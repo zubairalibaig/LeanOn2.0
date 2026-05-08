@@ -2,59 +2,64 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
   try {
-    const { amount, userId } = await req.json()
+    const { listenerId, durationMins, sessionType, seekerId } = await req.json()
 
-    if (!amount || amount < 100) {
-      return NextResponse.json({ error: 'Minimum recharge is ₹100' }, { status: 400 })
-    }
+    // TODO: wire up Supabase
+    // const { createServerSupabaseClient } = await import('@/lib/supabase')
+    // const sb = createServerSupabaseClient()
 
-    // TODO: uncomment when Razorpay secret key is in .env
-    // const Razorpay = (await import('razorpay')).default
-    // const rzp = new Razorpay({
-    //   key_id:     process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
-    //   key_secret: process.env.RAZORPAY_KEY_SECRET!,
-    // })
-    // const order = await rzp.orders.create({
-    //   amount:   amount * 100, // paise
-    //   currency: 'INR',
-    //   receipt:  `wallet_${userId}_${Date.now()}`,
-    //   notes:    { userId, type: 'wallet_recharge' },
-    // })
-    // return NextResponse.json({ orderId: order.id, amount: order.amount, currency: order.currency })
+    // 1. Get listener rate
+    // const { data: listener } = await sb.from('listener_profiles').select('rate_per_min').eq('user_id', listenerId).single()
+    // const rate = listener.rate_per_min
+    const rate = 10 // placeholder
 
-    // Placeholder response for development
+    const isFree      = durationMins === 5
+    const base        = isFree ? 0 : rate * durationMins
+    const platformFee = isFree ? 0 : Math.round(base * 0.10)
+    const total       = base + platformFee
+
+    // 2. Check wallet balance
+    // const { data: seeker } = await sb.from('users').select('wallet_balance').eq('id', seekerId).single()
+    // if (!isFree && seeker.wallet_balance < total) return NextResponse.json({ error: 'insufficient_balance' }, { status: 400 })
+
+    // 3. Create session
+    const agoraChannel = `session_${Date.now()}`
+    // const { data: session } = await sb.from('sessions').insert({
+    //   seeker_id: seekerId, listener_id: listenerId,
+    //   session_type: sessionType, duration_mins: durationMins,
+    //   amount_held: total, platform_fee: platformFee,
+    //   is_free_trial: isFree, agora_channel: agoraChannel, status: 'pending'
+    // }).select().single()
+
+    // 4. Deduct wallet
+    // if (!isFree) await sb.rpc('start_session', { p_session_id: session.id, p_seeker_id: seekerId, p_amount: total })
+
     return NextResponse.json({
-      orderId:  `order_dev_${Date.now()}`,
-      amount:   amount * 100,
-      currency: 'INR',
-      note:     'Connect RAZORPAY_KEY_SECRET in Vercel env vars to activate'
+      sessionId:    `sess_dev_${Date.now()}`,
+      agoraChannel,
+      total,
+      platformFee,
+      note: 'Connect Supabase to activate real sessions'
     })
 
   } catch (err) {
-    console.error('Wallet order error:', err)
-    return NextResponse.json({ error: 'Failed to create order' }, { status: 500 })
+    console.error('Session create error:', err)
+    return NextResponse.json({ error: 'Failed to create session' }, { status: 500 })
   }
 }
 
-// Called by Razorpay webhook after payment success
-export async function PUT(req: NextRequest) {
+export async function PATCH(req: NextRequest) {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, userId, amount } = await req.json()
+    const { sessionId, rating, review } = await req.json()
 
-    // TODO: verify signature
-    // const crypto = await import('crypto')
-    // const body   = razorpay_order_id + '|' + razorpay_payment_id
-    // const expectedSig = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
-    //   .update(body).digest('hex')
-    // if (expectedSig !== razorpay_signature) return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
-
-    // TODO: credit wallet in Supabase
+    // TODO: complete session in Supabase
     // const { createServerSupabaseClient } = await import('@/lib/supabase')
     // const sb = createServerSupabaseClient()
-    // await sb.rpc('credit_wallet', { p_user_id: userId, p_amount: amount / 100, p_reference: razorpay_payment_id })
+    // await sb.rpc('complete_session', { p_session_id: sessionId })
+    // if (rating) await sb.from('sessions').update({ seeker_rating: rating, seeker_review: review }).eq('id', sessionId)
 
     return NextResponse.json({ success: true })
   } catch (err) {
-    return NextResponse.json({ error: 'Verification failed' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to complete session' }, { status: 500 })
   }
 }
