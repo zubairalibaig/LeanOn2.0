@@ -39,7 +39,7 @@ export default function Home() {
         @media(min-width:480px) { .btn-nav-ghost { display: block; } }
 
         /* HERO */
-        .hero { padding: 56px 20px 64px; text-align: center; max-width: 520px; margin: 0 auto; }
+        .hero { padding: 96px 20px 64px; text-align: center; max-width: 520px; margin: 0 auto; }
         .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: #FFF3E0; color: var(--orange); font-weight: 700; font-size: 13px; padding: 7px 16px; border-radius: 50px; margin-bottom: 24px; border: 1.5px solid #FFD9A0; }
         .hero h1 { font-size: clamp(34px, 8vw, 48px); font-weight: 900; line-height: 1.15; color: var(--navy); margin-bottom: 18px; letter-spacing: -0.5px; }
         .hero h1 span { color: var(--orange); }
@@ -131,7 +131,7 @@ export default function Home() {
         /* FOOTER */
         .footer { border-top: 1px solid var(--border); padding: 32px 20px 48px; max-width: 540px; margin: 0 auto; }
         .footer-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
-        .footer-logo img { height: 44px; }
+        .footer-logo img { height: 96px; }
         .footer-links { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-bottom: 16px; }
         .footer-links a { font-size: 13px; color: var(--gray); font-weight: 600; transition: color 0.2s; }
         .footer-links a:hover { color: var(--navy); }
