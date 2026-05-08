@@ -31,7 +31,7 @@ export default function Home() {
         /* NAV */
         .nav { position: sticky; top: 0; z-index: 100; background: rgba(255,251,245,0.95); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); padding: 0 20px; height: 64px; display: flex; align-items: center; justify-content: space-between; max-width: 100%; }
         .nav-logo { display: flex; align-items: center; gap: 10px; }
-        .nav-logo img { height: 56px; width: auto; }
+        .nav-logo img { height: 1066px; width: auto; }
         .nav-links { display: flex; align-items: center; gap: 8px; }
         .btn-nav { background: var(--orange); color: white; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14px; padding: 9px 20px; border-radius: 50px; border: none; cursor: pointer; transition: all 0.2s; }
         .btn-nav:hover { background: #e8861a; transform: translateY(-1px); }
