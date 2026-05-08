@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  
+  html { scroll-behavior: smooth; }
+
+  body {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #B8D4E8; border-radius: 2px; }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-orange text-white font-display font-700 px-6 py-3 rounded-2xl
+           shadow-orange active:scale-95 transition-all duration-150
+           hover:bg-orange-light disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-navy font-display font-600 px-6 py-3 rounded-2xl
+           border border-soft-blue active:scale-95 transition-all duration-150
+           hover:bg-warm-gray;
+  }
+
+  .btn-ghost {
+    @apply text-navy font-display font-600 px-4 py-2 rounded-xl
+           active:scale-95 transition-all duration-150 hover:bg-warm-gray;
+  }
+
+  .card {
+    @apply bg-white rounded-3xl shadow-card border border-soft-blue/30 p-5;
+  }
+
+  .card-hover {
+    @apply card transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5 cursor-pointer;
+  }
+
+  .input-field {
+    @apply w-full bg-warm-gray border border-soft-blue/40 rounded-2xl
+           px-4 py-3 text-navy placeholder-slate-blue/60
+           focus:outline-none focus:border-navy focus:ring-2 focus:ring-navy/10
+           transition-all duration-150 text-base font-body;
+  }
+
+  .tag-pill {
+    @apply inline-flex items-center gap-1 bg-soft-blue/20 text-navy-light
+           text-xs font-body font-500 px-3 py-1 rounded-full;
+  }
+
+  .available-dot {
+    @apply w-2.5 h-2.5 rounded-full bg-green-400 ring-2 ring-white;
+  }
+
+  .busy-dot {
+    @apply w-2.5 h-2.5 rounded-full bg-amber-400 ring-2 ring-white;
+  }
+
+  .offline-dot {
+    @apply w-2.5 h-2.5 rounded-full bg-gray-300 ring-2 ring-white;
+  }
+
+  /* Page container */
+  .page-container {
+    @apply max-w-lg mx-auto min-h-screen;
+  }
+}
+
+/* OTP input styling */
+.otp-input {
+  @apply w-12 h-14 text-center text-2xl font-display font-700 text-navy
+         bg-warm-gray border-2 border-soft-blue/40 rounded-xl
+         focus:outline-none focus:border-orange focus:bg-white
+         transition-all duration-150;
+}
+
+/* Session timer pulse */
+@keyframes pulse-ring {
+  0%   { transform: scale(0.95); opacity: 0.8; }
+  50%  { transform: scale(1);    opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+.timer-pulse { animation: pulse-ring 2s ease-in-out infinite; }
+
+/* Skeleton loading */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #e8e8e4 25%, #f2f2ee 50%, #e8e8e4 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
