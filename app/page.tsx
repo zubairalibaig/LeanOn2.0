@@ -1,276 +1,269 @@
 import type { Metadata } from 'next'
-
 export const metadata: Metadata = {
   title: 'LeanOn — Someone to lean on, anytime',
-  description: 'Talk to real people who have been through what you\'re going through. Peer listeners available 24/7. Start free.',
+  description: "Talk to real people who have been through what you're going through. Peer listeners available 24/7. Start free.",
 }
-
 export default function Home() {
   return (
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        :root { --navy:#0F4867; --navy2:#1a6090; --orange:#FF9933; --orange2:#FFB366; --blue:#C9E7F4; --cream:#FFFBF5; --white:#FFFFFF; --gray:#6B8FA8; --light:#F0F4F7; --border:#DDE8F0; }
-        html { scroll-behavior: smooth; }
-        body { font-family:'Nunito',sans-serif; background:var(--cream); color:var(--navy); -webkit-font-smoothing:antialiased; }
-        a { text-decoration:none; color:inherit; }
-        img { max-width:100%; display:block; }
-        .nav { position:sticky; top:0; z-index:100; background:rgba(255,251,245,0.95); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); padding:0 20px; height:64px; display:flex; align-items:center; justify-content:space-between; }
-        .nav-logo img { height:56px; width:auto; }
-        .nav-links { display:flex; align-items:center; gap:8px; }
-        .btn-nav { background:var(--orange); color:white; font-family:'Nunito',sans-serif; font-weight:700; font-size:14px; padding:9px 20px; border-radius:50px; border:none; cursor:pointer; transition:all 0.2s; }
-        .btn-nav:hover { background:#e8861a; transform:translateY(-1px); }
-        .btn-nav-ghost { background:transparent; color:var(--navy); font-family:'Nunito',sans-serif; font-weight:600; font-size:14px; padding:9px 16px; border-radius:50px; border:none; cursor:pointer; display:none; }
-        @media(min-width:480px){ .btn-nav-ghost { display:block; } }
-        .hero { padding:56px 20px 64px; text-align:center; max-width:520px; margin:0 auto; }
-        .hero-badge { display:inline-flex; align-items:center; gap:8px; background:#FFF3E0; color:var(--orange); font-weight:700; font-size:13px; padding:7px 16px; border-radius:50px; margin-bottom:24px; border:1.5px solid #FFD9A0; }
-        .hero h1 { font-size:clamp(34px,8vw,48px); font-weight:900; line-height:1.15; color:var(--navy); margin-bottom:18px; letter-spacing:-0.5px; }
-        .hero h1 span { color:var(--orange); }
-        .hero p { font-size:17px; color:var(--gray); line-height:1.65; margin-bottom:36px; max-width:380px; margin-left:auto; margin-right:auto; }
-        .hero-btns { display:flex; flex-direction:column; gap:12px; max-width:300px; margin:0 auto 20px; }
-        .btn-primary { background:var(--orange); color:white; font-family:'Nunito',sans-serif; font-weight:800; font-size:16px; padding:16px 28px; border-radius:16px; border:none; cursor:pointer; display:block; text-align:center; transition:all 0.2s; box-shadow:0 4px 20px rgba(255,153,51,0.35); }
-        .btn-primary:hover { background:#e8861a; transform:translateY(-2px); }
-        .btn-secondary { background:white; color:var(--navy); font-family:'Nunito',sans-serif; font-weight:700; font-size:16px; padding:16px 28px; border-radius:16px; border:2px solid var(--border); cursor:pointer; display:block; text-align:center; transition:all 0.2s; }
-        .btn-secondary:hover { border-color:var(--navy); }
-        .hero-note { font-size:12px; color:#9BB5C7; font-weight:600; }
-        .section { padding:48px 20px; max-width:540px; margin:0 auto; }
-        .section-title { font-size:22px; font-weight:800; color:var(--navy); margin-bottom:6px; }
-        .section-sub { font-size:14px; color:var(--gray); margin-bottom:24px; font-weight:500; }
-        .topic-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-        .topic-card { background:white; border:1.5px solid var(--border); border-radius:16px; padding:16px; display:flex; align-items:center; gap:12px; font-weight:700; font-size:14px; color:var(--navy); transition:all 0.2s; cursor:pointer; }
-        .topic-card:hover { border-color:var(--orange); background:#FFF8F0; transform:translateY(-2px); box-shadow:0 4px 16px rgba(15,72,103,0.08); }
-        .topic-icon { font-size:24px; flex-shrink:0; }
-        .about-section { background:white; border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:48px 20px; }
-        .about-inner { max-width:540px; margin:0 auto; }
-        .about-label { font-size:12px; font-weight:800; color:var(--orange); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:10px; }
-        .about-title { font-size:clamp(22px,5vw,30px); font-weight:900; color:var(--navy); margin-bottom:20px; line-height:1.25; }
-        .about-title span { color:var(--orange); }
-        .about-body { font-size:15px; color:#4A6B7E; line-height:1.75; }
-        .about-body p+p { margin-top:14px; }
-        .features-section { padding:48px 20px; max-width:540px; margin:0 auto; }
-        .feature-list { display:flex; flex-direction:column; gap:16px; margin-top:24px; }
-        .feature-item { display:flex; gap:16px; align-items:flex-start; background:white; border:1.5px solid var(--border); border-radius:18px; padding:18px; }
-        .feature-icon-wrap { width:44px; height:44px; border-radius:12px; background:#FFF3E0; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
-        .feature-title { font-size:15px; font-weight:800; color:var(--navy); margin-bottom:4px; }
-        .feature-desc { font-size:13px; color:var(--gray); line-height:1.55; font-weight:500; }
-        .how-section { background:var(--navy); padding:52px 20px; }
-        .how-inner { max-width:540px; margin:0 auto; }
-        .how-title { font-size:24px; font-weight:900; color:white; text-align:center; margin-bottom:32px; }
-        .steps-list { display:flex; flex-direction:column; gap:0; }
-        .step-item { display:flex; gap:16px; align-items:flex-start; padding:16px 0; border-bottom:1px solid rgba(255,255,255,0.08); }
-        .step-item:last-child { border-bottom:none; }
-        .step-num { width:36px; height:36px; border-radius:50%; background:var(--orange); display:flex; align-items:center; justify-content:center; font-weight:900; font-size:15px; color:white; flex-shrink:0; margin-top:2px; }
-        .step-title { font-size:15px; font-weight:800; color:white; margin-bottom:4px; }
-        .step-desc { font-size:13px; color:var(--blue); line-height:1.5; font-weight:500; }
-        .pricing-section { padding:52px 20px; max-width:540px; margin:0 auto; }
-        .pricing-cards { display:flex; flex-direction:column; gap:12px; margin-top:24px; }
-        .price-card { background:white; border:1.5px solid var(--border); border-radius:18px; padding:18px 20px; display:flex; justify-content:space-between; align-items:center; }
-        .price-card.featured { border:2.5px solid var(--orange); background:#FFFBF5; }
-        .price-label { font-size:16px; font-weight:800; color:var(--navy); margin-bottom:3px; }
-        .price-detail { font-size:13px; color:var(--gray); font-weight:500; }
-        .price-badge { background:#FFF3E0; color:var(--orange); font-size:11px; font-weight:800; padding:3px 10px; border-radius:50px; display:inline-block; margin-top:5px; }
-        .price-amount { font-size:26px; font-weight:900; color:var(--navy); flex-shrink:0; }
-        .refund-note { background:var(--light); border-radius:14px; padding:14px 16px; display:flex; gap:12px; align-items:center; margin-top:14px; }
-        .refund-note span { font-size:13px; color:var(--gray); line-height:1.5; font-weight:500; }
-        .testimonials-section { background:white; border-top:1px solid var(--border); padding:52px 20px; }
-        .testimonials-inner { max-width:540px; margin:0 auto; }
-        .testimonial-list { display:flex; flex-direction:column; gap:14px; margin-top:24px; }
-        .testimonial-card { background:var(--cream); border:1.5px solid var(--border); border-radius:18px; padding:20px; }
-        .stars { display:flex; gap:3px; margin-bottom:12px; }
-        .testimonial-text { font-size:14px; color:#3A5A6E; line-height:1.65; font-weight:500; margin-bottom:14px; font-style:italic; }
-        .testimonial-author { display:flex; align-items:center; gap:10px; }
-        .author-avatar { width:32px; height:32px; border-radius:50%; background:var(--blue); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; color:var(--navy); flex-shrink:0; }
-        .author-name { font-size:13px; font-weight:700; color:var(--navy); }
-        .author-city { font-size:12px; color:var(--gray); font-weight:500; }
-        .trust-section { padding:40px 20px; max-width:540px; margin:0 auto; }
-        .trust-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; text-align:center; }
-        .trust-item { display:flex; flex-direction:column; align-items:center; gap:10px; }
-        .trust-icon { width:48px; height:48px; border-radius:16px; background:var(--light); display:flex; align-items:center; justify-content:center; font-size:22px; }
-        .trust-label { font-size:12px; color:var(--gray); font-weight:700; line-height:1.3; }
-        /* ── DISCLAIMER ── */
-        .disclaimer-section { padding:0 20px 40px; max-width:540px; margin:0 auto; }
-        .disclaimer-box { background:#F0F7FF; border:1.5px solid #B8D4F0; border-radius:20px; padding:20px; }
-        .disclaimer-box h3 { font-size:14px; font-weight:800; color:var(--navy); margin-bottom:10px; display:flex; align-items:center; gap:8px; }
-        .disclaimer-box p { font-size:13px; color:#3A5A6E; line-height:1.65; font-weight:500; }
-        .disclaimer-box p+p { margin-top:8px; }
-        .crisis-box { background:#FFF0F0; border:1.5px solid #FFCDD2; border-radius:16px; padding:16px; margin-top:12px; }
-        .crisis-box p { font-size:12px; color:#7A2020; font-weight:600; line-height:1.7; }
-        .cta-section { padding:20px 20px 64px; max-width:540px; margin:0 auto; }
-        .cta-card { background:var(--navy); border-radius:28px; padding:44px 28px; text-align:center; }
-        .cta-card h2 { font-size:clamp(22px,5vw,28px); font-weight:900; color:white; margin-bottom:12px; line-height:1.25; }
-        .cta-card p { font-size:15px; color:var(--blue); margin-bottom:28px; font-weight:500; }
-        .btn-cta { background:var(--orange); color:white; font-family:'Nunito',sans-serif; font-weight:800; font-size:17px; padding:18px 36px; border-radius:16px; border:none; cursor:pointer; display:inline-block; transition:all 0.2s; box-shadow:0 6px 24px rgba(255,153,51,0.4); }
-        .btn-cta:hover { background:#e8861a; transform:translateY(-2px); }
-        .footer { border-top:1px solid var(--border); padding:32px 20px 48px; max-width:540px; margin:0 auto; }
-        .footer-logo img { height:44px; margin-bottom:16px; }
-        .footer-links { display:flex; flex-wrap:wrap; gap:8px 20px; margin-bottom:16px; }
-        .footer-links a { font-size:13px; color:var(--gray); font-weight:600; transition:color 0.2s; }
-        .footer-links a:hover { color:var(--navy); }
-        .footer-copy { font-size:12px; color:#9BB5C7; font-weight:600; }
-        .footer-listener { margin-top:20px; background:var(--light); border-radius:14px; padding:16px 18px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
-        .footer-listener p { font-size:13px; font-weight:700; color:var(--navy); }
-        .footer-listener span { font-size:12px; color:var(--gray); font-weight:500; display:block; margin-top:2px; }
-        .btn-listener { background:white; color:var(--navy); font-family:'Nunito',sans-serif; font-weight:700; font-size:13px; padding:9px 16px; border-radius:10px; border:1.5px solid var(--border); cursor:pointer; white-space:nowrap; flex-shrink:0; }
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+        :root{
+          --navy:#0F4867;
+          --teal:#1A8FA0;
+          --orange:#FF9933;
+          --bg:#EBF5FA;
+          --card:#FFFFFF;
+          --light:#F0F8FC;
+          --border:#D5EEF6;
+          --gray:#5A7A8A;
+          --muted:#8AAAB8;
+        }
+        html{scroll-behavior:smooth;}
+        body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--navy);-webkit-font-smoothing:antialiased;}
+        a{text-decoration:none;color:inherit;}
+        img{max-width:100%;display:block;}
+
+        .nav{background:#FFFFFF;border-bottom:1px solid var(--border);padding:0 24px;height:70px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(15,72,103,0.06);}
+        .nav-logo{height:52px;width:auto;}
+        .nav-right{display:flex;align-items:center;gap:10px;}
+        .btn-ghost{background:transparent;color:var(--teal);font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;padding:9px 18px;border-radius:50px;border:2px solid var(--teal);cursor:pointer;transition:all 0.2s;display:none;}
+        .btn-ghost:hover{background:var(--teal);color:white;}
+        @media(min-width:500px){.btn-ghost{display:block;}}
+        .btn-nav{background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;padding:10px 22px;border-radius:50px;border:none;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 10px rgba(255,153,51,0.3);}
+        .btn-nav:hover{background:#e8861a;transform:translateY(-1px);}
+
+        .hero{padding:60px 24px 68px;text-align:center;max-width:540px;margin:0 auto;}
+        .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(26,143,160,0.1);color:var(--teal);font-weight:700;font-size:13px;padding:7px 18px;border-radius:50px;margin-bottom:28px;border:1.5px solid rgba(26,143,160,0.25);}
+        .hero h1{font-size:clamp(32px,8vw,50px);font-weight:900;line-height:1.12;color:var(--navy);margin-bottom:20px;letter-spacing:-0.5px;}
+        .hero h1 .o{color:var(--orange);}
+        .hero p{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:36px;max-width:360px;margin-left:auto;margin-right:auto;}
+        .hero-btns{display:flex;flex-direction:column;gap:12px;max-width:300px;margin:0 auto 16px;}
+        .btn-primary{background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;padding:17px 28px;border-radius:50px;border:none;cursor:pointer;display:block;text-align:center;transition:all 0.2s;box-shadow:0 4px 20px rgba(255,153,51,0.35);}
+        .btn-primary:hover{background:#e8861a;transform:translateY(-2px);}
+        .btn-outline{background:transparent;color:var(--teal);font-family:'Nunito',sans-serif;font-weight:700;font-size:16px;padding:15px 28px;border-radius:50px;border:2px solid var(--teal);cursor:pointer;display:block;text-align:center;transition:all 0.2s;}
+        .btn-outline:hover{background:var(--teal);color:white;}
+        .hero-note{font-size:12px;color:var(--muted);font-weight:600;}
+
+        .section{padding:48px 24px;max-width:560px;margin:0 auto;}
+        .sh{font-size:22px;font-weight:800;color:var(--navy);margin-bottom:6px;}
+        .ss{font-size:14px;color:var(--gray);margin-bottom:24px;font-weight:500;}
+        .topic-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+        .tc{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px;font-weight:700;font-size:14px;color:var(--navy);transition:all 0.2s;cursor:pointer;}
+        .tc:hover{border-color:var(--teal);background:var(--light);transform:translateY(-2px);box-shadow:0 4px 16px rgba(15,72,103,0.08);}
+
+        .about{background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:52px 24px;}
+        .ai{max-width:560px;margin:0 auto;}
+        .al{font-size:12px;font-weight:800;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;}
+        .at{font-size:clamp(22px,5vw,30px);font-weight:900;color:var(--navy);margin-bottom:20px;line-height:1.25;}
+        .at .o{color:var(--orange);}
+        .ab p{font-size:15px;color:#3A6070;line-height:1.78;margin-bottom:14px;}
+
+        .features{padding:52px 24px;max-width:560px;margin:0 auto;}
+        .fl{display:flex;flex-direction:column;gap:14px;margin-top:24px;}
+        .fi{display:flex;gap:16px;align-items:flex-start;background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:18px;}
+        .fw{width:44px;height:44px;border-radius:12px;background:rgba(26,143,160,0.1);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+        .ft{font-size:15px;font-weight:800;color:var(--navy);margin-bottom:4px;}
+        .fd{font-size:13px;color:var(--gray);line-height:1.6;font-weight:500;}
+
+        .how{background:var(--navy);padding:56px 24px;}
+        .hi{max-width:560px;margin:0 auto;}
+        .ht{font-size:24px;font-weight:900;color:white;text-align:center;margin-bottom:36px;}
+        .sl{display:flex;flex-direction:column;}
+        .si{display:flex;gap:16px;align-items:flex-start;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.08);}
+        .si:last-child{border-bottom:none;}
+        .sn{width:36px;height:36px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;color:white;flex-shrink:0;margin-top:2px;}
+        .stit{font-size:15px;font-weight:800;color:white;margin-bottom:3px;}
+        .sd{font-size:13px;color:rgba(213,238,246,0.75);line-height:1.5;font-weight:500;}
+
+        .pricing{padding:52px 24px;max-width:560px;margin:0 auto;}
+        .pc{display:flex;flex-direction:column;gap:12px;margin-top:24px;}
+        .pcard{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;}
+        .pcard.feat{border:2.5px solid var(--orange);background:#FFFDF8;}
+        .pl{font-size:16px;font-weight:800;color:var(--navy);margin-bottom:3px;}
+        .pd{font-size:13px;color:var(--gray);font-weight:500;}
+        .pb{background:rgba(255,153,51,0.12);color:var(--orange);font-size:11px;font-weight:800;padding:3px 10px;border-radius:50px;display:inline-block;margin-top:5px;}
+        .pa{font-size:28px;font-weight:900;color:var(--navy);flex-shrink:0;}
+        .rn{background:rgba(26,143,160,0.08);border:1px solid rgba(26,143,160,0.2);border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:center;margin-top:14px;}
+        .rn span{font-size:13px;color:#1A5F6A;line-height:1.5;font-weight:600;}
+
+        .testi{background:var(--card);border-top:1px solid var(--border);padding:52px 24px;}
+        .testi-in{max-width:560px;margin:0 auto;}
+        .tlist{display:flex;flex-direction:column;gap:12px;margin-top:24px;}
+        .tcard{background:var(--bg);border:1.5px solid var(--border);border-radius:18px;padding:20px;}
+        .tst{font-size:14px;color:var(--orange);margin-bottom:10px;letter-spacing:2px;}
+        .ttx{font-size:14px;color:#2A4F60;line-height:1.68;font-weight:500;margin-bottom:14px;font-style:italic;}
+        .tau{display:flex;align-items:center;gap:10px;}
+        .tav{width:32px;height:32px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:white;flex-shrink:0;}
+        .tnm{font-size:13px;font-weight:700;color:var(--navy);}
+        .tcy{font-size:12px;color:var(--gray);font-weight:500;}
+
+        .trust{padding:40px 24px;max-width:560px;margin:0 auto;}
+        .tg{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;text-align:center;}
+        .ti{display:flex;flex-direction:column;align-items:center;gap:10px;}
+        .tic{width:52px;height:52px;border-radius:18px;background:var(--card);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;}
+        .tl{font-size:12px;color:var(--gray);font-weight:700;line-height:1.3;}
+
+        .disc{padding:0 24px 44px;max-width:560px;margin:0 auto;}
+        .db{background:rgba(26,143,160,0.06);border:1.5px solid rgba(26,143,160,0.2);border-radius:20px;padding:20px;}
+        .db h3{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:10px;}
+        .db p{font-size:13px;color:#2A4F60;line-height:1.68;font-weight:500;margin-bottom:8px;}
+        .cb{background:#FFF0F0;border:1.5px solid #FFCDD2;border-radius:14px;padding:14px 16px;margin-top:8px;}
+        .cb p{font-size:12px;color:#7A2020;font-weight:700;line-height:1.7;}
+
+        .cta-s{padding:20px 24px 70px;max-width:560px;margin:0 auto;}
+        .cta-c{background:var(--navy);border-radius:28px;padding:48px 28px;text-align:center;}
+        .cta-c h2{font-size:clamp(22px,5vw,28px);font-weight:900;color:white;margin-bottom:12px;line-height:1.25;}
+        .cta-c p{font-size:15px;color:rgba(213,238,246,0.8);margin-bottom:28px;font-weight:500;}
+        .btn-cta{background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;padding:18px 40px;border-radius:50px;border:none;cursor:pointer;display:inline-block;transition:all 0.2s;box-shadow:0 6px 24px rgba(255,153,51,0.4);}
+        .btn-cta:hover{background:#e8861a;transform:translateY(-2px);}
+
+        .footer{border-top:1px solid var(--border);background:var(--card);padding:36px 24px 52px;}
+        .fi2{max-width:560px;margin:0 auto;}
+        .fli{display:flex;flex-wrap:wrap;gap:8px 20px;margin-bottom:18px;}
+        .fli a{font-size:13px;color:var(--gray);font-weight:600;}
+        .fli a:hover{color:var(--navy);}
+        .flis{background:var(--bg);border:1.5px solid var(--border);border-radius:16px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px;}
+        .flis p{font-size:13px;font-weight:700;color:var(--navy);}
+        .flis span{font-size:12px;color:var(--gray);font-weight:500;display:block;margin-top:2px;}
+        .btn-lis{background:white;color:var(--teal);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;padding:9px 18px;border-radius:50px;border:2px solid var(--teal);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all 0.2s;}
+        .btn-lis:hover{background:var(--teal);color:white;}
+        .fcp{font-size:12px;color:var(--muted);font-weight:600;}
       `}</style>
 
       <nav className="nav">
-        <a href="/" className="nav-logo"><img src="/logo.png" alt="LeanOn" /></a>
-        <div className="nav-links">
-          <a href="/become-listener" className="btn-nav-ghost">Become a listener</a>
+        <a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" style={{height:'52px',width:'auto'}} /></a>
+        <div className="nav-right">
+          <a href="/become-listener" className="btn-ghost">Become a listener</a>
           <a href="/auth" className="btn-nav">Get started free</a>
         </div>
       </nav>
 
       <section className="hero">
         <div className="hero-badge"><span>🌙</span><span>Available 24 / 7 — even at 2 AM</span></div>
-        <h1>Someone to<br /><span>lean on,</span><br />anytime.</h1>
+        <h1>Someone to<br /><span className="o">lean on,</span><br />anytime.</h1>
         <p>Talk to real people who have been through what you&apos;re going through. No appointments. No stigma. No waiting.</p>
         <div className="hero-btns">
           <a href="/auth" className="btn-primary">Start your free 5-min chat</a>
-          <a href="/browse" className="btn-secondary">Browse listeners first</a>
+          <a href="/browse" className="btn-outline">Browse listeners first</a>
         </div>
         <p className="hero-note">First session free · No credit card needed</p>
       </section>
 
       <section className="section">
-        <h2 className="section-title">What&apos;s on your mind?</h2>
-        <p className="section-sub">Pick a topic and find someone who gets it.</p>
+        <h2 className="sh">What&apos;s on your mind?</h2>
+        <p className="ss">Pick a topic and find someone who gets it.</p>
         <div className="topic-grid">
-          {[
-            {id:'loneliness',icon:'🌙',label:'Loneliness'},{id:'stress',icon:'💼',label:'Work stress'},
-            {id:'career',icon:'🧭',label:'Career confusion'},{id:'relationships',icon:'💬',label:'Relationships'},
-            {id:'grief',icon:'🌿',label:'Grief & loss'},{id:'students',icon:'📚',label:'Student pressure'},
-            {id:'startup',icon:'🚀',label:'Startup journey'},{id:'general',icon:'☕',label:'Just need to talk'},
-          ].map(t => (
-            <a key={t.id} href={`/browse?topic=${t.id}`} className="topic-card">
-              <span className="topic-icon">{t.icon}</span><span>{t.label}</span>
-            </a>
+          {[{id:'loneliness',i:'🌙',l:'Loneliness'},{id:'stress',i:'💼',l:'Work stress'},{id:'career',i:'🧭',l:'Career confusion'},{id:'relationships',i:'💬',l:'Relationships'},{id:'grief',i:'🌿',l:'Grief & loss'},{id:'students',i:'📚',l:'Student pressure'},{id:'startup',i:'🚀',l:'Startup journey'},{id:'general',i:'☕',l:'Just need to talk'}].map(t=>(
+            <a key={t.id} href={`/browse?topic=${t.id}`} className="tc"><span style={{fontSize:22,flexShrink:0}}>{t.i}</span><span>{t.l}</span></a>
           ))}
         </div>
       </section>
 
-      <div className="about-section">
-        <div className="about-inner">
-          <p className="about-label">Our mission</p>
-          <h2 className="about-title">Let&apos;s change the conversation on <span>emotional wellness</span></h2>
-          <div className="about-body">
-            <p>Emotional wellbeing is as important as physical health. When your body hurts, you seek help — the same should be true for how you feel inside. Life presents real challenges, and there&apos;s nothing wrong with needing someone to talk to.</p>
-            <p>Unfortunately, stigma still holds people back. Seeking support is sometimes seen as weakness. LeanOn exists to change that — connecting you instantly with real people who have lived through what you&apos;re facing and found their way through.</p>
-            <p>You don&apos;t need a diagnosis. You don&apos;t need an appointment. You just need someone to lean on.</p>
+      <div className="about">
+        <div className="ai">
+          <p className="al">Our mission</p>
+          <h2 className="at">Let&apos;s change the conversation on <span className="o">emotional wellness</span></h2>
+          <div className="ab">
+            <p>We believe solving emotional challenges should be no different from solving any other health challenge. When you&apos;re struggling, you deserve someone who truly understands — not just a stranger, but someone who has been through the same thing and found their way through.</p>
+            <p>Stigma still holds people back. LeanOn is here to change that — making human connection instant, affordable, and free of judgment. You don&apos;t need a diagnosis or an appointment. You just need someone to lean on.</p>
           </div>
         </div>
       </div>
 
-      <section className="features-section">
-        <h2 className="section-title">Why choose LeanOn?</h2>
-        <p className="section-sub">Built around what actually helps people feel better.</p>
-        <div className="feature-list">
+      <section className="features">
+        <h2 className="sh">Why choose LeanOn?</h2>
+        <p className="ss">Built around what actually helps people feel better.</p>
+        <div className="fl">
           {[
-            {icon:'🔍',title:'Open listener directory',desc:'Browse peer listeners by topic for free. Read their stories, see ratings, find the right fit — before you pay anything.'},
-            {icon:'⚡',title:'Instant, no-appointment access',desc:'No booking. No waiting rooms. Someone is available right now. Start a session in under 60 seconds.'},
-            {icon:'💳',title:'Pay-per-session flexibility',desc:'No subscriptions, no commitments. Recharge your wallet and use it whenever you need. Unused balance refunded anytime.'},
-            {icon:'💬',title:'Text or voice — your choice',desc:'Type if you need privacy. Talk if you want the warmth of a voice. Both options, always.'},
-            {icon:'🤝',title:'Lived-experience listeners',desc:'Our listeners have been through it — breakups, burnout, grief, startup failure, student pressure. They understand.'},
-            {icon:'🔒',title:'Safe & private by design',desc:'Sessions are private. No personal information shared. AI moderation protects every conversation.'},
-          ].map((f,i) => (
-            <div key={i} className="feature-item">
-              <div className="feature-icon-wrap">{f.icon}</div>
-              <div><div className="feature-title">{f.title}</div><div className="feature-desc">{f.desc}</div></div>
-            </div>
+            {i:'🔍',t:'Open listener directory',d:'Browse peer listeners by topic for free. Read their stories and ratings before you pay anything.'},
+            {i:'⚡',t:'Instant, no-appointment access',d:'No booking. No waiting rooms. Someone is available right now. Start in under 60 seconds.'},
+            {i:'💳',t:'Pay-per-session flexibility',d:'No subscriptions. Recharge your wallet whenever you need. Unused balance refunded anytime.'},
+            {i:'💬',t:'Text or voice — your choice',d:'Type for privacy in a joint home. Talk for the warmth of a real voice. Always your choice.'},
+            {i:'🤝',t:'Lived-experience listeners',d:'Our listeners have been through it — breakups, burnout, grief, startup failure. They truly understand.'},
+            {i:'🔒',t:'Safe & private by design',d:'Sessions are private. No personal info shared. AI moderation keeps every conversation safe.'},
+          ].map((f,i)=>(
+            <div key={i} className="fi"><div className="fw">{f.i}</div><div><div className="ft">{f.t}</div><div className="fd">{f.d}</div></div></div>
           ))}
         </div>
       </section>
 
-      <div className="how-section">
-        <div className="how-inner">
-          <h2 className="how-title">Start your journey with LeanOn</h2>
-          <div className="steps-list">
+      <div className="how">
+        <div className="hi">
+          <h2 className="ht">Start your journey with LeanOn</h2>
+          <div className="sl">
             {[
-              {title:'Sign up to LeanOn',desc:'Just your phone number. OTP verified. Takes 30 seconds.'},
-              {title:'Browse peer listeners',desc:'Filter by topic. Read bios and ratings. No charge to browse.'},
-              {title:'Pick your session length',desc:'Free 5-min trial, or choose 15 or 30 minutes.'},
-              {title:'Recharge your wallet',desc:'Top up ₹200, ₹500 or ₹1000. Refundable anytime, no expiry.'},
-              {title:'Start instantly',desc:'Text chat or voice call — your session begins immediately.'},
-              {title:'Get the support you need',desc:'Rate your listener. Book again anytime. You are not alone.'},
-            ].map((s,i) => (
-              <div key={i} className="step-item">
-                <div className="step-num">{i+1}</div>
-                <div><div className="step-title">{s.title}</div><div className="step-desc">{s.desc}</div></div>
+              {t:'Sign up to LeanOn',d:'Just your phone number. OTP verified. 30 seconds.'},
+              {t:'Browse peer listeners',d:'Filter by topic. Read bios and ratings. Free to browse.'},
+              {t:'Pick your session length',d:'Free 5-min trial, or choose 15 or 30 minutes.'},
+              {t:'Recharge your wallet',d:'Top up ₹200, ₹500 or ₹1000. Refundable anytime.'},
+              {t:'Start instantly',d:'Text chat or voice call — begins immediately.'},
+              {t:'Get the support you need',d:'Rate your listener. Book again anytime. You are not alone.'},
+            ].map((s,i)=>(
+              <div key={i} className="si"><div className="sn">{i+1}</div><div><div className="stit">{s.t}</div><div className="sd">{s.d}</div></div></div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <section className="pricing">
+        <h2 className="sh">Simple, honest pricing</h2>
+        <p className="ss">Your listener keeps 90% of every session fee.</p>
+        <div className="pc">
+          {[
+            {l:'Free trial',d:'5 minutes · First session, text only',p:'₹0',b:'First session free',feat:false},
+            {l:'Quick chat',d:'15 minutes · ₹150 + ₹15 platform fee',p:'₹165',b:'',feat:false},
+            {l:'Deep dive',d:'30 minutes · ₹300 + ₹30 platform fee',p:'₹330',b:'Most popular',feat:true},
+          ].map((item,i)=>(
+            <div key={i} className={`pcard${item.feat?' feat':''}`}>
+              <div><div className="pl">{item.l}</div><div className="pd">{item.d}</div>{item.b&&<div className="pb">{item.b}</div>}</div>
+              <div className="pa">{item.p}</div>
+            </div>
+          ))}
+        </div>
+        <div className="rn"><span style={{fontSize:18}}>🔄</span><span>Unused wallet balance is fully refundable anytime. No lock-in, ever.</span></div>
+      </section>
+
+      <div className="testi">
+        <div className="testi-in">
+          <h2 className="sh">What people are saying</h2>
+          <p className="ss">Real sessions. Real relief.</p>
+          <div className="tlist">
+            {[
+              {tx:"I was dreading another sleepless night. LeanOn connected me with someone who just got it. No judgment.",nm:'Priya M.',cy:'Bengaluru',in:'P'},
+              {tx:"As a founder going through a hard patch, I felt completely alone. Talking to someone who survived their own startup failure was exactly what I needed.",nm:'Arjun K.',cy:'Mumbai',in:'A'},
+              {tx:"So much more affordable than therapy. And honestly more useful for day-to-day anxiety. I've used it 4 times.",nm:'Sneha R.',cy:'Hyderabad',in:'S'},
+            ].map((r,i)=>(
+              <div key={i} className="tcard">
+                <div className="tst">★★★★★</div>
+                <p className="ttx">&ldquo;{r.tx}&rdquo;</p>
+                <div className="tau"><div className="tav">{r.in}</div><div><div className="tnm">{r.nm}</div><div className="tcy">{r.cy}</div></div></div>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      <section className="pricing-section">
-        <h2 className="section-title">Simple, honest pricing</h2>
-        <p className="section-sub">Your listener keeps 90% of every session fee.</p>
-        <div className="pricing-cards">
-          {[
-            {label:'Free trial',duration:'5 minutes',price:'₹0',sub:'First session, text only',tag:'First session free',featured:false},
-            {label:'Quick chat',duration:'15 minutes',price:'₹165',sub:'₹150 + ₹15 platform fee',tag:'',featured:false},
-            {label:'Deep dive',duration:'30 minutes',price:'₹330',sub:'₹300 + ₹30 platform fee',tag:'Most popular',featured:true},
-          ].map((item,i) => (
-            <div key={i} className={`price-card${item.featured?' featured':''}`}>
-              <div>
-                <div className="price-label">{item.label}</div>
-                <div className="price-detail">{item.duration} · {item.sub}</div>
-                {item.tag && <div className="price-badge">{item.tag}</div>}
-              </div>
-              <div className="price-amount">{item.price}</div>
-            </div>
-          ))}
-        </div>
-        <div className="refund-note"><span style={{fontSize:20}}>🔄</span><span>Unused wallet balance is fully refundable anytime. No lock-in, ever.</span></div>
-      </section>
-
-      <div className="testimonials-section">
-        <div className="testimonials-inner">
-          <h2 className="section-title">What people are saying</h2>
-          <p className="section-sub">Real sessions. Real relief.</p>
-          <div className="testimonial-list">
-            {[
-              {text:"I was dreading another sleepless night. LeanOn connected me with someone who just got it. No judgment, no advice I didn't ask for. Just someone who listened.",name:'Priya M.',city:'Bengaluru',init:'P'},
-              {text:"As a founder going through a hard patch, I felt completely alone. Talking to someone who had survived their own startup failure was exactly what I needed.",name:'Arjun K.',city:'Mumbai',init:'A'},
-              {text:"So much more affordable than therapy. And honestly more useful for the day-to-day anxiety I deal with. I've used it 4 times already.",name:'Sneha R.',city:'Hyderabad',init:'S'},
-            ].map((r,i) => (
-              <div key={i} className="testimonial-card">
-                <div className="stars">{'★★★★★'.split('').map((s,j) => <span key={j} style={{color:'#FF9933',fontSize:15}}>{s}</span>)}</div>
-                <p className="testimonial-text">&ldquo;{r.text}&rdquo;</p>
-                <div className="testimonial-author">
-                  <div className="author-avatar">{r.init}</div>
-                  <div><div className="author-name">{r.name}</div><div className="author-city">{r.city}</div></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <section className="trust-section">
-        <div className="trust-grid">
-          {[{icon:'🔒',label:'Safe & private'},{icon:'💬',label:'Text or voice'},{icon:'🔄',label:'Refund anytime'},{icon:'⚡',label:'Instant access'},{icon:'🤝',label:'Lived experience'},{icon:'🌙',label:'Available 24/7'}].map((t,i) => (
-            <div key={i} className="trust-item"><div className="trust-icon">{t.icon}</div><span className="trust-label">{t.label}</span></div>
+      <section className="trust">
+        <div className="tg">
+          {[{i:'🔒',l:'Safe & private'},{i:'💬',l:'Text or voice'},{i:'🔄',l:'Refund anytime'},{i:'⚡',l:'Instant access'},{i:'🤝',l:'Lived experience'},{i:'🌙',l:'Available 24/7'}].map((t,i)=>(
+            <div key={i} className="ti"><div className="tic">{t.i}</div><span className="tl">{t.l}</span></div>
           ))}
         </div>
       </section>
 
-      {/* ── IMPORTANT DISCLAIMER ── */}
-      <section className="disclaimer-section">
-        <div className="disclaimer-box">
-          <h3>ℹ️ Important: What LeanOn is — and isn&apos;t</h3>
-          <p><strong>LeanOn is a peer support platform, not a mental health service.</strong> Our listeners are real people who have lived through similar experiences — they are not licensed therapists, psychologists, or clinical counselors.</p>
-          <p>Peer support is a legitimate and valuable form of human connection. It is different from, and not a replacement for, professional mental health treatment. If you are experiencing a clinical mental health condition, please consult a qualified professional.</p>
-          <div className="crisis-box">
-            <p>🆘 <strong>If you are in crisis or having thoughts of self-harm, please reach out immediately:</strong><br />
-            iCall (India): <strong>9152987821</strong> · Vandrevala Foundation: <strong>1860-2662-345</strong> (24/7) · SNEHI: <strong>044-24640050</strong></p>
-          </div>
+      <section className="disc">
+        <div className="db">
+          <h3>ℹ️ LeanOn is peer support — not therapy</h3>
+          <p><strong>Our listeners are real people with lived experience — not licensed therapists or counselors.</strong> Peer support is a legitimate, valuable form of human connection, different from professional mental health treatment.</p>
+          <p>If you are experiencing a clinical mental health condition, please consult a qualified professional.</p>
+          <div className="cb"><p>🆘 <strong>In crisis?</strong> iCall: <strong>9152987821</strong> · Vandrevala Foundation: <strong>1860-2662-345</strong> (24/7)</p></div>
         </div>
       </section>
 
-      <section className="cta-section">
-        <div className="cta-card">
+      <section className="cta-s">
+        <div className="cta-c">
           <h2>You don&apos;t have to go through this alone.</h2>
           <p>Someone is available right now. Start free — no card needed.</p>
           <a href="/auth" className="btn-cta">Start free now →</a>
@@ -278,16 +271,18 @@ export default function Home() {
       </section>
 
       <footer className="footer">
-        <div className="footer-logo"><img src="/logo.png" alt="LeanOn" /></div>
-        <div className="footer-links">
-          <a href="/about">About</a><a href="/browse">Find a listener</a>
-          <a href="/privacy">Privacy policy</a><a href="/terms">Terms of use</a><a href="/contact">Contact</a>
+        <div className="fi2">
+          <div style={{marginBottom:18}}><img src="/logo.png" alt="LeanOn" style={{height:44}} /></div>
+          <div className="fli">
+            <a href="/about">About</a><a href="/browse">Find a listener</a>
+            <a href="/privacy">Privacy policy</a><a href="/terms">Terms of use</a><a href="/contact">Contact</a>
+          </div>
+          <div className="flis">
+            <div><p>Have lived experience to share?</p><span>Earn ₹8–25/min as a peer listener</span></div>
+            <a href="/become-listener"><button className="btn-lis">Join as listener →</button></a>
+          </div>
+          <p className="fcp">© 2025 LeanOn · leanon.app · Peer support platform · Made in India 🇮🇳</p>
         </div>
-        <div className="footer-listener">
-          <div><p>Have lived experience to share?</p><span>Earn ₹8–25/min as a peer listener</span></div>
-          <a href="/become-listener"><button className="btn-listener">Join as listener →</button></a>
-        </div>
-        <p className="footer-copy" style={{marginTop:20}}>© 2025 LeanOn · leanon.app · Peer support platform · Made in India 🇮🇳</p>
       </footer>
     </>
   )
