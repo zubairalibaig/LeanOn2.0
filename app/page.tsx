@@ -38,14 +38,14 @@ export default function Home() {
         .nav{
           background:transparent;
           padding:0 28px;
-          height:80px;
+          height:100px;
           display:flex;
           align-items:center;
           justify-content:space-between;
           max-width:1100px;
           margin:0 auto;
         }
-        .nav-logo{height:72px;width:auto;}
+        .nav-logo{height:90px;width:auto;}
         .nav-right{display:flex;align-items:center;gap:12px;}
         .btn-ghost{background:transparent;color:var(--teal);font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;padding:9px 18px;border-radius:50px;border:2px solid var(--teal);cursor:pointer;transition:all 0.2s;display:none;}
         .btn-ghost:hover{background:var(--teal);color:white;}
