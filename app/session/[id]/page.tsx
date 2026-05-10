@@ -30,12 +30,8 @@ body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:an
 .msg.me{background:var(--navy);color:white;align-self:flex-end;border-bottom-right-radius:4px;}
 .msg-time{font-size:10px;margin-top:4px;opacity:0.55;}
 .msg.me .msg-time{text-align:right;}
-.typing{display:flex;align-items:center;gap:4px;padding:10px 14px;background:var(--light);border:1.5px solid var(--border);border-radius:18px;border-bottom-left-radius:4px;width:fit-content;align-self:flex-start;}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--gray);animation:bounce 1.2s infinite;}
-.dot:nth-child(2){animation-delay:.2s;}.dot:nth-child(3){animation-delay:.4s;}
-@keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-6px);}}
 .input-bar{padding:10px 14px;background:white;border-top:1px solid var(--border);display:flex;align-items:flex-end;gap:10px;flex-shrink:0;}
-.msg-input{flex:1;padding:11px 15px;font-family:'Nunito',sans-serif;font-size:15px;color:var(--navy);border:1.5px solid var(--border);border-radius:20px;outline:none;resize:none;max-height:100px;background:var(--light);transition:border-color .2s;line-height:1.4;}
+.msg-input{flex:1;padding:11px 15px;font-family:'Nunito',sans-serif;font-size:15px;color:var(--navy);border:1.5px solid var(--border);border-radius:20px;outline:none;resize:none;max-height:100px;background:var(--light);line-height:1.4;}
 .msg-input:focus{border-color:var(--navy);background:white;}
 .send{width:42px;height:42px;border-radius:50%;background:var(--orange);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;flex-shrink:0;box-shadow:0 2px 10px rgba(255,153,51,.3);}
 .send:disabled{opacity:.4;cursor:not-allowed;}
@@ -46,8 +42,8 @@ body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:an
 .end-p{font-size:15px;color:var(--gray);font-weight:500;margin-bottom:28px;}
 .stars{display:flex;gap:8px;justify-content:center;margin-bottom:28px;}
 .star{font-size:36px;background:none;border:none;cursor:pointer;filter:grayscale(1);opacity:.3;}
-.star.lit{filter:none;opacity:1;transform:scale(1.1);}
-.btn-done{background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;padding:16px 40px;border-radius:50px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(255,153,51,.3);}
+.star.lit{filter:none;opacity:1;}
+.btn-done{background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;padding:16px 40px;border-radius:50px;border:none;cursor:pointer;}
 `
 
 function fmt(s: number) {
@@ -55,23 +51,23 @@ function fmt(s: number) {
 }
 
 function SessionContent() {
-  const router      = useRouter()
-  const routeParams = useParams()
+  const router       = useRouter()
+  const routeParams  = useParams()
   const searchParams = useSearchParams()
-  const client      = sb()
+  const client       = sb()
 
-  // sessionId comes from the URL PATH /session/[id]
   const sessionId    = routeParams.id as string
   const listenerName = searchParams.get('name') || 'Listener'
   const durationMins = parseInt(searchParams.get('duration') || '15')
 
-  const [msgs, setMsgs]     = useState<any[]>([])
-  const [input, setInput]   = useState('')
-  const [secs, setSecs]     = useState(durationMins * 60)
-  const [ended, setEnded]   = useState(false)
-  const [rating, setRating] = useState(0)
-  const [userId, setUserId] = useState<string|null>(null)
+  const [msgs, setMsgs]       = useState<any[]>([])
+  const [input, setInput]     = useState('')
+  const [secs, setSecs]       = useState(durationMins * 60)
+  const [ended, setEnded]     = useState(false)
+  const [rating, setRating]   = useState(0)
+  const [userId, setUserId]   = useState<string|null>(null)
   const [sending, setSending] = useState(false)
+  const [status, setStatus]   = useState<string>('connecting')
   const bottomRef = useRef<HTMLDivElement>(null)
 
   // Get current user
@@ -91,37 +87,38 @@ function SessionContent() {
       .then(({ data }) => { if (data) setMsgs(data) })
   }, [sessionId])
 
-  // Supabase Realtime — listen for new messages
+  // Realtime — NO filter, match client-side (more reliable on free tier)
   useEffect(() => {
     if (!sessionId) return
+
     const channel = client
-      .channel(`session-${sessionId}`)
+      .channel('all-messages')
       .on('postgres_changes', {
-        event: 'INSERT',
+        event:  'INSERT',
         schema: 'public',
-        table: 'messages',
-        filter: `session_id=eq.${sessionId}`,
+        table:  'messages',
       }, (payload) => {
+        const msg = payload.new as any
+        // Only show messages for THIS session
+        if (msg.session_id !== sessionId) return
         setMsgs(prev => {
-          if (prev.find(m => m.id === payload.new.id)) return prev
-          return [...prev, payload.new]
+          if (prev.find(m => m.id === msg.id)) return prev
+          return [...prev, msg]
         })
       })
-      .subscribe()
+      .subscribe((s) => setStatus(s))
+
     return () => { client.removeChannel(channel) }
   }, [sessionId])
 
-  // Countdown timer
+  // Countdown
   useEffect(() => {
-    if (ended || secs <= 0) {
-      if (secs <= 0) setEnded(true)
-      return
-    }
+    if (ended || secs <= 0) { if (secs <= 0) setEnded(true); return }
     const t = setInterval(() => setSecs(s => s - 1), 1000)
     return () => clearInterval(t)
   }, [secs, ended])
 
-  // Auto scroll to bottom
+  // Scroll to bottom
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [msgs])
@@ -137,8 +134,8 @@ function SessionContent() {
       content:    text,
     })
     if (error) {
-      console.error('Send error:', error)
-      setInput(text) // restore if failed
+      console.error('Send error:', error.message)
+      setInput(text)
     }
     setSending(false)
   }
@@ -192,7 +189,9 @@ function SessionContent() {
           <div className="av">{ini(listenerName)}</div>
           <div className="hdr-info">
             <div className="hdr-name">{listenerName}</div>
-            <div className="hdr-sub">{durationMins}-min session · text chat</div>
+            <div className="hdr-sub">
+              {durationMins}-min session · {status === 'SUBSCRIBED' ? '🟢 live' : '⏳ connecting...'}
+            </div>
           </div>
           <div className={`timer${secs < 120 ? ' low' : ''}`}>{fmt(secs)}</div>
           <button className="end-btn" onClick={() => setEnded(true)}>End</button>
@@ -226,15 +225,10 @@ function SessionContent() {
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault()
-                sendMsg()
-              }
+              if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg() }
             }}
           />
-          <button className="send" onClick={sendMsg} disabled={!input.trim() || sending}>
-            ↑
-          </button>
+          <button className="send" onClick={sendMsg} disabled={!input.trim() || sending}>↑</button>
         </div>
       </div>
     </>
