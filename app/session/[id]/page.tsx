@@ -28,6 +28,7 @@ body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:an
 .msg{max-width:78%;padding:11px 15px;border-radius:18px;font-size:14px;font-weight:500;line-height:1.5;}
 .msg.them{background:var(--light);color:var(--navy);border:1.5px solid var(--border);align-self:flex-start;border-bottom-left-radius:4px;}
 .msg.me{background:var(--navy);color:white;align-self:flex-end;border-bottom-right-radius:4px;}
+.msg.me.sending{opacity:0.6;}
 .msg-time{font-size:10px;margin-top:4px;opacity:0.55;}
 .msg.me .msg-time{text-align:right;}
 .input-bar{padding:10px 14px;background:white;border-top:1px solid var(--border);display:flex;align-items:flex-end;gap:10px;flex-shrink:0;}
@@ -36,6 +37,8 @@ body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:an
 .send{width:42px;height:42px;border-radius:50%;background:var(--orange);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;flex-shrink:0;box-shadow:0 2px 10px rgba(255,153,51,.3);}
 .send:disabled{opacity:.4;cursor:not-allowed;}
 .note{padding:8px 16px;text-align:center;font-size:12px;color:var(--gray);font-weight:600;background:var(--light);flex-shrink:0;}
+.conn-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;}
+.conn-dot.live{background:#34C759;}.conn-dot.wait{background:#FFD60A;}
 .end-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;}
 .end-icon{font-size:56px;margin-bottom:20px;}
 .end-h{font-size:24px;font-weight:900;color:var(--navy);margin-bottom:8px;}
@@ -47,8 +50,11 @@ body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:an
 `
 
 function fmt(s: number) {
-  return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
 }
+
+// Unique ID for this tab's channel — prevents collision between tabs
+const TAB_ID = `${Date.now()}-${Math.random().toString(36).slice(2)}`
 
 function SessionContent() {
   const router       = useRouter()
@@ -65,19 +71,22 @@ function SessionContent() {
   const [secs, setSecs]       = useState(durationMins * 60)
   const [ended, setEnded]     = useState(false)
   const [rating, setRating]   = useState(0)
-  const [userId, setUserId]   = useState<string|null>(null)
-  const [sending, setSending] = useState(false)
-  const [status, setStatus]   = useState<string>('connecting')
+  const [userId, setUserId]   = useState<string | null>(null)
+  const [connected, setConnected] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
+  const userIdRef = useRef<string | null>(null)
 
   // Get current user
   useEffect(() => {
     client.auth.getUser().then(({ data: { user } }) => {
-      if (user) setUserId(user.id)
+      if (user) {
+        setUserId(user.id)
+        userIdRef.current = user.id
+      }
     })
   }, [])
 
-  // Load existing messages
+  // Load existing messages from DB
   useEffect(() => {
     if (!sessionId) return
     client.from('messages')
@@ -87,65 +96,98 @@ function SessionContent() {
       .then(({ data }) => { if (data) setMsgs(data) })
   }, [sessionId])
 
-  // Realtime — NO filter, match client-side (more reliable on free tier)
+  // Realtime — unique channel per tab, no filter, client-side match
   useEffect(() => {
     if (!sessionId) return
 
+    const channelName = `msgs-${sessionId}-${TAB_ID}`
+
     const channel = client
-      .channel('all-messages')
+      .channel(channelName)
       .on('postgres_changes', {
         event:  'INSERT',
         schema: 'public',
         table:  'messages',
       }, (payload) => {
         const msg = payload.new as any
-        // Only show messages for THIS session
+
+        // Only handle messages for this session
         if (msg.session_id !== sessionId) return
+
+        // Skip own messages — already shown via optimistic update
+        if (msg.sender_id === userIdRef.current) {
+          // Replace temp message with confirmed DB message
+          setMsgs(prev => prev.map(m =>
+            m.temp && m.sender_id === msg.sender_id && m.content === msg.content
+              ? msg
+              : m
+          ))
+          return
+        }
+
+        // Add other person's message
         setMsgs(prev => {
           if (prev.find(m => m.id === msg.id)) return prev
           return [...prev, msg]
         })
       })
-      .subscribe((s) => setStatus(s))
+      .subscribe((status) => {
+        setConnected(status === 'SUBSCRIBED')
+      })
 
     return () => { client.removeChannel(channel) }
   }, [sessionId])
 
-  // Countdown
+  // Countdown timer
   useEffect(() => {
     if (ended || secs <= 0) { if (secs <= 0) setEnded(true); return }
     const t = setInterval(() => setSecs(s => s - 1), 1000)
     return () => clearInterval(t)
   }, [secs, ended])
 
-  // Scroll to bottom
+  // Auto scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [msgs])
 
   async function sendMsg() {
     const text = input.trim()
-    if (!text || !sessionId || !userId || sending) return
-    setSending(true)
+    if (!text || !sessionId || !userId) return
+
     setInput('')
+
+    // Optimistic update — show immediately without waiting for DB
+    const tempId = `temp-${Date.now()}`
+    const tempMsg = {
+      id:         tempId,
+      temp:       true,
+      session_id: sessionId,
+      sender_id:  userId,
+      content:    text,
+      created_at: new Date().toISOString(),
+    }
+    setMsgs(prev => [...prev, tempMsg])
+
     const { error } = await client.from('messages').insert({
       session_id: sessionId,
       sender_id:  userId,
       content:    text,
     })
+
     if (error) {
-      console.error('Send error:', error.message)
+      console.error('Send failed:', error.message)
+      // Remove the temp message on failure
+      setMsgs(prev => prev.filter(m => m.id !== tempId))
       setInput(text)
     }
-    setSending(false)
   }
 
   async function finishSession() {
     if (sessionId) {
       await fetch('/api/sessions', {
-        method: 'PATCH',
+        method:  'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId, rating }),
+        body:    JSON.stringify({ sessionId, rating }),
       })
     }
     router.push('/browse')
@@ -169,7 +211,7 @@ function SessionContent() {
           <h2 className="end-h">How was your session?</h2>
           <p className="end-p">Your rating helps listeners improve.</p>
           <div className="stars">
-            {[1,2,3,4,5].map(s => (
+            {[1, 2, 3, 4, 5].map(s => (
               <button key={s} className={`star${rating >= s ? ' lit' : ''}`} onClick={() => setRating(s)}>★</button>
             ))}
           </div>
@@ -190,7 +232,8 @@ function SessionContent() {
           <div className="hdr-info">
             <div className="hdr-name">{listenerName}</div>
             <div className="hdr-sub">
-              {durationMins}-min session · {status === 'SUBSCRIBED' ? '🟢 live' : '⏳ connecting...'}
+              <span className={`conn-dot ${connected ? 'live' : 'wait'}`} />
+              {durationMins}-min session · {connected ? 'connected' : 'connecting...'}
             </div>
           </div>
           <div className={`timer${secs < 120 ? ' low' : ''}`}>{fmt(secs)}</div>
@@ -203,14 +246,16 @@ function SessionContent() {
           {msgs.length === 0 && (
             <div className="msg them">
               Hi! I&apos;m here and ready to listen. Take your time — what&apos;s on your mind?
-              <div className="msg-time">{new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true})}</div>
+              <div className="msg-time">
+                {new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}
+              </div>
             </div>
           )}
           {msgs.map(m => (
-            <div key={m.id} className={`msg ${m.sender_id === userId ? 'me' : 'them'}`}>
+            <div key={m.id} className={`msg ${m.sender_id === userId ? 'me' : 'them'}${m.temp ? ' sending' : ''}`}>
               {m.content}
               <div className="msg-time">
-                {new Date(m.created_at).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true})}
+                {new Date(m.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}
               </div>
             </div>
           ))}
@@ -228,7 +273,7 @@ function SessionContent() {
               if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg() }
             }}
           />
-          <button className="send" onClick={sendMsg} disabled={!input.trim() || sending}>↑</button>
+          <button className="send" onClick={sendMsg} disabled={!input.trim()}>↑</button>
         </div>
       </div>
     </>
@@ -238,7 +283,7 @@ function SessionContent() {
 export default function SessionPage() {
   return (
     <Suspense fallback={
-      <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',fontFamily:'Nunito,sans-serif',color:'#0F4867'}}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', fontFamily: 'Nunito,sans-serif', color: '#0F4867' }}>
         Starting session...
       </div>
     }>
