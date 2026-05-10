@@ -94,9 +94,11 @@ export async function PATCH(req: NextRequest) {
     }).eq('id', sessionId)
 
     // Update listener stats
-    await sb.from('listener_profiles')
-      .update({ total_sessions: session.total_sessions + 1 })
-      .eq('user_id', session.listener_id)
+const { data: lp } = await sb.from('listener_profiles')
+  .select('total_sessions').eq('user_id', session.listener_id).single()
+await sb.from('listener_profiles')
+  .update({ total_sessions: (lp?.total_sessions || 0) + 1 })
+  .eq('user_id', session.listener_id)
 
     return NextResponse.json({ success: true })
   } catch (err: any) {
