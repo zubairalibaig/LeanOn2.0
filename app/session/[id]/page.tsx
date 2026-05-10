@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 
-const sb = () => createBrowserClient(
+const makeClient = () => createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
@@ -11,35 +11,63 @@ const sb = () => createBrowserClient(
 const S = `
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{--navy:#0F4867;--teal:#1A8FA0;--orange:#FF9933;--gray:#5A7A8A;--border:#D5EEF6;--light:#F0F8FC;}
-body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:antialiased;background:#fff;}
-.wrap{display:flex;flex-direction:column;height:100dvh;max-width:480px;margin:0 auto;background:#fff;}
-.hdr{background:var(--navy);padding:12px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
-.av{width:38px;height:38px;border-radius:12px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:white;flex-shrink:0;}
+:root{
+  --navy:#0F4867;--teal:#1A8FA0;--orange:#FF9933;
+  --gray:#5A7A8A;--border:#D5EEF6;--light:#F0F8FC;
+  --bubble-me:#005C4B;--bubble-them:#FFFFFF;
+  --bg-chat:#ECE5DD;
+}
+body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:antialiased;}
+.wrap{display:flex;flex-direction:column;height:100dvh;max-width:480px;margin:0 auto;background:var(--bg-chat);}
+
+/* HEADER */
+.hdr{background:#075E54;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.av{width:40px;height:40px;border-radius:50%;background:#128C7E;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:white;flex-shrink:0;}
 .hdr-info{flex:1;}
-.hdr-name{font-size:15px;font-weight:800;color:white;}
-.hdr-sub{font-size:12px;color:rgba(213,238,246,0.7);font-weight:500;}
-.timer{background:rgba(255,255,255,0.12);padding:6px 14px;border-radius:50px;font-size:14px;font-weight:800;color:white;}
-.timer.low{background:rgba(239,68,68,0.3);color:#FCA5A5;}
-.end-btn{background:rgba(239,68,68,0.2);color:#FCA5A5;border:1px solid rgba(239,68,68,0.3);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;padding:7px 14px;border-radius:10px;cursor:pointer;}
-.msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;}
+.hdr-name{font-size:16px;font-weight:700;color:white;}
+.hdr-sub{font-size:12px;color:rgba(255,255,255,0.7);font-weight:500;}
+.timer{background:rgba(255,255,255,0.15);padding:5px 12px;border-radius:50px;font-size:13px;font-weight:800;color:white;}
+.timer.low{background:rgba(220,38,38,0.4);color:#FCA5A5;}
+.end-btn{background:rgba(220,38,38,0.25);color:#FCA5A5;border:1px solid rgba(220,38,38,0.3);font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;padding:6px 12px;border-radius:8px;cursor:pointer;}
+
+/* MESSAGES */
+.msgs{flex:1;overflow-y:auto;padding:12px 8px;display:flex;flex-direction:column;gap:3px;}
 .msgs::-webkit-scrollbar{width:3px;}
-.msgs::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-.msg{max-width:78%;padding:11px 15px;border-radius:18px;font-size:14px;font-weight:500;line-height:1.5;}
-.msg.them{background:var(--light);color:var(--navy);border:1.5px solid var(--border);align-self:flex-start;border-bottom-left-radius:4px;}
-.msg.me{background:var(--navy);color:white;align-self:flex-end;border-bottom-right-radius:4px;}
-.msg.me.sending{opacity:0.6;}
-.msg-time{font-size:10px;margin-top:4px;opacity:0.55;}
-.msg.me .msg-time{text-align:right;}
-.input-bar{padding:10px 14px;background:white;border-top:1px solid var(--border);display:flex;align-items:flex-end;gap:10px;flex-shrink:0;}
-.msg-input{flex:1;padding:11px 15px;font-family:'Nunito',sans-serif;font-size:15px;color:var(--navy);border:1.5px solid var(--border);border-radius:20px;outline:none;resize:none;max-height:100px;background:var(--light);line-height:1.4;}
-.msg-input:focus{border-color:var(--navy);background:white;}
-.send{width:42px;height:42px;border-radius:50%;background:var(--orange);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;flex-shrink:0;box-shadow:0 2px 10px rgba(255,153,51,.3);}
-.send:disabled{opacity:.4;cursor:not-allowed;}
-.note{padding:8px 16px;text-align:center;font-size:12px;color:var(--gray);font-weight:600;background:var(--light);flex-shrink:0;}
-.conn-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;}
-.conn-dot.live{background:#34C759;}.conn-dot.wait{background:#FFD60A;}
-.end-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;}
+.msgs::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15);border-radius:2px;}
+
+/* WhatsApp-style date divider */
+.date-pill{align-self:center;background:rgba(255,255,255,0.85);color:#667781;font-size:12px;font-weight:600;padding:4px 12px;border-radius:8px;margin:8px 0;box-shadow:0 1px 2px rgba(0,0,0,0.1);}
+
+/* Message bubbles */
+.msg-wrap{display:flex;flex-direction:column;max-width:72%;}
+.msg-wrap.me{align-self:flex-end;align-items:flex-end;}
+.msg-wrap.them{align-self:flex-start;align-items:flex-start;}
+
+.bubble{padding:8px 12px 6px;border-radius:8px;position:relative;box-shadow:0 1px 2px rgba(0,0,0,0.13);}
+.bubble.me{background:#DCF8C6;border-top-right-radius:2px;}
+.bubble.them{background:#FFFFFF;border-top-left-radius:2px;}
+.bubble.temp{opacity:0.65;}
+
+.bubble-text{font-size:14px;font-weight:500;line-height:1.5;color:#111B21;word-break:break-word;}
+.bubble-footer{display:flex;align-items:center;justify-content:flex-end;gap:4px;margin-top:2px;}
+.bubble-time{font-size:11px;color:#667781;font-weight:500;}
+.ticks{font-size:13px;line-height:1;}
+.ticks.sent{color:#8696A0;}
+.ticks.delivered{color:#8696A0;}
+.ticks.read{color:#53BDEB;}
+
+/* Sender label for group clarity */
+.sender-label{font-size:12px;font-weight:700;color:#075E54;margin-bottom:2px;padding:0 4px;}
+
+/* INPUT BAR */
+.input-bar{padding:8px 10px;background:#F0F2F5;display:flex;align-items:flex-end;gap:8px;flex-shrink:0;}
+.msg-input{flex:1;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:15px;color:#111B21;border:none;border-radius:24px;outline:none;resize:none;max-height:100px;background:white;line-height:1.4;box-shadow:0 1px 2px rgba(0,0,0,0.1);}
+.send{width:44px;height:44px;border-radius:50%;background:#075E54;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.2);}
+.send svg{width:22px;height:22px;}
+.send:disabled{opacity:.5;cursor:not-allowed;}
+
+/* END SCREEN */
+.end-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;background:white;}
 .end-icon{font-size:56px;margin-bottom:20px;}
 .end-h{font-size:24px;font-weight:900;color:var(--navy);margin-bottom:8px;}
 .end-p{font-size:15px;color:var(--gray);font-weight:500;margin-bottom:28px;}
@@ -49,103 +77,94 @@ body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:an
 .btn-done{background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;padding:16px 40px;border-radius:50px;border:none;cursor:pointer;}
 `
 
-function fmt(s: number) {
+function fmtTimer(s: number) {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
 }
+function fmtTime(iso: string) {
+  return new Date(iso).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
+}
+function ini(n: string) {
+  return n.split(' ').map(x => x[0]).join('').slice(0, 2).toUpperCase()
+}
 
-// Unique ID for this tab's channel — prevents collision between tabs
-const TAB_ID = `${Date.now()}-${Math.random().toString(36).slice(2)}`
+type Msg = {
+  id: string
+  session_id: string
+  sender_id: string
+  content: string
+  created_at: string
+  temp?: boolean
+}
 
 function SessionContent() {
   const router       = useRouter()
   const routeParams  = useParams()
   const searchParams = useSearchParams()
-  const client       = sb()
+  const client       = makeClient()
 
   const sessionId    = routeParams.id as string
-  const listenerName = searchParams.get('name') || 'Listener'
+  const listenerName = decodeURIComponent(searchParams.get('name') || 'Listener')
   const durationMins = parseInt(searchParams.get('duration') || '15')
 
-  const [msgs, setMsgs]       = useState<any[]>([])
-  const [input, setInput]     = useState('')
-  const [secs, setSecs]       = useState(durationMins * 60)
-  const [ended, setEnded]     = useState(false)
-  const [rating, setRating]   = useState(0)
-  const [userId, setUserId]   = useState<string | null>(null)
+  const [msgs, setMsgs]         = useState<Msg[]>([])
+  const [input, setInput]       = useState('')
+  const [secs, setSecs]         = useState(durationMins * 60)
+  const [ended, setEnded]       = useState(false)
+  const [rating, setRating]     = useState(0)
+  const [userId, setUserId]     = useState<string | null>(null)
   const [connected, setConnected] = useState(false)
-  const bottomRef = useRef<HTMLDivElement>(null)
-  const userIdRef = useRef<string | null>(null)
+  const channelRef = useRef<any>(null)
+  const bottomRef  = useRef<HTMLDivElement>(null)
+  const userIdRef  = useRef<string | null>(null)
 
-  // Get current user
+  // Auth
   useEffect(() => {
     client.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        setUserId(user.id)
-        userIdRef.current = user.id
-      }
+      if (user) { setUserId(user.id); userIdRef.current = user.id }
     })
   }, [])
 
-  // Load existing messages from DB
+  // Load existing messages
   useEffect(() => {
     if (!sessionId) return
     client.from('messages')
-      .select('*')
-      .eq('session_id', sessionId)
+      .select('*').eq('session_id', sessionId)
       .order('created_at', { ascending: true })
-      .then(({ data }) => { if (data) setMsgs(data) })
+      .then(({ data }) => { if (data) setMsgs(data as Msg[]) })
   }, [sessionId])
 
-  // Realtime — unique channel per tab, no filter, client-side match
+  // Supabase BROADCAST — no RLS, direct websocket, instant
   useEffect(() => {
     if (!sessionId) return
 
-    const channelName = `msgs-${sessionId}-${TAB_ID}`
+    // Channel name is same for all participants in this session
+    const channel = client.channel(`session-broadcast-${sessionId}`)
 
-    const channel = client
-      .channel(channelName)
-      .on('postgres_changes', {
-        event:  'INSERT',
-        schema: 'public',
-        table:  'messages',
-      }, (payload) => {
-        const msg = payload.new as any
-
-        // Only handle messages for this session
-        if (msg.session_id !== sessionId) return
-
-        // Skip own messages — already shown via optimistic update
-        if (msg.sender_id === userIdRef.current) {
-          // Replace temp message with confirmed DB message
-          setMsgs(prev => prev.map(m =>
-            m.temp && m.sender_id === msg.sender_id && m.content === msg.content
-              ? msg
-              : m
-          ))
-          return
-        }
-
-        // Add other person's message
+    channel
+      .on('broadcast', { event: 'new_message' }, ({ payload }: { payload: Msg }) => {
+        // Don't add if it's our own message (already shown via optimistic)
+        if (payload.sender_id === userIdRef.current) return
         setMsgs(prev => {
-          if (prev.find(m => m.id === msg.id)) return prev
-          return [...prev, msg]
+          if (prev.find(m => m.id === payload.id)) return prev
+          return [...prev, payload]
         })
       })
-      .subscribe((status) => {
+      .subscribe((status: string) => {
         setConnected(status === 'SUBSCRIBED')
       })
 
+    channelRef.current = channel
     return () => { client.removeChannel(channel) }
   }, [sessionId])
 
-  // Countdown timer
+  // Timer
   useEffect(() => {
     if (ended || secs <= 0) { if (secs <= 0) setEnded(true); return }
     const t = setInterval(() => setSecs(s => s - 1), 1000)
     return () => clearInterval(t)
   }, [secs, ended])
 
-  // Auto scroll
+  // Scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [msgs])
@@ -153,32 +172,45 @@ function SessionContent() {
   async function sendMsg() {
     const text = input.trim()
     if (!text || !sessionId || !userId) return
-
     setInput('')
 
-    // Optimistic update — show immediately without waiting for DB
-    const tempId = `temp-${Date.now()}`
-    const tempMsg = {
+    const tempId  = `temp-${Date.now()}`
+    const tempMsg: Msg = {
       id:         tempId,
-      temp:       true,
       session_id: sessionId,
       sender_id:  userId,
       content:    text,
       created_at: new Date().toISOString(),
+      temp:       true,
     }
+
+    // 1. Show immediately (optimistic)
     setMsgs(prev => [...prev, tempMsg])
 
-    const { error } = await client.from('messages').insert({
+    // 2. Save to database
+    const { data: saved, error } = await client.from('messages').insert({
       session_id: sessionId,
       sender_id:  userId,
       content:    text,
-    })
+    }).select().single()
 
     if (error) {
-      console.error('Send failed:', error.message)
-      // Remove the temp message on failure
+      console.error('Insert failed:', error.message)
       setMsgs(prev => prev.filter(m => m.id !== tempId))
       setInput(text)
+      return
+    }
+
+    // 3. Replace temp with confirmed message
+    setMsgs(prev => prev.map(m => m.id === tempId ? (saved as Msg) : m))
+
+    // 4. Broadcast to other participants via websocket
+    if (channelRef.current && saved) {
+      channelRef.current.send({
+        type:    'broadcast',
+        event:   'new_message',
+        payload: saved,
+      })
     }
   }
 
@@ -193,13 +225,11 @@ function SessionContent() {
     router.push('/browse')
   }
 
-  const ini = (n: string) => n.split(' ').map(x => x[0]).join('').slice(0, 2).toUpperCase()
-
   if (ended) return (
     <>
       <style>{S}</style>
       <div className="wrap">
-        <div className="hdr">
+        <div className="hdr" style={{ background: 'var(--navy)' }}>
           <div className="av">{ini(listenerName)}</div>
           <div className="hdr-info">
             <div className="hdr-name">{listenerName}</div>
@@ -209,9 +239,9 @@ function SessionContent() {
         <div className="end-screen">
           <div className="end-icon">🙏</div>
           <h2 className="end-h">How was your session?</h2>
-          <p className="end-p">Your rating helps listeners improve.</p>
+          <p className="end-p">Your rating helps others choose the right listener.</p>
           <div className="stars">
-            {[1, 2, 3, 4, 5].map(s => (
+            {[1,2,3,4,5].map(s => (
               <button key={s} className={`star${rating >= s ? ' lit' : ''}`} onClick={() => setRating(s)}>★</button>
             ))}
           </div>
@@ -232,33 +262,47 @@ function SessionContent() {
           <div className="hdr-info">
             <div className="hdr-name">{listenerName}</div>
             <div className="hdr-sub">
-              <span className={`conn-dot ${connected ? 'live' : 'wait'}`} />
-              {durationMins}-min session · {connected ? 'connected' : 'connecting...'}
+              {connected ? '🟢 connected' : '⏳ connecting...'}
             </div>
           </div>
-          <div className={`timer${secs < 120 ? ' low' : ''}`}>{fmt(secs)}</div>
+          <div className={`timer${secs < 120 ? ' low' : ''}`}>{fmtTimer(secs)}</div>
           <button className="end-btn" onClick={() => setEnded(true)}>End</button>
         </div>
 
-        <div className="note">Everything shared here is private and confidential.</div>
-
         <div className="msgs">
+          <div className="date-pill">
+            {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long' })} · Private & confidential
+          </div>
+
           {msgs.length === 0 && (
-            <div className="msg them">
-              Hi! I&apos;m here and ready to listen. Take your time — what&apos;s on your mind?
-              <div className="msg-time">
-                {new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}
+            <div className="msg-wrap them">
+              <div className="bubble them">
+                <div className="bubble-text">Hi! I&apos;m here and ready to listen. Take your time — what&apos;s on your mind?</div>
+                <div className="bubble-footer">
+                  <span className="bubble-time">{fmtTime(new Date().toISOString())}</span>
+                </div>
               </div>
             </div>
           )}
-          {msgs.map(m => (
-            <div key={m.id} className={`msg ${m.sender_id === userId ? 'me' : 'them'}${m.temp ? ' sending' : ''}`}>
-              {m.content}
-              <div className="msg-time">
-                {new Date(m.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}
+
+          {msgs.map(m => {
+            const isMe = m.sender_id === userId
+            return (
+              <div key={m.id} className={`msg-wrap ${isMe ? 'me' : 'them'}`}>
+                <div className={`bubble ${isMe ? 'me' : 'them'}${m.temp ? ' temp' : ''}`}>
+                  <div className="bubble-text">{m.content}</div>
+                  <div className="bubble-footer">
+                    <span className="bubble-time">{fmtTime(m.created_at)}</span>
+                    {isMe && (
+                      <span className={`ticks ${m.temp ? 'sent' : 'delivered'}`}>
+                        {m.temp ? '✓' : '✓✓'}
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
           <div ref={bottomRef} />
         </div>
 
@@ -266,14 +310,18 @@ function SessionContent() {
           <textarea
             className="msg-input"
             rows={1}
-            placeholder="Type your message..."
+            placeholder="Type a message..."
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => {
               if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg() }
             }}
           />
-          <button className="send" onClick={sendMsg} disabled={!input.trim()}>↑</button>
+          <button className="send" onClick={sendMsg} disabled={!input.trim()}>
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+          </button>
         </div>
       </div>
     </>
@@ -283,7 +331,7 @@ function SessionContent() {
 export default function SessionPage() {
   return (
     <Suspense fallback={
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', fontFamily: 'Nunito,sans-serif', color: '#0F4867' }}>
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', fontFamily:'Nunito,sans-serif', color:'#0F4867' }}>
         Starting session...
       </div>
     }>
