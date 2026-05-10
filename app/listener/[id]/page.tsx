@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 
@@ -64,9 +64,9 @@ a{text-decoration:none;color:inherit;}
 @keyframes spin{to{transform:rotate(360deg);}}
 `
 
-export default function ListenerPage({ params }: { params: Promise<{id:string}> }) {
+export default function ListenerPage({ params }: { params: {id:string} }) {
   const router   = useRouter()
-  const { id }   = use(params)
+  const { id }   = params
   const client   = sb()
 
   const [listener, setListener] = useState<any>(null)
