@@ -101,7 +101,8 @@ export default function AuthPage() {
 
     const { data: userData } = await sb.from('users').select('name').eq('id', data.user!.id).single()
     setLoading(false)
-    if (!userData?.name) { setStep('name') } else { router.push('/browse') }
+    if (!userData?.name) { setStep('name') } else { const redirectTo = new URLSearchParams(window.location.search).get('redirect') || '/browse'
+router.push(redirectTo) }
   }
 
   async function saveName() {
@@ -112,7 +113,8 @@ export default function AuthPage() {
     if (!user) { setError('Session expired. Please try again.'); setLoading(false); return }
     await sb.from('users').update({ name: name.trim() }).eq('id', user.id)
     setLoading(false)
-    router.push('/browse')
+    const redirectTo = new URLSearchParams(window.location.search).get('redirect') || '/browse'
+router.push(redirectTo)
   }
 
   function handleOtpChange(i: number, val: string) {
