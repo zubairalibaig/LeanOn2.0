@@ -71,7 +71,7 @@ export default function ListenerPage({ params }: { params: Promise<{id:string}> 
 
   const [listener, setListener] = useState<any>(null)
   const [reviews,  setReviews]  = useState<any[]>([])
-  const [duration, setDuration] = useState<5|15|30>(15)
+  const [duration, setDuration] = useState<number>(15)
   const [type,     setType]     = useState<'text'|'voice'>('text')
   const [balance,  setBalance]  = useState<number>(0)
   const [loading,  setLoading]  = useState(false)
