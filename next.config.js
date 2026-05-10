@@ -1,10 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  // Disabled: reactStrictMode causes double-mount in dev
+  // which creates duplicate WebSocket subscriptions and confuses testing
+  reactStrictMode: false,
+
   images: {
     domains: ['lh3.googleusercontent.com', 'avatars.githubusercontent.com'],
   },
-  // Required for Agora SDK
+
   webpack: (config) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,
