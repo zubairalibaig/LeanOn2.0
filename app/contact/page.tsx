@@ -44,9 +44,26 @@ export default function ContactPage() {
   const [message, setMessage] = useState('')
   const [sent, setSent]       = useState(false)
 
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+
   async function submit() {
-    // TODO: send to Resend / email
-    setSent(true)
+    setSubmitting(true)
+    setSubmitError('')
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, type, message }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to submit')
+      setSent(true)
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Something went wrong.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -104,8 +121,11 @@ export default function ContactPage() {
               </select>
               <label className="label">Message</label>
               <textarea className="input" placeholder="How can we help?" value={message} onChange={e=>setMessage(e.target.value)} />
-              <button className="btn" onClick={submit} disabled={!name||!email||!message}>
-                Send message →
+              {submitError && (
+                <p style={{color:'#E53935',fontSize:13,fontWeight:700,marginBottom:12}}>{submitError}</p>
+              )}
+              <button className="btn" onClick={submit} disabled={submitting||!name||!email||!message}>
+                {submitting ? '⟳ Sending...' : 'Send message →'}
               </button>
             </>
           )}

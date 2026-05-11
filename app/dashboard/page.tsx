@@ -1,6 +1,12 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { createBrowserClient } from '@supabase/ssr'
+
+const sb = createBrowserClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
 const S = `
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
@@ -31,6 +37,7 @@ const S = `
   .payout-label{font-size:13px;color:var(--gray);font-weight:600;}
   .btn-payout{background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;padding:12px 24px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 3px 12px rgba(255,153,51,0.3);transition:all 0.2s;}
   .btn-payout:hover{background:#e8861a;}
+  .btn-payout:disabled{opacity:.5;cursor:not-allowed;}
   .payout-note{font-size:12px;color:var(--gray);font-weight:500;}
   .session-list{display:flex;flex-direction:column;gap:8px;margin-bottom:28px;}
   .session-item{background:white;border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;}
@@ -50,27 +57,131 @@ const S = `
   .progress-bar{height:8px;background:var(--light);border-radius:4px;overflow:hidden;}
   .progress-fill{height:100%;background:var(--orange);border-radius:4px;transition:width 0.6s ease;}
   .level-label{font-size:12px;font-weight:700;color:var(--gray);}
+  .not-listener{text-align:center;padding:60px 20px;}
+  .not-listener p{font-size:15px;color:var(--gray);margin-bottom:20px;}
+  .btn-apply{background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;padding:14px 32px;border-radius:50px;border:none;cursor:pointer;}
+  .skeleton{background:linear-gradient(90deg,#e8e8e4 25%,#f2f2ee 50%,#e8e8e4 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:12px;}
+  @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 `
 
-const DEMO_SESSIONS = [
-  { user:'P.M.',  duration:'30 min', type:'Text', date:'Today, 2:15 AM',    earn:270 },
-  { user:'A.K.',  duration:'15 min', type:'Voice',date:'Yesterday, 11 PM',  earn:135 },
-  { user:'S.R.',  duration:'30 min', type:'Text', date:'2 days ago',        earn:270 },
-  { user:'R.V.',  duration:'15 min', type:'Text', date:'3 days ago',        earn:135 },
-  { user:'D.P.',  duration:'15 min', type:'Voice',date:'4 days ago',        earn:135 },
-]
+function ini(n: string) {
+  if (!n) return '?'
+  return n.split(' ').map(x => x[0] || '').join('').slice(0, 2).toUpperCase()
+}
+
+function fmtDate(iso: string) {
+  const d = new Date(iso)
+  const now = new Date()
+  const diff = now.getTime() - d.getTime()
+  const days = Math.floor(diff / 86400000)
+  if (days === 0) return `Today, ${d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}`
+  if (days === 1) return `Yesterday, ${d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}`
+  return `${days} days ago`
+}
 
 export default function DashboardPage() {
-  const router   = useRouter()
-  const [avail, setAvail]   = useState(true)
-  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+  const [profile, setProfile]     = useState<any>(null)
+  const [user, setUser]           = useState<any>(null)
+  const [sessions, setSessions]   = useState<any[]>([])
+  const [avail, setAvail]         = useState(false)
+  const [loading, setLoading]     = useState(true)
+  const [payoutLoading, setPayoutLoading] = useState(false)
+
+  useEffect(() => { loadData() }, [])
+
+  async function loadData() {
+    const { data: { user: u } } = await sb.auth.getUser()
+    if (!u) { router.push('/auth?redirect=/dashboard'); return }
+    setUser(u)
+
+    // Load listener profile
+    const { data: lp } = await sb
+      .from('listener_profiles')
+      .select('*, users!inner(name, wallet_balance)')
+      .eq('user_id', u.id)
+      .single()
+
+    if (lp) {
+      setProfile({ ...lp, name: lp.users?.name || 'Listener', balance: lp.users?.wallet_balance || 0 })
+      setAvail(lp.is_available)
+    }
+
+    // Load recent completed sessions
+    const { data: recent } = await sb
+      .from('sessions')
+      .select('*, users!seeker_id(name)')
+      .eq('listener_id', u.id)
+      .eq('status', 'completed')
+      .order('ended_at', { ascending: false })
+      .limit(10)
+
+    if (recent) setSessions(recent)
+    setLoading(false)
+  }
+
+  async function toggleAvailability() {
+    if (!user) return
+    const next = !avail
+    setAvail(next)
+    await sb.from('listener_profiles')
+      .update({ is_available: next })
+      .eq('user_id', user.id)
+  }
 
   async function requestPayout() {
-    setLoading(true)
-    await new Promise(r => setTimeout(r, 1000))
-    setLoading(false)
-    alert('Payout request submitted! ₹945 will be transferred to your bank within 3 business days.')
+    if (!user || !profile) return
+    setPayoutLoading(true)
+    // Log payout request — admin processes manually within 3 days
+    await sb.from('payout_requests').insert({
+      user_id: user.id,
+      amount:  profile.balance,
+      status:  'pending',
+    })
+    setPayoutLoading(false)
+    alert(`Payout request submitted! ₹${profile.balance} will be transferred to your bank within 3 business days.`)
   }
+
+  // Calculate stats from real sessions
+  const thisMonthSessions = sessions.filter(s => {
+    if (!s.ended_at) return false
+    const d = new Date(s.ended_at)
+    const now = new Date()
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
+  })
+  const thisMonthEarned = thisMonthSessions.reduce((sum, s) => sum + (s.amount_held - s.platform_fee), 0)
+  const totalSessions   = profile?.total_sessions || 0
+  const rating          = profile?.rating || 0
+  const nextTierAt      = 200
+  const progressPct     = Math.min(100, Math.round((totalSessions / nextTierAt) * 100))
+
+  if (loading) return (
+    <>
+      <style>{S}</style>
+      <div className="page">
+        <div className="topbar"><h1>My Dashboard</h1></div>
+        <div className="stats-grid">
+          {[1,2,3,4].map(i => <div key={i} className="skeleton" style={{height:80}} />)}
+        </div>
+      </div>
+    </>
+  )
+
+  if (!profile) return (
+    <>
+      <style>{S}</style>
+      <div className="page">
+        <div className="topbar"><h1>My Dashboard</h1></div>
+        <div className="not-listener">
+          <div style={{fontSize:48,marginBottom:16}}>🎧</div>
+          <p>You haven&apos;t applied to become a listener yet.</p>
+          <button className="btn-apply" onClick={() => router.push('/become-listener')}>
+            Apply to become a listener →
+          </button>
+        </div>
+      </div>
+    </>
+  )
 
   return (
     <>
@@ -78,92 +189,114 @@ export default function DashboardPage() {
       <div className="page">
         <div className="topbar">
           <h1>My Dashboard</h1>
-          <button className={`avail-toggle ${avail ? 'on':'off'}`} onClick={() => setAvail(!avail)}>
-            <div className={`avail-dot ${avail ? 'on':'off'}`} />
+          <button className={`avail-toggle ${avail ? 'on' : 'off'}`} onClick={toggleAvailability}>
+            <div className={`avail-dot ${avail ? 'on' : 'off'}`} />
             {avail ? 'Available' : 'Go offline'}
           </button>
         </div>
 
-        {/* Stats */}
         <div className="stats-grid">
           <div className="stat-card accent">
             <div className="stat-label">This month</div>
-            <div className="stat-value">₹4,050</div>
-            <div className="stat-sub">15 sessions</div>
+            <div className="stat-value">₹{thisMonthEarned}</div>
+            <div className="stat-sub">{thisMonthSessions.length} sessions</div>
           </div>
           <div className="stat-card">
             <div className="stat-label">Rating</div>
-            <div className="stat-value">4.9 ⭐</div>
-            <div className="stat-sub">143 reviews</div>
+            <div className="stat-value">{rating > 0 ? `${parseFloat(rating).toFixed(1)} ⭐` : '— ⭐'}</div>
+            <div className="stat-sub">{totalSessions} reviews</div>
           </div>
           <div className="stat-card">
             <div className="stat-label">Total sessions</div>
-            <div className="stat-value">143</div>
+            <div className="stat-value">{totalSessions}</div>
             <div className="stat-sub">Since joining</div>
           </div>
           <div className="stat-card">
-            <div className="stat-label">Total earned</div>
-            <div className="stat-value">₹38K</div>
-            <div className="stat-sub">All time</div>
+            <div className="stat-label">Wallet balance</div>
+            <div className="stat-value">₹{profile.balance}</div>
+            <div className="stat-sub">Available</div>
           </div>
         </div>
 
-        {/* Rate tier progress */}
         <div className="progress-section">
           <div className="progress-label">
-            <span className="level-label">Level: ₹10/min</span>
-            <span className="level-label">Next: ₹15/min at 200 sessions</span>
+            <span className="level-label">Level: ₹{profile.rate_per_min}/min</span>
+            <span className="level-label">Next: ₹{profile.rate_per_min + 5}/min at {nextTierAt} sessions</span>
           </div>
           <div className="progress-bar">
-            <div className="progress-fill" style={{width:'71.5%'}} />
+            <div className="progress-fill" style={{ width: `${progressPct}%` }} />
           </div>
-          <div style={{fontSize:12,color:'var(--gray)',fontWeight:600,marginTop:6}}>143 / 200 sessions to unlock ₹15/min rate</div>
+          <div style={{ fontSize: 12, color: 'var(--gray)', fontWeight: 600, marginTop: 6 }}>
+            {totalSessions} / {nextTierAt} sessions to unlock higher rate
+          </div>
         </div>
 
-        {/* Payout */}
         <div className="section-title">Pending payout</div>
         <div className="payout-card">
           <div className="payout-row">
             <div>
               <div className="payout-label">Available to withdraw</div>
-              <div className="payout-balance">₹945</div>
+              <div className="payout-balance">₹{profile.balance}</div>
             </div>
-            <button className="btn-payout" onClick={requestPayout} disabled={loading}>
-              {loading ? '...' : 'Request payout →'}
+            <button className="btn-payout" onClick={requestPayout}
+              disabled={payoutLoading || profile.balance <= 0}>
+              {payoutLoading ? '...' : 'Request payout →'}
             </button>
           </div>
           <p className="payout-note">Transfers to your registered bank account within 3 business days.</p>
         </div>
 
-        {/* Profile card */}
         <div className="section-title">Your listener profile</div>
         <div className="profile-section">
           <div className="profile-row">
-            <div className="profile-avatar">AS</div>
+            <div className="profile-avatar">{ini(profile.name)}</div>
             <div>
-              <div className="profile-name">Ananya S.</div>
-              <div className="profile-rate">₹10/min · Loneliness, Relationships</div>
+              <div className="profile-name">{profile.name}</div>
+              <div className="profile-rate">
+                ₹{profile.rate_per_min}/min · {(profile.specialty_tags || []).slice(0, 2).join(', ')}
+              </div>
             </div>
           </div>
           <div className="profile-actions">
             <button className="btn-edit" onClick={() => alert('Profile editing coming soon')}>✏️ Edit profile</button>
-            <button className="btn-share" onClick={() => { navigator.clipboard?.writeText('https://leanon.app/listener/1'); alert('Profile link copied!') }}>🔗 Share profile</button>
+            <button className="btn-share" onClick={() => {
+              navigator.clipboard?.writeText(`https://leanon.app/listener/${user?.id}`)
+              alert('Profile link copied!')
+            }}>🔗 Share profile</button>
           </div>
         </div>
 
-        {/* Recent sessions */}
-        <div className="section-title">Recent sessions</div>
-        <div className="session-list">
-          {DEMO_SESSIONS.map((s,i) => (
-            <div key={i} className="session-item">
-              <div>
-                <div className="session-user">{s.user} · {s.duration} {s.type}</div>
-                <div className="session-meta">{s.date}</div>
-              </div>
-              <div className="session-earn">+₹{s.earn}</div>
+        {sessions.length > 0 && (
+          <>
+            <div className="section-title">Recent sessions</div>
+            <div className="session-list">
+              {sessions.map((s, i) => {
+                const earned = s.amount_held - s.platform_fee
+                const seeker = s.users?.name
+                const seekerDisplay = seeker
+                  ? seeker.split(' ').map((p: string) => p[0] || '').join('.') + '.'
+                  : 'User'
+                return (
+                  <div key={i} className="session-item">
+                    <div>
+                      <div className="session-user">
+                        {seekerDisplay} · {s.duration_mins} min {s.session_type}
+                      </div>
+                      <div className="session-meta">{s.ended_at ? fmtDate(s.ended_at) : ''}</div>
+                    </div>
+                    <div className="session-earn">+₹{earned}</div>
+                  </div>
+                )
+              })}
             </div>
-          ))}
-        </div>
+          </>
+        )}
+
+        {sessions.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--gray)', fontSize: 14, fontWeight: 600 }}>
+            No sessions yet — go available to start receiving requests.
+          </div>
+        )}
       </div>
     </>
   )

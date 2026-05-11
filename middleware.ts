@@ -1,22 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createServerClient } from '@supabase/ssr'
 
 const PROTECTED = ['/session', '/wallet', '/dashboard', '/browse']
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
-  const isProtected  = PROTECTED.some(p => pathname.startsWith(p))
-  if (!isProtected) return NextResponse.next()
+  if (!PROTECTED.some(p => pathname.startsWith(p))) return NextResponse.next()
 
-  const token = req.cookies.get('sb-access-token')?.value
-              || req.cookies.get(`sb-${process.env.NEXT_PUBLIC_SUPABASE_URL?.split('//')[1]?.split('.')[0]}-auth-token`)?.value
+  // Use Supabase SSR client — reads the real auth cookie and refreshes tokens
+  let response = NextResponse.next({ request: req })
 
-  if (!token) {
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name)               { return req.cookies.get(name)?.value },
+        set(name, value, opts)  {
+          req.cookies.set({ name, value, ...opts })
+          response = NextResponse.next({ request: req })
+          response.cookies.set({ name, value, ...opts })
+        },
+        remove(name, opts) {
+          req.cookies.set({ name, value: '', ...opts })
+          response = NextResponse.next({ request: req })
+          response.cookies.set({ name, value: '', ...opts })
+        },
+      },
+    }
+  )
+
+  const { data: { session } } = await supabase.auth.getSession()
+
+  if (!session) {
     const loginUrl = new URL('/auth', req.url)
     loginUrl.searchParams.set('redirect', pathname + req.nextUrl.search)
     return NextResponse.redirect(loginUrl)
   }
 
-  return NextResponse.next()
+  return response
 }
 
 export const config = {

@@ -1,5 +1,13 @@
 'use client'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { createBrowserClient } from '@supabase/ssr'
+import { MIN_LISTENER_RATE, MAX_LISTENER_RATE } from '@/lib/constants'
+
+const sb = createBrowserClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
 const TAGS = ['loneliness','stress','career','relationships','grief','students','startup','general']
 const TAG_LABELS: Record<string,string> = {
@@ -19,7 +27,6 @@ const S = `
   .topbar{display:flex;align-items:center;gap:12px;padding:16px 0 24px;}
   .back{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,0.7);border:1.5px solid var(--border);cursor:pointer;font-size:18px;color:var(--navy);display:flex;align-items:center;justify-content:center;}
 
-  /* HERO EARN CARD */
   .hero-card{background:var(--navy);border-radius:24px;padding:28px;margin-bottom:32px;text-align:center;}
   .hero-card h1{font-size:24px;font-weight:900;color:white;margin-bottom:10px;}
   .hero-card p{font-size:14px;color:rgba(201,231,244,0.8);font-weight:500;line-height:1.6;margin-bottom:24px;}
@@ -27,7 +34,6 @@ const S = `
   .earn-item .amount{font-size:24px;font-weight:900;color:var(--orange);}
   .earn-item .label{font-size:11px;color:rgba(201,231,244,0.7);font-weight:600;margin-top:2px;}
 
-  /* FEE MODEL EXPLAINER */
   .fee-box{background:rgba(26,143,160,0.08);border:1.5px solid rgba(26,143,160,0.2);border-radius:16px;padding:16px;margin-bottom:24px;}
   .fee-box h3{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:10px;}
   .fee-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(26,143,160,0.12);font-size:13px;}
@@ -36,7 +42,6 @@ const S = `
   .fee-row .value{color:var(--navy);font-weight:700;}
   .fee-row.highlight .value{color:#1A8FA0;font-weight:800;}
 
-  /* STEPS */
   .step-dots{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:28px;}
   .dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;}
   .dot.done{background:var(--orange);color:white;} .dot.active{background:var(--navy);color:white;} .dot.todo{background:var(--light);color:var(--gray);}
@@ -62,6 +67,7 @@ const S = `
   .rate-preview strong{color:var(--navy);}
   .disclaimer{background:#FFF8F0;border:1.5px solid #FFD9A0;border-radius:14px;padding:14px 16px;margin-bottom:24px;}
   .disclaimer p{font-size:12px;color:#7A5C00;font-weight:600;line-height:1.6;}
+  .error-box{background:#FFF0F0;border:1.5px solid #FFCDD2;border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#7A2020;font-weight:600;}
   .btn{width:100%;padding:16px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:white;background:var(--orange);border:none;border-radius:50px;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px rgba(255,153,51,0.3);}
   .btn:hover{background:#e8861a;transform:translateY(-1px);}
   .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
@@ -75,6 +81,7 @@ const S = `
 `
 
 export default function BecomeListenerPage() {
+  const router  = useRouter()
   const [step, setStep]   = useState(1)
   const [name, setName]   = useState('')
   const [phone, setPhone] = useState('')
@@ -86,23 +93,66 @@ export default function BecomeListenerPage() {
   const [ifsc, setIfsc]   = useState('')
   const [loading, setLoading] = useState(false)
   const [done, setDone]   = useState(false)
+  const [error, setError] = useState('')
 
-  const rateNum = parseInt(rate) || 10
-  const earn15  = rateNum * 15
-  const earn30  = rateNum * 30
-  const userPays15 = earn15 + 15
-  const userPays30 = earn30 + 15
+  const rateNum     = Math.min(Math.max(parseInt(rate) || MIN_LISTENER_RATE, MIN_LISTENER_RATE), MAX_LISTENER_RATE)
+  const earn15      = rateNum * 15
+  const earn30      = rateNum * 30
+  const userPays15  = earn15 + 15
+  const userPays30  = earn30 + 15
 
   function toggleTag(t: string) {
     setTags(p => p.includes(t) ? p.filter(x => x !== t) : [...p, t])
   }
 
   async function submit() {
+    setError('')
     setLoading(true)
-    // TODO: POST to Supabase listener_profiles
-    await new Promise(r => setTimeout(r, 1500))
-    setLoading(false)
-    setDone(true)
+    try {
+      // Require authentication — listener applications are tied to a user account
+      const { data: { user } } = await sb.auth.getUser()
+      if (!user) {
+        router.push('/auth?redirect=/become-listener')
+        return
+      }
+
+      // Save application — is_approved: false means pending admin review
+      // Aadhaar: store only last 4 digits per privacy best practice
+      const aadhaarDigits = aadhaar.replace(/\s/g, '')
+      const aadhaarLast4  = aadhaarDigits.slice(-4)
+
+      const { error: profileErr } = await sb.from('listener_profiles').upsert({
+        user_id:         user.id,
+        bio:             bio.trim(),
+        specialty_tags:  tags,
+        rate_per_min:    rateNum,
+        is_approved:     false,
+        is_available:    false,
+      }, { onConflict: 'user_id' })
+
+      if (profileErr) throw profileErr
+
+      // Save payout + verification details separately
+      await sb.from('listener_applications').upsert({
+        user_id:       user.id,
+        name:          name.trim(),
+        phone:         phone.trim(),
+        aadhaar_last4: aadhaarLast4,
+        bank_account:  bank.trim(),
+        ifsc_code:     ifsc.trim().toUpperCase(),
+        status:        'pending',
+      }, { onConflict: 'user_id' })
+
+      // Update user name if not already set
+      await sb.from('users').update({ name: name.trim() }).eq('id', user.id)
+
+      setDone(true)
+    } catch (err) {
+      setError('Something went wrong. Please try again.')
+      console.error('Listener application error:', err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (done) return (
@@ -187,7 +237,7 @@ export default function BecomeListenerPage() {
             <label className="label">Your rate per minute</label>
             <div className="rate-wrap">
               <span className="rate-prefix">₹</span>
-              <input className="rate-input" type="number" min={8} max={25} value={rate} onChange={e=>setRate(e.target.value)} />
+              <input className="rate-input" type="number" min={MIN_LISTENER_RATE} max={MAX_LISTENER_RATE} value={rate} onChange={e=>setRate(e.target.value)} />
               <span className="rate-suffix">/ minute</span>
             </div>
 
@@ -209,7 +259,7 @@ export default function BecomeListenerPage() {
             <input className="input" type="text" placeholder="XXXX XXXX XXXX" maxLength={14}
               value={aadhaar} onChange={e=>setAadhaar(e.target.value.replace(/[^\d\s]/g,''))} />
             <div className="disclaimer">
-              <p>🔒 Your Aadhaar is used only for identity verification. It is never stored in plain text and is not shared with anyone.</p>
+              <p>🔒 Only the last 4 digits of your Aadhaar are stored for reference. The full number is never retained. Used solely for identity verification per Indian regulations.</p>
             </div>
             <button className="btn" onClick={()=>setStep(3)} disabled={!aadhaar||aadhaar.replace(/\s/g,'').length<12}>
               Next: Bank details →
@@ -229,6 +279,7 @@ export default function BecomeListenerPage() {
             <div className="disclaimer">
               <p>⚠️ <strong>Important:</strong> LeanOn is a peer support platform. By applying, you confirm you are sharing personal lived experience only — not providing clinical advice, therapy, or counseling of any kind.</p>
             </div>
+            {error && <div className="error-box">{error}</div>}
             <button className="btn" onClick={submit} disabled={loading||!bank||!ifsc}>
               {loading ? <span className="spin">⟳</span> : 'Submit application →'}
             </button>

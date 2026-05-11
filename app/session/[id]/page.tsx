@@ -101,6 +101,23 @@ function SessionContent() {
     })
   }, [])
 
+  // Sync timer from DB session record — prevents free time on refresh
+  useEffect(() => {
+    if (!sessionId) return
+    supabase.from('sessions')
+      .select('started_at, duration_mins')
+      .eq('id', sessionId)
+      .single()
+      .then(({ data }) => {
+        if (data?.started_at) {
+          const elapsed    = Math.floor((Date.now() - new Date(data.started_at).getTime()) / 1000)
+          const remaining  = Math.max(0, data.duration_mins * 60 - elapsed)
+          setSecs(remaining)
+          if (remaining <= 0) setEnded(true)
+        }
+      })
+  }, [sessionId])
+
   // Load existing messages from DB on mount
   useEffect(() => {
     if (!sessionId) return

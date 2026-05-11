@@ -109,20 +109,24 @@ export default function WalletPage() {
         prefill:     {},
         theme:       { color: '#FF9933' },
         handler: async (response: any) => {
-          // Verify and credit wallet
-          await fetch('/api/wallet', {
+          // Verify and credit wallet — userId derived server-side from session cookie
+          const res = await fetch('/api/wallet', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               razorpay_order_id:   response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature:  response.razorpay_signature,
-              userId,
               amount: selected,
             }),
           })
-          await loadUserData()
-          alert(`₹${selected} added to your wallet!`)
+          if (res.ok) {
+            await loadUserData()
+            alert(`₹${selected} added to your wallet!`)
+          } else {
+            const data = await res.json()
+            alert(data.error || 'Payment verification failed. Contact support.')
+          }
         },
       })
       rzp.open()
