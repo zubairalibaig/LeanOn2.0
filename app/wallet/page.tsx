@@ -13,7 +13,7 @@ const S = `
   body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:antialiased;
     background:radial-gradient(ellipse 90% 55% at 0% 0%, #C2E4F2 0%, #DAEEF8 22%, #FFFFFF 58%) fixed;}
   a{text-decoration:none;color:inherit;}
-  .page{max-width:460px;margin:0 auto;padding:0 20px 60px;}
+  .page{max-width:460px;margin:0 auto;padding:0 20px 88px;}
   .topbar{display:flex;align-items:center;gap:12px;padding:16px 0 20px;}
   .back{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,0.8);border:1.5px solid var(--border);cursor:pointer;font-size:18px;color:var(--navy);display:flex;align-items:center;justify-content:center;}
   h1{font-size:22px;font-weight:900;color:var(--navy);}
