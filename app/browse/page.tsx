@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 
@@ -71,6 +71,12 @@ a{text-decoration:none;color:inherit;}
 .join-cta h3{font-size:15px;font-weight:800;color:var(--navy);margin-bottom:6px;}
 .join-cta p{font-size:13px;color:var(--gray);font-weight:500;margin-bottom:16px;}
 .btn-join{background:white;color:var(--teal);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;padding:10px 20px;border-radius:50px;border:2px solid var(--teal);cursor:pointer;}
+.session-toast{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--orange);color:white;font-family:'Nunito',sans-serif;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 4px 20px rgba(255,153,51,.35);animation:toastDrop .25s ease;}
+@keyframes toastDrop{from{opacity:0;transform:translateY(-100%)}to{opacity:1;transform:translateY(0)}}
+.session-toast-text{font-size:14px;font-weight:800;}
+.session-toast-sub{font-size:12px;font-weight:600;opacity:.85;margin-top:2px;}
+.btn-toast-join{background:white;color:var(--orange);font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:9px 16px;border-radius:10px;border:none;cursor:pointer;white-space:nowrap;}
+.btn-toast-dismiss{background:transparent;color:white;font-family:'Nunito',sans-serif;font-weight:700;font-size:20px;border:none;cursor:pointer;padding:0 4px;line-height:1;}
 `
 
 function BrowseContent() {
@@ -83,6 +89,8 @@ function BrowseContent() {
   const [listeners, setListeners] = useState<Listener[]>([])
   const [loading, setLoading] = useState(true)
   const [balance, setBalance] = useState<number|null>(null)
+  const [incomingSession, setIncomingSession] = useState<any>(null)
+  const channelRef = useRef<ReturnType<typeof client.channel> | null>(null)
 
   useEffect(() => { loadListeners() }, [tag])
 
@@ -91,7 +99,25 @@ function BrowseContent() {
       if (!user) return
       const {data} = await client.from('users').select('wallet_balance').eq('id',user.id).single()
       if (data) setBalance(data.wallet_balance)
+
+      // Subscribe to incoming session requests (in case user is a listener browsing)
+      if (channelRef.current) client.removeChannel(channelRef.current)
+      const channel = client.channel('browse-incoming-sessions')
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'sessions',
+          filter: `listener_id=eq.${user.id}`,
+        }, (payload) => {
+          setIncomingSession(payload.new)
+        })
+        .subscribe()
+      channelRef.current = channel
     })
+
+    return () => {
+      if (channelRef.current) client.removeChannel(channelRef.current)
+    }
   }, [])
 
   async function loadListeners() {
@@ -121,6 +147,32 @@ function BrowseContent() {
   return (
     <>
       <style>{S}</style>
+
+      {/* Incoming session toast for listeners browsing */}
+      {incomingSession && (
+        <div className="session-toast">
+          <div>
+            <div className="session-toast-text">New session request!</div>
+            <div className="session-toast-sub">
+              {incomingSession.duration_mins ? `${incomingSession.duration_mins} min` : ''}{' '}
+              {incomingSession.session_type ?? ''}{incomingSession.amount_held ? ` · ₹${incomingSession.amount_held}` : ''}
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <button
+              className="btn-toast-join"
+              onClick={() => {
+                setIncomingSession(null)
+                router.push(`/session/${incomingSession.id}?name=You&duration=${incomingSession.duration_mins}`)
+              }}
+            >
+              Join →
+            </button>
+            <button className="btn-toast-dismiss" onClick={() => setIncomingSession(null)}>✕</button>
+          </div>
+        </div>
+      )}
+
       <div className="topbar">
         <div className="topbar-row">
           <h1>Find a listener</h1>
