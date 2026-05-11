@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
-const PROTECTED = ['/session', '/wallet', '/dashboard', '/browse']
+const PROTECTED = ['/session', '/wallet', '/dashboard', '/browse', '/admin']
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
@@ -42,5 +42,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/session/:path*', '/wallet/:path*', '/dashboard/:path*', '/browse/:path*'],
+  matcher: ['/session/:path*', '/wallet/:path*', '/dashboard/:path*', '/browse/:path*', '/admin/:path*', '/admin'],
 }

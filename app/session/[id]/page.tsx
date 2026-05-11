@@ -53,6 +53,40 @@ body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:an
 .star{font-size:36px;background:none;border:none;cursor:pointer;filter:grayscale(1);opacity:.3;}
 .star.lit{filter:none;opacity:1;}
 .btn-done{background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;padding:16px 40px;border-radius:50px;border:none;cursor:pointer;}
+
+/* ── Voice call overlay ── */
+.voice-overlay{
+  position:fixed;inset:0;z-index:100;
+  background:var(--navy);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:20px;max-width:480px;margin:0 auto;
+}
+.voice-av{
+  width:80px;height:80px;border-radius:50%;
+  background:var(--teal);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:28px;color:white;
+  box-shadow:0 0 0 8px rgba(26,143,160,0.25);
+}
+.voice-name{font-size:22px;font-weight:800;color:white;}
+.voice-status{font-size:14px;color:rgba(255,255,255,0.65);font-weight:500;}
+.voice-timer{font-size:28px;font-weight:800;color:white;font-variant-numeric:tabular-nums;}
+.voice-timer.low{color:#FCA5A5;}
+.voice-actions{display:flex;gap:20px;margin-top:8px;}
+.voice-btn{
+  width:60px;height:60px;border-radius:50%;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+  font-family:'Nunito',sans-serif;font-weight:700;
+}
+.voice-btn.mute{background:rgba(255,255,255,0.15);color:white;}
+.voice-btn.mute.muted{background:rgba(220,38,38,0.35);color:#FCA5A5;}
+.voice-btn.end{background:rgba(220,38,38,0.85);color:white;}
+.voice-err{
+  font-size:13px;color:#FCA5A5;font-weight:600;
+  background:rgba(220,38,38,0.15);
+  border:1px solid rgba(220,38,38,0.3);
+  border-radius:10px;padding:10px 16px;text-align:center;max-width:280px;
+}
 `
 
 function fmtTimer(s: number) {
@@ -82,6 +116,8 @@ function SessionContent() {
   const sessionId    = routeParams.id as string
   const listenerName = decodeURIComponent(searchParams.get('name') || 'Listener')
   const durationMins = parseInt(searchParams.get('duration') || '15')
+  const sessionType  = searchParams.get('type') || 'text'
+  const isVoice      = sessionType === 'voice'
 
   const [msgs, setMsgs]       = useState<Msg[]>([])
   const [input, setInput]     = useState('')
@@ -91,8 +127,18 @@ function SessionContent() {
   const [userId, setUserId]   = useState<string | null>(null)
   const [connected, setConnected] = useState(false)
 
-  const channelRef = useRef<any>(null)
-  const bottomRef  = useRef<HTMLDivElement>(null)
+  // Voice call state
+  const [voiceStatus, setVoiceStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
+  const [voiceError, setVoiceError]   = useState<string | null>(null)
+  const [muted, setMuted]             = useState(false)
+  const [callSecs, setCallSecs]       = useState(0)
+
+  const channelRef  = useRef<any>(null)
+  const bottomRef   = useRef<HTMLDivElement>(null)
+  const agoraRef    = useRef<{
+    client: any
+    micTrack: any
+  } | null>(null)
 
   // Auth — runs once
   useEffect(() => {
@@ -169,17 +215,126 @@ function SessionContent() {
     return () => { supabase.removeChannel(channel) }
   }, [sessionId])
 
-  // Countdown timer
+  // Countdown timer (shared for both text and voice)
   useEffect(() => {
     if (ended || secs <= 0) { if (secs <= 0) setEnded(true); return }
     const t = setInterval(() => setSecs(s => s - 1), 1000)
     return () => clearInterval(t)
   }, [secs, ended])
 
+  // Call duration counter (voice only — counts up from 0 once connected)
+  useEffect(() => {
+    if (!isVoice || voiceStatus !== 'connected') return
+    const t = setInterval(() => setCallSecs(s => s + 1), 1000)
+    return () => clearInterval(t)
+  }, [isVoice, voiceStatus])
+
   // Auto scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [msgs])
+
+  // Agora voice call — only for voice sessions
+  useEffect(() => {
+    if (!isVoice || !sessionId) return
+
+    let cancelled = false
+
+    async function joinVoiceCall() {
+      try {
+        // Dynamically import to avoid SSR issues with the browser SDK
+        const AgoraRTC = (await import('agora-rtc-sdk-ng')).default
+
+        // Fetch token from our API
+        const res = await fetch(`/api/agora?sessionId=${sessionId}`)
+        if (!res.ok) {
+          const { error } = await res.json()
+          throw new Error(error || 'Failed to get voice token')
+        }
+        const { token, channelName, appId } = await res.json()
+
+        if (cancelled) return
+
+        // Create Agora RTC client
+        const client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
+
+        // Create microphone audio track
+        let micTrack: any
+        try {
+          micTrack = await AgoraRTC.createMicrophoneAudioTrack()
+        } catch (micErr: any) {
+          throw new Error('Microphone access denied. Please allow microphone permission and try again.')
+        }
+
+        if (cancelled) {
+          micTrack.close()
+          return
+        }
+
+        // Join channel then publish mic
+        await client.join(appId, channelName, token, null)
+        await client.publish([micTrack])
+
+        if (cancelled) {
+          await client.unpublish([micTrack])
+          micTrack.close()
+          await client.leave()
+          return
+        }
+
+        agoraRef.current = { client, micTrack }
+        setVoiceStatus('connected')
+        setVoiceError(null)
+      } catch (err: any) {
+        if (!cancelled) {
+          console.error('Agora join error:', err)
+          setVoiceStatus('error')
+          setVoiceError(err?.message || 'Failed to connect voice call')
+        }
+      }
+    }
+
+    joinVoiceCall()
+
+    return () => {
+      cancelled = true
+      // Cleanup Agora on unmount or when session ends
+      if (agoraRef.current) {
+        const { client, micTrack } = agoraRef.current
+        micTrack.close()
+        client.unpublish([micTrack]).catch(() => {})
+        client.leave().catch(() => {})
+        agoraRef.current = null
+      }
+    }
+  }, [isVoice, sessionId])
+
+  // Leave Agora channel when session ends
+  useEffect(() => {
+    if (ended && agoraRef.current) {
+      const { client, micTrack } = agoraRef.current
+      micTrack.close()
+      client.unpublish([micTrack]).catch(() => {})
+      client.leave().catch(() => {})
+      agoraRef.current = null
+    }
+  }, [ended])
+
+  async function toggleMute() {
+    if (!agoraRef.current) return
+    const { micTrack } = agoraRef.current
+    const next = !muted
+    if (next) {
+      await micTrack.setMuted(true)
+    } else {
+      await micTrack.setMuted(false)
+    }
+    setMuted(next)
+  }
+
+  async function endVoiceCall() {
+    setEnded(true)
+  }
 
   async function sendMsg() {
     const text = input.trim()
@@ -235,6 +390,7 @@ function SessionContent() {
     router.push('/browse')
   }
 
+  // ── End screen (shared for both text and voice)
   if (ended) return (
     <>
       <style>{S}</style>
@@ -263,6 +419,54 @@ function SessionContent() {
     </>
   )
 
+  // ── Voice call overlay
+  if (isVoice) return (
+    <>
+      <style>{S}</style>
+      <div className="voice-overlay">
+        <div className="voice-av">{ini(listenerName)}</div>
+        <div className="voice-name">{listenerName}</div>
+
+        {voiceStatus === 'connecting' && (
+          <div className="voice-status">Connecting…</div>
+        )}
+        {voiceStatus === 'connected' && (
+          <div className="voice-status">Voice call · {fmtTimer(secs)} left</div>
+        )}
+        {voiceStatus === 'error' && (
+          <div className="voice-status">Connection error</div>
+        )}
+
+        <div className={`voice-timer${secs < 120 ? ' low' : ''}`}>
+          {voiceStatus === 'connected' ? fmtTimer(callSecs) : '--:--'}
+        </div>
+
+        {voiceError && (
+          <div className="voice-err">{voiceError}</div>
+        )}
+
+        <div className="voice-actions">
+          <button
+            className={`voice-btn mute${muted ? ' muted' : ''}`}
+            onClick={toggleMute}
+            title={muted ? 'Unmute' : 'Mute'}
+            disabled={voiceStatus !== 'connected'}
+          >
+            {muted ? '🔇' : '🎙️'}
+          </button>
+          <button
+            className="voice-btn end end-btn"
+            onClick={endVoiceCall}
+            title="End call"
+          >
+            📵
+          </button>
+        </div>
+      </div>
+    </>
+  )
+
+  // ── Text chat (unchanged)
   return (
     <>
       <style>{S}</style>

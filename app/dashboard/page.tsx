@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 
@@ -62,6 +62,22 @@ const S = `
   .btn-apply{background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;padding:14px 32px;border-radius:50px;border:none;cursor:pointer;}
   .skeleton{background:linear-gradient(90deg,#e8e8e4 25%,#f2f2ee 50%,#e8e8e4 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:12px;}
   @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+  .modal-overlay{position:fixed;inset:0;background:rgba(15,72,103,0.55);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn .2s ease;}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .modal-card{background:white;border-radius:24px;padding:28px 24px;max-width:360px;width:100%;box-shadow:0 12px 48px rgba(15,72,103,.25);animation:slideUp .25s ease;}
+  @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .modal-icon{width:56px;height:56px;border-radius:18px;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 16px;}
+  .modal-title{font-size:20px;font-weight:900;color:var(--navy);text-align:center;margin-bottom:8px;}
+  .modal-sub{font-size:14px;color:var(--gray);font-weight:600;text-align:center;margin-bottom:20px;}
+  .modal-detail{display:flex;justify-content:space-around;background:var(--light);border-radius:14px;padding:14px;margin-bottom:20px;}
+  .modal-detail-item{text-align:center;}
+  .modal-detail-label{font-size:10px;font-weight:800;color:var(--gray);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+  .modal-detail-value{font-size:16px;font-weight:900;color:var(--navy);}
+  .btn-join-session{width:100%;background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;padding:15px;border-radius:14px;border:none;cursor:pointer;margin-bottom:10px;box-shadow:0 4px 16px rgba(255,153,51,.35);transition:all .2s;}
+  .btn-join-session:hover{background:#e8861a;}
+  .btn-dismiss{width:100%;background:transparent;color:var(--gray);font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;padding:10px;border-radius:14px;border:1.5px solid var(--border);cursor:pointer;}
+  .countdown-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:16px;}
+  .countdown-fill{height:100%;background:var(--orange);border-radius:2px;transition:width 1s linear;}
 `
 
 function ini(n: string) {
@@ -87,8 +103,40 @@ export default function DashboardPage() {
   const [avail, setAvail]         = useState(false)
   const [loading, setLoading]     = useState(true)
   const [payoutLoading, setPayoutLoading] = useState(false)
+  const [incomingSession, setIncomingSession] = useState<any>(null)
+  const [countdown, setCountdown] = useState(30)
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const channelRef   = useRef<ReturnType<typeof sb.channel> | null>(null)
 
   useEffect(() => { loadData() }, [])
+
+  // Cleanup realtime on unmount
+  useEffect(() => {
+    return () => {
+      if (channelRef.current) sb.removeChannel(channelRef.current)
+      if (countdownRef.current) clearInterval(countdownRef.current)
+    }
+  }, [])
+
+  function startCountdown(onExpire: () => void) {
+    setCountdown(30)
+    if (countdownRef.current) clearInterval(countdownRef.current)
+    countdownRef.current = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(countdownRef.current!)
+          onExpire()
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+  }
+
+  function dismissIncoming() {
+    setIncomingSession(null)
+    if (countdownRef.current) clearInterval(countdownRef.current)
+  }
 
   async function loadData() {
     const { data: { user: u } } = await sb.auth.getUser()
@@ -118,6 +166,21 @@ export default function DashboardPage() {
 
     if (recent) setSessions(recent)
     setLoading(false)
+
+    // Subscribe to incoming session requests for this listener
+    if (channelRef.current) sb.removeChannel(channelRef.current)
+    const channel = sb.channel('incoming-sessions')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'sessions',
+        filter: `listener_id=eq.${u.id}`,
+      }, (payload) => {
+        setIncomingSession(payload.new)
+        startCountdown(() => setIncomingSession(null))
+      })
+      .subscribe()
+    channelRef.current = channel
   }
 
   async function toggleAvailability() {
@@ -186,6 +249,45 @@ export default function DashboardPage() {
   return (
     <>
       <style>{S}</style>
+
+      {/* Incoming session modal */}
+      {incomingSession && (
+        <div className="modal-overlay" onClick={dismissIncoming}>
+          <div className="modal-card" onClick={e => e.stopPropagation()}>
+            <div className="modal-icon">📞</div>
+            <div className="modal-title">New session request!</div>
+            <div className="modal-sub">Someone wants to connect with you right now.</div>
+            <div className="countdown-bar">
+              <div className="countdown-fill" style={{ width: `${(countdown / 30) * 100}%` }} />
+            </div>
+            <div className="modal-detail">
+              <div className="modal-detail-item">
+                <div className="modal-detail-label">Duration</div>
+                <div className="modal-detail-value">{incomingSession.duration_mins ?? '—'} min</div>
+              </div>
+              <div className="modal-detail-item">
+                <div className="modal-detail-label">Type</div>
+                <div className="modal-detail-value" style={{ textTransform: 'capitalize' }}>{incomingSession.session_type ?? '—'}</div>
+              </div>
+              <div className="modal-detail-item">
+                <div className="modal-detail-label">Amount</div>
+                <div className="modal-detail-value">₹{incomingSession.amount_held ?? '—'}</div>
+              </div>
+            </div>
+            <button
+              className="btn-join-session"
+              onClick={() => {
+                dismissIncoming()
+                router.push(`/session/${incomingSession.id}?name=You&duration=${incomingSession.duration_mins}`)
+              }}
+            >
+              Join session → ({countdown}s)
+            </button>
+            <button className="btn-dismiss" onClick={dismissIncoming}>Dismiss</button>
+          </div>
+        </div>
+      )}
+
       <div className="page">
         <div className="topbar">
           <h1>My Dashboard</h1>

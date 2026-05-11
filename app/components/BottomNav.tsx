@@ -1,0 +1,69 @@
+'use client'
+import { usePathname, useRouter } from 'next/navigation'
+
+const TABS = [
+  { href: '/browse',   icon: '🔍', label: 'Browse'   },
+  { href: '/sessions', icon: '💬', label: 'Sessions'  },
+  { href: '/wallet',   icon: '💰', label: 'Wallet'    },
+  { href: '/profile',  icon: '👤', label: 'Profile'   },
+]
+
+const HIDDEN_PREFIXES = ['/', '/auth', '/session/', '/become-listener', '/about', '/privacy', '/terms', '/contact', '/admin']
+
+export default function BottomNav() {
+  const pathname = usePathname()
+  const router = useRouter()
+
+  const shouldHide =
+    pathname === '/' ||
+    pathname === '/auth' ||
+    pathname.startsWith('/session/') ||
+    pathname === '/become-listener' ||
+    pathname === '/about' ||
+    pathname === '/privacy' ||
+    pathname === '/terms' ||
+    pathname === '/contact' ||
+    pathname === '/admin' ||
+    pathname.startsWith('/admin/')
+
+  if (shouldHide) return null
+
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&display=swap');
+        .bottom-nav{
+          position:fixed;bottom:0;left:0;right:0;z-index:100;
+          background:white;border-top:1.5px solid #D5EEF6;
+          display:flex;justify-content:center;
+          padding-bottom:env(safe-area-inset-bottom,0px);
+        }
+        .bottom-nav-inner{
+          width:100%;max-width:540px;display:flex;
+        }
+        .nav-tab{
+          flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+          padding:10px 0 8px;cursor:pointer;border:none;background:transparent;
+          font-family:'Nunito',sans-serif;font-weight:600;font-size:11px;
+          color:#5A7A8A;transition:color .15s;gap:3px;
+        }
+        .nav-tab.active{color:#0F4867;}
+        .nav-tab-icon{font-size:20px;line-height:1;}
+      `}</style>
+      <nav className="bottom-nav">
+        <div className="bottom-nav-inner">
+          {TABS.map(tab => (
+            <button
+              key={tab.href}
+              className={`nav-tab${pathname === tab.href ? ' active' : ''}`}
+              onClick={() => router.push(tab.href)}
+            >
+              <span className="nav-tab-icon">{tab.icon}</span>
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </nav>
+    </>
+  )
+}

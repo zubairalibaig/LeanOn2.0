@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import BottomNav from './components/BottomNav'
 
 export const metadata: Metadata = {
   title: 'LeanOn — Someone to lean on, anytime',
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body style={{ margin: 0, padding: 0 }}>
         {children}
+        <BottomNav />
       </body>
     </html>
   )

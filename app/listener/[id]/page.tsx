@@ -142,7 +142,7 @@ export default function ListenerPage({ params }: { params: {id:string} }) {
     setLoading(false)
     if (data.error === 'insufficient_balance') { router.push('/wallet'); return }
     if (data.sessionId) {
-      router.push(`/session/${data.sessionId}?name=${encodeURIComponent(listener.name)}&duration=${duration}`)
+      router.push(`/session/${data.sessionId}?name=${encodeURIComponent(listener.name)}&duration=${duration}&type=${type}`)
     }
   }
 
