@@ -1,40 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Razorpay from 'razorpay'
 import crypto from 'crypto'
-import { createServerClient } from '@supabase/ssr'
-import { createClient } from '@supabase/supabase-js'
-import { cookies } from 'next/headers'
+import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 const rzp = new Razorpay({
   key_id:     process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
   key_secret: process.env.RAZORPAY_KEY_SECRET!,
 })
 
-// User-context client — reads session cookies to verify caller identity
-function getUserSupabase() {
-  const c = cookies()
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: { get: (n: string) => c.get(n)?.value, set: () => {}, remove: () => {} } }
-  )
-}
-
-// Admin client — bypasses RLS for trusted wallet writes
-function getAdminSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
-}
-
 // POST — create Razorpay order (requires auth)
 export async function POST(req: NextRequest) {
   try {
-    // Verify caller is authenticated
-    const userSb = getUserSupabase()
+    const userSb = createServerSupabaseClient()
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+
+    // 10 order-creates per hour per user — prevents wallet abuse
+    if (!checkRateLimit(`wallet:${user.id}`, 10, 60 * 60_000)) {
+      return NextResponse.json({ error: 'Too many requests. Please wait.' }, { status: 429 })
+    }
 
     const { amount } = await req.json()
     if (!amount || amount < 100) {
@@ -45,7 +30,7 @@ export async function POST(req: NextRequest) {
       amount:   amount * 100,
       currency: 'INR',
       receipt:  `wallet_${Date.now()}`,
-      notes:    { userId: user.id, amount: String(amount) }, // stored for webhook fallback
+      notes:    { userId: user.id, amount: String(amount) },
     })
     return NextResponse.json({ orderId: order.id, amount: order.amount })
   } catch (err) {
@@ -59,22 +44,24 @@ export async function PUT(req: NextRequest) {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, amount } = await req.json()
 
-    // userId comes from verified session — NOT from request body (prevents spoofing)
-    const userSb = getUserSupabase()
+    // userId from verified session cookie — NOT from request body (prevents spoofing)
+    const userSb = createServerSupabaseClient()
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
     // Verify Razorpay HMAC signature
-    const sigBody  = razorpay_order_id + '|' + razorpay_payment_id
-    const expected = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
-                       .update(sigBody).digest('hex')
+    const expected = crypto
+      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
+      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+      .digest('hex')
+
     if (expected !== razorpay_signature) {
       return NextResponse.json({ error: 'Invalid payment signature' }, { status: 400 })
     }
 
-    const sb = getAdminSupabase()
+    const sb = createAdminClient()
 
-    // Idempotency — prevent double-credit if user calls PUT twice for same payment
+    // Idempotency — prevent double-credit if PUT is called twice for the same payment
     const { data: existing } = await sb
       .from('wallet_transactions')
       .select('id')
@@ -86,22 +73,23 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ success: true, newBalance: u?.wallet_balance ?? 0 })
     }
 
-    // Credit wallet atomically via SQL function
+    // Credit wallet atomically
     const { error: creditErr } = await sb.rpc('credit_wallet', {
       p_user_id: user.id,
       p_amount:  amount,
     })
 
     if (creditErr) {
-      // RPC unavailable — log and fail; do NOT silently do race-condition read-modify-write
       console.error('credit_wallet RPC failed:', creditErr)
-      return NextResponse.json({ error: 'Wallet credit failed. Contact support with payment ID: ' + razorpay_payment_id }, { status: 500 })
+      return NextResponse.json(
+        { error: `Wallet credit failed. Contact support with payment ID: ${razorpay_payment_id}` },
+        { status: 500 }
+      )
     }
 
-    // Log transaction
     await sb.from('wallet_transactions').insert({
       user_id:      user.id,
-      amount:       amount,
+      amount,
       type:         'credit',
       description:  'Wallet recharge',
       reference_id: razorpay_payment_id,

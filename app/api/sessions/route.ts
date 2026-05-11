@@ -1,41 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
-import { createClient } from '@supabase/supabase-js'
-import { cookies } from 'next/headers'
+import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { PLATFORM_FEE, FREE_SESSION_MINS } from '@/lib/constants'
-
-// User-context client — respects RLS, used for auth check
-function getUserSupabase() {
-  const c = cookies()
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: { get: (n: string) => c.get(n)?.value, set: () => {}, remove: () => {} } }
-  )
-}
-
-// Admin client — bypasses RLS for trusted server operations
-function getAdminSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
-}
 
 // POST — create session + deduct wallet atomically
 export async function POST(req: NextRequest) {
   try {
     const { listenerId, durationMins, sessionType } = await req.json()
 
-    // Verify user is authenticated
-    const userSb = getUserSupabase()
+    const userSb = createServerSupabaseClient()
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
-    const sb     = getAdminSupabase()
+    // 5 session-starts per minute per user — prevents spam booking
+    if (!checkRateLimit(`session:${user.id}`, 5, 60_000)) {
+      return NextResponse.json({ error: 'Too many requests. Please wait.' }, { status: 429 })
+    }
+
+    const sb     = createAdminClient()
     const isFree = durationMins === FREE_SESSION_MINS
 
-    // Get listener rate
     const { data: lp } = await sb
       .from('listener_profiles')
       .select('rate_per_min')
@@ -47,7 +31,6 @@ export async function POST(req: NextRequest) {
     const total = isFree ? 0 : base + PLATFORM_FEE
 
     if (!isFree) {
-      // Check balance first (fast pre-flight — RPC enforces atomically below)
       const { data: u } = await sb
         .from('users')
         .select('wallet_balance')
@@ -58,20 +41,18 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'insufficient_balance', required: total }, { status: 400 })
       }
 
-      // Deduct atomically via SQL function — prevents race condition / double-spend
+      // Deduct atomically — prevents race condition / double-spend
       const { error: deductErr } = await sb.rpc('deduct_wallet', {
         p_user_id: user.id,
         p_amount:  total,
       })
 
       if (deductErr) {
-        // RPC must exist — do NOT fall back to read-modify-write (race condition risk)
         console.error('deduct_wallet RPC failed:', deductErr)
         return NextResponse.json({ error: 'Payment processing failed. Please try again.' }, { status: 500 })
       }
     }
 
-    // Create session record
     const { data: session, error: sErr } = await sb.from('sessions').insert({
       seeker_id:     user.id,
       listener_id:   listenerId,
@@ -87,7 +68,6 @@ export async function POST(req: NextRequest) {
 
     if (sErr) throw sErr
 
-    // Log wallet transaction
     if (!isFree) {
       await sb.from('wallet_transactions').insert({
         user_id:     user.id,
@@ -100,9 +80,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ sessionId: session.id, total })
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
     console.error('Session create error:', err)
-    return NextResponse.json({ error: message }, { status: 500 })
+    return NextResponse.json({ error: err instanceof Error ? err.message : 'Unknown error' }, { status: 500 })
   }
 }
 
@@ -111,12 +90,11 @@ export async function PATCH(req: NextRequest) {
   try {
     const { sessionId, rating } = await req.json()
 
-    // Verify authentication — anyone without a valid session is rejected
-    const userSb = getUserSupabase()
+    const userSb = createServerSupabaseClient()
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
-    const sb = getAdminSupabase()
+    const sb = createAdminClient()
 
     const { data: session, error: sErr } = await sb
       .from('sessions')
@@ -133,8 +111,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
-    // Atomically mark session completed — .eq('status','active') acts as optimistic lock.
-    // If two requests race, only one UPDATE matches; the other gets null and returns early.
+    // Optimistic lock — .eq('status','active') prevents double-payout if two requests race
     const { data: completed } = await sb
       .from('sessions')
       .update({
@@ -143,14 +120,12 @@ export async function PATCH(req: NextRequest) {
         ...(rating ? { seeker_rating: rating } : {}),
       })
       .eq('id', sessionId)
-      .eq('status', 'active') // only succeeds if not already completed
+      .eq('status', 'active')
       .select()
       .single()
 
-    // Already completed — idempotent success
-    if (!completed) return NextResponse.json({ success: true })
+    if (!completed) return NextResponse.json({ success: true }) // already completed
 
-    // Credit listener earnings atomically via SQL function
     const listenerEarning = session.amount_held - session.platform_fee
     if (listenerEarning > 0 && !session.is_free_trial) {
       const { error: creditErr } = await sb.rpc('credit_wallet', {
@@ -159,9 +134,8 @@ export async function PATCH(req: NextRequest) {
       })
 
       if (creditErr) {
-        // Log for manual reconciliation — do not silently read-modify-write
         console.error('credit_wallet RPC failed — manual reconciliation needed:', {
-          sessionId, listenerId: session.listener_id, amount: listenerEarning, err: creditErr,
+          sessionId, listenerId: session.listener_id, amount: listenerEarning,
         })
       } else {
         await sb.from('wallet_transactions').insert({
@@ -174,7 +148,6 @@ export async function PATCH(req: NextRequest) {
       }
     }
 
-    // Increment listener session count (cosmetic counter — minor race risk acceptable)
     const { data: lp } = await sb
       .from('listener_profiles')
       .select('total_sessions')
@@ -187,8 +160,7 @@ export async function PATCH(req: NextRequest) {
 
     return NextResponse.json({ success: true })
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
     console.error('Session complete error:', err)
-    return NextResponse.json({ error: message }, { status: 500 })
+    return NextResponse.json({ error: err instanceof Error ? err.message : 'Unknown error' }, { status: 500 })
   }
 }

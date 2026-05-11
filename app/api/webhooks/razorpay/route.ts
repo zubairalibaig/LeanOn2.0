@@ -1,13 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
-import { createClient } from '@supabase/supabase-js'
-
-function getAdminSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
-}
+import { createAdminClient } from '@/lib/supabase'
 
 // Razorpay sends webhook events when payments complete asynchronously.
 // This is the safety net for users who pay then close the browser before
@@ -48,7 +41,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ received: true })
       }
 
-      const sb = getAdminSupabase()
+      const sb = createAdminClient()
 
       // Idempotency — skip if already credited via the client-side PUT handler
       const { data: existing } = await sb

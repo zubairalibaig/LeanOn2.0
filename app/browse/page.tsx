@@ -1,12 +1,20 @@
 'use client'
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { createBrowserClient } from '@supabase/ssr'
+import { createClient } from '@/lib/supabase'
 
-const sb = () => createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+type Listener = {
+  id: string
+  user_id: string
+  name: string
+  bio: string
+  rating: number
+  total_sessions: number
+  rate_per_min: number
+  is_available: boolean
+  specialty_tags: string[]
+  avatar_url?: string
+}
 
 const TAGS = [
   {id:'all',icon:'✨',label:'All'},
@@ -68,11 +76,11 @@ a{text-decoration:none;color:inherit;}
 function BrowseContent() {
   const router  = useRouter()
   const params  = useSearchParams()
-  const client  = sb()
+  const client  = createClient()
 
   const [tag, setTag]         = useState(params.get('topic') || 'all')
   const [query, setQuery]     = useState('')
-  const [listeners, setListeners] = useState<any[]>([])
+  const [listeners, setListeners] = useState<Listener[]>([])
   const [loading, setLoading] = useState(true)
   const [balance, setBalance] = useState<number|null>(null)
 
@@ -96,8 +104,9 @@ function BrowseContent() {
       .limit(20)
     if (tag !== 'all') q = q.contains('specialty_tags', [tag])
     const {data} = await q
-    setListeners((data || []).map((l:any) => ({
-      ...l, name: l.users?.name || 'Listener', avatar_url: l.users?.avatar_url
+    setListeners((data || []).map((l) => ({
+      ...l, name: (l.users as {name:string}|null)?.name || 'Listener',
+      avatar_url: (l.users as {avatar_url?:string}|null)?.avatar_url,
     })))
     setLoading(false)
   }
@@ -162,7 +171,7 @@ function BrowseContent() {
             </div>
             <p className="bio">{l.bio}</p>
             <div className="tags">
-              {(l.specialty_tags||[]).slice(0,3).map((t:string) => {
+              {(l.specialty_tags||[]).slice(0,3).map((t) => {
                 const info = tagInfo(t)
                 return <span key={t} className="tag-badge">{info?.icon} {info?.label||t}</span>
               })}

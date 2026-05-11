@@ -1,12 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
-function getAdminSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
-}
+import { createAdminClient } from '@/lib/supabase'
 
 export async function POST(req: NextRequest) {
   try {
@@ -21,7 +14,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
     }
 
-    const sb = getAdminSupabase()
+    const sb = createAdminClient()
     const { error } = await sb.from('contact_messages').insert({
       name:    name.trim().slice(0, 100),
       email:   email.trim().toLowerCase().slice(0, 200),

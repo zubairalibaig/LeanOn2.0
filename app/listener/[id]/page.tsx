@@ -1,12 +1,25 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { createBrowserClient } from '@supabase/ssr'
+import { createClient } from '@/lib/supabase'
 
-const sb = () => createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+type ListenerProfile = {
+  id: string
+  user_id: string
+  name: string
+  bio: string
+  rating: number
+  total_sessions: number
+  rate_per_min: number
+  is_available: boolean
+  specialty_tags: string[]
+}
+
+type Review = {
+  seeker_rating: number
+  seeker_review: string | null
+  users: { name: string } | null
+}
 
 const TAGS: Record<string,string> = {
   loneliness:'Loneliness 🌙',stress:'Work stress 💼',career:'Career confusion 🧭',
@@ -67,10 +80,10 @@ a{text-decoration:none;color:inherit;}
 export default function ListenerPage({ params }: { params: {id:string} }) {
   const router   = useRouter()
   const { id }   = params
-  const client   = sb()
+  const client   = createClient()
 
-  const [listener, setListener] = useState<any>(null)
-  const [reviews,  setReviews]  = useState<any[]>([])
+  const [listener, setListener] = useState<ListenerProfile|null>(null)
+  const [reviews,  setReviews]  = useState<Review[]>([])
   const [duration, setDuration] = useState<number>(15)
   const [type,     setType]     = useState<'text'|'voice'>('text')
   const [balance,  setBalance]  = useState<number>(0)
@@ -83,7 +96,10 @@ export default function ListenerPage({ params }: { params: {id:string} }) {
       .select('*, users!inner(name, avatar_url)')
       .eq('user_id', id).single()
       .then(({data}) => {
-        if (data) setListener({...data, name: data.users?.name || 'Listener'})
+        if (data) setListener({
+          ...data,
+          name: (data.users as {name:string}|null)?.name || 'Listener',
+        })
       })
 
     // Load reviews
@@ -91,7 +107,7 @@ export default function ListenerPage({ params }: { params: {id:string} }) {
       .select('seeker_rating, seeker_review, users!seeker_id(name)')
       .eq('listener_id', id).eq('status', 'completed').not('seeker_rating', 'is', null)
       .order('created_at', {ascending:false}).limit(5)
-      .then(({data}) => { if (data) setReviews(data) })
+      .then(({data}) => { if (data) setReviews(data as Review[]) })
 
     // Load user wallet
     client.auth.getUser().then(async ({data:{user}}) => {
@@ -110,7 +126,7 @@ export default function ListenerPage({ params }: { params: {id:string} }) {
   )
 
   const ini    = (n:string) => n.split(' ').map((x:string)=>x[0]).join('').slice(0,2).toUpperCase()
-  const cost   = duration === 5 ? 0 : listener.rate_per_min * duration + 15
+  const cost   = duration === 5 ? 0 : listener!.rate_per_min * duration + 15
   const canPay = duration === 5 || balance >= cost
 
   async function book() {
