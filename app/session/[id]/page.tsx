@@ -174,38 +174,36 @@ function SessionContent() {
       .then(({ data }) => { if (data) setMsgs(data as Msg[]) })
   }, [sessionId])
 
-  // ── CRITICAL FIX 2: Broadcast subscription
-  // Channel name is SHARED between all session participants
-  // NO sender_id filter — deduplicate by message ID instead
   useEffect(() => {
     if (!sessionId) return
 
-    const channel = supabase.channel(`room:${sessionId}`)
+    function applyMsg(msg: Msg) {
+      setMsgs(prev => {
+        if (prev.find(m => m.id === msg.id)) return prev
+        const hasTemp = prev.find(
+          m => m.temp && m.sender_id === msg.sender_id && m.content === msg.content
+        )
+        if (hasTemp) {
+          return prev.map(m =>
+            m.temp && m.sender_id === msg.sender_id && m.content === msg.content ? msg : m
+          )
+        }
+        return [...prev, msg]
+      })
+    }
 
-    channel
+    // Primary: postgres_changes fires for BOTH parties whenever any insert lands in DB
+    // Backup: broadcast for instant delivery when the other client is already subscribed
+    const channel = supabase
+      .channel(`room:${sessionId}`)
+      .on(
+        'postgres_changes' as any,
+        { event: 'INSERT', schema: 'public', table: 'messages', filter: `session_id=eq.${sessionId}` },
+        (payload: any) => applyMsg(payload.new as Msg)
+      )
       .on('broadcast', { event: 'msg' }, ({ payload }: { payload: Msg }) => {
         if (payload.session_id !== sessionId) return
-
-        setMsgs(prev => {
-          // ── CRITICAL FIX 3: Deduplicate by ID only, NOT sender_id
-          // sender_id check was dropping all messages when both users are same person (testing)
-          // and was unreliable in real usage too
-          if (prev.find(m => m.id === payload.id)) return prev
-
-          // Replace any matching temp message (same content + sender)
-          const hasTemp = prev.find(
-            m => m.temp && m.sender_id === payload.sender_id && m.content === payload.content
-          )
-          if (hasTemp) {
-            return prev.map(m =>
-              m.temp && m.sender_id === payload.sender_id && m.content === payload.content
-                ? payload
-                : m
-            )
-          }
-
-          return [...prev, payload]
-        })
+        applyMsg(payload)
       })
       .subscribe((status: string) => {
         setConnected(status === 'SUBSCRIBED')
