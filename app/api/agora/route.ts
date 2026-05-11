@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { RtcTokenBuilder, RtcRole } from 'agora-access-token'
-import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase'
+import { RtcTokenBuilder, RtcRole } from 'agora-token'
+import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 
 export async function GET(req: NextRequest) {
   try {

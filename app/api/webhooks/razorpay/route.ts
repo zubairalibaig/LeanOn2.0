@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
-import { createAdminClient } from '@/lib/supabase'
+import { createAdminClient } from '@/lib/supabase-server'
 
 // Razorpay sends webhook events when payments complete asynchronously.
 // This is the safety net for users who pay then close the browser before
