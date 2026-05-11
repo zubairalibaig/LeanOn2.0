@@ -46,6 +46,7 @@ export async function GET(req: NextRequest) {
       channelName,
       0,               // uid=0 means Agora assigns one
       RtcRole.PUBLISHER,
+      expireTime,
       expireTime
     )
 

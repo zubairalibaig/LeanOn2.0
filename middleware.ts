@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
 
 const PROTECTED = ['/session', '/wallet', '/dashboard', '/browse', '/admin']
 
@@ -15,13 +15,13 @@ export async function middleware(req: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name)               { return req.cookies.get(name)?.value },
-        set(name, value, opts)  {
+        get(name: string)                              { return req.cookies.get(name)?.value },
+        set(name: string, value: string, opts: CookieOptions)  {
           req.cookies.set({ name, value, ...opts })
           response = NextResponse.next({ request: req })
           response.cookies.set({ name, value, ...opts })
         },
-        remove(name, opts) {
+        remove(name: string, opts: CookieOptions) {
           req.cookies.set({ name, value: '', ...opts })
           response = NextResponse.next({ request: req })
           response.cookies.set({ name, value: '', ...opts })

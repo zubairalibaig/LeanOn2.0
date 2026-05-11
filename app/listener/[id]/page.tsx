@@ -107,7 +107,7 @@ export default function ListenerPage({ params }: { params: {id:string} }) {
       .select('seeker_rating, seeker_review, users!seeker_id(name)')
       .eq('listener_id', id).eq('status', 'completed').not('seeker_rating', 'is', null)
       .order('created_at', {ascending:false}).limit(5)
-      .then(({data}) => { if (data) setReviews(data as Review[]) })
+      .then(({data}) => { if (data) setReviews(data as unknown as Review[]) })
 
     // Load user wallet
     client.auth.getUser().then(async ({data:{user}}) => {
@@ -142,7 +142,7 @@ export default function ListenerPage({ params }: { params: {id:string} }) {
     setLoading(false)
     if (data.error === 'insufficient_balance') { router.push('/wallet'); return }
     if (data.sessionId) {
-      router.push(`/session/${data.sessionId}?name=${encodeURIComponent(listener.name)}&duration=${duration}&type=${type}`)
+      router.push(`/session/${data.sessionId}?name=${encodeURIComponent(listener!.name)}&duration=${duration}&type=${type}`)
     }
   }
 
@@ -163,7 +163,7 @@ export default function ListenerPage({ params }: { params: {id:string} }) {
             <div style={{flex:1}}>
               <div className="listener-name">{listener.name}</div>
               <div className="stats-row">
-                {listener.rating > 0 && <span className="stat">⭐ {parseFloat(listener.rating).toFixed(1)}</span>}
+                {listener.rating > 0 && <span className="stat">⭐ {(+listener.rating).toFixed(1)}</span>}
                 {listener.total_sessions > 0 && <span className="stat">{listener.total_sessions} sessions</span>}
                 <span className="rate-badge">₹{listener.rate_per_min}/min</span>
               </div>

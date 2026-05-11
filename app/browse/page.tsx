@@ -212,7 +212,7 @@ function BrowseContent() {
               <div className="meta">
                 <div className="name">{l.name}</div>
                 <div className="stats">
-                  {l.rating > 0 && <span>⭐ {parseFloat(l.rating).toFixed(1)}</span>}
+                  {l.rating > 0 && <span>⭐ {(+l.rating).toFixed(1)}</span>}
                   {l.total_sessions > 0 && <span>{l.total_sessions} sessions</span>}
                   <span style={{color:l.is_available?'#34C759':'#C7C7CC'}}>
                     {l.is_available?'● Available':'● Offline'}
