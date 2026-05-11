@@ -54,21 +54,20 @@ export default function PrivacyPage() {
         <p>LeanOn uses automated AI tools to monitor sessions in real-time for safety purposes — specifically to detect content that violates our community guidelines. This is done to protect all users. Flagged content may be reviewed by our safety team.</p>
 
         <h2>4. Data storage</h2>
-        <p>Your data is stored on Supabase servers hosted in the Asia South (Mumbai) region. We comply with India's Digital Personal Data Protection Act (DPDP Act 2023).</p>
+        <p>Your data is stored on Supabase servers hosted in the Asia South (Mumbai) region. We comply with India&apos;s Digital Personal Data Protection Act (DPDP Act 2023).</p>
 
         <h2>5. Aadhaar data</h2>
         <p>Aadhaar numbers collected from listeners for identity verification are processed via a third-party KYC provider (Surepass) and are never stored in plain text on our servers.</p>
 
         <h2>6. Your rights</h2>
         <ul>
-          <li>Request deletion of your account and data</li>
-          <li>Request a copy of your data</li>
-          <li>Withdraw consent at any time</li>
+          <li>Request deletion of your account — use the &ldquo;Delete account&rdquo; option inside the app under Profile</li>
+          <li>Withdraw consent at any time by deleting your account</li>
         </ul>
-        <p>To exercise these rights, email us at <a href="mailto:privacy@leanon.app">privacy@leanon.app</a></p>
+        <p>For privacy concerns, use the <a href="/contact">contact form</a> on our website.</p>
 
         <h2>7. Contact</h2>
-        <p>For privacy concerns: <a href="mailto:privacy@leanon.app">privacy@leanon.app</a></p>
+        <p>For privacy concerns, please use the <a href="/contact">contact form</a> on our website.</p>
       </div>
     </>
   )

@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
+import { LANGUAGES } from '@/lib/constants'
 
 type Listener = {
   id: string
@@ -13,6 +14,7 @@ type Listener = {
   rate_per_min: number
   is_available: boolean
   specialty_tags: string[]
+  languages_spoken: string[]
   avatar_url?: string
 }
 
@@ -85,6 +87,7 @@ function BrowseContent() {
   const client  = createClient()
 
   const [tag, setTag]         = useState(params.get('topic') || 'all')
+  const [lang, setLang]       = useState('all')
   const [query, setQuery]     = useState('')
   const [listeners, setListeners] = useState<Listener[]>([])
   const [loading, setLoading] = useState(true)
@@ -92,7 +95,7 @@ function BrowseContent() {
   const [incomingSession, setIncomingSession] = useState<any>(null)
   const channelRef = useRef<ReturnType<typeof client.channel> | null>(null)
 
-  useEffect(() => { loadListeners() }, [tag])
+  useEffect(() => { loadListeners() }, [tag, lang])
 
   useEffect(() => {
     client.auth.getUser().then(async ({data:{user}}) => {
@@ -129,10 +132,12 @@ function BrowseContent() {
       .order('rating', {ascending:false})
       .limit(20)
     if (tag !== 'all') q = q.contains('specialty_tags', [tag])
+    if (lang !== 'all') q = q.contains('languages_spoken', [lang])
     const {data} = await q
     setListeners((data || []).map((l) => ({
       ...l, name: (l.users as {name:string}|null)?.name || 'Listener',
       avatar_url: (l.users as {avatar_url?:string}|null)?.avatar_url,
+      languages_spoken: l.languages_spoken || [],
     })))
     setLoading(false)
   }
@@ -191,6 +196,16 @@ function BrowseContent() {
             </button>
           ))}
         </div>
+        <div className="tag-scroll" style={{marginTop:8}}>
+          <button className={`tag-pill${lang==='all'?' active':''}`} onClick={()=>setLang('all')}>
+            🌐 All languages
+          </button>
+          {LANGUAGES.map(l=>(
+            <button key={l.id} className={`tag-pill${lang===l.id?' active':''}`} onClick={()=>setLang(l.id)}>
+              {l.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="list">
@@ -198,9 +213,9 @@ function BrowseContent() {
           [1,2,3].map(i=><div key={i} className="skeleton"/>)
         ) : filtered.length === 0 ? (
           <div className="empty">
-            <div style={{fontSize:48,marginBottom:16}}>🦉</div>
-            <h3 style={{fontSize:18,fontWeight:800,marginBottom:8}}>No listeners yet</h3>
-            <p style={{fontSize:14,color:'var(--gray)',fontWeight:500}}>Be the first — or check back soon.</p>
+            <img src="/logo.png" alt="LeanOn" style={{height:64,marginBottom:16,opacity:0.6}} />
+            <h3 style={{fontSize:18,fontWeight:800,marginBottom:8}}>No listeners found</h3>
+            <p style={{fontSize:14,color:'var(--gray)',fontWeight:500}}>Try a different filter, or check back soon.</p>
           </div>
         ) : filtered.map(l => (
           <div key={l.id} className="card">
@@ -226,6 +241,10 @@ function BrowseContent() {
               {(l.specialty_tags||[]).slice(0,3).map((t) => {
                 const info = tagInfo(t)
                 return <span key={t} className="tag-badge">{info?.icon} {info?.label||t}</span>
+              })}
+              {(l.languages_spoken||[]).slice(0,2).map((lid) => {
+                const info = LANGUAGES.find(x=>x.id===lid)
+                return <span key={lid} className="tag-badge" style={{background:'rgba(255,153,51,.1)',color:'#7A4A00'}}>🌐 {info?.label||lid}</span>
               })}
             </div>
             <div className="btns">

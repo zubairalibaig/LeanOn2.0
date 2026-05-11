@@ -121,5 +121,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true })
   }
 
+  if (action === 'deactivate_user') {
+    await admin.from('users').update({ is_active: false }).eq('id', id)
+    await admin.from('listener_profiles').update({ is_active: false, is_available: false }).eq('user_id', id)
+    await admin.auth.admin.signOut(id, 'global')
+    return NextResponse.json({ ok: true })
+  }
+
+  if (action === 'reactivate_user') {
+    await admin.from('users').update({ is_active: true }).eq('id', id)
+    await admin.from('listener_profiles').update({ is_active: true }).eq('user_id', id)
+    return NextResponse.json({ ok: true })
+  }
+
   return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
 }

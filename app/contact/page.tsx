@@ -15,12 +15,6 @@ const S = `
   .back{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:var(--gray);margin-bottom:28px;}
   h1{font-size:28px;font-weight:900;color:var(--navy);margin-bottom:8px;}
   .sub{font-size:15px;color:var(--gray);font-weight:500;margin-bottom:32px;line-height:1.6;}
-  .contact-cards{display:flex;flex-direction:column;gap:12px;margin-bottom:36px;}
-  .contact-card{background:white;border:1.5px solid var(--border);border-radius:18px;padding:18px;display:flex;gap:14px;align-items:center;}
-  .contact-icon{width:44px;height:44px;border-radius:12px;background:rgba(26,143,160,0.1);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
-  .contact-title{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:2px;}
-  .contact-val{font-size:13px;color:var(--teal);font-weight:600;}
-  .contact-sub{font-size:12px;color:var(--gray);font-weight:500;margin-top:2px;}
   .form-card{background:white;border:1.5px solid var(--border);border-radius:20px;padding:24px;}
   .form-card h2{font-size:18px;font-weight:800;color:var(--navy);margin-bottom:20px;}
   .label{font-size:13px;font-weight:800;color:var(--navy);margin-bottom:8px;display:block;}
@@ -43,7 +37,6 @@ export default function ContactPage() {
   const [type, setType]       = useState('general')
   const [message, setMessage] = useState('')
   const [sent, setSent]       = useState(false)
-
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
 
@@ -76,24 +69,7 @@ export default function ContactPage() {
       <div className="page">
         <a href="/" className="back">← Back to home</a>
         <h1>Get in touch</h1>
-        <p className="sub">Have a question, feedback, or issue? We reply within 24 hours.</p>
-
-        <div className="contact-cards">
-          {[
-            {icon:'📧',title:'Email us',val:'hello@leanon.app',sub:'General enquiries and feedback'},
-            {icon:'🔒',title:'Privacy concerns',val:'privacy@leanon.app',sub:'Data requests and privacy queries'},
-            {icon:'⚖️',title:'Legal',val:'legal@leanon.app',sub:'Terms, disputes, compliance'},
-          ].map((c,i)=>(
-            <div key={i} className="contact-card">
-              <div className="contact-icon">{c.icon}</div>
-              <div>
-                <div className="contact-title">{c.title}</div>
-                <div className="contact-val">{c.val}</div>
-                <div className="contact-sub">{c.sub}</div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <p className="sub">Have a question, feedback, or issue? We&apos;ll get back to you within 24 hours.</p>
 
         <div className="form-card">
           <h2>Send us a message</h2>
@@ -116,6 +92,7 @@ export default function ContactPage() {
                 <option value="listener">Question as a listener</option>
                 <option value="refund">Refund request</option>
                 <option value="safety">Safety concern</option>
+                <option value="legal">Legal / compliance</option>
                 <option value="press">Press / media</option>
                 <option value="partnership">Partnership</option>
               </select>

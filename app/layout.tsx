@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'LeanOn — Someone to lean on, anytime',
   description: "Talk to real people who have been through what you're going through. Peer listeners available 24/7. Start free.",
   manifest: '/manifest.json',
-  icons: { icon: '/favicon.ico' },
+  icons: { icon: '/logo.png', apple: '/logo.png' },
   openGraph: {
     title: 'LeanOn',
     description: 'Someone to lean on, anytime.',

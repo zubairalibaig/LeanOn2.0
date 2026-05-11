@@ -35,6 +35,13 @@ a{text-decoration:none;color:inherit;}
 .go-btn{background:var(--navy);color:white;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;padding:9px 16px;border-radius:10px;border:none;cursor:pointer;white-space:nowrap;}
 .logout-btn{width:100%;background:white;color:#E53E3E;font-family:'Nunito',sans-serif;font-weight:700;font-size:15px;padding:14px;border-radius:14px;border:1.5px solid #FED7D7;cursor:pointer;transition:all .2s;}
 .logout-btn:hover{background:#FFF5F5;}
+.delete-btn{width:100%;background:transparent;color:#aaa;font-family:'Nunito',sans-serif;font-weight:600;font-size:13px;padding:10px;border-radius:14px;border:none;cursor:pointer;margin-top:8px;transition:color .2s;}
+.delete-btn:hover{color:#E53E3E;}
+.confirm-box{background:#FFF0F0;border:1.5px solid #FFCDD2;border-radius:16px;padding:18px;margin-top:12px;}
+.confirm-box p{font-size:13px;color:#7A2020;font-weight:600;line-height:1.6;margin-bottom:14px;}
+.confirm-actions{display:flex;gap:10px;}
+.confirm-yes{flex:1;background:#E53E3E;color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;padding:11px;border-radius:10px;border:none;cursor:pointer;}
+.confirm-no{flex:1;background:white;color:var(--navy);font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;padding:11px;border-radius:10px;border:1.5px solid var(--border);cursor:pointer;}
 .loading{text-align:center;padding:60px 20px;font-size:16px;font-weight:600;color:var(--gray);}
 `
 
@@ -53,6 +60,8 @@ export default function ProfilePage() {
   const [editingName, setEditingName] = useState(false)
   const [nameInput, setNameInput] = useState('')
   const [saving, setSaving] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     async function loadProfile() {
@@ -90,6 +99,13 @@ export default function ProfilePage() {
   }
 
   async function handleLogout() {
+    await supabase.auth.signOut()
+    router.push('/')
+  }
+
+  async function handleDeleteAccount() {
+    setDeleting(true)
+    await fetch('/api/account', { method: 'POST' })
     await supabase.auth.signOut()
     router.push('/')
   }
@@ -167,6 +183,24 @@ export default function ProfilePage() {
           <button className="logout-btn" onClick={handleLogout}>
             Sign out
           </button>
+
+          <button className="delete-btn" onClick={() => setShowDeleteConfirm(true)}>
+            Delete account
+          </button>
+
+          {showDeleteConfirm && (
+            <div className="confirm-box">
+              <p>Are you sure you want to delete your account? Your data will be deactivated. This cannot be undone.</p>
+              <div className="confirm-actions">
+                <button className="confirm-yes" onClick={handleDeleteAccount} disabled={deleting}>
+                  {deleting ? 'Deleting...' : 'Yes, delete'}
+                </button>
+                <button className="confirm-no" onClick={() => setShowDeleteConfirm(false)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </>

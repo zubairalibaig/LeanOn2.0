@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
-import { MIN_LISTENER_RATE, MAX_LISTENER_RATE } from '@/lib/constants'
+import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, LANGUAGES } from '@/lib/constants'
 
 const sb = createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -88,6 +88,7 @@ export default function BecomeListenerPage() {
   const [bio, setBio]     = useState('')
   const [tags, setTags]   = useState<string[]>([])
   const [rate, setRate]   = useState('10')
+  const [langs, setLangs] = useState<string[]>(['english'])
   const [aadhaar, setAadhaar] = useState('')
   const [bank, setBank]   = useState('')
   const [ifsc, setIfsc]   = useState('')
@@ -103,6 +104,9 @@ export default function BecomeListenerPage() {
 
   function toggleTag(t: string) {
     setTags(p => p.includes(t) ? p.filter(x => x !== t) : [...p, t])
+  }
+  function toggleLang(l: string) {
+    setLangs(p => p.includes(l) ? (p.length > 1 ? p.filter(x => x !== l) : p) : [...p, l])
   }
 
   async function submit() {
@@ -122,12 +126,13 @@ export default function BecomeListenerPage() {
       const aadhaarLast4  = aadhaarDigits.slice(-4)
 
       const { error: profileErr } = await sb.from('listener_profiles').upsert({
-        user_id:         user.id,
-        bio:             bio.trim(),
-        specialty_tags:  tags,
-        rate_per_min:    rateNum,
-        is_approved:     false,
-        is_available:    false,
+        user_id:          user.id,
+        bio:              bio.trim(),
+        specialty_tags:   tags,
+        languages_spoken: langs,
+        rate_per_min:     rateNum,
+        is_approved:      false,
+        is_available:     false,
       }, { onConflict: 'user_id' })
 
       if (profileErr) throw profileErr
@@ -222,7 +227,15 @@ export default function BecomeListenerPage() {
                 </button>
               ))}
             </div>
-            <button className="btn" onClick={()=>setStep(2)} disabled={!name||!phone||bio.length<50||tags.length===0}>
+            <label className="label" style={{marginTop:4}}>Languages you can listen in 🌐 (select all)</label>
+            <div className="tag-grid">
+              {LANGUAGES.map(l => (
+                <button key={l.id} className={`tag-chip${langs.includes(l.id)?' sel':''}`} onClick={()=>toggleLang(l.id)}>
+                  {l.label}
+                </button>
+              ))}
+            </div>
+            <button className="btn" onClick={()=>setStep(2)} disabled={!name||!phone||bio.length<50||tags.length===0||langs.length===0}>
               Next: Set your rate →
             </button>
           </>

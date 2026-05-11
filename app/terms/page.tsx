@@ -74,7 +74,7 @@ export default function TermsPage() {
         <p>These terms are governed by the laws of India. Disputes will be subject to the jurisdiction of courts in Bengaluru, Karnataka.</p>
 
         <h2>9. Contact</h2>
-        <p>For legal queries: <a href="mailto:legal@leanon.app">legal@leanon.app</a></p>
+        <p>For legal or compliance queries, please use the <a href="/contact">contact form</a> on our website and select &ldquo;Legal&rdquo; as the topic.</p>
       </div>
     </>
   )

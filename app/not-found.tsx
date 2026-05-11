@@ -8,7 +8,7 @@ const S = `
     background:radial-gradient(ellipse 90% 55% at 0% 0%, #C2E4F2 0%, #DAEEF8 22%, #FFFFFF 58%);}
   a{text-decoration:none;}
   .wrap{text-align:center;padding:40px 24px;max-width:400px;}
-  .owl{font-size:72px;margin-bottom:24px;}
+  .logo{height:72px;margin-bottom:24px;opacity:0.7;}
   h1{font-size:80px;font-weight:900;color:#0F4867;line-height:1;margin-bottom:8px;}
   h2{font-size:22px;font-weight:800;color:#0F4867;margin-bottom:12px;}
   p{font-size:15px;color:#5A7A8A;font-weight:500;line-height:1.6;margin-bottom:32px;}
@@ -22,9 +22,9 @@ export default function NotFound() {
     <>
       <style>{S}</style>
       <div className="wrap">
-        <div className="owl">🦉</div>
+        <img src="/logo.png" alt="LeanOn" className="logo" />
         <h1>404</h1>
-        <h2>Hoot! Page not found.</h2>
+        <h2>Page not found.</h2>
         <p>The page you&apos;re looking for doesn&apos;t exist — but someone to talk to always does.</p>
         <div className="btns">
           <a href="/"><button className="btn-primary">Go home →</button></a>

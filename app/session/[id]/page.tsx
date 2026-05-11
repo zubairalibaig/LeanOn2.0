@@ -15,9 +15,9 @@ const S = `
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{--navy:#0F4867;--teal:#1A8FA0;--orange:#FF9933;--gray:#5A7A8A;--border:#D5EEF6;--light:#F0F8FC;}
 body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:antialiased;}
-.wrap{display:flex;flex-direction:column;height:100dvh;max-width:480px;margin:0 auto;background:#ECE5DD;}
-.hdr{background:#075E54;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
-.av{width:40px;height:40px;border-radius:50%;background:#128C7E;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:white;flex-shrink:0;}
+.wrap{display:flex;flex-direction:column;height:100dvh;max-width:480px;margin:0 auto;background:#E8F4FD;}
+.hdr{background:#0F4867;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.av{width:40px;height:40px;border-radius:50%;background:#1A8FA0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:white;flex-shrink:0;}
 .hdr-info{flex:1;}
 .hdr-name{font-size:16px;font-weight:700;color:white;}
 .hdr-sub{font-size:12px;color:rgba(255,255,255,0.7);font-weight:500;}
@@ -27,24 +27,24 @@ body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:an
 .msgs{flex:1;overflow-y:auto;padding:12px 8px;display:flex;flex-direction:column;gap:3px;}
 .msgs::-webkit-scrollbar{width:3px;}
 .msgs::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15);border-radius:2px;}
-.date-pill{align-self:center;background:rgba(255,255,255,0.85);color:#667781;font-size:12px;font-weight:600;padding:4px 12px;border-radius:8px;margin:8px 0;box-shadow:0 1px 2px rgba(0,0,0,0.1);}
+.date-pill{align-self:center;background:rgba(255,255,255,0.85);color:#4A6B7E;font-size:12px;font-weight:600;padding:4px 12px;border-radius:8px;margin:8px 0;box-shadow:0 1px 2px rgba(0,0,0,0.1);}
 .msg-wrap{display:flex;flex-direction:column;max-width:72%;}
 .msg-wrap.me{align-self:flex-end;align-items:flex-end;}
 .msg-wrap.them{align-self:flex-start;align-items:flex-start;}
 .bubble{padding:8px 12px 6px;border-radius:8px;position:relative;box-shadow:0 1px 2px rgba(0,0,0,0.13);}
-.bubble.me{background:#DCF8C6;border-top-right-radius:2px;}
+.bubble.me{background:#C5E3FF;border-top-right-radius:2px;}
 .bubble.them{background:#FFFFFF;border-top-left-radius:2px;}
 .bubble.temp{opacity:0.65;}
-.bubble-text{font-size:14px;font-weight:500;line-height:1.5;color:#111B21;word-break:break-word;}
+.bubble-text{font-size:14px;font-weight:500;line-height:1.5;color:#0F2233;word-break:break-word;}
 .bubble-footer{display:flex;align-items:center;justify-content:flex-end;gap:4px;margin-top:2px;}
-.bubble-time{font-size:11px;color:#667781;font-weight:500;}
-.ticks{font-size:13px;line-height:1;color:#8696A0;}
-.input-bar{padding:8px 10px;background:#F0F2F5;display:flex;align-items:flex-end;gap:8px;flex-shrink:0;}
-.msg-input{flex:1;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:15px;color:#111B21;border:none;border-radius:24px;outline:none;resize:none;max-height:100px;background:white;line-height:1.4;box-shadow:0 1px 2px rgba(0,0,0,0.1);}
-.send{width:44px;height:44px;border-radius:50%;background:#075E54;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.2);}
+.bubble-time{font-size:11px;color:#4A6B7E;font-weight:500;}
+.ticks{font-size:13px;line-height:1;color:#1A8FA0;}
+.input-bar{padding:8px 10px;background:#D6EAF8;display:flex;align-items:flex-end;gap:8px;flex-shrink:0;}
+.msg-input{flex:1;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:15px;color:#0F2233;border:none;border-radius:24px;outline:none;resize:none;max-height:100px;background:white;line-height:1.4;box-shadow:0 1px 2px rgba(0,0,0,0.1);}
+.send{width:44px;height:44px;border-radius:50%;background:#0F4867;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.2);}
 .send svg{width:22px;height:22px;}
 .send:disabled{opacity:.5;cursor:not-allowed;}
-.note{padding:8px 16px;text-align:center;font-size:12px;color:#667781;font-weight:600;background:rgba(255,255,255,0.6);flex-shrink:0;}
+.note{padding:8px 16px;text-align:center;font-size:12px;color:#4A6B7E;font-weight:600;background:rgba(255,255,255,0.6);flex-shrink:0;}
 .end-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;background:white;}
 .end-icon{font-size:56px;margin-bottom:20px;}
 .end-h{font-size:24px;font-weight:900;color:var(--navy);margin-bottom:8px;}
@@ -395,7 +395,7 @@ function SessionContent() {
     <>
       <style>{S}</style>
       <div className="wrap">
-        <div className="hdr" style={{ background: '#0F4867' }}>
+        <div className="hdr">
           <div className="av">{ini(listenerName)}</div>
           <div className="hdr-info">
             <div className="hdr-name">{listenerName}</div>

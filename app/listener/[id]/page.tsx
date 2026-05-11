@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
+import { LANGUAGES } from '@/lib/constants'
 
 type ListenerProfile = {
   id: string
@@ -13,6 +14,7 @@ type ListenerProfile = {
   rate_per_min: number
   is_available: boolean
   specialty_tags: string[]
+  languages_spoken: string[]
 }
 
 type Review = {
@@ -173,6 +175,10 @@ export default function ListenerPage({ params }: { params: {id:string} }) {
             {(listener.specialty_tags||[]).map((t:string) => (
               <span key={t} className="tag">{TAGS[t]||t}</span>
             ))}
+            {(listener.languages_spoken||[]).map((lid:string) => {
+              const info = LANGUAGES.find(x=>x.id===lid)
+              return <span key={lid} className="tag" style={{background:'rgba(255,153,51,.12)',color:'#7A4A00'}}>🌐 {info?.label||lid}</span>
+            })}
           </div>
           <p className="bio">{listener.bio}</p>
         </div>
