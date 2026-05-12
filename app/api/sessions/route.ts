@@ -20,6 +20,20 @@ export async function POST(req: NextRequest) {
     const sb     = createAdminClient()
     const isFree = durationMins === FREE_SESSION_MINS
 
+    // Block paid sessions if listener already has an active paid session
+    if (!isFree) {
+      const { data: activeSessions } = await sb
+        .from('sessions')
+        .select('id')
+        .eq('listener_id', listenerId)
+        .eq('status', 'active')
+        .eq('is_free_trial', false)
+        .limit(1)
+      if (activeSessions && activeSessions.length > 0) {
+        return NextResponse.json({ error: 'listener_busy', message: 'This listener is in a session right now. Please try again shortly.' }, { status: 409 })
+      }
+    }
+
     const { data: lp } = await sb
       .from('listener_profiles')
       .select('rate_per_min')

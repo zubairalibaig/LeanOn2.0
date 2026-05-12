@@ -220,7 +220,7 @@ function BrowseContent() {
             <p style={{fontSize:14,color:'var(--gray)',fontWeight:500}}>Try a different filter, or check back soon.</p>
           </div>
         ) : filtered.map(l => (
-          <div key={l.id} className="card">
+          <div key={l.id} className="card" onClick={()=>router.push(`/listener/${l.user_id}`)}>
             <div className="card-top">
               <div className="av">
                 {l.avatar_url
@@ -253,10 +253,10 @@ function BrowseContent() {
               })}
             </div>
             <div className="btns">
-              <button className="btn-chat" onClick={()=>router.push(`/listener/${l.user_id}?type=text`)}>
+              <button className="btn-chat" onClick={e=>{e.stopPropagation();router.push(`/listener/${l.user_id}?type=text`)}}>
                 💬 Chat — ₹{Math.round(l.rate_per_min*15)+15}
               </button>
-              <button className="btn-voice" onClick={()=>router.push(`/listener/${l.user_id}?type=voice`)}>
+              <button className="btn-voice" onClick={e=>{e.stopPropagation();router.push(`/listener/${l.user_id}?type=voice`)}}>
                 🎙️ Voice
               </button>
             </div>

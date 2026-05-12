@@ -2,11 +2,23 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
+import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE } from '@/lib/constants'
 
 const sb = createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
+
+const SPECIALTY_TAGS = [
+  {id:'loneliness',label:'Loneliness 🌙'},
+  {id:'stress',label:'Work stress 💼'},
+  {id:'career',label:'Career confusion 🧭'},
+  {id:'relationships',label:'Relationships 💬'},
+  {id:'grief',label:'Grief & loss 🌿'},
+  {id:'students',label:'Student pressure 📚'},
+  {id:'startup',label:'Startup journey 🚀'},
+  {id:'general',label:'Just need to talk ☕'},
+]
 
 const S = `
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
@@ -46,7 +58,8 @@ const S = `
   .session-earn{font-size:15px;font-weight:800;color:#34C759;}
   .profile-section{background:white;border:1.5px solid var(--border);border-radius:18px;padding:18px;margin-bottom:24px;}
   .profile-row{display:flex;align-items:center;gap:14px;}
-  .profile-avatar{width:52px;height:52px;border-radius:16px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:var(--navy);flex-shrink:0;}
+  .profile-avatar{width:52px;height:52px;border-radius:16px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:var(--navy);flex-shrink:0;overflow:hidden;}
+  .profile-avatar img{width:100%;height:100%;object-fit:cover;border-radius:16px;}
   .profile-name{font-size:16px;font-weight:800;color:var(--navy);}
   .profile-rate{font-size:13px;color:var(--gray);font-weight:600;}
   .profile-actions{display:flex;gap:8px;margin-top:14px;}
@@ -62,12 +75,13 @@ const S = `
   .btn-apply{background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;padding:14px 32px;border-radius:50px;border:none;cursor:pointer;}
   .skeleton{background:linear-gradient(90deg,#e8e8e4 25%,#f2f2ee 50%,#e8e8e4 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:12px;}
   @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-  .modal-overlay{position:fixed;inset:0;background:rgba(15,72,103,0.55);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn .2s ease;}
+  .modal-overlay{position:fixed;inset:0;background:rgba(15,72,103,0.55);z-index:200;display:flex;align-items:flex-end;justify-content:center;padding:0;animation:fadeIn .2s ease;}
   @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-  .modal-card{background:white;border-radius:24px;padding:28px 24px;max-width:360px;width:100%;box-shadow:0 12px 48px rgba(15,72,103,.25);animation:slideUp .25s ease;}
-  @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .modal-card{background:white;border-radius:24px 24px 0 0;padding:28px 24px 40px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;animation:slideUp .25s ease;}
+  @keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+  .modal-title{font-size:20px;font-weight:900;color:var(--navy);margin-bottom:20px;}
   .modal-icon{width:56px;height:56px;border-radius:18px;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 16px;}
-  .modal-title{font-size:20px;font-weight:900;color:var(--navy);text-align:center;margin-bottom:8px;}
+  .modal-title2{font-size:20px;font-weight:900;color:var(--navy);text-align:center;margin-bottom:8px;}
   .modal-sub{font-size:14px;color:var(--gray);font-weight:600;text-align:center;margin-bottom:20px;}
   .modal-detail{display:flex;justify-content:space-around;background:var(--light);border-radius:14px;padding:14px;margin-bottom:20px;}
   .modal-detail-item{text-align:center;}
@@ -78,6 +92,23 @@ const S = `
   .btn-dismiss{width:100%;background:transparent;color:var(--gray);font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;padding:10px;border-radius:14px;border:1.5px solid var(--border);cursor:pointer;}
   .countdown-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:16px;}
   .countdown-fill{height:100%;background:var(--orange);border-radius:2px;transition:width 1s linear;}
+  .field-label{font-size:13px;font-weight:800;color:var(--navy);margin-bottom:6px;}
+  .field-group{margin-bottom:18px;}
+  .field-input{width:100%;padding:12px 14px;font-family:'Nunito',sans-serif;font-size:14px;color:var(--navy);border:1.5px solid var(--border);border-radius:12px;outline:none;resize:vertical;}
+  .field-input:focus{border-color:var(--navy);}
+  .tag-grid{display:flex;flex-wrap:wrap;gap:8px;}
+  .tag-chip{padding:7px 14px;border:1.5px solid var(--border);border-radius:50px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;color:var(--gray);background:white;cursor:pointer;transition:all .15s;}
+  .tag-chip.sel{background:var(--navy);color:white;border-color:var(--navy);}
+  .rate-row{display:flex;align-items:center;gap:12px;}
+  .rate-input{width:100px;padding:12px 14px;font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;color:var(--navy);border:1.5px solid var(--border);border-radius:12px;outline:none;text-align:center;}
+  .rate-input:focus{border-color:var(--navy);}
+  .btn-save-profile{width:100%;background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;padding:15px;border-radius:14px;border:none;cursor:pointer;margin-top:8px;}
+  .btn-save-profile:disabled{opacity:.5;cursor:not-allowed;}
+  .btn-cancel{width:100%;background:transparent;color:var(--gray);font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;padding:10px;border-radius:14px;border:1.5px solid var(--border);cursor:pointer;margin-top:8px;}
+  .avatar-edit{display:flex;flex-direction:column;align-items:center;margin-bottom:20px;}
+  .avatar-edit-img{width:72px;height:72px;border-radius:20px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:24px;color:var(--navy);overflow:hidden;margin-bottom:8px;}
+  .avatar-edit-img img{width:100%;height:100%;object-fit:cover;border-radius:20px;}
+  .avatar-upload-btn{font-size:12px;font-weight:700;color:var(--navy);background:var(--light);border:none;cursor:pointer;padding:7px 16px;border-radius:8px;}
 `
 
 function ini(n: string) {
@@ -108,6 +139,16 @@ export default function DashboardPage() {
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const channelRef   = useRef<ReturnType<typeof sb.channel> | null>(null)
 
+  // Edit profile state
+  const [showEdit, setShowEdit]       = useState(false)
+  const [editBio, setEditBio]         = useState('')
+  const [editTags, setEditTags]       = useState<string[]>([])
+  const [editLangs, setEditLangs]     = useState<string[]>([])
+  const [editRate, setEditRate]       = useState('')
+  const [editAvatar, setEditAvatar]   = useState<string | null>(null)
+  const [uploadingAv, setUploadingAv] = useState(false)
+  const [savingEdit, setSavingEdit]   = useState(false)
+
   useEffect(() => { loadData() }, [])
 
   // Cleanup realtime on unmount
@@ -117,6 +158,16 @@ export default function DashboardPage() {
       if (countdownRef.current) clearInterval(countdownRef.current)
     }
   }, [])
+
+  // Auto-offline when dashboard is closed/navigated away
+  useEffect(() => {
+    function handleUnload() {
+      if (!user) return
+      navigator.sendBeacon('/api/presence', JSON.stringify({ userId: user.id, available: false }))
+    }
+    window.addEventListener('beforeunload', handleUnload)
+    return () => window.removeEventListener('beforeunload', handleUnload)
+  }, [user])
 
   function startCountdown(onExpire: () => void) {
     setCountdown(30)
@@ -143,19 +194,23 @@ export default function DashboardPage() {
     if (!u) { router.push('/auth?redirect=/dashboard'); return }
     setUser(u)
 
-    // Load listener profile
     const { data: lp } = await sb
       .from('listener_profiles')
-      .select('*, users!inner(name, wallet_balance)')
+      .select('*, users!inner(name, wallet_balance, avatar_url)')
       .eq('user_id', u.id)
       .single()
 
     if (lp) {
-      setProfile({ ...lp, name: lp.users?.name || 'Listener', balance: lp.users?.wallet_balance || 0 })
+      const avatarUrl = (lp.users as any)?.avatar_url || null
+      setProfile({ ...lp, name: (lp.users as any)?.name || 'Listener', balance: (lp.users as any)?.wallet_balance || 0, avatar_url: avatarUrl })
       setAvail(lp.is_available)
+      setEditBio(lp.bio || '')
+      setEditTags(lp.specialty_tags || [])
+      setEditLangs(lp.languages_spoken || ['english'])
+      setEditRate(String(lp.rate_per_min || 10))
+      setEditAvatar(avatarUrl)
     }
 
-    // Load recent completed sessions
     const { data: recent } = await sb
       .from('sessions')
       .select('*, users!seeker_id(name)')
@@ -167,7 +222,6 @@ export default function DashboardPage() {
     if (recent) setSessions(recent)
     setLoading(false)
 
-    // Subscribe to incoming session requests for this listener
     if (channelRef.current) sb.removeChannel(channelRef.current)
     const channel = sb.channel('incoming-sessions')
       .on('postgres_changes', {
@@ -187,25 +241,88 @@ export default function DashboardPage() {
     if (!user) return
     const next = !avail
     setAvail(next)
-    await sb.from('listener_profiles')
-      .update({ is_available: next })
-      .eq('user_id', user.id)
+    await sb.from('listener_profiles').update({ is_available: next }).eq('user_id', user.id)
   }
 
   async function requestPayout() {
     if (!user || !profile) return
     setPayoutLoading(true)
-    // Log payout request — admin processes manually within 3 days
-    await sb.from('payout_requests').insert({
-      user_id: user.id,
-      amount:  profile.balance,
-      status:  'pending',
-    })
+    await sb.from('payout_requests').insert({ user_id: user.id, amount: profile.balance, status: 'pending' })
     setPayoutLoading(false)
     alert(`Payout request submitted! ₹${profile.balance} will be transferred to your bank within 3 business days.`)
   }
 
-  // Calculate stats from real sessions
+  function openEdit() {
+    setEditBio(profile.bio || '')
+    setEditTags(profile.specialty_tags || [])
+    setEditLangs(profile.languages_spoken || ['english'])
+    setEditRate(String(profile.rate_per_min || 10))
+    setEditAvatar(profile.avatar_url || null)
+    setShowEdit(true)
+  }
+
+  async function uploadAvatar(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file || !user) return
+    if (file.size > 2 * 1024 * 1024) { alert('Photo must be under 2 MB'); return }
+    setUploadingAv(true)
+    try {
+      const ext = file.name.split('.').pop()
+      const path = `${user.id}.${ext}`
+      const { error: upErr } = await sb.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type })
+      if (upErr) throw upErr
+      const { data: { publicUrl } } = sb.storage.from('avatars').getPublicUrl(path)
+      const url = `${publicUrl}?t=${Date.now()}`
+      await sb.from('users').update({ avatar_url: url }).eq('id', user.id)
+      setEditAvatar(url)
+    } catch (err) {
+      console.error('Avatar upload error:', err)
+      alert('Upload failed. Make sure the avatars storage bucket exists in Supabase.')
+    } finally {
+      setUploadingAv(false)
+    }
+  }
+
+  function toggleTag(id: string) {
+    setEditTags(prev => prev.includes(id) ? prev.filter(t => t !== id) : [...prev, id])
+  }
+
+  function toggleLang(id: string) {
+    setEditLangs(prev => {
+      if (prev.includes(id)) {
+        if (prev.length <= 1) return prev
+        return prev.filter(l => l !== id)
+      }
+      return [...prev, id]
+    })
+  }
+
+  async function saveProfile() {
+    if (!user) return
+    const rate = parseInt(editRate)
+    if (isNaN(rate) || rate < MIN_LISTENER_RATE || rate > MAX_LISTENER_RATE) {
+      alert(`Rate must be between ₹${MIN_LISTENER_RATE} and ₹${MAX_LISTENER_RATE} per minute`)
+      return
+    }
+    setSavingEdit(true)
+    await sb.from('listener_profiles').update({
+      bio: editBio.trim(),
+      specialty_tags: editTags,
+      languages_spoken: editLangs,
+      rate_per_min: rate,
+    }).eq('user_id', user.id)
+    setProfile((prev: any) => ({
+      ...prev,
+      bio: editBio.trim(),
+      specialty_tags: editTags,
+      languages_spoken: editLangs,
+      rate_per_min: rate,
+      avatar_url: editAvatar,
+    }))
+    setSavingEdit(false)
+    setShowEdit(false)
+  }
+
   const thisMonthSessions = sessions.filter(s => {
     if (!s.ended_at) return false
     const d = new Date(s.ended_at)
@@ -255,7 +372,7 @@ export default function DashboardPage() {
         <div className="modal-overlay" onClick={dismissIncoming}>
           <div className="modal-card" onClick={e => e.stopPropagation()}>
             <div className="modal-icon">📞</div>
-            <div className="modal-title">New session request!</div>
+            <div className="modal-title2">New session request!</div>
             <div className="modal-sub">Someone wants to connect with you right now.</div>
             <div className="countdown-bar">
               <div className="countdown-fill" style={{ width: `${(countdown / 30) * 100}%` }} />
@@ -288,6 +405,96 @@ export default function DashboardPage() {
         </div>
       )}
 
+      {/* Edit profile bottom sheet */}
+      {showEdit && (
+        <div className="modal-overlay" onClick={() => setShowEdit(false)}>
+          <div className="modal-card" onClick={e => e.stopPropagation()}>
+            <div className="modal-title">Edit listener profile</div>
+
+            {/* Avatar */}
+            <div className="avatar-edit">
+              <div className="avatar-edit-img">
+                {editAvatar
+                  ? <img src={editAvatar} alt="avatar" />
+                  : ini(profile.name)}
+              </div>
+              <label style={{cursor:'pointer'}}>
+                <input type="file" accept="image/*" style={{display:'none'}} onChange={uploadAvatar} />
+                <span className="avatar-upload-btn">
+                  {uploadingAv ? 'Uploading...' : editAvatar ? 'Change photo' : '+ Add photo'}
+                </span>
+              </label>
+            </div>
+
+            {/* Bio */}
+            <div className="field-group">
+              <div className="field-label">Bio (introduce yourself)</div>
+              <textarea
+                className="field-input"
+                rows={3}
+                value={editBio}
+                onChange={e => setEditBio(e.target.value)}
+                placeholder="Share a little about your lived experience and how you can help..."
+              />
+            </div>
+
+            {/* Rate */}
+            <div className="field-group">
+              <div className="field-label">Your rate (₹{MIN_LISTENER_RATE}–₹{MAX_LISTENER_RATE}/min)</div>
+              <div className="rate-row">
+                <span style={{fontSize:20,fontWeight:900,color:'var(--navy)'}}>₹</span>
+                <input
+                  type="number"
+                  className="rate-input"
+                  value={editRate}
+                  min={MIN_LISTENER_RATE}
+                  max={MAX_LISTENER_RATE}
+                  onChange={e => setEditRate(e.target.value)}
+                />
+                <span style={{fontSize:14,color:'var(--gray)',fontWeight:600}}>/min</span>
+              </div>
+            </div>
+
+            {/* Specialty tags */}
+            <div className="field-group">
+              <div className="field-label">I can help with</div>
+              <div className="tag-grid">
+                {SPECIALTY_TAGS.map(t => (
+                  <button
+                    key={t.id}
+                    className={`tag-chip${editTags.includes(t.id) ? ' sel' : ''}`}
+                    onClick={() => toggleTag(t.id)}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Languages */}
+            <div className="field-group">
+              <div className="field-label">Languages I speak</div>
+              <div className="tag-grid">
+                {LANGUAGES.map(l => (
+                  <button
+                    key={l.id}
+                    className={`tag-chip${editLangs.includes(l.id) ? ' sel' : ''}`}
+                    onClick={() => toggleLang(l.id)}
+                  >
+                    {l.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button className="btn-save-profile" onClick={saveProfile} disabled={savingEdit}>
+              {savingEdit ? 'Saving...' : 'Save changes'}
+            </button>
+            <button className="btn-cancel" onClick={() => setShowEdit(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
+
       <div className="page">
         <div className="topbar">
           <h1>My Dashboard</h1>
@@ -305,7 +512,7 @@ export default function DashboardPage() {
           </div>
           <div className="stat-card">
             <div className="stat-label">Rating</div>
-            <div className="stat-value">{rating > 0 ? `${parseFloat(rating).toFixed(1)} ⭐` : '— ⭐'}</div>
+            <div className="stat-value">{rating > 0 ? `${(+rating).toFixed(1)} ⭐` : '— ⭐'}</div>
             <div className="stat-sub">{totalSessions} reviews</div>
           </div>
           <div className="stat-card">
@@ -351,7 +558,11 @@ export default function DashboardPage() {
         <div className="section-title">Your listener profile</div>
         <div className="profile-section">
           <div className="profile-row">
-            <div className="profile-avatar">{ini(profile.name)}</div>
+            <div className="profile-avatar">
+              {profile.avatar_url
+                ? <img src={profile.avatar_url} alt={profile.name} />
+                : ini(profile.name)}
+            </div>
             <div>
               <div className="profile-name">{profile.name}</div>
               <div className="profile-rate">
@@ -360,7 +571,7 @@ export default function DashboardPage() {
             </div>
           </div>
           <div className="profile-actions">
-            <button className="btn-edit" onClick={() => alert('Profile editing coming soon')}>✏️ Edit profile</button>
+            <button className="btn-edit" onClick={openEdit}>✏️ Edit profile</button>
             <button className="btn-share" onClick={() => {
               navigator.clipboard?.writeText(`https://leanon.app/listener/${user?.id}`)
               alert('Profile link copied!')

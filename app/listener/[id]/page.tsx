@@ -147,6 +147,7 @@ export default function ListenerPage({ params }: { params: {id:string} }) {
     const data = await res.json()
     setLoading(false)
     if (data.error === 'insufficient_balance') { router.push('/wallet'); return }
+    if (data.error === 'listener_busy') { alert(data.message || 'Listener is currently in a session. Please try again shortly.'); setLoading(false); return }
     if (data.sessionId) {
       router.push(`/session/${data.sessionId}?name=${encodeURIComponent(listener!.name)}&duration=${duration}&type=${type}`)
     }

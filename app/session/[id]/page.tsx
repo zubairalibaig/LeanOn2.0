@@ -135,15 +135,31 @@ function SessionContent() {
 
   const channelRef  = useRef<any>(null)
   const bottomRef   = useRef<HTMLDivElement>(null)
+  const userIdRef   = useRef<string | null>(null)
   const agoraRef    = useRef<{
     client: any
     micTrack: any
   } | null>(null)
 
+  function playBeep() {
+    try {
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.frequency.value = 880
+      gain.gain.setValueAtTime(0.3, ctx.currentTime)
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3)
+      osc.start()
+      osc.stop(ctx.currentTime + 0.3)
+    } catch { /* audio not available */ }
+  }
+
   // Auth — runs once
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) setUserId(user.id)
+      if (user) { setUserId(user.id); userIdRef.current = user.id }
     })
   }, [])
 
@@ -188,6 +204,8 @@ function SessionContent() {
             m.temp && m.sender_id === msg.sender_id && m.content === msg.content ? msg : m
           )
         }
+        // Beep only for incoming messages (not own messages)
+        if (msg.sender_id !== userIdRef.current) playBeep()
         return [...prev, msg]
       })
     }
