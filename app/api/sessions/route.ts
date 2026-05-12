@@ -20,6 +20,18 @@ export async function POST(req: NextRequest) {
     const sb     = createAdminClient()
     const isFree = durationMins === FREE_SESSION_MINS
 
+    // One free trial per user lifetime — prevents abuse
+    if (isFree) {
+      const { count } = await sb
+        .from('sessions')
+        .select('id', { count: 'exact', head: true })
+        .eq('seeker_id', user.id)
+        .eq('is_free_trial', true)
+      if ((count ?? 0) > 0) {
+        return NextResponse.json({ error: 'free_trial_used', message: 'You have already used your free 5-min trial.' }, { status: 400 })
+      }
+    }
+
     // Block paid sessions if listener already has an active paid session
     if (!isFree) {
       const { data: activeSessions } = await sb

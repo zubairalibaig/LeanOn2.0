@@ -23,54 +23,50 @@ async function requireAdmin() {
   return { error: null, status: 200, user }
 }
 
-export async function GET() {
+const PAGE_SIZE = 20
+
+export async function GET(req: NextRequest) {
   const { error, status } = await requireAdmin()
   if (error) return NextResponse.json({ error }, { status })
 
-  const admin = createAdminClient()
+  const url    = new URL(req.url)
+  const lpPage = parseInt(url.searchParams.get('lpPage') || '0')
+  const prPage = parseInt(url.searchParams.get('prPage') || '0')
+  const admin  = createAdminClient()
 
-  const { data: pendingListeners } = await admin
-    .from('listener_applications')
-    .select(`
-      id,
-      user_id,
-      status,
-      created_at,
-      listener_profiles (
-        bio,
-        rate_per_min,
-        specialty_tags,
-        aadhaar_last4,
-        bank_account,
-        ifsc_code,
-        phone
-      ),
-      users (
-        name,
-        email
-      )
-    `)
-    .eq('status', 'pending')
-    .order('created_at', { ascending: false })
+  const [{ data: pendingListeners, count: lpCount }, { data: pendingPayouts, count: prCount }, { data: refundRequests }] = await Promise.all([
+    admin
+      .from('listener_applications')
+      .select(`id, user_id, status, created_at,
+        listener_profiles ( bio, rate_per_min, specialty_tags, aadhaar_last4, bank_account, ifsc_code, phone ),
+        users ( name, email )`, { count: 'exact' })
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false })
+      .range(lpPage * PAGE_SIZE, lpPage * PAGE_SIZE + PAGE_SIZE - 1),
 
-  const { data: pendingPayouts } = await admin
-    .from('payout_requests')
-    .select(`
-      id,
-      amount,
-      status,
-      created_at,
-      users (
-        name,
-        email
-      )
-    `)
-    .eq('status', 'pending')
-    .order('created_at', { ascending: false })
+    admin
+      .from('payout_requests')
+      .select(`id, amount, status, created_at, users ( name, email )`, { count: 'exact' })
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false })
+      .range(prPage * PAGE_SIZE, prPage * PAGE_SIZE + PAGE_SIZE - 1),
+
+    admin
+      .from('refund_requests')
+      .select(`id, amount, reason, status, created_at, users ( name, email )`)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false })
+      .limit(50),
+  ])
 
   return NextResponse.json({
     pendingListeners: pendingListeners || [],
+    lpTotal: lpCount ?? 0,
+    lpPage,
     pendingPayouts: pendingPayouts || [],
+    prTotal: prCount ?? 0,
+    prPage,
+    refundRequests: refundRequests || [],
   })
 }
 
@@ -125,6 +121,17 @@ export async function POST(req: NextRequest) {
     await admin.from('users').update({ is_active: false }).eq('id', id)
     await admin.from('listener_profiles').update({ is_active: false, is_available: false }).eq('user_id', id)
     await admin.auth.admin.signOut(id, 'global')
+    return NextResponse.json({ ok: true })
+  }
+
+  if (action === 'complete_refund') {
+    await admin.from('refund_requests').update({ status: 'completed' }).eq('id', id)
+    // Zero out the user's wallet after refund is processed
+    const { data: rr } = await admin.from('refund_requests').select('user_id, amount').eq('id', id).single()
+    if (rr) {
+      await admin.from('users').update({ wallet_balance: 0 }).eq('id', rr.user_id)
+      await admin.from('wallet_transactions').insert({ user_id: rr.user_id, amount: -rr.amount, type: 'debit', description: 'Wallet refund processed' })
+    }
     return NextResponse.json({ ok: true })
   }
 

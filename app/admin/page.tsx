@@ -64,21 +64,23 @@ export default function AdminPage() {
   const [denied, setDenied]   = useState(false)
   const [busy, setBusy]       = useState<string | null>(null)
   const [toast, setToast]     = useState<string | null>(null)
+  const [lpPage, setLpPage]   = useState(0)
+  const [prPage, setPrPage]   = useState(0)
 
   const showToast = (msg: string) => {
     setToast(msg)
     setTimeout(() => setToast(null), 2500)
   }
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (lp = lpPage, pr = prPage) => {
     setLoading(true)
-    const res = await fetch('/api/admin')
+    const res = await fetch(`/api/admin?lpPage=${lp}&prPage=${pr}`)
     if (res.status === 401) { router.push('/auth?redirect=/admin'); return }
     if (res.status === 403) { setDenied(true); setLoading(false); return }
     const json = await res.json()
     setData(json)
     setLoading(false)
-  }, [router])
+  }, [router, lpPage, prPage])
 
   useEffect(() => { loadData() }, [loadData])
 
@@ -124,7 +126,8 @@ export default function AdminPage() {
     </>
   )
 
-  const { pendingListeners = [], pendingPayouts = [] } = data || {}
+  const { pendingListeners = [], pendingPayouts = [], refundRequests = [], lpTotal = 0, prTotal = 0 } = data || {}
+  const PAGE_SIZE = 20
 
   return (
     <>
@@ -147,6 +150,7 @@ export default function AdminPage() {
           {pendingListeners.length === 0 ? (
             <div className="empty">No pending applications — all caught up!</div>
           ) : pendingListeners.map((app: any) => {
+
             const lp = app.listener_profiles
             const u  = app.users
             return (
@@ -226,6 +230,15 @@ export default function AdminPage() {
           })}
         </div>
 
+        {/* Listener applications pagination */}
+        {lpTotal > PAGE_SIZE && (
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:8,marginBottom:8}}>
+            <button style={{background:'var(--light)',border:'1.5px solid var(--border)',borderRadius:10,padding:'8px 16px',fontFamily:'Nunito,sans-serif',fontWeight:700,fontSize:13,cursor:'pointer',color:'var(--navy)'}} disabled={lpPage===0} onClick={()=>{ const p=lpPage-1; setLpPage(p); loadData(p,prPage) }}>← Prev</button>
+            <span style={{fontSize:13,color:'var(--gray)',fontWeight:600}}>{lpPage*PAGE_SIZE+1}–{Math.min((lpPage+1)*PAGE_SIZE,lpTotal)} of {lpTotal}</span>
+            <button style={{background:'var(--light)',border:'1.5px solid var(--border)',borderRadius:10,padding:'8px 16px',fontFamily:'Nunito,sans-serif',fontWeight:700,fontSize:13,cursor:'pointer',color:'var(--navy)'}} disabled={(lpPage+1)*PAGE_SIZE>=lpTotal} onClick={()=>{ const p=lpPage+1; setLpPage(p); loadData(p,prPage) }}>Next →</button>
+          </div>
+        )}
+
         {/* Pending Payouts */}
         <div className="section">
           <div className="section-title">
@@ -253,6 +266,38 @@ export default function AdminPage() {
                   onClick={() => doAction('complete_payout', p.id, `Marked ₹${p.amount} payout complete`)}
                 >
                   {busy === `complete_payout:${p.id}` ? 'Saving…' : 'Mark Complete'}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* Payout pagination */}
+        {prTotal > PAGE_SIZE && (
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:8,marginBottom:8}}>
+            <button style={{background:'var(--light)',border:'1.5px solid var(--border)',borderRadius:10,padding:'8px 16px',fontFamily:'Nunito,sans-serif',fontWeight:700,fontSize:13,cursor:'pointer',color:'var(--navy)'}} disabled={prPage===0} onClick={()=>{ const p=prPage-1; setPrPage(p); loadData(lpPage,p) }}>← Prev</button>
+            <span style={{fontSize:13,color:'var(--gray)',fontWeight:600}}>{prPage*PAGE_SIZE+1}–{Math.min((prPage+1)*PAGE_SIZE,prTotal)} of {prTotal}</span>
+            <button style={{background:'var(--light)',border:'1.5px solid var(--border)',borderRadius:10,padding:'8px 16px',fontFamily:'Nunito,sans-serif',fontWeight:700,fontSize:13,cursor:'pointer',color:'var(--navy)'}} disabled={(prPage+1)*PAGE_SIZE>=prTotal} onClick={()=>{ const p=prPage+1; setPrPage(p); loadData(lpPage,p) }}>Next →</button>
+          </div>
+        )}
+
+        {/* Refund Requests */}
+        <div className="section">
+          <div className="section-title">
+            Refund Requests
+            {refundRequests.length > 0 && <span className="count-badge">{refundRequests.length}</span>}
+          </div>
+          {refundRequests.length === 0 ? (
+            <div className="empty">No pending refund requests!</div>
+          ) : refundRequests.map((r: any) => (
+            <div key={r.id} className="payout-card">
+              <div className="payout-info">
+                <div className="payout-name">{r.users?.name || '—'}</div>
+                <div className="payout-meta">{r.users?.email || ''}{r.reason ? ` · "${r.reason}"` : ''}{r.created_at ? ` · ${fmtDate(r.created_at)}` : ''}</div>
+              </div>
+              <div style={{display:'flex',alignItems:'center',gap:14}}>
+                <div className="payout-amount">₹{r.amount}</div>
+                <button className="btn-complete" disabled={busy !== null} onClick={() => doAction('complete_refund', r.id, `Refund ₹${r.amount} marked complete`)}>
+                  {busy === `complete_refund:${r.id}` ? 'Saving…' : 'Mark Refunded'}
                 </button>
               </div>
             </div>

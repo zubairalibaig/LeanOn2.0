@@ -126,6 +126,8 @@ function SessionContent() {
   const [rating, setRating]   = useState(0)
   const [userId, setUserId]   = useState<string | null>(null)
   const [connected, setConnected] = useState(false)
+  // Resolved from DB so name survives page refresh
+  const [resolvedListenerName, setResolvedListenerName] = useState(listenerName)
 
   // Voice call state
   const [voiceStatus, setVoiceStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
@@ -163,11 +165,11 @@ function SessionContent() {
     })
   }, [])
 
-  // Sync timer from DB session record — prevents free time on refresh
+  // Sync timer + listener name from DB — survives page refresh
   useEffect(() => {
     if (!sessionId) return
     supabase.from('sessions')
-      .select('started_at, duration_mins')
+      .select('started_at, duration_mins, listener:users!listener_id(name)')
       .eq('id', sessionId)
       .single()
       .then(({ data }) => {
@@ -177,6 +179,8 @@ function SessionContent() {
           setSecs(remaining)
           if (remaining <= 0) setEnded(true)
         }
+        const name = (data?.listener as any)?.name
+        if (name) setResolvedListenerName(name)
       })
   }, [sessionId])
 
@@ -412,9 +416,9 @@ function SessionContent() {
       <style>{S}</style>
       <div className="wrap">
         <div className="hdr">
-          <div className="av">{ini(listenerName)}</div>
+          <div className="av">{ini(resolvedListenerName)}</div>
           <div className="hdr-info">
-            <div className="hdr-name">{listenerName}</div>
+            <div className="hdr-name">{resolvedListenerName}</div>
             <div className="hdr-sub">Session complete</div>
           </div>
         </div>
@@ -440,8 +444,8 @@ function SessionContent() {
     <>
       <style>{S}</style>
       <div className="voice-overlay">
-        <div className="voice-av">{ini(listenerName)}</div>
-        <div className="voice-name">{listenerName}</div>
+        <div className="voice-av">{ini(resolvedListenerName)}</div>
+        <div className="voice-name">{resolvedListenerName}</div>
 
         {voiceStatus === 'connecting' && (
           <div className="voice-status">Connecting…</div>
@@ -488,9 +492,9 @@ function SessionContent() {
       <style>{S}</style>
       <div className="wrap">
         <div className="hdr">
-          <div className="av">{ini(listenerName)}</div>
+          <div className="av">{ini(resolvedListenerName)}</div>
           <div className="hdr-info">
-            <div className="hdr-name">{listenerName}</div>
+            <div className="hdr-name">{resolvedListenerName}</div>
             <div className="hdr-sub">
               {connected ? '🟢 connected' : '⏳ connecting...'}
             </div>

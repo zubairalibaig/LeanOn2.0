@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, LANGUAGES } from '@/lib/constants'
@@ -94,6 +94,7 @@ export default function BecomeListenerPage() {
   const router  = useRouter()
   const [step, setStep]   = useState(1)
   const [name, setName]   = useState('')
+  const [guardChecked, setGuardChecked] = useState(false)
   const [phone, setPhone] = useState('')
   const [bio, setBio]     = useState('')
   const [tags, setTags]   = useState<string[]>([])
@@ -105,6 +106,16 @@ export default function BecomeListenerPage() {
   const [loading, setLoading] = useState(false)
   const [done, setDone]   = useState(false)
   const [error, setError] = useState('')
+
+  // Guard: redirect already-approved listeners to their dashboard
+  useEffect(() => {
+    sb.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) { setGuardChecked(true); return }
+      const { data: lp } = await sb.from('listener_profiles').select('is_approved').eq('user_id', user.id).maybeSingle()
+      if (lp?.is_approved) { router.replace('/dashboard'); return }
+      setGuardChecked(true)
+    })
+  }, [])
 
   const rateNum     = Math.min(Math.max(parseInt(rate) || MIN_LISTENER_RATE, MIN_LISTENER_RATE), MAX_LISTENER_RATE)
   const earn15      = rateNum * 15
@@ -171,6 +182,13 @@ export default function BecomeListenerPage() {
       setLoading(false)
     }
   }
+
+  if (!guardChecked) return (
+    <>
+      <style>{S}</style>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',fontFamily:'Nunito,sans-serif',color:'#0F4867'}}>Loading...</div>
+    </>
+  )
 
   if (done) return (
     <>

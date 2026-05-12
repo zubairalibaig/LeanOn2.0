@@ -96,18 +96,23 @@ export default function ListenerPage({ params }: { params: {id:string} }) {
   const [balance,  setBalance]  = useState<number>(0)
   const [loading,  setLoading]  = useState(false)
   const [userId,   setUserId]   = useState<string|null>(null)
+  const [notFound, setNotFound] = useState(false)
 
   useEffect(() => {
     // Load listener profile
     client.from('listener_profiles')
       .select('*, users!inner(name, avatar_url)')
       .eq('user_id', id).single()
-      .then(({data}) => {
-        if (data) setListener({
-          ...data,
-          name: (data.users as {name:string}|null)?.name || 'Listener',
-          avatar_url: (data.users as {avatar_url?:string}|null)?.avatar_url,
-        })
+      .then(({data, error}) => {
+        if (data) {
+          setListener({
+            ...data,
+            name: (data.users as {name:string}|null)?.name || 'Listener',
+            avatar_url: (data.users as {avatar_url?:string}|null)?.avatar_url,
+          })
+        } else if (error) {
+          setNotFound(true)
+        }
       })
 
     // Load reviews
@@ -125,6 +130,18 @@ export default function ListenerPage({ params }: { params: {id:string} }) {
       if (data) setBalance(data.wallet_balance)
     })
   }, [id])
+
+  if (notFound) return (
+    <>
+      <style>{S}</style>
+      <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'100vh',fontFamily:'Nunito,sans-serif',color:'#0F4867',gap:16,padding:24,textAlign:'center'}}>
+        <div style={{fontSize:48}}>🔍</div>
+        <div style={{fontSize:20,fontWeight:900}}>Listener not found</div>
+        <div style={{fontSize:14,color:'#5A7A8A',fontWeight:500}}>This profile may no longer be active.</div>
+        <button style={{background:'#FF9933',color:'white',border:'none',borderRadius:50,padding:'12px 28px',fontFamily:'Nunito,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer'}} onClick={()=>router.push('/browse')}>Browse listeners →</button>
+      </div>
+    </>
+  )
 
   if (!listener) return (
     <>
@@ -150,6 +167,7 @@ export default function ListenerPage({ params }: { params: {id:string} }) {
     const data = await res.json()
     setLoading(false)
     if (data.error === 'insufficient_balance') { router.push('/wallet'); return }
+    if (data.error === 'free_trial_used') { alert(data.message || 'You have already used your free trial.'); setLoading(false); return }
     if (data.error === 'listener_busy') { alert(data.message || 'Listener is currently in a session. Please try again shortly.'); setLoading(false); return }
     if (data.sessionId) {
       router.push(`/session/${data.sessionId}?name=${encodeURIComponent(listener!.name)}&duration=${duration}&type=${type}`)

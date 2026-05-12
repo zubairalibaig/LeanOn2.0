@@ -62,6 +62,7 @@ export default function WalletPage() {
   const [balance, setBalance]   = useState<number|null>(null)
   const [transactions, setTransactions] = useState<any[]>([])
   const [userId, setUserId]     = useState<string|null>(null)
+  const [refunding, setRefunding] = useState(false)
 
   useEffect(() => {
     // Load Razorpay script
@@ -84,6 +85,17 @@ export default function WalletPage() {
     const { data: txns } = await sb.from('wallet_transactions')
       .select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(10)
     if (txns) setTransactions(txns)
+  }
+
+  async function handleRefund() {
+    if (!userId || !balance || balance <= 0) return
+    if (!confirm(`Request a refund of ₹${balance} to your original payment method? We'll process it within 3–5 business days.`)) return
+    setRefunding(true)
+    const res = await fetch('/api/refund', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) })
+    const data = await res.json()
+    setRefunding(false)
+    if (!res.ok) { alert(data.error || 'Could not submit refund request.'); return }
+    alert(`Refund request for ₹${balance} submitted! You'll receive it in 3–5 business days.`)
   }
 
   async function handleRecharge() {
@@ -149,8 +161,8 @@ export default function WalletPage() {
           <div className="balance-label">AVAILABLE BALANCE</div>
           <div className="balance-amount">₹{balance ?? '—'}</div>
           <div className="balance-sub">{balance !== null ? `~${Math.floor(balance/165)} sessions remaining` : 'Loading...'}</div>
-          <button className="refund-btn" onClick={() => alert('Email hello@leanon.app with subject "Refund request" and we\'ll process within 3-5 days.')}>
-            Request refund of balance
+          <button className="refund-btn" onClick={handleRefund} disabled={refunding || !balance || balance <= 0}>
+            {refunding ? 'Submitting…' : 'Request refund of balance'}
           </button>
         </div>
 
