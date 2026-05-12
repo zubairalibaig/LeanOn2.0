@@ -9,12 +9,22 @@ const sb = createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-const TAGS = ['loneliness','stress','career','relationships','grief','students','startup','general']
-const TAG_LABELS: Record<string,string> = {
-  loneliness:'Loneliness 🌙', stress:'Work stress 💼', career:'Career confusion 🧭',
-  relationships:'Relationships 💬', grief:'Grief & loss 🌿', students:'Student pressure 📚',
-  startup:'Startup journey 🚀', general:'Just need to talk ☕'
-}
+const TAGS = [
+  {id:'loneliness', label:'Loneliness 🌙'},
+  {id:'anxiety',    label:'Anxiety 😰'},
+  {id:'stress',     label:'Work stress 💼'},
+  {id:'burnout',    label:'Burnout 🔥'},
+  {id:'career',     label:'Career confusion 🧭'},
+  {id:'relationships', label:'Relationships 💬'},
+  {id:'breakup',    label:'Breakup & divorce 💔'},
+  {id:'grief',      label:'Grief & loss 🌿'},
+  {id:'students',   label:'Student pressure 📚'},
+  {id:'selfesteem', label:'Self-esteem 💙'},
+  {id:'lgbtq',      label:'LGBTQ+ 🌈'},
+  {id:'parenting',  label:'Parenting 👶'},
+  {id:'startup',    label:'Startup journey 🚀'},
+  {id:'general',    label:'Just need to talk ☕'},
+]
 
 const S = `
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
@@ -99,8 +109,10 @@ export default function BecomeListenerPage() {
   const rateNum     = Math.min(Math.max(parseInt(rate) || MIN_LISTENER_RATE, MIN_LISTENER_RATE), MAX_LISTENER_RATE)
   const earn15      = rateNum * 15
   const earn30      = rateNum * 30
+  const earn45      = rateNum * 45
   const userPays15  = earn15 + 15
   const userPays30  = earn30 + 15
+  const userPays45  = earn45 + 15
 
   function toggleTag(t: string) {
     setTags(p => p.includes(t) ? p.filter(x => x !== t) : [...p, t])
@@ -222,8 +234,8 @@ export default function BecomeListenerPage() {
             <label className="label">Topics you can speak to (select all that apply)</label>
             <div className="tag-grid">
               {TAGS.map(t => (
-                <button key={t} className={`tag-chip${tags.includes(t)?' sel':''}`} onClick={()=>toggleTag(t)}>
-                  {TAG_LABELS[t]}
+                <button key={t.id} className={`tag-chip${tags.includes(t.id)?' sel':''}`} onClick={()=>toggleTag(t.id)}>
+                  {t.label}
                 </button>
               ))}
             </div>
@@ -235,7 +247,7 @@ export default function BecomeListenerPage() {
                 </button>
               ))}
             </div>
-            <button className="btn" onClick={()=>setStep(2)} disabled={!name||!phone||bio.length<50||tags.length===0||langs.length===0}>
+            <button className="btn" onClick={()=>setStep(2)} disabled={!name||!phone||bio.length<50||tags.length===0}>
               Next: Set your rate →
             </button>
           </>
@@ -254,10 +266,15 @@ export default function BecomeListenerPage() {
               <span className="rate-suffix">/ minute</span>
             </div>
 
+            <div style={{background:'#F0F8FC',borderRadius:12,padding:'10px 14px',marginBottom:12,fontSize:13,color:'#0F4867',fontWeight:600}}>
+              📅 Sessions are booked in <strong>15, 30, or 45 minute slots</strong>. No open-ended calls — clean start and end times for both sides.
+            </div>
+
             <div className="rate-preview">
               <p>At <strong>₹{rateNum}/min</strong> you earn:</p>
-              <p>15-min session → you earn <strong>₹{earn15}</strong> · user pays <strong>₹{userPays15}</strong> (₹15 platform fee added)</p>
-              <p>30-min session → you earn <strong>₹{earn30}</strong> · user pays <strong>₹{userPays30}</strong> (₹15 platform fee added)</p>
+              <p>15 min → you earn <strong>₹{earn15}</strong> · user pays <strong>₹{userPays15}</strong></p>
+              <p>30 min → you earn <strong>₹{earn30}</strong> · user pays <strong>₹{userPays30}</strong></p>
+              <p>45 min → you earn <strong>₹{earn45}</strong> · user pays <strong>₹{userPays45}</strong></p>
             </div>
 
             <div className="fee-box">

@@ -19,15 +19,21 @@ type Listener = {
 }
 
 const TAGS = [
-  {id:'all',icon:'✨',label:'All'},
-  {id:'loneliness',icon:'🌙',label:'Loneliness'},
-  {id:'stress',icon:'💼',label:'Work stress'},
-  {id:'career',icon:'🧭',label:'Career'},
+  {id:'all',       icon:'✨', label:'All'},
+  {id:'loneliness',icon:'🌙', label:'Loneliness'},
+  {id:'anxiety',   icon:'😰', label:'Anxiety'},
+  {id:'stress',    icon:'💼', label:'Work stress'},
+  {id:'burnout',   icon:'🔥', label:'Burnout'},
+  {id:'career',    icon:'🧭', label:'Career'},
   {id:'relationships',icon:'💬',label:'Relationships'},
-  {id:'grief',icon:'🌿',label:'Grief'},
-  {id:'students',icon:'📚',label:'Students'},
-  {id:'startup',icon:'🚀',label:'Startup'},
-  {id:'general',icon:'☕',label:'Just talk'},
+  {id:'breakup',   icon:'💔', label:'Breakup'},
+  {id:'grief',     icon:'🌿', label:'Grief'},
+  {id:'students',  icon:'📚', label:'Students'},
+  {id:'selfesteem',icon:'💙', label:'Self-esteem'},
+  {id:'lgbtq',     icon:'🌈', label:'LGBTQ+'},
+  {id:'parenting', icon:'👶', label:'Parenting'},
+  {id:'startup',   icon:'🚀', label:'Startup'},
+  {id:'general',   icon:'☕', label:'Just talk'},
 ]
 
 const S = `

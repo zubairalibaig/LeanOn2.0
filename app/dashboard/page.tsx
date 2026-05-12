@@ -10,14 +10,20 @@ const sb = createBrowserClient(
 )
 
 const SPECIALTY_TAGS = [
-  {id:'loneliness',label:'Loneliness 🌙'},
-  {id:'stress',label:'Work stress 💼'},
-  {id:'career',label:'Career confusion 🧭'},
+  {id:'loneliness',  label:'Loneliness 🌙'},
+  {id:'anxiety',     label:'Anxiety 😰'},
+  {id:'stress',      label:'Work stress 💼'},
+  {id:'burnout',     label:'Burnout 🔥'},
+  {id:'career',      label:'Career confusion 🧭'},
   {id:'relationships',label:'Relationships 💬'},
-  {id:'grief',label:'Grief & loss 🌿'},
-  {id:'students',label:'Student pressure 📚'},
-  {id:'startup',label:'Startup journey 🚀'},
-  {id:'general',label:'Just need to talk ☕'},
+  {id:'breakup',     label:'Breakup & divorce 💔'},
+  {id:'grief',       label:'Grief & loss 🌿'},
+  {id:'students',    label:'Student pressure 📚'},
+  {id:'selfesteem',  label:'Self-esteem 💙'},
+  {id:'lgbtq',       label:'LGBTQ+ 🌈'},
+  {id:'parenting',   label:'Parenting 👶'},
+  {id:'startup',     label:'Startup journey 🚀'},
+  {id:'general',     label:'Just need to talk ☕'},
 ]
 
 const S = `
@@ -453,6 +459,18 @@ export default function DashboardPage() {
                 />
                 <span style={{fontSize:14,color:'var(--gray)',fontWeight:600}}>/min</span>
               </div>
+              {/* Earnings preview — updates live as rate changes */}
+              {(() => {
+                const r = Math.min(Math.max(parseInt(editRate)||MIN_LISTENER_RATE, MIN_LISTENER_RATE), MAX_LISTENER_RATE)
+                return (
+                  <div style={{marginTop:10,background:'var(--light)',borderRadius:12,padding:'10px 14px',fontSize:12,color:'var(--gray)',fontWeight:600,lineHeight:1.9}}>
+                    📅 Sessions are booked in <strong style={{color:'var(--navy)'}}>15 / 30 / 45 min slots</strong>
+                    <br/>15 min → you earn <strong style={{color:'var(--navy)'}}>₹{r*15}</strong> · user pays ₹{r*15+15}
+                    <br/>30 min → you earn <strong style={{color:'var(--navy)'}}>₹{r*30}</strong> · user pays ₹{r*30+15}
+                    <br/>45 min → you earn <strong style={{color:'var(--navy)'}}>₹{r*45}</strong> · user pays ₹{r*45+15}
+                  </div>
+                )
+              })()}
             </div>
 
             {/* Specialty tags */}

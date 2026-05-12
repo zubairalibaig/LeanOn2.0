@@ -25,9 +25,11 @@ type Review = {
 }
 
 const TAGS: Record<string,string> = {
-  loneliness:'Loneliness 🌙',stress:'Work stress 💼',career:'Career confusion 🧭',
-  relationships:'Relationships 💬',grief:'Grief & loss 🌿',students:'Student pressure 📚',
-  startup:'Startup journey 🚀',general:'Just need to talk ☕'
+  loneliness:'Loneliness 🌙', anxiety:'Anxiety 😰', stress:'Work stress 💼',
+  burnout:'Burnout 🔥', career:'Career confusion 🧭', relationships:'Relationships 💬',
+  breakup:'Breakup & divorce 💔', grief:'Grief & loss 🌿', students:'Student pressure 📚',
+  selfesteem:'Self-esteem 💙', lgbtq:'LGBTQ+ 🌈', parenting:'Parenting 👶',
+  startup:'Startup journey 🚀', general:'Just need to talk ☕'
 }
 
 const S = `
@@ -133,6 +135,7 @@ export default function ListenerPage({ params }: { params: {id:string} }) {
 
   const ini    = (n:string) => n.split(' ').map((x:string)=>x[0]).join('').slice(0,2).toUpperCase()
   const cost   = duration === 5 ? 0 : listener!.rate_per_min * duration + 15
+  // Sessions available in 15/30/45 min paid slots (5 min is free trial)
   const canPay = duration === 5 || balance >= cost
 
   async function book() {
@@ -212,7 +215,7 @@ export default function ListenerPage({ params }: { params: {id:string} }) {
           <div className="wallet-warn">⚠️ Your wallet (₹{balance}) needs ₹{cost-balance} more. <a href="/wallet" style={{color:'var(--teal)'}}>Recharge →</a></div>
         )}
         <div className="book-opts">
-          {([5,15,30] as const).map(d => (
+          {([5,15,30,45] as const).map(d => (
             <div key={d} className={`book-opt${duration===d?' sel':''}`} onClick={()=>setDuration(d)}>
               <div className="opt-label">{d} min</div>
               <div className="opt-price">{d===5 ? '—' : `₹${listener.rate_per_min*d+15}`}</div>
