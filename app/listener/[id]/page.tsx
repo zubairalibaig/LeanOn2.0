@@ -15,6 +15,7 @@ type ListenerProfile = {
   is_available: boolean
   specialty_tags: string[]
   languages_spoken: string[]
+  avatar_url?: string
 }
 
 type Review = {
@@ -41,10 +42,12 @@ a{text-decoration:none;color:inherit;}
 .back{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.8);border:1.5px solid var(--border);cursor:pointer;font-size:18px;color:var(--navy);display:flex;align-items:center;justify-content:center;}
 .profile-hdr{padding:0 20px 24px;}
 .av-row{display:flex;align-items:flex-end;gap:16px;margin-bottom:16px;}
-.av{width:80px;height:80px;border-radius:24px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:28px;color:white;position:relative;flex-shrink:0;}
+.av{width:80px;height:80px;border-radius:24px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:28px;color:white;position:relative;flex-shrink:0;overflow:hidden;}
+.av img{width:100%;height:100%;object-fit:cover;border-radius:24px;}
 .av-dot{position:absolute;bottom:-2px;right:-2px;width:16px;height:16px;border-radius:50%;border:3px solid white;}
 .av-dot.on{background:#34C759;}.av-dot.off{background:#C7C7CC;}
 .listener-name{font-size:24px;font-weight:900;color:var(--navy);margin-bottom:4px;}
+.verified-badge{display:inline-flex;align-items:center;gap:4px;background:#E6F6FF;color:#0F4867;font-size:11px;font-weight:800;padding:3px 8px;border-radius:50px;border:1.5px solid #B8D9F0;}
 .stats-row{display:flex;align-items:center;gap:12px;}
 .stat{font-size:13px;color:var(--gray);font-weight:600;}
 .rate-badge{background:var(--orange);color:white;font-weight:800;font-size:14px;padding:5px 14px;border-radius:50px;margin-left:auto;}
@@ -101,6 +104,7 @@ export default function ListenerPage({ params }: { params: {id:string} }) {
         if (data) setListener({
           ...data,
           name: (data.users as {name:string}|null)?.name || 'Listener',
+          avatar_url: (data.users as {avatar_url?:string}|null)?.avatar_url,
         })
       })
 
@@ -159,12 +163,15 @@ export default function ListenerPage({ params }: { params: {id:string} }) {
         <div className="profile-hdr">
           <div className="av-row">
             <div className="av">
-              {ini(listener.name)}
+              {listener.avatar_url
+                ? <img src={listener.avatar_url} alt={listener.name} />
+                : ini(listener.name)}
               <div className={`av-dot ${listener.is_available?'on':'off'}`}/>
             </div>
             <div style={{flex:1}}>
               <div className="listener-name">{listener.name}</div>
               <div className="stats-row">
+                <span className="verified-badge">✓ Verified</span>
                 {listener.rating > 0 && <span className="stat">⭐ {(+listener.rating).toFixed(1)}</span>}
                 {listener.total_sessions > 0 && <span className="stat">{listener.total_sessions} sessions</span>}
                 <span className="rate-badge">₹{listener.rate_per_min}/min</span>

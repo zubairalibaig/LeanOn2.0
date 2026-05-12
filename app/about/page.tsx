@@ -1,5 +1,9 @@
 import type { Metadata } from 'next'
-export const metadata: Metadata = { title: 'About LeanOn — Peer support for India' }
+
+export const metadata: Metadata = {
+  title: 'About LeanOn — Peer Support for India',
+  description: 'LeanOn connects people going through hard times with peer listeners who have lived through the same experiences. Instant, affordable, private. Built for India.',
+}
 
 const S = `
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
@@ -27,10 +31,10 @@ const S = `
   .value-icon{font-size:28px;margin-bottom:10px;}
   .value-title{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:6px;}
   .value-desc{font-size:13px;color:var(--gray);line-height:1.55;font-weight:500;}
-  .founder-card{background:var(--navy);border-radius:24px;padding:28px;margin-bottom:24px;color:white;}
-  .founder-card h2{font-size:18px;font-weight:800;margin-bottom:14px;}
-  .founder-card p{font-size:14px;color:rgba(201,231,244,0.8);line-height:1.7;font-weight:500;margin-bottom:10px;}
-  .founder-card p:last-child{margin-bottom:0;}
+  .mission-card{background:var(--navy);border-radius:24px;padding:28px;margin-bottom:24px;color:white;}
+  .mission-card h2{font-size:18px;font-weight:800;margin-bottom:14px;}
+  .mission-card p{font-size:14px;color:rgba(201,231,244,0.85);line-height:1.75;font-weight:500;margin-bottom:10px;}
+  .mission-card p:last-child{margin-bottom:0;}
   .cta-section{text-align:center;padding:32px 24px;background:white;border-radius:24px;border:1.5px solid var(--border);}
   .cta-section h2{font-size:22px;font-weight:800;color:var(--navy);margin-bottom:10px;}
   .cta-section p{font-size:14px;color:var(--gray);font-weight:500;margin-bottom:24px;}
@@ -66,7 +70,7 @@ export default function AboutPage() {
             {icon:'⚡',title:'Instant access',desc:'No appointments. No wait lists. When you need support, it should be available now.'},
             {icon:'🔒',title:'Private always',desc:'Your sessions are private. We will never share your conversations or identity.'},
             {icon:'💰',title:'Genuinely affordable',desc:'Starting at ₹165 for 15 minutes. Less than a cup of coffee at most cafes.'},
-            {icon:'🇮🇳',title:'Built for India',desc:'Text-first for joint family privacy. Phone OTP so no email friction. Hindi support coming.'},
+            {icon:'🇮🇳',title:'Built for India',desc:'Text-first for joint family privacy. Phone OTP, UPI payments, 12 Indian languages.'},
             {icon:'❤️',title:'Peer, not clinical',desc:'We are not therapy. We are honest about that. Peer support is its own valid category.'},
           ].map((v,i)=>(
             <div key={i} className="value-card">
@@ -77,12 +81,11 @@ export default function AboutPage() {
           ))}
         </div>
 
-        <div className="founder-card">
-          <h2>A note from the founder</h2>
-          <p>LeanOn 1.0 was a mental health marketplace for India. It failed — not because the need wasn&apos;t there, but because professional counselors were hard to onboard and the positioning was off.</p>
-          <p>LeanOn 2.0 is different. We&apos;re not a therapy platform. We&apos;re a peer support platform. Our listeners are everyday people with extraordinary stories. They&apos;ve been through the dark and they&apos;re here to sit with you in yours.</p>
-          <p>I built this because I know what it&apos;s like to need someone to talk to at midnight and have nobody to call.</p>
-          <p style={{fontWeight:700,color:'white'}}>— Zubair Ali Baig, Bengaluru</p>
+        <div className="mission-card">
+          <h2>Our mission</h2>
+          <p>In India, 1 in 7 people experiences a mental health condition, yet fewer than 1% receive any form of support. Therapy has a stigma. Hotlines feel clinical. Friends get tired. Family doesn&apos;t always understand.</p>
+          <p>LeanOn exists to close that gap — not with doctors or algorithms, but with people. Real people who have lived through what you&apos;re facing and who choose to sit with you in it. Available now. In your language. At a price that doesn&apos;t sting.</p>
+          <p>Someone to lean on, whenever you need one.</p>
         </div>
 
         <div className="cta-section">

@@ -51,7 +51,8 @@ a{text-decoration:none;color:inherit;}
 .card{background:white;border:1.5px solid var(--border);border-radius:20px;padding:18px;cursor:pointer;transition:all .2s;box-shadow:0 1px 4px rgba(15,72,103,.04);}
 .card:hover{border-color:var(--teal);box-shadow:0 4px 20px rgba(15,72,103,.08);transform:translateY(-2px);}
 .card-top{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;}
-.av{width:48px;height:48px;border-radius:16px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:white;flex-shrink:0;position:relative;}
+.av{width:48px;height:48px;border-radius:16px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:white;flex-shrink:0;position:relative;overflow:hidden;}
+.av img{width:100%;height:100%;object-fit:cover;border-radius:16px;}
 .dot{position:absolute;bottom:-2px;right:-2px;width:12px;height:12px;border-radius:50%;border:2px solid white;}
 .dot.on{background:#34C759;}.dot.off{background:#C7C7CC;}
 .meta{flex:1;min-width:0;}
@@ -62,6 +63,7 @@ a{text-decoration:none;color:inherit;}
 .bio{font-size:13px;color:#4A6B7E;line-height:1.6;margin-bottom:12px;font-weight:500;}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
 .tag-badge{background:rgba(26,143,160,.1);color:var(--navy);font-size:11px;font-weight:700;padding:4px 10px;border-radius:50px;}
+.verified-chip{background:#E6F6FF;color:#0F4867;font-size:10px;font-weight:800;padding:3px 7px;border-radius:50px;border:1.5px solid #B8D9F0;}
 .btns{display:flex;gap:8px;}
 .btn-chat{flex:1;background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:11px;border-radius:12px;border:none;cursor:pointer;transition:all .2s;}
 .btn-chat:hover{background:#e8861a;}
@@ -221,12 +223,15 @@ function BrowseContent() {
           <div key={l.id} className="card">
             <div className="card-top">
               <div className="av">
-                {ini(l.name)}
+                {l.avatar_url
+                  ? <img src={l.avatar_url} alt={l.name} />
+                  : ini(l.name)}
                 <div className={`dot ${l.is_available?'on':'off'}`}/>
               </div>
               <div className="meta">
                 <div className="name">{l.name}</div>
                 <div className="stats">
+                  <span className="verified-chip">✓ Verified</span>
                   {l.rating > 0 && <span>⭐ {(+l.rating).toFixed(1)}</span>}
                   {l.total_sessions > 0 && <span>{l.total_sessions} sessions</span>}
                   <span style={{color:l.is_available?'#34C759':'#C7C7CC'}}>

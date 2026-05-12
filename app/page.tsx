@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 export const metadata: Metadata = {
-  title: 'LeanOn — Someone to lean on, anytime',
-  description: "Talk to real people who have been through what you're going through. Peer listeners available 24/7. Start free.",
+  title: 'LeanOn — Peer Support App India | Talk to Someone Who Gets It',
+  description: "India's peer support platform. Connect with real people who've lived through loneliness, burnout, grief, relationships & more. Available 24/7. First 5 minutes free. No therapy, just someone who truly understands.",
+  alternates: { canonical: 'https://leanon.app' },
 }
 export default function Home() {
   return (

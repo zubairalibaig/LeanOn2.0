@@ -15,7 +15,9 @@ a{text-decoration:none;color:inherit;}
 .topbar h1{font-size:20px;font-weight:900;color:var(--navy);}
 .page{max-width:540px;margin:0 auto;padding:24px 20px 100px;}
 .avatar-section{display:flex;flex-direction:column;align-items:center;margin-bottom:28px;}
-.avatar{width:80px;height:80px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:white;margin-bottom:14px;}
+.avatar{width:80px;height:80px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:white;margin-bottom:8px;position:relative;overflow:hidden;}
+.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.avatar-upload-btn{font-size:12px;font-weight:700;color:var(--teal);background:none;border:none;cursor:pointer;padding:2px 0 10px;text-decoration:underline;}
 .name-row{display:flex;align-items:center;gap:8px;}
 .name-display{font-size:22px;font-weight:900;color:var(--navy);}
 .pencil-btn{background:none;border:none;cursor:pointer;font-size:16px;padding:4px;opacity:0.6;}
@@ -57,6 +59,8 @@ export default function ProfilePage() {
   const [createdAt, setCreatedAt] = useState('')
   const [sessionCount, setSessionCount] = useState(0)
   const [isListener, setIsListener] = useState(false)
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const [editingName, setEditingName] = useState(false)
   const [nameInput, setNameInput] = useState('')
   const [saving, setSaving] = useState(false)
@@ -70,7 +74,7 @@ export default function ProfilePage() {
       setUserId(user.id)
 
       const [profileRes, sessionsRes, listenerRes] = await Promise.all([
-        supabase.from('users').select('id,name,wallet_balance,created_at,phone').eq('id', user.id).single(),
+        supabase.from('users').select('id,name,wallet_balance,created_at,phone,avatar_url').eq('id', user.id).single(),
         supabase.from('sessions').select('id', { count: 'exact', head: true }).eq('seeker_id', user.id).eq('status', 'completed'),
         supabase.from('listener_profiles').select('id').eq('user_id', user.id).maybeSingle(),
       ])
@@ -81,6 +85,7 @@ export default function ProfilePage() {
         setWalletBalance(profileRes.data.wallet_balance || 0)
         setCreatedAt(profileRes.data.created_at || '')
         setPhone(profileRes.data.phone || user.phone || '')
+        setAvatarUrl(profileRes.data.avatar_url || null)
       }
       setSessionCount(sessionsRes.count || 0)
       setIsListener(!!listenerRes.data)
@@ -88,6 +93,28 @@ export default function ProfilePage() {
     }
     loadProfile()
   }, [])
+
+  async function uploadAvatar(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file || !userId) return
+    if (file.size > 2 * 1024 * 1024) { alert('Photo must be under 2 MB'); return }
+    setUploadingAvatar(true)
+    try {
+      const ext = file.name.split('.').pop()
+      const path = `${userId}.${ext}`
+      const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type })
+      if (upErr) throw upErr
+      const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path)
+      const url = `${publicUrl}?t=${Date.now()}` // cache bust
+      await supabase.from('users').update({ avatar_url: url }).eq('id', userId)
+      setAvatarUrl(url)
+    } catch (err) {
+      console.error('Avatar upload error:', err)
+      alert('Upload failed. Make sure the avatars storage bucket exists in Supabase.')
+    } finally {
+      setUploadingAvatar(false)
+    }
+  }
 
   async function saveName() {
     if (!userId || !nameInput.trim()) return
@@ -130,7 +157,17 @@ export default function ProfilePage() {
       ) : (
         <div className="page">
           <div className="avatar-section">
-            <div className="avatar">{ini(name)}</div>
+            <div className="avatar">
+              {avatarUrl
+                ? <img src={avatarUrl} alt={name} />
+                : ini(name)}
+            </div>
+            <label style={{cursor:'pointer'}}>
+              <input type="file" accept="image/*" style={{display:'none'}} onChange={uploadAvatar} />
+              <span className="avatar-upload-btn">
+                {uploadingAvatar ? 'Uploading...' : avatarUrl ? 'Change photo' : '+ Add photo'}
+              </span>
+            </label>
             {editingName ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
                 <input
