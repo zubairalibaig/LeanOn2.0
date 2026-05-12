@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
+import { showToast } from '@/lib/toast'
 
 // ── CRITICAL FIX 1: Create client ONCE outside component
 // Previously inside component = new WebSocket on every render
@@ -45,6 +46,8 @@ body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:an
 .send svg{width:22px;height:22px;}
 .send:disabled{opacity:.5;cursor:not-allowed;}
 .note{padding:8px 16px;text-align:center;font-size:12px;color:#4A6B7E;font-weight:600;background:rgba(255,255,255,0.6);flex-shrink:0;}
+.crisis-bar{background:#FFF0F0;border-bottom:2px solid #FFCDD2;padding:10px 16px;font-size:12px;color:#7A2020;font-weight:700;line-height:1.5;flex-shrink:0;}
+.crisis-bar a{color:#C0392B;text-decoration:underline;}
 .end-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;background:white;}
 .end-icon{font-size:56px;margin-bottom:20px;}
 .end-h{font-size:24px;font-weight:900;color:var(--navy);margin-bottom:8px;}
@@ -135,9 +138,12 @@ function SessionContent() {
   const [muted, setMuted]             = useState(false)
   const [callSecs, setCallSecs]       = useState(0)
 
-  const channelRef  = useRef<any>(null)
-  const bottomRef   = useRef<HTMLDivElement>(null)
-  const userIdRef   = useRef<string | null>(null)
+  const channelRef      = useRef<any>(null)
+  const bottomRef       = useRef<HTMLDivElement>(null)
+  const userIdRef       = useRef<string | null>(null)
+  const completedRef    = useRef(false)
+  const [crisisAlert, setCrisisAlert] = useState(false)
+  const [reconnectTick, setReconnectTick] = useState(0)
   const agoraRef    = useRef<{
     client: any
     micTrack: any
@@ -214,10 +220,9 @@ function SessionContent() {
       })
     }
 
-    // Primary: postgres_changes fires for BOTH parties whenever any insert lands in DB
-    // Backup: broadcast for instant delivery when the other client is already subscribed
+    // Primary: postgres_changes; backup: broadcast for instant delivery
     const channel = supabase
-      .channel(`room:${sessionId}`)
+      .channel(`room:${sessionId}:${reconnectTick}`)
       .on(
         'postgres_changes' as any,
         { event: 'INSERT', schema: 'public', table: 'messages', filter: `session_id=eq.${sessionId}` },
@@ -229,18 +234,42 @@ function SessionContent() {
       })
       .subscribe((status: string) => {
         setConnected(status === 'SUBSCRIBED')
+        if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          // Reconnect after 3 s — incrementing tick re-runs this effect
+          setTimeout(() => setReconnectTick(t => t + 1), 3000)
+        }
       })
 
     channelRef.current = channel
     return () => { supabase.removeChannel(channel) }
-  }, [sessionId])
+  }, [sessionId, reconnectTick])
 
-  // Countdown timer (shared for both text and voice)
+  // Countdown timer — auto-ends session when it hits 0
   useEffect(() => {
     if (ended || secs <= 0) { if (secs <= 0) setEnded(true); return }
     const t = setInterval(() => setSecs(s => s - 1), 1000)
     return () => clearInterval(t)
   }, [secs, ended])
+
+  // Auto-complete session in DB when ended (timer expiry or manual end)
+  // Uses a ref so it fires exactly once even if component re-renders
+  useEffect(() => {
+    if (!ended || completedRef.current || !sessionId) return
+    completedRef.current = true
+    fetch('/api/sessions', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId }),
+    }).catch(() => {}) // fire and forget — user will rate separately
+  }, [ended, sessionId])
+
+  // Crisis keyword detection — show helpline banner
+  const CRISIS_WORDS = ['suicide', 'kill myself', 'end my life', 'want to die', 'self harm', 'hurt myself', 'no reason to live', 'can\'t go on']
+  useEffect(() => {
+    if (crisisAlert || msgs.length === 0) return
+    const recentText = msgs.slice(-6).map(m => m.content.toLowerCase()).join(' ')
+    if (CRISIS_WORDS.some(w => recentText.includes(w))) setCrisisAlert(true)
+  }, [msgs])
 
   // Call duration counter (voice only — counts up from 0 once connected)
   useEffect(() => {
@@ -401,11 +430,13 @@ function SessionContent() {
 
   async function finishSession() {
     if (sessionId) {
+      // Session may already be completed by auto-end; send rating regardless
+      // The API accepts rating updates on already-completed sessions
       await fetch('/api/sessions', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId, rating }),
-      })
+        body: JSON.stringify({ sessionId, rating: rating || undefined }),
+      }).catch(() => {})
     }
     router.push('/browse')
   }
@@ -503,6 +534,13 @@ function SessionContent() {
           <button className="end-btn" onClick={() => setEnded(true)}>End</button>
         </div>
 
+        {crisisAlert && (
+          <div className="crisis-bar">
+            🆘 If you or someone you know is in crisis, please reach out immediately:&nbsp;
+            <a href="tel:18005990019">iCall 9152987821</a> · <a href="tel:18602662345">Vandrevala 1860-2662-345</a> · <a href="tel:112">Emergency 112</a>
+            <button onClick={() => setCrisisAlert(false)} style={{float:'right',background:'none',border:'none',cursor:'pointer',color:'#7A2020',fontWeight:900,fontSize:14}}>✕</button>
+          </div>
+        )}
         <div className="note">🔒 Private & confidential · {durationMins}-min session</div>
 
         <div className="msgs">

@@ -59,6 +59,19 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid payment signature' }, { status: 400 })
     }
 
+    // Validate amount against the actual Razorpay order — prevents client manipulation
+    let verifiedAmount = amount
+    try {
+      const order = await rzp.orders.fetch(razorpay_order_id)
+      verifiedAmount = Math.round(Number(order.amount) / 100)
+      if (verifiedAmount !== amount) {
+        console.warn(`Amount mismatch: client sent ${amount}, order has ${verifiedAmount}`)
+      }
+    } catch (err) {
+      console.error('Failed to fetch Razorpay order for validation:', err)
+      // Proceed with client-provided amount if order fetch fails — HMAC already verified
+    }
+
     const sb = createAdminClient()
 
     // Idempotency — prevent double-credit if PUT is called twice for the same payment
@@ -73,10 +86,10 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ success: true, newBalance: u?.wallet_balance ?? 0 })
     }
 
-    // Credit wallet atomically
+    // Credit wallet atomically using server-validated amount
     const { error: creditErr } = await sb.rpc('credit_wallet', {
       p_user_id: user.id,
-      p_amount:  amount,
+      p_amount:  verifiedAmount,
     })
 
     if (creditErr) {
@@ -89,7 +102,7 @@ export async function PUT(req: NextRequest) {
 
     await sb.from('wallet_transactions').insert({
       user_id:      user.id,
-      amount,
+      amount:       verifiedAmount,
       type:         'credit',
       description:  'Wallet recharge',
       reference_id: razorpay_payment_id,

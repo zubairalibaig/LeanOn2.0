@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import BottomNav from './components/BottomNav'
+import ToastProvider from './components/ToastProvider'
 
 export const metadata: Metadata = {
   title: 'LeanOn — Peer Support App India | Talk to Someone Who Gets It',
@@ -79,6 +80,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body style={{ margin: 0, padding: 0 }}>
         {children}
         <BottomNav />
+        <ToastProvider />
       </body>
     </html>
   )

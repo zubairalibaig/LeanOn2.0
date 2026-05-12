@@ -70,8 +70,12 @@ export async function GET(req: NextRequest) {
   })
 }
 
+async function auditLog(admin: ReturnType<typeof createAdminClient>, adminId: string, action: string, targetId: string) {
+  try { await admin.from('admin_audit_logs').insert({ admin_id: adminId, action, target_id: targetId }) } catch {}
+}
+
 export async function POST(req: NextRequest) {
-  const { error, status } = await requireAdmin()
+  const { error, status, user } = await requireAdmin()
   if (error) return NextResponse.json({ error }, { status })
 
   const body = await req.json()
@@ -96,24 +100,21 @@ export async function POST(req: NextRequest) {
     ])
     if (r1.error) return NextResponse.json({ error: r1.error.message }, { status: 500 })
     if (r2.error) return NextResponse.json({ error: r2.error.message }, { status: 500 })
+    await auditLog(admin, user!.id, 'approve_listener', id)
     return NextResponse.json({ ok: true })
   }
 
   if (action === 'reject_listener') {
-    const { error: err } = await admin
-      .from('listener_applications')
-      .update({ status: 'rejected' })
-      .eq('user_id', id)
+    const { error: err } = await admin.from('listener_applications').update({ status: 'rejected' }).eq('user_id', id)
     if (err) return NextResponse.json({ error: err.message }, { status: 500 })
+    await auditLog(admin, user!.id, 'reject_listener', id)
     return NextResponse.json({ ok: true })
   }
 
   if (action === 'complete_payout') {
-    const { error: err } = await admin
-      .from('payout_requests')
-      .update({ status: 'completed' })
-      .eq('id', id)
+    const { error: err } = await admin.from('payout_requests').update({ status: 'completed' }).eq('id', id)
     if (err) return NextResponse.json({ error: err.message }, { status: 500 })
+    await auditLog(admin, user!.id, 'complete_payout', id)
     return NextResponse.json({ ok: true })
   }
 
@@ -121,23 +122,25 @@ export async function POST(req: NextRequest) {
     await admin.from('users').update({ is_active: false }).eq('id', id)
     await admin.from('listener_profiles').update({ is_active: false, is_available: false }).eq('user_id', id)
     await admin.auth.admin.signOut(id, 'global')
+    await auditLog(admin, user!.id, 'deactivate_user', id)
     return NextResponse.json({ ok: true })
   }
 
   if (action === 'complete_refund') {
     await admin.from('refund_requests').update({ status: 'completed' }).eq('id', id)
-    // Zero out the user's wallet after refund is processed
     const { data: rr } = await admin.from('refund_requests').select('user_id, amount').eq('id', id).single()
     if (rr) {
       await admin.from('users').update({ wallet_balance: 0 }).eq('id', rr.user_id)
       await admin.from('wallet_transactions').insert({ user_id: rr.user_id, amount: -rr.amount, type: 'debit', description: 'Wallet refund processed' })
     }
+    await auditLog(admin, user!.id, 'complete_refund', id)
     return NextResponse.json({ ok: true })
   }
 
   if (action === 'reactivate_user') {
     await admin.from('users').update({ is_active: true }).eq('id', id)
     await admin.from('listener_profiles').update({ is_active: true }).eq('user_id', id)
+    await auditLog(admin, user!.id, 'reactivate_user', id)
     return NextResponse.json({ ok: true })
   }
 

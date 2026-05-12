@@ -179,7 +179,20 @@ CREATE TABLE IF NOT EXISTS public.refund_requests (
 );
 
 
--- ── 9. CONTACT MESSAGES ─────────────────────────────────────
+-- ── 9. ADMIN AUDIT LOGS ─────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS public.admin_audit_logs (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  admin_id   UUID NOT NULL REFERENCES public.users(id),
+  action     TEXT NOT NULL,
+  target_id  TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_audit_admin ON public.admin_audit_logs(admin_id, created_at DESC);
+
+
+-- ── 10. CONTACT MESSAGES ─────────────────────────────────────
 
 CREATE TABLE IF NOT EXISTS public.contact_messages (
   id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),

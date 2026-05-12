@@ -150,7 +150,14 @@ export async function PATCH(req: NextRequest) {
       .select()
       .single()
 
-    if (!completed) return NextResponse.json({ success: true }) // already completed
+    if (!completed) {
+      // Session already completed — still allow seeker to submit/update rating
+      if (rating && user.id === session.seeker_id) {
+        await sb.from('sessions').update({ seeker_rating: rating })
+          .eq('id', sessionId).eq('seeker_id', user.id)
+      }
+      return NextResponse.json({ success: true })
+    }
 
     const listenerEarning = session.amount_held - session.platform_fee
     if (listenerEarning > 0 && !session.is_free_trial) {

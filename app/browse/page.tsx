@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { LANGUAGES } from '@/lib/constants'
+import { showToast } from '@/lib/toast'
 
 type Listener = {
   id: string
@@ -136,6 +137,7 @@ function BrowseContent() {
     let q = client.from('listener_profiles')
       .select('*, users!inner(name, avatar_url)')
       .eq('is_approved', true)
+      .eq('is_active', true)
       .order('is_available', {ascending:false})
       .order('rating', {ascending:false})
       .limit(20)
