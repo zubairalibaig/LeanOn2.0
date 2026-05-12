@@ -240,42 +240,61 @@ ALTER TABLE public.payout_requests     ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.refund_requests     ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.contact_messages    ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies before recreating (safe to re-run)
+DO $$ BEGIN
+  DROP POLICY IF EXISTS "users_select_own"    ON public.users;
+  DROP POLICY IF EXISTS "users_update_own"    ON public.users;
+  DROP POLICY IF EXISTS "lp_select_approved"  ON public.listener_profiles;
+  DROP POLICY IF EXISTS "lp_insert_own"       ON public.listener_profiles;
+  DROP POLICY IF EXISTS "lp_update_own"       ON public.listener_profiles;
+  DROP POLICY IF EXISTS "la_own"              ON public.listener_applications;
+  DROP POLICY IF EXISTS "sessions_own"        ON public.sessions;
+  DROP POLICY IF EXISTS "sessions_insert"     ON public.sessions;
+  DROP POLICY IF EXISTS "sessions_update_own" ON public.sessions;
+  DROP POLICY IF EXISTS "messages_select"     ON public.messages;
+  DROP POLICY IF EXISTS "messages_insert"     ON public.messages;
+  DROP POLICY IF EXISTS "wallet_txns_own"     ON public.wallet_transactions;
+  DROP POLICY IF EXISTS "payout_own"          ON public.payout_requests;
+  DROP POLICY IF EXISTS "refund_own"          ON public.refund_requests;
+  DROP POLICY IF EXISTS "contact_insert"      ON public.contact_messages;
+END $$;
+
 -- users: read own row; service role bypasses RLS for admin ops
-CREATE POLICY IF NOT EXISTS "users_select_own"
+CREATE POLICY "users_select_own"
   ON public.users FOR SELECT USING (auth.uid() = id);
 
-CREATE POLICY IF NOT EXISTS "users_update_own"
+CREATE POLICY "users_update_own"
   ON public.users FOR UPDATE USING (auth.uid() = id);
 
 -- listener_profiles: anyone can read approved profiles; owner can write
-CREATE POLICY IF NOT EXISTS "lp_select_approved"
+CREATE POLICY "lp_select_approved"
   ON public.listener_profiles FOR SELECT
   USING (is_approved = TRUE OR auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "lp_insert_own"
+CREATE POLICY "lp_insert_own"
   ON public.listener_profiles FOR INSERT WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "lp_update_own"
+CREATE POLICY "lp_update_own"
   ON public.listener_profiles FOR UPDATE USING (auth.uid() = user_id);
 
 -- listener_applications: owner only
-CREATE POLICY IF NOT EXISTS "la_own"
+CREATE POLICY "la_own"
   ON public.listener_applications FOR ALL USING (auth.uid() = user_id);
 
 -- sessions: seeker and listener can see their own sessions
-CREATE POLICY IF NOT EXISTS "sessions_own"
+CREATE POLICY "sessions_own"
   ON public.sessions FOR SELECT
   USING (auth.uid() = seeker_id OR auth.uid() = listener_id);
 
-CREATE POLICY IF NOT EXISTS "sessions_insert"
+CREATE POLICY "sessions_insert"
   ON public.sessions FOR INSERT WITH CHECK (auth.uid() = seeker_id);
 
-CREATE POLICY IF NOT EXISTS "sessions_update_own"
+CREATE POLICY "sessions_update_own"
   ON public.sessions FOR UPDATE
   USING (auth.uid() = seeker_id OR auth.uid() = listener_id);
 
 -- messages: participants of the session can read/write
-CREATE POLICY IF NOT EXISTS "messages_select"
+CREATE POLICY "messages_select"
   ON public.messages FOR SELECT
   USING (
     EXISTS (
@@ -285,7 +304,7 @@ CREATE POLICY IF NOT EXISTS "messages_select"
     )
   );
 
-CREATE POLICY IF NOT EXISTS "messages_insert"
+CREATE POLICY "messages_insert"
   ON public.messages FOR INSERT
   WITH CHECK (
     auth.uid() = sender_id AND
@@ -298,18 +317,18 @@ CREATE POLICY IF NOT EXISTS "messages_insert"
   );
 
 -- wallet_transactions: own only
-CREATE POLICY IF NOT EXISTS "wallet_txns_own"
+CREATE POLICY "wallet_txns_own"
   ON public.wallet_transactions FOR SELECT USING (auth.uid() = user_id);
 
 -- payout & refund requests: own only
-CREATE POLICY IF NOT EXISTS "payout_own"
+CREATE POLICY "payout_own"
   ON public.payout_requests FOR ALL USING (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "refund_own"
+CREATE POLICY "refund_own"
   ON public.refund_requests FOR ALL USING (auth.uid() = user_id);
 
 -- contact_messages: anyone can insert; no one can read (admin uses service role)
-CREATE POLICY IF NOT EXISTS "contact_insert"
+CREATE POLICY "contact_insert"
   ON public.contact_messages FOR INSERT WITH CHECK (TRUE);
 
 
