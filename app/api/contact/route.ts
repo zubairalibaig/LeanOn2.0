@@ -33,8 +33,8 @@ export async function POST(req: NextRequest) {
     if (dbErr) throw dbErr
 
     // Notify admin — non-blocking, failure doesn't affect the user response
-    const adminTo = process.env.ADMIN_NOTIFICATION_EMAIL || 'hello@leanon.app'
-    if (process.env.RESEND_API_KEY) {
+    const adminTo = process.env.ADMIN_NOTIFICATION_EMAIL
+    if (process.env.RESEND_API_KEY && adminTo) {
       const resend = getResend()
       await resend.emails.send({
         from:    'LeanOn Contact <no-reply@leanon.app>',
@@ -48,11 +48,13 @@ export async function POST(req: NextRequest) {
           <p>${cleanMessage.replace(/\n/g, '<br/>')}</p>
         `,
       }).catch(err => console.error('Resend notification failed:', err))
+    } else if (!adminTo) {
+      console.warn('ADMIN_NOTIFICATION_EMAIL not set — contact form saved to DB only')
     }
 
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error('Contact form error:', err)
-    return NextResponse.json({ error: 'Failed to submit. Please email hello@leanon.app directly.' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to submit. Please try again or reach us via the email on our website.' }, { status: 500 })
   }
 }

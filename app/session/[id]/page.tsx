@@ -536,8 +536,7 @@ function SessionContent() {
 
         {crisisAlert && (
           <div className="crisis-bar">
-            🆘 If you or someone you know is in crisis, call the national helpline:&nbsp;
-            <a href="tel:18005990019">KIRAN 1800-599-0019</a> (Govt · free · 24/7) · <a href="tel:112">Emergency 112</a>
+            🆘 In crisis? Call <strong>Tele MANAS 14416</strong> (free · 24/7 · Govt of India) — also reachable at <a href="tel:18008914416">1800-89-14416</a> · Emergency: <a href="tel:112">112</a>
             <button onClick={() => setCrisisAlert(false)} style={{float:'right',background:'none',border:'none',cursor:'pointer',color:'#7A2020',fontWeight:900,fontSize:14}}>✕</button>
           </div>
         )}

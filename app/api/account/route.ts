@@ -1,6 +1,26 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 
+// PATCH — deactivate listener profile only (keeps user account active)
+export async function PATCH() {
+  try {
+    const userSb = createServerSupabaseClient()
+    const { data: { user } } = await userSb.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+
+    const admin = createAdminClient()
+    const { error } = await admin.from('listener_profiles')
+      .update({ is_active: false, is_available: false, is_approved: false })
+      .eq('user_id', user.id)
+
+    if (error) throw error
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    console.error('Listener deactivation error:', err)
+    return NextResponse.json({ error: 'Failed to deactivate listener profile' }, { status: 500 })
+  }
+}
+
 // POST — soft-delete (deactivate) the authenticated user's account
 export async function POST() {
   try {

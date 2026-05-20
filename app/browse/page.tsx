@@ -71,10 +71,16 @@ a{text-decoration:none;color:inherit;}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
 .tag-badge{background:rgba(26,143,160,.1);color:var(--navy);font-size:11px;font-weight:700;padding:4px 10px;border-radius:50px;}
 .verified-chip{background:#E6F6FF;color:#0F4867;font-size:10px;font-weight:800;padding:3px 7px;border-radius:50px;border:1.5px solid #B8D9F0;}
-.btns{display:flex;gap:8px;}
-.btn-chat{flex:1;background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:11px;border-radius:12px;border:none;cursor:pointer;transition:all .2s;}
-.btn-chat:hover{background:#e8861a;}
-.btn-voice{background:white;color:var(--navy);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;padding:11px 16px;border-radius:12px;border:1.5px solid var(--border);cursor:pointer;}
+.btns{display:flex;gap:8px;align-items:center;}
+.btn-chat{flex:1;color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:11px;border-radius:12px;border:none;cursor:pointer;transition:all .2s;}
+.btn-chat.avail{background:#34C759;box-shadow:0 2px 10px rgba(52,199,89,.3);}
+.btn-chat.avail:hover{background:#28a745;}
+.btn-chat.busy{background:var(--orange);}
+.btn-chat.busy:hover{background:#e8861a;}
+.btn-chat.offline{background:#C7C7CC;cursor:not-allowed;box-shadow:none;}
+.btn-voice{background:white;color:var(--navy);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;padding:11px 16px;border-radius:12px;border:1.5px solid var(--border);cursor:pointer;white-space:nowrap;}
+.avail-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;}
+.avail-label.on{color:#34C759;}.avail-label.off{color:#C7C7CC;}
 .skeleton{background:linear-gradient(90deg,#e8e8e4 25%,#f2f2ee 50%,#e8e8e4 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:12px;height:160px;}
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 .empty{text-align:center;padding:60px 20px;}
@@ -237,17 +243,18 @@ function BrowseContent() {
                 <div className={`dot ${l.is_available?'on':'off'}`}/>
               </div>
               <div className="meta">
-                <div className="name">{l.name}</div>
+                <div className="name">
+                  {l.name}&nbsp;<span className="verified-chip">✓ Verified</span>
+                </div>
                 <div className="stats">
-                  <span className="verified-chip">✓ Verified</span>
                   {l.rating > 0 && <span>⭐ {(+l.rating).toFixed(1)}</span>}
-                  {l.total_sessions > 0 && <span>{l.total_sessions} sessions</span>}
-                  <span style={{color:l.is_available?'#34C759':'#C7C7CC'}}>
-                    {l.is_available?'● Available':'● Offline'}
-                  </span>
+                  {l.total_sessions > 0 && <span>🗣️ {l.total_sessions} sessions</span>}
                 </div>
               </div>
-              <div className="rate">₹{l.rate_per_min}<span>/min</span></div>
+              <div style={{textAlign:'right',flexShrink:0}}>
+                <div className="rate">₹{l.rate_per_min}<span>/min</span></div>
+                <div className={`avail-label ${l.is_available?'on':'off'}`}>{l.is_available?'● Online':'● Offline'}</div>
+              </div>
             </div>
             <p className="bio">{l.bio}</p>
             <div className="tags">
@@ -261,12 +268,17 @@ function BrowseContent() {
               })}
             </div>
             <div className="btns">
-              <button className="btn-chat" onClick={e=>{e.stopPropagation();router.push(`/listener/${l.user_id}?type=text`)}}>
-                💬 Chat — ₹{Math.round(l.rate_per_min*15)+15}
+              <button
+                className={`btn-chat ${l.is_available ? 'avail' : 'offline'}`}
+                onClick={e=>{e.stopPropagation(); if(l.is_available) router.push(`/listener/${l.user_id}?type=text`)}}
+              >
+                💬 {l.is_available ? `Chat now — ₹${Math.round(l.rate_per_min*15)+15}` : 'Currently offline'}
               </button>
-              <button className="btn-voice" onClick={e=>{e.stopPropagation();router.push(`/listener/${l.user_id}?type=voice`)}}>
-                🎙️ Voice
-              </button>
+              {l.is_available && (
+                <button className="btn-voice" onClick={e=>{e.stopPropagation();router.push(`/listener/${l.user_id}?type=voice`)}}>
+                  🎙️
+                </button>
+              )}
             </div>
           </div>
         ))}

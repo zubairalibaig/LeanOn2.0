@@ -84,6 +84,9 @@ const S = `
   .profile-actions{display:flex;gap:8px;margin-top:14px;}
   .btn-edit{flex:1;padding:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;color:var(--navy);background:var(--light);border:none;border-radius:10px;cursor:pointer;}
   .btn-share{flex:1;padding:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;color:var(--orange);background:#FFF3E0;border:none;border-radius:10px;cursor:pointer;}
+  .btn-deactivate{width:100%;margin-top:10px;padding:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;color:#B71C1C;background:#FFF5F5;border:1.5px solid #FFCDD2;border-radius:10px;cursor:pointer;transition:all 0.2s;}
+  .btn-deactivate:hover{background:#FFEBEE;}
+  .btn-deactivate:disabled{opacity:0.5;cursor:not-allowed;}
   .progress-section{margin-bottom:28px;}
   .progress-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
   .progress-bar{height:8px;background:var(--light);border-radius:4px;overflow:hidden;}
@@ -167,6 +170,7 @@ export default function DashboardPage() {
   const [editAvatar, setEditAvatar]   = useState<string | null>(null)
   const [uploadingAv, setUploadingAv] = useState(false)
   const [savingEdit, setSavingEdit]   = useState(false)
+  const [deactivating, setDeactivating] = useState(false)
 
   useEffect(() => { loadData() }, [])
 
@@ -269,6 +273,19 @@ export default function DashboardPage() {
     await sb.from('payout_requests').insert({ user_id: user.id, amount: profile.balance, status: 'pending' })
     setPayoutLoading(false)
     alert(`Payout request submitted! ₹${profile.balance} will be transferred to your bank within 3 business days.`)
+  }
+
+  async function deactivateListenerProfile() {
+    if (!confirm('This will deactivate your listener profile. You will no longer appear in search or receive sessions. Your user account stays active. Continue?')) return
+    setDeactivating(true)
+    const res = await fetch('/api/account', { method: 'PATCH' })
+    setDeactivating(false)
+    if (res.ok) {
+      alert('Listener profile deactivated. Contact support to reactivate.')
+      router.push('/browse')
+    } else {
+      alert('Something went wrong. Please try again.')
+    }
   }
 
   function openEdit() {
@@ -608,6 +625,9 @@ export default function DashboardPage() {
               alert('Profile link copied!')
             }}>🔗 Share profile</button>
           </div>
+          <button className="btn-deactivate" onClick={deactivateListenerProfile} disabled={deactivating}>
+            {deactivating ? '⟳ Deactivating...' : '⚠️ Deactivate listener profile'}
+          </button>
         </div>
 
         {sessions.length > 0 && (
