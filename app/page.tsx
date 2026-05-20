@@ -53,6 +53,9 @@ export default function Home() {
         @media(min-width:520px){.btn-ghost{display:block;}}
         .btn-nav{background:var(--teal);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;padding:11px 24px;border-radius:50px;border:none;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 12px rgba(26,143,160,0.35);}
         .btn-nav:hover{background:#167a8a;transform:translateY(-1px);}
+        .btn-listener{background:transparent;color:var(--navy);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;padding:9px 16px;border-radius:50px;border:1.5px solid var(--border);cursor:pointer;transition:all 0.2s;display:none;white-space:nowrap;}
+        .btn-listener:hover{border-color:var(--teal);color:var(--teal);}
+        @media(min-width:480px){.btn-listener{display:block;}}
 
         /* HERO — no background, flows with body gradient */
         .hero{padding:48px 28px 64px;max-width:600px;margin:0 auto;text-align:left;}
@@ -163,7 +166,8 @@ export default function Home() {
         <a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a>
         <div className="nav-right">
           <a href="/become-listener" className="btn-ghost">Become a listener</a>
-          <a href="/auth" className="btn-nav">Open app</a>
+          <a href="/auth?mode=listener" className="btn-listener">Listener login</a>
+          <a href="/auth" className="btn-nav">Sign in</a>
         </div>
       </nav>
 

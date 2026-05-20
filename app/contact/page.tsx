@@ -1,4 +1,5 @@
 'use client'
+export const dynamic = 'force-dynamic'
 import { useState } from 'react'
 
 const S = `
@@ -11,6 +12,7 @@ const S = `
   .nav{padding:0 28px;height:72px;display:flex;align-items:center;justify-content:space-between;max-width:700px;margin:0 auto;}
   .nav-logo{height:56px;width:auto;}
   .btn-nav{background:var(--teal);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;padding:10px 22px;border-radius:50px;border:none;cursor:pointer;}
+  .btn-nav-ghost{background:transparent;color:var(--teal);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;padding:8px 16px;border-radius:50px;border:1.5px solid var(--teal);cursor:pointer;}
   .page{max-width:560px;margin:0 auto;padding:16px 24px 80px;}
   .back{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:var(--gray);margin-bottom:28px;}
   h1{font-size:28px;font-weight:900;color:var(--navy);margin-bottom:8px;}
@@ -21,6 +23,8 @@ const S = `
   .input{width:100%;padding:13px 16px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;color:var(--navy);border:2px solid var(--border);border-radius:14px;outline:none;background:white;transition:border-color 0.2s;margin-bottom:16px;}
   .input:focus{border-color:var(--navy);}
   .input::placeholder{color:#B0C8D8;font-weight:400;}
+  .input.error{border-color:#E53935;}
+  .field-error{font-size:12px;color:#E53935;font-weight:700;margin-top:-12px;margin-bottom:12px;}
   textarea.input{resize:vertical;min-height:110px;line-height:1.5;}
   select.input{cursor:pointer;}
   .btn{width:100%;padding:15px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:white;background:var(--orange);border:none;border-radius:50px;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px rgba(255,153,51,0.3);}
@@ -34,11 +38,17 @@ const S = `
 export default function ContactPage() {
   const [name, setName]       = useState('')
   const [email, setEmail]     = useState('')
+  const [emailError, setEmailError] = useState('')
   const [type, setType]       = useState('general')
   const [message, setMessage] = useState('')
   const [sent, setSent]       = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
+
+  function validateEmail(val: string) {
+    if (!val) { setEmailError(''); return }
+    setEmailError(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) ? '' : 'Enter a valid email address')
+  }
 
   async function submit() {
     setSubmitting(true)
@@ -64,7 +74,10 @@ export default function ContactPage() {
       <style>{S}</style>
       <nav className="nav">
         <a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a>
-        <a href="/auth"><button className="btn-nav">Open app</button></a>
+        <div style={{display:'flex',gap:8,alignItems:'center'}}>
+          <a href="/auth?mode=listener"><button className="btn-nav-ghost">Listener login</button></a>
+          <a href="/auth"><button className="btn-nav">Sign in</button></a>
+        </div>
       </nav>
       <div className="page">
         <a href="/" className="back">← Back to home</a>
@@ -84,7 +97,15 @@ export default function ContactPage() {
               <label className="label">Your name</label>
               <input className="input" placeholder="Full name" value={name} onChange={e=>setName(e.target.value)} />
               <label className="label">Email address</label>
-              <input className="input" type="email" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)} />
+              <input
+                className={`input${emailError ? ' error' : ''}`}
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={e => { setEmail(e.target.value); validateEmail(e.target.value) }}
+                onBlur={e => validateEmail(e.target.value)}
+              />
+              {emailError && <p className="field-error">{emailError}</p>}
               <label className="label">Topic</label>
               <select className="input" value={type} onChange={e=>setType(e.target.value)}>
                 <option value="general">General enquiry</option>
@@ -101,7 +122,7 @@ export default function ContactPage() {
               {submitError && (
                 <p style={{color:'#E53935',fontSize:13,fontWeight:700,marginBottom:12}}>{submitError}</p>
               )}
-              <button className="btn" onClick={submit} disabled={submitting||!name||!email||!message}>
+              <button className="btn" onClick={submit} disabled={submitting||!name||!email||!!emailError||!message}>
                 {submitting ? '⟳ Sending...' : 'Send message →'}
               </button>
             </>

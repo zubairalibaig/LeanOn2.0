@@ -62,6 +62,11 @@ export default function AuthPage() {
   const [countdown, setCountdown] = useState(0)
   const otpRefs = useRef<(HTMLInputElement|null)[]>([])
 
+  // Detect listener mode from ?mode=listener query param
+  const isListenerMode = typeof window !== 'undefined'
+    ? new URLSearchParams(window.location.search).get('mode') === 'listener'
+    : false
+
   useEffect(() => {
     if (countdown <= 0) return
     const t = setTimeout(() => setCountdown(c => c-1), 1000)
@@ -102,8 +107,13 @@ export default function AuthPage() {
 
     const { data: userData } = await sb.from('users').select('name').eq('id', data.user!.id).single()
     setLoading(false)
-    if (!userData?.name) { setStep('name') } else { const redirectTo = new URLSearchParams(window.location.search).get('redirect') || '/browse'
-router.push(redirectTo) }
+    if (!userData?.name) {
+      setStep('name')
+    } else {
+      const params = new URLSearchParams(window.location.search)
+      const redirectTo = params.get('redirect') || (params.get('mode') === 'listener' ? '/dashboard' : '/browse')
+      router.push(redirectTo)
+    }
   }
 
   async function saveName() {
@@ -114,8 +124,9 @@ router.push(redirectTo) }
     if (!user) { setError('Session expired. Please try again.'); setLoading(false); return }
     await sb.from('users').update({ name: name.trim() }).eq('id', user.id)
     setLoading(false)
-    const redirectTo = new URLSearchParams(window.location.search).get('redirect') || '/browse'
-router.push(redirectTo)
+    const params = new URLSearchParams(window.location.search)
+    const redirectTo = params.get('redirect') || (params.get('mode') === 'listener' ? '/dashboard' : '/browse')
+    router.push(redirectTo)
   }
 
   function handleOtpChange(i: number, val: string) {
@@ -145,9 +156,13 @@ router.push(redirectTo)
         <div className="content">
           {step === 'phone' && (
             <>
-              <div className="step-icon">📱</div>
-              <h1>What&apos;s your mobile number?</h1>
-              <p className="subtitle">We&apos;ll send a one-time code to verify. No spam, ever.</p>
+              <div className="step-icon">{isListenerMode ? '🎧' : '📱'}</div>
+              <h1>{isListenerMode ? 'Listener sign in' : 'What\'s your mobile number?'}</h1>
+              <p className="subtitle">
+                {isListenerMode
+                  ? 'Sign in to your listener dashboard. Same number you registered with.'
+                  : "We'll send a one-time code to verify. No spam, ever."}
+              </p>
               <label className="label">Mobile number</label>
               <div className="phone-wrap">
                 <div className="phone-prefix">🇮🇳 +91</div>
@@ -194,7 +209,7 @@ router.push(redirectTo)
             <>
               <div className="step-icon">👋</div>
               <h1>What should we call you?</h1>
-              <p className="subtitle">Just a first name. This is what listeners will see.</p>
+              <p className="subtitle">{isListenerMode ? 'Just a first name. This is what seekers will see on your profile.' : 'Just a first name. This is what listeners will see.'}</p>
               <label className="label">Your first name</label>
               <input className="text-input" type="text" placeholder="e.g. Priya" autoFocus
                 value={name} onChange={e => setName(e.target.value)}
