@@ -35,6 +35,11 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
+    // Only issue tokens for active sessions — completed/cancelled sessions cannot rejoin
+    if (session.status !== 'active') {
+      return NextResponse.json({ error: 'Session is no longer active' }, { status: 403 })
+    }
+
     const appId      = process.env.NEXT_PUBLIC_AGORA_APP_ID!
     const appCert    = process.env.AGORA_APP_CERTIFICATE!
     const channelName = session.agora_channel as string

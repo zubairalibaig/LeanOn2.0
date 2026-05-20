@@ -4,14 +4,17 @@ import crypto from 'crypto'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 
-const rzp = new Razorpay({
-  key_id:     process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-})
+function getRzp() {
+  return new Razorpay({
+    key_id:     process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+    key_secret: process.env.RAZORPAY_KEY_SECRET!,
+  })
+}
 
 // POST — create Razorpay order (requires auth)
 export async function POST(req: NextRequest) {
   try {
+    const rzp = getRzp()
     const userSb = createServerSupabaseClient()
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
@@ -42,6 +45,7 @@ export async function POST(req: NextRequest) {
 // PUT — verify Razorpay signature and credit wallet (requires auth)
 export async function PUT(req: NextRequest) {
   try {
+    const rzp = getRzp()
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, amount } = await req.json()
 
     // userId from verified session cookie — NOT from request body (prevents spoofing)
@@ -60,7 +64,7 @@ export async function PUT(req: NextRequest) {
     }
 
     // Validate amount against the actual Razorpay order — prevents client manipulation
-    let verifiedAmount = amount
+    let verifiedAmount: number
     try {
       const order = await rzp.orders.fetch(razorpay_order_id)
       verifiedAmount = Math.round(Number(order.amount) / 100)
@@ -69,7 +73,11 @@ export async function PUT(req: NextRequest) {
       }
     } catch (err) {
       console.error('Failed to fetch Razorpay order for validation:', err)
-      // Proceed with client-provided amount if order fetch fails — HMAC already verified
+      // Fail closed — never trust client-provided amount if we can't verify it
+      return NextResponse.json(
+        { error: `Could not verify payment amount. Contact support with payment ID: ${razorpay_payment_id}` },
+        { status: 500 }
+      )
     }
 
     const sb = createAdminClient()

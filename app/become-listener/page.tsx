@@ -1,13 +1,19 @@
 'use client'
+export const dynamic = 'force-dynamic'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, LANGUAGES } from '@/lib/constants'
 
-const sb = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+let _sb: ReturnType<typeof createBrowserClient> | null = null
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const sb = new Proxy({} as ReturnType<typeof createBrowserClient>, {
+  get(_, prop) {
+    if (!_sb) _sb = createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
+    const val = (_sb as any)[prop]
+    return typeof val === 'function' ? val.bind(_sb) : val
+  }
+})
 
 const TAGS = [
   {id:'loneliness', label:'Loneliness 🌙'},

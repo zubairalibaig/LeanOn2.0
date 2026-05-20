@@ -1,13 +1,26 @@
 'use client'
+export const dynamic = 'force-dynamic'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE } from '@/lib/constants'
 
-const sb = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+let _sb: ReturnType<typeof createBrowserClient> | null = null
+function initSb() {
+  if (!_sb) _sb = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+  return _sb
+}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const sb = new Proxy({} as ReturnType<typeof createBrowserClient>, {
+  get(_, prop) {
+    const client = initSb()
+    const val = (client as any)[prop]
+    return typeof val === 'function' ? val.bind(client) : val
+  }
+})
 
 const SPECIALTY_TAGS = [
   {id:'loneliness',  label:'Loneliness 🌙'},
@@ -169,7 +182,7 @@ export default function DashboardPage() {
   useEffect(() => {
     function handleUnload() {
       if (!user) return
-      navigator.sendBeacon('/api/presence', JSON.stringify({ userId: user.id, available: false }))
+      navigator.sendBeacon('/api/presence', JSON.stringify({ available: false }))
     }
     window.addEventListener('beforeunload', handleUnload)
     return () => window.removeEventListener('beforeunload', handleUnload)

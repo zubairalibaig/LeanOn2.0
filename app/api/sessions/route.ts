@@ -66,19 +66,9 @@ export async function POST(req: NextRequest) {
       if (!u || u.wallet_balance < total) {
         return NextResponse.json({ error: 'insufficient_balance', required: total }, { status: 400 })
       }
-
-      // Deduct atomically — prevents race condition / double-spend
-      const { error: deductErr } = await sb.rpc('deduct_wallet', {
-        p_user_id: user.id,
-        p_amount:  total,
-      })
-
-      if (deductErr) {
-        console.error('deduct_wallet RPC failed:', deductErr)
-        return NextResponse.json({ error: 'Payment processing failed. Please try again.' }, { status: 500 })
-      }
     }
 
+    // Insert session BEFORE deducting wallet — if insert fails, no money is taken
     const { data: session, error: sErr } = await sb.from('sessions').insert({
       seeker_id:     user.id,
       listener_id:   listenerId,
@@ -95,6 +85,18 @@ export async function POST(req: NextRequest) {
     if (sErr) throw sErr
 
     if (!isFree) {
+      // Deduct atomically — if this fails, cancel the session (no money was taken)
+      const { error: deductErr } = await sb.rpc('deduct_wallet', {
+        p_user_id: user.id,
+        p_amount:  total,
+      })
+
+      if (deductErr) {
+        console.error('deduct_wallet RPC failed — cancelling session:', { sessionId: session.id, deductErr })
+        await sb.from('sessions').update({ status: 'cancelled' }).eq('id', session.id)
+        return NextResponse.json({ error: 'Payment processing failed. Please try again.' }, { status: 500 })
+      }
+
       await sb.from('wallet_transactions').insert({
         user_id:     user.id,
         amount:      -total,
