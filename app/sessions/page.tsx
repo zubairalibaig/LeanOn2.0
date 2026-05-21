@@ -43,7 +43,7 @@ type Session = {
   id: string
   status: string
   session_type: string
-  duration: number
+  duration_mins: number
   amount_held: number
   seeker_rating: number | null
   created_at: string
@@ -77,7 +77,7 @@ export default function SessionsPage() {
           id: s.id as string,
           status: s.status as string,
           session_type: s.session_type as string,
-          duration: (s.duration as number) || 0,
+          duration_mins: (s.duration_mins as number) || 0,
           amount_held: (s.amount_held as number) || 0,
           seeker_rating: s.seeker_rating as number | null,
           created_at: s.created_at as string,
@@ -142,8 +142,8 @@ export default function SessionsPage() {
               <span className="meta-item">
                 {s.session_type === 'voice' ? '🎙️' : '💬'} {s.session_type === 'voice' ? 'Voice' : 'Text'}
               </span>
-              {s.duration > 0 && (
-                <span className="meta-item">⏱ {formatDuration(s.duration)}</span>
+              {s.duration_mins > 0 && (
+                <span className="meta-item">⏱ {formatDuration(s.duration_mins)}</span>
               )}
               <span className="meta-item">📅 {formatDate(s.created_at)}</span>
             </div>
@@ -156,7 +156,7 @@ export default function SessionsPage() {
             {s.status === 'active' && (
               <button
                 className="rejoin-btn"
-                onClick={() => router.push(`/session/${s.id}?name=${encodeURIComponent(s.listener_name)}&duration=${s.duration}`)}
+                onClick={() => router.push(`/session/${s.id}?name=${encodeURIComponent(s.listener_name)}&duration=${s.duration_mins}&type=${s.session_type}`)}
               >
                 Rejoin →
               </button>

@@ -23,6 +23,8 @@ export async function POST(req: NextRequest) {
     const cleanType    = type || 'general'
     const cleanMessage = message.trim().slice(0, 2000)
 
+    const esc = (s: string) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+
     const sb = createAdminClient()
     const { error: dbErr } = await sb.from('contact_messages').insert({
       name:    cleanName,
@@ -43,11 +45,11 @@ export async function POST(req: NextRequest) {
         replyTo: cleanEmail,
         subject: `[LeanOn Contact] ${cleanType} from ${cleanName}`,
         html: `
-          <p><strong>From:</strong> ${cleanName} &lt;${cleanEmail}&gt;</p>
-          <p><strong>Topic:</strong> ${cleanType}</p>
-          <p><strong>Reply-to:</strong> ${cleanEmail}</p>
+          <p><strong>From:</strong> ${esc(cleanName)} &lt;${esc(cleanEmail)}&gt;</p>
+          <p><strong>Topic:</strong> ${esc(cleanType)}</p>
+          <p><strong>Reply-to:</strong> ${esc(cleanEmail)}</p>
           <hr/>
-          <p>${cleanMessage.replace(/\n/g, '<br/>')}</p>
+          <p>${esc(cleanMessage).replace(/\n/g, '<br/>')}</p>
         `,
       }).catch(err => console.error('Resend notification failed:', err))
     } else if (!adminTo) {

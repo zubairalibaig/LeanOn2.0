@@ -4,7 +4,8 @@ import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-se
 // Called via navigator.sendBeacon when dashboard page unloads
 export async function POST(req: NextRequest) {
   try {
-    const { available } = await req.json()
+    const body = await req.json()
+    const available = body.available === true
 
     // Authenticate from session cookie — never trust userId from request body
     const userSb = createServerSupabaseClient()

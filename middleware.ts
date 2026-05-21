@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 
-const PROTECTED = ['/session', '/wallet', '/dashboard', '/browse', '/admin']
+const PROTECTED = ['/session', '/wallet', '/dashboard', '/browse', '/admin', '/profile', '/sessions']
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
@@ -30,9 +30,10 @@ export async function middleware(req: NextRequest) {
     }
   )
 
-  const { data: { session } } = await supabase.auth.getSession()
+  // getUser() validates the JWT server-side — getSession() trusts the cookie blindly
+  const { data: { user } } = await supabase.auth.getUser()
 
-  if (!session) {
+  if (!user) {
     const loginUrl = new URL('/auth', req.url)
     loginUrl.searchParams.set('redirect', pathname + req.nextUrl.search)
     return NextResponse.redirect(loginUrl)
@@ -42,5 +43,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/session/:path*', '/wallet/:path*', '/dashboard/:path*', '/browse/:path*', '/admin/:path*', '/admin'],
+  matcher: ['/session/:path*', '/wallet/:path*', '/dashboard/:path*', '/browse/:path*', '/admin/:path*', '/admin', '/profile/:path*', '/profile', '/sessions/:path*', '/sessions'],
 }

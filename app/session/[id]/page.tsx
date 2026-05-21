@@ -111,6 +111,8 @@ type Msg = {
   temp?: boolean
 }
 
+const CRISIS_WORDS = ['suicide', 'kill myself', 'end my life', 'want to die', 'self harm', 'hurt myself', 'no reason to live', "can't go on"]
+
 function SessionContent() {
   const router       = useRouter()
   const routeParams  = useParams()
@@ -246,10 +248,13 @@ function SessionContent() {
 
   // Countdown timer — auto-ends session when it hits 0
   useEffect(() => {
-    if (ended || secs <= 0) { if (secs <= 0) setEnded(true); return }
-    const t = setInterval(() => setSecs(s => s - 1), 1000)
+    if (ended) return
+    const t = setInterval(() => setSecs(s => {
+      if (s <= 1) { setEnded(true); return 0 }
+      return s - 1
+    }), 1000)
     return () => clearInterval(t)
-  }, [secs, ended])
+  }, [ended])
 
   // Auto-complete session in DB when ended (timer expiry or manual end)
   // Uses a ref so it fires exactly once even if component re-renders
@@ -264,7 +269,6 @@ function SessionContent() {
   }, [ended, sessionId])
 
   // Crisis keyword detection — show helpline banner
-  const CRISIS_WORDS = ['suicide', 'kill myself', 'end my life', 'want to die', 'self harm', 'hurt myself', 'no reason to live', 'can\'t go on']
   useEffect(() => {
     if (crisisAlert || msgs.length === 0) return
     const recentText = msgs.slice(-6).map(m => m.content.toLowerCase()).join(' ')
@@ -347,23 +351,23 @@ function SessionContent() {
 
     return () => {
       cancelled = true
-      // Cleanup Agora on unmount or when session ends
+      // Cleanup Agora on unmount or when session ends (unpublish → close → leave)
       if (agoraRef.current) {
         const { client, micTrack } = agoraRef.current
-        micTrack.close()
         client.unpublish([micTrack]).catch(() => {})
+        micTrack.close()
         client.leave().catch(() => {})
         agoraRef.current = null
       }
     }
   }, [isVoice, sessionId])
 
-  // Leave Agora channel when session ends
+  // Leave Agora channel when session ends (unpublish → close → leave)
   useEffect(() => {
     if (ended && agoraRef.current) {
       const { client, micTrack } = agoraRef.current
-      micTrack.close()
       client.unpublish([micTrack]).catch(() => {})
+      micTrack.close()
       client.leave().catch(() => {})
       agoraRef.current = null
     }

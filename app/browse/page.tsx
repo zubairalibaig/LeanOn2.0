@@ -120,7 +120,7 @@ function BrowseContent() {
 
       // Subscribe to incoming session requests (in case user is a listener browsing)
       if (channelRef.current) client.removeChannel(channelRef.current)
-      const channel = client.channel('browse-incoming-sessions')
+      const channel = client.channel(`browse-incoming-${user.id}`)
         .on('postgres_changes', {
           event: 'INSERT',
           schema: 'public',

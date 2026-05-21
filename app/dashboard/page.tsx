@@ -270,6 +270,18 @@ export default function DashboardPage() {
   async function requestPayout() {
     if (!user || !profile) return
     setPayoutLoading(true)
+    // Check for existing pending payout before inserting
+    const { data: existing } = await sb
+      .from('payout_requests')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('status', 'pending')
+      .limit(1)
+    if (existing && existing.length > 0) {
+      setPayoutLoading(false)
+      alert('You already have a pending payout request. Please wait for it to be processed.')
+      return
+    }
     await sb.from('payout_requests').insert({ user_id: user.id, amount: profile.balance, status: 'pending' })
     setPayoutLoading(false)
     alert(`Payout request submitted! ₹${profile.balance} will be transferred to your bank within 3 business days.`)
@@ -548,7 +560,7 @@ export default function DashboardPage() {
           <h1>My Dashboard</h1>
           <button className={`avail-toggle ${avail ? 'on' : 'off'}`} onClick={toggleAvailability}>
             <div className={`avail-dot ${avail ? 'on' : 'off'}`} />
-            {avail ? 'Available' : 'Go offline'}
+            {avail ? 'Go offline' : 'Go online'}
           </button>
         </div>
 

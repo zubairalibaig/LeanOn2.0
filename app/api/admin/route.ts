@@ -1,16 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 async function requireAdmin() {
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Unauthenticated', status: 401, user: null }
 
-  // Check admin by email env var or is_admin column
   const adminEmail = process.env.ADMIN_EMAIL
   if (adminEmail) {
     if (user.email !== adminEmail) return { error: 'Forbidden', status: 403, user: null }
   } else {
+    console.warn('ADMIN_EMAIL env var not set — falling back to is_admin DB column')
     const admin = createAdminClient()
     const { data: dbUser } = await admin
       .from('users')
@@ -85,13 +87,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing action or id' }, { status: 400 })
   }
 
+  // Validate id is a proper UUID to prevent malformed DB queries
+  if (!UUID_RE.test(id)) {
+    return NextResponse.json({ error: 'Invalid id format' }, { status: 400 })
+  }
+
   const admin = createAdminClient()
 
   if (action === 'approve_listener') {
     const [r1, r2] = await Promise.all([
       admin
         .from('listener_profiles')
-        .update({ is_approved: true })
+        // is_active: true required — browse page filters on both is_approved AND is_active
+        .update({ is_approved: true, is_active: true })
         .eq('user_id', id),
       admin
         .from('listener_applications')
@@ -112,8 +120,22 @@ export async function POST(req: NextRequest) {
   }
 
   if (action === 'complete_payout') {
+    const { data: pr } = await admin.from('payout_requests')
+      .select('user_id, amount')
+      .eq('id', id)
+      .eq('status', 'pending')
+      .single()
+
+    if (!pr) return NextResponse.json({ error: 'Payout request not found or already processed' }, { status: 404 })
+
     const { error: err } = await admin.from('payout_requests').update({ status: 'completed' }).eq('id', id)
     if (err) return NextResponse.json({ error: err.message }, { status: 500 })
+
+    await admin.rpc('deduct_wallet', { p_user_id: pr.user_id, p_amount: pr.amount })
+    await admin.from('wallet_transactions').insert({
+      user_id: pr.user_id, amount: pr.amount, type: 'debit', description: 'Payout disbursed',
+    })
+
     await auditLog(admin, user!.id, 'complete_payout', id)
     return NextResponse.json({ ok: true })
   }
@@ -127,12 +149,27 @@ export async function POST(req: NextRequest) {
   }
 
   if (action === 'complete_refund') {
+    // Fetch refund details BEFORE marking complete so rr is always present
+    const { data: rr } = await admin.from('refund_requests')
+      .select('user_id, amount')
+      .eq('id', id)
+      .eq('status', 'pending')  // guard: only process pending refunds
+      .single()
+
+    if (!rr) return NextResponse.json({ error: 'Refund request not found or already processed' }, { status: 404 })
+
     await admin.from('refund_requests').update({ status: 'completed' }).eq('id', id)
-    const { data: rr } = await admin.from('refund_requests').select('user_id, amount').eq('id', id).single()
-    if (rr) {
-      await admin.from('users').update({ wallet_balance: 0 }).eq('id', rr.user_id)
-      await admin.from('wallet_transactions').insert({ user_id: rr.user_id, amount: -rr.amount, type: 'debit', description: 'Wallet refund processed' })
+
+    // Use deduct_wallet RPC for atomicity — prevents race with concurrent recharges
+    const { error: deductErr } = await admin.rpc('deduct_wallet', { p_user_id: rr.user_id, p_amount: rr.amount })
+    if (deductErr) {
+      console.error('deduct_wallet failed for refund — manual reconciliation needed:', { id, deductErr })
     }
+
+    await admin.from('wallet_transactions').insert({
+      user_id: rr.user_id, amount: rr.amount, type: 'debit', description: 'Wallet refund processed',
+    })
+
     await auditLog(admin, user!.id, 'complete_refund', id)
     return NextResponse.json({ ok: true })
   }

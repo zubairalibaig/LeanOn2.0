@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
-import { PLATFORM_FEE, FREE_SESSION_MINS } from '@/lib/constants'
+import { PLATFORM_FEE, FREE_SESSION_MINS, SESSION_DURATIONS } from '@/lib/constants'
+
+const VALID_SESSION_TYPES = ['text', 'voice'] as const
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 // POST — create session + deduct wallet atomically
 export async function POST(req: NextRequest) {
@@ -11,6 +14,17 @@ export async function POST(req: NextRequest) {
     const userSb = createServerSupabaseClient()
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+
+    // Input validation — prevents crafted requests with invalid durations/types
+    if (!UUID_RE.test(listenerId)) {
+      return NextResponse.json({ error: 'Invalid listener' }, { status: 400 })
+    }
+    if (!(SESSION_DURATIONS as readonly number[]).includes(durationMins)) {
+      return NextResponse.json({ error: 'Invalid session duration' }, { status: 400 })
+    }
+    if (!VALID_SESSION_TYPES.includes(sessionType)) {
+      return NextResponse.json({ error: 'Invalid session type' }, { status: 400 })
+    }
 
     // 5 session-starts per minute per user — prevents spam booking
     if (!checkRateLimit(`session:${user.id}`, 5, 60_000)) {
@@ -32,6 +46,20 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Verify listener is active and available (server-side — client-side check is not enough)
+    const { data: lp } = await sb
+      .from('listener_profiles')
+      .select('rate_per_min, is_active, is_available, is_approved')
+      .eq('user_id', listenerId)
+      .single()
+
+    if (!lp?.is_active || !lp?.is_approved) {
+      return NextResponse.json({ error: 'listener_unavailable', message: 'This listener is not available.' }, { status: 400 })
+    }
+    if (!isFree && !lp?.is_available) {
+      return NextResponse.json({ error: 'listener_offline', message: 'This listener is currently offline.' }, { status: 400 })
+    }
+
     // Block paid sessions if listener already has an active paid session
     if (!isFree) {
       const { data: activeSessions } = await sb
@@ -46,13 +74,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const { data: lp } = await sb
-      .from('listener_profiles')
-      .select('rate_per_min')
-      .eq('user_id', listenerId)
-      .single()
-
-    const rate  = lp?.rate_per_min || 10
+    const rate  = lp.rate_per_min || 10
     const base  = isFree ? 0 : rate * durationMins
     const total = isFree ? 0 : base + PLATFORM_FEE
 
@@ -77,7 +99,7 @@ export async function POST(req: NextRequest) {
       amount_held:   total,
       platform_fee:  isFree ? 0 : PLATFORM_FEE,
       is_free_trial: isFree,
-      agora_channel: `lo_${Date.now()}`,
+      agora_channel: `lo_${crypto.randomUUID()}`,
       status:        'active',
       started_at:    new Date().toISOString(),
     }).select().single()
@@ -113,7 +135,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// PATCH — complete session + credit listener
+// PATCH — complete session + credit listener + update rating average
 export async function PATCH(req: NextRequest) {
   try {
     const { sessionId, rating } = await req.json()
@@ -134,12 +156,11 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Session not found' }, { status: 404 })
     }
 
-    // Only the seeker or listener of THIS session can complete it
     if (user.id !== session.seeker_id && user.id !== session.listener_id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
-    // Optimistic lock — .eq('status','active') prevents double-payout if two requests race
+    // Optimistic lock — prevents double-payout if two requests race
     const { data: completed } = await sb
       .from('sessions')
       .update({
@@ -153,15 +174,17 @@ export async function PATCH(req: NextRequest) {
       .single()
 
     if (!completed) {
-      // Session already completed — still allow seeker to submit/update rating
+      // Already completed — only seeker can update rating
       if (rating && user.id === session.seeker_id) {
         await sb.from('sessions').update({ seeker_rating: rating })
           .eq('id', sessionId).eq('seeker_id', user.id)
+        // Recalculate rating average even on late updates
+        await updateListenerRating(sb, session.listener_id)
       }
       return NextResponse.json({ success: true })
     }
 
-    const listenerEarning = session.amount_held - session.platform_fee
+    const listenerEarning = session.amount_held - (session.platform_fee ?? 0)
     if (listenerEarning > 0 && !session.is_free_trial) {
       const { error: creditErr } = await sb.rpc('credit_wallet', {
         p_user_id: session.listener_id,
@@ -193,9 +216,27 @@ export async function PATCH(req: NextRequest) {
       total_sessions: (lp?.total_sessions || 0) + 1,
     }).eq('user_id', session.listener_id)
 
+    // Update rating average when session has a rating
+    if (rating) await updateListenerRating(sb, session.listener_id)
+
     return NextResponse.json({ success: true })
   } catch (err: unknown) {
     console.error('Session complete error:', err)
     return NextResponse.json({ error: err instanceof Error ? err.message : 'Unknown error' }, { status: 500 })
   }
+}
+
+async function updateListenerRating(sb: ReturnType<typeof createAdminClient>, listenerId: string) {
+  const { data: rows } = await sb
+    .from('sessions')
+    .select('seeker_rating')
+    .eq('listener_id', listenerId)
+    .not('seeker_rating', 'is', null)
+
+  if (!rows || rows.length === 0) return
+
+  const avg = rows.reduce((s, r) => s + (r.seeker_rating as number), 0) / rows.length
+  await sb.from('listener_profiles')
+    .update({ rating: Math.round(avg * 100) / 100 })
+    .eq('user_id', listenerId)
 }

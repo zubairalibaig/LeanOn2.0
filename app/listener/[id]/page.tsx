@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
-import { LANGUAGES } from '@/lib/constants'
+import { LANGUAGES, PLATFORM_FEE } from '@/lib/constants'
 
 type ListenerProfile = {
   id: string
@@ -151,7 +151,7 @@ export default function ListenerPage({ params }: { params: {id:string} }) {
   )
 
   const ini    = (n:string) => n.split(' ').map((x:string)=>x[0]).join('').slice(0,2).toUpperCase()
-  const cost   = duration === 5 ? 0 : listener!.rate_per_min * duration + 15
+  const cost   = duration === 5 ? 0 : listener!.rate_per_min * duration + PLATFORM_FEE
   // Sessions available in 15/30/45 min paid slots (5 min is free trial)
   const canPay = duration === 5 || balance >= cost
 
