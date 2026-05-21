@@ -36,14 +36,16 @@ export async function POST(req: NextRequest) {
     const adminTo = process.env.ADMIN_NOTIFICATION_EMAIL
     if (process.env.RESEND_API_KEY && adminTo) {
       const resend = getResend()
+      // Use onboarding@resend.dev until leanon.app is verified as a Resend sending domain
       await resend.emails.send({
-        from:    'LeanOn Contact <no-reply@leanon.app>',
+        from:    'LeanOn <onboarding@resend.dev>',
         to:      adminTo,
         replyTo: cleanEmail,
         subject: `[LeanOn Contact] ${cleanType} from ${cleanName}`,
         html: `
           <p><strong>From:</strong> ${cleanName} &lt;${cleanEmail}&gt;</p>
           <p><strong>Topic:</strong> ${cleanType}</p>
+          <p><strong>Reply-to:</strong> ${cleanEmail}</p>
           <hr/>
           <p>${cleanMessage.replace(/\n/g, '<br/>')}</p>
         `,

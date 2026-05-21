@@ -30,7 +30,7 @@ export default function TermsPage() {
         <p className="updated">Last updated: May 2025</p>
 
         <div className="warning-box">
-          <p>⚠️ LeanOn is a peer support platform only. It is NOT a mental health service, therapy platform, or medical service. Listeners are not licensed therapists, psychologists, or counselors. If you are in crisis, call iCall: 9152987821.</p>
+          <p>⚠️ LeanOn is a peer support platform only. It is NOT a mental health service, therapy platform, or medical service. Listeners are not licensed therapists, psychologists, or counselors. If you are in crisis, call <strong>NIMHANS 080-46110007</strong> or the national Tele-MANAS helpline: <strong>14416</strong> (free, 24/7, Govt of India).</p>
         </div>
 
         <h2>1. What LeanOn is</h2>
