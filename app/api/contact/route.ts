@@ -36,22 +36,31 @@ export async function POST(req: NextRequest) {
 
     // Notify admin — non-blocking, failure doesn't affect the user response
     const adminTo = process.env.ADMIN_NOTIFICATION_EMAIL
+    const fromAddr = process.env.RESEND_FROM || 'LeanOn <onboarding@resend.dev>'
     if (process.env.RESEND_API_KEY && adminTo) {
       const resend = getResend()
-      // Use onboarding@resend.dev until leanon.app is verified as a Resend sending domain
-      await resend.emails.send({
-        from:    'LeanOn <onboarding@resend.dev>',
-        to:      adminTo,
-        replyTo: cleanEmail,
-        subject: `[LeanOn Contact] ${cleanType} from ${cleanName}`,
-        html: `
-          <p><strong>From:</strong> ${esc(cleanName)} &lt;${esc(cleanEmail)}&gt;</p>
-          <p><strong>Topic:</strong> ${esc(cleanType)}</p>
-          <p><strong>Reply-to:</strong> ${esc(cleanEmail)}</p>
-          <hr/>
-          <p>${esc(cleanMessage).replace(/\n/g, '<br/>')}</p>
-        `,
-      }).catch(err => console.error('Resend notification failed:', err))
+      try {
+        // NOTE: resend.emails.send returns { data, error } — it does NOT throw on API errors.
+        // With onboarding@resend.dev, Resend only delivers to the account-owner's email.
+        // Verify leanon.app as a sending domain and set RESEND_FROM to send anywhere.
+        const { data, error } = await resend.emails.send({
+          from:    fromAddr,
+          to:      adminTo,
+          replyTo: cleanEmail,
+          subject: `[LeanOn Contact] ${cleanType} from ${cleanName}`,
+          html: `
+            <p><strong>From:</strong> ${esc(cleanName)} &lt;${esc(cleanEmail)}&gt;</p>
+            <p><strong>Topic:</strong> ${esc(cleanType)}</p>
+            <p><strong>Reply-to:</strong> ${esc(cleanEmail)}</p>
+            <hr/>
+            <p>${esc(cleanMessage).replace(/\n/g, '<br/>')}</p>
+          `,
+        })
+        if (error) console.error('Resend API rejected the email:', error)
+        else console.log('Resend accepted contact email:', data?.id)
+      } catch (err) {
+        console.error('Resend network failure:', err)
+      }
     } else if (!adminTo) {
       console.warn('ADMIN_NOTIFICATION_EMAIL not set — contact form saved to DB only')
     }
