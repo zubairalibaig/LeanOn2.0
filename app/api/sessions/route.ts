@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
 
       await sb.from('wallet_transactions').insert({
         user_id:     user.id,
-        amount:      -total,
+        amount:      total,
         type:        'debit',
         description: `${durationMins}-min ${sessionType} session`,
         session_id:  session.id,

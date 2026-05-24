@@ -167,7 +167,7 @@ export default function BecomeListenerPage() {
       if (profileErr) throw profileErr
 
       // Save payout + verification details separately
-      await sb.from('listener_applications').upsert({
+      const { error: appErr } = await sb.from('listener_applications').upsert({
         user_id:       user.id,
         name:          name.trim(),
         phone:         phone.trim(),
@@ -176,6 +176,7 @@ export default function BecomeListenerPage() {
         ifsc_code:     ifsc.trim().toUpperCase(),
         status:        'pending',
       }, { onConflict: 'user_id' })
+      if (appErr) throw appErr
 
       // Update user name if not already set
       await sb.from('users').update({ name: name.trim() }).eq('id', user.id)

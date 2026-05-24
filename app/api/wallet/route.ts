@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     const order = await rzp.orders.create({
       amount:   amount * 100,
       currency: 'INR',
-      receipt:  `wallet_${Date.now()}`,
+      receipt:  `wallet_${user.id.slice(0, 8)}_${Date.now()}`,
       notes:    { userId: user.id, amount: String(amount) },
     })
     return NextResponse.json({ orderId: order.id, amount: order.amount })

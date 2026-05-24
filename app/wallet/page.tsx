@@ -3,10 +3,18 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
-const createClient = () => createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+
+let _sbWallet: ReturnType<typeof createBrowserClient> | null = null
+const sb = new Proxy({} as ReturnType<typeof createBrowserClient>, {
+  get(_, prop) {
+    if (!_sbWallet) _sbWallet = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+    const val = (_sbWallet as any)[prop]
+    return typeof val === 'function' ? val.bind(_sbWallet) : val
+  }
+})
 const S = `
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -57,7 +65,6 @@ declare global { interface Window { Razorpay: any } }
 
 export default function WalletPage() {
   const router = useRouter()
-  const sb = createClient()
   const [selected, setSelected] = useState(500)
   const [loading, setLoading]   = useState(false)
   const [balance, setBalance]   = useState<number|null>(null)
