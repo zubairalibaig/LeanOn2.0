@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
-import { PLATFORM_FEE, FREE_SESSION_MINS, SESSION_DURATIONS } from '@/lib/constants'
+import { PLATFORM_FEE, FREE_SESSION_MINS, MAX_FREE_TRIALS, SESSION_DURATIONS } from '@/lib/constants'
 
 const VALID_SESSION_TYPES = ['text', 'voice'] as const
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -34,15 +34,15 @@ export async function POST(req: NextRequest) {
     const sb     = createAdminClient()
     const isFree = durationMins === FREE_SESSION_MINS
 
-    // One free trial per user lifetime — prevents abuse
+    // Up to MAX_FREE_TRIALS free trials per user — lets them try multiple listeners
     if (isFree) {
       const { count } = await sb
         .from('sessions')
         .select('id', { count: 'exact', head: true })
         .eq('seeker_id', user.id)
         .eq('is_free_trial', true)
-      if ((count ?? 0) > 0) {
-        return NextResponse.json({ error: 'free_trial_used', message: 'You have already used your free 5-min trial.' }, { status: 400 })
+      if ((count ?? 0) >= MAX_FREE_TRIALS) {
+        return NextResponse.json({ error: 'free_trial_used', message: `You've used all ${MAX_FREE_TRIALS} of your free 5-min trials. Recharge your wallet to continue.` }, { status: 400 })
       }
     }
 

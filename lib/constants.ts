@@ -2,6 +2,7 @@ export const PLATFORM_FEE       = 15   // flat ₹15 added on top of listener ra
 export const MIN_LISTENER_RATE  = 8    // ₹/min
 export const MAX_LISTENER_RATE  = 25   // ₹/min
 export const FREE_SESSION_MINS  = 5
+export const MAX_FREE_TRIALS    = 5    // each user gets 5 free 5-min trials (try multiple listeners)
 export const SESSION_DURATIONS  = [5, 15, 30, 45] as const
 
 export const LANGUAGES = [
