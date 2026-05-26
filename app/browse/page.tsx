@@ -184,7 +184,7 @@ function BrowseContent() {
               className="btn-toast-join"
               onClick={() => {
                 setIncomingSession(null)
-                router.push(`/session/${incomingSession.id}?name=You&duration=${incomingSession.duration_mins}`)
+                router.push(`/session/${incomingSession.id}?name=You&duration=${incomingSession.duration_mins}&type=${incomingSession.session_type ?? 'text'}`)
               }}
             >
               Join →

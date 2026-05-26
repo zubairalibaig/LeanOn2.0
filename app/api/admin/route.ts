@@ -131,7 +131,10 @@ export async function POST(req: NextRequest) {
     const { error: err } = await admin.from('payout_requests').update({ status: 'completed' }).eq('id', id)
     if (err) return NextResponse.json({ error: err.message }, { status: 500 })
 
-    await admin.rpc('deduct_wallet', { p_user_id: pr.user_id, p_amount: pr.amount })
+    const { error: deductErr } = await admin.rpc('deduct_wallet', { p_user_id: pr.user_id, p_amount: pr.amount })
+    if (deductErr) {
+      console.error('deduct_wallet failed for payout — manual reconciliation needed:', { id, deductErr })
+    }
     await admin.from('wallet_transactions').insert({
       user_id: pr.user_id, amount: pr.amount, type: 'debit', description: 'Payout disbursed',
     })

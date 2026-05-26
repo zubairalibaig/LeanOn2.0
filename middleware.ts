@@ -5,6 +5,14 @@ const PROTECTED = ['/session', '/wallet', '/dashboard', '/browse', '/admin', '/p
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
+
+  // Redirect www → apex so Google sees a single canonical domain
+  if (req.nextUrl.hostname === 'www.leanon.app') {
+    const apex = req.nextUrl.clone()
+    apex.hostname = 'leanon.app'
+    return NextResponse.redirect(apex, { status: 301 })
+  }
+
   if (!PROTECTED.some(p => pathname.startsWith(p))) return NextResponse.next()
 
   // Use Supabase SSR client — reads the real auth cookie and refreshes tokens
@@ -43,5 +51,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/session/:path*', '/wallet/:path*', '/dashboard/:path*', '/browse/:path*', '/admin/:path*', '/admin', '/profile/:path*', '/profile', '/sessions/:path*', '/sessions'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|logo.png|manifest.json).*)'],
 }

@@ -4,6 +4,7 @@ import BottomNav from './components/BottomNav'
 import ToastProvider from './components/ToastProvider'
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://leanon.app'),
   title: 'LeanOn — Peer Support App India | Talk to Someone Who Gets It',
   description: 'Connect with verified peer listeners in India who have lived through what you\'re facing — loneliness, burnout, grief, relationships, startup stress. Instant, affordable, private. First 5 minutes free.',
   manifest: '/manifest.json',

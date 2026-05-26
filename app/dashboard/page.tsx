@@ -246,7 +246,7 @@ export default function DashboardPage() {
     setLoading(false)
 
     if (channelRef.current) sb.removeChannel(channelRef.current)
-    const channel = sb.channel('incoming-sessions')
+    const channel = sb.channel(`dashboard-incoming-${u.id}`)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
@@ -377,7 +377,7 @@ export default function DashboardPage() {
     const now = new Date()
     return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
   })
-  const thisMonthEarned = thisMonthSessions.reduce((sum, s) => sum + (s.amount_held - s.platform_fee), 0)
+  const thisMonthEarned = thisMonthSessions.reduce((sum, s) => sum + (s.amount_held - (s.platform_fee ?? 0)), 0)
   const totalSessions   = profile?.total_sessions || 0
   const rating          = profile?.rating || 0
   const nextTierAt      = 200
@@ -443,7 +443,7 @@ export default function DashboardPage() {
               className="btn-join-session"
               onClick={() => {
                 dismissIncoming()
-                router.push(`/session/${incomingSession.id}?name=You&duration=${incomingSession.duration_mins}`)
+                router.push(`/session/${incomingSession.id}?name=You&duration=${incomingSession.duration_mins}&type=${incomingSession.session_type ?? 'text'}`)
               }}
             >
               Join session → ({countdown}s)
