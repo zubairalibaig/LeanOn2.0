@@ -107,7 +107,9 @@ function BrowseContent() {
   const [listeners, setListeners] = useState<Listener[]>([])
   const [loading, setLoading] = useState(true)
   const [balance, setBalance] = useState<number|null>(null)
-  const [incomingSession, setIncomingSession] = useState<any>(null)
+  const [incomingSession, setIncomingSession] = useState<{
+    id: string; duration_mins: number; session_type: string; amount_held: number
+  } | null>(null)
   const channelRef = useRef<ReturnType<typeof client.channel> | null>(null)
 
   useEffect(() => { loadListeners() }, [tag, lang])
@@ -127,7 +129,7 @@ function BrowseContent() {
           table: 'sessions',
           filter: `listener_id=eq.${user.id}`,
         }, (payload) => {
-          setIncomingSession(payload.new)
+          setIncomingSession(payload.new as { id: string; duration_mins: number; session_type: string; amount_held: number })
         })
         .subscribe()
       channelRef.current = channel

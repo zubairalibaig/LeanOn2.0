@@ -140,20 +140,23 @@ function SessionContent() {
   const [muted, setMuted]             = useState(false)
   const [callSecs, setCallSecs]       = useState(0)
 
-  const channelRef      = useRef<any>(null)
+  const channelRef      = useRef<ReturnType<typeof supabase.channel> | null>(null)
   const bottomRef       = useRef<HTMLDivElement>(null)
   const userIdRef       = useRef<string | null>(null)
   const completedRef    = useRef(false)
   const [crisisAlert, setCrisisAlert] = useState(false)
   const [reconnectTick, setReconnectTick] = useState(0)
+  // Agora SDK is a dynamic import; store as opaque interface to avoid any
   const agoraRef    = useRef<{
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     client: any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     micTrack: any
   } | null>(null)
 
   function playBeep() {
     try {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
+      const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
       const osc = ctx.createOscillator()
       const gain = ctx.createGain()
       osc.connect(gain)
@@ -187,7 +190,7 @@ function SessionContent() {
           setSecs(remaining)
           if (remaining <= 0) setEnded(true)
         }
-        const name = (data?.listener as any)?.name
+        const name = (data?.listener as { name?: string } | null)?.name
         if (name) setResolvedListenerName(name)
       })
   }, [sessionId])
@@ -226,9 +229,9 @@ function SessionContent() {
     const channel = supabase
       .channel(`room:${sessionId}:${reconnectTick}`)
       .on(
-        'postgres_changes' as any,
+        'postgres_changes' as 'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages', filter: `session_id=eq.${sessionId}` },
-        (payload: any) => applyMsg(payload.new as Msg)
+        (payload: { new: Msg }) => applyMsg(payload.new)
       )
       .on('broadcast', { event: 'msg' }, ({ payload }: { payload: Msg }) => {
         if (payload.session_id !== sessionId) return
@@ -372,15 +375,15 @@ function SessionContent() {
 
         // Create microphone audio track
         // Bluetooth/Safari: createMicrophoneAudioTrack may need AEC disabled on some devices
-        let micTrack: any
+        let micTrack: Awaited<ReturnType<typeof AgoraRTC.createMicrophoneAudioTrack>>
         try {
           micTrack = await AgoraRTC.createMicrophoneAudioTrack({
             AEC: true,  // Acoustic Echo Cancellation
             AGC: true,  // Automatic Gain Control
             ANS: true,  // Automatic Noise Suppression
           })
-        } catch (micErr: any) {
-          const msg = micErr?.message || ''
+        } catch (micErr: unknown) {
+          const msg = micErr instanceof Error ? micErr.message : ''
           if (msg.includes('Permission') || msg.includes('NotAllowed') || msg.includes('denied')) {
             throw new Error('Microphone access denied. Please allow microphone permission in your browser settings and try again.')
           }
@@ -407,11 +410,11 @@ function SessionContent() {
         setVoiceStatus('connected')
         setVoiceError(null)
         reconnectAttempts = 0
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (!cancelled) {
           console.error('Agora join error:', err)
           setVoiceStatus('error')
-          setVoiceError(err?.message || 'Failed to connect voice call. Please check your microphone and try again.')
+          setVoiceError((err instanceof Error ? err.message : null) || 'Failed to connect voice call. Please check your microphone and try again.')
         }
       }
     }
@@ -475,25 +478,28 @@ function SessionContent() {
     }
     setMsgs(prev => [...prev, tempMsg])
 
-    // 2. Save to database
-    const { data: saved, error } = await supabase
-      .from('messages')
-      .insert({ session_id: sessionId, sender_id: userId, content: text })
-      .select()
-      .single()
+    // 2. Save via server API (rate-limited, participant-verified)
+    const res = await fetch('/api/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId, content: text }),
+    }).catch(() => null)
 
-    if (error) {
-      console.error('Send failed:', error.message)
+    if (!res || !res.ok) {
+      const body = await res?.json().catch(() => ({}))
+      console.error('Send failed:', body?.error)
       setMsgs(prev => prev.filter(m => m.id !== tempId))
       setInput(text)
       return
     }
 
+    const saved = await res.json() as Msg
+
     // 3. Replace temp with confirmed DB message
-    setMsgs(prev => prev.map(m => m.id === tempId ? (saved as Msg) : m))
+    setMsgs(prev => prev.map(m => m.id === tempId ? saved : m))
 
     // 4. Broadcast to the other participant(s)
-    if (channelRef.current && saved) {
+    if (channelRef.current) {
       channelRef.current.send({
         type: 'broadcast',
         event: 'msg',

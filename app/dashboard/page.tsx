@@ -13,12 +13,11 @@ function initSb() {
   )
   return _sb
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = new Proxy({} as ReturnType<typeof createBrowserClient>, {
   get(_, prop) {
     const client = initSb()
-    const val = (client as any)[prop]
-    return typeof val === 'function' ? val.bind(client) : val
+    const val = (client as ReturnType<typeof createBrowserClient>)[prop as keyof ReturnType<typeof createBrowserClient>]
+    return typeof val === 'function' ? (val as (...a: unknown[]) => unknown).bind(client) : val
   }
 })
 
@@ -133,7 +132,7 @@ const S = `
   .avatar-upload-btn{font-size:12px;font-weight:700;color:var(--navy);background:var(--light);border:none;cursor:pointer;padding:7px 16px;border-radius:8px;}
 `
 
-function ini(n: string) {
+function ini(n?: string | null) {
   if (!n) return '?'
   return n.split(' ').map(x => x[0] || '').join('').slice(0, 2).toUpperCase()
 }
@@ -148,15 +147,34 @@ function fmtDate(iso: string) {
   return `${days} days ago`
 }
 
+type DashProfile = {
+  user_id: string; bio?: string; rate_per_min: number; specialty_tags: string[]
+  languages_spoken: string[]; total_sessions: number; rating: number
+  is_available: boolean; avatar_url?: string | null; balance: number
+  bank_account?: string; ifsc_code?: string; aadhaar_last4?: string
+  name?: string; wallet_balance?: number
+}
+type DashUser = { id: string; name?: string; email?: string; wallet_balance?: number }
+type DashSession = {
+  id: string; listener_id: string; duration_mins: number; amount_held: number
+  platform_fee?: number; status: string; started_at: string; ended_at?: string
+  seeker_rating?: number; session_type?: string
+  listener?: { name?: string } | null
+  users?: { name?: string } | null
+}
+type IncomingSession = {
+  id: string; duration_mins: number; session_type: string; amount_held: number; seeker_id: string
+}
+
 export default function DashboardPage() {
   const router = useRouter()
-  const [profile, setProfile]     = useState<any>(null)
-  const [user, setUser]           = useState<any>(null)
-  const [sessions, setSessions]   = useState<any[]>([])
+  const [profile, setProfile]     = useState<DashProfile | null>(null)
+  const [user, setUser]           = useState<DashUser | null>(null)
+  const [sessions, setSessions]   = useState<DashSession[]>([])
   const [avail, setAvail]         = useState(false)
   const [loading, setLoading]     = useState(true)
   const [payoutLoading, setPayoutLoading] = useState(false)
-  const [incomingSession, setIncomingSession] = useState<any>(null)
+  const [incomingSession, setIncomingSession] = useState<IncomingSession | null>(null)
   const [countdown, setCountdown] = useState(30)
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const channelRef   = useRef<ReturnType<typeof sb.channel> | null>(null)
@@ -224,8 +242,9 @@ export default function DashboardPage() {
       .single()
 
     if (lp) {
-      const avatarUrl = (lp.users as any)?.avatar_url || null
-      setProfile({ ...lp, name: (lp.users as any)?.name || 'Listener', balance: (lp.users as any)?.wallet_balance || 0, avatar_url: avatarUrl })
+      const usr = lp.users as { name?: string; wallet_balance?: number; avatar_url?: string } | null
+      const avatarUrl = usr?.avatar_url || null
+      setProfile({ ...lp, name: usr?.name || 'Listener', balance: usr?.wallet_balance || 0, avatar_url: avatarUrl })
       setAvail(lp.is_available)
       setEditBio(lp.bio || '')
       setEditTags(lp.specialty_tags || [])
@@ -253,7 +272,7 @@ export default function DashboardPage() {
         table: 'sessions',
         filter: `listener_id=eq.${u.id}`,
       }, (payload) => {
-        setIncomingSession(payload.new)
+        setIncomingSession(payload.new as IncomingSession)
         startCountdown(() => setIncomingSession(null))
       })
       .subscribe()
@@ -293,6 +312,7 @@ export default function DashboardPage() {
   }
 
   function openEdit() {
+    if (!profile) return
     setEditBio(profile.bio || '')
     setEditTags(profile.specialty_tags || [])
     setEditLangs(profile.languages_spoken || ['english'])
@@ -351,14 +371,14 @@ export default function DashboardPage() {
       languages_spoken: editLangs,
       rate_per_min: rate,
     }).eq('user_id', user.id)
-    setProfile((prev: any) => ({
+    setProfile((prev) => prev ? {
       ...prev,
       bio: editBio.trim(),
       specialty_tags: editTags,
       languages_spoken: editLangs,
       rate_per_min: rate,
       avatar_url: editAvatar,
-    }))
+    } : null)
     setSavingEdit(false)
     setShowEdit(false)
   }
@@ -456,7 +476,7 @@ export default function DashboardPage() {
               <div className="avatar-edit-img">
                 {editAvatar
                   ? <img src={editAvatar} alt="avatar" />
-                  : ini(profile.name)}
+                  : ini(profile?.name)}
               </div>
               <label style={{cursor:'pointer'}}>
                 <input type="file" accept="image/*" style={{display:'none'}} onChange={uploadAvatar} />
@@ -611,9 +631,9 @@ export default function DashboardPage() {
         <div className="profile-section">
           <div className="profile-row">
             <div className="profile-avatar">
-              {profile.avatar_url
-                ? <img src={profile.avatar_url} alt={profile.name} />
-                : ini(profile.name)}
+              {profile?.avatar_url
+                ? <img src={profile.avatar_url ?? ''} alt={profile.name ?? ''} />
+                : ini(profile?.name)}
             </div>
             <div>
               <div className="profile-name">{profile.name}</div>
@@ -639,7 +659,7 @@ export default function DashboardPage() {
             <div className="section-title">Recent sessions</div>
             <div className="session-list">
               {sessions.map((s, i) => {
-                const earned = s.amount_held - s.platform_fee
+                const earned = s.amount_held - (s.platform_fee ?? 0)
                 const seeker = s.users?.name
                 const seekerDisplay = seeker
                   ? seeker.split(' ').map((p: string) => p[0] || '').join('.') + '.'

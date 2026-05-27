@@ -107,8 +107,7 @@ export default function AuthPage() {
       setStep('name')
     } else {
       const params = new URLSearchParams(window.location.search)
-      const redirectTo = params.get('redirect') || (params.get('mode') === 'listener' ? '/dashboard' : '/browse')
-      router.push(redirectTo)
+      router.push(safeRedirect(params.get('redirect'), params.get('mode') === 'listener' ? '/dashboard' : '/browse'))
     }
   }
 
@@ -121,8 +120,14 @@ export default function AuthPage() {
     await sb.from('users').update({ name: name.trim() }).eq('id', user.id)
     setLoading(false)
     const params = new URLSearchParams(window.location.search)
-    const redirectTo = params.get('redirect') || (params.get('mode') === 'listener' ? '/dashboard' : '/browse')
-    router.push(redirectTo)
+    router.push(safeRedirect(params.get('redirect'), params.get('mode') === 'listener' ? '/dashboard' : '/browse'))
+  }
+
+  // Prevent open redirect — only allow relative paths we control
+  function safeRedirect(raw: string | null, fallback: string): string {
+    if (!raw) return fallback
+    if (raw.startsWith('/') && !raw.startsWith('//') && !raw.includes('\\')) return raw
+    return fallback
   }
 
   function handleOtpChange(i: number, val: string) {
