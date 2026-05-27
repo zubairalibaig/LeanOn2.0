@@ -99,6 +99,12 @@ export default function ListenerPage({ params }: { params: {id:string} }) {
   const [notFound, setNotFound] = useState(false)
 
   useEffect(() => {
+    if (listener) {
+      document.title = `${listener.name} — LeanOn Peer Listener`
+    }
+  }, [listener])
+
+  useEffect(() => {
     // Load listener profile
     client.from('listener_profiles')
       .select('*, users!inner(name, avatar_url)')
@@ -191,6 +197,9 @@ export default function ListenerPage({ params }: { params: {id:string} }) {
         <div className="topbar">
           <button className="back" onClick={()=>router.back()}>←</button>
         </div>
+
+        {/* Hidden meta description equivalent for SEO crawlers */}
+        <div style={{display:'none'}} aria-hidden="true">{listener.bio}</div>
 
         <div className="profile-hdr">
           <div className="av-row">
