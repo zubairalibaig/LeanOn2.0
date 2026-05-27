@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+// Admin routes: 30 requests per minute per admin user to prevent brute-force scraping
+const ADMIN_RATE = { limit: 30, windowMs: 60_000 }
 
 async function requireAdmin() {
   const supabase = createServerSupabaseClient()
@@ -28,8 +32,11 @@ async function requireAdmin() {
 const PAGE_SIZE = 20
 
 export async function GET(req: NextRequest) {
-  const { error, status } = await requireAdmin()
+  const { error, status, user } = await requireAdmin()
   if (error) return NextResponse.json({ error }, { status })
+  if (!checkRateLimit(`admin:${user!.id}`, ADMIN_RATE.limit, ADMIN_RATE.windowMs)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
 
   const url    = new URL(req.url)
   const lpPage = parseInt(url.searchParams.get('lpPage') || '0')
@@ -79,6 +86,9 @@ async function auditLog(admin: ReturnType<typeof createAdminClient>, adminId: st
 export async function POST(req: NextRequest) {
   const { error, status, user } = await requireAdmin()
   if (error) return NextResponse.json({ error }, { status })
+  if (!checkRateLimit(`admin:${user!.id}`, ADMIN_RATE.limit, ADMIN_RATE.windowMs)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
 
   const body = await req.json()
   const { action, id } = body as { action: string; id: string }

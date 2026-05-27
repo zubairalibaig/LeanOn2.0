@@ -2,6 +2,50 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 
+// ── Typed interfaces replacing `any` ──────────────────────────────────────────
+type ListenerProfile = {
+  bio?: string
+  rate_per_min?: number
+  specialty_tags?: string[]
+  aadhaar_last4?: string
+  bank_account?: string
+  ifsc_code?: string
+  phone?: string
+}
+type AdminUser = { name?: string; email?: string }
+type ListenerApplication = {
+  id: string
+  user_id: string
+  created_at: string
+  listener_profiles: ListenerProfile | null
+  users: AdminUser | null
+}
+type PayoutRequest = {
+  id: string
+  amount: number
+  status: string
+  created_at: string
+  users: AdminUser | null
+}
+type RefundRequest = {
+  id: string
+  amount: number
+  reason?: string
+  status: string
+  created_at: string
+  users: AdminUser | null
+}
+type AdminData = {
+  pendingListeners: ListenerApplication[]
+  lpTotal: number
+  lpPage: number
+  pendingPayouts: PayoutRequest[]
+  prTotal: number
+  prPage: number
+  refundRequests: RefundRequest[]
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 const S = `
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -59,7 +103,7 @@ function fmtDate(iso: string) {
 
 export default function AdminPage() {
   const router = useRouter()
-  const [data, setData]       = useState<any>(null)
+  const [data, setData]       = useState<AdminData | null>(null)
   const [loading, setLoading] = useState(true)
   const [denied, setDenied]   = useState(false)
   const [busy, setBusy]       = useState<string | null>(null)
@@ -149,7 +193,7 @@ export default function AdminPage() {
 
           {pendingListeners.length === 0 ? (
             <div className="empty">No pending applications — all caught up!</div>
-          ) : pendingListeners.map((app: any) => {
+          ) : pendingListeners.map((app: ListenerApplication) => {
 
             const lp = app.listener_profiles
             const u  = app.users
@@ -176,7 +220,7 @@ export default function AdminPage() {
 
                 {(lp?.specialty_tags || []).length > 0 && (
                   <div className="tags-row">
-                    {lp.specialty_tags.map((t: string) => (
+                    {(lp?.specialty_tags ?? []).map((t: string) => (
                       <span key={t} className="tag-badge">{t}</span>
                     ))}
                   </div>
@@ -250,7 +294,7 @@ export default function AdminPage() {
 
           {pendingPayouts.length === 0 ? (
             <div className="empty">No pending payouts — all clear!</div>
-          ) : pendingPayouts.map((p: any) => (
+          ) : pendingPayouts.map((p: PayoutRequest) => (
             <div key={p.id} className="payout-card">
               <div className="payout-info">
                 <div className="payout-name">{p.users?.name || '—'}</div>
@@ -288,7 +332,7 @@ export default function AdminPage() {
           </div>
           {refundRequests.length === 0 ? (
             <div className="empty">No pending refund requests!</div>
-          ) : refundRequests.map((r: any) => (
+          ) : refundRequests.map((r: RefundRequest) => (
             <div key={r.id} className="payout-card">
               <div className="payout-info">
                 <div className="payout-name">{r.users?.name || '—'}</div>

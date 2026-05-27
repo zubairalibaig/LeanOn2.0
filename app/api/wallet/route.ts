@@ -3,6 +3,7 @@ import Razorpay from 'razorpay'
 import crypto from 'crypto'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
+import { notifyWalletRecharge } from '@/lib/notify'
 
 function getRzp() {
   return new Razorpay({
@@ -25,8 +26,10 @@ export async function POST(req: NextRequest) {
     }
 
     const { amount } = await req.json()
-    if (!amount || amount < 100) {
-      return NextResponse.json({ error: 'Minimum recharge is ₹100' }, { status: 400 })
+    // Whitelist valid recharge tiers — prevents crafted amounts and float abuse
+    const VALID_AMOUNTS = [200, 500, 1000, 2000]
+    if (!Number.isInteger(amount) || !VALID_AMOUNTS.includes(amount)) {
+      return NextResponse.json({ error: 'Please select a valid recharge amount (₹200, ₹500, ₹1000, or ₹2000)' }, { status: 400 })
     }
 
     const order = await rzp.orders.create({
@@ -68,8 +71,9 @@ export async function PUT(req: NextRequest) {
     try {
       const order = await rzp.orders.fetch(razorpay_order_id)
       verifiedAmount = Math.round(Number(order.amount) / 100)
+      // Log mismatch server-side only — never expose internal amount details to client
       if (verifiedAmount !== amount) {
-        console.warn(`Amount mismatch: client sent ${amount}, order has ${verifiedAmount}`)
+        console.warn('Wallet PUT: client-reported amount differs from Razorpay order amount. Using order amount.')
       }
     } catch (err) {
       console.error('Failed to fetch Razorpay order for validation:', err)
@@ -116,8 +120,19 @@ export async function PUT(req: NextRequest) {
       reference_id: razorpay_payment_id,
     })
 
-    const { data: updated } = await sb.from('users').select('wallet_balance').eq('id', user.id).single()
-    return NextResponse.json({ success: true, newBalance: updated?.wallet_balance ?? 0 })
+    const [updated, authUser] = await Promise.all([
+      sb.from('users').select('wallet_balance, name').eq('id', user.id).single(),
+      sb.auth.admin.getUserById(user.id),
+    ])
+
+    // Fire-and-forget recharge confirmation email
+    notifyWalletRecharge({
+      userEmail: authUser.data?.user?.email ?? null,
+      userName:  (updated.data as { name?: string } | null)?.name ?? 'there',
+      amount:    verifiedAmount,
+    }).catch(() => {})
+
+    return NextResponse.json({ success: true, newBalance: (updated.data as { wallet_balance?: number } | null)?.wallet_balance ?? 0 })
   } catch (err) {
     console.error('Payment verify error:', err)
     return NextResponse.json({ error: 'Verification failed' }, { status: 500 })

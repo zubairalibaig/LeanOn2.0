@@ -268,6 +268,31 @@ function SessionContent() {
     }).catch(() => {}) // fire and forget — user will rate separately
   }, [ended, sessionId])
 
+  // Session heartbeat — keeps session alive and enables listener disconnect detection
+  // Fires every 30s; uses sendBeacon on unmount so it doesn't block navigation
+  useEffect(() => {
+    if (!sessionId || ended) return
+    const send = () => fetch('/api/sessions/heartbeat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId }),
+    }).catch(() => {})
+    send() // immediate on mount
+    const hb = setInterval(send, 30_000)
+    return () => {
+      clearInterval(hb)
+      // Final beacon on unmount (works even if page is closing)
+      navigator.sendBeacon('/api/sessions/heartbeat', JSON.stringify({ sessionId }))
+    }
+  }, [sessionId, ended])
+
+  // Trigger cleanup API on session mount — self-heals any orphaned sessions from prior crashes
+  useEffect(() => {
+    if (!sessionId) return
+    fetch('/api/sessions/cleanup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+      .catch(() => {})
+  }, [sessionId])
+
   // Crisis keyword detection — show helpline banner
   useEffect(() => {
     if (crisisAlert || msgs.length === 0) return
@@ -288,21 +313,26 @@ function SessionContent() {
   }, [msgs])
 
   // Agora voice call — only for voice sessions
+  // Includes: token refresh, network-disconnect reconnect, Safari/Bluetooth handling
   useEffect(() => {
     if (!isVoice || !sessionId) return
 
     let cancelled = false
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null
 
     async function joinVoiceCall() {
       try {
         // Dynamically import to avoid SSR issues with the browser SDK
         const AgoraRTC = (await import('agora-rtc-sdk-ng')).default
 
-        // Fetch token from our API
+        // Suppress Agora's own console noise in production
+        AgoraRTC.setLogLevel(process.env.NODE_ENV === 'production' ? 4 : 1)
+
+        // Fetch token from our API (token expires in 1 hour — sufficient for any session)
         const res = await fetch(`/api/agora?sessionId=${sessionId}`)
         if (!res.ok) {
-          const { error } = await res.json()
-          throw new Error(error || 'Failed to get voice token')
+          const body = await res.json().catch(() => ({}))
+          throw new Error(body.error || 'Failed to get voice token')
         }
         const { token, channelName, appId } = await res.json()
 
@@ -311,12 +341,43 @@ function SessionContent() {
         // Create Agora RTC client
         const client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
 
+        // Handle network disconnect — attempt reconnect up to 3 times
+        let reconnectAttempts = 0
+        client.on('connection-state-change', (curState: string) => {
+          if (cancelled) return
+          if (curState === 'DISCONNECTED' || curState === 'DISCONNECTING') {
+            if (reconnectAttempts < 3) {
+              reconnectAttempts++
+              setVoiceError(`Connection lost — reconnecting (${reconnectAttempts}/3)…`)
+              reconnectTimer = setTimeout(() => {
+                if (!cancelled) joinVoiceCall()
+              }, 2000 * reconnectAttempts)
+            } else {
+              setVoiceStatus('error')
+              setVoiceError('Connection lost. Please end and restart the call.')
+            }
+          }
+          if (curState === 'CONNECTED') {
+            reconnectAttempts = 0
+            setVoiceError(null)
+          }
+        })
+
         // Create microphone audio track
+        // Bluetooth/Safari: createMicrophoneAudioTrack may need AEC disabled on some devices
         let micTrack: any
         try {
-          micTrack = await AgoraRTC.createMicrophoneAudioTrack()
+          micTrack = await AgoraRTC.createMicrophoneAudioTrack({
+            AEC: true,  // Acoustic Echo Cancellation
+            AGC: true,  // Automatic Gain Control
+            ANS: true,  // Automatic Noise Suppression
+          })
         } catch (micErr: any) {
-          throw new Error('Microphone access denied. Please allow microphone permission and try again.')
+          const msg = micErr?.message || ''
+          if (msg.includes('Permission') || msg.includes('NotAllowed') || msg.includes('denied')) {
+            throw new Error('Microphone access denied. Please allow microphone permission in your browser settings and try again.')
+          }
+          throw new Error('Could not access your microphone. Check that no other app is using it.')
         }
 
         if (cancelled) {
@@ -329,20 +390,21 @@ function SessionContent() {
         await client.publish([micTrack])
 
         if (cancelled) {
-          await client.unpublish([micTrack])
+          await client.unpublish([micTrack]).catch(() => {})
           micTrack.close()
-          await client.leave()
+          await client.leave().catch(() => {})
           return
         }
 
         agoraRef.current = { client, micTrack }
         setVoiceStatus('connected')
         setVoiceError(null)
+        reconnectAttempts = 0
       } catch (err: any) {
         if (!cancelled) {
           console.error('Agora join error:', err)
           setVoiceStatus('error')
-          setVoiceError(err?.message || 'Failed to connect voice call')
+          setVoiceError(err?.message || 'Failed to connect voice call. Please check your microphone and try again.')
         }
       }
     }
@@ -351,6 +413,7 @@ function SessionContent() {
 
     return () => {
       cancelled = true
+      if (reconnectTimer) clearTimeout(reconnectTimer)
       // Cleanup Agora on unmount or when session ends (unpublish → close → leave)
       if (agoraRef.current) {
         const { client, micTrack } = agoraRef.current

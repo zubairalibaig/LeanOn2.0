@@ -2,11 +2,7 @@
 export const dynamic = 'force-dynamic'
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createBrowserClient } from '@supabase/ssr'
-const createClient = () => createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+import { createClient } from '@/lib/supabase'
 
 const S = `
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
@@ -52,7 +48,7 @@ const S = `
 
 export default function AuthPage() {
   const router = useRouter()
-  const sb = createClient()
+  const sb = createClient() // returns the module-level singleton
   const [step, setStep]         = useState<'phone'|'otp'|'name'>('phone')
   const [phone, setPhone]       = useState('')
   const [otp, setOtp]           = useState(['','','','','',''])

@@ -3,6 +3,10 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 
 const PROTECTED = ['/session', '/wallet', '/dashboard', '/browse', '/admin', '/profile', '/sessions']
 
+// CSRF: valid origins that may send mutating requests (POST/PUT/PATCH/DELETE) to the API
+const ALLOWED_ORIGINS = ['https://leanon.app', 'https://www.leanon.app']
+if (process.env.NODE_ENV === 'development') ALLOWED_ORIGINS.push('http://localhost:3000')
+
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
@@ -11,6 +15,17 @@ export async function middleware(req: NextRequest) {
     const apex = req.nextUrl.clone()
     apex.hostname = 'leanon.app'
     return NextResponse.redirect(apex, { status: 301 })
+  }
+
+  // CSRF protection for mutating API routes — reject cross-origin requests
+  const isMutation = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)
+  if (isMutation && pathname.startsWith('/api/')) {
+    const origin = req.headers.get('origin')
+    // Webhooks (Razorpay) don't send Origin — exempt /api/webhooks
+    const isWebhook = pathname.startsWith('/api/webhooks')
+    if (origin && !isWebhook && !ALLOWED_ORIGINS.includes(origin)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
   }
 
   if (!PROTECTED.some(p => pathname.startsWith(p))) return NextResponse.next()

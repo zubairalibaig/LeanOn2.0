@@ -169,6 +169,16 @@ export default function ListenerPage({ params }: { params: {id:string} }) {
     if (data.error === 'insufficient_balance') { router.push('/wallet'); return }
     if (data.error === 'free_trial_used') { alert(data.message || 'You have already used your free trial.'); setLoading(false); return }
     if (data.error === 'listener_busy') { alert(data.message || 'Listener is currently in a session. Please try again shortly.'); setLoading(false); return }
+    if (data.error === 'already_in_session') {
+      // Redirect to the existing active session rather than blocking with a dead-end error
+      if (data.sessionId) {
+        router.push(`/session/${data.sessionId}?duration=${duration}&type=${type}`)
+      } else {
+        alert(data.message || 'You already have an active session.')
+        setLoading(false)
+      }
+      return
+    }
     if (data.sessionId) {
       router.push(`/session/${data.sessionId}?name=${encodeURIComponent(listener!.name)}&duration=${duration}&type=${type}`)
     }

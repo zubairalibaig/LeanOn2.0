@@ -71,6 +71,7 @@ export default function WalletPage() {
   const [transactions, setTransactions] = useState<any[]>([])
   const [userId, setUserId]     = useState<string|null>(null)
   const [refunding, setRefunding] = useState(false)
+  const [paymentPending, setPaymentPending] = useState(false)
 
   useEffect(() => {
     // Load Razorpay script
@@ -129,6 +130,8 @@ export default function WalletPage() {
         prefill:     {},
         theme:       { color: '#FF9933' },
         handler: async (response: any) => {
+          // Show pending state immediately — webhook may arrive before PUT resolves
+          setPaymentPending(true)
           // Verify and credit wallet — userId derived server-side from session cookie
           const res = await fetch('/api/wallet', {
             method: 'PUT',
@@ -140,6 +143,7 @@ export default function WalletPage() {
               amount: selected,
             }),
           })
+          setPaymentPending(false)
           if (res.ok) {
             await loadUserData()
             alert(`₹${selected} added to your wallet!`)
@@ -190,8 +194,14 @@ export default function WalletPage() {
           <span>Unused balance is fully refundable anytime. No expiry. Your money is safe.</span>
         </div>
 
-        <button className="btn" onClick={handleRecharge} disabled={loading} style={{marginBottom:32}}>
-          {loading ? <span className="spin">⟳</span> : `Recharge ₹${selected} →`}
+        {paymentPending && (
+          <div className="note" style={{marginBottom:12,background:'rgba(255,153,51,0.1)',borderColor:'rgba(255,153,51,0.3)'}}>
+            <span>⏳</span>
+            <span><strong>Processing your payment…</strong> Please wait. Do not close this page.</span>
+          </div>
+        )}
+        <button className="btn" onClick={handleRecharge} disabled={loading || paymentPending} style={{marginBottom:32}}>
+          {loading || paymentPending ? <span className="spin">⟳</span> : `Recharge ₹${selected} →`}
         </button>
 
         {transactions.length > 0 && (

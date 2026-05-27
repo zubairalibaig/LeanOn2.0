@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { PLATFORM_FEE, FREE_SESSION_MINS, MAX_FREE_TRIALS, SESSION_DURATIONS } from '@/lib/constants'
+import { notifySessionComplete } from '@/lib/notify'
 
 const VALID_SESSION_TYPES = ['text', 'voice'] as const
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -72,6 +73,17 @@ export async function POST(req: NextRequest) {
       if (activeSessions && activeSessions.length > 0) {
         return NextResponse.json({ error: 'listener_busy', message: 'This listener is in a session right now. Please try again shortly.' }, { status: 409 })
       }
+    }
+
+    // Multi-device guard: seeker cannot start two sessions simultaneously
+    const { data: seekerActive } = await sb
+      .from('sessions')
+      .select('id')
+      .eq('seeker_id', user.id)
+      .eq('status', 'active')
+      .limit(1)
+    if (seekerActive && seekerActive.length > 0) {
+      return NextResponse.json({ error: 'already_in_session', message: 'You already have an active session. Please complete it before starting a new one.', sessionId: seekerActive[0].id }, { status: 409 })
     }
 
     const rate  = lp.rate_per_min || 10
@@ -218,6 +230,31 @@ export async function PATCH(req: NextRequest) {
 
     // Update rating average when session has a rating
     if (rating) await updateListenerRating(sb, session.listener_id)
+
+    // Fire-and-forget session completion notifications (non-blocking)
+    ;(async () => {
+      try {
+        const [seekerAuth, listenerAuth, namesRes] = await Promise.all([
+          sb.auth.admin.getUserById(session.seeker_id),
+          sb.auth.admin.getUserById(session.listener_id),
+          sb.from('users').select('id, name').in('id', [session.seeker_id, session.listener_id]),
+        ])
+        const nameMap = Object.fromEntries(
+          ((namesRes.data ?? []) as { id: string; name: string }[]).map(u => [u.id, u.name])
+        )
+        await notifySessionComplete({
+          seekerEmail:     seekerAuth.data?.user?.email ?? null,
+          listenerEmail:   listenerAuth.data?.user?.email ?? null,
+          seekerName:      nameMap[session.seeker_id] ?? 'there',
+          listenerName:    nameMap[session.listener_id] ?? 'Listener',
+          durationMins:    session.duration_mins as number,
+          sessionType:     session.session_type as string,
+          listenerEarning: listenerEarning > 0 ? listenerEarning : 0,
+        })
+      } catch (err) {
+        console.error('Session notification failed (non-critical):', err)
+      }
+    })()
 
     return NextResponse.json({ success: true })
   } catch (err: unknown) {
