@@ -4,5 +4,7 @@
       "path": "/api/sessions/cleanup",
       "schedule": "*/5 * * * *"
     }
-  ]
+  ],
+  "buildCommand": "next build",
+  "framework": "nextjs"
 }
