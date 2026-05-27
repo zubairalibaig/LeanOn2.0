@@ -205,7 +205,12 @@ function BrowseContent() {
         </div>
         <div className="search-wrap">
           <span>🔍</span>
-          <input placeholder="Search listeners..." value={query} onChange={e=>setQuery(e.target.value)}/>
+          <input
+            placeholder="Search listeners..."
+            value={query}
+            onChange={e=>setQuery(e.target.value)}
+            aria-label="Search listeners by name or topic"
+          />
         </div>
         <div className="tag-scroll">
           {TAGS.map(t=>(
@@ -231,9 +236,23 @@ function BrowseContent() {
           [1,2,3].map(i=><div key={i} className="skeleton"/>)
         ) : filtered.length === 0 ? (
           <div className="empty">
-            <img src="/logo.png" alt="LeanOn" style={{height:64,marginBottom:16,opacity:0.6}} />
-            <h3 style={{fontSize:18,fontWeight:800,marginBottom:8}}>No listeners found</h3>
-            <p style={{fontSize:14,color:'var(--gray)',fontWeight:500}}>Try a different filter, or check back soon.</p>
+            <div style={{fontSize:48,marginBottom:16}}>{tag !== 'all' || lang !== 'all' || query ? '🔍' : '🌙'}</div>
+            <h3 style={{fontSize:18,fontWeight:800,marginBottom:8}}>
+              {tag !== 'all' || lang !== 'all' || query ? 'No matches for your filters' : 'No listeners online right now'}
+            </h3>
+            <p style={{fontSize:14,color:'var(--gray)',fontWeight:500,marginBottom:20,lineHeight:1.6}}>
+              {tag !== 'all' || lang !== 'all' || query
+                ? 'Try removing a filter or searching broader terms. Listeners are added every week.'
+                : 'Our listeners are real people with lives outside the platform. Check back in a bit — new listeners join every week.'}
+            </p>
+            {(tag !== 'all' || lang !== 'all' || query) && (
+              <button
+                style={{background:'var(--navy)',color:'white',border:'none',borderRadius:12,padding:'10px 22px',fontFamily:'Nunito,sans-serif',fontWeight:700,fontSize:13,cursor:'pointer'}}
+                onClick={()=>{ setTag('all'); setLang('all'); setQuery('') }}
+              >
+                Clear filters
+              </button>
+            )}
           </div>
         ) : filtered.map(l => (
           <div key={l.id} className="card" onClick={()=>router.push(`/listener/${l.user_id}`)}>

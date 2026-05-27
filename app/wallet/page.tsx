@@ -2,19 +2,7 @@
 export const dynamic = 'force-dynamic'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createBrowserClient } from '@supabase/ssr'
-
-let _sbWallet: ReturnType<typeof createBrowserClient> | null = null
-const sb = new Proxy({} as ReturnType<typeof createBrowserClient>, {
-  get(_, prop) {
-    if (!_sbWallet) _sbWallet = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
-    const val = (_sbWallet as any)[prop]
-    return typeof val === 'function' ? val.bind(_sbWallet) : val
-  }
-})
+import { createClient } from '@/lib/supabase'
 const S = `
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -61,14 +49,19 @@ const PRESETS = [
   { amount:2000, sessions:'~12 sessions',  tag:'' },
 ]
 
-declare global { interface Window { Razorpay: any } }
+type RazorpayResponse = { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }
+type RazorpayOptions = { key: string | undefined; amount: number; currency: string; name: string; description: string; order_id: string; prefill: object; theme: { color: string }; handler: (r: RazorpayResponse) => void }
+declare global { interface Window { Razorpay: new (opts: RazorpayOptions) => { open(): void } } }
+
+type Txn = { id: string; description?: string; type: 'credit' | 'debit'; amount: number; created_at: string }
 
 export default function WalletPage() {
   const router = useRouter()
+  const sb = createClient()
   const [selected, setSelected] = useState(500)
   const [loading, setLoading]   = useState(false)
   const [balance, setBalance]   = useState<number|null>(null)
-  const [transactions, setTransactions] = useState<any[]>([])
+  const [transactions, setTransactions] = useState<Txn[]>([])
   const [userId, setUserId]     = useState<string|null>(null)
   const [refunding, setRefunding] = useState(false)
   const [paymentPending, setPaymentPending] = useState(false)
@@ -129,7 +122,7 @@ export default function WalletPage() {
         order_id:    orderId,
         prefill:     {},
         theme:       { color: '#FF9933' },
-        handler: async (response: any) => {
+        handler: async (response: RazorpayResponse) => {
           // Show pending state immediately — webhook may arrive before PUT resolves
           setPaymentPending(true)
           // Verify and credit wallet — userId derived server-side from session cookie
@@ -154,7 +147,7 @@ export default function WalletPage() {
         },
       })
       rzp.open()
-    } catch (err) {
+    } catch {
       alert('Payment failed. Please try again.')
     }
     setLoading(false)

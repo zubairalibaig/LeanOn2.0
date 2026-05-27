@@ -169,6 +169,7 @@ export default function AuthPage() {
                 <div className="phone-prefix">🇮🇳 +91</div>
                 <input className="phone-input" type="tel" inputMode="numeric" maxLength={10}
                   placeholder="98765 43210" autoFocus
+                  aria-label="Mobile number"
                   value={digits()} onChange={e => setPhone(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && sendOtp()} />
               </div>
@@ -189,6 +190,7 @@ export default function AuthPage() {
                 {otp.map((d,i) => (
                   <input key={i} ref={el => { otpRefs.current[i] = el }} className="otp-box"
                     type="text" inputMode="numeric" maxLength={1} value={d} autoFocus={i===0}
+                    aria-label={`OTP digit ${i + 1}`}
                     onChange={e => handleOtpChange(i, e.target.value)}
                     onKeyDown={e => handleOtpKey(i, e)} />
                 ))}
@@ -213,6 +215,7 @@ export default function AuthPage() {
               <p className="subtitle">{isListenerMode ? 'Just a first name. This is what seekers will see on your profile.' : 'Just a first name. This is what listeners will see.'}</p>
               <label className="label">Your first name</label>
               <input className="text-input" type="text" placeholder="e.g. Priya" autoFocus
+                aria-label="Your first name"
                 value={name} onChange={e => setName(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && saveName()} />
               {error && <p className="error">{error}</p>}

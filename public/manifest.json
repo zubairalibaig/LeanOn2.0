@@ -1,0 +1,28 @@
+{
+  "name": "LeanOn — Peer Support India",
+  "short_name": "LeanOn",
+  "description": "Talk to real people who have been through what you're going through. Peer support, available 24/7 in India.",
+  "start_url": "/browse",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#0F4867",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["health", "lifestyle", "social"],
+  "lang": "en-IN",
+  "dir": "ltr",
+  "scope": "/"
+}

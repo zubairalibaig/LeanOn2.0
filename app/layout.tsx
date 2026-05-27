@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import BottomNav from './components/BottomNav'
 import ToastProvider from './components/ToastProvider'
+import ErrorBoundary from './components/ErrorBoundary'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://leanon.app'),
@@ -109,7 +110,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         )}
       </head>
       <body style={{ margin: 0, padding: 0 }}>
-        {children}
+        <ErrorBoundary>
+          {children}
+        </ErrorBoundary>
         <BottomNav />
         <ToastProvider />
       </body>
