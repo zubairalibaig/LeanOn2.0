@@ -57,7 +57,9 @@ export async function POST(req: NextRequest) {
     if (!lp?.is_active || !lp?.is_approved) {
       return NextResponse.json({ error: 'listener_unavailable', message: 'This listener is not available.' }, { status: 400 })
     }
-    if (!isFree && !lp?.is_available) {
+    // is_available check applies to ALL session types — free trials included.
+    // A listener who has gone offline should not receive any sessions.
+    if (!lp?.is_available) {
       return NextResponse.json({ error: 'listener_offline', message: 'This listener is currently offline.' }, { status: 400 })
     }
 
@@ -86,7 +88,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'already_in_session', message: 'You already have an active session. Please complete it before starting a new one.', sessionId: seekerActive[0].id }, { status: 409 })
     }
 
-    const rate  = lp.rate_per_min || 10
+    const rate  = lp.rate_per_min ?? 10  // ?? not || — a legitimate rate of 0 must not be overridden
     const base  = isFree ? 0 : rate * durationMins
     const total = isFree ? 0 : base + PLATFORM_FEE
 
@@ -143,7 +145,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ sessionId: session.id, total })
   } catch (err: unknown) {
     console.error('Session create error:', err)
-    return NextResponse.json({ error: err instanceof Error ? err.message : 'Unknown error' }, { status: 500 })
+    return NextResponse.json({ error: 'An unexpected error occurred. Please try again.' }, { status: 500 })
   }
 }
 
@@ -151,6 +153,17 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   try {
     const { sessionId, rating } = await req.json()
+
+    // Validate sessionId is a proper UUID before using it in any DB query
+    if (!sessionId || !UUID_RE.test(sessionId)) {
+      return NextResponse.json({ error: 'Invalid session' }, { status: 400 })
+    }
+    // Validate rating when provided — must be integer 1–5
+    if (rating !== undefined) {
+      if (typeof rating !== 'number' || !Number.isInteger(rating) || rating < 1 || rating > 5) {
+        return NextResponse.json({ error: 'Rating must be an integer from 1 to 5' }, { status: 400 })
+      }
+    }
 
     const userSb = createServerSupabaseClient()
     const { data: { user } } = await userSb.auth.getUser()
@@ -259,7 +272,7 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ success: true })
   } catch (err: unknown) {
     console.error('Session complete error:', err)
-    return NextResponse.json({ error: err instanceof Error ? err.message : 'Unknown error' }, { status: 500 })
+    return NextResponse.json({ error: 'An unexpected error occurred. Please try again.' }, { status: 500 })
   }
 }
 

@@ -29,6 +29,11 @@ export async function POST(req: NextRequest) {
 
     if (!session || session.status !== 'active') return NextResponse.json({ ok: true })
 
+    // Participant guard — only seeker or listener can update this session's timestamps
+    if (user.id !== session.seeker_id && user.id !== session.listener_id) {
+      return NextResponse.json({ ok: true })
+    }
+
     const now = new Date().toISOString()
     const isSeeker = user.id === session.seeker_id
 

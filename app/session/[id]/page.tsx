@@ -281,8 +281,13 @@ function SessionContent() {
     const hb = setInterval(send, 30_000)
     return () => {
       clearInterval(hb)
-      // Final beacon on unmount (works even if page is closing)
-      navigator.sendBeacon('/api/sessions/heartbeat', JSON.stringify({ sessionId }))
+      // Final beacon on unmount (works even if page is closing).
+      // Must use Blob with application/json so the server can parse req.json() —
+      // sendBeacon(url, string) sends text/plain which throws in req.json().
+      navigator.sendBeacon(
+        '/api/sessions/heartbeat',
+        new Blob([JSON.stringify({ sessionId })], { type: 'application/json' })
+      )
     }
   }, [sessionId, ended])
 
@@ -319,6 +324,9 @@ function SessionContent() {
 
     let cancelled = false
     let reconnectTimer: ReturnType<typeof setTimeout> | null = null
+    // Declared OUTSIDE joinVoiceCall so the counter persists across recursive calls.
+    // If declared inside, each recursive entry resets it to 0 and the cap never triggers.
+    let reconnectAttempts = 0
 
     async function joinVoiceCall() {
       try {
@@ -342,7 +350,6 @@ function SessionContent() {
         const client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
 
         // Handle network disconnect — attempt reconnect up to 3 times
-        let reconnectAttempts = 0
         client.on('connection-state-change', (curState: string) => {
           if (cancelled) return
           if (curState === 'DISCONNECTED' || curState === 'DISCONNECTING') {

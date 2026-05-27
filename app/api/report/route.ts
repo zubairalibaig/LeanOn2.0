@@ -67,6 +67,9 @@ export async function POST(req: NextRequest) {
     // Auto-escalate self-harm reports — send immediate admin email
     if (type === 'self_harm_risk' && process.env.RESEND_API_KEY && process.env.ADMIN_NOTIFICATION_EMAIL) {
       try {
+        // Escape user-supplied content before inserting into HTML to prevent injection
+        const escHtml = (s: string) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+        const safeDescription = escHtml(description.trim().slice(0, 2000))
         const resend = new Resend(process.env.RESEND_API_KEY)
         await resend.emails.send({
           from: process.env.RESEND_FROM || 'LeanOn <onboarding@resend.dev>',
@@ -74,10 +77,10 @@ export async function POST(req: NextRequest) {
           subject: '🚨 URGENT: Self-harm risk report on LeanOn',
           html: `
             <p><strong>A self-harm risk report has been submitted.</strong></p>
-            <p><strong>Reporter:</strong> ${user.id}</p>
-            ${sessionId ? `<p><strong>Session ID:</strong> ${sessionId}</p>` : ''}
-            ${reportedUserId ? `<p><strong>Reported user:</strong> ${reportedUserId}</p>` : ''}
-            <p><strong>Description:</strong> ${description.trim()}</p>
+            <p><strong>Reporter:</strong> ${escHtml(user.id)}</p>
+            ${sessionId ? `<p><strong>Session ID:</strong> ${escHtml(sessionId)}</p>` : ''}
+            ${reportedUserId ? `<p><strong>Reported user:</strong> ${escHtml(reportedUserId)}</p>` : ''}
+            <p><strong>Description:</strong> ${safeDescription}</p>
             <p>Please review immediately in the admin panel.</p>
           `,
         })

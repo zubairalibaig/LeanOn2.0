@@ -270,21 +270,13 @@ export default function DashboardPage() {
   async function requestPayout() {
     if (!user || !profile) return
     setPayoutLoading(true)
-    // Check for existing pending payout before inserting
-    const { data: existing } = await sb
-      .from('payout_requests')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('status', 'pending')
-      .limit(1)
-    if (existing && existing.length > 0) {
-      setPayoutLoading(false)
-      alert('You already have a pending payout request. Please wait for it to be processed.')
-      return
-    }
-    await sb.from('payout_requests').insert({ user_id: user.id, amount: profile.balance, status: 'pending' })
+    const res = await fetch('/api/payout', { method: 'POST' }).catch(() => null)
     setPayoutLoading(false)
-    alert(`Payout request submitted! ₹${profile.balance} will be transferred to your bank within 3 business days.`)
+    if (!res) { alert('Network error. Please try again.'); return }
+    const body = await res.json().catch(() => ({}))
+    if (res.status === 409) { alert('You already have a pending payout request. Please wait for it to be processed.'); return }
+    if (!res.ok) { alert(body.message || body.error || 'Failed to submit payout. Please try again.'); return }
+    alert(`Payout request submitted! ₹${body.amount} will be transferred to your bank within 3 business days.`)
   }
 
   async function deactivateListenerProfile() {

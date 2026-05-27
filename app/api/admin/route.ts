@@ -39,8 +39,9 @@ export async function GET(req: NextRequest) {
   }
 
   const url    = new URL(req.url)
-  const lpPage = parseInt(url.searchParams.get('lpPage') || '0')
-  const prPage = parseInt(url.searchParams.get('prPage') || '0')
+  // Math.max(0, ... || 0) guards against NaN (non-numeric input) and negative page numbers
+  const lpPage = Math.max(0, parseInt(url.searchParams.get('lpPage') || '0', 10) || 0)
+  const prPage = Math.max(0, parseInt(url.searchParams.get('prPage') || '0', 10) || 0)
   const admin  = createAdminClient()
 
   const [{ data: pendingListeners, count: lpCount }, { data: pendingPayouts, count: prCount }, { data: refundRequests }] = await Promise.all([
@@ -130,6 +131,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (action === 'complete_payout') {
+    // First fetch so we have user_id/amount for the deduction
     const { data: pr } = await admin.from('payout_requests')
       .select('user_id, amount')
       .eq('id', id)
@@ -138,13 +140,19 @@ export async function POST(req: NextRequest) {
 
     if (!pr) return NextResponse.json({ error: 'Payout request not found or already processed' }, { status: 404 })
 
-    const { error: err } = await admin.from('payout_requests').update({ status: 'completed' }).eq('id', id)
-    if (err) return NextResponse.json({ error: err.message }, { status: 500 })
-
+    // Deduct wallet BEFORE marking complete.
+    // If deduct fails the record stays 'pending' and the admin can retry safely.
     const { error: deductErr } = await admin.rpc('deduct_wallet', { p_user_id: pr.user_id, p_amount: pr.amount })
     if (deductErr) {
-      console.error('deduct_wallet failed for payout — manual reconciliation needed:', { id, deductErr })
+      console.error('deduct_wallet failed for payout — aborting status change:', { id, deductErr })
+      return NextResponse.json({ error: 'Wallet deduction failed. Please retry.' }, { status: 500 })
     }
+
+    // Use the UPDATE as an optimistic lock (eq status='pending') to prevent double-processing
+    const { error: err } = await admin.from('payout_requests')
+      .update({ status: 'completed' }).eq('id', id).eq('status', 'pending')
+    if (err) return NextResponse.json({ error: err.message }, { status: 500 })
+
     await admin.from('wallet_transactions').insert({
       user_id: pr.user_id, amount: pr.amount, type: 'debit', description: 'Payout disbursed',
     })
@@ -162,22 +170,24 @@ export async function POST(req: NextRequest) {
   }
 
   if (action === 'complete_refund') {
-    // Fetch refund details BEFORE marking complete so rr is always present
     const { data: rr } = await admin.from('refund_requests')
       .select('user_id, amount')
       .eq('id', id)
-      .eq('status', 'pending')  // guard: only process pending refunds
+      .eq('status', 'pending')
       .single()
 
     if (!rr) return NextResponse.json({ error: 'Refund request not found or already processed' }, { status: 404 })
 
-    await admin.from('refund_requests').update({ status: 'completed' }).eq('id', id)
-
-    // Use deduct_wallet RPC for atomicity — prevents race with concurrent recharges
+    // Deduct wallet BEFORE marking complete — same pattern as complete_payout.
+    // If deduct fails the record stays 'pending' so the admin can retry.
     const { error: deductErr } = await admin.rpc('deduct_wallet', { p_user_id: rr.user_id, p_amount: rr.amount })
     if (deductErr) {
-      console.error('deduct_wallet failed for refund — manual reconciliation needed:', { id, deductErr })
+      console.error('deduct_wallet failed for refund — aborting status change:', { id, deductErr })
+      return NextResponse.json({ error: 'Wallet deduction failed. Please retry.' }, { status: 500 })
     }
+
+    await admin.from('refund_requests')
+      .update({ status: 'completed' }).eq('id', id).eq('status', 'pending')
 
     await admin.from('wallet_transactions').insert({
       user_id: rr.user_id, amount: rr.amount, type: 'debit', description: 'Wallet refund processed',

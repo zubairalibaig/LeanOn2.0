@@ -10,13 +10,21 @@ import { createAdminClient } from '@/lib/supabase-server'
 //
 // Vercel cron authentication: cron requests include the CRON_SECRET header.
 export async function POST(req: Request) {
-  // Allow cron secret OR unauthenticated (session page self-heal call)
+  // Auth: accept either a valid CRON_SECRET bearer token (Vercel cron)
+  // OR an authenticated user session (session-page self-heal on mount).
+  // Plain unauthenticated requests are rejected when CRON_SECRET is configured.
   const cronSecret = process.env.CRON_SECRET
+  const authHeader = req.headers.get('authorization')
+
   if (cronSecret) {
-    const authHeader = req.headers.get('authorization')
-    // If Authorization header present, validate it; if absent, allow (self-heal path)
-    if (authHeader && authHeader !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    if (authHeader === `Bearer ${cronSecret}`) {
+      // Verified cron call — proceed
+    } else {
+      // Not the cron secret — require a valid user session (self-heal path)
+      const { createServerSupabaseClient } = await import('@/lib/supabase-server')
+      const userSb = createServerSupabaseClient()
+      const { data: { user } } = await userSb.auth.getUser()
+      if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
   }
 
