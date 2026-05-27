@@ -63,6 +63,17 @@ export default function AuthPage() {
     ? new URLSearchParams(window.location.search).get('mode') === 'listener'
     : false
 
+  // If already authenticated, skip straight to the destination
+  useEffect(() => {
+    sb.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return
+      const params = new URLSearchParams(window.location.search)
+      const dest = safeRedirect(params.get('redirect'), params.get('mode') === 'listener' ? '/dashboard' : '/browse')
+      // Don't redirect back to /auth — that's the loop
+      if (!dest.startsWith('/auth')) router.replace(dest)
+    })
+  }, [])
+
   useEffect(() => {
     if (countdown <= 0) return
     const t = setTimeout(() => setCountdown(c => c-1), 1000)

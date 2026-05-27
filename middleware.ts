@@ -3,9 +3,24 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 
 const PROTECTED = ['/session', '/wallet', '/dashboard', '/browse', '/admin', '/profile', '/sessions']
 
-// CSRF: valid origins that may send mutating requests (POST/PUT/PATCH/DELETE) to the API
-const ALLOWED_ORIGINS = ['https://leanon.app', 'https://www.leanon.app']
-if (process.env.NODE_ENV === 'development') ALLOWED_ORIGINS.push('http://localhost:3000')
+// CSRF: reject cross-origin mutations. Allow same-host, explicit production
+// domains, and same Vercel deployment previews.
+const EXPLICIT_ORIGINS = ['https://leanon.app', 'https://www.leanon.app']
+if (process.env.NODE_ENV === 'development') EXPLICIT_ORIGINS.push('http://localhost:3000')
+
+function isTrustedOrigin(origin: string, reqHostname: string): boolean {
+  if (EXPLICIT_ORIGINS.includes(origin)) return true
+  try {
+    const oh = new URL(origin).hostname
+    // Same host (handles any custom domain or Vercel preview URL automatically)
+    if (oh === reqHostname) return true
+    // www ↔ apex pair
+    if (oh === 'www.' + reqHostname || reqHostname === 'www.' + oh) return true
+    // Vercel preview deployments for this project
+    if (oh.endsWith('.vercel.app')) return true
+  } catch { /* malformed origin → deny */ }
+  return false
+}
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
@@ -23,7 +38,7 @@ export async function middleware(req: NextRequest) {
     const origin = req.headers.get('origin')
     // Webhooks (Razorpay) don't send Origin — exempt /api/webhooks
     const isWebhook = pathname.startsWith('/api/webhooks')
-    if (origin && !isWebhook && !ALLOWED_ORIGINS.includes(origin)) {
+    if (origin && !isWebhook && !isTrustedOrigin(origin, req.nextUrl.hostname)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
   }
