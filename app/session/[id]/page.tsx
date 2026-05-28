@@ -99,6 +99,10 @@ body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:an
 .net-bar.on.good{background:#4ADE80;}
 .net-bar.on.fair{background:#FCD34D;}
 .net-bar.on.poor{background:#F87171;}
+.mic-select{background:rgba(255,255,255,0.12);color:white;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:6px 10px;cursor:pointer;max-width:200px;}
+.mic-select option{background:#0F4867;color:white;}
+.reconnecting-badge{background:rgba(255,153,51,0.2);border:1px solid rgba(255,153,51,0.4);color:#FFD580;font-size:12px;font-weight:700;padding:6px 14px;border-radius:50px;animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
 `
 
 function NetQualityIndicator({ q }: { q: 0|1|2|3|4|5|6 }) {
@@ -171,6 +175,9 @@ function SessionContent() {
   const [muted, setMuted]               = useState(false)
   const [callSecs, setCallSecs]         = useState(0)
   const [netQuality, setNetQuality]     = useState<0 | 1 | 2 | 3 | 4 | 5 | 6>(0)
+  const [mics, setMics]                 = useState<MediaDeviceInfo[]>([])
+  const [selectedMic, setSelectedMic]   = useState<string>('')
+  const [reconnecting, setReconnecting] = useState(false)
 
   const channelRef      = useRef<ReturnType<typeof supabase.channel> | null>(null)
   const bottomRef       = useRef<HTMLDivElement>(null)
@@ -391,6 +398,7 @@ function SessionContent() {
         client.on('connection-state-change', (curState: string) => {
           if (cancelled) return
           if (curState === 'DISCONNECTED' || curState === 'DISCONNECTING') {
+            setReconnecting(true)
             if (reconnectAttempts < 3) {
               reconnectAttempts++
               setVoiceError(`Connection lost — reconnecting (${reconnectAttempts}/3)…`)
@@ -404,6 +412,7 @@ function SessionContent() {
           }
           if (curState === 'CONNECTED') {
             reconnectAttempts = 0
+            setReconnecting(false)
             setVoiceError(null)
           }
         })
@@ -457,6 +466,15 @@ function SessionContent() {
         setVoiceStatus('connected')
         setVoiceError(null)
         reconnectAttempts = 0
+
+        // Enumerate audio input devices for mic selector
+        navigator.mediaDevices.enumerateDevices().then(devices => {
+          if (!cancelled) {
+            const audioInputs = devices.filter(d => d.kind === 'audioinput')
+            setMics(audioInputs)
+            if (audioInputs.length > 0) setSelectedMic(audioInputs[0].deviceId)
+          }
+        }).catch(() => {})
       } catch (err: unknown) {
         if (!cancelled) {
           console.error('Agora join error:', err)
@@ -516,6 +534,21 @@ function SessionContent() {
       await micTrack.setMuted(false)
     }
     setMuted(next)
+  }
+
+  async function switchMic(deviceId: string) {
+    if (!agoraRef.current) return
+    setSelectedMic(deviceId)
+    try {
+      const AgoraRTC = (await import('agora-rtc-sdk-ng')).default
+      const newMic = await AgoraRTC.createMicrophoneAudioTrack({ microphoneId: deviceId })
+      await agoraRef.current.client.unpublish([agoraRef.current.micTrack])
+      agoraRef.current.micTrack.close()
+      await agoraRef.current.client.publish([newMic])
+      agoraRef.current.micTrack = newMic
+    } catch (err) {
+      console.error('switchMic error:', err)
+    }
   }
 
   async function endVoiceCall() {
@@ -634,6 +667,24 @@ function SessionContent() {
 
         {voiceStatus === 'connected' && (
           <NetQualityIndicator q={netQuality} />
+        )}
+
+        {reconnecting && (
+          <div className="reconnecting-badge">🔄 Reconnecting…</div>
+        )}
+        {mics.length > 1 && voiceStatus === 'connected' && (
+          <select
+            className="mic-select"
+            value={selectedMic}
+            onChange={e => switchMic(e.target.value)}
+            aria-label="Select microphone"
+          >
+            {mics.map(m => (
+              <option key={m.deviceId} value={m.deviceId}>
+                🎙 {m.label || `Microphone ${mics.indexOf(m) + 1}`}
+              </option>
+            ))}
+          </select>
         )}
 
         {voiceError && (

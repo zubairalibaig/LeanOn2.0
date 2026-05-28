@@ -37,7 +37,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/blog/loneliness-at-night`,         lastModified: now, changeFrequency: 'monthly', priority: 0.75 },
     { url: `${base}/blog/emotional-burnout`,           lastModified: now, changeFrequency: 'monthly', priority: 0.75 },
     { url: `${base}/blog/anonymous-emotional-support-india`, lastModified: now, changeFrequency: 'monthly', priority: 0.75 },
-    { url: `${base}/blog/peer-support-vs-therapy-india`,    lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${base}/blog/joint-family-emotional-support`,   lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/blog/peer-support-vs-therapy-india`,              lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/blog/joint-family-emotional-support`,             lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/blog/how-to-deal-with-loneliness-in-joint-family-india`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/blog/startup-founder-burnout-stories-and-recovery`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/blog/affordable-alternatives-to-therapy-in-india`, lastModified: now, changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/blog/mens-mental-health-talking-is-strength`,      lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/blog/women-loneliness-india-peer-support`,         lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    // Brand + authority hub pages
+    { url: `${base}/leanon`,             lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/emotional-support`,  lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
+    // City pages
+    { url: `${base}/bengaluru`,          lastModified: now, changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/mumbai`,             lastModified: now, changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/delhi`,              lastModified: now, changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/hyderabad`,          lastModified: now, changeFrequency: 'monthly', priority: 0.85 },
   ]
 }

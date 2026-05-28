@@ -9,10 +9,19 @@ import { post as emotionalBurnoutPost } from '../posts/emotional-burnout'
 import { post as anonymousSupportPost } from '../posts/anonymous-support-india'
 import { post as peerVsTherapyPost } from '../posts/peer-support-vs-therapy-india'
 import { post as jointFamilyPost } from '../posts/joint-family-emotional-support'
+import { post as lonelinessJointFamilyPost } from '../posts/loneliness-in-joint-family'
+import { post as founderBurnoutPost } from '../posts/startup-founder-burnout'
+import { post as affordableTherapyPost } from '../posts/affordable-alternatives-therapy-india'
+import { post as mensMentalHealthPost } from '../posts/mens-mental-health-india'
+import { post as womenLonelinessPost } from '../posts/women-loneliness-india'
 
 export const dynamic = 'force-static'
 
-const allPosts = [lonelinessPost, burnoutPost, peerSupportPost, leanOnMeanPost, lonelinessAtNightPost, emotionalBurnoutPost, anonymousSupportPost, peerVsTherapyPost, jointFamilyPost]
+const allPosts = [
+  lonelinessPost, burnoutPost, peerSupportPost, leanOnMeanPost, lonelinessAtNightPost,
+  emotionalBurnoutPost, anonymousSupportPost, peerVsTherapyPost, jointFamilyPost,
+  lonelinessJointFamilyPost, founderBurnoutPost, affordableTherapyPost, mensMentalHealthPost, womenLonelinessPost,
+]
 
 function getPost(slug: string) {
   return allPosts.find((p) => p.slug === slug)

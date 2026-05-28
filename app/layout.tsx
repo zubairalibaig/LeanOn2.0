@@ -3,6 +3,7 @@ import './globals.css'
 import BottomNav from './components/BottomNav'
 import ToastProvider from './components/ToastProvider'
 import ErrorBoundary from './components/ErrorBoundary'
+import FloatingCTA from './components/FloatingCTA'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://leanon.app'),
@@ -154,6 +155,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </ErrorBoundary>
         <BottomNav />
+        <FloatingCTA />
         <ToastProvider />
       </body>
     </html>

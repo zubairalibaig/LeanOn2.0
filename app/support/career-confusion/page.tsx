@@ -268,10 +268,33 @@ export default function CareerConfusionSupportPage() {
             <a href="/support/founder-burnout" className="related-link">Founder Burnout</a>
             <a href="/support/loneliness" className="related-link">Loneliness</a>
             <a href="/support/student-stress" className="related-link">Student Stress</a>
-            <a href="/support/grief" className="related-link">Grief</a>
+            <a href="/support/emotional-support" className="related-link">Emotional Support</a>
+            <a href="/support/anonymous-support" className="related-link">Anonymous Support</a>
             <a href="/browse" className="related-link">Browse All Listeners</a>
           </div>
         </div>
+
+        {/* People Also Search For */}
+        <div className="section">
+          <h2>People Also Search For</h2>
+          <p>If you&apos;re looking for career confusion support, these pages may also help:</p>
+          <div className="related">
+            <a href="/blog/burnout-recovery-india" className="related-link">Burnout recovery</a>
+            <a href="/blog/emotional-burnout" className="related-link">Emotional burnout</a>
+            <a href="/blog/peer-support-vs-therapy-india" className="related-link">Peer support vs therapy</a>
+            <a href="/blog/what-does-lean-on-mean" className="related-link">What does &quot;lean on&quot; mean?</a>
+            <a href="/blog/affordable-alternatives-to-therapy-in-india" className="related-link">Affordable alternatives to therapy</a>
+            <a href="/blog/mens-mental-health-talking-is-strength" className="related-link">Men&apos;s mental health</a>
+            <a href="/bengaluru" className="related-link">Peer support Bengaluru</a>
+            <a href="/mumbai" className="related-link">Peer support Mumbai</a>
+            <a href="/hyderabad" className="related-link">Peer support Hyderabad</a>
+          </div>
+        </div>
+
+        {/* City availability */}
+        <p style={{textAlign:'center',fontSize:'13px',color:'var(--gray)',fontWeight:600,marginBottom:'40px'}}>
+          Available across India: <a href="/bengaluru" style={{color:'var(--teal)'}}>Bengaluru</a> · <a href="/mumbai" style={{color:'var(--teal)'}}>Mumbai</a> · <a href="/delhi" style={{color:'var(--teal)'}}>Delhi</a> · Chennai · <a href="/hyderabad" style={{color:'var(--teal)'}}>Hyderabad</a> · Pune · Kolkata
+        </p>
       </div>
     </>
   )
