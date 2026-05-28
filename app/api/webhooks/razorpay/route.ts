@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ received: true })
   } catch (err) {
-    console.error('Razorpay webhook error:', err)
+    logger.error('Razorpay webhook error:', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 })
   }
 }

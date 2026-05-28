@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { notifyPayoutRequested } from '@/lib/notify'
+import { logger } from '@/lib/logger'
 
 // POST — request a payout (listener-only action)
 // Replaces the client-side direct Supabase insert so we can send a notification.
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest) {
     .insert({ user_id: user.id, amount, status: 'pending' })
 
   if (insertErr) {
-    console.error('Payout insert failed:', insertErr)
+    logger.error('Payout insert failed:', { error: insertErr instanceof Error ? insertErr.message : String(insertErr) })
     return NextResponse.json({ error: 'Failed to submit payout request' }, { status: 500 })
   }
 
