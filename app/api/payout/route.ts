@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
         amount,
       })
     } catch (err) {
-      console.error('notifyPayoutRequested failed (non-critical):', err)
+      logger.error('notifyPayoutRequested failed (non-critical):', { error: err instanceof Error ? err.message : String(err) })
     }
   })()
 

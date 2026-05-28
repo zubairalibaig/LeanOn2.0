@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
+import { logger } from '@/lib/logger'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const MAX_MSG_LENGTH = 2000
@@ -53,13 +54,13 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (error) {
-      console.error('Message insert failed:', error)
+      logger.error('Message insert failed:', { error: error instanceof Error ? error.message : String(error) })
       return NextResponse.json({ error: 'Failed to send message' }, { status: 500 })
     }
 
     return NextResponse.json(saved)
   } catch (err: unknown) {
-    console.error('Message API error:', err)
+    logger.error('Message API error:', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 })
   }
 }
