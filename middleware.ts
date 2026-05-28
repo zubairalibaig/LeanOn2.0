@@ -25,12 +25,9 @@ function isTrustedOrigin(origin: string, reqHostname: string): boolean {
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
-  // Redirect www → apex so Google sees a single canonical domain
-  if (req.nextUrl.hostname === 'www.leanon.app') {
-    const apex = req.nextUrl.clone()
-    apex.hostname = 'leanon.app'
-    return NextResponse.redirect(apex, { status: 301 })
-  }
+  // NOTE: Vercel handles the apex↔www canonical redirect at the edge.
+  // Do NOT add a www→apex redirect here — it would fight Vercel's redirect and
+  // cause ERR_TOO_MANY_REDIRECTS.
 
   // CSRF protection for mutating API routes — reject cross-origin requests
   const isMutation = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)
