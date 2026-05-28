@@ -135,7 +135,7 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({ success: true, newBalance: (updated.data as { wallet_balance?: number } | null)?.wallet_balance ?? 0 })
   } catch (err) {
-    console.error('Payment verify error:', err)
+    logger.error('Payment verify error:', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json({ error: 'Verification failed' }, { status: 500 })
   }
 }

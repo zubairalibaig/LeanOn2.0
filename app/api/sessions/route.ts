@@ -3,6 +3,7 @@ import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-se
 import { checkRateLimit } from '@/lib/rate-limit'
 import { PLATFORM_FEE, FREE_SESSION_MINS, MAX_FREE_TRIALS, SESSION_DURATIONS } from '@/lib/constants'
 import { notifySessionComplete } from '@/lib/notify'
+import { logger } from '@/lib/logger'
 
 const VALID_SESSION_TYPES = ['text', 'voice'] as const
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -128,7 +129,7 @@ export async function POST(req: NextRequest) {
       })
 
       if (deductErr) {
-        console.error('deduct_wallet RPC failed — cancelling session:', { sessionId: session.id, deductErr })
+        logger.error('deduct_wallet RPC failed — cancelling session:', { sessionId: session.id, deductErr: deductErr as unknown })
         await sb.from('sessions').update({ status: 'cancelled' }).eq('id', session.id)
         return NextResponse.json({ error: 'Payment processing failed. Please try again.' }, { status: 500 })
       }
@@ -144,7 +145,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ sessionId: session.id, total })
   } catch (err: unknown) {
-    console.error('Session create error:', err)
+    logger.error('Session create error:', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json({ error: 'An unexpected error occurred. Please try again.' }, { status: 500 })
   }
 }
@@ -217,7 +218,7 @@ export async function PATCH(req: NextRequest) {
       })
 
       if (creditErr) {
-        console.error('credit_wallet RPC failed — manual reconciliation needed:', {
+        logger.error('credit_wallet RPC failed — manual reconciliation needed:', {
           sessionId, listenerId: session.listener_id, amount: listenerEarning,
         })
       } else {
