@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { createAdminClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 function getResend() {
   return new Resend(process.env.RESEND_API_KEY!)
@@ -56,18 +57,18 @@ export async function POST(req: NextRequest) {
             <p>${esc(cleanMessage).replace(/\n/g, '<br/>')}</p>
           `,
         })
-        if (error) console.error('Resend API rejected the email:', error)
-        else console.log('Resend accepted contact email:', data?.id)
+        if (error) logger.error('Resend API rejected the email:', { error: error instanceof Error ? error.message : String(error) })
+        else logger.info('Resend accepted contact email:', { id: data?.id })
       } catch (err) {
-        console.error('Resend network failure:', err)
+        logger.error('Resend network failure:', { error: err instanceof Error ? err.message : String(err) })
       }
     } else if (!adminTo) {
-      console.warn('ADMIN_NOTIFICATION_EMAIL not set — contact form saved to DB only')
+      logger.warn('ADMIN_NOTIFICATION_EMAIL not set — contact form saved to DB only')
     }
 
     return NextResponse.json({ success: true })
   } catch (err) {
-    console.error('Contact form error:', err)
+    logger.error('Contact form error:', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json({ error: 'Failed to submit. Please try again or reach us via the email on our website.' }, { status: 500 })
   }
 }

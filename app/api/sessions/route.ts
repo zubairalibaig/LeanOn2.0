@@ -266,13 +266,13 @@ export async function PATCH(req: NextRequest) {
           listenerEarning: listenerEarning > 0 ? listenerEarning : 0,
         })
       } catch (err) {
-        console.error('Session notification failed (non-critical):', err)
+        logger.error('Session notification failed (non-critical):', { error: err instanceof Error ? err.message : String(err) })
       }
     })()
 
     return NextResponse.json({ success: true })
   } catch (err: unknown) {
-    console.error('Session complete error:', err)
+    logger.error('Session complete error:', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json({ error: 'An unexpected error occurred. Please try again.' }, { status: 500 })
   }
 }

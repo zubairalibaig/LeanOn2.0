@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 import { createAdminClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 // Razorpay sends webhook events when payments complete asynchronously.
 // This is the safety net for users who pay then close the browser before
@@ -13,7 +14,7 @@ export async function POST(req: NextRequest) {
     // Verify webhook authenticity with webhook secret (different from API key secret)
     const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET
     if (!webhookSecret) {
-      console.error('RAZORPAY_WEBHOOK_SECRET not configured')
+      logger.error('RAZORPAY_WEBHOOK_SECRET not configured')
       return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 })
     }
 
@@ -37,7 +38,7 @@ export async function POST(req: NextRequest) {
       const userId = payment.notes?.userId as string | undefined
 
       if (!userId) {
-        console.error('Webhook: no userId in order notes for order', orderId)
+        logger.error('Webhook: no userId in order notes for order', { orderId })
         return NextResponse.json({ received: true })
       }
 
@@ -61,7 +62,7 @@ export async function POST(req: NextRequest) {
       })
 
       if (creditErr) {
-        console.error('Webhook: credit_wallet RPC failed for payment', paymentId, creditErr)
+        logger.error('Webhook: credit_wallet RPC failed for payment', { paymentId, creditErr: creditErr as unknown })
         return NextResponse.json({ error: 'Credit failed' }, { status: 500 })
       }
 
@@ -73,7 +74,7 @@ export async function POST(req: NextRequest) {
         reference_id: paymentId,
       })
 
-      console.log(`Webhook: credited ₹${amountRs} to user ${userId} for payment ${paymentId}`)
+      logger.info('Webhook: credited wallet', { amountRs, userId, paymentId })
     }
 
     return NextResponse.json({ received: true })
