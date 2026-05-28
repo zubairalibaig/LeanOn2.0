@@ -7,7 +7,10 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
-    const { reason } = await req.json().catch(() => ({}))
+    const body = await req.json().catch(() => ({}))
+    const reason: string | null = (typeof body?.reason === 'string' && body.reason.length <= 500)
+      ? body.reason.trim() || null
+      : null
 
     const sb = createAdminClient()
     const { data: u } = await sb

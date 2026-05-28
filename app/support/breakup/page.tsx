@@ -206,7 +206,7 @@ export default function BreakupSupportPage() {
               <div className="listener-avatar">{l.emoji}</div>
               <div className="listener-name">{l.name}</div>
               <div className="listener-tag">{l.tag}</div>
-              <p className="listener-bio" dangerouslySetInnerHTML={{__html: l.bio}} />
+              <p className="listener-bio">{l.bio}</p>
             </div>
           ))}
         </div>

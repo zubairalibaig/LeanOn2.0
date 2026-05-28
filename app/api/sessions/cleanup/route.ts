@@ -2,8 +2,7 @@ import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
 
 // POST — clean up sessions that have been "active" past their scheduled end time.
-// Call this from a Vercel cron job: vercel.json → crons → /api/sessions/cleanup every 5 min.
-// Also called client-side on session page mount to self-heal after browser crashes.
+// Called by Vercel cron job (daily at 02:00 UTC) and by session page on mount (self-heal).
 //
 // A session is considered orphaned if:
 //   status = 'active'  AND  started_at + duration_mins * 60s < now - 2 min grace period
@@ -15,6 +14,10 @@ export async function POST(req: Request) {
   // Plain unauthenticated requests are rejected when CRON_SECRET is configured.
   const cronSecret = process.env.CRON_SECRET
   const authHeader = req.headers.get('authorization')
+
+  if (!cronSecret && process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ error: 'CRON_SECRET not configured' }, { status: 500 })
+  }
 
   if (cronSecret) {
     if (authHeader === `Bearer ${cronSecret}`) {

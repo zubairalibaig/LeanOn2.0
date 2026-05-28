@@ -98,6 +98,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing action or id' }, { status: 400 })
   }
 
+  const ALLOWED_ACTIONS = [
+    'approve_listener', 'reject_listener', 'deactivate_user', 'reactivate_user',
+    'complete_payout', 'complete_refund',
+  ] as const
+  if (!(ALLOWED_ACTIONS as readonly string[]).includes(action)) {
+    return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
+  }
+
   // Validate id is a proper UUID to prevent malformed DB queries
   if (!UUID_RE.test(id)) {
     return NextResponse.json({ error: 'Invalid id format' }, { status: 400 })
