@@ -238,21 +238,26 @@ function BrowseContent() {
           <div className="empty">
             <div style={{fontSize:48,marginBottom:16}}>{tag !== 'all' || lang !== 'all' || query ? '🔍' : '🌙'}</div>
             <h3 style={{fontSize:18,fontWeight:800,marginBottom:8}}>
-              {tag !== 'all' || lang !== 'all' || query ? 'No matches for your filters' : 'No listeners online right now'}
+              {tag !== 'all' || lang !== 'all' || query ? 'No matches for your filters' : 'Listeners are joining soon'}
             </h3>
-            <p style={{fontSize:14,color:'var(--gray)',fontWeight:500,marginBottom:20,lineHeight:1.6}}>
+            <p style={{fontSize:14,color:'var(--gray)',fontWeight:500,marginBottom:16,lineHeight:1.6}}>
               {tag !== 'all' || lang !== 'all' || query
-                ? 'Try removing a filter or searching broader terms. Listeners are added every week.'
-                : 'Our listeners are real people with lives outside the platform. Check back in a bit — new listeners join every week.'}
+                ? 'Try removing a filter or searching broader terms. New peer listeners join LeanOn every week.'
+                : 'LeanOn is growing — new peer listeners from Bengaluru, Mumbai, Delhi, and across India join every week. Check back soon, or be among the first to help others by becoming a listener yourself.'}
             </p>
-            {(tag !== 'all' || lang !== 'all' || query) && (
-              <button
-                style={{background:'var(--navy)',color:'white',border:'none',borderRadius:12,padding:'10px 22px',fontFamily:'Nunito,sans-serif',fontWeight:700,fontSize:13,cursor:'pointer'}}
-                onClick={()=>{ setTag('all'); setLang('all'); setQuery('') }}
-              >
-                Clear filters
-              </button>
-            )}
+            <div style={{display:'flex',flexDirection:'column',gap:10,alignItems:'center'}}>
+              {(tag !== 'all' || lang !== 'all' || query) && (
+                <button
+                  style={{background:'var(--navy)',color:'white',border:'none',borderRadius:12,padding:'10px 22px',fontFamily:'Nunito,sans-serif',fontWeight:700,fontSize:13,cursor:'pointer'}}
+                  onClick={()=>{ setTag('all'); setLang('all'); setQuery('') }}
+                >
+                  Show all listeners
+                </button>
+              )}
+              <a href="/become-listener" style={{fontSize:13,fontWeight:700,color:'var(--teal)',textDecoration:'underline',textUnderlineOffset:3}}>
+                Have lived experience? Become a listener →
+              </a>
+            </div>
           </div>
         ) : filtered.map(l => (
           <div key={l.id} className="card" onClick={()=>router.push(`/listener/${l.user_id}`)}>

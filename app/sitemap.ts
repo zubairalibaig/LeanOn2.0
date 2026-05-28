@@ -37,5 +37,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/blog/loneliness-at-night`,         lastModified: now, changeFrequency: 'monthly', priority: 0.75 },
     { url: `${base}/blog/emotional-burnout`,           lastModified: now, changeFrequency: 'monthly', priority: 0.75 },
     { url: `${base}/blog/anonymous-emotional-support-india`, lastModified: now, changeFrequency: 'monthly', priority: 0.75 },
+    { url: `${base}/blog/peer-support-vs-therapy-india`,    lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/blog/joint-family-emotional-support`,   lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
   ]
 }

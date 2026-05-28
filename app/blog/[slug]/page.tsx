@@ -7,10 +7,12 @@ import { post as leanOnMeanPost } from '../posts/what-does-lean-on-mean'
 import { post as lonelinessAtNightPost } from '../posts/loneliness-at-night'
 import { post as emotionalBurnoutPost } from '../posts/emotional-burnout'
 import { post as anonymousSupportPost } from '../posts/anonymous-support-india'
+import { post as peerVsTherapyPost } from '../posts/peer-support-vs-therapy-india'
+import { post as jointFamilyPost } from '../posts/joint-family-emotional-support'
 
 export const dynamic = 'force-static'
 
-const allPosts = [lonelinessPost, burnoutPost, peerSupportPost, leanOnMeanPost, lonelinessAtNightPost, emotionalBurnoutPost, anonymousSupportPost]
+const allPosts = [lonelinessPost, burnoutPost, peerSupportPost, leanOnMeanPost, lonelinessAtNightPost, emotionalBurnoutPost, anonymousSupportPost, peerVsTherapyPost, jointFamilyPost]
 
 function getPost(slug: string) {
   return allPosts.find((p) => p.slug === slug)
@@ -81,11 +83,30 @@ const S = `
   .btn-secondary{background:rgba(255,255,255,0.12);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;padding:14px 28px;border-radius:50px;border:1.5px solid rgba(255,255,255,0.3);cursor:pointer;}
   .back-link{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:var(--teal);margin-bottom:32px;}
   .back-link:hover{opacity:0.8;}
+  .related{margin-top:48px;}
+  .related-title{font-size:18px;font-weight:900;color:var(--navy);margin-bottom:16px;}
+  .related-grid{display:flex;flex-direction:column;gap:12px;}
+  .related-card{background:white;border:1.5px solid var(--border);border-radius:16px;padding:16px 20px;transition:all .2s;}
+  .related-card:hover{border-color:var(--teal);box-shadow:0 4px 16px rgba(15,72,103,.08);}
+  .related-card-title{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:4px;}
+  .related-card-desc{font-size:13px;color:var(--gray);font-weight:500;line-height:1.5;}
+  .related-card-topics{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+  .related-card-topic{font-size:11px;font-weight:700;color:var(--teal);background:rgba(26,143,160,0.1);padding:2px 8px;border-radius:50px;}
 `
+
+function getRelatedPosts(post: ReturnType<typeof getPost>, count = 3) {
+  if (!post) return []
+  return allPosts
+    .filter(p => p.slug !== post.slug)
+    .filter(p => p.topics.some((t: string) => post.topics.includes(t)))
+    .slice(0, count)
+}
 
 export default function BlogPostPage({ params }: { params: { slug: string } }) {
   const post = getPost(params.slug)
   if (!post) notFound()
+
+  const relatedPosts = getRelatedPosts(post)
 
   const articleSchema = {
     '@context': 'https://schema.org',
@@ -137,7 +158,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
           <h1 className="article-title">{post.title}</h1>
           <p className="article-desc">{post.description}</p>
           <div className="article-topics">
-            {post.topics.map((t) => (
+            {post.topics.map((t: string) => (
               <span key={t} className="article-topic">{t}</span>
             ))}
           </div>
@@ -150,11 +171,29 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
 
+        {relatedPosts.length > 0 && (
+          <div className="related">
+            <div className="related-title">Related reading</div>
+            <div className="related-grid">
+              {relatedPosts.map(p => (
+                <a key={p.slug} href={`/blog/${p.slug}`} className="related-card">
+                  <div className="related-card-title">{p.title}</div>
+                  <div className="related-card-desc">{p.description}</div>
+                  <div className="related-card-topics">
+                    {p.topics.slice(0,3).map((t: string) => <span key={t} className="related-card-topic">{t}</span>)}
+                    <span className="related-card-topic">{p.readTime}</span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Gets It?</h2>
-          <p>Reading is a start — but sometimes you need to actually talk. Browse peer listeners who understand what you are going through. First 5 minutes free.</p>
+          <p>Reading is a start — but sometimes you need to actually talk. Browse affordable peer listeners across India who understand what you are going through. First 5 minutes free.</p>
           <div className="cta-btns">
-            <a href="/browse"><button className="btn-primary">Browse All Listeners</button></a>
+            <a href="/browse"><button className="btn-primary">Browse Peer Listeners</button></a>
             <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
           </div>
         </div>

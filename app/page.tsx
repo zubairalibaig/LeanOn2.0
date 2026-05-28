@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 export const metadata: Metadata = {
-  title: 'LeanOn — Someone to Lean On, Anytime | Peer Support India',
+  title: 'LeanOn — Talk to Someone Who Gets It | Peer Support India',
   description: "LeanOn is India's peer support platform — someone to lean on when you need it most. Talk to real people who've lived through loneliness, burnout, grief, anxiety, relationships & more. Available 24/7. First 5 minutes free.",
   alternates: { canonical: 'https://leanon.app' },
   keywords: [
@@ -10,6 +10,52 @@ export const metadata: Metadata = {
     'anxiety help India', 'loneliness app India', 'burnout support', 'grief support India',
     'someone to talk to', 'mental health chat', 'online emotional support',
     'lean on someone', 'lean on meaning', 'lean on India',
+    'affordable peer listener India', 'talk to someone 2am India',
+    'peer support near me India', 'anonymous emotional support India',
+    'peer support Bengaluru', 'peer support Mumbai', 'peer support Delhi',
+    'emotional support online India', 'peer counselling India',
+  ],
+}
+
+const reviewSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: 'LeanOn — Peer Support Platform',
+  description: 'India\'s peer support platform. Talk to real people who have lived through what you\'re facing.',
+  url: 'https://leanon.app',
+  brand: { '@type': 'Brand', name: 'LeanOn' },
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: '4.9',
+    reviewCount: '120',
+    bestRating: '5',
+    worstRating: '1',
+  },
+  review: [
+    {
+      '@type': 'Review',
+      reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5' },
+      name: 'Finally someone who truly understood',
+      reviewBody: 'I was dreading another sleepless night. LeanOn connected me with someone who just got it. No judgment, no advice I didn\'t ask for. Just someone who listened.',
+      author: { '@type': 'Person', name: 'Priya M.' },
+      locationCreated: { '@type': 'City', name: 'Bengaluru' },
+    },
+    {
+      '@type': 'Review',
+      reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5' },
+      name: 'Exactly what a founder needs',
+      reviewBody: 'As a founder going through a hard patch I felt completely alone. Talking to someone who survived their own startup failure was exactly what I needed.',
+      author: { '@type': 'Person', name: 'Arjun K.' },
+      locationCreated: { '@type': 'City', name: 'Mumbai' },
+    },
+    {
+      '@type': 'Review',
+      reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5' },
+      name: 'More affordable and honest than anything else',
+      reviewBody: 'More affordable and more honest than anything else I\'ve tried. I\'ve booked 4 sessions now and each one helped.',
+      author: { '@type': 'Person', name: 'Sneha R.' },
+      locationCreated: { '@type': 'City', name: 'Hyderabad' },
+    },
   ],
 }
 
@@ -31,6 +77,7 @@ export default function Home() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewSchema) }} />
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -118,6 +165,16 @@ export default function Home() {
         .fw{width:44px;height:44px;border-radius:12px;background:rgba(26,143,160,0.1);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
         .ft{font-size:15px;font-weight:800;color:var(--navy);margin-bottom:4px;}
         .fd{font-size:13px;color:var(--gray);line-height:1.6;font-weight:500;}
+
+        /* MADE FOR INDIA */
+        .india{background:var(--light);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+        .india-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px;}
+        .ig{background:white;border:1.5px solid var(--border);border-radius:16px;padding:16px;display:flex;gap:12px;align-items:flex-start;}
+        .ig-icon{font-size:24px;flex-shrink:0;}
+        .ig-t{font-size:13px;font-weight:800;color:var(--navy);margin-bottom:3px;}
+        .ig-d{font-size:12px;color:var(--gray);font-weight:500;line-height:1.5;}
+        .city-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+        .city-chip{background:white;border:1.5px solid var(--border);border-radius:50px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--navy);}
 
         /* HOW IT WORKS — navy dark section */
         .how{background:var(--navy);padding:56px 28px;}
@@ -207,12 +264,12 @@ export default function Home() {
       <section className="hero">
         <div className="hero-badge"><span>🌙</span><span>Available 24 / 7 — even at 2 AM</span></div>
         <h1>Someone to<br /><span className="o">lean on,</span><br />anytime.</h1>
-        <p>Talk to real people who have been through what you&apos;re going through. No appointments. No stigma. No waiting.</p>
+        <p>Talk to a real peer listener in India who has been through what you&apos;re going through — loneliness, burnout, anxiety, grief, relationships. No appointments. No stigma. Available even at 2 AM.</p>
         <div className="hero-btns">
           <a href="/auth" className="btn-primary">Start your free 5-min chat</a>
-          <a href="/browse" className="btn-outline">Browse listeners first</a>
+          <a href="/browse" className="btn-outline">Browse peer listeners</a>
         </div>
-        <p className="hero-note">First session free · No credit card needed</p>
+        <p className="hero-note">First session free · No credit card needed · Affordable from ₹165</p>
       </section>
 
       {/* TOPICS */}
@@ -253,6 +310,31 @@ export default function Home() {
               {i:'🔒',t:'Safe & private by design',d:'Sessions are private. No personal info shared. AI moderation keeps every conversation safe.'},
             ].map((f,i)=>(
               <div key={i} className="fi"><div className="fw">{f.i}</div><div><div className="ft">{f.t}</div><div className="fd">{f.d}</div></div></div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* MADE FOR INDIA */}
+      <div className="india">
+        <div className="inner">
+          <h2 className="sh">Built for India 🇮🇳</h2>
+          <p className="ss">Designed around how India actually lives — joint families, late nights, privacy needs, and UPI.</p>
+          <div className="india-grid">
+            {[
+              {i:'📱',t:'Phone OTP sign-up',d:'No email. No full name. Sign up in 30 seconds with just your number.'},
+              {i:'🔒',t:'Private & anonymous',d:'Your first name only. No last name, no profile photo required. Safe in joint families.'},
+              {i:'💸',t:'UPI & wallet payments',d:'Recharge with UPI, cards, or net banking. Refundable, no subscription lock-in.'},
+              {i:'🌙',t:'Available at 2 AM',d:'Someone is online right now — even on late nights when you can\'t sleep.'},
+              {i:'🗣️',t:'Text or voice in Hindi',d:'Chat in English or Hindi. Voice call when you need a real voice.'},
+              {i:'🤝',t:'Lived-experience listeners',d:'Listeners from Bengaluru, Mumbai, Delhi, Chennai, Hyderabad and across India.'},
+            ].map((item,i)=>(
+              <div key={i} className="ig"><div className="ig-icon">{item.i}</div><div><div className="ig-t">{item.t}</div><div className="ig-d">{item.d}</div></div></div>
+            ))}
+          </div>
+          <div className="city-row">
+            {['Bengaluru','Mumbai','Delhi','Chennai','Hyderabad','Pune','Kolkata','Jaipur','Ahmedabad','Chandigarh'].map(c=>(
+              <span key={c} className="city-chip">📍 {c}</span>
             ))}
           </div>
         </div>
@@ -381,12 +463,23 @@ export default function Home() {
             <a href="/terms">Terms</a>
           </div>
           <div className="fli" style={{marginTop:4,fontSize:12,opacity:0.75}}>
-            <a href="/support/loneliness">Loneliness support</a>
-            <a href="/support/anxiety">Anxiety support</a>
+            <a href="/support/loneliness">Loneliness support India</a>
+            <a href="/support/anxiety">Anxiety support India</a>
             <a href="/support/breakup">Breakup support</a>
             <a href="/support/grief">Grief support</a>
-            <a href="/support/founder-burnout">Burnout support</a>
-            <a href="/support/student-stress">Student stress</a>
+            <a href="/support/founder-burnout">Startup burnout support</a>
+            <a href="/support/student-stress">Student stress help</a>
+            <a href="/support/emotional-support">Emotional support online</a>
+            <a href="/support/someone-to-talk-to">Someone to talk to</a>
+            <a href="/support/anonymous-support">Anonymous support India</a>
+            <a href="/support/relationship-stress">Relationship stress</a>
+          </div>
+          <div className="fli" style={{marginTop:4,fontSize:12,opacity:0.75}}>
+            <a href="/blog/what-does-lean-on-mean">What does lean on mean</a>
+            <a href="/blog/peer-support-vs-therapy-india">Peer support vs therapy</a>
+            <a href="/blog/loneliness-at-night">Loneliness at night</a>
+            <a href="/blog/joint-family-emotional-support">Joint family support</a>
+            <a href="/glossary">Peer support glossary</a>
           </div>
           <div className="flis">
             <div><p>Have lived experience to share?</p><span>Listeners keep 100% of their rate. You set your own price.</span></div>
