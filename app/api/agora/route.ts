@@ -10,6 +10,10 @@ export async function GET(req: NextRequest) {
     if (!sessionId) {
       return NextResponse.json({ error: 'sessionId is required' }, { status: 400 })
     }
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (!UUID_RE.test(sessionId)) {
+      return NextResponse.json({ error: 'Invalid sessionId format' }, { status: 400 })
+    }
 
     // Verify caller is authenticated
     const userSb = createServerSupabaseClient()

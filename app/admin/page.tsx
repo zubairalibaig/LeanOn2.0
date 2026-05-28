@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 
 // ── Typed interfaces replacing `any` ──────────────────────────────────────────
@@ -110,11 +110,15 @@ export default function AdminPage() {
   const [toast, setToast]     = useState<string | null>(null)
   const [lpPage, setLpPage]   = useState(0)
   const [prPage, setPrPage]   = useState(0)
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const showToast = (msg: string) => {
+    if (toastTimer.current) clearTimeout(toastTimer.current)
     setToast(msg)
-    setTimeout(() => setToast(null), 2500)
+    toastTimer.current = setTimeout(() => setToast(null), 2500)
   }
+
+  useEffect(() => () => { if (toastTimer.current) clearTimeout(toastTimer.current) }, [])
 
   const loadData = useCallback(async (lp = lpPage, pr = prPage) => {
     setLoading(true)

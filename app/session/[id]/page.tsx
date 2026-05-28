@@ -279,6 +279,7 @@ function SessionContent() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sessionId }),
+      signal: AbortSignal.timeout(5000),
     }).catch(() => {})
     send() // immediate on mount
     const hb = setInterval(send, 30_000)
