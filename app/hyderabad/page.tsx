@@ -282,7 +282,7 @@ export default function HyderabadPage() {
         {/* Disclaimer */}
         <div className="disclaimer">
           <p><strong>LeanOn is peer support, not a crisis service.</strong> If you are in immediate distress or having thoughts of self-harm, please reach out to a professional helpline immediately.</p>
-          <p><strong>iCall (TISS):</strong> 9152987821 &nbsp;|&nbsp; <strong>Tele-MANAS (Govt. of India):</strong> 14416</p>
+          <p><strong>NIMHANS:</strong> <a href="tel:08046110007">080-46110007</a> &nbsp;|&nbsp; <strong>Tele-MANAS (Govt. of India):</strong> <a href="tel:14416">14416</a> (free · 24/7)</p>
           <p>LeanOn listeners are trained peers, not licensed therapists or medical professionals. For clinical mental health support, please consult a qualified mental health professional.</p>
         </div>
       </div>

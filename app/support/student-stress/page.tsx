@@ -146,7 +146,7 @@ export default function StudentStressSupportPage() {
         </div>
 
         <div className="notice">
-          If you are in crisis or having thoughts of self-harm, please call iCall at 9152987821 (free) or Vandrevala Foundation at 1860-2662-345 (24/7). LeanOn is peer support and cannot replace crisis intervention.
+          If you are in crisis or having thoughts of self-harm, please call NIMHANS at 080-46110007 or Tele-MANAS at 14416 (free · 24/7 · Govt of India). LeanOn is peer support and cannot replace crisis intervention.
         </div>
 
         <div className="section">

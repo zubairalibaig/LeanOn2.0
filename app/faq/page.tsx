@@ -91,7 +91,7 @@ const faqs = [
       },
       {
         q: 'What if I\'m in a mental health crisis?',
-        a: 'LeanOn is peer support, not a crisis service. If you are in crisis or having thoughts of self-harm, please call iCall at 9152987821 (free) or Tele-MANAS at 14416 (Govt of India, free, 24/7).',
+        a: 'LeanOn is peer support, not a crisis service. If you are in crisis or having thoughts of self-harm, please call NIMHANS at 080-46110007 or Tele-MANAS at 14416 (free, 24/7, Govt of India).',
       },
     ],
   },

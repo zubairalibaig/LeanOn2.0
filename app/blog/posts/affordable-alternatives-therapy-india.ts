@@ -42,9 +42,9 @@ export const post = {
 
 <p>India has several free mental health helplines that provide immediate support, mostly by telephone:</p>
 
-<p><strong>iCall</strong> (9152987821) — run by the Tata Institute of Social Sciences, provides free counselling by trained professionals and counselling students. Available Monday to Saturday.</p>
+<p><strong>NIMHANS</strong> (080-46110007) — the National Institute of Mental Health and Neuro Sciences, a premier government institution offering mental health support. Free helpline available for people in distress.</p>
 
-<p><strong>Vandrevala Foundation</strong> (1860-2662-345) — 24/7 mental health helpline, free, available in multiple languages including Hindi, English, and regional languages.</p>
+<p><strong>Tele-MANAS</strong> (14416) — the Government of India's national mental health helpline. Free, available 24/7, accessible in multiple languages across India.</p>
 
 <p><strong>Snehi</strong> (044-24640050) — based in Chennai, offers emotional support and crisis intervention.</p>
 

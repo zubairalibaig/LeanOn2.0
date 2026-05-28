@@ -762,7 +762,7 @@ function SessionContent() {
 
         {crisisAlert && (
           <div className="crisis-bar">
-            💙 We care about you. If you&apos;re having thoughts of self-harm, please call <strong>iCall: <a href="tel:9152987821">9152987821</a></strong> or <strong>Vandrevala Foundation: <a href="tel:18602662345">1860-2662-345</a></strong> (24/7, free). You can still continue this conversation.
+            🆘 In crisis? Call <strong>NIMHANS: <a href="tel:08046110007">080-46110007</a></strong> or <strong>Tele-MANAS: <a href="tel:14416">14416</a></strong> (free · 24/7 · Govt of India). You can still continue this conversation.
             <button onClick={() => setCrisisAlert(false)} style={{float:'right',background:'none',border:'none',cursor:'pointer',color:'#7A2020',fontWeight:900,fontSize:14}}>✕</button>
           </div>
         )}

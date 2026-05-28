@@ -302,7 +302,7 @@ export default function AnonymousSupportPage() {
         {/* Disclaimer */}
         <div className="disclaimer">
           <p><strong>Peer support is not a substitute for professional mental health care.</strong> LeanOn listeners are trained peers, not licensed therapists or counsellors. If you are in crisis or experiencing thoughts of self-harm, please contact a professional immediately.</p>
-          <p><strong>Crisis helplines in India:</strong> iCall — <a href="tel:9152987821" style={{color:'#7A5020',fontWeight:700}}>9152987821</a> &nbsp;|&nbsp; Tele-MANAS — <a href="tel:14416" style={{color:'#7A5020',fontWeight:700}}>14416</a></p>
+          <p><strong>Crisis helplines in India:</strong> NIMHANS — <a href="tel:08046110007" style={{color:'#7A5020',fontWeight:700}}>080-46110007</a> &nbsp;|&nbsp; Tele-MANAS — <a href="tel:14416" style={{color:'#7A5020',fontWeight:700}}>14416</a> (free · 24/7 · Govt of India)</p>
         </div>
 
         {/* Related pages */}
