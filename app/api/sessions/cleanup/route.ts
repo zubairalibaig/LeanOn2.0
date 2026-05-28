@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 // POST — clean up sessions that have been "active" past their scheduled end time.
 // Called by Vercel cron job (daily at 02:00 UTC) and by session page on mount (self-heal).
@@ -41,7 +42,7 @@ export async function POST(req: Request) {
     .lt('started_at', new Date(Date.now() - 2 * 60_000).toISOString()) // at least 2 min old
 
   if (error) {
-    console.error('Session cleanup query failed:', error)
+    logger.error('Session cleanup query failed', { error: error.message })
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
@@ -74,7 +75,7 @@ export async function POST(req: Request) {
         p_amount: earning,
       })
       if (creditErr) {
-        console.error('cleanup: credit_wallet failed — manual reconciliation needed:', {
+        logger.error('cleanup: credit_wallet failed — manual reconciliation needed', {
           sessionId: session.id, listenerId: session.listener_id, earning,
         })
       } else {
@@ -98,6 +99,53 @@ export async function POST(req: Request) {
     cleaned++
   }
 
-  console.log(`Session cleanup: closed ${cleaned} orphaned session(s) out of ${(orphans ?? []).length} candidates`)
-  return NextResponse.json({ cleaned, checked: (orphans ?? []).length })
+  // Cancel stale pending sessions (stuck in 'pending' for > 5 minutes — refund seeker)
+  const { data: stalePending } = await sb
+    .from('sessions')
+    .select('id, seeker_id, amount_held')
+    .eq('status', 'pending')
+    .lt('created_at', new Date(Date.now() - 5 * 60_000).toISOString())
+
+  let staleCancelled = 0
+  for (const s of stalePending ?? []) {
+    const { data: cancelled } = await sb
+      .from('sessions')
+      .update({ status: 'cancelled', ended_at: new Date().toISOString() })
+      .eq('id', s.id)
+      .eq('status', 'pending')
+      .select()
+      .single()
+
+    if (!cancelled) continue
+
+    // Refund held amount back to seeker
+    if ((s.amount_held as number) > 0) {
+      const { error: refundErr } = await sb.rpc('credit_wallet', {
+        p_user_id: s.seeker_id,
+        p_amount: s.amount_held,
+      })
+      if (refundErr) {
+        logger.error('cleanup: stale pending refund failed', { sessionId: s.id, seekerId: s.seeker_id })
+      } else {
+        await sb.from('wallet_transactions').insert({
+          user_id: s.seeker_id,
+          amount: s.amount_held,
+          type: 'credit',
+          description: 'Refund — session not accepted',
+          session_id: s.id,
+        })
+        staleCancelled++
+      }
+    } else {
+      staleCancelled++
+    }
+  }
+
+  logger.info('Session cleanup complete', {
+    cleaned,
+    checked: (orphans ?? []).length,
+    staleCancelled,
+    stalePendingChecked: (stalePending ?? []).length,
+  })
+  return NextResponse.json({ cleaned, checked: (orphans ?? []).length, staleCancelled })
 }

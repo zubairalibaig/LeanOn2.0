@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 // PATCH — deactivate listener profile only (keeps user account active)
 export async function PATCH() {
@@ -16,7 +17,7 @@ export async function PATCH() {
     if (error) throw error
     return NextResponse.json({ success: true })
   } catch (err) {
-    console.error('Listener deactivation error:', err)
+    logger.error('Listener deactivation error:', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json({ error: 'Failed to deactivate listener profile' }, { status: 500 })
   }
 }
@@ -43,7 +44,7 @@ export async function POST() {
 
     return NextResponse.json({ success: true })
   } catch (err) {
-    console.error('Account deactivation error:', err)
+    logger.error('Account deactivation error:', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json({ error: 'Failed to deactivate account' }, { status: 500 })
   }
 }

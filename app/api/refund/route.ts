@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 export async function POST(req: NextRequest) {
   try {
@@ -44,7 +45,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true, amount: u.wallet_balance })
   } catch (err: unknown) {
-    console.error('Refund request error:', err)
+    logger.error('Refund request error:', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
   }
 }

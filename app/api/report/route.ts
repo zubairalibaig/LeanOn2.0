@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { Resend } from 'resend'
+import { logger } from '@/lib/logger'
 
 const VALID_REPORT_TYPES = [
   'harassment',
@@ -85,13 +86,13 @@ export async function POST(req: NextRequest) {
           `,
         })
       } catch (emailErr) {
-        console.error('Failed to send self-harm escalation email:', emailErr)
+        logger.error('Failed to send self-harm escalation email:', { error: emailErr instanceof Error ? emailErr.message : String(emailErr) })
       }
     }
 
     return NextResponse.json({ success: true })
   } catch (err: unknown) {
-    console.error('Report submission error:', err)
+    logger.error('Report submission error:', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json({ error: 'Failed to submit report. Please try again.' }, { status: 500 })
   }
 }

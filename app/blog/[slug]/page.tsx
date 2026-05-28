@@ -3,10 +3,14 @@ import { notFound } from 'next/navigation'
 import { post as lonelinessPost } from '../posts/loneliness-in-india'
 import { post as burnoutPost } from '../posts/burnout-recovery-india'
 import { post as peerSupportPost } from '../posts/how-peer-support-works'
+import { post as leanOnMeanPost } from '../posts/what-does-lean-on-mean'
+import { post as lonelinessAtNightPost } from '../posts/loneliness-at-night'
+import { post as emotionalBurnoutPost } from '../posts/emotional-burnout'
+import { post as anonymousSupportPost } from '../posts/anonymous-support-india'
 
 export const dynamic = 'force-static'
 
-const allPosts = [lonelinessPost, burnoutPost, peerSupportPost]
+const allPosts = [lonelinessPost, burnoutPost, peerSupportPost, leanOnMeanPost, lonelinessAtNightPost, emotionalBurnoutPost, anonymousSupportPost]
 
 function getPost(slug: string) {
   return allPosts.find((p) => p.slug === slug)

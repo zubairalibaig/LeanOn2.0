@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
+import { logger } from '@/lib/logger'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -16,7 +17,7 @@ async function requireAdmin() {
   if (adminEmail) {
     if (user.email !== adminEmail) return { error: 'Forbidden', status: 403, user: null }
   } else {
-    console.warn('ADMIN_EMAIL env var not set — falling back to is_admin DB column')
+    logger.warn('ADMIN_EMAIL env var not set — falling back to is_admin DB column')
     const admin = createAdminClient()
     const { data: dbUser } = await admin
       .from('users')
@@ -152,7 +153,7 @@ export async function POST(req: NextRequest) {
     // If deduct fails the record stays 'pending' and the admin can retry safely.
     const { error: deductErr } = await admin.rpc('deduct_wallet', { p_user_id: pr.user_id, p_amount: pr.amount })
     if (deductErr) {
-      console.error('deduct_wallet failed for payout — aborting status change:', { id, deductErr })
+      logger.error('deduct_wallet failed for payout — aborting status change:', { id, deductErr: deductErr as unknown })
       return NextResponse.json({ error: 'Wallet deduction failed. Please retry.' }, { status: 500 })
     }
 
@@ -190,7 +191,7 @@ export async function POST(req: NextRequest) {
     // If deduct fails the record stays 'pending' so the admin can retry.
     const { error: deductErr } = await admin.rpc('deduct_wallet', { p_user_id: rr.user_id, p_amount: rr.amount })
     if (deductErr) {
-      console.error('deduct_wallet failed for refund — aborting status change:', { id, deductErr })
+      logger.error('deduct_wallet failed for refund — aborting status change:', { id, deductErr: deductErr as unknown })
       return NextResponse.json({ error: 'Wallet deduction failed. Please retry.' }, { status: 500 })
     }
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { RtcTokenBuilder, RtcRole } from 'agora-token'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 export async function GET(req: NextRequest) {
   try {
@@ -61,7 +62,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ token, channelName, appId })
   } catch (err: unknown) {
-    console.error('Agora token error:', err)
+    logger.error('Agora token error:', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json(
       { error: err instanceof Error ? err.message : 'Token generation failed' },
       { status: 500 }

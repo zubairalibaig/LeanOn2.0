@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'About LeanOn — Peer Support for India',
-  description: 'LeanOn connects people going through hard times with peer listeners who have lived through the same experiences. Instant, affordable, private. Built for India.',
+  title: 'About LeanOn — Our Mission | Peer Support India',
+  description: "LeanOn is India's peer support platform. Our mission: give everyone access to someone to lean on. Learn about our story, values, and how we are changing emotional wellness in India.",
+  keywords: ['about leanon', 'leanon mission', 'peer support India mission', 'lean on app story'],
+  alternates: { canonical: 'https://leanon.app/about' },
 }
 
 const S = `

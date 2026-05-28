@@ -4,6 +4,7 @@ import crypto from 'crypto'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { notifyWalletRecharge } from '@/lib/notify'
+import { logger } from '@/lib/logger'
 
 function getRzp() {
   return new Razorpay({
@@ -40,7 +41,7 @@ export async function POST(req: NextRequest) {
     })
     return NextResponse.json({ orderId: order.id, amount: order.amount })
   } catch (err) {
-    console.error('Razorpay order error:', err)
+    logger.error('Razorpay order error:', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json({ error: 'Failed to create order' }, { status: 500 })
   }
 }
@@ -73,10 +74,10 @@ export async function PUT(req: NextRequest) {
       verifiedAmount = Math.round(Number(order.amount) / 100)
       // Log mismatch server-side only — never expose internal amount details to client
       if (verifiedAmount !== amount) {
-        console.warn('Wallet PUT: client-reported amount differs from Razorpay order amount. Using order amount.')
+        logger.warn('Wallet PUT: client-reported amount differs from Razorpay order amount. Using order amount.')
       }
     } catch (err) {
-      console.error('Failed to fetch Razorpay order for validation:', err)
+      logger.error('Failed to fetch Razorpay order for validation:', { error: err instanceof Error ? err.message : String(err) })
       // Fail closed — never trust client-provided amount if we can't verify it
       return NextResponse.json(
         { error: `Could not verify payment amount. Contact support with payment ID: ${razorpay_payment_id}` },
@@ -105,7 +106,7 @@ export async function PUT(req: NextRequest) {
     })
 
     if (creditErr) {
-      console.error('credit_wallet RPC failed:', creditErr)
+      logger.error('credit_wallet RPC failed:', { error: creditErr instanceof Error ? creditErr.message : String(creditErr) })
       return NextResponse.json(
         { error: `Wallet credit failed. Contact support with payment ID: ${razorpay_payment_id}` },
         { status: 500 }

@@ -1,6 +1,10 @@
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = { title: 'Terms of Use — LeanOn' }
+export const metadata: Metadata = {
+  title: 'Terms of Use — LeanOn',
+  description: 'LeanOn terms of use. Read our terms governing use of the peer support platform, sessions, wallet, and listener services.',
+  alternates: { canonical: 'https://leanon.app/terms' },
+}
 
 const S = `
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');

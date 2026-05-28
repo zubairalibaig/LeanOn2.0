@@ -6,8 +6,9 @@ import { post as peerSupportPost } from './posts/how-peer-support-works'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Mental Health & Peer Support Blog | LeanOn India',
-  description: 'Honest, evidence-based writing about loneliness, burnout, anxiety, grief, and peer support in India. Real stories and practical guidance for real challenges.',
+  title: 'Blog — Emotional Wellness & Peer Support | LeanOn',
+  description: 'LeanOn blog: honest articles on loneliness, burnout, grief, anxiety, and peer support in India. Written by people who have been through it.',
+  keywords: ['peer support blog India', 'emotional wellness India', 'leanon blog', 'mental health India blog'],
   alternates: { canonical: 'https://leanon.app/blog' },
   openGraph: {
     title: 'Mental Health & Peer Support Blog — LeanOn India',

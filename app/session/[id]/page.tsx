@@ -90,7 +90,38 @@ body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:an
   border:1px solid rgba(220,38,38,0.3);
   border-radius:10px;padding:10px 16px;text-align:center;max-width:280px;
 }
+.net-quality{
+  display:flex;align-items:center;gap:6px;
+  font-size:12px;font-weight:700;color:rgba(255,255,255,0.75);
+}
+.net-bars{display:flex;align-items:flex-end;gap:2px;height:14px;}
+.net-bar{width:4px;border-radius:2px;background:rgba(255,255,255,0.2);}
+.net-bar.on.good{background:#4ADE80;}
+.net-bar.on.fair{background:#FCD34D;}
+.net-bar.on.poor{background:#F87171;}
 `
+
+function NetQualityIndicator({ q }: { q: 0|1|2|3|4|5|6 }) {
+  // 0=unknown, 1-2=good, 3-4=fair, 5-6=poor
+  if (q === 0) return null
+  const tier = q <= 2 ? 'good' : q <= 4 ? 'fair' : 'poor'
+  const label = q <= 2 ? 'Good signal' : q <= 4 ? 'Fair signal' : 'Poor signal'
+  const filled = q <= 2 ? 3 : q <= 4 ? 2 : 1
+  return (
+    <div className="net-quality">
+      <div className="net-bars">
+        {[1,2,3].map(i => (
+          <div
+            key={i}
+            className={`net-bar${i <= filled ? ` on ${tier}` : ''}`}
+            style={{ height: i === 1 ? 5 : i === 2 ? 9 : 14 }}
+          />
+        ))}
+      </div>
+      <span>{label}</span>
+    </div>
+  )
+}
 
 function fmtTimer(s: number) {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
@@ -135,10 +166,11 @@ function SessionContent() {
   const [resolvedListenerName, setResolvedListenerName] = useState(listenerName)
 
   // Voice call state
-  const [voiceStatus, setVoiceStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
-  const [voiceError, setVoiceError]   = useState<string | null>(null)
-  const [muted, setMuted]             = useState(false)
-  const [callSecs, setCallSecs]       = useState(0)
+  const [voiceStatus, setVoiceStatus]   = useState<'connecting' | 'connected' | 'error'>('connecting')
+  const [voiceError, setVoiceError]     = useState<string | null>(null)
+  const [muted, setMuted]               = useState(false)
+  const [callSecs, setCallSecs]         = useState(0)
+  const [netQuality, setNetQuality]     = useState<0 | 1 | 2 | 3 | 4 | 5 | 6>(0)
 
   const channelRef      = useRef<ReturnType<typeof supabase.channel> | null>(null)
   const bottomRef       = useRef<HTMLDivElement>(null)
@@ -341,7 +373,9 @@ function SessionContent() {
         AgoraRTC.setLogLevel(process.env.NODE_ENV === 'production' ? 4 : 1)
 
         // Fetch token from our API (token expires in 1 hour — sufficient for any session)
-        const res = await fetch(`/api/agora?sessionId=${sessionId}`)
+        const res = await fetch(`/api/agora?sessionId=${sessionId}`, {
+          signal: AbortSignal.timeout(8000),
+        })
         if (!res.ok) {
           const body = await res.json().catch(() => ({}))
           throw new Error(body.error || 'Failed to get voice token')
@@ -374,6 +408,11 @@ function SessionContent() {
           }
         })
 
+        // Network quality monitoring (0=unknown, 1=excellent…6=disconnected)
+        client.on('network-quality', (stats: { uplinkNetworkQuality: 0|1|2|3|4|5|6 }) => {
+          if (!cancelled) setNetQuality(stats.uplinkNetworkQuality)
+        })
+
         // Create microphone audio track
         // Bluetooth/Safari: createMicrophoneAudioTrack may need AEC disabled on some devices
         let micTrack: Awaited<ReturnType<typeof AgoraRTC.createMicrophoneAudioTrack>>
@@ -385,10 +424,17 @@ function SessionContent() {
           })
         } catch (micErr: unknown) {
           const msg = micErr instanceof Error ? micErr.message : ''
-          if (msg.includes('Permission') || msg.includes('NotAllowed') || msg.includes('denied')) {
-            throw new Error('Microphone access denied. Please allow microphone permission in your browser settings and try again.')
+          const name = micErr instanceof Error ? (micErr as { name?: string }).name ?? '' : ''
+          if (name === 'NotAllowedError' || msg.includes('Permission') || msg.includes('NotAllowed') || msg.includes('denied')) {
+            throw new Error('Microphone access denied. Tap the 🔒 icon in your browser address bar, allow microphone, then refresh.')
           }
-          throw new Error('Could not access your microphone. Check that no other app is using it.')
+          if (name === 'NotFoundError' || msg.includes('NotFound') || msg.includes('Requested device not found')) {
+            throw new Error('No microphone found. Please connect a microphone and try again.')
+          }
+          if (name === 'NotReadableError' || msg.includes('NotReadable')) {
+            throw new Error('Microphone is being used by another app. Close other apps and try again.')
+          }
+          throw new Error('Could not access your microphone. Check browser permissions and try again.')
         }
 
         if (cancelled) {
@@ -422,8 +468,21 @@ function SessionContent() {
 
     joinVoiceCall()
 
+    // Visibility change — reconnect if tab was hidden and connection dropped
+    function handleVisibilityChange() {
+      if (document.visibilityState === 'visible' && !cancelled && agoraRef.current) {
+        const state: string = agoraRef.current.client.connectionState
+        if (state === 'DISCONNECTED' || state === 'DISCONNECTING') {
+          reconnectAttempts = 0
+          joinVoiceCall()
+        }
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
     return () => {
       cancelled = true
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
       if (reconnectTimer) clearTimeout(reconnectTimer)
       // Cleanup Agora on unmount or when session ends (unpublish → close → leave)
       if (agoraRef.current) {
@@ -572,6 +631,10 @@ function SessionContent() {
         <div className={`voice-timer${secs < 120 ? ' low' : ''}`}>
           {voiceStatus === 'connected' ? fmtTimer(callSecs) : '--:--'}
         </div>
+
+        {voiceStatus === 'connected' && (
+          <NetQualityIndicator q={netQuality} />
+        )}
 
         {voiceError && (
           <div className="voice-err">{voiceError}</div>
