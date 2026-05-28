@@ -1,14 +1,14 @@
 'use client'
 import { usePathname, useRouter } from 'next/navigation'
+import NotificationsBell from './NotificationsBell'
 
 const TABS = [
-  { href: '/browse',   icon: '🔍', label: 'Browse'   },
-  { href: '/sessions', icon: '💬', label: 'Sessions'  },
-  { href: '/wallet',   icon: '💰', label: 'Wallet'    },
-  { href: '/profile',  icon: '👤', label: 'Profile'   },
+  { href: '/browse',        icon: '🔍', label: 'Browse'   },
+  { href: '/sessions',      icon: '💬', label: 'Sessions'  },
+  { href: '/wallet',        icon: '💰', label: 'Wallet'    },
+  { href: '/notifications', icon: null, label: 'Alerts'    },
+  { href: '/profile',       icon: '👤', label: 'Profile'   },
 ]
-
-const HIDDEN_PREFIXES = ['/', '/auth', '/session/', '/become-listener', '/about', '/privacy', '/terms', '/contact', '/admin']
 
 export default function BottomNav() {
   const pathname = usePathname()
@@ -55,10 +55,15 @@ export default function BottomNav() {
           {TABS.map(tab => (
             <button
               key={tab.href}
-              className={`nav-tab${pathname === tab.href ? ' active' : ''}`}
+              className={`nav-tab${pathname === tab.href || pathname.startsWith(tab.href + '/') ? ' active' : ''}`}
               onClick={() => router.push(tab.href)}
             >
-              <span className="nav-tab-icon">{tab.icon}</span>
+              <span className="nav-tab-icon">
+                {tab.icon === null
+                  ? <NotificationsBell />
+                  : tab.icon
+                }
+              </span>
               {tab.label}
             </button>
           ))}

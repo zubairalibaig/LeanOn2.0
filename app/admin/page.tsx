@@ -2,6 +2,33 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 
+// ── Typed interfaces ───────────────────────────────────────────────────────────
+type AdminUserBasic = { name?: string; email?: string }
+
+type ReportRow = {
+  id: string
+  type: string
+  description: string
+  status: string
+  created_at: string
+  session_id: string | null
+  reported_user_id: string | null
+  reporter: AdminUserBasic | null
+  target: AdminUserBasic | null
+}
+
+type VerificationRow = {
+  id: string
+  listener_id: string
+  full_name: string
+  id_type: string
+  selfie_url: string | null
+  id_doc_url: string | null
+  status: string
+  submitted_at: string
+  admin_notes: string | null
+}
+
 // ── Typed interfaces replacing `any` ──────────────────────────────────────────
 type ListenerProfile = {
   bio?: string
@@ -103,13 +130,17 @@ function fmtDate(iso: string) {
 
 export default function AdminPage() {
   const router = useRouter()
-  const [data, setData]       = useState<AdminData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [denied, setDenied]   = useState(false)
-  const [busy, setBusy]       = useState<string | null>(null)
-  const [toast, setToast]     = useState<string | null>(null)
-  const [lpPage, setLpPage]   = useState(0)
-  const [prPage, setPrPage]   = useState(0)
+  const [data, setData]           = useState<AdminData | null>(null)
+  const [loading, setLoading]     = useState(true)
+  const [denied, setDenied]       = useState(false)
+  const [busy, setBusy]           = useState<string | null>(null)
+  const [toast, setToast]         = useState<string | null>(null)
+  const [lpPage, setLpPage]       = useState(0)
+  const [prPage, setPrPage]       = useState(0)
+  const [tab, setTab]             = useState<'main'|'reports'|'verifications'>('main')
+  const [reports, setReports]     = useState<ReportRow[]>([])
+  const [verifs, setVerifs]       = useState<VerificationRow[]>([])
+  const [rejectNotes, setRejectNotes] = useState<Record<string, string>>({})
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const showToast = (msg: string) => {
@@ -131,6 +162,62 @@ export default function AdminPage() {
   }, [router, lpPage, prPage])
 
   useEffect(() => { loadData() }, [loadData])
+
+  const loadReports = useCallback(async (status = 'pending') => {
+    const res = await fetch(`/api/admin/moderate?status=${status}`)
+    if (res.ok) {
+      const json = await res.json()
+      setReports(json.reports ?? [])
+    }
+  }, [])
+
+  const loadVerifs = useCallback(async (status = 'pending') => {
+    const res = await fetch(`/api/admin/verify-listener?status=${status}`)
+    if (res.ok) {
+      const json = await res.json()
+      setVerifs(json.verifications ?? [])
+    }
+  }, [])
+
+  useEffect(() => {
+    if (tab === 'reports') loadReports()
+    if (tab === 'verifications') loadVerifs()
+  }, [tab, loadReports, loadVerifs])
+
+  async function moderateReport(reportId: string, action: 'dismiss'|'warn'|'suspend', targetUserId?: string) {
+    setBusy(`moderate:${reportId}:${action}`)
+    const res = await fetch('/api/admin/moderate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reportId, action, targetUserId }),
+    })
+    setBusy(null)
+    if (res.ok) {
+      showToast(`Report ${action}ed`)
+      loadReports()
+    } else {
+      const err = await res.json()
+      showToast(`Error: ${err.error || 'Failed'}`)
+    }
+  }
+
+  async function handleVerif(verificationId: string, action: 'approve'|'reject', listenerId: string) {
+    setBusy(`verif:${verificationId}:${action}`)
+    const notes = rejectNotes[verificationId] || ''
+    const res = await fetch('/api/admin/verify-listener', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ verificationId, action, notes: notes || undefined }),
+    })
+    setBusy(null)
+    if (res.ok) {
+      showToast(`Verification ${action}d`)
+      loadVerifs()
+    } else {
+      const err = await res.json()
+      showToast(`Error: ${err.error || 'Failed'}`)
+    }
+  }
 
   async function doAction(action: string, id: string, label: string) {
     setBusy(`${action}:${id}`)
@@ -185,6 +272,144 @@ export default function AdminPage() {
           <h1>Admin Panel</h1>
           <p>Manage listener applications and payout requests.</p>
         </div>
+
+        {/* Tab navigation */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
+          {(['main', 'reports', 'verifications'] as const).map(t => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              style={{
+                padding: '8px 18px', borderRadius: 50, border: 'none', cursor: 'pointer',
+                fontFamily: 'Nunito,sans-serif', fontWeight: 800, fontSize: 13,
+                background: tab === t ? 'var(--navy)' : 'var(--light)',
+                color: tab === t ? 'white' : 'var(--gray)',
+              }}
+            >
+              {t === 'main' ? 'Overview' : t === 'reports' ? '🚩 Reports' : '✓ Verifications'}
+            </button>
+          ))}
+        </div>
+
+        {/* ── REPORTS TAB ── */}
+        {tab === 'reports' && (
+          <div className="section">
+            <div className="section-title">
+              User Reports
+              {reports.length > 0 && <span className="count-badge">{reports.length}</span>}
+            </div>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+              {(['pending','reviewed','resolved','dismissed'] as const).map(s => (
+                <button key={s} onClick={() => loadReports(s)}
+                  style={{ padding: '5px 12px', borderRadius: 50, border: '1.5px solid var(--border)', background: 'var(--light)', fontFamily: 'Nunito,sans-serif', fontWeight: 700, fontSize: 12, cursor: 'pointer', color: 'var(--gray)' }}>
+                  {s}
+                </button>
+              ))}
+            </div>
+            {reports.length === 0 ? (
+              <div className="empty">No reports in this status.</div>
+            ) : reports.map((r: ReportRow) => (
+              <div key={r.id} className="card" style={{ marginBottom: 14 }}>
+                <div className="card-header">
+                  <div>
+                    <div className="listener-name">{r.type.replace(/_/g, ' ')}</div>
+                    <div className="listener-email">
+                      From: {r.reporter?.name || '—'} · Against: {r.target?.name || 'unknown'}
+                      {r.session_id && <> · <a href={`/session/${r.session_id}`} style={{ color: 'var(--teal)' }}>session</a></>}
+                    </div>
+                  </div>
+                  <div className="rate-badge" style={{ background: r.status === 'pending' ? 'var(--orange)' : 'var(--light)', color: r.status === 'pending' ? 'white' : 'var(--gray)' }}>
+                    {r.status}
+                  </div>
+                </div>
+                <div className="bio-box">
+                  <div className="bio-text">{r.description}</div>
+                  <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 6, fontWeight: 600 }}>{fmtDate(r.created_at)}</div>
+                </div>
+                {r.status === 'pending' && (
+                  <div className="card-actions">
+                    <button className="btn-approve" style={{ background: 'var(--gray)' }} disabled={busy !== null}
+                      onClick={() => moderateReport(r.id, 'dismiss')}>
+                      {busy === `moderate:${r.id}:dismiss` ? '…' : 'Dismiss'}
+                    </button>
+                    <button className="btn-approve" style={{ background: '#FF9933' }} disabled={busy !== null}
+                      onClick={() => moderateReport(r.id, 'warn', r.reported_user_id ?? undefined)}>
+                      {busy === `moderate:${r.id}:warn` ? '…' : '⚠ Warn'}
+                    </button>
+                    <button className="btn-reject" disabled={busy !== null}
+                      onClick={() => moderateReport(r.id, 'suspend', r.reported_user_id ?? undefined)}>
+                      {busy === `moderate:${r.id}:suspend` ? '…' : '🚫 Suspend'}
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ── VERIFICATIONS TAB ── */}
+        {tab === 'verifications' && (
+          <div className="section">
+            <div className="section-title">
+              Listener Verifications
+              {verifs.length > 0 && <span className="count-badge">{verifs.length}</span>}
+            </div>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+              {(['pending','approved','rejected'] as const).map(s => (
+                <button key={s} onClick={() => loadVerifs(s)}
+                  style={{ padding: '5px 12px', borderRadius: 50, border: '1.5px solid var(--border)', background: 'var(--light)', fontFamily: 'Nunito,sans-serif', fontWeight: 700, fontSize: 12, cursor: 'pointer', color: 'var(--gray)' }}>
+                  {s}
+                </button>
+              ))}
+            </div>
+            {verifs.length === 0 ? (
+              <div className="empty">No verifications in this status.</div>
+            ) : verifs.map((v: VerificationRow) => (
+              <div key={v.id} className="card" style={{ marginBottom: 14 }}>
+                <div className="card-header">
+                  <div>
+                    <div className="listener-name">{v.full_name}</div>
+                    <div className="listener-email">{v.id_type.replace(/_/g, ' ')} · Submitted {fmtDate(v.submitted_at)}</div>
+                  </div>
+                  <div className="rate-badge">{v.status}</div>
+                </div>
+                <div style={{ display: 'flex', gap: 10, marginBottom: 12 }}>
+                  {v.selfie_url && (
+                    <a href={v.selfie_url} target="_blank" rel="noopener" style={{ fontSize: 12, fontWeight: 700, color: 'var(--teal)' }}>📸 Selfie</a>
+                  )}
+                  {v.id_doc_url && (
+                    <a href={v.id_doc_url} target="_blank" rel="noopener" style={{ fontSize: 12, fontWeight: 700, color: 'var(--teal)' }}>📄 ID Doc</a>
+                  )}
+                </div>
+                {v.status === 'pending' && (
+                  <>
+                    <input
+                      placeholder="Rejection reason (optional)"
+                      value={rejectNotes[v.id] || ''}
+                      onChange={e => setRejectNotes(prev => ({ ...prev, [v.id]: e.target.value }))}
+                      style={{ width: '100%', padding: '8px 12px', border: '1.5px solid var(--border)', borderRadius: 10, fontFamily: 'Nunito,sans-serif', fontSize: 13, marginBottom: 10, outline: 'none', boxSizing: 'border-box' }}
+                    />
+                    <div className="card-actions">
+                      <button className="btn-approve" disabled={busy !== null}
+                        onClick={() => handleVerif(v.id, 'approve', v.listener_id)}>
+                        {busy === `verif:${v.id}:approve` ? 'Approving…' : '✓ Approve'}
+                      </button>
+                      <button className="btn-reject" disabled={busy !== null}
+                        onClick={() => handleVerif(v.id, 'reject', v.listener_id)}>
+                        {busy === `verif:${v.id}:reject` ? 'Rejecting…' : '✕ Reject'}
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {tab !== 'main' && null}
+
+        {/* ── MAIN TAB ── */}
+        {tab === 'main' && <>
 
         {/* Pending Listener Applications */}
         <div className="section">
@@ -351,6 +576,7 @@ export default function AdminPage() {
             </div>
           ))}
         </div>
+        </>}
       </div>
 
       {toast && <div className="toast">{toast}</div>}

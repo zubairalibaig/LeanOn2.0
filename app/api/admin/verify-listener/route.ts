@@ -1,0 +1,112 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
+import { checkRateLimit } from '@/lib/rate-limit'
+import { logger } from '@/lib/logger'
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+async function requireAdmin() {
+  const supabase = createServerSupabaseClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Unauthenticated', status: 401, user: null }
+
+  const adminEmail = process.env.ADMIN_EMAIL
+  if (adminEmail) {
+    if (user.email !== adminEmail) return { error: 'Forbidden', status: 403, user: null }
+  } else {
+    const admin = createAdminClient()
+    const { data: dbUser } = await admin.from('users').select('is_admin').eq('id', user.id).single()
+    if (!dbUser?.is_admin) return { error: 'Forbidden', status: 403, user: null }
+  }
+  return { error: null, status: 200, user }
+}
+
+// POST /api/admin/verify-listener
+// Body: { verificationId, action: 'approve'|'reject', notes? }
+export async function POST(req: NextRequest) {
+  const { error, status, user } = await requireAdmin()
+  if (error) return NextResponse.json({ error }, { status })
+  if (!checkRateLimit(`admin:${user!.id}`, 30, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
+
+  try {
+    const { verificationId, action, notes } = await req.json()
+
+    if (!verificationId || !UUID_RE.test(verificationId)) {
+      return NextResponse.json({ error: 'Invalid verificationId' }, { status: 400 })
+    }
+    if (!['approve', 'reject'].includes(action)) {
+      return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
+    }
+
+    const sb = createAdminClient()
+
+    const { data: verification } = await sb.from('listener_verifications')
+      .select('listener_id, status')
+      .eq('id', verificationId)
+      .single()
+
+    if (!verification) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+
+    const newStatus = action === 'approve' ? 'approved' : 'rejected'
+
+    await sb.from('listener_verifications').update({
+      status:      newStatus,
+      admin_notes: notes ?? null,
+      reviewed_at: new Date().toISOString(),
+      reviewed_by: user!.id,
+    }).eq('id', verificationId)
+
+    if (action === 'approve') {
+      await sb.from('listener_profiles')
+        .update({ is_verified: true })
+        .eq('user_id', verification.listener_id)
+    }
+
+    // Notify the listener
+    const notifBody = action === 'approve'
+      ? 'Congratulations! Your identity has been verified. A verified badge now appears on your profile.'
+      : `Your verification was not approved. ${notes ? `Reason: ${notes}` : 'Please resubmit with clearer documents.'}`
+
+    await sb.from('notifications').insert({
+      user_id:    verification.listener_id,
+      type:       'verification_update',
+      title:      action === 'approve' ? '✓ Identity verified!' : 'Verification not approved',
+      body:       notifBody,
+      action_url: '/become-listener/verify',
+    }).then(() => {}, () => {})
+
+    await sb.from('admin_audit_logs').insert({
+      admin_id:  user!.id,
+      action:    `${action}_verification`,
+      target_id: verification.listener_id,
+    }).then(() => {}, () => {})
+
+    return NextResponse.json({ ok: true })
+  } catch (err) {
+    logger.error('verify-listener admin error:', { error: err instanceof Error ? err.message : String(err) })
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+  }
+}
+
+// GET /api/admin/verify-listener — list verifications
+export async function GET(req: NextRequest) {
+  const { error, status, user } = await requireAdmin()
+  if (error) return NextResponse.json({ error }, { status })
+  if (!checkRateLimit(`admin:${user!.id}`, 30, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
+
+  const url = new URL(req.url)
+  const statusFilter = url.searchParams.get('status') || 'pending'
+
+  const sb = createAdminClient()
+  const { data } = await sb.from('listener_verifications')
+    .select('id, listener_id, full_name, id_type, selfie_url, id_doc_url, status, submitted_at, admin_notes')
+    .eq('status', statusFilter)
+    .order('submitted_at', { ascending: false })
+    .limit(50)
+
+  return NextResponse.json({ verifications: data ?? [] })
+}

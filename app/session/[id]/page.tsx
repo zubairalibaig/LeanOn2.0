@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { showToast } from '@/lib/toast'
+import ReportModal from '@/app/components/ReportModal'
 
 // ── CRITICAL FIX 1: Create client ONCE outside component
 // Previously inside component = new WebSocket on every render
@@ -175,9 +176,12 @@ function SessionContent() {
   const [muted, setMuted]               = useState(false)
   const [callSecs, setCallSecs]         = useState(0)
   const [netQuality, setNetQuality]     = useState<0 | 1 | 2 | 3 | 4 | 5 | 6>(0)
-  const [mics, setMics]                 = useState<MediaDeviceInfo[]>([])
-  const [selectedMic, setSelectedMic]   = useState<string>('')
-  const [reconnecting, setReconnecting] = useState(false)
+  const [mics, setMics]                   = useState<MediaDeviceInfo[]>([])
+  const [selectedMic, setSelectedMic]     = useState<string>('')
+  const [reconnecting, setReconnecting]   = useState(false)
+  const [showReport, setShowReport]       = useState(false)
+  const [listenerId, setListenerId]       = useState<string | null>(null)
+  const crisisFlaggedRef                  = useRef(false)
 
   const channelRef      = useRef<ReturnType<typeof supabase.channel> | null>(null)
   const bottomRef       = useRef<HTMLDivElement>(null)
@@ -215,11 +219,11 @@ function SessionContent() {
     })
   }, [])
 
-  // Sync timer + listener name from DB — survives page refresh
+  // Sync timer + listener name + listener ID from DB — survives page refresh
   useEffect(() => {
     if (!sessionId) return
     supabase.from('sessions')
-      .select('started_at, duration_mins, listener:users!listener_id(name)')
+      .select('started_at, duration_mins, listener_id, listener:users!listener_id(name)')
       .eq('id', sessionId)
       .single()
       .then(({ data }) => {
@@ -231,6 +235,7 @@ function SessionContent() {
         }
         const name = (data?.listener as { name?: string } | null)?.name
         if (name) setResolvedListenerName(name)
+        if (data?.listener_id) setListenerId(data.listener_id)
       })
   }, [sessionId])
 
@@ -341,12 +346,22 @@ function SessionContent() {
       .catch(() => {})
   }, [sessionId])
 
-  // Crisis keyword detection — show helpline banner
+  // Crisis keyword detection — show helpline banner + flag session
   useEffect(() => {
     if (crisisAlert || msgs.length === 0) return
     const recentText = msgs.slice(-6).map(m => m.content.toLowerCase()).join(' ')
-    if (CRISIS_WORDS.some(w => recentText.includes(w))) setCrisisAlert(true)
-  }, [msgs])
+    if (CRISIS_WORDS.some(w => recentText.includes(w))) {
+      setCrisisAlert(true)
+      if (!crisisFlaggedRef.current && sessionId) {
+        crisisFlaggedRef.current = true
+        fetch('/api/sessions/crisis-flag', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId }),
+        }).catch(() => {})
+      }
+    }
+  }, [msgs, crisisAlert, sessionId])
 
   // Call duration counter (voice only — counts up from 0 once connected)
   useEffect(() => {
@@ -638,8 +653,24 @@ function SessionContent() {
           <button className="btn-done" onClick={finishSession}>
             {rating > 0 ? 'Submit & finish →' : 'Skip & finish →'}
           </button>
+          {listenerId && (
+            <button
+              onClick={() => setShowReport(true)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#8AAAB8', fontFamily: "'Nunito',sans-serif", marginTop: 16, fontWeight: 600 }}
+            >
+              Report an issue with this session
+            </button>
+          )}
         </div>
       </div>
+      {showReport && listenerId && (
+        <ReportModal
+          targetUserId={listenerId}
+          targetName={resolvedListenerName}
+          sessionId={sessionId}
+          onClose={() => setShowReport(false)}
+        />
+      )}
     </>
   )
 
@@ -731,7 +762,7 @@ function SessionContent() {
 
         {crisisAlert && (
           <div className="crisis-bar">
-            🆘 In crisis? Call <strong>Tele MANAS 14416</strong> (free · 24/7 · Govt of India) — also reachable at <a href="tel:18008914416">1800-89-14416</a> · Emergency: <a href="tel:112">112</a>
+            💙 We care about you. If you&apos;re having thoughts of self-harm, please call <strong>iCall: <a href="tel:9152987821">9152987821</a></strong> or <strong>Vandrevala Foundation: <a href="tel:18602662345">1860-2662-345</a></strong> (24/7, free). You can still continue this conversation.
             <button onClick={() => setCrisisAlert(false)} style={{float:'right',background:'none',border:'none',cursor:'pointer',color:'#7A2020',fontWeight:900,fontSize:14}}>✕</button>
           </div>
         )}

@@ -139,6 +139,10 @@ export default function GriefSupportPage() {
           <span style={{color:'var(--navy)'}}>Grief</span>
         </nav>
 
+        <div style={{background:'#EBF5FB',borderLeft:'4px solid #1A8FA0',borderRadius:'0 12px 12px 0',padding:'14px 18px',marginBottom:28,fontSize:14,color:'#0F4867',fontWeight:600,lineHeight:1.65}}>
+          <strong>In crisis right now?</strong> iCall: <a href="tel:9152987821" style={{color:'#1A8FA0',fontWeight:800}}>9152987821</a> · Vandrevala Foundation: <a href="tel:18602662345" style={{color:'#1A8FA0',fontWeight:800}}>1860-2662-345</a> (24/7, free) · <a href="https://icallhelpline.org" target="_blank" rel="noopener noreferrer" style={{color:'#1A8FA0',fontWeight:800}}>iCall website ↗</a>
+        </div>
+
         <div className="hero">
           <p className="tag">Peer Support · Grief & Loss</p>
           <h1>Grief Is Not a Problem to Solve. <em>It Is Love With Nowhere to Go.</em></h1>

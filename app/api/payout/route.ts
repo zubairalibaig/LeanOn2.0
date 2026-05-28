@@ -50,9 +50,12 @@ export async function POST(req: NextRequest) {
   }
 
   // Insert payout request
+  const body = await req.json().catch(() => ({}))
+  const upiId = typeof body?.upi_id === 'string' ? body.upi_id.trim() : null
+
   const { error: insertErr } = await sb
     .from('payout_requests')
-    .insert({ user_id: user.id, amount, status: 'pending' })
+    .insert({ user_id: user.id, amount, status: 'pending', ...(upiId ? { upi_id: upiId } : {}) })
 
   if (insertErr) {
     logger.error('Payout insert failed:', { error: insertErr instanceof Error ? insertErr.message : String(insertErr) })

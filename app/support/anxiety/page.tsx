@@ -147,8 +147,8 @@ export default function AnxietySupportPage() {
           <p className="lead">Anxiety affects millions of people in India — from work pressure and exam stress to racing thoughts that won&apos;t quit at 3 AM. LeanOn connects you with peer listeners who have managed their own anxiety and truly understand what you are going through.</p>
         </div>
 
-        <div className="notice">
-          LeanOn offers peer support, not clinical treatment. If you are experiencing a mental health crisis or severe anxiety, please reach out to iCall at 9152987821 or Vandrevala Foundation at 1860-2662-345.
+        <div style={{background:'#EBF5FB',borderLeft:'4px solid #1A8FA0',borderRadius:'0 12px 12px 0',padding:'14px 18px',marginBottom:28,fontSize:14,color:'#0F4867',fontWeight:600,lineHeight:1.65}}>
+          <strong>In crisis right now?</strong> iCall: <a href="tel:9152987821" style={{color:'#1A8FA0',fontWeight:800}}>9152987821</a> · Vandrevala Foundation: <a href="tel:18602662345" style={{color:'#1A8FA0',fontWeight:800}}>1860-2662-345</a> (24/7, free) · <a href="https://icallhelpline.org" target="_blank" rel="noopener noreferrer" style={{color:'#1A8FA0',fontWeight:800}}>iCall website ↗</a>
         </div>
 
         <div className="section">

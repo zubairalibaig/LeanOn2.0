@@ -13,6 +13,7 @@ type ListenerProfile = {
   total_sessions: number
   rate_per_min: number
   is_available: boolean
+  is_verified: boolean
   specialty_tags: string[]
   languages_spoken: string[]
   avatar_url?: string
@@ -196,7 +197,7 @@ export default function ListenerClient({ id }: { id: string }) {
             <div style={{flex:1}}>
               <div className="listener-name">{listener.name}</div>
               <div className="stats-row">
-                <span className="verified-badge">✓ Verified</span>
+                {listener.is_verified && <span className="verified-badge">✓ Verified</span>}
                 {listener.rating > 0 && <span className="stat">⭐ {(+listener.rating).toFixed(1)}</span>}
                 {listener.total_sessions > 0 && <span className="stat">{listener.total_sessions} sessions</span>}
                 <span className="rate-badge">₹{listener.rate_per_min}/min</span>

@@ -229,8 +229,27 @@ export async function PATCH(req: NextRequest) {
           description: 'Session earnings',
           session_id:  sessionId,
         })
+
+        // Track earnings in listener_earnings for dashboard
+        await sb.from('listener_earnings').insert({
+          listener_id:  session.listener_id,
+          session_id:   sessionId,
+          gross_amount: session.amount_held,
+          platform_fee: session.platform_fee ?? 0,
+          net_amount:   listenerEarning,
+          status:       'settled',
+        }).then(() => {}, () => {})
       }
     }
+
+    // Follow-up notification for seeker
+    await sb.from('notifications').insert({
+      user_id:    session.seeker_id,
+      type:       'follow_up',
+      title:      'How are you feeling?',
+      body:       'We hope your conversation helped. Remember, support is available anytime — browse listeners whenever you need.',
+      action_url: '/browse',
+    }).then(() => {}, () => {})
 
     const { data: lp } = await sb
       .from('listener_profiles')

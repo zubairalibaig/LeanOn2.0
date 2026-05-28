@@ -22,7 +22,7 @@ const faqSchema = {
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'Why is Hyderabad's tech boom creating more loneliness, not less?',
+      name: "Why is Hyderabad's tech boom creating more loneliness, not less?",
       acceptedAnswer: {
         '@type': 'Answer',
         text: 'Hyderabad\'s rapid growth has drawn hundreds of thousands of tech workers from across India — people who arrive for the opportunity but leave behind their support networks, familiar culture, and the communities that gave their life texture. HITEC City\'s gleaming campuses are full of people eating alone at their desks, leaving office at 9 PM to go back to an empty flat, and spending weekends in the city trying to build a social life from scratch. Growth creates prosperity, but it does not automatically create connection.',
