@@ -1,19 +1,17 @@
 import type { Metadata } from 'next'
 export const metadata: Metadata = {
-  title: 'LeanOn — Talk to Someone Who Gets It | Peer Support India',
-  description: "LeanOn is India's peer support platform — someone to lean on when you need it most. Talk to real people who've lived through loneliness, burnout, grief, anxiety, relationships & more. Available 24/7. First 5 minutes free.",
-  alternates: { canonical: 'https://leanon.app' },
+  title: 'LeanOn — Free Peer Emotional Support India | Talk to Someone Now',
+  description: 'Talk to a trained peer listener in India, anonymously. First session is free. Available 24/7. Connect with empathetic listeners for anxiety, loneliness, grief, and more.',
+  alternates: { canonical: 'https://www.leanon.app', languages: { 'en-IN': 'https://www.leanon.app' } },
   keywords: [
-    'lean on', 'leanon', 'LeanOn', 'lean on app', 'leanon app India',
+    'leanon', 'lean on', 'LeanOn', 'lean on app', 'leanon app India',
     'someone to lean on', 'peer support India', 'mental health India',
-    'talk to someone India', 'emotional support India', 'friendship app India',
+    'talk to someone India', 'emotional support India',
+    'anonymous emotional support India', 'peer listener app India',
+    'talk to someone free India', 'emotional support chat India',
     'anxiety help India', 'loneliness app India', 'burnout support', 'grief support India',
     'someone to talk to', 'mental health chat', 'online emotional support',
-    'lean on someone', 'lean on meaning', 'lean on India',
-    'affordable peer listener India', 'talk to someone 2am India',
-    'peer support near me India', 'anonymous emotional support India',
-    'peer support Bengaluru', 'peer support Mumbai', 'peer support Delhi',
-    'emotional support online India', 'peer counselling India',
+    'online listener India', 'peer counselling India',
   ],
 }
 
@@ -73,9 +71,38 @@ const faqSchema = {
     { '@type': 'Question', name: 'What topics can I talk about on LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'Listeners on LeanOn specialise in loneliness, work stress, career confusion, relationships, grief and loss, student pressure, startup journey, breakups, anxiety, and more. If you just need someone to lean on with no specific topic, that\'s fine too.' } },
   ],
 }
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': 'https://www.leanon.app/#organization',
+      name: 'LeanOn',
+      alternateName: ['Lean On', 'leanon'],
+      url: 'https://www.leanon.app',
+      logo: { '@type': 'ImageObject', url: 'https://www.leanon.app/logo.png', width: 512, height: 512 },
+      description: "India's peer support platform. Talk to trained peer listeners anonymously. Free first session. Available 24/7.",
+      areaServed: { '@type': 'Country', name: 'India' },
+    },
+    {
+      '@type': 'WebSite',
+      '@id': 'https://www.leanon.app/#website',
+      url: 'https://www.leanon.app',
+      name: 'LeanOn',
+      publisher: { '@id': 'https://www.leanon.app/#organization' },
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: { '@type': 'EntryPoint', urlTemplate: 'https://www.leanon.app/browse?query={search_term_string}' },
+        'query-input': 'required name=search_term_string',
+      },
+    },
+  ],
+}
+
 export default function Home() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewSchema) }} />
       <style>{`
