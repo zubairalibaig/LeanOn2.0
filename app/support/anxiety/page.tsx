@@ -3,13 +3,13 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Anxiety Support in India | Talk to Someone Who Understands | LeanOn',
-  description: 'Dealing with work anxiety, exam stress, or racing thoughts? Connect with peer listeners who have lived through anxiety and found real relief. First 5 minutes free.',
-  alternates: { canonical: 'https://leanon.app/support/anxiety' },
+  title: 'Peer Support for Anxiety in India | Talk Anonymously | LeanOn',
+  description: 'Manage anxiety with peer support. Talk to a trained listener anonymously on LeanOn. Free first session. Available across India.',
+  alternates: { canonical: 'https://www.leanon.app/support/anxiety', languages: { 'en-IN': 'https://www.leanon.app/support/anxiety' } },
   openGraph: {
-    title: 'Anxiety Support — LeanOn',
-    description: 'Talk to a peer listener who has personally managed anxiety. Real understanding, no judgment. Available 24/7 across India.',
-    url: 'https://leanon.app/support/anxiety',
+    title: 'Peer Support for Anxiety in India | Talk Anonymously | LeanOn',
+    description: 'Manage anxiety with peer support. Talk to a trained listener anonymously on LeanOn. Free first session. Available across India.',
+    url: 'https://www.leanon.app/support/anxiety',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -66,9 +66,9 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://leanon.app/support' },
-    { '@type': 'ListItem', position: 3, name: 'Anxiety', item: 'https://leanon.app/support/anxiety' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://www.leanon.app/support' },
+    { '@type': 'ListItem', position: 3, name: 'Anxiety', item: 'https://www.leanon.app/support/anxiety' },
   ],
 }
 

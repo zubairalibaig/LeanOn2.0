@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      url: `https://leanon.app/listener/${params.id}`,
+      url: `https://www.leanon.app/listener/${params.id}`,
       siteName: 'LeanOn',
       type: 'profile',
     },
@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
     },
-    alternates: { canonical: `https://leanon.app/listener/${params.id}` },
+    alternates: { canonical: `https://www.leanon.app/listener/${params.id}` },
   }
 }
 
@@ -61,9 +61,9 @@ export default async function ListenerPage({ params }: Props) {
     '@type': 'Person',
     name,
     jobTitle: 'Verified Peer Listener',
-    worksFor: { '@type': 'Organization', name: 'LeanOn', url: 'https://leanon.app' },
+    worksFor: { '@type': 'Organization', name: 'LeanOn', url: 'https://www.leanon.app' },
     knowsAbout: tags,
-    url: `https://leanon.app/listener/${params.id}`,
+    url: `https://www.leanon.app/listener/${params.id}`,
     description: data.bio || `Verified peer listener on LeanOn. Specialises in: ${tags.join(', ')}.`,
   } : null
 
@@ -71,9 +71,9 @@ export default async function ListenerPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanon.app' },
-      { '@type': 'ListItem', position: 2, name: 'Browse Listeners', item: 'https://leanon.app/browse' },
-      { '@type': 'ListItem', position: 3, name: name, item: `https://leanon.app/listener/${params.id}` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+      { '@type': 'ListItem', position: 2, name: 'Browse Listeners', item: 'https://www.leanon.app/browse' },
+      { '@type': 'ListItem', position: 3, name: name, item: `https://www.leanon.app/listener/${params.id}` },
     ],
   }
 

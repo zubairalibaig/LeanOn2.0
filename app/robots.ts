@@ -23,7 +23,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/', '/session/', '/dashboard/', '/wallet/', '/admin/'],
       },
     ],
-    sitemap: 'https://leanon.app/sitemap.xml',
-    host: 'https://leanon.app',
+    sitemap: 'https://www.leanon.app/sitemap.xml',
+    host: 'https://www.leanon.app',
   }
 }

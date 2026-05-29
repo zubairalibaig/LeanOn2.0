@@ -37,11 +37,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return {
     title: `${post.title} | LeanOn Blog`,
     description: post.description,
-    alternates: { canonical: `https://leanon.app/blog/${post.slug}` },
+    alternates: { canonical: `https://www.leanon.app/blog/${post.slug}` },
     openGraph: {
       title: post.title,
       description: post.description,
-      url: `https://leanon.app/blog/${post.slug}`,
+      url: `https://www.leanon.app/blog/${post.slug}`,
       siteName: 'LeanOn',
       type: 'article',
       publishedTime: post.date,
@@ -124,18 +124,18 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
     description: post.description,
     datePublished: post.date,
     author: { '@type': 'Organization', name: 'LeanOn' },
-    publisher: { '@type': 'Organization', name: 'LeanOn', url: 'https://leanon.app' },
-    url: `https://leanon.app/blog/${post.slug}`,
-    mainEntityOfPage: `https://leanon.app/blog/${post.slug}`,
+    publisher: { '@type': 'Organization', name: 'LeanOn', url: 'https://www.leanon.app' },
+    url: `https://www.leanon.app/blog/${post.slug}`,
+    mainEntityOfPage: `https://www.leanon.app/blog/${post.slug}`,
   }
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanon.app' },
-      { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://leanon.app/blog' },
-      { '@type': 'ListItem', position: 3, name: post.title, item: `https://leanon.app/blog/${post.slug}` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.leanon.app/blog' },
+      { '@type': 'ListItem', position: 3, name: post.title, item: `https://www.leanon.app/blog/${post.slug}` },
     ],
   }
 

@@ -3,13 +3,13 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Student Stress Support India | IIT NEET Exam Pressure Help | LeanOn',
-  description: 'Overwhelmed by exam pressure, IIT/NEET stress, hostel homesickness, or campus bullying? Talk to peer listeners who have been through it. First 5 minutes free.',
-  alternates: { canonical: 'https://leanon.app/support/student-stress' },
+  title: 'Student Stress Support India | LeanOn Peer Listeners',
+  description: 'Student stress getting overwhelming? Talk to a peer listener anonymously on LeanOn. Free for students. Available 24/7 across India.',
+  alternates: { canonical: 'https://www.leanon.app/support/student-stress', languages: { 'en-IN': 'https://www.leanon.app/support/student-stress' } },
   openGraph: {
-    title: 'Student Stress Support — LeanOn',
-    description: 'Peer support for Indian students navigating exam pressure, hostel life, competitive coaching culture, and career anxiety. Real help, real understanding.',
-    url: 'https://leanon.app/support/student-stress',
+    title: 'Student Stress Support India | LeanOn Peer Listeners',
+    description: 'Student stress getting overwhelming? Talk to a peer listener anonymously on LeanOn. Free for students. Available 24/7 across India.',
+    url: 'https://www.leanon.app/support/student-stress',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -66,9 +66,9 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://leanon.app/support' },
-    { '@type': 'ListItem', position: 3, name: 'Student Stress', item: 'https://leanon.app/support/student-stress' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://www.leanon.app/support' },
+    { '@type': 'ListItem', position: 3, name: 'Student Stress', item: 'https://www.leanon.app/support/student-stress' },
   ],
 }
 

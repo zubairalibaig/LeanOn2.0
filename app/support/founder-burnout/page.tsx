@@ -5,11 +5,11 @@ export const dynamic = 'force-static'
 export const metadata: Metadata = {
   title: 'Founder Burnout Support India | Talk to Someone Who Gets Startup Stress | LeanOn',
   description: 'Startup stress, fundraising rejection, imposter syndrome as a founder? Connect with peer listeners who have lived through founder burnout. First 5 minutes free.',
-  alternates: { canonical: 'https://leanon.app/support/founder-burnout' },
+  alternates: { canonical: 'https://www.leanon.app/support/founder-burnout' },
   openGraph: {
     title: 'Founder Burnout Support — LeanOn',
     description: 'Peer support for founders navigating startup stress, team conflicts, fundraising rejection, and imposter syndrome. Real conversations, real relief.',
-    url: 'https://leanon.app/support/founder-burnout',
+    url: 'https://www.leanon.app/support/founder-burnout',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -66,9 +66,9 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://leanon.app/support' },
-    { '@type': 'ListItem', position: 3, name: 'Founder Burnout', item: 'https://leanon.app/support/founder-burnout' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://www.leanon.app/support' },
+    { '@type': 'ListItem', position: 3, name: 'Founder Burnout', item: 'https://www.leanon.app/support/founder-burnout' },
   ],
 }
 

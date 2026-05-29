@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /session/
+Disallow: /become-listener/verify
+Disallow: /notifications
+
+Sitemap: https://www.leanon.app/sitemap.xml

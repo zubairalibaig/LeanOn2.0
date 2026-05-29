@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Privacy Policy — LeanOn',
   description: 'LeanOn privacy policy. Learn how we protect your data, session confidentiality, and your rights as a LeanOn user.',
-  alternates: { canonical: 'https://leanon.app/privacy' },
+  alternates: { canonical: 'https://www.leanon.app/privacy' },
 }
 
 const S = `

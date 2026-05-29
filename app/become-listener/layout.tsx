@@ -1,14 +1,14 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Become a Peer Listener — Earn on LeanOn India',
-  description: 'Apply to become a peer listener on LeanOn. Share your lived experience, set your own rate (₹8–25/min), help others who need someone to lean on. Apply free.',
+  title: 'Become a Peer Listener | LeanOn India',
+  description: 'Join LeanOn as a peer listener. Support people across India through empathetic conversation. Apply now to become a volunteer peer listener.',
   keywords: ['become a listener leanon', 'peer listener India', 'earn helping others India', 'lean on listener'],
-  alternates: { canonical: 'https://leanon.app/become-listener' },
+  alternates: { canonical: 'https://www.leanon.app/become-listener', languages: { 'en-IN': 'https://www.leanon.app/become-listener' } },
   openGraph: {
-    title: 'Earn by Listening — Become a Peer Listener on LeanOn',
-    description: 'Help people going through what you survived. Earn ₹8–25/min. 100% of your rate is yours.',
-    url: 'https://leanon.app/become-listener',
+    title: 'Become a Peer Listener | LeanOn India',
+    description: 'Join LeanOn as a peer listener. Support people across India through empathetic conversation. Apply now to become a volunteer peer listener.',
+    url: 'https://www.leanon.app/become-listener',
   },
 }
 

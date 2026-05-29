@@ -3,13 +3,13 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Anonymous Emotional Support India — No Judgment | LeanOn',
-  description: 'Anonymous emotional support in India. Talk to real peer listeners without revealing who you are. Private, judgment-free, and instantly available. First 5 minutes free on LeanOn.',
-  alternates: { canonical: 'https://leanon.app/support/anonymous-support' },
+  title: 'Anonymous Emotional Support India | LeanOn Peer Listeners',
+  description: 'Get anonymous emotional support from trained peer listeners. No registration required for your first free session on LeanOn.',
+  alternates: { canonical: 'https://www.leanon.app/support/anonymous-support', languages: { 'en-IN': 'https://www.leanon.app/support/anonymous-support' } },
   openGraph: {
-    title: 'Anonymous Emotional Support in India — LeanOn',
-    description: 'Private, judgment-free peer support in India. Your identity stays yours — always.',
-    url: 'https://leanon.app/support/anonymous-support',
+    title: 'Anonymous Emotional Support India | LeanOn Peer Listeners',
+    description: 'Get anonymous emotional support from trained peer listeners. No registration required for your first free session on LeanOn.',
+    url: 'https://www.leanon.app/support/anonymous-support',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -66,9 +66,9 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://leanon.app/support' },
-    { '@type': 'ListItem', position: 3, name: 'Anonymous Support', item: 'https://leanon.app/support/anonymous-support' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://www.leanon.app/support' },
+    { '@type': 'ListItem', position: 3, name: 'Anonymous Support', item: 'https://www.leanon.app/support/anonymous-support' },
   ],
 }
 

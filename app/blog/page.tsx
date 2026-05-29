@@ -6,14 +6,14 @@ import { post as peerSupportPost } from './posts/how-peer-support-works'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Blog — Emotional Wellness & Peer Support | LeanOn',
-  description: 'LeanOn blog: honest articles on loneliness, burnout, grief, anxiety, and peer support in India. Written by people who have been through it.',
+  title: 'Mental Health Blog India | LeanOn',
+  description: 'Expert articles on emotional wellness, peer support, anxiety, loneliness, and mental health in India.',
   keywords: ['peer support blog India', 'emotional wellness India', 'leanon blog', 'mental health India blog'],
-  alternates: { canonical: 'https://leanon.app/blog' },
+  alternates: { canonical: 'https://www.leanon.app/blog', languages: { 'en-IN': 'https://www.leanon.app/blog' } },
   openGraph: {
-    title: 'Mental Health & Peer Support Blog — LeanOn India',
-    description: 'Evidence-based writing about the mental health challenges that matter most to people in India — and what actually helps.',
-    url: 'https://leanon.app/blog',
+    title: 'Mental Health Blog India | LeanOn',
+    description: 'Expert articles on emotional wellness, peer support, anxiety, loneliness, and mental health in India.',
+    url: 'https://www.leanon.app/blog',
     siteName: 'LeanOn',
     type: 'website',
   },
@@ -23,8 +23,8 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://leanon.app/blog' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.leanon.app/blog' },
   ],
 }
 

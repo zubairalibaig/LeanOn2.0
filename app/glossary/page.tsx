@@ -5,7 +5,7 @@ export const dynamic = 'force-static'
 export const metadata: Metadata = {
   title: 'Glossary — Peer Support Terms | LeanOn',
   description: 'Definitions of peer support terms used on LeanOn: lean on, peer support, peer listener, emotional support, peer counselling, and more. Your guide to understanding emotional wellness.',
-  alternates: { canonical: 'https://leanon.app/glossary' },
+  alternates: { canonical: 'https://www.leanon.app/glossary' },
   keywords: ['lean on meaning', 'peer support definition', 'what is peer support', 'peer listener meaning', 'emotional support definition'],
 }
 
@@ -13,42 +13,42 @@ const definedTermSchema = {
   '@context': 'https://schema.org',
   '@type': 'DefinedTermSet',
   name: 'LeanOn Peer Support Glossary',
-  url: 'https://leanon.app/glossary',
+  url: 'https://www.leanon.app/glossary',
   hasDefinedTerm: [
     {
       '@type': 'DefinedTerm',
       name: 'Lean On',
       description: 'To "lean on" someone means to rely on them emotionally — to draw support, comfort, or strength from another person during a difficult time. LeanOn (the platform) is named after this concept: giving everyone access to someone to lean on.',
-      url: 'https://leanon.app/glossary#lean-on',
-      inDefinedTermSet: 'https://leanon.app/glossary',
+      url: 'https://www.leanon.app/glossary#lean-on',
+      inDefinedTermSet: 'https://www.leanon.app/glossary',
     },
     {
       '@type': 'DefinedTerm',
       name: 'Peer Support',
       description: 'Peer support is emotional and social support given by a person who has lived experience of a similar challenge. Unlike professional therapy, peer support is based on shared experience, empathy, and mutual understanding rather than clinical expertise.',
-      url: 'https://leanon.app/glossary#peer-support',
-      inDefinedTermSet: 'https://leanon.app/glossary',
+      url: 'https://www.leanon.app/glossary#peer-support',
+      inDefinedTermSet: 'https://www.leanon.app/glossary',
     },
     {
       '@type': 'DefinedTerm',
       name: 'Peer Listener',
       description: 'A peer listener is a trained individual who provides emotional support based on their own lived experience. On LeanOn, peer listeners are verified real people who have personally navigated challenges like loneliness, burnout, grief, or anxiety.',
-      url: 'https://leanon.app/glossary#peer-listener',
-      inDefinedTermSet: 'https://leanon.app/glossary',
+      url: 'https://www.leanon.app/glossary#peer-listener',
+      inDefinedTermSet: 'https://www.leanon.app/glossary',
     },
     {
       '@type': 'DefinedTerm',
       name: 'Emotional Support',
       description: 'Emotional support is the provision of empathy, caring, and understanding to someone experiencing stress or difficulty. It focuses on the person\'s feelings rather than problem-solving, and helps them feel less alone.',
-      url: 'https://leanon.app/glossary#emotional-support',
-      inDefinedTermSet: 'https://leanon.app/glossary',
+      url: 'https://www.leanon.app/glossary#emotional-support',
+      inDefinedTermSet: 'https://www.leanon.app/glossary',
     },
     {
       '@type': 'DefinedTerm',
       name: 'Peer Counselling',
       description: 'Peer counselling is a form of support where individuals with similar life experiences provide guidance, support, and understanding to one another. It is distinct from professional counselling — peer counsellors are not licensed clinicians.',
-      url: 'https://leanon.app/glossary#peer-counselling',
-      inDefinedTermSet: 'https://leanon.app/glossary',
+      url: 'https://www.leanon.app/glossary#peer-counselling',
+      inDefinedTermSet: 'https://www.leanon.app/glossary',
     },
   ],
 }
@@ -57,8 +57,8 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Glossary', item: 'https://leanon.app/glossary' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+    { '@type': 'ListItem', position: 2, name: 'Glossary', item: 'https://www.leanon.app/glossary' },
   ],
 }
 

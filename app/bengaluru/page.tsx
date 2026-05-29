@@ -3,14 +3,14 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Peer Support in Bengaluru — LeanOn | Talk to Someone Who Gets It',
-  description: 'LeanOn peer support in Bengaluru — connect with verified peer listeners who understand Bangalore\'s WFH isolation, startup burnout, and the loneliness of relocating to India\'s tech capital. First 5 min free.',
-  alternates: { canonical: 'https://leanon.app/bengaluru' },
+  title: 'Emotional Support in Bengaluru — Peer Listeners | LeanOn',
+  description: 'Connect with peer listeners in Bengaluru, India. Free first session. Talk anonymously on LeanOn.',
+  alternates: { canonical: 'https://www.leanon.app/bengaluru', languages: { 'en-IN': 'https://www.leanon.app/bengaluru' } },
   keywords: 'peer support Bengaluru, emotional support Bangalore, loneliness Bangalore, startup burnout Bengaluru, talk to someone Bangalore, leanon Bengaluru',
   openGraph: {
-    title: 'Peer Support in Bengaluru — LeanOn',
-    description: 'Connect with peer listeners who understand Bangalore\'s WFH isolation, startup burnout, and relocation loneliness. First 5 minutes free.',
-    url: 'https://leanon.app/bengaluru',
+    title: 'Emotional Support in Bengaluru — Peer Listeners | LeanOn',
+    description: 'Connect with peer listeners in Bengaluru, India. Free first session. Talk anonymously on LeanOn.',
+    url: 'https://www.leanon.app/bengaluru',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -67,9 +67,23 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Bengaluru', item: 'https://leanon.app/bengaluru' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+    { '@type': 'ListItem', position: 2, name: 'Bengaluru', item: 'https://www.leanon.app/bengaluru' },
   ],
+}
+
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: 'LeanOn',
+  description: 'Peer emotional support platform',
+  url: 'https://www.leanon.app/bengaluru',
+  areaServed: {
+    '@type': 'City',
+    name: 'Bengaluru',
+    addressCountry: 'IN',
+  },
+  serviceType: 'Peer Emotional Support',
 }
 
 const S = `
@@ -130,6 +144,7 @@ export default function BengaluruPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
       <style>{S}</style>
 
       <nav className="nav">

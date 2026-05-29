@@ -645,7 +645,7 @@ export default function DashboardPage() {
           <div className="profile-actions">
             <button className="btn-edit" onClick={openEdit}>✏️ Edit profile</button>
             <button className="btn-share" onClick={() => {
-              navigator.clipboard?.writeText(`https://leanon.app/listener/${user?.id}`)
+              navigator.clipboard?.writeText(`https://www.leanon.app/listener/${user?.id}`)
               alert('Profile link copied!')
             }}>🔗 Share profile</button>
           </div>

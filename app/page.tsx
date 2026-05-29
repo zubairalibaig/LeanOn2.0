@@ -20,7 +20,7 @@ const reviewSchema = {
   '@type': 'Product',
   name: 'LeanOn — Peer Support Platform',
   description: 'India\'s peer support platform. Talk to real people who have lived through what you\'re facing.',
-  url: 'https://leanon.app',
+  url: 'https://www.leanon.app',
   brand: { '@type': 'Brand', name: 'LeanOn' },
   aggregateRating: {
     '@type': 'AggregateRating',

@@ -3,13 +3,13 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Grief Support in India | Talk to Someone Who Understands Loss | LeanOn',
-  description: 'Grieving a loved one, pet, or facing ambiguous grief? Connect with peer listeners who have been through loss and found a way to carry it. First 5 minutes free.',
-  alternates: { canonical: 'https://leanon.app/support/grief' },
+  title: 'Grief & Loss Peer Support India | LeanOn',
+  description: 'Navigate grief and loss with compassionate peer support. Talk anonymously to a trained listener. Free first session on LeanOn.',
+  alternates: { canonical: 'https://www.leanon.app/support/grief', languages: { 'en-IN': 'https://www.leanon.app/support/grief' } },
   openGraph: {
-    title: 'Grief Support — LeanOn',
-    description: 'Talk to someone who understands loss from the inside. Peer support for grief, bereavement, and complicated grief. Available 24/7 across India.',
-    url: 'https://leanon.app/support/grief',
+    title: 'Grief & Loss Peer Support India | LeanOn',
+    description: 'Navigate grief and loss with compassionate peer support. Talk anonymously to a trained listener. Free first session on LeanOn.',
+    url: 'https://www.leanon.app/support/grief',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -66,9 +66,9 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://leanon.app/support' },
-    { '@type': 'ListItem', position: 3, name: 'Grief', item: 'https://leanon.app/support/grief' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://www.leanon.app/support' },
+    { '@type': 'ListItem', position: 3, name: 'Grief', item: 'https://www.leanon.app/support/grief' },
   ],
 }
 

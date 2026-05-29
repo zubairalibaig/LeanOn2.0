@@ -3,13 +3,13 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Relationship Stress Support — Talk to Someone Who Gets It | LeanOn',
-  description: 'Struggling with relationship stress in India? Connect with peer listeners who understand relationship problems, conflict, and family pressure. Anonymous, affordable, and judgment-free peer support.',
-  alternates: { canonical: 'https://leanon.app/support/relationship-stress' },
+  title: 'Relationship Stress Peer Support India | LeanOn',
+  description: 'Dealing with relationship stress? Talk to a peer listener anonymously on LeanOn. Free first session. Available across India.',
+  alternates: { canonical: 'https://www.leanon.app/support/relationship-stress', languages: { 'en-IN': 'https://www.leanon.app/support/relationship-stress' } },
   openGraph: {
-    title: 'Relationship Stress Support — LeanOn',
-    description: 'Talk to a peer listener who truly understands relationship stress. Real support, available now in India.',
-    url: 'https://leanon.app/support/relationship-stress',
+    title: 'Relationship Stress Peer Support India | LeanOn',
+    description: 'Dealing with relationship stress? Talk to a peer listener anonymously on LeanOn. Free first session. Available across India.',
+    url: 'https://www.leanon.app/support/relationship-stress',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -66,9 +66,9 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://leanon.app/support' },
-    { '@type': 'ListItem', position: 3, name: 'Relationship Stress', item: 'https://leanon.app/support/relationship-stress' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://www.leanon.app/support' },
+    { '@type': 'ListItem', position: 3, name: 'Relationship Stress', item: 'https://www.leanon.app/support/relationship-stress' },
   ],
 }
 

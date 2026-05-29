@@ -5,7 +5,7 @@ export const dynamic = 'force-static'
 export const metadata: Metadata = {
   title: 'LeanOn — What Is LeanOn? India\'s Peer Support Platform',
   description: 'LeanOn (Lean On) is India\'s peer support platform. Learn what LeanOn means, how it works, who it\'s for, and why it\'s the most human alternative to therapy in India. First 5 minutes free.',
-  alternates: { canonical: 'https://leanon.app/leanon' },
+  alternates: { canonical: 'https://www.leanon.app/leanon' },
   keywords: [
     'LeanOn', 'leanon', 'lean on', 'lean on app', 'leanon app', 'what is leanon',
     'leanon India', 'leanon peer support', 'leanon meaning', 'lean on meaning',
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'LeanOn — What Is LeanOn? India\'s Peer Support Platform',
     description: 'LeanOn is India\'s peer support platform. Someone to lean on, anytime.',
-    url: 'https://leanon.app/leanon',
+    url: 'https://www.leanon.app/leanon',
     siteName: 'LeanOn',
     type: 'website',
   },
@@ -26,8 +26,8 @@ const brandSchema = {
   name: 'LeanOn',
   alternateName: ['Lean On', 'leanon', 'LeanOn App', 'leanon app'],
   description: 'LeanOn is India\'s peer support platform — someone to lean on, anytime. Talk to real people who have lived through what you\'re facing.',
-  url: 'https://leanon.app',
-  logo: 'https://leanon.app/logo.png',
+  url: 'https://www.leanon.app',
+  logo: 'https://www.leanon.app/logo.png',
   sameAs: [
     'https://www.instagram.com/leanon.app',
     'https://twitter.com/leanonapp',
@@ -110,8 +110,8 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'About LeanOn', item: 'https://leanon.app/leanon' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+    { '@type': 'ListItem', position: 2, name: 'About LeanOn', item: 'https://www.leanon.app/leanon' },
   ],
 }
 

@@ -3,13 +3,13 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Online Emotional Support India — Talk to a Real Person | LeanOn',
-  description: 'Find online emotional support in India. Talk to real peer listeners who understand what you are going through — not a bot, not a stranger, someone who truly gets it. First 5 minutes free.',
-  alternates: { canonical: 'https://leanon.app/support/emotional-support' },
+  title: 'Online Emotional Support India — Talk to a Peer Listener | LeanOn',
+  description: 'Get online emotional support from trained peer listeners in India. Anonymous, affordable, and available 24/7 on LeanOn.',
+  alternates: { canonical: 'https://www.leanon.app/support/emotional-support', languages: { 'en-IN': 'https://www.leanon.app/support/emotional-support' } },
   openGraph: {
-    title: 'Online Emotional Support in India — LeanOn',
-    description: 'Real peer listeners for emotional support in India. Available 24/7. First 5 minutes free.',
-    url: 'https://leanon.app/support/emotional-support',
+    title: 'Online Emotional Support India — Talk to a Peer Listener | LeanOn',
+    description: 'Get online emotional support from trained peer listeners in India. Anonymous, affordable, and available 24/7 on LeanOn.',
+    url: 'https://www.leanon.app/support/emotional-support',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -66,9 +66,9 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://leanon.app/support' },
-    { '@type': 'ListItem', position: 3, name: 'Emotional Support', item: 'https://leanon.app/support/emotional-support' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://www.leanon.app/support' },
+    { '@type': 'ListItem', position: 3, name: 'Emotional Support', item: 'https://www.leanon.app/support/emotional-support' },
   ],
 }
 

@@ -3,13 +3,13 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Loneliness Support in India | Talk to Someone Who Understands | LeanOn',
-  description: 'Feeling lonely in India? Connect with peer listeners who have overcome isolation, WFH loneliness, and the ache of 2 AM sadness. First 5 minutes free.',
-  alternates: { canonical: 'https://leanon.app/support/loneliness' },
+  title: 'Free Peer Support for Loneliness in India | LeanOn',
+  description: 'Feeling lonely? Talk to a peer listener anonymously. Free first session. LeanOn connects you with empathetic listeners in India, available 24/7.',
+  alternates: { canonical: 'https://www.leanon.app/support/loneliness', languages: { 'en-IN': 'https://www.leanon.app/support/loneliness' } },
   openGraph: {
-    title: 'Loneliness Support — LeanOn',
-    description: 'Talk to someone who has been through deep loneliness and found their way through. Real peer support, available now.',
-    url: 'https://leanon.app/support/loneliness',
+    title: 'Free Peer Support for Loneliness in India | LeanOn',
+    description: 'Feeling lonely? Talk to a peer listener anonymously. Free first session. LeanOn connects you with empathetic listeners in India, available 24/7.',
+    url: 'https://www.leanon.app/support/loneliness',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -66,9 +66,9 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://leanon.app/support' },
-    { '@type': 'ListItem', position: 3, name: 'Loneliness', item: 'https://leanon.app/support/loneliness' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://www.leanon.app/support' },
+    { '@type': 'ListItem', position: 3, name: 'Loneliness', item: 'https://www.leanon.app/support/loneliness' },
   ],
 }
 

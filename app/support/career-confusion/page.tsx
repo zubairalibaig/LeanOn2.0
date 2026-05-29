@@ -5,11 +5,11 @@ export const dynamic = 'force-static'
 export const metadata: Metadata = {
   title: 'Career Confusion Support India | Job Change Layoff Burnout Help | LeanOn',
   description: 'Facing a layoff, career switch, or mid-career crisis in India? Talk to peer listeners who have navigated career confusion and found clarity. First 5 minutes free.',
-  alternates: { canonical: 'https://leanon.app/support/career-confusion' },
+  alternates: { canonical: 'https://www.leanon.app/support/career-confusion' },
   openGraph: {
     title: 'Career Confusion Support — LeanOn',
     description: 'Peer support for career confusion, layoffs, career switches, and mid-career crises in India. Real conversations with people who have been there.',
-    url: 'https://leanon.app/support/career-confusion',
+    url: 'https://www.leanon.app/support/career-confusion',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -66,9 +66,9 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://leanon.app/support' },
-    { '@type': 'ListItem', position: 3, name: 'Career Confusion', item: 'https://leanon.app/support/career-confusion' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://www.leanon.app/support' },
+    { '@type': 'ListItem', position: 3, name: 'Career Confusion', item: 'https://www.leanon.app/support/career-confusion' },
   ],
 }
 

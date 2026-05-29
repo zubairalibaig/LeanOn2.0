@@ -3,14 +3,14 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Peer Support in Hyderabad — LeanOn | Talk to Someone Who Gets It',
-  description: 'LeanOn peer support in Hyderabad — peer listeners who understand the unique pressures of Hyderabad\'s tech boom: relocation loneliness, WFH isolation, career confusion, and startup burnout.',
-  alternates: { canonical: 'https://leanon.app/hyderabad' },
+  title: 'Emotional Support in Hyderabad — Peer Listeners | LeanOn',
+  description: 'Connect with peer listeners in Hyderabad, India. Free first session. Talk anonymously on LeanOn.',
+  alternates: { canonical: 'https://www.leanon.app/hyderabad', languages: { 'en-IN': 'https://www.leanon.app/hyderabad' } },
   keywords: 'peer support Hyderabad, emotional support Hyderabad, loneliness Hyderabad, WFH isolation Hyderabad, career confusion Hyderabad, leanon Hyderabad',
   openGraph: {
-    title: 'Peer Support in Hyderabad — LeanOn',
-    description: 'Peer listeners who understand Hyderabad\'s tech boom pressures: relocation loneliness, WFH isolation, career confusion, and startup burnout.',
-    url: 'https://leanon.app/hyderabad',
+    title: 'Emotional Support in Hyderabad — Peer Listeners | LeanOn',
+    description: 'Connect with peer listeners in Hyderabad, India. Free first session. Talk anonymously on LeanOn.',
+    url: 'https://www.leanon.app/hyderabad',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -67,9 +67,23 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Hyderabad', item: 'https://leanon.app/hyderabad' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+    { '@type': 'ListItem', position: 2, name: 'Hyderabad', item: 'https://www.leanon.app/hyderabad' },
   ],
+}
+
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: 'LeanOn',
+  description: 'Peer emotional support platform',
+  url: 'https://www.leanon.app/hyderabad',
+  areaServed: {
+    '@type': 'City',
+    name: 'Hyderabad',
+    addressCountry: 'IN',
+  },
+  serviceType: 'Peer Emotional Support',
 }
 
 const S = `
@@ -130,6 +144,7 @@ export default function HyderabadPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
       <style>{S}</style>
 
       <nav className="nav">

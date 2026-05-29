@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'FAQ — LeanOn Peer Support India',
-  description: 'Frequently asked questions about LeanOn — India\'s peer support platform. Learn what LeanOn is, how it works, what "lean on" means, pricing, privacy, and how to become a listener.',
-  alternates: { canonical: 'https://leanon.app/faq' },
+  title: 'Frequently Asked Questions | LeanOn Peer Support India',
+  description: 'Find answers to common questions about LeanOn — India\'s peer emotional support platform. Learn about sessions, pricing, listeners, and more.',
+  alternates: { canonical: 'https://www.leanon.app/faq', languages: { 'en-IN': 'https://www.leanon.app/faq' } },
   keywords: [
     'lean on app FAQ', 'leanon FAQ', 'what is leanon', 'lean on meaning', 'lean on someone',
     'peer support India FAQ', 'LeanOn how it works', 'leanon pricing', 'leanon privacy',

@@ -5,11 +5,11 @@ export const dynamic = 'force-static'
 export const metadata: Metadata = {
   title: 'Breakup & Heartbreak Support in India | Talk to Someone Who Gets It | LeanOn',
   description: 'Going through a breakup, divorce, or heartbreak? Connect with peer listeners who have been through the pain and rebuilt. First 5 minutes free.',
-  alternates: { canonical: 'https://leanon.app/support/breakup' },
+  alternates: { canonical: 'https://www.leanon.app/support/breakup' },
   openGraph: {
     title: 'Breakup Support — LeanOn',
     description: 'Talk to someone who has survived heartbreak and rebuilt their life. Real peer support for breakups, divorce, and relationship pain.',
-    url: 'https://leanon.app/support/breakup',
+    url: 'https://www.leanon.app/support/breakup',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -66,9 +66,9 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://leanon.app/support' },
-    { '@type': 'ListItem', position: 3, name: 'Breakup & Heartbreak', item: 'https://leanon.app/support/breakup' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://www.leanon.app/support' },
+    { '@type': 'ListItem', position: 3, name: 'Breakup & Heartbreak', item: 'https://www.leanon.app/support/breakup' },
   ],
 }
 

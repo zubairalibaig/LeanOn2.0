@@ -3,13 +3,13 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Someone to Talk To in India — Anonymous Peer Support | LeanOn',
-  description: 'Need someone to talk to in India? LeanOn connects you with real peer listeners available now — anonymous, non-judgmental, and genuinely understanding. First 5 minutes free.',
-  alternates: { canonical: 'https://leanon.app/support/someone-to-talk-to' },
+  title: 'Someone to Talk To in India | LeanOn Peer Listeners',
+  description: 'Need someone to talk to? LeanOn connects you with trained peer listeners in India. Anonymous, free first session, available 24/7.',
+  alternates: { canonical: 'https://www.leanon.app/support/someone-to-talk-to', languages: { 'en-IN': 'https://www.leanon.app/support/someone-to-talk-to' } },
   openGraph: {
-    title: 'Someone to Talk To in India — LeanOn',
-    description: 'Real listeners available now in India. Anonymous, judgment-free peer support when you need someone to talk to.',
-    url: 'https://leanon.app/support/someone-to-talk-to',
+    title: 'Someone to Talk To in India | LeanOn Peer Listeners',
+    description: 'Need someone to talk to? LeanOn connects you with trained peer listeners in India. Anonymous, free first session, available 24/7.',
+    url: 'https://www.leanon.app/support/someone-to-talk-to',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -66,9 +66,9 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://leanon.app/support' },
-    { '@type': 'ListItem', position: 3, name: 'Someone to Talk To', item: 'https://leanon.app/support/someone-to-talk-to' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://www.leanon.app/support' },
+    { '@type': 'ListItem', position: 3, name: 'Someone to Talk To', item: 'https://www.leanon.app/support/someone-to-talk-to' },
   ],
 }
 

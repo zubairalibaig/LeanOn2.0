@@ -5,11 +5,11 @@ export const dynamic = 'force-static'
 export const metadata: Metadata = {
   title: 'Peer Support for Every Challenge | LeanOn India',
   description: 'Find peer support for loneliness, anxiety, grief, breakups, student stress, career confusion, and founder burnout. Real humans who have been there — available now across India.',
-  alternates: { canonical: 'https://leanon.app/support' },
+  alternates: { canonical: 'https://www.leanon.app/support' },
   openGraph: {
     title: 'Peer Support for Every Challenge — LeanOn India',
     description: 'Whatever you are going through, there is someone on LeanOn who has been there. Browse peer support topics and connect with a listener who truly understands.',
-    url: 'https://leanon.app/support',
+    url: 'https://www.leanon.app/support',
     siteName: 'LeanOn',
     type: 'website',
   },
@@ -19,8 +19,8 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://leanon.app/support' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+    { '@type': 'ListItem', position: 2, name: 'Support', item: 'https://www.leanon.app/support' },
   ],
 }
 

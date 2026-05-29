@@ -5,7 +5,7 @@ export const dynamic = 'force-static'
 export const metadata: Metadata = {
   title: 'Emotional Support Online India — Complete Guide | LeanOn',
   description: 'The complete guide to emotional support in India. Understand your options, find the right support for loneliness, anxiety, burnout, grief, relationships and more. LeanOn peer support — first 5 minutes free.',
-  alternates: { canonical: 'https://leanon.app/emotional-support' },
+  alternates: { canonical: 'https://www.leanon.app/emotional-support' },
   keywords: [
     'emotional support India', 'online emotional support India', 'emotional support online',
     'peer support India', 'mental health support India', 'someone to lean on India',
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Emotional Support Online India — Complete Guide | LeanOn',
     description: 'Everything you need to know about emotional support in India. Find the right support for your situation.',
-    url: 'https://leanon.app/emotional-support',
+    url: 'https://www.leanon.app/emotional-support',
     siteName: 'LeanOn',
     type: 'website',
   },
@@ -26,27 +26,27 @@ const hubSchema = {
   '@type': 'WebPage',
   name: 'Emotional Support Online India — LeanOn',
   description: 'The complete topical authority hub for emotional support in India. Covers peer support, loneliness, anxiety, burnout, grief, relationships, student stress, and more.',
-  url: 'https://leanon.app/emotional-support',
+  url: 'https://www.leanon.app/emotional-support',
   breadcrumb: {
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanon.app' },
-      { '@type': 'ListItem', position: 2, name: 'Emotional Support', item: 'https://leanon.app/emotional-support' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+      { '@type': 'ListItem', position: 2, name: 'Emotional Support', item: 'https://www.leanon.app/emotional-support' },
     ],
   },
   mainEntity: {
     '@type': 'ItemList',
     name: 'Emotional Support Topics',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Loneliness Support', url: 'https://leanon.app/support/loneliness' },
-      { '@type': 'ListItem', position: 2, name: 'Anxiety Support', url: 'https://leanon.app/support/anxiety' },
-      { '@type': 'ListItem', position: 3, name: 'Breakup Support', url: 'https://leanon.app/support/breakup' },
-      { '@type': 'ListItem', position: 4, name: 'Grief Support', url: 'https://leanon.app/support/grief' },
-      { '@type': 'ListItem', position: 5, name: 'Burnout Support', url: 'https://leanon.app/support/founder-burnout' },
-      { '@type': 'ListItem', position: 6, name: 'Student Stress', url: 'https://leanon.app/support/student-stress' },
-      { '@type': 'ListItem', position: 7, name: 'Career Confusion', url: 'https://leanon.app/support/career-confusion' },
-      { '@type': 'ListItem', position: 8, name: 'Relationship Stress', url: 'https://leanon.app/support/relationship-stress' },
-      { '@type': 'ListItem', position: 9, name: 'Anonymous Support', url: 'https://leanon.app/support/anonymous-support' },
+      { '@type': 'ListItem', position: 1, name: 'Loneliness Support', url: 'https://www.leanon.app/support/loneliness' },
+      { '@type': 'ListItem', position: 2, name: 'Anxiety Support', url: 'https://www.leanon.app/support/anxiety' },
+      { '@type': 'ListItem', position: 3, name: 'Breakup Support', url: 'https://www.leanon.app/support/breakup' },
+      { '@type': 'ListItem', position: 4, name: 'Grief Support', url: 'https://www.leanon.app/support/grief' },
+      { '@type': 'ListItem', position: 5, name: 'Burnout Support', url: 'https://www.leanon.app/support/founder-burnout' },
+      { '@type': 'ListItem', position: 6, name: 'Student Stress', url: 'https://www.leanon.app/support/student-stress' },
+      { '@type': 'ListItem', position: 7, name: 'Career Confusion', url: 'https://www.leanon.app/support/career-confusion' },
+      { '@type': 'ListItem', position: 8, name: 'Relationship Stress', url: 'https://www.leanon.app/support/relationship-stress' },
+      { '@type': 'ListItem', position: 9, name: 'Anonymous Support', url: 'https://www.leanon.app/support/anonymous-support' },
     ],
   },
 }
