@@ -16,3 +16,7 @@ tsconfig.tsbuildinfo
 # Misc
 .DS_Store
 *.pem
+
+# Playwright
+test-results/
+playwright-report/
