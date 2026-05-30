@@ -2,189 +2,323 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 
-// ── Typed interfaces ───────────────────────────────────────────────────────────
-type AdminUserBasic = { name?: string; email?: string }
+// ── Types ─────────────────────────────────────────────────────────────────────
 
+type KPIs = {
+  users: { total: number; active: number; inactive: number; newToday: number; newThisMonth: number }
+  listeners: { total: number; active: number; pending: number; online: number }
+  sessions: { total: number; today: number; thisMonth: number; active: number; freeTrial: number; paid: number; avgDurationMins: number }
+  revenue: { totalRechargedPaise: number; thisMonthPaise: number; todayPaise: number; listenerEarningsPaise: number }
+  payouts: { pendingAmountPaise: number; pendingCount: number; totalPaidPaise: number }
+  moderation: { pendingReports: number }
+}
+
+type UserRow = { id: string; name?: string; email?: string; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number; updated_at?: string }
+type ListenerRow = {
+  user_id: string; bio?: string; topics?: string[]; rate_per_min?: number; rating?: number; total_sessions?: number
+  is_active: boolean; is_approved: boolean; is_available: boolean; is_verified?: boolean; is_suspended?: boolean; created_at: string
+  users: { id: string; name?: string; email?: string; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number }
+}
+type SessionRow = {
+  id: string; seeker_id: string; listener_id: string; session_type: string; duration_mins: number
+  amount_held: number; status: string; is_free_trial: boolean; started_at: string; ended_at?: string
+  seeker?: { name?: string }; listener?: { name?: string }
+}
 type ReportRow = {
-  id: string
-  type: string
-  description: string
-  status: string
-  created_at: string
-  session_id: string | null
-  reported_user_id: string | null
-  reporter: AdminUserBasic | null
-  target: AdminUserBasic | null
+  id: string; type: string; description: string; status: string; created_at: string
+  session_id: string | null; reported_user_id: string | null
+  reporter: { name?: string; email?: string } | null
+  target: { name?: string; email?: string } | null
 }
-
 type VerificationRow = {
-  id: string
-  listener_id: string
-  full_name: string
-  id_type: string
-  selfie_url: string | null
-  id_doc_url: string | null
-  status: string
-  submitted_at: string
-  admin_notes: string | null
+  id: string; listener_id: string; full_name: string; id_type: string
+  selfie_url: string | null; id_doc_url: string | null; status: string
+  submitted_at: string; admin_notes: string | null
 }
+type PayoutRow = { id: string; amount: number; status: string; created_at: string; users: { name?: string; email?: string } | null }
 
-// ── Typed interfaces replacing `any` ──────────────────────────────────────────
-type ListenerProfile = {
-  bio?: string
-  rate_per_min?: number
-  specialty_tags?: string[]
-  aadhaar_last4?: string
-  bank_account?: string
-  ifsc_code?: string
-  phone?: string
-}
-type AdminUser = { name?: string; email?: string }
-type ListenerApplication = {
-  id: string
-  user_id: string
-  created_at: string
-  listener_profiles: ListenerProfile | null
-  users: AdminUser | null
-}
-type PayoutRequest = {
-  id: string
-  amount: number
-  status: string
-  created_at: string
-  users: AdminUser | null
-}
-type RefundRequest = {
-  id: string
-  amount: number
-  reason?: string
-  status: string
-  created_at: string
-  users: AdminUser | null
-}
-type AdminData = {
-  pendingListeners: ListenerApplication[]
-  lpTotal: number
-  lpPage: number
-  pendingPayouts: PayoutRequest[]
-  prTotal: number
-  prPage: number
-  refundRequests: RefundRequest[]
-}
-// ─────────────────────────────────────────────────────────────────────────────
+type Tab = 'overview' | 'users' | 'listeners' | 'sessions' | 'reports' | 'payouts' | 'verifications'
+
+// ── Style ─────────────────────────────────────────────────────────────────────
 
 const S = `
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-  :root{--navy:#0F4867;--teal:#1A8FA0;--orange:#FF9933;--gray:#5A7A8A;--border:#D5EEF6;--light:#F0F8FC;}
+  :root{--navy:#0F4867;--teal:#1A8FA0;--orange:#FF9933;--gray:#5A7A8A;--border:#D5EEF6;--light:#F0F8FC;--green:#34C759;--red:#FF3B30;}
   body{font-family:'Nunito',sans-serif;background:var(--light);color:var(--navy);-webkit-font-smoothing:antialiased;}
-  .page{max-width:760px;margin:0 auto;padding:0 20px 60px;}
-  .topbar{padding:24px 0 20px;}
-  .topbar h1{font-size:24px;font-weight:900;color:var(--navy);}
+  .page{max-width:1100px;margin:0 auto;padding:0 20px 80px;}
+  .topbar{padding:24px 0 16px;display:flex;align-items:center;justify-content:space-between;}
+  .topbar h1{font-size:26px;font-weight:900;color:var(--navy);}
   .topbar p{font-size:13px;color:var(--gray);font-weight:600;margin-top:4px;}
-  .section{margin-bottom:36px;}
-  .section-title{font-size:17px;font-weight:800;color:var(--navy);margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--border);}
-  .count-badge{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;background:var(--orange);color:white;font-size:11px;font-weight:800;border-radius:50px;padding:0 6px;margin-left:8px;}
-  .card{background:white;border:1.5px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px;}
-  .card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
-  .listener-name{font-size:16px;font-weight:800;color:var(--navy);}
-  .listener-email{font-size:12px;color:var(--gray);font-weight:600;margin-top:2px;}
-  .rate-badge{background:var(--light);color:var(--teal);font-size:13px;font-weight:800;padding:6px 12px;border-radius:50px;border:1.5px solid var(--border);}
-  .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
-  .field{background:var(--light);border-radius:10px;padding:10px 12px;}
-  .field-label{font-size:10px;font-weight:800;color:var(--gray);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;}
-  .field-value{font-size:13px;font-weight:700;color:var(--navy);}
-  .bio-box{background:var(--light);border-radius:10px;padding:10px 12px;margin-bottom:12px;}
-  .bio-text{font-size:13px;color:#4A6B7E;line-height:1.6;font-weight:500;}
-  .tags-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
-  .tag-badge{background:rgba(26,143,160,.1);color:var(--navy);font-size:11px;font-weight:700;padding:4px 10px;border-radius:50px;}
-  .card-actions{display:flex;gap:10px;}
-  .btn-approve{flex:1;background:#34C759;color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;padding:12px;border-radius:12px;border:none;cursor:pointer;transition:all .2s;}
-  .btn-approve:hover{background:#2aad4a;}
-  .btn-approve:disabled{opacity:.5;cursor:not-allowed;}
-  .btn-reject{flex:1;background:white;color:#FF3B30;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;padding:12px;border-radius:12px;border:2px solid #FF3B30;cursor:pointer;transition:all .2s;}
-  .btn-reject:hover{background:#FFF0EF;}
-  .btn-reject:disabled{opacity:.5;cursor:not-allowed;}
-  .payout-card{background:white;border:1.5px solid var(--border);border-radius:18px;padding:18px 20px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
-  .payout-info{}
-  .payout-name{font-size:15px;font-weight:800;color:var(--navy);}
-  .payout-meta{font-size:12px;color:var(--gray);font-weight:600;margin-top:3px;}
-  .payout-amount{font-size:22px;font-weight:900;color:var(--navy);}
-  .btn-complete{background:var(--teal);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:10px 18px;border-radius:12px;border:none;cursor:pointer;transition:all .2s;white-space:nowrap;}
-  .btn-complete:hover{background:#147a8a;}
-  .btn-complete:disabled{opacity:.5;cursor:not-allowed;}
+  .tab-row{display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;}
+  .tab-btn{padding:8px 16px;border-radius:50px;border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;transition:all .15s;}
+  .tab-btn.active{background:var(--navy);color:white;}
+  .tab-btn:not(.active){background:white;color:var(--gray);border:1.5px solid var(--border);}
+  .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:32px;}
+  @media(min-width:640px){.kpi-grid{grid-template-columns:repeat(3,1fr);}}
+  @media(min-width:900px){.kpi-grid{grid-template-columns:repeat(4,1fr);}}
+  .kpi-card{background:white;border:1.5px solid var(--border);border-radius:16px;padding:16px 18px;}
+  .kpi-label{font-size:11px;font-weight:800;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+  .kpi-value{font-size:28px;font-weight:900;color:var(--navy);line-height:1;}
+  .kpi-sub{font-size:12px;color:var(--gray);font-weight:600;margin-top:4px;}
+  .section-title{font-size:17px;font-weight:800;color:var(--navy);margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px;}
+  .count-badge{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;background:var(--orange);color:white;font-size:11px;font-weight:800;border-radius:50px;padding:0 6px;}
+  .filter-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
+  .filter-btn{padding:5px 14px;border-radius:50px;border:1.5px solid var(--border);background:white;font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;cursor:pointer;color:var(--gray);transition:all .15s;}
+  .filter-btn.active{background:var(--teal);color:white;border-color:var(--teal);}
+  .search-input{flex:1;min-width:160px;padding:7px 14px;border:1.5px solid var(--border);border-radius:50px;font-family:'Nunito',sans-serif;font-size:13px;outline:none;color:var(--navy);}
+  .search-input:focus{border-color:var(--teal);}
+  .table-wrap{overflow-x:auto;background:white;border:1.5px solid var(--border);border-radius:16px;}
+  table{width:100%;border-collapse:collapse;}
+  th{font-size:11px;font-weight:800;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;padding:12px 14px;text-align:left;border-bottom:2px solid var(--border);white-space:nowrap;}
+  td{font-size:13px;font-weight:600;color:var(--navy);padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  tr.pending-row{background:#FFFBF0;}
+  .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:50px;font-size:11px;font-weight:800;}
+  .badge-green{background:rgba(52,199,89,.15);color:#1a7a2a;}
+  .badge-red{background:rgba(255,59,48,.15);color:#c0392b;}
+  .badge-orange{background:rgba(255,153,51,.15);color:#b35c00;}
+  .badge-gray{background:rgba(90,122,138,.12);color:var(--gray);}
+  .badge-teal{background:rgba(26,143,160,.12);color:#0d6e7e;}
+  .action-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .btn{font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;padding:6px 14px;border-radius:8px;border:none;cursor:pointer;transition:all .15s;white-space:nowrap;}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+  .btn-green{background:var(--green);color:white;}
+  .btn-green:hover:not(:disabled){background:#2aad4a;}
+  .btn-red{background:white;color:var(--red);border:1.5px solid var(--red);}
+  .btn-red:hover:not(:disabled){background:#FFF0EF;}
+  .btn-orange{background:var(--orange);color:white;}
+  .btn-orange:hover:not(:disabled){background:#d97c00;}
+  .btn-teal{background:var(--teal);color:white;}
+  .btn-teal:hover:not(:disabled){background:#147a8a;}
+  .btn-gray{background:var(--light);color:var(--gray);border:1.5px solid var(--border);}
+  .btn-gray:hover:not(:disabled){background:var(--border);}
+  .pagination{display:flex;justify-content:space-between;align-items:center;margin-top:12px;}
+  .pagination span{font-size:13px;color:var(--gray);font-weight:600;}
   .empty{text-align:center;padding:32px 20px;color:var(--gray);font-size:14px;font-weight:600;}
-  .error-page{text-align:center;padding:80px 20px;}
-  .error-page h2{font-size:22px;font-weight:900;color:var(--navy);margin-bottom:10px;}
-  .error-page p{font-size:15px;color:var(--gray);font-weight:600;}
+  .card{background:white;border:1.5px solid var(--border);border-radius:16px;padding:18px 20px;margin-bottom:12px;}
+  .card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
+  .name-text{font-size:15px;font-weight:800;color:var(--navy);}
+  .meta-text{font-size:12px;color:var(--gray);font-weight:600;margin-top:2px;}
   .skeleton{background:linear-gradient(90deg,#e8e8e4 25%,#f2f2ee 50%,#e8e8e4 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:14px;}
   @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:white;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;padding:12px 24px;border-radius:50px;box-shadow:0 4px 20px rgba(15,72,103,.25);z-index:999;animation:toastIn .25s ease;}
-  @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--navy);color:white;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;padding:12px 28px;border-radius:50px;box-shadow:0 4px 24px rgba(15,72,103,.3);z-index:9999;animation:toastIn .25s ease;white-space:nowrap;}
+  @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(14px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+  .error-page{text-align:center;padding:80px 20px;}
+  .error-page h2{font-size:22px;font-weight:900;color:var(--navy);margin-bottom:10px;}
+  .reject-input{width:100%;padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Nunito',sans-serif;font-size:12px;margin-bottom:8px;outline:none;color:var(--navy);}
+  .reject-input:focus{border-color:var(--red);}
 `
 
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function fmt(n: number) { return n.toLocaleString('en-IN') }
+function fmtRs(paise: number) { return `₹${fmt(Math.round(paise))}` }
 function fmtDate(iso: string) {
-  const d = new Date(iso)
-  return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+  return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
 }
+
+// ── Component ─────────────────────────────────────────────────────────────────
 
 export default function AdminPage() {
   const router = useRouter()
-  const [data, setData]           = useState<AdminData | null>(null)
-  const [loading, setLoading]     = useState(true)
-  const [denied, setDenied]       = useState(false)
-  const [busy, setBusy]           = useState<string | null>(null)
-  const [toast, setToast]         = useState<string | null>(null)
-  const [lpPage, setLpPage]       = useState(0)
-  const [prPage, setPrPage]       = useState(0)
-  const [tab, setTab]             = useState<'main'|'reports'|'verifications'>('main')
-  const [reports, setReports]     = useState<ReportRow[]>([])
-  const [verifs, setVerifs]       = useState<VerificationRow[]>([])
-  const [rejectNotes, setRejectNotes] = useState<Record<string, string>>({})
+
+  const [denied, setDenied] = useState(false)
+  const [tab, setTab] = useState<Tab>('overview')
+  const [toast, setToast] = useState<string | null>(null)
+  const [busy, setBusy] = useState<string | null>(null)
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // KPIs
+  const [kpis, setKpis] = useState<KPIs | null>(null)
+  const [kpisLoading, setKpisLoading] = useState(true)
+
+  // Users
+  const [users, setUsers] = useState<UserRow[]>([])
+  const [usersTotal, setUsersTotal] = useState(0)
+  const [usersPage, setUsersPage] = useState(0)
+  const [usersStatus, setUsersStatus] = useState('all')
+  const [usersSearch, setUsersSearch] = useState('')
+  const [usersLoading, setUsersLoading] = useState(false)
+
+  // Listeners
+  const [listeners, setListeners] = useState<ListenerRow[]>([])
+  const [listenersTotal, setListenersTotal] = useState(0)
+  const [listenersPage, setListenersPage] = useState(0)
+  const [listenersStatus, setListenersStatus] = useState('all')
+  const [listenersLoading, setListenersLoading] = useState(false)
+  const [rejectNotes, setRejectNotes] = useState<Record<string, string>>({})
+
+  // Sessions
+  const [sessions, setSessions] = useState<SessionRow[]>([])
+  const [sessionsStatus, setSessionsStatus] = useState('all')
+  const [sessionsLoading, setSessionsLoading] = useState(false)
+
+  // Reports
+  const [reports, setReports] = useState<ReportRow[]>([])
+  const [reportsStatus, setReportsStatus] = useState('pending')
+  const [reportsLoading, setReportsLoading] = useState(false)
+  const [reportRejectNotes, setReportRejectNotes] = useState<Record<string, string>>({})
+
+  // Payouts
+  const [payouts, setPayouts] = useState<PayoutRow[]>([])
+  const [payoutsLoading, setPayoutsLoading] = useState(false)
+
+  // Verifications
+  const [verifs, setVerifs] = useState<VerificationRow[]>([])
+  const [verifsStatus, setVerifsStatus] = useState('pending')
+  const [verifsLoading, setVerifsLoading] = useState(false)
+  const [verifRejectNotes, setVerifRejectNotes] = useState<Record<string, string>>({})
 
   const showToast = (msg: string) => {
     if (toastTimer.current) clearTimeout(toastTimer.current)
     setToast(msg)
-    toastTimer.current = setTimeout(() => setToast(null), 2500)
+    toastTimer.current = setTimeout(() => setToast(null), 3000)
   }
-
   useEffect(() => () => { if (toastTimer.current) clearTimeout(toastTimer.current) }, [])
 
-  const loadData = useCallback(async (lp = lpPage, pr = prPage) => {
-    setLoading(true)
-    const res = await fetch(`/api/admin?lpPage=${lp}&prPage=${pr}`)
+  // ── Data loaders ────────────────────────────────────────────────────────────
+
+  const loadKPIs = useCallback(async () => {
+    setKpisLoading(true)
+    const res = await fetch('/api/admin/kpis')
     if (res.status === 401) { router.push('/auth?redirect=/admin'); return }
-    if (res.status === 403) { setDenied(true); setLoading(false); return }
-    const json = await res.json()
-    setData(json)
-    setLoading(false)
-  }, [router, lpPage, prPage])
+    if (res.status === 403) { setDenied(true); setKpisLoading(false); return }
+    if (res.ok) setKpis(await res.json())
+    setKpisLoading(false)
+  }, [router])
 
-  useEffect(() => { loadData() }, [loadData])
-
-  const loadReports = useCallback(async (status = 'pending') => {
-    const res = await fetch(`/api/admin/moderate?status=${status}`)
+  const loadUsers = useCallback(async (pg = usersPage, st = usersStatus, q = usersSearch) => {
+    setUsersLoading(true)
+    const params = new URLSearchParams({ type: 'user', page: String(pg), status: st, search: q })
+    const res = await fetch(`/api/admin/users?${params}`)
     if (res.ok) {
       const json = await res.json()
-      setReports(json.reports ?? [])
+      setUsers(json.items)
+      setUsersTotal(json.total)
     }
-  }, [])
+    setUsersLoading(false)
+  }, [usersPage, usersStatus, usersSearch])
 
-  const loadVerifs = useCallback(async (status = 'pending') => {
-    const res = await fetch(`/api/admin/verify-listener?status=${status}`)
+  const loadListeners = useCallback(async (pg = listenersPage, st = listenersStatus) => {
+    setListenersLoading(true)
+    const params = new URLSearchParams({ type: 'listener', page: String(pg), status: st })
+    const res = await fetch(`/api/admin/users?${params}`)
     if (res.ok) {
       const json = await res.json()
-      setVerifs(json.verifications ?? [])
+      setListeners(json.items)
+      setListenersTotal(json.total)
     }
+    setListenersLoading(false)
+  }, [listenersPage, listenersStatus])
+
+  const loadSessions = useCallback(async (st = sessionsStatus) => {
+    setSessionsLoading(true)
+    const params = new URLSearchParams({ status: st !== 'all' ? st : '' })
+    const res = await fetch(`/api/admin/sessions?${params}`)
+    if (res.ok) setSessions((await res.json()).sessions ?? [])
+    setSessionsLoading(false)
+  }, [sessionsStatus])
+
+  const loadReports = useCallback(async (st = reportsStatus) => {
+    setReportsLoading(true)
+    const res = await fetch(`/api/admin/moderate?status=${st}`)
+    if (res.ok) setReports((await res.json()).reports ?? [])
+    setReportsLoading(false)
+  }, [reportsStatus])
+
+  const loadPayouts = useCallback(async () => {
+    setPayoutsLoading(true)
+    const res = await fetch('/api/admin?prPage=0&lpPage=0')
+    if (res.ok) {
+      const json = await res.json()
+      setPayouts(json.pendingPayouts ?? [])
+    }
+    setPayoutsLoading(false)
   }, [])
+
+  const loadVerifs = useCallback(async (st = verifsStatus) => {
+    setVerifsLoading(true)
+    const res = await fetch(`/api/admin/verify-listener?status=${st}`)
+    if (res.ok) setVerifs((await res.json()).verifications ?? [])
+    setVerifsLoading(false)
+  }, [verifsStatus])
+
+  // ── Effects ─────────────────────────────────────────────────────────────────
+
+  useEffect(() => { loadKPIs() }, [loadKPIs])
+
+  // Auto-refresh KPIs every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(loadKPIs, 30_000)
+    return () => clearInterval(interval)
+  }, [loadKPIs])
 
   useEffect(() => {
-    if (tab === 'reports') loadReports()
-    if (tab === 'verifications') loadVerifs()
-  }, [tab, loadReports, loadVerifs])
+    if (tab === 'users') loadUsers(0, usersStatus, usersSearch)
+  }, [tab]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  async function moderateReport(reportId: string, action: 'dismiss'|'warn'|'suspend', targetUserId?: string) {
+  useEffect(() => {
+    if (tab === 'listeners') loadListeners(0, listenersStatus)
+  }, [tab]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (tab === 'sessions') loadSessions(sessionsStatus)
+  }, [tab]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (tab === 'reports') loadReports(reportsStatus)
+  }, [tab]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (tab === 'payouts') loadPayouts()
+  }, [tab]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (tab === 'verifications') loadVerifs(verifsStatus)
+  }, [tab]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Actions ─────────────────────────────────────────────────────────────────
+
+  async function userAction(userId: string, action: string, notes?: string) {
+    const key = `${action}:${userId}`
+    setBusy(key)
+    const res = await fetch('/api/admin/users', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, action, notes }),
+    })
+    setBusy(null)
+    if (res.ok) {
+      showToast(`Action "${action}" completed`)
+      if (tab === 'users') loadUsers()
+      if (tab === 'listeners') loadListeners()
+      loadKPIs()
+    } else {
+      const err = await res.json()
+      showToast(`Error: ${err.error || 'Something went wrong'}`)
+    }
+  }
+
+  async function adminAction(action: string, id: string, label: string) {
+    setBusy(`${action}:${id}`)
+    const res = await fetch('/api/admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action, id }),
+    })
+    setBusy(null)
+    if (res.ok) {
+      showToast(label)
+      loadPayouts()
+      loadKPIs()
+    } else {
+      const err = await res.json()
+      showToast(`Error: ${err.error || 'Failed'}`)
+    }
+  }
+
+  async function moderateReport(reportId: string, action: 'dismiss' | 'warn' | 'suspend', targetUserId?: string) {
     setBusy(`moderate:${reportId}:${action}`)
     const res = await fetch('/api/admin/moderate', {
       method: 'POST',
@@ -193,17 +327,17 @@ export default function AdminPage() {
     })
     setBusy(null)
     if (res.ok) {
-      showToast(`Report ${action}ed`)
-      loadReports()
+      showToast(`Report ${action}d`)
+      loadReports(reportsStatus)
     } else {
       const err = await res.json()
       showToast(`Error: ${err.error || 'Failed'}`)
     }
   }
 
-  async function handleVerif(verificationId: string, action: 'approve'|'reject', listenerId: string) {
+  async function handleVerif(verificationId: string, action: 'approve' | 'reject', listenerId: string) {
     setBusy(`verif:${verificationId}:${action}`)
-    const notes = rejectNotes[verificationId] || ''
+    const notes = verifRejectNotes[verificationId] || ''
     const res = await fetch('/api/admin/verify-listener', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -212,41 +346,14 @@ export default function AdminPage() {
     setBusy(null)
     if (res.ok) {
       showToast(`Verification ${action}d`)
-      loadVerifs()
+      loadVerifs(verifsStatus)
     } else {
       const err = await res.json()
       showToast(`Error: ${err.error || 'Failed'}`)
     }
   }
 
-  async function doAction(action: string, id: string, label: string) {
-    setBusy(`${action}:${id}`)
-    const res = await fetch('/api/admin', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action, id }),
-    })
-    setBusy(null)
-    if (!res.ok) {
-      const err = await res.json()
-      showToast(`Error: ${err.error || 'Something went wrong'}`)
-      return
-    }
-    showToast(label)
-    loadData()
-  }
-
-  if (loading) return (
-    <>
-      <style>{S}</style>
-      <div className="page">
-        <div className="topbar"><h1>Admin Panel</h1></div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {[1, 2, 3].map(i => <div key={i} className="skeleton" style={{ height: 160 }} />)}
-        </div>
-      </div>
-    </>
-  )
+  // ── Render Guards ────────────────────────────────────────────────────────────
 
   if (denied) return (
     <>
@@ -255,328 +362,631 @@ export default function AdminPage() {
         <div className="error-page">
           <div style={{ fontSize: 48, marginBottom: 16 }}>🔒</div>
           <h2>Not authorized</h2>
-          <p>You don&apos;t have permission to access this page.</p>
+          <p style={{ color: 'var(--gray)', fontWeight: 600 }}>You don&apos;t have permission to access this page.</p>
         </div>
       </div>
     </>
   )
 
-  const { pendingListeners = [], pendingPayouts = [], refundRequests = [], lpTotal = 0, prTotal = 0 } = data || {}
-  const PAGE_SIZE = 20
+  const TABS: { key: Tab; label: string }[] = [
+    { key: 'overview', label: 'Overview' },
+    { key: 'users', label: 'Users' },
+    { key: 'listeners', label: 'Listeners' },
+    { key: 'sessions', label: 'Sessions' },
+    { key: 'reports', label: `Reports${kpis ? ` (${kpis.moderation.pendingReports})` : ''}` },
+    { key: 'payouts', label: `Payouts${kpis ? ` (${kpis.payouts.pendingCount})` : ''}` },
+    { key: 'verifications', label: 'Verifications' },
+  ]
+
+  const PAGE_SIZE = 25
 
   return (
     <>
       <style>{S}</style>
       <div className="page">
+
+        {/* Header */}
         <div className="topbar">
-          <h1>Admin Panel</h1>
-          <p>Manage listener applications and payout requests.</p>
+          <div>
+            <h1>Admin Panel</h1>
+            <p>LeanOn platform management</p>
+          </div>
+          <button
+            className="btn btn-teal"
+            style={{ fontSize: 13 }}
+            onClick={loadKPIs}
+          >
+            Refresh KPIs
+          </button>
         </div>
 
-        {/* Tab navigation */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
-          {(['main', 'reports', 'verifications'] as const).map(t => (
+        {/* Tab Nav */}
+        <div className="tab-row">
+          {TABS.map(t => (
             <button
-              key={t}
-              onClick={() => setTab(t)}
-              style={{
-                padding: '8px 18px', borderRadius: 50, border: 'none', cursor: 'pointer',
-                fontFamily: 'Nunito,sans-serif', fontWeight: 800, fontSize: 13,
-                background: tab === t ? 'var(--navy)' : 'var(--light)',
-                color: tab === t ? 'white' : 'var(--gray)',
-              }}
+              key={t.key}
+              className={`tab-btn${tab === t.key ? ' active' : ''}`}
+              onClick={() => setTab(t.key)}
             >
-              {t === 'main' ? 'Overview' : t === 'reports' ? '🚩 Reports' : '✓ Verifications'}
+              {t.label}
             </button>
           ))}
         </div>
 
-        {/* ── REPORTS TAB ── */}
+        {/* ─── OVERVIEW ─────────────────────────────────────────────────────── */}
+        {tab === 'overview' && (
+          <>
+            {kpisLoading && !kpis ? (
+              <div className="kpi-grid">
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <div key={i} className="skeleton" style={{ height: 90 }} />
+                ))}
+              </div>
+            ) : kpis ? (
+              <>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Users</div>
+                <div className="kpi-grid" style={{ marginBottom: 20 }}>
+                  <div className="kpi-card">
+                    <div className="kpi-label">Total Users</div>
+                    <div className="kpi-value">{fmt(kpis.users.total)}</div>
+                  </div>
+                  <div className="kpi-card">
+                    <div className="kpi-label">Active Users</div>
+                    <div className="kpi-value">{fmt(kpis.users.active)}</div>
+                    <div className="kpi-sub">last 30 days</div>
+                  </div>
+                  <div className="kpi-card">
+                    <div className="kpi-label">New Today</div>
+                    <div className="kpi-value">{fmt(kpis.users.newToday)}</div>
+                  </div>
+                  <div className="kpi-card">
+                    <div className="kpi-label">New This Month</div>
+                    <div className="kpi-value">{fmt(kpis.users.newThisMonth)}</div>
+                  </div>
+                </div>
+
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Listeners</div>
+                <div className="kpi-grid" style={{ marginBottom: 20 }}>
+                  <div className="kpi-card">
+                    <div className="kpi-label">Total Listeners</div>
+                    <div className="kpi-value">{fmt(kpis.listeners.total)}</div>
+                  </div>
+                  <div className="kpi-card">
+                    <div className="kpi-label">Active Listeners</div>
+                    <div className="kpi-value">{fmt(kpis.listeners.active)}</div>
+                    <div className="kpi-sub">approved + active</div>
+                  </div>
+                  <div className="kpi-card" style={{ border: kpis.listeners.pending > 0 ? '2px solid var(--orange)' : undefined }}>
+                    <div className="kpi-label">Pending Approval</div>
+                    <div className="kpi-value" style={{ color: kpis.listeners.pending > 0 ? 'var(--orange)' : undefined }}>{fmt(kpis.listeners.pending)}</div>
+                  </div>
+                  <div className="kpi-card">
+                    <div className="kpi-label">Online Now</div>
+                    <div className="kpi-value" style={{ color: 'var(--green)' }}>{fmt(kpis.listeners.online)}</div>
+                  </div>
+                </div>
+
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Sessions</div>
+                <div className="kpi-grid" style={{ marginBottom: 20 }}>
+                  <div className="kpi-card">
+                    <div className="kpi-label">Total Sessions</div>
+                    <div className="kpi-value">{fmt(kpis.sessions.total)}</div>
+                  </div>
+                  <div className="kpi-card">
+                    <div className="kpi-label">Sessions Today</div>
+                    <div className="kpi-value">{fmt(kpis.sessions.today)}</div>
+                  </div>
+                  <div className="kpi-card">
+                    <div className="kpi-label">This Month</div>
+                    <div className="kpi-value">{fmt(kpis.sessions.thisMonth)}</div>
+                  </div>
+                  <div className="kpi-card">
+                    <div className="kpi-label">Active Now</div>
+                    <div className="kpi-value" style={{ color: 'var(--teal)' }}>{fmt(kpis.sessions.active)}</div>
+                  </div>
+                  <div className="kpi-card">
+                    <div className="kpi-label">Free Trials</div>
+                    <div className="kpi-value">{fmt(kpis.sessions.freeTrial)}</div>
+                  </div>
+                  <div className="kpi-card">
+                    <div className="kpi-label">Paid Sessions</div>
+                    <div className="kpi-value">{fmt(kpis.sessions.paid)}</div>
+                  </div>
+                  <div className="kpi-card">
+                    <div className="kpi-label">Avg Duration</div>
+                    <div className="kpi-value">{kpis.sessions.avgDurationMins}</div>
+                    <div className="kpi-sub">minutes</div>
+                  </div>
+                </div>
+
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Revenue &amp; Payouts</div>
+                <div className="kpi-grid" style={{ marginBottom: 20 }}>
+                  <div className="kpi-card">
+                    <div className="kpi-label">Total Recharged</div>
+                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.revenue.totalRechargedPaise)}</div>
+                  </div>
+                  <div className="kpi-card">
+                    <div className="kpi-label">This Month</div>
+                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.revenue.thisMonthPaise)}</div>
+                  </div>
+                  <div className="kpi-card">
+                    <div className="kpi-label">Today</div>
+                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.revenue.todayPaise)}</div>
+                  </div>
+                  <div className="kpi-card">
+                    <div className="kpi-label">Listener Earnings</div>
+                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.revenue.listenerEarningsPaise)}</div>
+                    <div className="kpi-sub">settled</div>
+                  </div>
+                  <div className="kpi-card" style={{ border: kpis.payouts.pendingCount > 0 ? '2px solid var(--orange)' : undefined }}>
+                    <div className="kpi-label">Pending Payouts</div>
+                    <div className="kpi-value" style={{ fontSize: 20, color: kpis.payouts.pendingCount > 0 ? 'var(--orange)' : undefined }}>{fmtRs(kpis.payouts.pendingAmountPaise)}</div>
+                    <div className="kpi-sub">{kpis.payouts.pendingCount} requests</div>
+                  </div>
+                  <div className="kpi-card" style={{ border: kpis.moderation.pendingReports > 0 ? '2px solid var(--red)' : undefined }}>
+                    <div className="kpi-label">Reports Pending</div>
+                    <div className="kpi-value" style={{ color: kpis.moderation.pendingReports > 0 ? 'var(--red)' : undefined }}>{kpis.moderation.pendingReports}</div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="empty">Failed to load KPIs. <button className="btn btn-teal" style={{ marginLeft: 8 }} onClick={loadKPIs}>Retry</button></div>
+            )}
+          </>
+        )}
+
+        {/* ─── USERS ────────────────────────────────────────────────────────── */}
+        {tab === 'users' && (
+          <>
+            <div className="section-title">
+              Users
+              <span className="count-badge">{usersTotal}</span>
+            </div>
+            <div className="filter-row">
+              {(['all', 'active', 'inactive', 'suspended'] as const).map(s => (
+                <button
+                  key={s}
+                  className={`filter-btn${usersStatus === s ? ' active' : ''}`}
+                  onClick={() => { setUsersStatus(s); setUsersPage(0); loadUsers(0, s, usersSearch) }}
+                >
+                  {s.charAt(0).toUpperCase() + s.slice(1)}
+                </button>
+              ))}
+              <input
+                className="search-input"
+                placeholder="Search by name..."
+                value={usersSearch}
+                onChange={e => setUsersSearch(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') { setUsersPage(0); loadUsers(0, usersStatus, usersSearch) } }}
+              />
+              <button className="btn btn-teal" onClick={() => { setUsersPage(0); loadUsers(0, usersStatus, usersSearch) }}>Search</button>
+            </div>
+            {usersLoading ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {[1, 2, 3].map(i => <div key={i} className="skeleton" style={{ height: 52 }} />)}
+              </div>
+            ) : users.length === 0 ? (
+              <div className="empty">No users found.</div>
+            ) : (
+              <>
+                <div className="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Joined</th>
+                        <th>Wallet</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {users.map(u => (
+                        <tr key={u.id}>
+                          <td style={{ fontWeight: 700 }}>{u.name || '—'}</td>
+                          <td style={{ color: 'var(--gray)' }}>{u.email || '—'}</td>
+                          <td style={{ color: 'var(--gray)' }}>{fmtDate(u.created_at)}</td>
+                          <td>₹{u.wallet_balance ?? 0}</td>
+                          <td>
+                            {u.is_suspended
+                              ? <span className="badge badge-red">Suspended</span>
+                              : u.is_active
+                                ? <span className="badge badge-green">Active</span>
+                                : <span className="badge badge-gray">Inactive</span>}
+                          </td>
+                          <td>
+                            <div className="action-row">
+                              {u.is_suspended ? (
+                                <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(u.id, 'unsuspend')}>
+                                  {busy === `unsuspend:${u.id}` ? '…' : 'Unsuspend'}
+                                </button>
+                              ) : (
+                                <button className="btn btn-orange" disabled={busy !== null} onClick={() => userAction(u.id, 'suspend')}>
+                                  {busy === `suspend:${u.id}` ? '…' : 'Suspend'}
+                                </button>
+                              )}
+                              {u.is_active
+                                ? <button className="btn btn-gray" disabled={busy !== null} onClick={() => userAction(u.id, 'deactivate')}>
+                                    {busy === `deactivate:${u.id}` ? '…' : 'Deactivate'}
+                                  </button>
+                                : <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(u.id, 'activate')}>
+                                    {busy === `activate:${u.id}` ? '…' : 'Activate'}
+                                  </button>
+                              }
+                              <button className="btn btn-red" disabled={busy !== null} onClick={() => { if (window.confirm('Ban this user?')) userAction(u.id, 'ban') }}>
+                                Ban
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                {usersTotal > PAGE_SIZE && (
+                  <div className="pagination">
+                    <button className="btn btn-gray" disabled={usersPage === 0} onClick={() => { const p = usersPage - 1; setUsersPage(p); loadUsers(p, usersStatus, usersSearch) }}>← Prev</button>
+                    <span>{usersPage * PAGE_SIZE + 1}–{Math.min((usersPage + 1) * PAGE_SIZE, usersTotal)} of {usersTotal}</span>
+                    <button className="btn btn-gray" disabled={(usersPage + 1) * PAGE_SIZE >= usersTotal} onClick={() => { const p = usersPage + 1; setUsersPage(p); loadUsers(p, usersStatus, usersSearch) }}>Next →</button>
+                  </div>
+                )}
+              </>
+            )}
+          </>
+        )}
+
+        {/* ─── LISTENERS ────────────────────────────────────────────────────── */}
+        {tab === 'listeners' && (
+          <>
+            <div className="section-title">
+              Listeners
+              <span className="count-badge">{listenersTotal}</span>
+            </div>
+            <div className="filter-row">
+              {(['all', 'pending', 'active', 'suspended'] as const).map(s => (
+                <button
+                  key={s}
+                  className={`filter-btn${listenersStatus === s ? ' active' : ''}`}
+                  onClick={() => { setListenersStatus(s); setListenersPage(0); loadListeners(0, s) }}
+                >
+                  {s === 'pending' ? 'Pending Approval' : s.charAt(0).toUpperCase() + s.slice(1)}
+                </button>
+              ))}
+            </div>
+            {listenersLoading ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {[1, 2, 3].map(i => <div key={i} className="skeleton" style={{ height: 52 }} />)}
+              </div>
+            ) : listeners.length === 0 ? (
+              <div className="empty">No listeners found.</div>
+            ) : (
+              <>
+                <div className="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Rate</th>
+                        <th>Rating</th>
+                        <th>Sessions</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {listeners.map(l => {
+                        const u = l.users
+                        const isPending = !l.is_approved && !l.is_active
+                        return (
+                          <tr key={l.user_id} className={isPending ? 'pending-row' : ''}>
+                            <td style={{ fontWeight: 700 }}>
+                              {u?.name || '—'}
+                              {l.is_verified && <span className="badge badge-teal" style={{ marginLeft: 6, fontSize: 10 }}>Verified</span>}
+                            </td>
+                            <td style={{ color: 'var(--gray)' }}>{u?.email || '—'}</td>
+                            <td>₹{l.rate_per_min ?? '—'}/min</td>
+                            <td>{l.rating ? `${l.rating.toFixed(1)} ★` : '—'}</td>
+                            <td>{l.total_sessions ?? 0}</td>
+                            <td>
+                              {isPending
+                                ? <span className="badge badge-orange">Pending</span>
+                                : l.is_suspended
+                                  ? <span className="badge badge-red">Suspended</span>
+                                  : l.is_active
+                                    ? <span className="badge badge-green">Active</span>
+                                    : <span className="badge badge-gray">Inactive</span>}
+                            </td>
+                            <td>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                                {isPending && (
+                                  <div className="action-row">
+                                    <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'approve_listener')}>
+                                      {busy === `approve_listener:${l.user_id}` ? 'Approving…' : 'Approve'}
+                                    </button>
+                                    <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+                                      <input
+                                        className="reject-input"
+                                        style={{ width: 120, marginBottom: 0 }}
+                                        placeholder="Reason (opt)"
+                                        value={rejectNotes[l.user_id] || ''}
+                                        onChange={e => setRejectNotes(prev => ({ ...prev, [l.user_id]: e.target.value }))}
+                                      />
+                                      <button className="btn btn-red" disabled={busy !== null} onClick={() => userAction(l.user_id, 'reject_listener', rejectNotes[l.user_id])}>
+                                        {busy === `reject_listener:${l.user_id}` ? '…' : 'Reject'}
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
+                                <div className="action-row">
+                                  {!isPending && (
+                                    l.is_suspended || !l.is_active
+                                      ? <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'unsuspend')}>
+                                          {busy === `unsuspend:${l.user_id}` ? '…' : 'Unsuspend'}
+                                        </button>
+                                      : <button className="btn btn-orange" disabled={busy !== null} onClick={() => userAction(l.user_id, 'suspend')}>
+                                          {busy === `suspend:${l.user_id}` ? '…' : 'Suspend'}
+                                        </button>
+                                  )}
+                                  <a href={`/listener/${l.user_id}`} target="_blank" rel="noopener" className="btn btn-gray" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
+                                    View Profile
+                                  </a>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+                {listenersTotal > PAGE_SIZE && (
+                  <div className="pagination">
+                    <button className="btn btn-gray" disabled={listenersPage === 0} onClick={() => { const p = listenersPage - 1; setListenersPage(p); loadListeners(p, listenersStatus) }}>← Prev</button>
+                    <span>{listenersPage * PAGE_SIZE + 1}–{Math.min((listenersPage + 1) * PAGE_SIZE, listenersTotal)} of {listenersTotal}</span>
+                    <button className="btn btn-gray" disabled={(listenersPage + 1) * PAGE_SIZE >= listenersTotal} onClick={() => { const p = listenersPage + 1; setListenersPage(p); loadListeners(p, listenersStatus) }}>Next →</button>
+                  </div>
+                )}
+              </>
+            )}
+          </>
+        )}
+
+        {/* ─── SESSIONS ─────────────────────────────────────────────────────── */}
+        {tab === 'sessions' && (
+          <>
+            <div className="section-title">Recent Sessions</div>
+            <div className="filter-row">
+              {(['all', 'active', 'completed', 'cancelled'] as const).map(s => (
+                <button
+                  key={s}
+                  className={`filter-btn${sessionsStatus === s ? ' active' : ''}`}
+                  onClick={() => { setSessionsStatus(s); loadSessions(s) }}
+                >
+                  {s.charAt(0).toUpperCase() + s.slice(1)}
+                </button>
+              ))}
+              <button className="btn btn-teal" style={{ marginLeft: 'auto' }} onClick={() => loadSessions(sessionsStatus)}>Refresh</button>
+            </div>
+            {sessionsLoading ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {[1, 2, 3].map(i => <div key={i} className="skeleton" style={{ height: 52 }} />)}
+              </div>
+            ) : sessions.length === 0 ? (
+              <div className="empty">No sessions found for this filter.</div>
+            ) : (
+              <div className="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Started</th>
+                      <th>Seeker</th>
+                      <th>Listener</th>
+                      <th>Type</th>
+                      <th>Duration</th>
+                      <th>Amount</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sessions.map((s: SessionRow) => (
+                      <tr key={s.id}>
+                        <td style={{ color: 'var(--gray)', fontSize: 12 }}>{fmtDate(s.started_at)}</td>
+                        <td>{s.seeker_id.slice(0, 8)}…</td>
+                        <td>{s.listener_id.slice(0, 8)}…</td>
+                        <td><span className="badge badge-teal">{s.session_type}</span></td>
+                        <td>{s.duration_mins} min</td>
+                        <td>{s.is_free_trial ? <span className="badge badge-gray">Free</span> : `₹${s.amount_held}`}</td>
+                        <td>
+                          {s.status === 'active'
+                            ? <span className="badge badge-teal">Active</span>
+                            : s.status === 'completed'
+                              ? <span className="badge badge-green">Completed</span>
+                              : <span className="badge badge-gray">{s.status}</span>}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* ─── REPORTS ──────────────────────────────────────────────────────── */}
         {tab === 'reports' && (
-          <div className="section">
+          <>
             <div className="section-title">
               User Reports
               {reports.length > 0 && <span className="count-badge">{reports.length}</span>}
             </div>
-            <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-              {(['pending','reviewed','resolved','dismissed'] as const).map(s => (
-                <button key={s} onClick={() => loadReports(s)}
-                  style={{ padding: '5px 12px', borderRadius: 50, border: '1.5px solid var(--border)', background: 'var(--light)', fontFamily: 'Nunito,sans-serif', fontWeight: 700, fontSize: 12, cursor: 'pointer', color: 'var(--gray)' }}>
-                  {s}
+            <div className="filter-row">
+              {(['pending', 'reviewed', 'resolved', 'dismissed'] as const).map(s => (
+                <button
+                  key={s}
+                  className={`filter-btn${reportsStatus === s ? ' active' : ''}`}
+                  onClick={() => { setReportsStatus(s); loadReports(s) }}
+                >
+                  {s.charAt(0).toUpperCase() + s.slice(1)}
                 </button>
               ))}
             </div>
-            {reports.length === 0 ? (
+            {reportsLoading ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {[1, 2].map(i => <div key={i} className="skeleton" style={{ height: 120 }} />)}
+              </div>
+            ) : reports.length === 0 ? (
               <div className="empty">No reports in this status.</div>
             ) : reports.map((r: ReportRow) => (
-              <div key={r.id} className="card" style={{ marginBottom: 14 }}>
+              <div key={r.id} className="card">
                 <div className="card-header">
                   <div>
-                    <div className="listener-name">{r.type.replace(/_/g, ' ')}</div>
-                    <div className="listener-email">
+                    <div className="name-text">{r.type.replace(/_/g, ' ')}</div>
+                    <div className="meta-text">
                       From: {r.reporter?.name || '—'} · Against: {r.target?.name || 'unknown'}
                       {r.session_id && <> · <a href={`/session/${r.session_id}`} style={{ color: 'var(--teal)' }}>session</a></>}
                     </div>
                   </div>
-                  <div className="rate-badge" style={{ background: r.status === 'pending' ? 'var(--orange)' : 'var(--light)', color: r.status === 'pending' ? 'white' : 'var(--gray)' }}>
+                  <span className={`badge ${r.status === 'pending' ? 'badge-orange' : 'badge-gray'}`}>
                     {r.status}
-                  </div>
+                  </span>
                 </div>
-                <div className="bio-box">
-                  <div className="bio-text">{r.description}</div>
+                <div style={{ background: 'var(--light)', borderRadius: 10, padding: '10px 12px', marginBottom: 12 }}>
+                  <div style={{ fontSize: 13, color: '#4A6B7E', lineHeight: 1.6 }}>{r.description}</div>
                   <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 6, fontWeight: 600 }}>{fmtDate(r.created_at)}</div>
                 </div>
                 {r.status === 'pending' && (
-                  <div className="card-actions">
-                    <button className="btn-approve" style={{ background: 'var(--gray)' }} disabled={busy !== null}
-                      onClick={() => moderateReport(r.id, 'dismiss')}>
+                  <div className="action-row">
+                    <button className="btn btn-gray" disabled={busy !== null} onClick={() => moderateReport(r.id, 'dismiss')}>
                       {busy === `moderate:${r.id}:dismiss` ? '…' : 'Dismiss'}
                     </button>
-                    <button className="btn-approve" style={{ background: '#FF9933' }} disabled={busy !== null}
-                      onClick={() => moderateReport(r.id, 'warn', r.reported_user_id ?? undefined)}>
-                      {busy === `moderate:${r.id}:warn` ? '…' : '⚠ Warn'}
+                    <button className="btn btn-orange" disabled={busy !== null} onClick={() => moderateReport(r.id, 'warn', r.reported_user_id ?? undefined)}>
+                      {busy === `moderate:${r.id}:warn` ? '…' : 'Warn User'}
                     </button>
-                    <button className="btn-reject" disabled={busy !== null}
-                      onClick={() => moderateReport(r.id, 'suspend', r.reported_user_id ?? undefined)}>
-                      {busy === `moderate:${r.id}:suspend` ? '…' : '🚫 Suspend'}
+                    <button className="btn btn-red" disabled={busy !== null} onClick={() => moderateReport(r.id, 'suspend', r.reported_user_id ?? undefined)}>
+                      {busy === `moderate:${r.id}:suspend` ? '…' : 'Suspend User'}
                     </button>
                   </div>
                 )}
               </div>
             ))}
-          </div>
+          </>
         )}
 
-        {/* ── VERIFICATIONS TAB ── */}
+        {/* ─── PAYOUTS ──────────────────────────────────────────────────────── */}
+        {tab === 'payouts' && (
+          <>
+            <div className="section-title">
+              Pending Payout Requests
+              {payouts.length > 0 && <span className="count-badge">{payouts.length}</span>}
+            </div>
+            {kpis && payouts.length > 0 && (
+              <div style={{ background: 'white', border: '1.5px solid var(--border)', borderRadius: 12, padding: '12px 18px', marginBottom: 16, display: 'flex', gap: 32 }}>
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '.06em' }}>Total Pending</div>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--orange)' }}>{fmtRs(kpis.payouts.pendingAmountPaise)}</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '.06em' }}>Total Paid Out</div>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--navy)' }}>{fmtRs(kpis.payouts.totalPaidPaise)}</div>
+                </div>
+              </div>
+            )}
+            {payoutsLoading ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {[1, 2].map(i => <div key={i} className="skeleton" style={{ height: 72 }} />)}
+              </div>
+            ) : payouts.length === 0 ? (
+              <div className="empty">No pending payout requests — all clear!</div>
+            ) : payouts.map((p: PayoutRow) => (
+              <div key={p.id} style={{ background: 'white', border: '1.5px solid var(--border)', borderRadius: 16, padding: '16px 20px', marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--navy)' }}>{p.users?.name || '—'}</div>
+                  <div style={{ fontSize: 12, color: 'var(--gray)', fontWeight: 600, marginTop: 2 }}>
+                    {p.users?.email || ''}{p.created_at ? ` · Requested ${fmtDate(p.created_at)}` : ''}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--navy)' }}>₹{p.amount}</div>
+                  <button className="btn btn-teal" disabled={busy !== null} onClick={() => adminAction('complete_payout', p.id, `Marked ₹${p.amount} payout complete`)}>
+                    {busy === `complete_payout:${p.id}` ? 'Saving…' : 'Mark Paid'}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </>
+        )}
+
+        {/* ─── VERIFICATIONS ────────────────────────────────────────────────── */}
         {tab === 'verifications' && (
-          <div className="section">
+          <>
             <div className="section-title">
               Listener Verifications
               {verifs.length > 0 && <span className="count-badge">{verifs.length}</span>}
             </div>
-            <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-              {(['pending','approved','rejected'] as const).map(s => (
-                <button key={s} onClick={() => loadVerifs(s)}
-                  style={{ padding: '5px 12px', borderRadius: 50, border: '1.5px solid var(--border)', background: 'var(--light)', fontFamily: 'Nunito,sans-serif', fontWeight: 700, fontSize: 12, cursor: 'pointer', color: 'var(--gray)' }}>
-                  {s}
+            <div className="filter-row">
+              {(['pending', 'approved', 'rejected'] as const).map(s => (
+                <button
+                  key={s}
+                  className={`filter-btn${verifsStatus === s ? ' active' : ''}`}
+                  onClick={() => { setVerifsStatus(s); loadVerifs(s) }}
+                >
+                  {s.charAt(0).toUpperCase() + s.slice(1)}
                 </button>
               ))}
             </div>
-            {verifs.length === 0 ? (
+            {verifsLoading ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {[1, 2].map(i => <div key={i} className="skeleton" style={{ height: 120 }} />)}
+              </div>
+            ) : verifs.length === 0 ? (
               <div className="empty">No verifications in this status.</div>
             ) : verifs.map((v: VerificationRow) => (
-              <div key={v.id} className="card" style={{ marginBottom: 14 }}>
+              <div key={v.id} className="card">
                 <div className="card-header">
                   <div>
-                    <div className="listener-name">{v.full_name}</div>
-                    <div className="listener-email">{v.id_type.replace(/_/g, ' ')} · Submitted {fmtDate(v.submitted_at)}</div>
+                    <div className="name-text">{v.full_name}</div>
+                    <div className="meta-text">{v.id_type.replace(/_/g, ' ')} · Submitted {fmtDate(v.submitted_at)}</div>
                   </div>
-                  <div className="rate-badge">{v.status}</div>
+                  <span className={`badge ${v.status === 'pending' ? 'badge-orange' : v.status === 'approved' ? 'badge-green' : 'badge-red'}`}>
+                    {v.status}
+                  </span>
                 </div>
-                <div style={{ display: 'flex', gap: 10, marginBottom: 12 }}>
+                <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
                   {v.selfie_url && (
-                    <a href={v.selfie_url} target="_blank" rel="noopener" style={{ fontSize: 12, fontWeight: 700, color: 'var(--teal)' }}>📸 Selfie</a>
+                    <a href={v.selfie_url} target="_blank" rel="noopener" style={{ fontSize: 12, fontWeight: 700, color: 'var(--teal)' }}>Selfie</a>
                   )}
                   {v.id_doc_url && (
-                    <a href={v.id_doc_url} target="_blank" rel="noopener" style={{ fontSize: 12, fontWeight: 700, color: 'var(--teal)' }}>📄 ID Doc</a>
+                    <a href={v.id_doc_url} target="_blank" rel="noopener" style={{ fontSize: 12, fontWeight: 700, color: 'var(--teal)' }}>ID Document</a>
                   )}
                 </div>
                 {v.status === 'pending' && (
                   <>
                     <input
+                      className="reject-input"
                       placeholder="Rejection reason (optional)"
-                      value={rejectNotes[v.id] || ''}
-                      onChange={e => setRejectNotes(prev => ({ ...prev, [v.id]: e.target.value }))}
-                      style={{ width: '100%', padding: '8px 12px', border: '1.5px solid var(--border)', borderRadius: 10, fontFamily: 'Nunito,sans-serif', fontSize: 13, marginBottom: 10, outline: 'none', boxSizing: 'border-box' }}
+                      value={verifRejectNotes[v.id] || ''}
+                      onChange={e => setVerifRejectNotes(prev => ({ ...prev, [v.id]: e.target.value }))}
                     />
-                    <div className="card-actions">
-                      <button className="btn-approve" disabled={busy !== null}
-                        onClick={() => handleVerif(v.id, 'approve', v.listener_id)}>
-                        {busy === `verif:${v.id}:approve` ? 'Approving…' : '✓ Approve'}
+                    <div className="action-row">
+                      <button className="btn btn-green" disabled={busy !== null} onClick={() => handleVerif(v.id, 'approve', v.listener_id)}>
+                        {busy === `verif:${v.id}:approve` ? 'Approving…' : 'Approve'}
                       </button>
-                      <button className="btn-reject" disabled={busy !== null}
-                        onClick={() => handleVerif(v.id, 'reject', v.listener_id)}>
-                        {busy === `verif:${v.id}:reject` ? 'Rejecting…' : '✕ Reject'}
+                      <button className="btn btn-red" disabled={busy !== null} onClick={() => handleVerif(v.id, 'reject', v.listener_id)}>
+                        {busy === `verif:${v.id}:reject` ? 'Rejecting…' : 'Reject'}
                       </button>
                     </div>
                   </>
                 )}
+                {v.admin_notes && (
+                  <div style={{ marginTop: 8, fontSize: 12, color: 'var(--gray)', fontWeight: 600 }}>Note: {v.admin_notes}</div>
+                )}
               </div>
             ))}
-          </div>
+          </>
         )}
 
-        {tab !== 'main' && null}
-
-        {/* ── MAIN TAB ── */}
-        {tab === 'main' && <>
-
-        {/* Pending Listener Applications */}
-        <div className="section">
-          <div className="section-title">
-            Pending Listener Applications
-            {pendingListeners.length > 0 && (
-              <span className="count-badge">{pendingListeners.length}</span>
-            )}
-          </div>
-
-          {pendingListeners.length === 0 ? (
-            <div className="empty">No pending applications — all caught up!</div>
-          ) : pendingListeners.map((app: ListenerApplication) => {
-
-            const lp = app.listener_profiles
-            const u  = app.users
-            return (
-              <div key={app.id} className="card">
-                <div className="card-header">
-                  <div>
-                    <div className="listener-name">{u?.name || '—'}</div>
-                    <div className="listener-email">{u?.email || '—'}</div>
-                  </div>
-                  {lp?.rate_per_min && (
-                    <div className="rate-badge">₹{lp.rate_per_min}/min</div>
-                  )}
-                </div>
-
-                {lp?.bio && (
-                  <div className="bio-box">
-                    <div className="field-label">Bio</div>
-                    <div className="bio-text">
-                      {lp.bio.slice(0, 100)}{lp.bio.length > 100 ? '…' : ''}
-                    </div>
-                  </div>
-                )}
-
-                {(lp?.specialty_tags || []).length > 0 && (
-                  <div className="tags-row">
-                    {(lp?.specialty_tags ?? []).map((t: string) => (
-                      <span key={t} className="tag-badge">{t}</span>
-                    ))}
-                  </div>
-                )}
-
-                <div className="field-grid">
-                  {lp?.phone && (
-                    <div className="field">
-                      <div className="field-label">Phone</div>
-                      <div className="field-value">{lp.phone}</div>
-                    </div>
-                  )}
-                  {lp?.aadhaar_last4 && (
-                    <div className="field">
-                      <div className="field-label">Aadhaar (last 4)</div>
-                      <div className="field-value">XXXX-XXXX-{lp.aadhaar_last4}</div>
-                    </div>
-                  )}
-                  {lp?.bank_account && (
-                    <div className="field">
-                      <div className="field-label">Bank account</div>
-                      <div className="field-value">{lp.bank_account}</div>
-                    </div>
-                  )}
-                  {lp?.ifsc_code && (
-                    <div className="field">
-                      <div className="field-label">IFSC</div>
-                      <div className="field-value">{lp.ifsc_code}</div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="card-actions">
-                  <button
-                    className="btn-approve"
-                    disabled={busy !== null}
-                    onClick={() => doAction('approve_listener', app.user_id, `Approved ${u?.name || 'listener'}`)}
-                  >
-                    {busy === `approve_listener:${app.user_id}` ? 'Approving…' : '✓ Approve'}
-                  </button>
-                  <button
-                    className="btn-reject"
-                    disabled={busy !== null}
-                    onClick={() => doAction('reject_listener', app.user_id, `Rejected ${u?.name || 'listener'}`)}
-                  >
-                    {busy === `reject_listener:${app.user_id}` ? 'Rejecting…' : '✕ Reject'}
-                  </button>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-
-        {/* Listener applications pagination */}
-        {lpTotal > PAGE_SIZE && (
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:8,marginBottom:8}}>
-            <button style={{background:'var(--light)',border:'1.5px solid var(--border)',borderRadius:10,padding:'8px 16px',fontFamily:'Nunito,sans-serif',fontWeight:700,fontSize:13,cursor:'pointer',color:'var(--navy)'}} disabled={lpPage===0} onClick={()=>{ const p=lpPage-1; setLpPage(p); loadData(p,prPage) }}>← Prev</button>
-            <span style={{fontSize:13,color:'var(--gray)',fontWeight:600}}>{lpPage*PAGE_SIZE+1}–{Math.min((lpPage+1)*PAGE_SIZE,lpTotal)} of {lpTotal}</span>
-            <button style={{background:'var(--light)',border:'1.5px solid var(--border)',borderRadius:10,padding:'8px 16px',fontFamily:'Nunito,sans-serif',fontWeight:700,fontSize:13,cursor:'pointer',color:'var(--navy)'}} disabled={(lpPage+1)*PAGE_SIZE>=lpTotal} onClick={()=>{ const p=lpPage+1; setLpPage(p); loadData(p,prPage) }}>Next →</button>
-          </div>
-        )}
-
-        {/* Pending Payouts */}
-        <div className="section">
-          <div className="section-title">
-            Pending Payout Requests
-            {pendingPayouts.length > 0 && (
-              <span className="count-badge">{pendingPayouts.length}</span>
-            )}
-          </div>
-
-          {pendingPayouts.length === 0 ? (
-            <div className="empty">No pending payouts — all clear!</div>
-          ) : pendingPayouts.map((p: PayoutRequest) => (
-            <div key={p.id} className="payout-card">
-              <div className="payout-info">
-                <div className="payout-name">{p.users?.name || '—'}</div>
-                <div className="payout-meta">
-                  {p.users?.email || ''}{p.created_at ? ` · Requested ${fmtDate(p.created_at)}` : ''}
-                </div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                <div className="payout-amount">₹{p.amount}</div>
-                <button
-                  className="btn-complete"
-                  disabled={busy !== null}
-                  onClick={() => doAction('complete_payout', p.id, `Marked ₹${p.amount} payout complete`)}
-                >
-                  {busy === `complete_payout:${p.id}` ? 'Saving…' : 'Mark Complete'}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-        {/* Payout pagination */}
-        {prTotal > PAGE_SIZE && (
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:8,marginBottom:8}}>
-            <button style={{background:'var(--light)',border:'1.5px solid var(--border)',borderRadius:10,padding:'8px 16px',fontFamily:'Nunito,sans-serif',fontWeight:700,fontSize:13,cursor:'pointer',color:'var(--navy)'}} disabled={prPage===0} onClick={()=>{ const p=prPage-1; setPrPage(p); loadData(lpPage,p) }}>← Prev</button>
-            <span style={{fontSize:13,color:'var(--gray)',fontWeight:600}}>{prPage*PAGE_SIZE+1}–{Math.min((prPage+1)*PAGE_SIZE,prTotal)} of {prTotal}</span>
-            <button style={{background:'var(--light)',border:'1.5px solid var(--border)',borderRadius:10,padding:'8px 16px',fontFamily:'Nunito,sans-serif',fontWeight:700,fontSize:13,cursor:'pointer',color:'var(--navy)'}} disabled={(prPage+1)*PAGE_SIZE>=prTotal} onClick={()=>{ const p=prPage+1; setPrPage(p); loadData(lpPage,p) }}>Next →</button>
-          </div>
-        )}
-
-        {/* Refund Requests */}
-        <div className="section">
-          <div className="section-title">
-            Refund Requests
-            {refundRequests.length > 0 && <span className="count-badge">{refundRequests.length}</span>}
-          </div>
-          {refundRequests.length === 0 ? (
-            <div className="empty">No pending refund requests!</div>
-          ) : refundRequests.map((r: RefundRequest) => (
-            <div key={r.id} className="payout-card">
-              <div className="payout-info">
-                <div className="payout-name">{r.users?.name || '—'}</div>
-                <div className="payout-meta">{r.users?.email || ''}{r.reason ? ` · "${r.reason}"` : ''}{r.created_at ? ` · ${fmtDate(r.created_at)}` : ''}</div>
-              </div>
-              <div style={{display:'flex',alignItems:'center',gap:14}}>
-                <div className="payout-amount">₹{r.amount}</div>
-                <button className="btn-complete" disabled={busy !== null} onClick={() => doAction('complete_refund', r.id, `Refund ₹${r.amount} marked complete`)}>
-                  {busy === `complete_refund:${r.id}` ? 'Saving…' : 'Mark Refunded'}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-        </>}
       </div>
 
       {toast && <div className="toast">{toast}</div>}

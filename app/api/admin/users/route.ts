@@ -1,0 +1,162 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const PAGE_SIZE = 25
+
+async function requireAdmin() {
+  const supabase = createServerSupabaseClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Unauthenticated', status: 401, user: null }
+  const adminEmail = process.env.ADMIN_EMAIL
+  if (adminEmail) {
+    if (user.email !== adminEmail) return { error: 'Forbidden', status: 403, user: null }
+  } else {
+    const admin = createAdminClient()
+    const { data: dbUser } = await admin.from('users').select('is_admin').eq('id', user.id).single()
+    if (!dbUser?.is_admin) return { error: 'Forbidden', status: 403, user: null }
+  }
+  return { error: null, status: 200, user }
+}
+
+// GET — list users or listeners with pagination + filter
+// Query params: ?type=user|listener&status=active|inactive|suspended|pending&page=0&search=
+export async function GET(req: NextRequest) {
+  const { error, status } = await requireAdmin()
+  if (error) return NextResponse.json({ error }, { status })
+
+  const sb = createAdminClient()
+  const url = new URL(req.url)
+  const type = url.searchParams.get('type') || 'user'
+  const userStatus = url.searchParams.get('status') || 'all'
+  const page = Math.max(0, parseInt(url.searchParams.get('page') || '0'))
+  const search = url.searchParams.get('search') || ''
+
+  try {
+    if (type === 'listener') {
+      let query = sb.from('listener_profiles')
+        .select(`
+          user_id, bio, topics, rate_per_min, rating, total_sessions,
+          is_active, is_approved, is_available, is_verified, is_suspended,
+          created_at,
+          users!inner(id, name, email, created_at, is_active, is_suspended, wallet_balance)
+        `, { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)
+
+      if (userStatus === 'pending') query = query.eq('is_approved', false).eq('is_active', false)
+      else if (userStatus === 'active') query = query.eq('is_active', true).eq('is_approved', true)
+      else if (userStatus === 'suspended') query = query.eq('is_suspended', true)
+
+      if (search) {
+        // search on joined users table
+        query = query.ilike('users.name', `%${search}%`)
+      }
+
+      const { data, count, error: qErr } = await query
+      if (qErr) throw qErr
+      return NextResponse.json({ items: data ?? [], total: count ?? 0, page, type: 'listener' })
+    }
+
+    // Regular users
+    let query = sb.from('users')
+      .select('id, name, email, created_at, is_active, is_suspended, wallet_balance, updated_at', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)
+
+    if (userStatus === 'active') query = query.eq('is_active', true).eq('is_suspended', false)
+    else if (userStatus === 'inactive') query = query.eq('is_active', false)
+    else if (userStatus === 'suspended') query = query.eq('is_suspended', true)
+
+    if (search) query = query.ilike('name', `%${search}%`)
+
+    const { data, count, error: qErr } = await query
+    if (qErr) throw qErr
+    return NextResponse.json({ items: data ?? [], total: count ?? 0, page, type: 'user' })
+  } catch (err) {
+    logger.error('Admin users GET error:', { error: err instanceof Error ? err.message : String(err) })
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+  }
+}
+
+// PATCH — user management actions
+// Body: { userId, action: 'activate'|'deactivate'|'suspend'|'ban'|'unsuspend'|'approve_listener'|'reject_listener', notes? }
+export async function PATCH(req: NextRequest) {
+  const { error, status, user } = await requireAdmin()
+  if (error) return NextResponse.json({ error }, { status })
+
+  let body: { userId?: string; action?: string; notes?: string }
+  try {
+    body = await req.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+  }
+
+  const { userId, action, notes } = body
+  if (!userId || !UUID_RE.test(userId)) return NextResponse.json({ error: 'Invalid userId' }, { status: 400 })
+
+  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'approve_listener', 'reject_listener']
+  if (!action || !validActions.includes(action)) return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
+
+  const sb = createAdminClient()
+
+  try {
+    switch (action) {
+      case 'approve_listener':
+        await sb.from('listener_profiles').update({ is_approved: true, is_active: true }).eq('user_id', userId)
+        await sb.from('listener_applications').update({ status: 'approved' }).eq('user_id', userId).then(() => {}, () => {})
+        await sb.from('notifications').insert({
+          user_id: userId,
+          type: 'verification_update',
+          title: 'Application approved!',
+          body: 'Congratulations! Your listener application has been approved. Set your availability and start taking sessions.',
+          action_url: '/dashboard',
+        }).then(() => {}, () => {})
+        break
+
+      case 'reject_listener':
+        await sb.from('listener_profiles').update({ is_approved: false, is_active: false }).eq('user_id', userId)
+        await sb.from('listener_applications').update({ status: 'rejected' }).eq('user_id', userId).then(() => {}, () => {})
+        await sb.from('notifications').insert({
+          user_id: userId,
+          type: 'verification_update',
+          title: 'Application update',
+          body: notes || 'Your listener application needs revision. Please contact support for details.',
+          action_url: '/become-listener/status',
+        }).then(() => {}, () => {})
+        break
+
+      case 'suspend':
+      case 'ban':
+        await sb.from('users').update({ is_suspended: true, is_active: false }).eq('id', userId)
+        await sb.from('listener_profiles').update({ is_active: false, is_available: false }).eq('user_id', userId)
+        await sb.auth.admin.signOut(userId, 'global').then(() => {}, () => {})
+        break
+
+      case 'unsuspend':
+        await sb.from('users').update({ is_suspended: false, is_active: true }).eq('id', userId)
+        await sb.from('listener_profiles').update({ is_active: true }).eq('user_id', userId)
+        break
+
+      case 'deactivate':
+        await sb.from('users').update({ is_active: false }).eq('id', userId)
+        break
+
+      case 'activate':
+        await sb.from('users').update({ is_active: true }).eq('id', userId)
+        break
+    }
+
+    await sb.from('admin_audit_logs').insert({
+      admin_id: user!.id,
+      action: `user_${action}`,
+      target_id: userId,
+    }).then(() => {}, () => {})
+
+    return NextResponse.json({ ok: true })
+  } catch (err) {
+    logger.error('Admin users PATCH error:', { error: err instanceof Error ? err.message : String(err) })
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+  }
+}
