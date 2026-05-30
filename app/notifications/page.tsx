@@ -161,7 +161,8 @@ export default function NotificationsPage() {
         ) : notifs.length === 0 ? (
           <div className="empty">
             <div style={{ fontSize: 40, marginBottom: 12 }}>🔔</div>
-            No notifications yet
+            <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 8, color: '#0F4867' }}>All caught up!</div>
+            <div style={{ fontSize: 14, color: '#5A7A8A', lineHeight: 1.6 }}>Notifications about your sessions and account will appear here.</div>
           </div>
         ) : (
           <>

@@ -23,9 +23,9 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
-    // 3 reports per hour per user — prevents spam
-    if (!checkRateLimit(`report:${user.id}`, 3, 60 * 60_000)) {
-      return NextResponse.json({ error: 'Too many reports. Please wait before submitting another.' }, { status: 429 })
+    // SECURITY: 5 reports per day per user — prevents spam
+    if (!checkRateLimit(`report:${user.id}`, 5, 86_400_000)) {
+      return NextResponse.json({ error: 'Too many reports. You can submit up to 5 reports per day.' }, { status: 429 })
     }
 
     const { reportedUserId, sessionId, type, description } = await req.json()

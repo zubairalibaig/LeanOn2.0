@@ -95,10 +95,10 @@ export default function HistoryPage() {
             <div style={{fontSize:48,marginBottom:16}}>📋</div>
             <h3 style={{fontSize:18,fontWeight:800,marginBottom:8}}>No sessions yet</h3>
             <p style={{fontSize:14,color:'var(--gray)',fontWeight:500,marginBottom:24,lineHeight:1.6}}>
-              Your past sessions will appear here. Start your first free 5-min chat today.
+              You haven&apos;t had a session yet. Your first 5 minutes are free — start now!
             </p>
             <button onClick={() => router.push('/browse')} style={{background:'var(--orange)',color:'white',border:'none',borderRadius:50,padding:'12px 28px',fontFamily:'Nunito,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer'}}>
-              Browse listeners →
+              Find a listener →
             </button>
           </div>
         ) : sessions.map(s => (

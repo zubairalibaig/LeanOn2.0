@@ -11,9 +11,9 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await userSb.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
-  // 3 payout requests per hour — prevents double-submission spam
-  if (!checkRateLimit(`payout:${user.id}`, 3, 60 * 60_000)) {
-    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  // SECURITY: 1 payout request per 7 days — prevents spam and abuse
+  if (!checkRateLimit(`payout:${user.id}`, 1, 7 * 24 * 60 * 60_000)) {
+    return NextResponse.json({ error: 'You can only request a payout once per week. Please try again later.' }, { status: 429 })
   }
 
   const sb = createAdminClient()

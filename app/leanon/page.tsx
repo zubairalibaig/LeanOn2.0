@@ -272,6 +272,50 @@ export default function LeanOnBrandPage() {
           ))}
         </div>
 
+        {/* LeanOn vs Lean On (the song) — disambiguation */}
+        <div className="section">
+          <h2>LeanOn vs &ldquo;Lean On&rdquo; — The App vs The Song</h2>
+          <p>If you found us while searching for the Major Lazer song &ldquo;Lean On&rdquo; — welcome! You&apos;ve found something different (and arguably more useful).</p>
+          <table style={{width:'100%',borderCollapse:'collapse',marginTop:12,marginBottom:16}}>
+            <thead>
+              <tr>
+                <th style={{textAlign:'left',padding:'10px 12px',background:'var(--light)',border:'1.5px solid var(--border)',fontWeight:800,color:'var(--navy)',fontSize:13}}>Feature</th>
+                <th style={{textAlign:'center',padding:'10px 12px',background:'rgba(255,153,51,0.1)',border:'1.5px solid var(--border)',fontWeight:800,color:'var(--navy)',fontSize:13}}>LeanOn (the app)</th>
+                <th style={{textAlign:'center',padding:'10px 12px',background:'var(--light)',border:'1.5px solid var(--border)',fontWeight:800,color:'var(--gray)',fontSize:13}}>&ldquo;Lean On&rdquo; (the song)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                ['What is it?', 'Peer support platform for India', 'Dance/pop song by Major Lazer & DJ Snake'],
+                ['Can it help you?', 'Yes — real humans, real conversations', 'Emotionally, maybe. Practically, no'],
+                ['Available in India?', 'Yes — 24/7, across all cities', 'On all streaming platforms'],
+                ['Free to try?', 'Yes — first 5 minutes free', 'Yes — it is just a song'],
+                ['Will you feel better?', 'Very likely', 'Depends on your taste in music'],
+              ].map(([f, a, b], i) => (
+                <tr key={i}>
+                  <td style={{padding:'10px 12px',border:'1px solid var(--border)',fontSize:13,fontWeight:600,color:'var(--navy)'}}>{f}</td>
+                  <td style={{padding:'10px 12px',border:'1px solid var(--border)',fontSize:13,color:'#276749',fontWeight:700,textAlign:'center'}}>{a}</td>
+                  <td style={{padding:'10px 12px',border:'1px solid var(--border)',fontSize:13,color:'var(--gray)',fontWeight:500,textAlign:'center'}}>{b}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p style={{fontSize:13,color:'var(--gray)'}}>Bottom line: &ldquo;Lean On&rdquo; (the song) is catchy. LeanOn (this app) is where you actually lean on a real person when life gets hard. Both have their place — but only one can help you through a rough night.</p>
+
+          <h3>More FAQs: LeanOn App vs The Song</h3>
+          {[
+            { q: 'Is LeanOn the app or the song?', a: 'LeanOn is an app — India\'s peer support platform. The song "Lean On" is by Major Lazer and DJ Snake. We share the same phrase but are entirely unrelated.' },
+            { q: 'What does "lean on" mean in the LeanOn app context?', a: 'In the app, "lean on" means finding a real human you can emotionally rely on during hard times. A peer listener who has been through what you\'re going through and can offer genuine understanding — not advice, not therapy, just presence.' },
+            { q: 'Is LeanOn an app review or a song?', a: 'LeanOn is a peer support app — read user reviews on our website. If you\'re looking for the "Lean On" song review, that\'s a different (and very catchy) song.' },
+            { q: 'What is "leanon app" India?', a: 'LeanOn is India\'s peer emotional support app — you can talk to real listeners about anxiety, loneliness, burnout, relationships, and more. First 5 minutes free, available 24/7.' },
+          ].map((f, i) => (
+            <div key={i} className="faq-item" style={{marginTop: i === 0 ? 16 : 0}}>
+              <div className="faq-q">{f.q}</div>
+              <div className="faq-a">{f.a}</div>
+            </div>
+          ))}
+        </div>
+
         {/* Related */}
         <div className="section">
           <h2>Learn More About LeanOn</h2>

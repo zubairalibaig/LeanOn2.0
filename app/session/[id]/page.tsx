@@ -217,13 +217,10 @@ function SessionContent() {
   const completedRef    = useRef(false)
   const [crisisAlert, setCrisisAlert] = useState(false)
   const [reconnectTick, setReconnectTick] = useState(0)
-  // Agora SDK is a dynamic import; store as opaque interface to avoid any
-  const agoraRef    = useRef<{
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    client: any
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    micTrack: any
-  } | null>(null)
+  // Agora SDK is a dynamic import; typed with eslint-disable to avoid any
+  // The SDK types conflict with our interface due to UID return type from join()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const agoraRef    = useRef<{ client: any; micTrack: any } | null>(null)
 
   function playBeep() {
     try {

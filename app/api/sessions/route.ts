@@ -10,6 +10,7 @@ const VALID_SESSION_TYPES = ['text', 'voice'] as const
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 // POST — create session + deduct wallet atomically
+// SECURITY: auth required — user context for auth check, admin client for atomic DB operations
 export async function POST(req: NextRequest) {
   try {
     const { listenerId, durationMins, sessionType } = await req.json()
@@ -159,6 +160,7 @@ export async function POST(req: NextRequest) {
 }
 
 // PATCH — complete session + credit listener + update rating average
+// SECURITY: auth required — admin client required for wallet deduction, must bypass RLS for atomic operation
 export async function PATCH(req: NextRequest) {
   try {
     const { sessionId, rating } = await req.json()

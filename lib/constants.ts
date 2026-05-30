@@ -4,6 +4,12 @@ export const MAX_LISTENER_RATE  = 25   // ₹/min
 export const FREE_SESSION_MINS  = 5
 export const MAX_FREE_TRIALS    = 5    // each user gets 5 free 5-min trials (try multiple listeners)
 export const SESSION_DURATIONS  = [5, 15, 30, 45] as const
+export const RECHARGE_AMOUNTS   = [200, 500, 1000, 2000] as const
+export const UUID_RE            = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+export const CRISIS_RESOURCES   = {
+  NIMHANS:     { name: 'NIMHANS',     number: '080-46110007', tel: '08046110007' },
+  TELE_MANAS:  { name: 'Tele-MANAS', number: '14416',        tel: '14416'       },
+} as const
 
 export const LANGUAGES = [
   { id: 'english',   label: 'English' },

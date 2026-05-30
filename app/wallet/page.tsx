@@ -216,6 +216,13 @@ export default function WalletPage() {
           {loading || paymentPending ? <span className="spin">⟳</span> : `Recharge ₹${selected} →`}
         </button>
 
+        {transactions.length === 0 && balance !== null && (
+          <div style={{background:'white',borderRadius:16,padding:'24px',textAlign:'center',marginBottom:24,border:'1.5px solid var(--border)'}}>
+            <div style={{fontSize:32,marginBottom:8}}>💳</div>
+            <div style={{fontSize:14,color:'var(--gray)',fontWeight:600,lineHeight:1.6}}>No transactions yet. Your payment history will appear here after your first top-up or session.</div>
+          </div>
+        )}
+
         {transactions.length > 0 && (
           <>
             <div className="section-title">Recent transactions</div>

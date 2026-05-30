@@ -14,6 +14,7 @@ function getRzp() {
 }
 
 // POST — create Razorpay order (requires auth)
+// SECURITY: auth required — user context for auth check, admin client for atomic wallet credit
 export async function POST(req: NextRequest) {
   try {
     const rzp = getRzp()
