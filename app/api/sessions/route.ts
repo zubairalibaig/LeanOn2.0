@@ -210,7 +210,45 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ success: true })
     }
 
-    const listenerEarning = session.amount_held - (session.platform_fee ?? 0)
+    // Calculate actual duration and pro-rate (Item 27: harassment eject / early session refund)
+    const endedAt = completed.ended_at ?? new Date().toISOString()
+    const actualMins = Math.max(0, Math.floor(
+      (new Date(endedAt).getTime() - new Date(session.started_at).getTime()) / 60_000
+    ))
+    const bookedMins = session.duration_mins as number
+    const baseListenerEarning = session.amount_held - (session.platform_fee ?? 0)
+
+    // If session ended in < 1 minute: full refund to seeker, no listener earnings
+    // If partial: pro-rate based on actual vs booked minutes
+    let listenerEarning: number
+    let refundAmount = 0
+    if (session.is_free_trial) {
+      listenerEarning = 0
+    } else if (actualMins < 1) {
+      listenerEarning = 0
+      refundAmount = session.amount_held
+    } else if (actualMins < bookedMins) {
+      // Pro-rate
+      listenerEarning = Math.floor(baseListenerEarning * actualMins / bookedMins)
+      refundAmount = session.amount_held - listenerEarning - (session.platform_fee ?? 0)
+      refundAmount = Math.max(0, refundAmount)
+    } else {
+      listenerEarning = baseListenerEarning
+    }
+
+    // Issue refund to seeker if applicable
+    if (refundAmount > 0 && !session.is_free_trial) {
+      await sb.rpc('credit_wallet', { p_user_id: session.seeker_id, p_amount: refundAmount })
+        .then(() => {}, () => {})
+      await sb.from('wallet_transactions').insert({
+        user_id: session.seeker_id,
+        amount: refundAmount,
+        type: 'refund',
+        description: actualMins < 1 ? 'Session refund (ended < 1 min)' : `Session refund (${actualMins}/${bookedMins} min used)`,
+        session_id: sessionId,
+      }).then(() => {}, () => {})
+    }
+
     if (listenerEarning > 0 && !session.is_free_trial) {
       const { error: creditErr } = await sb.rpc('credit_wallet', {
         p_user_id: session.listener_id,

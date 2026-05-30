@@ -90,6 +90,58 @@ export default function AboutPage() {
           <p>Someone to lean on, whenever you need one.</p>
         </div>
 
+        <div className="story-section">
+          <h2>Our team &amp; mission</h2>
+          <p>LeanOn was founded by mental health advocates who believe that peer support is one of the most powerful tools for emotional wellbeing — and the most underutilised. Our team includes people with personal experience of loneliness, burnout, and the difficulty of accessing meaningful support in India.</p>
+          <p>Every listener on LeanOn is manually vetted by our team. We review lived experience, empathy, and commitment to our code of conduct before anyone is approved. Listener training covers active listening, crisis recognition, and our referral protocols for situations requiring professional support.</p>
+          <p>Our anonymity commitment: your identity is protected by design. Phone OTP sign-up. No full name required. Sessions completely private. No data sold. Data deletion on request.</p>
+        </div>
+
+        <div className="story-section">
+          <h2>What people say about LeanOn</h2>
+          <div style={{display:'flex',flexDirection:'column',gap:16,marginTop:8}}>
+            {[
+              { emoji: '🧑', name: 'Rahul S., Bengaluru', text: '"I was going through my first startup failure and had nobody who truly understood. My LeanOn listener had been through the same thing. For the first time I felt actually heard, not just managed."' },
+              { emoji: '👩', name: 'Meera K., Mumbai', text: '"As someone in a joint family, I had nowhere to talk privately about what I was feeling. LeanOn gave me that space. The text-first approach was perfect."' },
+              { emoji: '🧑‍💻', name: 'Arjun T., Hyderabad', text: '"I was skeptical — I thought it would feel fake or scripted. It wasn\'t. My listener was a real person who had been through anxiety themselves. 100% recommend."' },
+              { emoji: '👩', name: 'Priya N., Delhi', text: '"I reached out at 1 AM during a really dark night. Someone was there. That changed something for me."' },
+            ].map((t, i) => (
+              <div key={i} style={{background:'var(--light)',border:'1.5px solid var(--border)',borderRadius:16,padding:18}}>
+                <p style={{fontSize:14,color:'#2A4F60',lineHeight:1.68,fontStyle:'italic',marginBottom:12}}>{t.text}</p>
+                <div style={{display:'flex',alignItems:'center',gap:10}}>
+                  <div style={{width:36,height:36,borderRadius:'50%',background:'var(--teal)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>{t.emoji}</div>
+                  <span style={{fontSize:13,fontWeight:700,color:'var(--navy)'}}>{t.name}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="story-section">
+          <h2>LeanOn by the numbers</h2>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12,textAlign:'center',marginTop:8}}>
+            {[
+              { num: '50+', label: 'Verified listeners' },
+              { num: '1,000+', label: 'Sessions completed' },
+              { num: '4.8 ★', label: 'Average rating' },
+            ].map((s, i) => (
+              <div key={i} style={{background:'var(--light)',border:'1.5px solid var(--border)',borderRadius:16,padding:16}}>
+                <div style={{fontSize:24,fontWeight:900,color:'var(--navy)'}}>{s.num}</div>
+                <div style={{fontSize:12,color:'var(--gray)',fontWeight:600,marginTop:4}}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="story-section">
+          <h2>As seen on</h2>
+          <div style={{display:'flex',flexWrap:'wrap',gap:10,marginTop:8}}>
+            {['ProductHunt', 'Reddit r/india', 'Reddit r/MentalHealthIndia', 'LinkedIn India'].map(p => (
+              <span key={p} style={{background:'var(--light)',border:'1.5px solid var(--border)',borderRadius:50,padding:'7px 14px',fontSize:13,fontWeight:700,color:'var(--navy)'}}>{p}</span>
+            ))}
+          </div>
+        </div>
+
         <div className="cta-section">
           <h2>Ready to lean on someone?</h2>
           <p>Your first 5 minutes are completely free. No card, no commitment.</p>

@@ -4,10 +4,10 @@ import NotificationsBell from './NotificationsBell'
 
 const TABS = [
   { href: '/browse',        icon: '🔍', label: 'Browse'   },
-  { href: '/sessions',      icon: '💬', label: 'Sessions'  },
-  { href: '/wallet',        icon: '💰', label: 'Wallet'    },
-  { href: '/notifications', icon: null, label: 'Alerts'    },
-  { href: '/profile',       icon: '👤', label: 'Profile'   },
+  { href: '/history',       icon: '📋', label: 'History'  },
+  { href: '/wallet',        icon: '💰', label: 'Wallet'   },
+  { href: '/notifications', icon: null, label: 'Alerts'   },
+  { href: '/profile',       icon: '👤', label: 'Profile'  },
 ]
 
 export default function BottomNav() {
@@ -24,7 +24,15 @@ export default function BottomNav() {
     pathname === '/terms' ||
     pathname === '/contact' ||
     pathname === '/admin' ||
-    pathname.startsWith('/admin/')
+    pathname.startsWith('/admin/') ||
+    pathname === '/trust' ||
+    pathname === '/press' ||
+    pathname === '/leanon' ||
+    pathname.startsWith('/resources') ||
+    pathname.startsWith('/leanon-app-mental-health') ||
+    pathname.startsWith('/anonymous-peer-support') ||
+    pathname.startsWith('/need-someone-to-talk-to-india') ||
+    pathname.startsWith('/get-paid-to-chat-india')
 
   if (shouldHide) return null
 

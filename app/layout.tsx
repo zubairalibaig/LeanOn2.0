@@ -118,6 +118,20 @@ const jsonLd = {
   ],
 }
 
+const webAppJsonLd = {
+  "@context": "https://schema.org",
+  "@type": ["WebApplication", "HealthAndBeautyBusiness"],
+  "name": "LeanOn",
+  "url": "https://www.leanon.app",
+  "applicationCategory": "HealthApplication",
+  "operatingSystem": "Web",
+  "description": "LeanOn is India's peer emotional support platform. Talk to trained active listeners — not AI, not therapists — real humans with lived experience.",
+  "serviceType": "Peer Emotional Support",
+  "audience": { "@type": "Audience", "audienceType": "Adults in India experiencing loneliness, anxiety, grief, burnout, or relationship stress" },
+  "areaServed": { "@type": "Country", "name": "India" },
+  "offers": { "@type": "Offer", "priceCurrency": "INR", "price": "0", "description": "First 5 minutes free" }
+}
+
 const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -128,6 +142,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }}
+        />
+        <meta name="theme-color" content="#1A8FA0" />
+        <link rel="apple-touch-icon" href="/icon-192.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="LeanOn" />
         {/* Google Analytics — set NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX in Vercel */}
         {GA_ID && (
           <>

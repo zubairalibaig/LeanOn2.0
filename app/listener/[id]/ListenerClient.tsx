@@ -97,6 +97,9 @@ export default function ListenerClient({ id }: { id: string }) {
   const [loading,  setLoading]  = useState(false)
   const [userId,   setUserId]   = useState<string|null>(null)
   const [notFound, setNotFound] = useState(false)
+  const [isBooking, setIsBooking] = useState(false)
+  const [showInsufficient, setShowInsufficient] = useState(false)
+  const [bookError, setBookError] = useState<string | null>(null)
 
   useEffect(() => {
     client.from('listener_profiles')
@@ -151,30 +154,46 @@ export default function ListenerClient({ id }: { id: string }) {
   const cost   = duration === 5 ? 0 : listener.rate_per_min * duration + PLATFORM_FEE
   const canPay = duration === 5 || balance >= cost
 
+  const ERROR_MESSAGES: Record<string, string> = {
+    listener_unavailable: 'This listener is currently unavailable.',
+    listener_offline: 'This listener is offline right now.',
+    listener_busy: 'This listener is in a session. Please try again shortly.',
+    already_in_session: 'You already have an active session.',
+    insufficient_balance: 'Your wallet balance is too low. Top up to continue.',
+    free_trial_used: "You've used your free trial. Recharge your wallet to continue.",
+  }
+
   async function book() {
     if (!userId) { router.push('/auth'); return }
-    if (!canPay) { router.push('/wallet'); return }
-    setLoading(true)
-    const res = await fetch('/api/sessions', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ listenerId: id, durationMins: duration, sessionType: type }),
-    })
-    const data = await res.json()
-    setLoading(false)
-    if (data.error === 'insufficient_balance') { router.push('/wallet'); return }
-    if (data.error === 'free_trial_used') { alert(data.message || 'You have already used your free trial.'); return }
-    if (data.error === 'listener_busy') { alert(data.message || 'Listener is currently in a session. Please try again shortly.'); return }
-    if (data.error === 'already_in_session') {
-      if (data.sessionId) {
-        router.push(`/session/${data.sessionId}?duration=${duration}&type=${type}`)
-      } else {
-        alert(data.message || 'You already have an active session.')
+    // Double-click guard
+    if (isBooking) return
+    // Client-side balance check
+    if (duration !== 5 && balance < cost) { setShowInsufficient(true); return }
+    setIsBooking(true)
+    setBookError(null)
+    try {
+      const res = await fetch('/api/sessions', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ listenerId: id, durationMins: duration, sessionType: type }),
+      })
+      const data = await res.json()
+      if (data.error) {
+        if (data.error === 'already_in_session' && data.sessionId) {
+          router.push(`/session/${data.sessionId}?duration=${duration}&type=${type}`)
+          return
+        }
+        if (data.error === 'insufficient_balance') { setShowInsufficient(true); return }
+        setBookError(ERROR_MESSAGES[data.error] || data.message || 'Something went wrong. Please try again.')
+        return
       }
-      return
-    }
-    if (data.sessionId) {
-      router.push(`/session/${data.sessionId}?name=${encodeURIComponent(listener?.name ?? '')}&duration=${duration}&type=${type}`)
+      if (data.sessionId) {
+        router.push(`/session/${data.sessionId}?name=${encodeURIComponent(listener?.name ?? '')}&duration=${duration}&type=${type}`)
+      }
+    } catch {
+      setBookError('Network error. Please check your connection and try again.')
+    } finally {
+      setIsBooking(false)
     }
   }
 
@@ -232,9 +251,25 @@ export default function ListenerClient({ id }: { id: string }) {
         )}
       </div>
 
+      {showInsufficient && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.5)',zIndex:200,display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
+          <div style={{background:'white',borderRadius:'20px 20px 0 0',padding:24,width:'100%',maxWidth:480,fontFamily:'Nunito,sans-serif'}}>
+            <div style={{fontSize:24,marginBottom:12}}>💰</div>
+            <div style={{fontSize:18,fontWeight:900,color:'#0F4867',marginBottom:8}}>Insufficient Balance</div>
+            <div style={{fontSize:14,color:'#5A7A8A',marginBottom:20,lineHeight:1.6}}>
+              Your wallet has ₹{balance}. This session costs ₹{cost}. You need ₹{cost - balance} more.
+            </div>
+            <div style={{display:'flex',gap:10}}>
+              <button onClick={()=>setShowInsufficient(false)} style={{flex:1,padding:13,background:'white',border:'1.5px solid #D5EEF6',borderRadius:12,fontFamily:'Nunito,sans-serif',fontWeight:700,cursor:'pointer'}}>Cancel</button>
+              <a href="/wallet" style={{flex:1}}><button style={{width:'100%',padding:13,background:'#FF9933',color:'white',border:'none',borderRadius:12,fontFamily:'Nunito,sans-serif',fontWeight:800,cursor:'pointer'}}>Top Up Wallet →</button></a>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="book-bar">
-        {!canPay && duration !== 5 && (
-          <div className="wallet-warn">⚠️ Your wallet (₹{balance}) needs ₹{cost-balance} more. <a href="/wallet" style={{color:'var(--teal)'}}>Recharge →</a></div>
+        {bookError && (
+          <div className="wallet-warn">{bookError}</div>
         )}
         <div className="book-opts">
           {([5,15,30,45] as const).map(d => (
@@ -249,9 +284,14 @@ export default function ListenerClient({ id }: { id: string }) {
           <button className={`type-btn${type==='text'?' sel':''}`} onClick={()=>setType('text')}>💬 Text chat</button>
           <button className={`type-btn${type==='voice'?' sel':''}`} onClick={()=>setType('voice')}>🎙️ Voice call</button>
         </div>
-        <button className="btn-book" onClick={book} disabled={loading}>
-          {loading ? <span className="spin">⟳</span>
-            : duration===5 ? 'Start free 5-min chat →'
+        {duration === 5 && (
+          <div style={{background:'rgba(52,199,89,.1)',border:'1px solid rgba(52,199,89,.3)',borderRadius:10,padding:'8px 12px',fontSize:12,fontWeight:700,color:'#166534',marginBottom:8,textAlign:'center'}}>
+            ✅ No payment needed — completely free for 5 minutes
+          </div>
+        )}
+        <button className="btn-book" onClick={book} disabled={isBooking}>
+          {isBooking ? <span className="spin">⟳</span>
+            : duration===5 ? '🎁 Try Free — 5 min, no payment needed →'
             : `Book ${duration}-min ${type} — ₹${cost} →`}
         </button>
       </div>
