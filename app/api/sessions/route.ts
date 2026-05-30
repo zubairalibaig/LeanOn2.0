@@ -4,6 +4,7 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { PLATFORM_FEE, FREE_SESSION_MINS, MAX_FREE_TRIALS, SESSION_DURATIONS } from '@/lib/constants'
 import { notifySessionComplete } from '@/lib/notify'
 import { logger } from '@/lib/logger'
+import { sendPushNotification } from '@/lib/firebase-admin'
 
 const VALID_SESSION_TYPES = ['text', 'voice'] as const
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -93,57 +94,64 @@ export async function POST(req: NextRequest) {
     const base  = isFree ? 0 : rate * durationMins
     const total = isFree ? 0 : base + PLATFORM_FEE
 
-    if (!isFree) {
-      const { data: u } = await sb
-        .from('users')
-        .select('wallet_balance')
-        .eq('id', user.id)
-        .single()
+    // Note: balance check, seeker-active-session check, and listener-busy check are
+    // all handled atomically inside the create_session RPC (migration 002).
+    // The pre-checks above serve as early-exit optimizations; the RPC is the authoritative check.
 
-      if (!u || u.wallet_balance < total) {
+    const agoraChannel = `lo_${crypto.randomUUID()}`
+
+    // Use atomic create_session RPC (defined in migration 002) to prevent TOCTOU races
+    const { data: sessionId, error: rpcErr } = await sb.rpc('create_session', {
+      p_seeker_id:     user.id,
+      p_listener_id:   listenerId,
+      p_session_type:  sessionType,
+      p_duration_mins: durationMins,
+      p_amount_held:   total,
+      p_platform_fee:  isFree ? 0 : PLATFORM_FEE,
+      p_is_free_trial: isFree,
+      p_agora_channel: agoraChannel,
+    })
+
+    if (rpcErr) {
+      const msg = rpcErr.message || ''
+      if (msg.includes('insufficient_balance')) {
         return NextResponse.json({ error: 'insufficient_balance', required: total }, { status: 400 })
       }
+      if (msg.includes('already_in_session')) {
+        return NextResponse.json({ error: 'already_in_session', message: 'You already have an active session.' }, { status: 409 })
+      }
+      if (msg.includes('listener_busy')) {
+        return NextResponse.json({ error: 'listener_busy', message: 'This listener is in a session right now.' }, { status: 409 })
+      }
+      throw rpcErr
     }
 
-    // Insert session BEFORE deducting wallet — if insert fails, no money is taken
-    const { data: session, error: sErr } = await sb.from('sessions').insert({
-      seeker_id:     user.id,
-      listener_id:   listenerId,
-      session_type:  sessionType,
-      duration_mins: durationMins,
-      amount_held:   total,
-      platform_fee:  isFree ? 0 : PLATFORM_FEE,
-      is_free_trial: isFree,
-      agora_channel: `lo_${crypto.randomUUID()}`,
-      status:        'active',
-      started_at:    new Date().toISOString(),
-    }).select().single()
-
-    if (sErr) throw sErr
-
     if (!isFree) {
-      // Deduct atomically — if this fails, cancel the session (no money was taken)
-      const { error: deductErr } = await sb.rpc('deduct_wallet', {
-        p_user_id: user.id,
-        p_amount:  total,
-      })
-
-      if (deductErr) {
-        logger.error('deduct_wallet RPC failed — cancelling session:', { sessionId: session.id, deductErr: deductErr as unknown })
-        await sb.from('sessions').update({ status: 'cancelled' }).eq('id', session.id)
-        return NextResponse.json({ error: 'Payment processing failed. Please try again.' }, { status: 500 })
-      }
-
       await sb.from('wallet_transactions').insert({
         user_id:     user.id,
         amount:      total,
         type:        'debit',
         description: `${durationMins}-min ${sessionType} session`,
-        session_id:  session.id,
+        session_id:  sessionId,
       })
     }
 
-    return NextResponse.json({ sessionId: session.id, total })
+    // Send FCM push notification to listener (Item 27)
+    try {
+      const { data: listenerUser } = await sb.from('users').select('fcm_token').eq('id', listenerId).single()
+      if (listenerUser?.fcm_token) {
+        await sendPushNotification(
+          listenerUser.fcm_token,
+          'New session request!',
+          `A seeker wants to connect for a ${durationMins}-minute ${sessionType} session.`,
+          { sessionId: String(sessionId), type: 'session_request' }
+        )
+      }
+    } catch (fcmErr) {
+      logger.error('FCM push failed (non-critical):', { error: fcmErr instanceof Error ? fcmErr.message : String(fcmErr) })
+    }
+
+    return NextResponse.json({ sessionId, total })
   } catch (err: unknown) {
     logger.error('Session create error:', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json({ error: 'An unexpected error occurred. Please try again.' }, { status: 500 })

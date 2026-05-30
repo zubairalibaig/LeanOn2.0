@@ -1,6 +1,6 @@
 'use client'
 export const dynamic = 'force-dynamic'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, LANGUAGES } from '@/lib/constants'
 import { createClient } from '@/lib/supabase'
@@ -55,16 +55,21 @@ const S = `
 
   .section-title{font-size:18px;font-weight:800;color:var(--navy);margin-bottom:6px;}
   .section-sub{font-size:13px;color:var(--gray);font-weight:500;margin-bottom:20px;}
-  .label{font-size:13px;font-weight:800;color:var(--navy);margin-bottom:8px;display:block;}
-  .input{width:100%;padding:13px 16px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;color:var(--navy);border:2px solid var(--border);border-radius:14px;outline:none;background:white;transition:border-color 0.2s;margin-bottom:16px;}
+  .lbl{font-size:13px;font-weight:800;color:var(--navy);margin-bottom:8px;display:block;}
+  .input{width:100%;padding:13px 16px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;color:var(--navy);border:2px solid var(--border);border-radius:14px;outline:none;background:white;transition:border-color 0.2s;margin-bottom:4px;}
   .input:focus{border-color:var(--navy);}
+  .input.err{border-color:#E53935;background:#FFF5F5;}
   .input::placeholder{color:#B0C8D8;font-weight:400;}
   textarea.input{resize:vertical;min-height:100px;line-height:1.5;}
+  .field-err{font-size:12px;color:#E53935;font-weight:700;margin-bottom:12px;display:block;}
+  .char-count{font-size:12px;color:var(--gray);font-weight:600;text-align:right;margin-bottom:12px;}
+  .char-count.warn{color:#E53935;}
   .tag-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
   .tag-chip{padding:10px 14px;border:2px solid var(--border);border-radius:12px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--gray);background:white;cursor:pointer;text-align:left;transition:all 0.15s;}
   .tag-chip.sel{border-color:var(--orange);background:#FFF3E0;color:var(--navy);}
-  .rate-wrap{display:flex;align-items:center;gap:0;background:white;border:2px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:8px;}
+  .rate-wrap{display:flex;align-items:center;gap:0;background:white;border:2px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:4px;}
   .rate-wrap:focus-within{border-color:var(--navy);}
+  .rate-wrap.err{border-color:#E53935;}
   .rate-prefix{padding:13px 14px;font-weight:800;color:var(--gray);border-right:2px solid var(--border);}
   .rate-input{flex:1;padding:13px 14px;border:none;outline:none;font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;color:var(--navy);}
   .rate-suffix{padding:13px 14px;font-size:13px;font-weight:600;color:var(--gray);}
@@ -74,6 +79,10 @@ const S = `
   .disclaimer{background:#FFF8F0;border:1.5px solid #FFD9A0;border-radius:14px;padding:14px 16px;margin-bottom:24px;}
   .disclaimer p{font-size:12px;color:#7A5C00;font-weight:600;line-height:1.6;}
   .error-box{background:#FFF0F0;border:1.5px solid #FFCDD2;border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#7A2020;font-weight:600;}
+  .errors-list{background:#FFF0F0;border:1.5px solid #FFCDD2;border-radius:12px;padding:12px 16px;margin-bottom:16px;}
+  .errors-list p{font-size:13px;color:#7A2020;font-weight:700;margin-bottom:6px;}
+  .errors-list ul{padding-left:16px;}
+  .errors-list li{font-size:12px;color:#7A2020;font-weight:600;margin-bottom:2px;}
   .btn{width:100%;padding:16px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:white;background:var(--orange);border:none;border-radius:50px;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px rgba(255,153,51,0.3);}
   .btn:hover{background:#e8861a;transform:translateY(-1px);}
   .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
@@ -84,7 +93,58 @@ const S = `
   .success p{font-size:15px;color:var(--gray);font-weight:500;line-height:1.6;}
   .spin{display:inline-block;animation:spin 0.8s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
+  .shake{animation:shake 0.4s ease;}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+  .otp-row{display:flex;gap:10px;justify-content:center;margin-bottom:8px;}
+  .otp-box{width:48px;height:56px;border:2px solid var(--border);border-radius:14px;font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;color:var(--navy);text-align:center;background:white;outline:none;transition:all 0.2s;}
+  .otp-box:focus{border-color:var(--orange);background:#FFFBF5;}
+  .otp-box.err{border-color:#E53935;background:#FFF5F5;}
+  .resend-btn{background:none;border:none;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:var(--teal);cursor:pointer;}
+  .resend-count{font-size:14px;color:var(--gray);font-weight:600;}
+  .already-reg{background:#F0F8FC;border:1.5px solid var(--border);border-radius:16px;padding:20px;text-align:center;margin-bottom:24px;}
+  .already-reg p{font-size:15px;color:var(--navy);font-weight:600;margin-bottom:12px;}
+  .training-box{background:rgba(26,143,160,0.06);border:1.5px solid rgba(26,143,160,0.2);border-radius:14px;padding:14px 16px;margin-bottom:20px;}
+  .training-box h3{font-size:13px;font-weight:800;color:var(--navy);margin-bottom:8px;}
+  .training-box li{font-size:12px;color:var(--gray);font-weight:600;margin-bottom:4px;list-style:none;padding-left:4px;}
+  .training-box li::before{content:"✓ ";color:var(--teal);}
 `
+
+// Validation helpers
+function validateName(v: string): string {
+  if (!v || v.trim().length < 2) return 'Please enter your full name (2–60 characters)'
+  if (v.trim().length > 60) return 'Please enter your full name (2–60 characters)'
+  if (!/^[a-zA-Z\s\-]+$/.test(v.trim())) return 'Name can only contain letters, spaces, and hyphens'
+  return ''
+}
+function validatePhone(v: string): string {
+  const d = v.replace(/\D/g, '')
+  if (d.length !== 10) return 'Enter a valid 10-digit Indian mobile number'
+  if (!/^[6789]/.test(d)) return 'Enter a valid 10-digit Indian mobile number'
+  return ''
+}
+function validateBio(v: string): string {
+  if (v.trim().length < 30) return 'Bio must be 30–400 characters'
+  if (v.trim().length > 400) return 'Bio must be 30–400 characters'
+  return ''
+}
+function validateRate(v: string): string {
+  const n = parseInt(v)
+  if (isNaN(n) || n < 1 || n > 20) return 'Rate must be between ₹1–₹20 per minute'
+  return ''
+}
+function validateBank(v: string): string {
+  const d = v.replace(/\D/g, '')
+  if (d.length < 9 || d.length > 18) return 'Enter a valid 9–18 digit account number'
+  return ''
+}
+function validateIFSC(v: string): string {
+  if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(v.trim().toUpperCase())) return 'Enter a valid IFSC code (e.g. SBIN0001234)'
+  return ''
+}
+function validateUPI(v: string): string {
+  if (!v.includes('@') || v.split('@')[0].length < 3) return 'Enter a valid UPI ID (e.g. name@upi)'
+  return ''
+}
 
 export default function BecomeListenerPage() {
   const router  = useRouter()
@@ -92,24 +152,44 @@ export default function BecomeListenerPage() {
   const [step, setStep]   = useState(1)
   const [name, setName]   = useState('')
   const [guardChecked, setGuardChecked] = useState(false)
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false)
   const [phone, setPhone] = useState('')
   const [bio, setBio]     = useState('')
   const [tags, setTags]   = useState<string[]>([])
   const [rate, setRate]   = useState('10')
   const [langs, setLangs] = useState<string[]>(['english'])
-  const [aadhaar, setAadhaar] = useState('')
   const [bank, setBank]   = useState('')
   const [ifsc, setIfsc]   = useState('')
+  const [upi, setUpi]     = useState('')
   const [loading, setLoading] = useState(false)
   const [done, setDone]   = useState(false)
   const [error, setError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+  const [shaking, setShaking] = useState(false)
 
-  // Guard: redirect already-approved listeners to their dashboard
+  // OTP state
+  const [otpSent, setOtpSent] = useState(false)
+  const [otpVerified, setOtpVerified] = useState(false)
+  const [otp, setOtp] = useState(['','','','','',''])
+  const [otpLoading, setOtpLoading] = useState(false)
+  const [otpError, setOtpError] = useState('')
+  const [countdown, setCountdown] = useState(0)
+  const otpRefs = useRef<(HTMLInputElement|null)[]>([])
+
+  useEffect(() => {
+    if (countdown <= 0) return
+    const t = setTimeout(() => setCountdown(c => c - 1), 1000)
+    return () => clearTimeout(t)
+  }, [countdown])
+
+  // Guard: check if already registered
   useEffect(() => {
     sb.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) { setGuardChecked(true); return }
-      const { data: lp } = await sb.from('listener_profiles').select('is_approved').eq('user_id', user.id).maybeSingle()
-      if (lp?.is_approved) { router.replace('/dashboard'); return }
+      const { data: existing } = await sb.from('listener_profiles').select('id, is_approved').eq('user_id', user.id).maybeSingle()
+      if (existing) {
+        setAlreadyRegistered(true)
+      }
       setGuardChecked(true)
     })
   }, [])
@@ -129,21 +209,104 @@ export default function BecomeListenerPage() {
     setLangs(p => p.includes(l) ? (p.length > 1 ? p.filter(x => x !== l) : p) : [...p, l])
   }
 
+  const digits = () => phone.replace(/\D/g,'').slice(-10)
+
+  async function sendOtp() {
+    const phoneErr = validatePhone(phone)
+    if (phoneErr) { setFieldErrors(e => ({...e, phone: phoneErr})); return }
+    setOtpLoading(true)
+    setOtpError('')
+    const { error: err } = await sb.auth.signInWithOtp({ phone: '+91' + digits() })
+    setOtpLoading(false)
+    if (err) { setOtpError(err.message); return }
+    setOtpSent(true)
+    setCountdown(30)
+  }
+
+  async function verifyOtp() {
+    const code = otp.join('')
+    if (code.length < 6) { setOtpError('Enter the full 6-digit code'); return }
+    setOtpLoading(true)
+    setOtpError('')
+    const { error: err } = await sb.auth.verifyOtp({
+      phone: '+91' + digits(),
+      token: code,
+      type: 'sms',
+    })
+    setOtpLoading(false)
+    if (err) { setOtpError('Invalid OTP. Please try again.'); return }
+    setOtpVerified(true)
+  }
+
+  function handleOtpChange(i: number, val: string) {
+    if (!/^\d*$/.test(val)) return
+    const next = [...otp]; next[i] = val.slice(-1); setOtp(next)
+    if (val && i < 5) otpRefs.current[i+1]?.focus()
+    if (next.every(d => d)) setTimeout(() => verifyOtp(), 100)
+  }
+  function handleOtpKey(i: number, e: React.KeyboardEvent) {
+    if (e.key === 'Backspace' && !otp[i] && i > 0) otpRefs.current[i-1]?.focus()
+  }
+
+  function validateStep1(): string[] {
+    const errs: string[] = []
+    const ne = validateName(name); if (ne) errs.push(ne)
+    const pe = validatePhone(phone); if (pe) errs.push(pe)
+    if (!otpVerified) errs.push('Please verify your phone number with OTP')
+    const be = validateBio(bio); if (be) errs.push(be)
+    if (tags.length === 0) errs.push('Please select at least one topic')
+    return errs
+  }
+
+  function validateStep2(): string[] {
+    const errs: string[] = []
+    const re = validateRate(rate); if (re) errs.push(re)
+    const banke = validateBank(bank); if (banke) errs.push(banke)
+    const ifsce = validateIFSC(ifsc); if (ifsce) errs.push(ifsce)
+    if (upi.trim()) { const upie = validateUPI(upi); if (upie) errs.push(upie) }
+    return errs
+  }
+
+  function tryNextFromStep1() {
+    const errs = validateStep1()
+    if (errs.length > 0) {
+      const fe: Record<string,string> = {}
+      const ne = validateName(name); if (ne) fe.name = ne
+      const pe = validatePhone(phone); if (pe) fe.phone = pe
+      if (!otpVerified) fe.otp = 'Please verify your phone number with OTP'
+      const be = validateBio(bio); if (be) fe.bio = be
+      if (tags.length === 0) fe.tags = 'Please select at least one topic'
+      setFieldErrors(fe)
+      setShaking(true)
+      setTimeout(() => setShaking(false), 500)
+      return
+    }
+    setFieldErrors({})
+    setStep(2)
+  }
+
   async function submit() {
+    const errs = validateStep2()
+    if (errs.length > 0) {
+      const fe: Record<string,string> = {}
+      const re = validateRate(rate); if (re) fe.rate = re
+      const banke = validateBank(bank); if (banke) fe.bank = banke
+      const ifsce = validateIFSC(ifsc); if (ifsce) fe.ifsc = ifsce
+      if (upi.trim()) { const upie = validateUPI(upi); if (upie) fe.upi = upie }
+      setFieldErrors(fe)
+      setShaking(true)
+      setTimeout(() => setShaking(false), 500)
+      return
+    }
+
     setError('')
     setLoading(true)
     try {
-      // Require authentication — listener applications are tied to a user account
       const { data: { user } } = await sb.auth.getUser()
       if (!user) {
         router.push('/auth?redirect=/become-listener')
         return
       }
-
-      // Save application — is_approved: false means pending admin review
-      // Aadhaar: store only last 4 digits per privacy best practice
-      const aadhaarDigits = aadhaar.replace(/\s/g, '')
-      const aadhaarLast4  = aadhaarDigits.slice(-4)
 
       const { error: profileErr } = await sb.from('listener_profiles').upsert({
         user_id:          user.id,
@@ -157,19 +320,17 @@ export default function BecomeListenerPage() {
 
       if (profileErr) throw profileErr
 
-      // Save payout + verification details separately
       const { error: appErr } = await sb.from('listener_applications').upsert({
         user_id:       user.id,
         name:          name.trim(),
         phone:         phone.trim(),
-        aadhaar_last4: aadhaarLast4,
         bank_account:  bank.trim(),
         ifsc_code:     ifsc.trim().toUpperCase(),
+        upi_id:        upi.trim() || null,
         status:        'pending',
       }, { onConflict: 'user_id' })
       if (appErr) throw appErr
 
-      // Update user name if not already set
       await sb.from('users').update({ name: name.trim() }).eq('id', user.id)
 
       setDone(true)
@@ -188,6 +349,25 @@ export default function BecomeListenerPage() {
     </>
   )
 
+  if (alreadyRegistered) return (
+    <>
+      <style>{S}</style>
+      <div className="page">
+        <div className="topbar"><a href="/" className="back">←</a></div>
+        <div className="already-reg">
+          <div style={{fontSize:48,marginBottom:12}}>🎧</div>
+          <p>You already have a listener application on LeanOn.</p>
+          <a href="/become-listener/status">
+            <button className="btn">View your application status →</button>
+          </a>
+          <a href="/dashboard">
+            <button className="btn-ghost" style={{marginTop:10}}>Go to dashboard</button>
+          </a>
+        </div>
+      </div>
+    </>
+  )
+
   if (done) return (
     <>
       <style>{S}</style>
@@ -195,12 +375,15 @@ export default function BecomeListenerPage() {
         <div className="success">
           <div className="success-icon">🎉</div>
           <h2>Application submitted!</h2>
-          <p>We&apos;ll review your profile within 24 hours and notify you via WhatsApp on {phone}. Once approved, you&apos;ll go live and start earning.</p>
+          <p>We&apos;ll review your profile within 24 hours and notify you on {phone}. Once approved, you&apos;ll go live and start earning.</p>
           <a href="/"><button className="btn" style={{marginTop:28}}>Back to home</button></a>
         </div>
       </div>
     </>
   )
+
+  const step1Errors = step === 1 && shaking ? validateStep1() : []
+  const step2Errors = step === 2 && shaking ? validateStep2() : []
 
   return (
     <>
@@ -218,7 +401,7 @@ export default function BecomeListenerPage() {
             <h1>Earn by listening 🎧</h1>
             <p>You keep 100% of your rate. LeanOn adds a small flat fee on top — paid by the user, not taken from you.</p>
             <div className="earn-row">
-              <div className="earn-item"><div className="amount">₹8–25</div><div className="label">per minute (you set it)</div></div>
+              <div className="earn-item"><div className="amount">₹8–20</div><div className="label">per minute (you set it)</div></div>
               <div className="earn-item"><div className="amount">₹13K+</div><div className="label">per month possible</div></div>
               <div className="earn-item"><div className="amount">100%</div><div className="label">of your rate you keep</div></div>
             </div>
@@ -226,7 +409,7 @@ export default function BecomeListenerPage() {
         )}
 
         <div className="step-dots">
-          {[1,2,3].map((s,i) => (
+          {[1,2].map((s,i) => (
             <span key={s} style={{display:'contents'}}>
               {i > 0 && <div className="dot-line" />}
               <div className={`dot ${step > s ? 'done' : step === s ? 'active' : 'todo'}`}>
@@ -236,18 +419,105 @@ export default function BecomeListenerPage() {
           ))}
         </div>
 
-        {/* STEP 1 */}
+        {/* STEP 1: Profile + OTP */}
         {step === 1 && (
-          <>
+          <div className={shaking ? 'shake' : ''}>
             <div className="section-title">About you</div>
             <p className="section-sub">Your story is your profile. Be real — it builds trust.</p>
-            <label className="label">Full name</label>
-            <input className="input" placeholder="Your name" value={name} onChange={e=>setName(e.target.value)} />
-            <label className="label">WhatsApp number</label>
-            <input className="input" type="tel" placeholder="98765 43210" value={phone} onChange={e=>setPhone(e.target.value)} />
-            <label className="label">Your story (min 50 characters — this is shown on your profile)</label>
-            <textarea className="input" placeholder="e.g. I went through a painful divorce at 29. It took 2 years to rebuild. I'm here for people who feel like there's no light at the end of the tunnel — I've been there and found my way back." value={bio} onChange={e=>setBio(e.target.value)} />
-            <label className="label">Topics you can speak to (select all that apply)</label>
+
+            {step1Errors.length > 0 && (
+              <div className="errors-list">
+                <p>Please fix the following:</p>
+                <ul>{step1Errors.map((e,i) => <li key={i}>{e}</li>)}</ul>
+              </div>
+            )}
+
+            <label className="lbl">Full name</label>
+            <input
+              className={`input${fieldErrors.name ? ' err' : ''}`}
+              placeholder="Your full name"
+              value={name}
+              onChange={e => { setName(e.target.value); if (fieldErrors.name) setFieldErrors(f => ({...f, name: ''})) }}
+            />
+            {fieldErrors.name && <span className="field-err">{fieldErrors.name}</span>}
+
+            <label className="lbl">Phone number (India)</label>
+            <input
+              className={`input${fieldErrors.phone ? ' err' : ''}`}
+              type="tel"
+              inputMode="numeric"
+              maxLength={10}
+              placeholder="98765 43210 (10 digits)"
+              value={phone}
+              disabled={otpVerified}
+              onChange={e => { setPhone(e.target.value.replace(/\D/g,'')); if (fieldErrors.phone) setFieldErrors(f => ({...f, phone: ''})) }}
+            />
+            {fieldErrors.phone && <span className="field-err">{fieldErrors.phone}</span>}
+
+            {/* OTP Flow */}
+            {!otpVerified && (
+              <div style={{marginBottom:16}}>
+                {!otpSent ? (
+                  <button
+                    style={{width:'100%',padding:'12px',fontFamily:'Nunito,sans-serif',fontSize:14,fontWeight:700,color:'var(--teal)',background:'rgba(26,143,160,0.08)',border:'1.5px solid rgba(26,143,160,0.3)',borderRadius:12,cursor:'pointer',marginBottom:4}}
+                    onClick={sendOtp}
+                    disabled={otpLoading || digits().length < 10}
+                  >
+                    {otpLoading ? <span className="spin">⟳</span> : '📱 Send OTP to verify phone →'}
+                  </button>
+                ) : (
+                  <div style={{background:'white',border:'1.5px solid var(--border)',borderRadius:14,padding:16,marginBottom:4}}>
+                    <p style={{fontSize:13,fontWeight:700,color:'var(--navy)',marginBottom:12}}>Enter the 6-digit OTP sent to +91 {digits()}</p>
+                    <div className="otp-row">
+                      {otp.map((d,i) => (
+                        <input
+                          key={i}
+                          ref={el => { otpRefs.current[i] = el }}
+                          className={`otp-box${otpError ? ' err' : ''}`}
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={1}
+                          value={d}
+                          autoFocus={i===0}
+                          onChange={e => handleOtpChange(i, e.target.value)}
+                          onKeyDown={e => handleOtpKey(i, e)}
+                        />
+                      ))}
+                    </div>
+                    {otpError && <p style={{fontSize:12,color:'#E53935',fontWeight:700,marginTop:6,textAlign:'center'}}>{otpError}</p>}
+                    <div style={{textAlign:'center',marginTop:10}}>
+                      {otpLoading
+                        ? <span style={{fontSize:13,color:'var(--gray)'}}>Verifying...</span>
+                        : countdown > 0
+                          ? <span className="resend-count">Resend in {countdown}s</span>
+                          : <button className="resend-btn" onClick={() => { setOtp(['','','','','','']); sendOtp() }}>Resend OTP</button>
+                      }
+                    </div>
+                  </div>
+                )}
+                {fieldErrors.otp && <span className="field-err">{fieldErrors.otp}</span>}
+              </div>
+            )}
+            {otpVerified && (
+              <div style={{background:'#F0FFF4',border:'1.5px solid #34C759',borderRadius:12,padding:'10px 14px',marginBottom:16,fontSize:13,fontWeight:700,color:'#276749'}}>
+                ✓ Phone verified: +91 {digits()}
+              </div>
+            )}
+
+            <label className="lbl">Your story (30–400 characters — shown on your profile)</label>
+            <textarea
+              className={`input${fieldErrors.bio ? ' err' : ''}`}
+              placeholder="e.g. I went through a painful divorce at 29. It took 2 years to rebuild. I'm here for people who feel like there's no light at the end of the tunnel — I've been there and found my way back."
+              value={bio}
+              onChange={e => { if (e.target.value.length <= 400) { setBio(e.target.value); if (fieldErrors.bio) setFieldErrors(f => ({...f, bio: ''})) } }}
+            />
+            <div className={`char-count${bio.length > 380 || (bio.length > 0 && bio.length < 30) ? ' warn' : ''}`}>
+              {bio.length}/400 {bio.length < 30 && bio.length > 0 ? `(${30 - bio.length} more chars needed)` : ''}
+            </div>
+            {fieldErrors.bio && <span className="field-err">{fieldErrors.bio}</span>}
+
+            <label className="lbl">Topics you can speak to (select all that apply)</label>
+            {fieldErrors.tags && <span className="field-err">{fieldErrors.tags}</span>}
             <div className="tag-grid">
               {TAGS.map(t => (
                 <button key={t.id} className={`tag-chip${tags.includes(t.id)?' sel':''}`} onClick={()=>toggleTag(t.id)}>
@@ -255,7 +525,7 @@ export default function BecomeListenerPage() {
                 </button>
               ))}
             </div>
-            <label className="label" style={{marginTop:4}}>Languages you can listen in 🌐 (select all)</label>
+            <label className="lbl" style={{marginTop:4}}>Languages you can listen in 🌐 (select all)</label>
             <div className="tag-grid">
               {LANGUAGES.map(l => (
                 <button key={l.id} className={`tag-chip${langs.includes(l.id)?' sel':''}`} onClick={()=>toggleLang(l.id)}>
@@ -263,24 +533,45 @@ export default function BecomeListenerPage() {
                 </button>
               ))}
             </div>
-            <button className="btn" onClick={()=>setStep(2)} disabled={!name||!phone||bio.length<50||tags.length===0}>
-              Next: Set your rate →
+
+            <div className="training-box" style={{marginBottom:20}}>
+              <h3>📚 Training requirements</h3>
+              <ul>
+                <li>All listeners complete our 4-module empathy training program before going live</li>
+                <li>Module 1: Active listening & emotional reflection</li>
+                <li>Module 2: Boundary-setting & self-care</li>
+                <li>Module 3: Crisis recognition & referral protocols</li>
+                <li>Module 4: LeanOn code of conduct</li>
+              </ul>
+            </div>
+
+            <button className="btn" onClick={tryNextFromStep1}>
+              Next: Payment details →
             </button>
-          </>
+          </div>
         )}
 
-        {/* STEP 2 */}
+        {/* STEP 2: Rate + Payment */}
         {step === 2 && (
-          <>
-            <div className="section-title">Set your rate</div>
-            <p className="section-sub">You keep 100% of this. New listeners start at ₹8–12/min and can increase as they get reviews.</p>
+          <div className={shaking ? 'shake' : ''}>
+            <div className="section-title">Rate & payment details</div>
+            <p className="section-sub">Set your rate and add your payout details. Earnings transferred within 3 business days.</p>
 
-            <label className="label">Your rate per minute</label>
-            <div className="rate-wrap">
+            {step2Errors.length > 0 && (
+              <div className="errors-list">
+                <p>Please fix the following:</p>
+                <ul>{step2Errors.map((e,i) => <li key={i}>{e}</li>)}</ul>
+              </div>
+            )}
+
+            <label className="lbl">Your rate per minute (₹1–₹20)</label>
+            <div className={`rate-wrap${fieldErrors.rate ? ' err' : ''}`}>
               <span className="rate-prefix">₹</span>
-              <input className="rate-input" type="number" min={MIN_LISTENER_RATE} max={MAX_LISTENER_RATE} value={rate} onChange={e=>setRate(e.target.value)} />
+              <input className="rate-input" type="number" min={1} max={20} value={rate}
+                onChange={e => { setRate(e.target.value); if (fieldErrors.rate) setFieldErrors(f => ({...f, rate: ''})) }} />
               <span className="rate-suffix">/ minute</span>
             </div>
+            {fieldErrors.rate && <span className="field-err">{fieldErrors.rate}</span>}
 
             <div style={{background:'#F0F8FC',borderRadius:12,padding:'10px 14px',marginBottom:12,fontSize:13,color:'#0F4867',fontWeight:600}}>
               📅 Sessions are booked in <strong>15, 30, or 45 minute slots</strong>. No open-ended calls — clean start and end times for both sides.
@@ -301,36 +592,46 @@ export default function BecomeListenerPage() {
               <div className="fee-row highlight"><span className="label">You receive</span><span className="value">₹{earn15} ✓</span></div>
             </div>
 
-            <label className="label">Aadhaar number (for identity verification)</label>
-            <input className="input" type="text" placeholder="XXXX XXXX XXXX" maxLength={14}
-              value={aadhaar} onChange={e=>setAadhaar(e.target.value.replace(/[^\d\s]/g,''))} />
-            <div className="disclaimer">
-              <p>🔒 Only the last 4 digits of your Aadhaar are stored for reference. The full number is never retained. Used solely for identity verification per Indian regulations.</p>
-            </div>
-            <button className="btn" onClick={()=>setStep(3)} disabled={!aadhaar||aadhaar.replace(/\s/g,'').length<12}>
-              Next: Bank details →
-            </button>
-          </>
-        )}
+            <label className="lbl">Bank account number (9–18 digits)</label>
+            <input
+              className={`input${fieldErrors.bank ? ' err' : ''}`}
+              type="text"
+              inputMode="numeric"
+              placeholder="Enter account number"
+              value={bank}
+              onChange={e => { setBank(e.target.value.replace(/\D/g,'')); if (fieldErrors.bank) setFieldErrors(f => ({...f, bank: ''})) }}
+            />
+            {fieldErrors.bank && <span className="field-err">{fieldErrors.bank}</span>}
 
-        {/* STEP 3 */}
-        {step === 3 && (
-          <>
-            <div className="section-title">Bank account for payouts</div>
-            <p className="section-sub">Your earnings are transferred within 3 business days of completing sessions.</p>
-            <label className="label">Account number</label>
-            <input className="input" type="text" placeholder="Enter account number" value={bank} onChange={e=>setBank(e.target.value)} />
-            <label className="label">IFSC code</label>
-            <input className="input" type="text" placeholder="e.g. SBIN0001234" value={ifsc} onChange={e=>setIfsc(e.target.value.toUpperCase())} />
+            <label className="lbl">IFSC code</label>
+            <input
+              className={`input${fieldErrors.ifsc ? ' err' : ''}`}
+              type="text"
+              placeholder="e.g. SBIN0001234"
+              value={ifsc}
+              onChange={e => { setIfsc(e.target.value.toUpperCase()); if (fieldErrors.ifsc) setFieldErrors(f => ({...f, ifsc: ''})) }}
+            />
+            {fieldErrors.ifsc && <span className="field-err">{fieldErrors.ifsc}</span>}
+
+            <label className="lbl">UPI ID (optional)</label>
+            <input
+              className={`input${fieldErrors.upi ? ' err' : ''}`}
+              type="text"
+              placeholder="e.g. yourname@upi"
+              value={upi}
+              onChange={e => { setUpi(e.target.value); if (fieldErrors.upi) setFieldErrors(f => ({...f, upi: ''})) }}
+            />
+            {fieldErrors.upi && <span className="field-err">{fieldErrors.upi}</span>}
+
             <div className="disclaimer">
               <p>⚠️ <strong>Important:</strong> LeanOn is a peer support platform. By applying, you confirm you are sharing personal lived experience only — not providing clinical advice, therapy, or counseling of any kind.</p>
             </div>
             {error && <div className="error-box">{error}</div>}
-            <button className="btn" onClick={submit} disabled={loading||!bank||!ifsc}>
+            <button className="btn" onClick={submit} disabled={loading}>
               {loading ? <span className="spin">⟳</span> : 'Submit application →'}
             </button>
             <a href="/"><button className="btn-ghost">Cancel</button></a>
-          </>
+          </div>
         )}
       </div>
     </>

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     'talk to someone free India', 'emotional support chat India',
     'anxiety help India', 'loneliness app India', 'burnout support', 'grief support India',
     'someone to talk to', 'mental health chat', 'online emotional support',
-    'online listener India', 'peer counselling India',
+    'online listener India', 'peer support India',
   ],
 }
 

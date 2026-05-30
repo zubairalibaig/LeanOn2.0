@@ -5,6 +5,39 @@ import { createClient } from '@/lib/supabase'
 import { LANGUAGES } from '@/lib/constants'
 import { showToast } from '@/lib/toast'
 
+// Post-login welcome banner (Item 5)
+function WelcomeBanner() {
+  const [show, setShow] = useState(false)
+  const [isNew, setIsNew] = useState(false)
+  useEffect(() => {
+    const newUser = sessionStorage.getItem('leanon_welcome_new')
+    const onboarded = localStorage.getItem('leanon_onboarded')
+    if (newUser) {
+      setIsNew(true)
+      setShow(true)
+      sessionStorage.removeItem('leanon_welcome_new')
+    } else if (!onboarded) {
+      setShow(true)
+    }
+  }, [])
+  if (!show) return null
+  return (
+    <div style={{background:'var(--navy)',color:'white',padding:'12px 20px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,fontFamily:'Nunito,sans-serif'}}>
+      <div style={{flex:1}}>
+        {isNew ? (
+          <p style={{fontSize:14,fontWeight:800,margin:0}}>Welcome to LeanOn! Your first 5 minutes are free. 👋</p>
+        ) : (
+          <>
+            <p style={{fontSize:14,fontWeight:800,margin:0,marginBottom:2}}>Not sure where to start?</p>
+            <p style={{fontSize:12,fontWeight:600,opacity:0.8,margin:0}}>Browse listeners by topic → Find one you like → Start with a free 5-min session</p>
+          </>
+        )}
+      </div>
+      <button onClick={() => { setShow(false); localStorage.setItem('leanon_onboarded','1') }} style={{background:'none',border:'none',color:'white',cursor:'pointer',fontSize:18,fontWeight:900,padding:0,lineHeight:1}}>✕</button>
+    </div>
+  )
+}
+
 type Listener = {
   id: string
   user_id: string
@@ -48,8 +81,12 @@ a{text-decoration:none;color:inherit;}
 .topbar-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .topbar h1{font-size:20px;font-weight:900;color:var(--navy);}
 .wallet-chip{display:flex;align-items:center;gap:6px;background:var(--light);padding:8px 14px;border-radius:50px;font-weight:800;font-size:14px;color:var(--navy);cursor:pointer;border:1.5px solid var(--border);}
-.search-wrap{display:flex;align-items:center;gap:10px;background:white;border:1.5px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:12px;}
-.search-wrap input{flex:1;border:none;outline:none;font-family:'Nunito',sans-serif;font-size:14px;color:var(--navy);background:transparent;}
+.search-container{width:100%;max-width:600px;margin:0 auto 12px;position:relative;}
+.search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;}
+.search-wrap{width:100%;padding:12px 16px 12px 44px;border-radius:50px;border:1.5px solid var(--border);font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;color:var(--navy);background:white;outline:none;display:block;box-sizing:border-box;}
+.search-wrap:focus{border-color:var(--navy);}
+.search-wrap::placeholder{color:#B0C8D8;font-weight:400;}
+.filter-container{background:white;border-radius:24px;padding:12px 0 8px;margin-bottom:4px;}
 .tag-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;}
 .tag-scroll::-webkit-scrollbar{display:none;}
 .tag-pill{flex-shrink:0;display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:50px;font-size:12px;font-weight:700;border:1.5px solid var(--border);background:white;color:var(--gray);cursor:pointer;transition:all .15s;white-space:nowrap;}
@@ -196,6 +233,7 @@ function BrowseContent() {
         </div>
       )}
 
+      <WelcomeBanner />
       <div className="topbar">
         <div className="topbar-row">
           <h1>Find a listener</h1>
@@ -203,31 +241,34 @@ function BrowseContent() {
             💰 {balance !== null ? `₹${balance}` : 'Wallet'}
           </a>
         </div>
-        <div className="search-wrap">
-          <span>🔍</span>
+        <div className="search-container">
+          <span className="search-icon">🔍</span>
           <input
+            className="search-wrap"
             placeholder="Search listeners..."
             value={query}
             onChange={e=>setQuery(e.target.value)}
             aria-label="Search listeners by name or topic"
           />
         </div>
-        <div className="tag-scroll">
-          {TAGS.map(t=>(
-            <button key={t.id} className={`tag-pill${tag===t.id?' active':''}`} onClick={()=>setTag(t.id)}>
-              {t.icon} {t.label}
+        <div className="filter-container">
+          <div className="tag-scroll">
+            {TAGS.map(t=>(
+              <button key={t.id} className={`tag-pill${tag===t.id?' active':''}`} onClick={()=>setTag(t.id)}>
+                {t.icon} {t.label}
+              </button>
+            ))}
+          </div>
+          <div className="tag-scroll" style={{marginTop:8}}>
+            <button className={`tag-pill${lang==='all'?' active':''}`} onClick={()=>setLang('all')}>
+              🌐 All languages
             </button>
-          ))}
-        </div>
-        <div className="tag-scroll" style={{marginTop:8}}>
-          <button className={`tag-pill${lang==='all'?' active':''}`} onClick={()=>setLang('all')}>
-            🌐 All languages
-          </button>
-          {LANGUAGES.map(l=>(
-            <button key={l.id} className={`tag-pill${lang===l.id?' active':''}`} onClick={()=>setLang(l.id)}>
-              {l.label}
-            </button>
-          ))}
+            {LANGUAGES.map(l=>(
+              <button key={l.id} className={`tag-pill${lang===l.id?' active':''}`} onClick={()=>setLang(l.id)}>
+                {l.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -235,29 +276,28 @@ function BrowseContent() {
         {loading ? (
           [1,2,3].map(i=><div key={i} className="skeleton"/>)
         ) : filtered.length === 0 ? (
-          <div className="empty">
-            <div style={{fontSize:48,marginBottom:16}}>{tag !== 'all' || lang !== 'all' || query ? '🔍' : '🌙'}</div>
-            <h3 style={{fontSize:18,fontWeight:800,marginBottom:8}}>
-              {tag !== 'all' || lang !== 'all' || query ? 'No matches for your filters' : 'Listeners are joining soon'}
-            </h3>
-            <p style={{fontSize:14,color:'var(--gray)',fontWeight:500,marginBottom:16,lineHeight:1.6}}>
-              {tag !== 'all' || lang !== 'all' || query
-                ? 'Try removing a filter or searching broader terms. New peer listeners join LeanOn every week.'
-                : 'LeanOn is growing — new peer listeners from Bengaluru, Mumbai, Delhi, and across India join every week. Check back soon, or be among the first to help others by becoming a listener yourself.'}
+          <div style={{textAlign:'center',padding:'60px 20px',background:'white',borderRadius:24,border:'1.5px solid var(--border)'}}>
+            <div style={{fontSize:48,marginBottom:16}}>🔍</div>
+            <h3 style={{fontSize:20,fontWeight:800,color:'var(--navy)',marginBottom:8}}>No listeners match right now</h3>
+            <p style={{fontSize:15,color:'var(--gray)',lineHeight:1.7,marginBottom:24,maxWidth:400,margin:'0 auto 24px'}}>
+              Our listeners are most active between 6–11 PM IST. Try broadening your topic, or check back in 30 minutes.
             </p>
-            <div style={{display:'flex',flexDirection:'column',gap:10,alignItems:'center'}}>
-              {(tag !== 'all' || lang !== 'all' || query) && (
-                <button
-                  style={{background:'var(--navy)',color:'white',border:'none',borderRadius:12,padding:'10px 22px',fontFamily:'Nunito,sans-serif',fontWeight:700,fontSize:13,cursor:'pointer'}}
-                  onClick={()=>{ setTag('all'); setLang('all'); setQuery('') }}
-                >
-                  Show all listeners
-                </button>
-              )}
-              <a href="/become-listener" style={{fontSize:13,fontWeight:700,color:'var(--teal)',textDecoration:'underline',textUnderlineOffset:3}}>
-                Have lived experience? Become a listener →
+            <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
+              <button
+                onClick={()=>{ setTag('all'); setLang('all'); setQuery('') }}
+                style={{background:'var(--navy)',color:'white',border:'none',borderRadius:50,padding:'12px 24px',fontFamily:'Nunito,sans-serif',fontWeight:800,fontSize:14,cursor:'pointer'}}
+              >
+                Browse All Listeners
+              </button>
+              <a href="/support"
+                style={{background:'white',color:'var(--navy)',border:'1.5px solid var(--border)',borderRadius:50,padding:'12px 24px',fontFamily:'Nunito,sans-serif',fontWeight:700,fontSize:14,display:'inline-block'}}
+              >
+                Explore Support Topics
               </a>
             </div>
+            <p style={{marginTop:20,fontSize:13,color:'var(--gray)'}}>
+              💙 Need immediate support? <a href="/faq" style={{color:'var(--teal)'}}>See crisis resources →</a>
+            </p>
           </div>
         ) : filtered.map(l => (
           <div key={l.id} className="card" onClick={()=>router.push(`/listener/${l.user_id}`)}>

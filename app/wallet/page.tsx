@@ -171,6 +171,25 @@ export default function WalletPage() {
           </button>
         </div>
 
+        {balance === 0 && (
+          <div style={{textAlign:'center',padding:'40px 20px',background:'white',borderRadius:24,border:'1.5px solid var(--border)',marginBottom:24}}>
+            <div style={{fontSize:48,marginBottom:12}}>💰</div>
+            <h3 style={{fontSize:20,fontWeight:800,color:'var(--navy)',marginBottom:8}}>Your wallet is empty</h3>
+            <p style={{fontSize:15,color:'var(--gray)',marginBottom:24}}>
+              Top up your wallet to start a session. Your first 5 minutes are always free — no top-up needed for that!
+            </p>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:12,maxWidth:320,margin:'0 auto 20px'}}>
+              {[199,499,999,1999].map(amt => (
+                <button key={amt} onClick={() => setSelected(amt)}
+                  style={{background: selected===amt ? '#FFF8F0' : 'white',border:`2px solid ${selected===amt?'var(--orange)':'var(--border)'}`,borderRadius:16,padding:'16px 8px',textAlign:'center',cursor:'pointer',fontFamily:'Nunito,sans-serif',fontWeight:900,fontSize:20,color:'var(--navy)'}}>
+                  ₹{amt}
+                </button>
+              ))}
+            </div>
+            <p style={{fontSize:13,color:'var(--gray)'}}>₹165 for 15 min · ₹295 for 30 min · ₹395 for 45 min</p>
+          </div>
+        )}
+
         <div className="section-title">Recharge wallet</div>
         <div className="presets">
           {PRESETS.map(p => (

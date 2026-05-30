@@ -93,8 +93,52 @@ export default function AboutPage() {
         <div className="story-section">
           <h2>Our team &amp; mission</h2>
           <p>LeanOn was founded by mental health advocates who believe that peer support is one of the most powerful tools for emotional wellbeing — and the most underutilised. Our team includes people with personal experience of loneliness, burnout, and the difficulty of accessing meaningful support in India.</p>
-          <p>Every listener on LeanOn is manually vetted by our team. We review lived experience, empathy, and commitment to our code of conduct before anyone is approved. Listener training covers active listening, crisis recognition, and our referral protocols for situations requiring professional support.</p>
+          <p>Every listener on LeanOn is manually vetted by our team. We review lived experience, empathy, and commitment to our code of conduct before anyone is approved.</p>
           <p>Our anonymity commitment: your identity is protected by design. Phone OTP sign-up. No full name required. Sessions completely private. No data sold. Data deletion on request.</p>
+        </div>
+
+        <div className="story-section">
+          <h2>Our Methodology</h2>
+          <p>LeanOn listeners undergo a structured empathy training program before going live. The program covers four core modules:</p>
+          <div style={{display:'flex',flexDirection:'column',gap:10,marginTop:8}}>
+            {[
+              { n:'1', title:'Active Listening & Emotional Reflection', desc:'Techniques for creating non-judgmental space and reflecting back what is heard without interpretation or advice-giving.' },
+              { n:'2', title:'Boundary-Setting & Self-Care', desc:'How to be present for others without absorbing their distress — essential for sustainable, ethical peer support.' },
+              { n:'3', title:'Crisis Recognition & Referral Protocols', desc:'Identifying signs of acute crisis, appropriate responses, and when to refer seekers to professional resources.' },
+              { n:'4', title:'LeanOn Code of Conduct', desc:'Platform ethics, confidentiality, and what peer support is — and explicitly is not — so every listener is clear on their role.' },
+            ].map(m => (
+              <div key={m.n} style={{background:'var(--light)',border:'1.5px solid var(--border)',borderRadius:14,padding:14,display:'flex',gap:12,alignItems:'flex-start'}}>
+                <div style={{width:28,height:28,borderRadius:'50%',background:'var(--orange)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:900,color:'white',flexShrink:0}}>{m.n}</div>
+                <div>
+                  <div style={{fontSize:14,fontWeight:800,color:'var(--navy)',marginBottom:4}}>{m.title}</div>
+                  <div style={{fontSize:13,color:'var(--gray)',lineHeight:1.6}}>{m.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="story-section">
+          <h2>Safety First</h2>
+          <div style={{display:'flex',flexDirection:'column',gap:8,marginTop:4}}>
+            {[
+              '🔒 All conversations are private and never shared with third parties',
+              '✓ Every listener manually verified — no self-approval, no bots',
+              '🚫 Instant block and report feature for any session',
+              '🆘 Automatic crisis detection in text sessions with crisis resource display',
+              '📞 NIMHANS (080-46110007) and Tele-MANAS (14416) crisis helplines visible in every session',
+              '🗑️ Full data deletion available on request',
+              '👮 All reports reviewed within 24 hours by our safety team',
+            ].map((s, i) => (
+              <div key={i} style={{fontSize:14,color:'#2A4F60',fontWeight:600,lineHeight:1.6,padding:'8px 0',borderBottom:'1px solid var(--border)'}}>{s}</div>
+            ))}
+          </div>
+        </div>
+
+        <div className="story-section" style={{background:'#FFF8F0',border:'1.5px solid #FFD9A0'}}>
+          <h2 style={{color:'#7A5C00'}}>Peer Support, Not Therapy</h2>
+          <p style={{color:'#7A5C00',fontWeight:600}}>LeanOn is a peer emotional support platform. Our listeners are not licensed therapists, psychologists, or medical professionals. They are real people with relevant lived experience who have been trained in active listening and empathy.</p>
+          <p style={{color:'#7A5C00',fontWeight:600}}>If you need clinical mental health care, diagnosis, medication, or treatment for a diagnosed condition, please consult a licensed mental health professional. LeanOn can complement professional care — it is not a substitute for it.</p>
         </div>
 
         <div className="story-section">

@@ -44,35 +44,72 @@ const S = `
   .tos a{color:var(--teal);}
   .spin{display:inline-block;animation:spin 0.8s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
+  .loading-screen{display:flex;align-items:center;justify-content:center;height:100vh;font-family:'Nunito',sans-serif;color:#0F4867;font-size:16px;font-weight:600;}
 `
+
+// Prevent open redirect — only allow relative paths we control
+function safeRedirect(raw: string | null, fallback: string): string {
+  if (!raw) return fallback
+  if (raw.startsWith('/') && !raw.startsWith('//') && !raw.includes('\\')) return raw
+  return fallback
+}
 
 export default function AuthPage() {
   const router = useRouter()
-  const sb = createClient() // returns the module-level singleton
+  const sb = createClient()
   const [step, setStep]         = useState<'phone'|'otp'|'name'>('phone')
   const [phone, setPhone]       = useState('')
   const [otp, setOtp]           = useState(['','','','','',''])
   const [name, setName]         = useState('')
   const [loading, setLoading]   = useState(false)
+  const [checkingSession, setCheckingSession] = useState(true)
   const [error, setError]       = useState('')
   const [countdown, setCountdown] = useState(0)
   const otpRefs = useRef<(HTMLInputElement|null)[]>([])
+  const handledRef = useRef(false)
 
-  // Detect listener mode from ?mode=listener query param
-  const isListenerMode = typeof window !== 'undefined'
-    ? new URLSearchParams(window.location.search).get('mode') === 'listener'
-    : false
+  // Read mode from URL safely (SSR-safe)
+  const [isListenerMode, setIsListenerMode] = useState(false)
 
-  // If already authenticated, skip straight to the destination
   useEffect(() => {
-    sb.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return
-      const params = new URLSearchParams(window.location.search)
-      const dest = safeRedirect(params.get('redirect'), params.get('mode') === 'listener' ? '/dashboard' : '/browse')
-      // Don't redirect back to /auth — that's the loop
-      if (!dest.startsWith('/auth')) router.replace(dest)
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    const redirect = params.get('redirect')
+    const mode = params.get('mode')
+
+    // Persist redirect destination and mode to sessionStorage for post-OTP use
+    if (redirect) sessionStorage.setItem('auth_redirect', redirect)
+    if (mode) sessionStorage.setItem('auth_mode', mode)
+
+    if (mode === 'listener') setIsListenerMode(true)
+
+    // Check if already authenticated — redirect immediately
+    sb.auth.getSession().then(({ data: { session } }) => {
+      if (session && !handledRef.current) {
+        handledRef.current = true
+        const dest = safeRedirect(
+          sessionStorage.getItem('auth_redirect'),
+          mode === 'listener' ? '/dashboard' : '/browse'
+        )
+        sessionStorage.removeItem('auth_redirect')
+        router.replace(dest)
+        return
+      }
+      setCheckingSession(false)
     })
-  }, [])
+
+    // Also listen for auth state changes (handles Supabase OTP callback)
+    const { data: { subscription } } = sb.auth.onAuthStateChange((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session && !handledRef.current) {
+        // Only handle if we're past the OTP step (name step redirect happens in saveName)
+        // Don't double-redirect from the name step
+        if (step !== 'name') {
+          // Let verifyOtp handle the redirect logic
+        }
+      }
+    })
+    return () => subscription.unsubscribe()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (countdown <= 0) return
@@ -82,6 +119,13 @@ export default function AuthPage() {
 
   const digits = () => phone.replace(/\D/g,'').slice(-10)
   const formatted = () => '+91' + digits()
+
+  function getDestination(): string {
+    const stored = sessionStorage.getItem('auth_redirect')
+    const mode = sessionStorage.getItem('auth_mode')
+    const fallback = mode === 'listener' ? '/dashboard' : '/browse'
+    return safeRedirect(stored, fallback)
+  }
 
   async function sendOtp() {
     setError('')
@@ -104,9 +148,8 @@ export default function AuthPage() {
       token: code,
       type: 'sms',
     })
-    if (err) { setLoading(false); setError('Invalid code. Try again.'); return }
+    if (err) { setLoading(false); setError('Invalid OTP. Please try again.'); return }
 
-    // Check if new user — upsert their phone
     await sb.from('users').upsert({
       id: data.user!.id,
       phone: formatted(),
@@ -114,11 +157,26 @@ export default function AuthPage() {
 
     const { data: userData } = await sb.from('users').select('name').eq('id', data.user!.id).single()
     setLoading(false)
+
     if (!userData?.name) {
       setStep('name')
     } else {
-      const params = new URLSearchParams(window.location.search)
-      router.push(safeRedirect(params.get('redirect'), params.get('mode') === 'listener' ? '/dashboard' : '/browse'))
+      // Returning user — check if new (no sessions) for welcome toast
+      const { count: sessionCount } = await sb
+        .from('sessions')
+        .select('id', { count: 'exact', head: true })
+        .eq('seeker_id', data.user!.id)
+
+      const dest = getDestination()
+      sessionStorage.removeItem('auth_redirect')
+      sessionStorage.removeItem('auth_mode')
+
+      if ((sessionCount ?? 0) === 0) {
+        sessionStorage.setItem('leanon_welcome_new', '1')
+      }
+
+      handledRef.current = true
+      router.replace(dest)
     }
   }
 
@@ -130,15 +188,14 @@ export default function AuthPage() {
     if (!user) { setError('Session expired. Please try again.'); setLoading(false); return }
     await sb.from('users').update({ name: name.trim() }).eq('id', user.id)
     setLoading(false)
-    const params = new URLSearchParams(window.location.search)
-    router.push(safeRedirect(params.get('redirect'), params.get('mode') === 'listener' ? '/dashboard' : '/browse'))
-  }
 
-  // Prevent open redirect — only allow relative paths we control
-  function safeRedirect(raw: string | null, fallback: string): string {
-    if (!raw) return fallback
-    if (raw.startsWith('/') && !raw.startsWith('//') && !raw.includes('\\')) return raw
-    return fallback
+    const dest = getDestination()
+    sessionStorage.removeItem('auth_redirect')
+    sessionStorage.removeItem('auth_mode')
+    sessionStorage.setItem('leanon_welcome_new', '1')
+
+    handledRef.current = true
+    router.replace(dest)
   }
 
   function handleOtpChange(i: number, val: string) {
@@ -151,6 +208,13 @@ export default function AuthPage() {
   function handleOtpKey(i: number, e: React.KeyboardEvent) {
     if (e.key === 'Backspace' && !otp[i] && i > 0) otpRefs.current[i-1]?.focus()
   }
+
+  if (checkingSession) return (
+    <>
+      <style>{S}</style>
+      <div className="loading-screen">Checking session...</div>
+    </>
+  )
 
   return (
     <>

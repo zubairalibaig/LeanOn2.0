@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     'lean on app', 'lean on India', 'LeanOn',
     'peer listener India', 'emotional wellness app', 'talk to a friend online India',
     'loneliness support India', 'anxiety support India', 'grief support India',
-    'burnout help India', 'peer counselling India', 'free mental health support India',
+    'burnout help India', 'peer emotional support India', 'free emotional support India',
     'emotional support chat', 'online support group India',
   ],
   authors: [{ name: 'LeanOn' }],
@@ -58,7 +58,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
     {
-      '@type': 'Organization',
+      '@type': ['WebApplication', 'Organization'],
       '@id': 'https://www.leanon.app/#organization',
       name: 'LeanOn',
       alternateName: ['Lean On', 'leanon', 'LeanOn App'],
@@ -69,13 +69,16 @@ const jsonLd = {
         width: 512,
         height: 512,
       },
-      description: 'LeanOn is a peer support platform — someone to lean on anytime. We connect people in India with verified peer listeners who have lived through loneliness, burnout, grief, anxiety, and more. Available 24/7.',
-      foundingLocation: 'Bengaluru, India',
+      description: "LeanOn is India's peer emotional support platform. Real humans with lived experience, available 24/7.",
+      foundingDate: '2024',
+      foundingLocation: { '@type': 'Place', name: 'India' },
       areaServed: { '@type': 'Country', name: 'India' },
+      serviceType: 'Peer Emotional Support',
+      slogan: 'You are not alone.',
       sameAs: [
-        'https://www.instagram.com/leanon.app',
+        'https://www.instagram.com/leanonapp',
         'https://twitter.com/leanonapp',
-        'https://www.linkedin.com/company/leanon-app',
+        'https://www.linkedin.com/company/leanonapp',
       ],
     },
     {
@@ -87,10 +90,7 @@ const jsonLd = {
       publisher: { '@id': 'https://www.leanon.app/#organization' },
       potentialAction: {
         '@type': 'SearchAction',
-        target: {
-          '@type': 'EntryPoint',
-          urlTemplate: 'https://www.leanon.app/browse?query={search_term_string}',
-        },
+        target: 'https://www.leanon.app/browse?q={search_term_string}',
         'query-input': 'required name=search_term_string',
       },
     },

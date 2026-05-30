@@ -60,6 +60,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/mumbai`,                           lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/delhi`,                            lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/hyderabad`,                        lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.85 },
+    // New SEO pages (Items 18-21)
+    { url: `${base}/why-leanon`,                       lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/how-leanon-works`,                 lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/is-leanon-safe`,                   lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/anonymous-support-online`,         lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/someone-to-talk-to-at-night`,      lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/online-emotional-support-india`,   lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/alternatives-to-therapy-india`,    lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/feeling-lonely-in-india`,          lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/our-story`,                        lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.8 },
     // Resources hub + all resource pages
     { url: `${base}/resources`,                        lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/resources/loneliness-statistics-india`, lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
