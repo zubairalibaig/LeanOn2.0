@@ -134,9 +134,11 @@ export async function middleware(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    // Build redirect URL, preserving intended destination
+    // Only redirect to same-origin paths — prevents open redirect attacks.
+    // pathname + search are from req.nextUrl which is always same-origin.
+    const dest = pathname + search
     const loginUrl = new URL('/auth', req.url)
-    loginUrl.searchParams.set('redirect', pathname + search)
+    loginUrl.searchParams.set('redirect', dest)
     return NextResponse.redirect(loginUrl)
   }
 

@@ -17,7 +17,10 @@ export async function POST(req: Request) {
   const authHeader = req.headers.get('authorization')
 
   if (!cronSecret && process.env.NODE_ENV === 'production') {
-    return NextResponse.json({ error: 'CRON_SECRET not configured' }, { status: 500 })
+    // Require at minimum a valid user session when CRON_SECRET is missing
+    const { createServerSupabaseClient: makeClient } = await import('@/lib/supabase-server')
+    const { data: { user } } = await makeClient().auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
   if (cronSecret) {

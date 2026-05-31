@@ -19,9 +19,10 @@ export async function GET(req: NextRequest) {
   }
 
   const url    = new URL(req.url)
-  // Math.max(0, ... || 0) guards against NaN (non-numeric input) and negative page numbers
-  const lpPage = Math.max(0, parseInt(url.searchParams.get('lpPage') || '0', 10) || 0)
-  const prPage = Math.max(0, parseInt(url.searchParams.get('prPage') || '0', 10) || 0)
+  // Math.max/min guard against NaN, negative pages, and unreasonably large offsets
+  const MAX_PAGE = 500
+  const lpPage = Math.min(MAX_PAGE, Math.max(0, parseInt(url.searchParams.get('lpPage') || '0', 10) || 0))
+  const prPage = Math.min(MAX_PAGE, Math.max(0, parseInt(url.searchParams.get('prPage') || '0', 10) || 0))
   const admin  = createAdminClient()
 
   const [{ data: pendingListeners, count: lpCount }, { data: pendingPayouts, count: prCount }, { data: refundRequests }] = await Promise.all([

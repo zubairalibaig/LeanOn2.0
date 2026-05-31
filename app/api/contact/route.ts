@@ -19,9 +19,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
     }
 
+    const VALID_TYPES = ['general', 'feature_request', 'bug_report', 'support', 'partnership', 'press']
     const cleanName    = name.trim().slice(0, 100)
     const cleanEmail   = email.trim().toLowerCase().slice(0, 200)
-    const cleanType    = type || 'general'
+    const cleanType    = VALID_TYPES.includes(type) ? type : 'general'
     const cleanMessage = message.trim().slice(0, 2000)
 
     const esc = (s: string) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
