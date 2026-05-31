@@ -10,10 +10,15 @@ import { logger } from '@/lib/logger'
  *   code:'PIN_REQUIRED' → user IS admin but PIN missing/wrong → show PIN gate
  *
  * Identity check order (ANY match = admin):
- *   1. user.phone === ADMIN_PHONE env var  (phone-OTP logins)
+ *   1. user.phone === ADMIN_PHONE env var  (phone-OTP logins, digits-only normalized)
  *   2. user.email === ADMIN_EMAIL env var  (email logins)
  *   3. users.is_admin = true in DB        (explicit grant)
+ *   4. users.role = 'admin' in DB         (role-based grant)
  */
+
+// Strip all non-digit characters for phone comparison, handles +91 prefix differences
+const normalizePhone = (p: string | null | undefined) => (p ?? '').replace(/\D/g, '')
+
 export async function requireAdmin(req: Request) {
   // ── Step 1: verify session ───────────────────────────────────────────────
   const supabase = createServerSupabaseClient()
@@ -31,16 +36,22 @@ export async function requireAdmin(req: Request) {
   const adminPin   = process.env.ADMIN_PIN
 
   // ── Step 2: identity check (env vars first — no DB dependency) ──────────
-  const isAdminByPhone = !!(adminPhone && user.phone && user.phone === adminPhone)
+  // Normalize both sides to digits-only to handle +91 vs 91 prefix differences
+  const isAdminByPhone = !!(
+    adminPhone &&
+    user.phone &&
+    normalizePhone(user.phone) === normalizePhone(adminPhone)
+  )
   const isAdminByEmail = !!(adminEmail && user.email && user.email === adminEmail)
 
   // DB check — treat query errors as "not found" but log them
+  // Check both is_admin flag AND role column (real DB has role='admin' as alternative)
   let isAdminByDB = false
   try {
     const sb = createAdminClient()
     const { data: dbUser, error: dbErr } = await sb
       .from('users')
-      .select('is_admin')
+      .select('is_admin, role')
       .eq('id', user.id)
       .single()
     if (dbErr) {
@@ -50,7 +61,7 @@ export async function requireAdmin(req: Request) {
         hint: 'Run migration 014 to add is_admin column if missing',
       })
     } else {
-      isAdminByDB = dbUser?.is_admin === true
+      isAdminByDB = dbUser?.is_admin === true || dbUser?.role === 'admin'
     }
   } catch (e) {
     logger.error('requireAdmin: unexpected DB error', {
@@ -61,9 +72,9 @@ export async function requireAdmin(req: Request) {
   // Log the identity resolution to help diagnose auth failures
   logger.info('requireAdmin: identity check', {
     userId: user.id,
-    userPhone: user.phone ?? '(none)',
+    userPhoneNorm: normalizePhone(user.phone) || '(none)',
     userEmail: user.email ?? '(none)',
-    adminPhone: adminPhone ? adminPhone.slice(0, 4) + '***' : '(not set)',
+    adminPhoneNorm: adminPhone ? normalizePhone(adminPhone).slice(0, 4) + '***' : '(not set)',
     adminEmail: adminEmail ? adminEmail.split('@')[0].slice(0, 3) + '***' : '(not set)',
     isAdminByPhone,
     isAdminByEmail,
