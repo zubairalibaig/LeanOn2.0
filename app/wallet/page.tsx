@@ -76,6 +76,24 @@ export default function WalletPage() {
     loadUserData()
   }, [])
 
+  // Realtime: update balance if webhook credits it while page is open
+  useEffect(() => {
+    if (!userId) return
+    const sb = createClient()
+    const ch = sb.channel('wallet-balance')
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'users',
+        filter: `id=eq.${userId}`,
+      }, (payload) => {
+        const newBalance = (payload.new as { wallet_balance?: number }).wallet_balance
+        if (typeof newBalance === 'number') setBalance(newBalance)
+      })
+      .subscribe()
+    return () => { sb.removeChannel(ch) }
+  }, [userId])
+
   async function loadUserData() {
     const { data: { user } } = await sb.auth.getUser()
     if (!user) { router.push('/auth'); return }

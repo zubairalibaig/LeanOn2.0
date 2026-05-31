@@ -277,6 +277,21 @@ function SessionContent() {
     return () => window.removeEventListener('popstate', handlePop)
   }, [ended])
 
+  // Mobile: track keyboard height via visualViewport API
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.visualViewport) return
+    function onViewportResize() {
+      const keyboardH = window.innerHeight - (window.visualViewport?.height ?? window.innerHeight)
+      const bar = document.querySelector('.input-bar') as HTMLElement | null
+      if (bar) bar.style.bottom = `calc(${Math.max(0, keyboardH)}px + env(safe-area-inset-bottom) + 8px)`
+      if (keyboardH > 100) {
+        setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 100)
+      }
+    }
+    window.visualViewport.addEventListener('resize', onViewportResize)
+    return () => window.visualViewport?.removeEventListener('resize', onViewportResize)
+  }, [])
+
   // Load existing messages from DB on mount
   useEffect(() => {
     if (!sessionId) return

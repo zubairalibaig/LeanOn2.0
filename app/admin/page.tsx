@@ -13,7 +13,7 @@ type KPIs = {
   moderation: { pendingReports: number }
 }
 
-type UserRow = { id: string; name?: string; email?: string; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number; updated_at?: string }
+type UserRow = { id: string; name?: string; phone?: string; email?: string; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number; updated_at?: string }
 type ListenerRow = {
   user_id: string; bio?: string; specialty_tags?: string[]; rate_per_min?: number; rating?: number; total_sessions?: number
   is_active: boolean; is_approved: boolean; is_available: boolean; is_verified?: boolean; is_suspended?: boolean; created_at: string
@@ -698,8 +698,8 @@ export default function AdminPage() {
                     <tbody>
                       {users.map(u => (
                         <tr key={u.id}>
-                          <td style={{ fontWeight: 700 }}>{u.name || '—'}</td>
-                          <td style={{ color: 'var(--gray)' }}>{u.email || '—'}</td>
+                          <td style={{ fontWeight: 700 }}>{u.name || u.phone || '—'}</td>
+                          <td style={{ color: 'var(--gray)', fontSize: 13 }}>{u.email || (u.phone && !u.name ? u.phone : '—')}</td>
                           <td style={{ color: 'var(--gray)' }}>{fmtDate(u.created_at)}</td>
                           <td>₹{u.wallet_balance ?? 0}</td>
                           <td>

@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
 
     // Regular users
     let query = sb.from('users')
-      .select('id, name, email, created_at, is_active, is_suspended, wallet_balance, updated_at', { count: 'exact' })
+      .select('id, name, phone, email, created_at, is_active, is_suspended, wallet_balance, updated_at', { count: 'exact' })
       .order('created_at', { ascending: false })
       .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)
 
@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
     else if (userStatus === 'inactive') query = query.eq('is_active', false)
     else if (userStatus === 'suspended') query = query.eq('is_suspended', true)
 
-    if (search) query = query.ilike('name', `%${search}%`)
+    if (search) query = query.or(`name.ilike.%${search}%,phone.ilike.%${search}%`)
 
     const { data, count, error: qErr } = await query
     if (qErr) throw qErr
