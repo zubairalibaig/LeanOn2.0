@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -122,8 +121,6 @@ function fmtDate(iso: string) {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function AdminPage() {
-  const router = useRouter()
-
   // ── Auth gate ───────────────────────────────────────────────────────────────
   const [authChecking, setAuthChecking] = useState(true)
   const [authUser, setAuthUser] = useState<{ id: string; email?: string; phone?: string } | null>(null)
@@ -133,19 +130,19 @@ export default function AdminPage() {
   const [pinVerified, setPinVerified] = useState(false)
   const [denied, setDenied] = useState(false)
 
-  // Check auth on mount — client-side (avoids SSR cookie detection issues)
+  // Check auth on mount — client-side only (avoids SSR cookie detection issues on Vercel)
+  // Do NOT redirect to /auth — admin page handles all states internally.
+  // Redirecting to /auth leaks that an admin panel exists and allows any phone to attempt OTP.
   useEffect(() => {
     const sb = createClient()
     sb.auth.getSession().then(({ data: { session } }) => {
       if (!session) {
-        // Not logged in — redirect to auth
-        const dest = '/auth?redirect=/admin'
-        window.location.href = dest
+        setAuthChecking(false)
+        setDenied(true) // not logged in → Access Denied
         return
       }
       setAuthUser(session.user as { id: string; email?: string; phone?: string })
       setAuthChecking(false)
-      // Check if ADMIN_PIN is required (we discover this from the first KPI fetch response)
     }).catch(() => {
       setAuthChecking(false)
       setDenied(true)
@@ -240,16 +237,18 @@ export default function AdminPage() {
   const loadKPIs = useCallback(async () => {
     setKpisLoading(true)
     const res = await fetch('/api/admin/kpis', { headers: adminHeaders() })
-    if (res.status === 401) { router.push('/auth?redirect=/admin'); return }
+    if (res.status === 401) { setDenied(true); setKpisLoading(false); return }
     if (res.status === 403) {
-      // If we already have a verified PIN, the user is truly forbidden
-      if (verifiedPinRef.current) { setDenied(true) } else { setPinRequired(true) }
+      const body = await res.json().catch(() => ({}))
+      // PIN_REQUIRED → user IS admin but PIN missing/wrong — show PIN gate
+      // NOT_ADMIN / anything else → user is not admin — show Access Denied
+      if (body.code === 'PIN_REQUIRED') { setPinRequired(true) } else { setDenied(true) }
       setKpisLoading(false)
       return
     }
     if (res.ok) setKpis(await res.json())
     setKpisLoading(false)
-  }, [router]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadUsers = useCallback(async (pg = usersPage, st = usersStatus, q = usersSearch) => {
     setUsersLoading(true)

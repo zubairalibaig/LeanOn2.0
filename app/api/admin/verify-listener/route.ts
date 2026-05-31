@@ -10,8 +10,8 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 // POST /api/admin/verify-listener
 // Body: { verificationId, action: 'approve'|'reject', notes? }
 export async function POST(req: NextRequest) {
-  const { error, status, user } = await requireAdmin()
-  if (error) return NextResponse.json({ error }, { status })
+  const { error, code, status, user } = await requireAdmin(req)
+  if (error) return NextResponse.json({ error, code }, { status })
   if (!checkRateLimit(`admin:${user!.id}`, 30, 60_000)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
@@ -78,8 +78,8 @@ export async function POST(req: NextRequest) {
 
 // GET /api/admin/verify-listener — list verifications
 export async function GET(req: NextRequest) {
-  const { error, status, user } = await requireAdmin()
-  if (error) return NextResponse.json({ error }, { status })
+  const { error, code, status, user } = await requireAdmin(req)
+  if (error) return NextResponse.json({ error, code }, { status })
   if (!checkRateLimit(`admin:${user!.id}`, 30, 60_000)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }

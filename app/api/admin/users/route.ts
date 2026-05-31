@@ -10,8 +10,8 @@ const PAGE_SIZE = 25
 // GET — list users or listeners with pagination + filter
 // Query params: ?type=user|listener&status=active|inactive|suspended|pending&page=0&search=
 export async function GET(req: NextRequest) {
-  const { error, status } = await requireAdmin()
-  if (error) return NextResponse.json({ error }, { status })
+  const { error, code, status } = await requireAdmin(req)
+  if (error) return NextResponse.json({ error, code }, { status })
 
   const sb = createAdminClient()
   const url = new URL(req.url)
@@ -70,8 +70,8 @@ export async function GET(req: NextRequest) {
 // PATCH — user management actions
 // Body: { userId, action: 'activate'|'deactivate'|'suspend'|'ban'|'unsuspend'|'approve_listener'|'reject_listener', notes? }
 export async function PATCH(req: NextRequest) {
-  const { error, status, user } = await requireAdmin()
-  if (error) return NextResponse.json({ error }, { status })
+  const { error, code, status, user } = await requireAdmin(req)
+  if (error) return NextResponse.json({ error, code }, { status })
 
   let body: { userId?: string; action?: string; notes?: string }
   try {

@@ -5,8 +5,8 @@ import { requireAdmin } from '@/lib/require-admin'
 
 
 export async function GET(req: NextRequest) {
-  const { error, status } = await requireAdmin()
-  if (error) return NextResponse.json({ error }, { status })
+  const { error, code, status } = await requireAdmin(req)
+  if (error) return NextResponse.json({ error, code }, { status })
 
   try {
     const sb = createAdminClient()
