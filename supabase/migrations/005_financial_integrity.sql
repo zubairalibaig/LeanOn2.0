@@ -8,9 +8,11 @@ CREATE UNIQUE INDEX IF NOT EXISTS wallet_txn_payment_id_unique
   ON public.wallet_transactions(reference_id)
   WHERE reference_id IS NOT NULL;
 
--- Ensure sessions always hold a positive amount
+-- amount_held is 0 for free trials, positive for paid sessions
+-- Drop old constraint if it exists (was incorrectly set to > 0)
+ALTER TABLE public.sessions DROP CONSTRAINT IF EXISTS sessions_amount_held_positive;
 ALTER TABLE public.sessions
-  ADD CONSTRAINT sessions_amount_held_positive CHECK (amount_held > 0);
+  ADD CONSTRAINT sessions_amount_held_non_negative CHECK (amount_held >= 0);
 
 -- Fast index for double-booking prevention
 CREATE INDEX IF NOT EXISTS sessions_listener_status_idx

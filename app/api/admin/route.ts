@@ -1,39 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
+import { createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
+import { requireAdmin } from '@/lib/require-admin'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 // Admin routes: 30 requests per minute per admin user to prevent brute-force scraping
 const ADMIN_RATE = { limit: 30, windowMs: 60_000 }
 
-async function requireAdmin() {
-  const supabase = createServerSupabaseClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'Unauthenticated', status: 401, user: null }
-
-  const adminEmail = process.env.ADMIN_EMAIL
-  if (adminEmail) {
-    if (user.email !== adminEmail) return { error: 'Forbidden', status: 403, user: null }
-  } else {
-    logger.warn('ADMIN_EMAIL env var not set — falling back to is_admin DB column')
-    const admin = createAdminClient()
-    const { data: dbUser } = await admin
-      .from('users')
-      .select('is_admin')
-      .eq('id', user.id)
-      .single()
-    if (!dbUser?.is_admin) return { error: 'Forbidden', status: 403, user: null }
-  }
-
-  return { error: null, status: 200, user }
-}
-
 const PAGE_SIZE = 20
 
 export async function GET(req: NextRequest) {
-  const { error, status, user } = await requireAdmin()
+  const { error, status, user } = await requireAdmin(req)
   if (error) return NextResponse.json({ error }, { status })
   if (!checkRateLimit(`admin:${user!.id}`, ADMIN_RATE.limit, ADMIN_RATE.windowMs)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
@@ -86,7 +65,7 @@ async function auditLog(admin: ReturnType<typeof createAdminClient>, adminId: st
 }
 
 export async function POST(req: NextRequest) {
-  const { error, status, user } = await requireAdmin()
+  const { error, status, user } = await requireAdmin(req)
   if (error) return NextResponse.json({ error }, { status })
   if (!checkRateLimit(`admin:${user!.id}`, ADMIN_RATE.limit, ADMIN_RATE.windowMs)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })

@@ -1,21 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
+import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
+import { requireAdmin } from '@/lib/require-admin'
 
-async function requireAdmin() {
-  const supabase = createServerSupabaseClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'Unauthenticated', status: 401, user: null }
-  const adminEmail = process.env.ADMIN_EMAIL
-  if (adminEmail) {
-    if (user.email !== adminEmail) return { error: 'Forbidden', status: 403, user: null }
-  } else {
-    const admin = createAdminClient()
-    const { data: dbUser } = await admin.from('users').select('is_admin').eq('id', user.id).single()
-    if (!dbUser?.is_admin) return { error: 'Forbidden', status: 403, user: null }
-  }
-  return { error: null, status: 200, user }
-}
 
 // GET /api/admin/sessions — list recent sessions with optional status filter
 export async function GET(req: NextRequest) {

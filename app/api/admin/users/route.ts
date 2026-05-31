@@ -1,24 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
+import { requireAdmin } from '@/lib/require-admin'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const PAGE_SIZE = 25
 
-async function requireAdmin() {
-  const supabase = createServerSupabaseClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'Unauthenticated', status: 401, user: null }
-  const adminEmail = process.env.ADMIN_EMAIL
-  if (adminEmail) {
-    if (user.email !== adminEmail) return { error: 'Forbidden', status: 403, user: null }
-  } else {
-    const admin = createAdminClient()
-    const { data: dbUser } = await admin.from('users').select('is_admin').eq('id', user.id).single()
-    if (!dbUser?.is_admin) return { error: 'Forbidden', status: 403, user: null }
-  }
-  return { error: null, status: 200, user }
-}
 
 // GET — list users or listeners with pagination + filter
 // Query params: ?type=user|listener&status=active|inactive|suspended|pending&page=0&search=

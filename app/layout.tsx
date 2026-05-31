@@ -4,6 +4,7 @@ import BottomNav from './components/BottomNav'
 import ToastProvider from './components/ToastProvider'
 import ErrorBoundary from './components/ErrorBoundary'
 import FloatingCTA from './components/FloatingCTA'
+import { Analytics } from '@vercel/analytics/next'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.leanon.app'),
@@ -178,6 +179,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <BottomNav />
         <FloatingCTA />
         <ToastProvider />
+        <Analytics />
       </body>
     </html>
   )

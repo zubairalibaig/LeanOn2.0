@@ -51,6 +51,7 @@ const PUBLIC_PAGES = [
   '/privacy',
   '/terms',
   '/glossary',
+  '/admin', // handled client-side with Supabase auth + PIN gate
 ]
 
 const AUTH_REQUIRED_PREFIXES = [
@@ -59,7 +60,8 @@ const AUTH_REQUIRED_PREFIXES = [
   '/wallet',
   '/history',
   '/notifications',
-  '/admin',
+  // /admin is NOT here — the admin page handles its own auth + PIN gate client-side
+  // This prevents redirect loops caused by SSR cookie detection differences
   '/profile',
   '/sessions',
 ]

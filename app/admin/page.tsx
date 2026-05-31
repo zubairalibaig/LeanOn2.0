@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -123,11 +124,39 @@ function fmtDate(iso: string) {
 export default function AdminPage() {
   const router = useRouter()
 
+  // ── Auth gate ───────────────────────────────────────────────────────────────
+  const [authChecking, setAuthChecking] = useState(true)
+  const [authUser, setAuthUser] = useState<{ id: string; email?: string; phone?: string } | null>(null)
+  const [pinRequired, setPinRequired] = useState(false)
+  const [pinInput, setPinInput] = useState('')
+  const [pinError, setPinError] = useState('')
+  const [pinVerified, setPinVerified] = useState(false)
   const [denied, setDenied] = useState(false)
+
+  // Check auth on mount — client-side (avoids SSR cookie detection issues)
+  useEffect(() => {
+    const sb = createClient()
+    sb.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        // Not logged in — redirect to auth
+        const dest = '/auth?redirect=/admin'
+        window.location.href = dest
+        return
+      }
+      setAuthUser(session.user as { id: string; email?: string; phone?: string })
+      setAuthChecking(false)
+      // Check if ADMIN_PIN is required (we discover this from the first KPI fetch response)
+    }).catch(() => {
+      setAuthChecking(false)
+      setDenied(true)
+    })
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
   const [tab, setTab] = useState<Tab>('overview')
   const [toast, setToast] = useState<string | null>(null)
   const [busy, setBusy] = useState<string | null>(null)
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // Stores the verified PIN so all subsequent API calls include it
+  const verifiedPinRef = useRef<string>('')
 
   // KPIs
   const [kpis, setKpis] = useState<KPIs | null>(null)
@@ -179,70 +208,104 @@ export default function AdminPage() {
 
   // ── Data loaders ────────────────────────────────────────────────────────────
 
+  // Verify the admin PIN against the API
+  const verifyPin = async () => {
+    if (!pinInput.trim()) { setPinError('Please enter your PIN'); return }
+    const pin = pinInput.trim()
+    const res = await fetch('/api/admin/kpis', {
+      headers: { 'x-admin-pin': pin },
+    })
+    if (res.ok) {
+      verifiedPinRef.current = pin
+      setPinVerified(true)
+      setPinRequired(false)
+      const json = await res.json()
+      setKpis(json)
+      setKpisLoading(false)
+    } else if (res.status === 403) {
+      setPinError('Incorrect PIN. Try again.')
+      setPinInput('')
+    } else {
+      setPinError('Error verifying PIN. Try again.')
+    }
+  }
+
+  // Returns Authorization headers including the admin PIN when it has been verified
+  function adminHeaders(extra: Record<string, string> = {}): Record<string, string> {
+    const h: Record<string, string> = { ...extra }
+    if (verifiedPinRef.current) h['x-admin-pin'] = verifiedPinRef.current
+    return h
+  }
+
   const loadKPIs = useCallback(async () => {
     setKpisLoading(true)
-    const res = await fetch('/api/admin/kpis')
+    const res = await fetch('/api/admin/kpis', { headers: adminHeaders() })
     if (res.status === 401) { router.push('/auth?redirect=/admin'); return }
-    if (res.status === 403) { setDenied(true); setKpisLoading(false); return }
+    if (res.status === 403) {
+      // If we already have a verified PIN, the user is truly forbidden
+      if (verifiedPinRef.current) { setDenied(true) } else { setPinRequired(true) }
+      setKpisLoading(false)
+      return
+    }
     if (res.ok) setKpis(await res.json())
     setKpisLoading(false)
-  }, [router])
+  }, [router]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadUsers = useCallback(async (pg = usersPage, st = usersStatus, q = usersSearch) => {
     setUsersLoading(true)
     const params = new URLSearchParams({ type: 'user', page: String(pg), status: st, search: q })
-    const res = await fetch(`/api/admin/users?${params}`)
+    const res = await fetch(`/api/admin/users?${params}`, { headers: adminHeaders() })
     if (res.ok) {
       const json = await res.json()
       setUsers(json.items)
       setUsersTotal(json.total)
     }
     setUsersLoading(false)
-  }, [usersPage, usersStatus, usersSearch])
+  }, [usersPage, usersStatus, usersSearch]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadListeners = useCallback(async (pg = listenersPage, st = listenersStatus) => {
     setListenersLoading(true)
     const params = new URLSearchParams({ type: 'listener', page: String(pg), status: st })
-    const res = await fetch(`/api/admin/users?${params}`)
+    const res = await fetch(`/api/admin/users?${params}`, { headers: adminHeaders() })
     if (res.ok) {
       const json = await res.json()
       setListeners(json.items)
       setListenersTotal(json.total)
     }
     setListenersLoading(false)
-  }, [listenersPage, listenersStatus])
+  }, [listenersPage, listenersStatus]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadSessions = useCallback(async (st = sessionsStatus) => {
     setSessionsLoading(true)
     const params = new URLSearchParams({ status: st !== 'all' ? st : '' })
-    const res = await fetch(`/api/admin/sessions?${params}`)
+    const res = await fetch(`/api/admin/sessions?${params}`, { headers: adminHeaders() })
     if (res.ok) setSessions((await res.json()).sessions ?? [])
     setSessionsLoading(false)
-  }, [sessionsStatus])
+  }, [sessionsStatus]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadReports = useCallback(async (st = reportsStatus) => {
     setReportsLoading(true)
-    const res = await fetch(`/api/admin/moderate?status=${st}`)
+    const res = await fetch(`/api/admin/moderate?status=${st}`, { headers: adminHeaders() })
     if (res.ok) setReports((await res.json()).reports ?? [])
     setReportsLoading(false)
-  }, [reportsStatus])
+  }, [reportsStatus]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadPayouts = useCallback(async () => {
     setPayoutsLoading(true)
-    const res = await fetch('/api/admin?prPage=0&lpPage=0')
+    const res = await fetch('/api/admin?prPage=0&lpPage=0', { headers: adminHeaders() })
     if (res.ok) {
       const json = await res.json()
       setPayouts(json.pendingPayouts ?? [])
     }
     setPayoutsLoading(false)
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadVerifs = useCallback(async (st = verifsStatus) => {
     setVerifsLoading(true)
-    const res = await fetch(`/api/admin/verify-listener?status=${st}`)
+    const res = await fetch(`/api/admin/verify-listener?status=${st}`, { headers: adminHeaders() })
     if (res.ok) setVerifs((await res.json()).verifications ?? [])
     setVerifsLoading(false)
-  }, [verifsStatus])
+  }, [verifsStatus]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Effects ─────────────────────────────────────────────────────────────────
 
@@ -285,7 +348,7 @@ export default function AdminPage() {
     setBusy(key)
     const res = await fetch('/api/admin/users', {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: adminHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ userId, action, notes }),
     })
     setBusy(null)
@@ -304,7 +367,7 @@ export default function AdminPage() {
     setBusy(`${action}:${id}`)
     const res = await fetch('/api/admin', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: adminHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ action, id }),
     })
     setBusy(null)
@@ -322,7 +385,7 @@ export default function AdminPage() {
     setBusy(`moderate:${reportId}:${action}`)
     const res = await fetch('/api/admin/moderate', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: adminHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ reportId, action, targetUserId }),
     })
     setBusy(null)
@@ -340,7 +403,7 @@ export default function AdminPage() {
     const notes = verifRejectNotes[verificationId] || ''
     const res = await fetch('/api/admin/verify-listener', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: adminHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ verificationId, action, notes: notes || undefined }),
     })
     setBusy(null)
@@ -354,6 +417,44 @@ export default function AdminPage() {
   }
 
   // ── Render Guards ────────────────────────────────────────────────────────────
+
+  // Show loading while checking session
+  if (authChecking) return (
+    <>
+      <style>{S}</style>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',fontFamily:'Nunito,sans-serif',flexDirection:'column',gap:12}}>
+        <div style={{fontSize:32}}>🔐</div>
+        <p style={{fontWeight:700,fontSize:16,color:'#0F4867'}}>Verifying access…</p>
+      </div>
+    </>
+  )
+
+  // PIN gate — shown when API returns 403 with pinRequired
+  if (pinRequired && !pinVerified) return (
+    <>
+      <style>{S}</style>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',fontFamily:'Nunito,sans-serif'}}>
+        <div style={{background:'white',borderRadius:24,padding:'40px 32px',boxShadow:'0 8px 40px rgba(15,72,103,0.12)',maxWidth:360,width:'100%',textAlign:'center'}}>
+          <div style={{fontSize:40,marginBottom:16}}>🔒</div>
+          <h2 style={{fontSize:22,fontWeight:900,color:'#0F4867',marginBottom:8}}>Admin PIN Required</h2>
+          <p style={{fontSize:14,color:'#5A7A8A',marginBottom:24,lineHeight:1.6}}>Enter your admin PIN to access the dashboard.</p>
+          <input
+            type="password"
+            placeholder="Enter PIN"
+            value={pinInput}
+            onChange={e => { setPinInput(e.target.value); setPinError('') }}
+            onKeyDown={e => { if (e.key === 'Enter') verifyPin() }}
+            style={{width:'100%',padding:'14px 16px',borderRadius:14,border:'2px solid #D5EEF6',fontFamily:'Nunito,sans-serif',fontSize:18,fontWeight:700,letterSpacing:'0.2em',textAlign:'center',outline:'none',boxSizing:'border-box',marginBottom:8}}
+            autoFocus
+          />
+          {pinError && <p style={{color:'#FF3B30',fontSize:13,fontWeight:700,marginBottom:8}}>{pinError}</p>}
+          <button onClick={verifyPin} style={{width:'100%',padding:'14px',background:'#0F4867',color:'white',border:'none',borderRadius:50,fontFamily:'Nunito,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',marginTop:8}}>
+            Unlock Dashboard
+          </button>
+        </div>
+      </div>
+    </>
+  )
 
   if (denied) return (
     <>
