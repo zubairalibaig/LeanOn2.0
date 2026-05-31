@@ -1,4 +1,5 @@
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 /**
  * Shared admin auth check for all /api/admin/* routes.
@@ -8,35 +9,72 @@ import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-se
  *   code:'NOT_ADMIN'    → user is logged in but is not admin → show Access Denied
  *   code:'PIN_REQUIRED' → user IS admin but PIN missing/wrong → show PIN gate
  *
- * Logic order:
- * 1. Must be authenticated (401 if not)
- * 2. Identity check: ADMIN_EMAIL env var, OR ADMIN_PHONE env var, OR is_admin=true in DB
- *    Fails → NOT_ADMIN 403 (non-admins never see the PIN gate)
- * 3. If ADMIN_PIN env var is set, verify x-admin-pin header
- *    Fails → PIN_REQUIRED 403 (PIN gate shown only to confirmed admins)
+ * Identity check order (ANY match = admin):
+ *   1. user.phone === ADMIN_PHONE env var  (phone-OTP logins)
+ *   2. user.email === ADMIN_EMAIL env var  (email logins)
+ *   3. users.is_admin = true in DB        (explicit grant)
  */
 export async function requireAdmin(req: Request) {
+  // ── Step 1: verify session ───────────────────────────────────────────────
   const supabase = createServerSupabaseClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'Unauthenticated', code: 'UNAUTHENTICATED', status: 401 as const, user: null }
+  const { data: { user }, error: authErr } = await supabase.auth.getUser()
+
+  if (authErr) {
+    logger.warn('requireAdmin: auth.getUser() error', { error: authErr.message })
+  }
+  if (!user) {
+    return { error: 'Unauthenticated', code: 'UNAUTHENTICATED', status: 401 as const, user: null }
+  }
 
   const adminEmail = process.env.ADMIN_EMAIL
   const adminPhone = process.env.ADMIN_PHONE
   const adminPin   = process.env.ADMIN_PIN
 
-  // Check identity FIRST — non-admins must never reach the PIN gate
-  const sb = createAdminClient()
-  const { data: dbUser } = await sb.from('users').select('is_admin').eq('id', user.id).single()
+  // ── Step 2: identity check (env vars first — no DB dependency) ──────────
+  const isAdminByPhone = !!(adminPhone && user.phone && user.phone === adminPhone)
+  const isAdminByEmail = !!(adminEmail && user.email && user.email === adminEmail)
 
-  const isAdminByEmail = !!(adminEmail && user.email === adminEmail)
-  const isAdminByPhone = !!(adminPhone && user.phone === adminPhone)
-  const isAdminByDB    = dbUser?.is_admin === true
+  // DB check — treat query errors as "not found" but log them
+  let isAdminByDB = false
+  try {
+    const sb = createAdminClient()
+    const { data: dbUser, error: dbErr } = await sb
+      .from('users')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single()
+    if (dbErr) {
+      logger.warn('requireAdmin: DB is_admin query failed', {
+        userId: user.id,
+        error: dbErr.message,
+        hint: 'Run migration 014 to add is_admin column if missing',
+      })
+    } else {
+      isAdminByDB = dbUser?.is_admin === true
+    }
+  } catch (e) {
+    logger.error('requireAdmin: unexpected DB error', {
+      error: e instanceof Error ? e.message : String(e),
+    })
+  }
 
-  if (!isAdminByEmail && !isAdminByPhone && !isAdminByDB) {
+  // Log the identity resolution to help diagnose auth failures
+  logger.info('requireAdmin: identity check', {
+    userId: user.id,
+    userPhone: user.phone ?? '(none)',
+    userEmail: user.email ?? '(none)',
+    adminPhone: adminPhone ? adminPhone.slice(0, 4) + '***' : '(not set)',
+    adminEmail: adminEmail ? adminEmail.split('@')[0].slice(0, 3) + '***' : '(not set)',
+    isAdminByPhone,
+    isAdminByEmail,
+    isAdminByDB,
+  })
+
+  if (!isAdminByPhone && !isAdminByEmail && !isAdminByDB) {
     return { error: 'Forbidden', code: 'NOT_ADMIN', status: 403 as const, user: null }
   }
 
-  // Identity confirmed — enforce PIN when configured
+  // ── Step 3: PIN check (only for confirmed admins) ────────────────────────
   if (adminPin) {
     const authHeader = req.headers.get('x-admin-pin') ?? req.headers.get('authorization')
     const providedPin = authHeader?.replace(/^Bearer\s+/i, '')

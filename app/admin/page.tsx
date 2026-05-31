@@ -157,7 +157,7 @@ export default function AdminPage() {
 
   // KPIs
   const [kpis, setKpis] = useState<KPIs | null>(null)
-  const [kpisLoading, setKpisLoading] = useState(true)
+  const [kpisLoading, setKpisLoading] = useState(false)
 
   // Users
   const [users, setUsers] = useState<UserRow[]>([])
@@ -308,13 +308,18 @@ export default function AdminPage() {
 
   // ── Effects ─────────────────────────────────────────────────────────────────
 
-  useEffect(() => { loadKPIs() }, [loadKPIs])
-
-  // Auto-refresh KPIs every 30 seconds
+  // Only fire loadKPIs after session check completes and user is confirmed logged in.
+  // Firing before auth check means the request races with cookie hydration.
   useEffect(() => {
+    if (!authChecking && authUser) loadKPIs()
+  }, [authChecking, authUser, loadKPIs])
+
+  // Auto-refresh KPIs every 30 seconds (only while dashboard is visible)
+  useEffect(() => {
+    if (authChecking || !authUser || denied || (pinRequired && !pinVerified)) return
     const interval = setInterval(loadKPIs, 30_000)
     return () => clearInterval(interval)
-  }, [loadKPIs])
+  }, [authChecking, authUser, denied, pinRequired, pinVerified, loadKPIs])
 
   useEffect(() => {
     if (tab === 'users') loadUsers(0, usersStatus, usersSearch)
@@ -458,11 +463,20 @@ export default function AdminPage() {
   if (denied) return (
     <>
       <style>{S}</style>
-      <div className="page">
-        <div className="error-page">
-          <div style={{ fontSize: 48, marginBottom: 16 }}>🔒</div>
-          <h2>Not authorized</h2>
-          <p style={{ color: 'var(--gray)', fontWeight: 600 }}>You don&apos;t have permission to access this page.</p>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',fontFamily:'Nunito,sans-serif'}}>
+        <div style={{textAlign:'center',padding:'40px 24px',maxWidth:380}}>
+          <div style={{fontSize:48,marginBottom:16}}>🔒</div>
+          <h2 style={{fontSize:22,fontWeight:900,color:'#0F4867',marginBottom:10}}>Access Denied</h2>
+          <p style={{fontSize:14,color:'#5A7A8A',fontWeight:600,lineHeight:1.7,marginBottom:28}}>
+            {authUser
+              ? 'Your account does not have admin access.'
+              : 'You must be logged in with your admin account to access this page.'}
+          </p>
+          {!authUser && (
+            <a href="/auth" style={{display:'inline-block',padding:'14px 32px',background:'#0F4867',color:'white',borderRadius:50,fontWeight:800,fontSize:14,textDecoration:'none'}}>
+              Log In
+            </a>
+          )}
         </div>
       </div>
     </>
