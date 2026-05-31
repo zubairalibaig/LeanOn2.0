@@ -129,7 +129,7 @@ function validateBio(v: string): string {
 }
 function validateRate(v: string): string {
   const n = parseInt(v)
-  if (isNaN(n) || n < 1 || n > 20) return 'Rate must be between ₹1–₹20 per minute'
+  if (isNaN(n) || n < MIN_LISTENER_RATE || n > MAX_LISTENER_RATE) return `Rate must be between ₹${MIN_LISTENER_RATE}–₹${MAX_LISTENER_RATE} per minute`
   return ''
 }
 function validateBank(v: string): string {

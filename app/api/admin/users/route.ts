@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     if (type === 'listener') {
       let query = sb.from('listener_profiles')
         .select(`
-          user_id, bio, topics, rate_per_min, rating, total_sessions,
+          user_id, bio, specialty_tags, rate_per_min, rating, total_sessions,
           is_active, is_approved, is_available, is_verified, is_suspended,
           created_at,
           users!inner(id, name, email, created_at, is_active, is_suspended, wallet_balance)
@@ -117,13 +117,13 @@ export async function PATCH(req: NextRequest) {
       case 'suspend':
       case 'ban':
         await sb.from('users').update({ is_suspended: true, is_active: false }).eq('id', userId)
-        await sb.from('listener_profiles').update({ is_active: false, is_available: false }).eq('user_id', userId)
+        await sb.from('listener_profiles').update({ is_active: false, is_available: false, is_suspended: true }).eq('user_id', userId)
         await sb.auth.admin.signOut(userId, 'global').then(() => {}, () => {})
         break
 
       case 'unsuspend':
         await sb.from('users').update({ is_suspended: false, is_active: true }).eq('id', userId)
-        await sb.from('listener_profiles').update({ is_active: true }).eq('user_id', userId)
+        await sb.from('listener_profiles').update({ is_active: true, is_suspended: false }).eq('user_id', userId)
         break
 
       case 'deactivate':

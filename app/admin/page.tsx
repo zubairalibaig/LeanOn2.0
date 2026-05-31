@@ -15,7 +15,7 @@ type KPIs = {
 
 type UserRow = { id: string; name?: string; email?: string; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number; updated_at?: string }
 type ListenerRow = {
-  user_id: string; bio?: string; topics?: string[]; rate_per_min?: number; rating?: number; total_sessions?: number
+  user_id: string; bio?: string; specialty_tags?: string[]; rate_per_min?: number; rating?: number; total_sessions?: number
   is_active: boolean; is_approved: boolean; is_available: boolean; is_verified?: boolean; is_suspended?: boolean; created_at: string
   users: { id: string; name?: string; email?: string; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number }
 }

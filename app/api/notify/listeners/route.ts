@@ -1,20 +1,33 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
 
-// In-memory flag: timestamp of last notification send
-let lastNotifiedAt = 0
-const COOLDOWN_MS = 5 * 60_000 // 5 minutes
-
 // POST — notify offline listeners that a seeker is waiting
-export async function POST() {
+// Auth: CRON_SECRET bearer required — this is an internal endpoint only
+export async function POST(req: NextRequest) {
+  const cronSecret = process.env.CRON_SECRET
+  const authHeader = req.headers.get('authorization')
+
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
   try {
-    const now = Date.now()
-    if (now - lastNotifiedAt < COOLDOWN_MS) {
+    const sb = createAdminClient()
+
+    // Check last notification time via DB to be serverless-safe
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60_000).toISOString()
+    const { data: recentNotif } = await sb
+      .from('notifications')
+      .select('id')
+      .eq('type', 'seeker_waiting')
+      .gte('created_at', fiveMinutesAgo)
+      .limit(1)
+      .single()
+
+    if (recentNotif) {
       return NextResponse.json({ notified: 0, reason: 'cooldown' })
     }
-
-    const sb = createAdminClient()
 
     // Find all offline but active+approved listeners
     const { data: listeners } = await sb
@@ -23,6 +36,7 @@ export async function POST() {
       .eq('is_available', false)
       .eq('is_active', true)
       .eq('is_approved', true)
+      .eq('is_suspended', false)
 
     if (!listeners || listeners.length === 0) {
       return NextResponse.json({ notified: 0 })
@@ -37,7 +51,6 @@ export async function POST() {
     }))
 
     await sb.from('notifications').insert(notifications)
-    lastNotifiedAt = now
 
     logger.info('Cold-start notifications sent', { count: listeners.length })
     return NextResponse.json({ notified: listeners.length })

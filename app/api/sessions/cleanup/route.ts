@@ -89,6 +89,15 @@ export async function POST(req: Request) {
           description: 'Session earnings (auto-closed)',
           session_id: session.id,
         })
+        // Insert earnings record so it appears in the earnings dashboard
+        await sb.from('listener_earnings').insert({
+          listener_id: session.listener_id,
+          session_id: session.id,
+          gross_amount: session.amount_held,
+          platform_fee: session.platform_fee ?? 0,
+          net_amount: earning,
+          status: 'settled',
+        }).then(() => {}, () => {})
       }
     }
 

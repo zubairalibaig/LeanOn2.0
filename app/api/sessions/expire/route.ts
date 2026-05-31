@@ -1,11 +1,28 @@
-import { NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase-server'
+import { NextRequest, NextResponse } from 'next/server'
+import { createAdminClient, createServerSupabaseClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
 
 // GET — expire abandoned sessions
 // Sessions where status='active' AND started_at < now() - (duration_mins + 10 minutes)
 // For abandoned sessions, listener gets pro-rated credit based on actual minutes
-export async function GET() {
+//
+// Auth: CRON_SECRET bearer (Vercel cron) OR authenticated user session (self-heal)
+export async function GET(req: NextRequest) {
+  const cronSecret = process.env.CRON_SECRET
+  const authHeader = req.headers.get('authorization')
+
+  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    // Not the cron secret — require a valid user session
+    const userSb = createServerSupabaseClient()
+    const { data: { user } } = await userSb.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  } else if (!cronSecret && process.env.NODE_ENV === 'production') {
+    // Production without CRON_SECRET configured — require auth
+    const userSb = createServerSupabaseClient()
+    const { data: { user } } = await userSb.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
   try {
     const sb = createAdminClient()
 
