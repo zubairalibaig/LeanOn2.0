@@ -150,10 +150,19 @@ export default function AuthPage() {
     })
     if (err) { setLoading(false); setError('Invalid OTP. Please try again.'); return }
 
-    await sb.from('users').upsert({
+    // Create or update the public.users row NOW — this is the authoritative
+    // creation point for phone users. The DB trigger intentionally skips
+    // phone-only users at OTP-send time to prevent ghost accounts.
+    const { error: upsertErr } = await sb.from('users').upsert({
       id: data.user!.id,
       phone: formatted(),
+      is_active: true,
     }, { onConflict: 'id' })
+
+    if (upsertErr) {
+      // Non-fatal: log and continue — user may already exist
+      console.warn('users upsert after OTP:', upsertErr.message)
+    }
 
     const { data: userData } = await sb.from('users').select('name').eq('id', data.user!.id).single()
     setLoading(false)

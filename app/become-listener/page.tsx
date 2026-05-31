@@ -331,7 +331,12 @@ export default function BecomeListenerPage() {
       }, { onConflict: 'user_id' })
       if (appErr) throw appErr
 
-      await sb.from('users').update({ name: name.trim() }).eq('id', user.id)
+      await sb.from('users').upsert({
+        id: user.id,
+        name: name.trim(),
+        phone: user.phone ?? undefined,
+        is_active: true,
+      }, { onConflict: 'id' })
 
       setDone(true)
     } catch (err) {
