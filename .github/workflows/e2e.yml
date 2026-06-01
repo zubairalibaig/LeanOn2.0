@@ -1,0 +1,5 @@
+- name: Run Playwright
+  env:
+    PLAYWRIGHT_BASE_URL: https://www.leanon.app
+    VERCEL_BYPASS_SECRET: ${{ secrets.VERCEL_BYPASS_SECRET }}
+  run: npx playwright test --project=chromium
