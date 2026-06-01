@@ -30,12 +30,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'already_pending', message: 'You already have a pending payout request.' }, { status: 409 })
   }
 
-  // Fetch listener balance and name
+  // Fetch listener profile — SECURITY: only approved listeners may request payouts
   const { data: profile } = await sb
     .from('listener_profiles')
-    .select('wallet_balance')
+    .select('wallet_balance, is_approved')
     .eq('user_id', user.id)
     .single()
+
+  if (!profile) {
+    return NextResponse.json({ error: 'Not a listener' }, { status: 403 })
+  }
 
   // wallet_balance lives on users table
   const { data: userData } = await sb
@@ -49,9 +53,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No balance to withdraw' }, { status: 400 })
   }
 
-  // Insert payout request
+  // Parse and validate body before proceeding
   const body = await req.json().catch(() => ({}))
   const upiId = typeof body?.upi_id === 'string' ? body.upi_id.trim() : null
+  if (!upiId || !upiId.includes('@')) {
+    return NextResponse.json({ error: 'Valid UPI ID required (must contain @)' }, { status: 400 })
+  }
 
   const { error: insertErr } = await sb
     .from('payout_requests')

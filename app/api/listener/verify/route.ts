@@ -21,6 +21,19 @@ export async function POST(req: NextRequest) {
     if (!full_name?.trim()) return NextResponse.json({ error: 'Full name is required' }, { status: 400 })
     if (!VALID_ID_TYPES.includes(id_type)) return NextResponse.json({ error: 'Invalid ID type' }, { status: 400 })
     if (!id_number_hash?.trim()) return NextResponse.json({ error: 'ID hash is required' }, { status: 400 })
+    // Hashed ID number must look like a SHA-256 hex digest (64 hex chars)
+    if (!/^[0-9a-f]{64}$/i.test(id_number_hash.trim())) {
+      return NextResponse.json({ error: 'id_number_hash must be a SHA-256 hex digest' }, { status: 400 })
+    }
+
+    // SECURITY: only allow Supabase Storage URLs to prevent SSRF/phishing via arbitrary URLs
+    const STORAGE_PREFIX = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/verifications/`
+    if (selfie_url && !selfie_url.startsWith(STORAGE_PREFIX)) {
+      return NextResponse.json({ error: 'Invalid selfie_url' }, { status: 400 })
+    }
+    if (id_doc_url && !id_doc_url.startsWith(STORAGE_PREFIX)) {
+      return NextResponse.json({ error: 'Invalid id_doc_url' }, { status: 400 })
+    }
 
     const sb = createAdminClient()
 

@@ -208,7 +208,8 @@ export async function PATCH(req: NextRequest) {
       .update({
         status:   'completed',
         ended_at: new Date().toISOString(),
-        ...(rating ? { seeker_rating: rating } : {}),
+        // SECURITY: only seeker may write their rating of the listener
+        ...(rating && user.id === session.seeker_id ? { seeker_rating: rating } : {}),
       })
       .eq('id', sessionId)
       .eq('status', 'active')
