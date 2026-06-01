@@ -1,5 +1,42 @@
-- name: Run Playwright
-  env:
-    PLAYWRIGHT_BASE_URL: https://www.leanon.app
-    VERCEL_BYPASS_SECRET: ${{ secrets.VERCEL_BYPASS_SECRET }}
-  run: npx playwright test --project=chromium
+name: E2E Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright tests
+        env:
+          PLAYWRIGHT_BASE_URL: https://www.leanon.app
+          VERCEL_BYPASS_SECRET: ${{ secrets.VERCEL_BYPASS_SECRET }}
+        run: npx playwright test --project=chromium
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: |
+            test-results/
+            test-results/results.json
+          retention-days: 7
