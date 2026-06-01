@@ -84,8 +84,10 @@ export default function NotificationsPage() {
   const observerRef = useRef<IntersectionObserver | null>(null)
 
   const load = useCallback(async (p: number) => {
+    const { data: { session } } = await sb.auth.getSession()
+    if (!session) { router.replace('/auth?redirect=/notifications'); return }
     const { data: { user } } = await sb.auth.getUser()
-    if (!user) { router.push('/auth?redirect=/notifications'); return }
+    if (!user) { router.replace('/auth?redirect=/notifications'); return }
 
     const res = await fetch(`/api/notifications?page=${p}&limit=${LIMIT}`).catch(() => null)
     if (!res?.ok) return
@@ -95,7 +97,13 @@ export default function NotificationsPage() {
     setLoading(false)
   }, [router])
 
-  useEffect(() => { load(0) }, [load])
+  useEffect(() => {
+    // Fast session check (reads local storage/cookie — no network request)
+    sb.auth.getSession().then(({ data: { session } }) => {
+      if (!session) { router.replace('/auth?redirect=/notifications'); return }
+      load(0)
+    })
+  }, [load, router])
 
   // Mark visible unread notifications as read via IntersectionObserver
   useEffect(() => {

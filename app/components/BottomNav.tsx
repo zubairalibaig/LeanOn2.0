@@ -29,10 +29,28 @@ export default function BottomNav() {
     pathname === '/press' ||
     pathname === '/leanon' ||
     pathname.startsWith('/resources') ||
+    pathname.startsWith('/support/') ||
+    pathname === '/support' ||
     pathname.startsWith('/leanon-app-mental-health') ||
     pathname.startsWith('/anonymous-peer-support') ||
     pathname.startsWith('/need-someone-to-talk-to-india') ||
-    pathname.startsWith('/get-paid-to-chat-india')
+    pathname.startsWith('/get-paid-to-chat-india') ||
+    pathname.startsWith('/delhi') ||
+    pathname.startsWith('/mumbai') ||
+    pathname.startsWith('/bengaluru') ||
+    pathname.startsWith('/hyderabad') ||
+    pathname.startsWith('/blog') ||
+    pathname.startsWith('/faq') ||
+    pathname.startsWith('/emotional-support') ||
+    pathname.startsWith('/anonymous-support-online') ||
+    pathname.startsWith('/someone-to-talk-to-at-night') ||
+    pathname.startsWith('/alternatives-to-therapy-india') ||
+    pathname.startsWith('/feeling-lonely-in-india') ||
+    pathname.startsWith('/online-emotional-support-india') ||
+    pathname.startsWith('/our-story') ||
+    pathname.startsWith('/why-leanon') ||
+    pathname.startsWith('/how-leanon-works') ||
+    pathname.startsWith('/is-leanon-safe')
 
   if (shouldHide) return null
 

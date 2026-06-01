@@ -12,6 +12,7 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'off',
+    ignoreHTTPSErrors: true,
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
