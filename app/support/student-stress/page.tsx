@@ -146,7 +146,7 @@ export default function StudentStressSupportPage() {
         </div>
 
         <div className="notice">
-          If you are in crisis or having thoughts of self-harm, please call NIMHANS at 080-46110007 or Tele-MANAS at 14416 (free · 24/7 · Govt of India). LeanOn is peer support and cannot replace crisis intervention.
+          If you are in crisis or having thoughts of self-harm, please call <a href="tel:08046110007" style={{color:'#7A5020',fontWeight:800}}>NIMHANS 080-46110007</a> or <a href="tel:14416" style={{color:'#7A5020',fontWeight:800}}>Tele-MANAS 14416</a> (free · 24/7 · Govt of India). LeanOn is peer support and cannot replace crisis intervention.
         </div>
 
         <div className="section">

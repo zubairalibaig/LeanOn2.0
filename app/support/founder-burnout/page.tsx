@@ -86,7 +86,8 @@ const S = `
   .breadcrumb{display:flex;gap:6px;align-items:center;font-size:13px;font-weight:600;color:var(--gray);margin-bottom:32px;flex-wrap:wrap;}
   .breadcrumb span{color:var(--border);}
   .breadcrumb a:hover{color:var(--teal);}
-  .hero{margin-bottom:48px;}
+  .hero{margin-bottom:24px;}
+  .notice{background:#FFF8F0;border:1.5px solid #FFD9A0;border-radius:16px;padding:16px 20px;margin-bottom:24px;font-size:14px;color:#7A5020;font-weight:600;line-height:1.6;}
   .tag{font-size:12px;font-weight:800;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;}
   h1{font-size:clamp(28px,6vw,44px);font-weight:900;color:var(--navy);line-height:1.15;margin-bottom:16px;}
   h1 em{color:var(--orange);font-style:normal;}
@@ -146,6 +147,10 @@ export default function FounderBurnoutSupportPage() {
           <p className="tag">Peer Support · Founder Burnout</p>
           <h1>Building a Startup Is Hard. <em>Burning Out Is Harder.</em></h1>
           <p className="lead">Behind every founder story shared on LinkedIn is a human being who is often exhausted, scared, and carrying far more than they let on. LeanOn connects you with peer listeners who have been through startup stress — and are honest about what it actually felt like.</p>
+        </div>
+
+        <div className="notice">
+          If you are in crisis or having thoughts of self-harm, please call <a href="tel:08046110007" style={{color:'#1A8FA0',fontWeight:800}}>NIMHANS 080-46110007</a> or <a href="tel:14416" style={{color:'#1A8FA0',fontWeight:800}}>Tele-MANAS 14416</a> (free · 24/7 · Govt of India). LeanOn is peer support and cannot replace crisis intervention.
         </div>
 
         <div className="section">

@@ -13,6 +13,9 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: 'off',
     ignoreHTTPSErrors: true,
+    extraHTTPHeaders: {
+      'x-vercel-protection-bypass': process.env.VERCEL_BYPASS_SECRET || '',
+    },
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
