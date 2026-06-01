@@ -183,6 +183,7 @@ function BrowseContent() {
       .select('*, users!inner(name, avatar_url)')
       .eq('is_approved', true)
       .eq('is_active', true)
+      .eq('is_suspended', false)
       .order('is_available', {ascending:false})
       .order('rating', {ascending:false})
       .limit(20)

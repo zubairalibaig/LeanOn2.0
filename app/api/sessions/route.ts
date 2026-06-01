@@ -53,16 +53,22 @@ export async function POST(req: NextRequest) {
     // Verify listener is active and available (server-side — client-side check is not enough)
     const { data: lp } = await sb
       .from('listener_profiles')
-      .select('rate_per_min, is_active, is_available, is_approved')
+      .select('rate_per_min, is_active, is_available, is_approved, is_suspended')
       .eq('user_id', listenerId)
       .single()
 
-    if (!lp?.is_active || !lp?.is_approved) {
+    if (!lp) {
+      return NextResponse.json({ error: 'listener_unavailable', message: 'Listener not found.' }, { status: 400 })
+    }
+    if (lp.is_suspended) {
+      return NextResponse.json({ error: 'listener_unavailable', message: 'This listener is not available.' }, { status: 400 })
+    }
+    if (!lp.is_active || !lp.is_approved) {
       return NextResponse.json({ error: 'listener_unavailable', message: 'This listener is not available.' }, { status: 400 })
     }
     // is_available check applies to ALL session types — free trials included.
     // A listener who has gone offline should not receive any sessions.
-    if (!lp?.is_available) {
+    if (!lp.is_available) {
       return NextResponse.json({ error: 'listener_offline', message: 'This listener is currently offline.' }, { status: 400 })
     }
 

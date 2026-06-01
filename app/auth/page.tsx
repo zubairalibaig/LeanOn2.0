@@ -195,7 +195,13 @@ export default function AuthPage() {
     setLoading(true)
     const { data: { user } } = await sb.auth.getUser()
     if (!user) { setError('Session expired. Please try again.'); setLoading(false); return }
-    await sb.from('users').update({ name: name.trim() }).eq('id', user.id)
+    // Upsert (not update) — ensures the row exists even if the post-verifyOtp upsert failed
+    await sb.from('users').upsert({
+      id: user.id,
+      name: name.trim(),
+      phone: user.phone ?? undefined,
+      is_active: true,
+    }, { onConflict: 'id' })
     setLoading(false)
 
     const dest = getDestination()
@@ -211,7 +217,8 @@ export default function AuthPage() {
     if (!/^\d*$/.test(val)) return
     const next = [...otp]; next[i] = val.slice(-1); setOtp(next)
     if (val && i < 5) otpRefs.current[i+1]?.focus()
-    if (next.every(d => d)) setTimeout(() => document.getElementById('verify-btn')?.click(), 100)
+    // Only auto-click if not already loading — prevents double-submit
+    if (next.every(d => d)) setTimeout(() => { if (!loading) document.getElementById('verify-btn')?.click() }, 100)
   }
 
   function handleOtpKey(i: number, e: React.KeyboardEvent) {

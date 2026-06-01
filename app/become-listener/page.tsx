@@ -223,8 +223,9 @@ export default function BecomeListenerPage() {
     setCountdown(30)
   }
 
-  async function verifyOtp() {
-    const code = otp.join('')
+  async function verifyOtp(codeOverride?: string) {
+    if (otpLoading) return                                    // prevent double-submit
+    const code = codeOverride ?? otp.join('')
     if (code.length < 6) { setOtpError('Enter the full 6-digit code'); return }
     setOtpLoading(true)
     setOtpError('')
@@ -242,7 +243,11 @@ export default function BecomeListenerPage() {
     if (!/^\d*$/.test(val)) return
     const next = [...otp]; next[i] = val.slice(-1); setOtp(next)
     if (val && i < 5) otpRefs.current[i+1]?.focus()
-    if (next.every(d => d)) setTimeout(() => verifyOtp(), 100)
+    // Pass the completed code directly — avoids stale closure reading old otp state
+    if (next.every(d => d)) {
+      const code = next.join('')
+      setTimeout(() => verifyOtp(code), 100)
+    }
   }
   function handleOtpKey(i: number, e: React.KeyboardEvent) {
     if (e.key === 'Backspace' && !otp[i] && i > 0) otpRefs.current[i-1]?.focus()
