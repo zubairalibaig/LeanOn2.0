@@ -109,10 +109,10 @@ DROP POLICY IF EXISTS "listener_insert_payout"    ON public.payout_requests;
 DROP POLICY IF EXISTS "admin_all_payouts"         ON public.payout_requests;
 
 CREATE POLICY "payout_select_own" ON public.payout_requests
-  FOR SELECT USING (auth.uid() = user_id OR auth.uid() = listener_id);
+  FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "payout_insert_own" ON public.payout_requests
   FOR INSERT WITH CHECK (
-    (auth.uid() = user_id OR auth.uid() = listener_id)
+    auth.uid() = user_id
     AND status = 'pending'
     AND amount > 0
   );
