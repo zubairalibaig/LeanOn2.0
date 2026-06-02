@@ -12,8 +12,9 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
     const { sessionId } = await req.json()
-    if (!sessionId || typeof sessionId !== 'string') {
-      return NextResponse.json({ error: 'Missing sessionId' }, { status: 400 })
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (!sessionId || typeof sessionId !== 'string' || !UUID_RE.test(sessionId)) {
+      return NextResponse.json({ error: 'Missing or invalid sessionId' }, { status: 400 })
     }
 
     const sb = createAdminClient()

@@ -255,15 +255,20 @@ export async function PATCH(req: NextRequest) {
 
     // Issue refund to seeker if applicable
     if (refundAmount > 0 && !session.is_free_trial) {
-      await sb.rpc('credit_wallet', { p_user_id: session.seeker_id, p_amount: refundAmount })
-        .then(() => {}, () => {})
-      await sb.from('wallet_transactions').insert({
-        user_id: session.seeker_id,
-        amount: refundAmount,
-        type: 'refund',
-        description: actualMins < 1 ? 'Session refund (ended < 1 min)' : `Session refund (${actualMins}/${bookedMins} min used)`,
-        session_id: sessionId,
-      }).then(() => {}, () => {})
+      const { error: refundErr } = await sb.rpc('credit_wallet', { p_user_id: session.seeker_id, p_amount: refundAmount })
+      if (refundErr) {
+        logger.error('Refund credit_wallet failed — manual reconciliation needed:', {
+          sessionId, seekerId: session.seeker_id, refundAmount, refundErr,
+        })
+      } else {
+        await sb.from('wallet_transactions').insert({
+          user_id: session.seeker_id,
+          amount: refundAmount,
+          type: 'refund',
+          description: actualMins < 1 ? 'Session refund (ended < 1 min)' : `Session refund (${actualMins}/${bookedMins} min used)`,
+          session_id: sessionId,
+        }).then(() => {}, (e) => logger.error('refund wallet_transactions insert failed', { sessionId, error: e }))
+      }
     }
 
     if (listenerEarning > 0 && !session.is_free_trial) {

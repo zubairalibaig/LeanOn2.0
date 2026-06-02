@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { createAdminClient } from '@/lib/supabase-server'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 
 function getResend() {
@@ -9,6 +10,12 @@ function getResend() {
 
 export async function POST(req: NextRequest) {
   try {
+    // 5 contact form submits per 15 minutes per IP — prevents spam from bots
+    const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'unknown'
+    if (!checkRateLimit(`contact:${clientIp}`, 5, 15 * 60_000)) {
+      return NextResponse.json({ error: 'Too many requests. Please wait before submitting again.' }, { status: 429 })
+    }
+
     const { name, email, type, message } = await req.json()
 
     if (!name?.trim() || !email?.trim() || !message?.trim()) {

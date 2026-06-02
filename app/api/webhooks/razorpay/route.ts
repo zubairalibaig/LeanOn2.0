@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       const paymentId  = payment.id
       const orderId    = payment.order_id
       const amountPaise = payment.amount
-      const amountRs   = amountPaise / 100
+      const amountRs   = Math.round(amountPaise / 100) // avoid float precision issues with INTEGER DB column
 
       // userId was stored in order notes during POST /api/wallet
       const userId = payment.notes?.userId as string | undefined

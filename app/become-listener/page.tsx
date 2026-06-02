@@ -129,7 +129,8 @@ function validateBio(v: string): string {
 }
 function validateRate(v: string): string {
   const n = parseInt(v)
-  if (isNaN(n) || n < MIN_LISTENER_RATE || n > MAX_LISTENER_RATE) return `Rate must be between ₹${MIN_LISTENER_RATE}–₹${MAX_LISTENER_RATE} per minute`
+  if (isNaN(n) || n < 1) return 'Please enter a rate of at least ₹1 per minute'
+  if (n > MAX_LISTENER_RATE) return `Rate can be at most ₹${MAX_LISTENER_RATE} per minute`
   return ''
 }
 function validateBank(v: string): string {
@@ -313,6 +314,17 @@ export default function BecomeListenerPage() {
         return
       }
 
+      // Upsert public.users FIRST — listener_profiles has a FK to users(id).
+      // Phone-only users aren't created by the DB trigger, so we must create
+      // the row here before inserting any child records.
+      const { error: userErr } = await sb.from('users').upsert({
+        id:        user.id,
+        name:      name.trim(),
+        phone:     user.phone ?? ('+91' + phone.replace(/\D/g, '').slice(-10)),
+        is_active: true,
+      }, { onConflict: 'id' })
+      if (userErr) throw userErr
+
       const { error: profileErr } = await sb.from('listener_profiles').upsert({
         user_id:          user.id,
         bio:              bio.trim(),
@@ -322,30 +334,36 @@ export default function BecomeListenerPage() {
         is_approved:      false,
         is_available:     false,
       }, { onConflict: 'user_id' })
-
       if (profileErr) throw profileErr
 
-      const { error: appErr } = await sb.from('listener_applications').upsert({
-        user_id:       user.id,
-        name:          name.trim(),
-        phone:         phone.trim(),
-        bank_account:  bank.trim(),
-        ifsc_code:     ifsc.trim().toUpperCase(),
-        upi_id:        upi.trim() || null,
-        status:        'pending',
-      }, { onConflict: 'user_id' })
+      // Try with upi_id first (available after migration 022); fall back without it
+      let appErr = (await sb.from('listener_applications').upsert({
+        user_id:      user.id,
+        name:         name.trim(),
+        phone:        phone.trim(),
+        bank_account: bank.trim(),
+        ifsc_code:    ifsc.trim().toUpperCase(),
+        upi_id:       upi.trim() || null,
+        status:       'pending',
+      }, { onConflict: 'user_id' })).error
+
+      if (appErr?.message?.includes('upi_id')) {
+        // Column not yet in DB — retry without it (pre-migration 022)
+        appErr = (await sb.from('listener_applications').upsert({
+          user_id:      user.id,
+          name:         name.trim(),
+          phone:        phone.trim(),
+          bank_account: bank.trim(),
+          ifsc_code:    ifsc.trim().toUpperCase(),
+          status:       'pending',
+        }, { onConflict: 'user_id' })).error
+      }
       if (appErr) throw appErr
 
-      await sb.from('users').upsert({
-        id: user.id,
-        name: name.trim(),
-        phone: user.phone ?? undefined,
-        is_active: true,
-      }, { onConflict: 'id' })
-
       setDone(true)
-    } catch (err) {
-      setError('Something went wrong. Please try again.')
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err)
+      setError(`Submission failed: ${msg}. Please try again or contact support.`)
       console.error('Listener application error:', err)
     } finally {
       setLoading(false)
@@ -411,7 +429,7 @@ export default function BecomeListenerPage() {
             <h1>Earn by listening 🎧</h1>
             <p>You keep 100% of your rate. LeanOn adds a small flat fee on top — paid by the user, not taken from you.</p>
             <div className="earn-row">
-              <div className="earn-item"><div className="amount">₹8–20</div><div className="label">per minute (you set it)</div></div>
+              <div className="earn-item"><div className="amount">₹10+</div><div className="label">per minute (you choose)</div></div>
               <div className="earn-item"><div className="amount">₹13K+</div><div className="label">per month possible</div></div>
               <div className="earn-item"><div className="amount">100%</div><div className="label">of your rate you keep</div></div>
             </div>
@@ -574,14 +592,15 @@ export default function BecomeListenerPage() {
               </div>
             )}
 
-            <label className="lbl">Your rate per minute (₹1–₹20)</label>
+            <label className="lbl">Your rate per minute — <span style={{fontWeight:500,color:'var(--gray)'}}>suggestion: ₹10–₹50/min</span></label>
             <div className={`rate-wrap${fieldErrors.rate ? ' err' : ''}`}>
               <span className="rate-prefix">₹</span>
-              <input className="rate-input" type="number" min={1} max={20} value={rate}
+              <input className="rate-input" type="number" min={1} max={200} value={rate}
                 onChange={e => { setRate(e.target.value); if (fieldErrors.rate) setFieldErrors(f => ({...f, rate: ''})) }} />
               <span className="rate-suffix">/ minute</span>
             </div>
             {fieldErrors.rate && <span className="field-err">{fieldErrors.rate}</span>}
+            <p style={{fontSize:12,color:'var(--gray)',marginBottom:12,fontWeight:500}}>You keep 100% of your rate. New listeners often start at ₹10–₹15 and raise it as they build reviews.</p>
 
             <div style={{background:'#F0F8FC',borderRadius:12,padding:'10px 14px',marginBottom:12,fontSize:13,color:'#0F4867',fontWeight:600}}>
               📅 Sessions are booked in <strong>15, 30, or 45 minute slots</strong>. No open-ended calls — clean start and end times for both sides.

@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
 
-  if (!fcm_token || typeof fcm_token !== 'string' || fcm_token.length < 10) {
+  if (!fcm_token || typeof fcm_token !== 'string' || fcm_token.length < 10 || fcm_token.length > 4096) {
     return NextResponse.json({ error: 'Invalid FCM token' }, { status: 400 })
   }
 

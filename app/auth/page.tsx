@@ -83,9 +83,11 @@ export default function AuthPage() {
 
     if (mode === 'listener') setIsListenerMode(true)
 
-    // Check if already authenticated — redirect immediately
-    sb.auth.getSession().then(({ data: { session } }) => {
-      if (session && !handledRef.current) {
+    // Validate session server-side to avoid stale-token redirect loops.
+    // getUser() hits the Supabase server; getSession() only reads localStorage
+    // and can return an expired session that the middleware will reject.
+    sb.auth.getUser().then(({ data: { user } }) => {
+      if (user && !handledRef.current) {
         handledRef.current = true
         const dest = safeRedirect(
           sessionStorage.getItem('auth_redirect'),
@@ -93,8 +95,10 @@ export default function AuthPage() {
         )
         sessionStorage.removeItem('auth_redirect')
         router.replace(dest)
-        return
+        // Still set checkingSession=false so if navigation fails the form shows
       }
+      setCheckingSession(false)
+    }).catch(() => {
       setCheckingSession(false)
     })
 
