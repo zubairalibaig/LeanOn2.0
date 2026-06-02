@@ -5,11 +5,21 @@
 -- without SET search_path are exploitable via a malicious schema.
 -- ================================================================
 
--- credit_wallet: add search_path hardening
+-- Drop any stale numeric-typed overloads so only the INTEGER signature exists
+-- (migrations 001/002 created numeric versions; coexisting overloads cause
+-- "function is not unique" errors and type-truncation ambiguity).
+DROP FUNCTION IF EXISTS public.credit_wallet(uuid, numeric);
+DROP FUNCTION IF EXISTS public.deduct_wallet(uuid, numeric);
+
+-- credit_wallet: add search_path hardening + positive-amount guard
 CREATE OR REPLACE FUNCTION public.credit_wallet(p_user_id UUID, p_amount INTEGER)
 RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER
 SET search_path = public, pg_temp AS $$
 BEGIN
+  IF p_amount IS NULL OR p_amount <= 0 THEN
+    RAISE EXCEPTION 'credit_wallet: amount must be positive, got %', p_amount;
+  END IF;
+
   UPDATE public.users
   SET wallet_balance = wallet_balance + p_amount
   WHERE id = p_user_id;
@@ -20,13 +30,17 @@ BEGIN
 END;
 $$;
 
--- deduct_wallet: add search_path hardening
+-- deduct_wallet: add search_path hardening + positive-amount guard
 CREATE OR REPLACE FUNCTION public.deduct_wallet(p_user_id UUID, p_amount INTEGER)
 RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER
 SET search_path = public, pg_temp AS $$
 DECLARE
   v_balance INTEGER;
 BEGIN
+  IF p_amount IS NULL OR p_amount <= 0 THEN
+    RAISE EXCEPTION 'deduct_wallet: amount must be positive, got %', p_amount;
+  END IF;
+
   SELECT wallet_balance INTO v_balance
   FROM public.users
   WHERE id = p_user_id

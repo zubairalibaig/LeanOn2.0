@@ -30,15 +30,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'already_pending', message: 'You already have a pending payout request.' }, { status: 409 })
   }
 
-  // Fetch listener profile — SECURITY: only approved listeners may request payouts
+  // Fetch listener profile — SECURITY: only approved listeners may request payouts.
+  // NOTE: wallet_balance lives on the users table, NOT listener_profiles — selecting
+  // a nonexistent column here previously errored and 403'd every listener.
   const { data: profile } = await sb
     .from('listener_profiles')
-    .select('wallet_balance, is_approved')
+    .select('is_approved')
     .eq('user_id', user.id)
-    .single()
+    .maybeSingle()
 
   if (!profile) {
     return NextResponse.json({ error: 'Not a listener' }, { status: 403 })
+  }
+  if (!profile.is_approved) {
+    return NextResponse.json({ error: 'Your listener account is not yet approved for payouts.' }, { status: 403 })
   }
 
   // wallet_balance lives on users table
@@ -53,11 +58,26 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No balance to withdraw' }, { status: 400 })
   }
 
-  // Parse and validate body before proceeding
+  // Parse body; fall back to the UPI/bank details captured at application time
+  // so the dashboard "Request Payout" button works without re-asking for UPI.
   const body = await req.json().catch(() => ({}))
-  const upiId = typeof body?.upi_id === 'string' ? body.upi_id.trim() : null
+  let upiId = typeof body?.upi_id === 'string' ? body.upi_id.trim() : null
+
   if (!upiId || !upiId.includes('@')) {
-    return NextResponse.json({ error: 'Valid UPI ID required (must contain @)' }, { status: 400 })
+    const { data: app } = await sb
+      .from('listener_applications')
+      .select('upi_id, bank_account, ifsc_code')
+      .eq('user_id', user.id)
+      .maybeSingle()
+    const storedUpi = typeof app?.upi_id === 'string' ? app.upi_id.trim() : null
+    if (storedUpi && storedUpi.includes('@')) {
+      upiId = storedUpi
+    } else if (app?.bank_account && app?.ifsc_code) {
+      // No UPI but bank details exist — admin will transfer via bank. Use a marker.
+      upiId = `bank:${app.ifsc_code}/${app.bank_account}`
+    } else {
+      return NextResponse.json({ error: 'No payout method on file. Please add a UPI ID or bank account in your application.' }, { status: 400 })
+    }
   }
 
   const { error: insertErr } = await sb

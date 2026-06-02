@@ -192,7 +192,7 @@ export default function BecomeListenerPage() {
         setAlreadyRegistered(true)
       }
       setGuardChecked(true)
-    })
+    }).catch(() => setGuardChecked(true)) // never hang on the Loading screen
   }, [])
 
   const rateNum     = Math.min(Math.max(parseInt(rate) || MIN_LISTENER_RATE, MIN_LISTENER_RATE), MAX_LISTENER_RATE)

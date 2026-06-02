@@ -1,10 +1,8 @@
 # LeanOn 2.0 — Project Bible
 
 > Last updated: May 2025
-> Built by: Zubair Ali Baig
-> Live URL: https://lean-on2-0.vercel.app
-> Domain: leanon.app (pending DNS)
-> GitHub: https://github.com/zubairalibaig/LeanOn2.0
+> Live URL: https://leanon.app
+> Domain: leanon.app
 
 ---
 
@@ -180,10 +178,10 @@ Like AA is to rehab. Like a support group is to therapy. Legitimate, needed, dif
 
 ## 📞 Crisis Resources (always show these)
 
-If a user appears in crisis, the platform must surface:
-- **iCall (India):** 9152987821
-- **Vandrevala Foundation:** 1860-2662-345 (24/7)
-- **SNEHI:** 044-24640050
+If a user appears in crisis, the platform must surface ONLY these two
+official helplines (no others are permitted anywhere on the platform):
+- **NIMHANS:** 080-46110007
+- **Tele-MANAS:** 14416
 
 ---
 
@@ -191,7 +189,7 @@ If a user appears in crisis, the platform must surface:
 
 | Service | Account | Notes |
 |---|---|---|
-| GitHub | zubairalibaig | LeanOn2.0 repo |
+| GitHub | (private) | LeanOn2.0 repo |
 | Vercel | Connected to GitHub | Auto-deploys on push |
 | Supabase | — | Mumbai region |
 | Razorpay | Registered | Individual/sole prop |

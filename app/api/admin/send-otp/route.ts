@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 
 const normalizePhone = (p: string) => p.replace(/\D/g, '')
@@ -9,6 +10,12 @@ const normalizePhone = (p: string) => p.replace(/\D/g, '')
 // Returns 200 either way to avoid leaking which phone is admin.
 export async function POST(req: NextRequest) {
   try {
+    // Throttle OTP sends per IP to prevent SMS-bombing the admin number.
+    const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'unknown'
+    if (!checkRateLimit(`admin-otp:${clientIp}`, 3, 5 * 60_000)) {
+      return NextResponse.json({ ok: true }) // silent throttle, no enumeration signal
+    }
+
     const { phone } = await req.json()
     if (!phone || typeof phone !== 'string') {
       return NextResponse.json({ ok: true }) // silent reject

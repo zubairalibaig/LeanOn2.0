@@ -205,16 +205,18 @@ export default function AdminPage() {
     }
   }
 
-  // Check auth on mount — client-side only (avoids SSR cookie detection issues on Vercel)
+  // Check auth on mount — client-side only (avoids SSR cookie detection issues on Vercel).
+  // Use getUser() (server-validated JWT), not getSession() (localStorage only),
+  // so a stale/expired token doesn't render the admin shell.
   useEffect(() => {
     const sb = createClient()
-    sb.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
+    sb.auth.getUser().then(({ data: { user } }) => {
+      if (!user) {
         setAuthChecking(false)
         setDenied(true) // not logged in → show embedded login
         return
       }
-      setAuthUser(session.user as { id: string; email?: string; phone?: string })
+      setAuthUser(user as { id: string; email?: string; phone?: string })
       setAuthChecking(false)
     }).catch(() => {
       setAuthChecking(false)

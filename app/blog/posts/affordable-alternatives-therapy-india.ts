@@ -46,10 +46,6 @@ export const post = {
 
 <p><strong>Tele-MANAS</strong> (14416) — the Government of India's national mental health helpline. Free, available 24/7, accessible in multiple languages across India.</p>
 
-<p><strong>Snehi</strong> (044-24640050) — based in Chennai, offers emotional support and crisis intervention.</p>
-
-<p><strong>iMind</strong> (04066202020) — Hyderabad-based, specialises in suicide prevention and crisis support.</p>
-
 <p>These helplines are valuable for crisis situations and for people who need immediate support. They are not designed for ongoing therapeutic relationships — the nature of a helpline is that you speak with whoever is available — but they are an important first resource and genuinely free.</p>
 
 <h2>Option 3: Online Support Communities</h2>

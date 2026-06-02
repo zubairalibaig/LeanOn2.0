@@ -56,7 +56,11 @@ export async function GET(req: NextRequest) {
     else if (userStatus === 'inactive') query = query.eq('is_active', false)
     else if (userStatus === 'suspended') query = query.eq('is_suspended', true)
 
-    if (search) query = query.or(`name.ilike.%${search}%,phone.ilike.%${search}%`)
+    if (search) {
+      // Strip PostgREST filter metacharacters to prevent filter injection via .or()
+      const safe = search.replace(/[,()*:\\]/g, '').slice(0, 100)
+      if (safe) query = query.or(`name.ilike.%${safe}%,phone.ilike.%${safe}%`)
+    }
 
     const { data, count, error: qErr } = await query
     if (qErr) throw qErr

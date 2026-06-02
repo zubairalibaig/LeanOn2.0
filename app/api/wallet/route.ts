@@ -4,6 +4,7 @@ import crypto from 'crypto'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { notifyWalletRecharge } from '@/lib/notify'
+import { RECHARGE_AMOUNTS } from '@/lib/constants'
 import { logger } from '@/lib/logger'
 
 function getRzp() {
@@ -29,8 +30,7 @@ export async function POST(req: NextRequest) {
 
     const { amount } = await req.json()
     // Whitelist valid recharge tiers — prevents crafted amounts and float abuse
-    const VALID_AMOUNTS = [200, 500, 1000, 2000]
-    if (!Number.isInteger(amount) || !VALID_AMOUNTS.includes(amount)) {
+    if (!Number.isInteger(amount) || !(RECHARGE_AMOUNTS as readonly number[]).includes(amount)) {
       return NextResponse.json({ error: 'Please select a valid recharge amount (₹200, ₹500, ₹1000, or ₹2000)' }, { status: 400 })
     }
 
@@ -88,39 +88,23 @@ export async function PUT(req: NextRequest) {
 
     const sb = createAdminClient()
 
-    // Idempotency — prevent double-credit if PUT is called twice for the same payment
-    const { data: existing } = await sb
-      .from('wallet_transactions')
-      .select('id')
-      .eq('reference_id', razorpay_payment_id)
-      .maybeSingle()
-
-    if (existing) {
-      const { data: u } = await sb.from('users').select('wallet_balance').eq('id', user.id).single()
-      return NextResponse.json({ success: true, newBalance: u?.wallet_balance ?? 0 })
-    }
-
-    // Credit wallet atomically using server-validated amount
-    const { error: creditErr } = await sb.rpc('credit_wallet', {
-      p_user_id: user.id,
-      p_amount:  verifiedAmount,
+    // Atomic + idempotent credit: inserts the ledger row and bumps the balance
+    // in one transaction, keyed on payment id. Safe against the webhook firing
+    // concurrently (no double-credit window).
+    const { data: newBalance, error: creditErr } = await sb.rpc('credit_wallet_idempotent', {
+      p_user_id:      user.id,
+      p_amount:       verifiedAmount,
+      p_reference_id: razorpay_payment_id,
+      p_description:  'Wallet recharge',
     })
 
     if (creditErr) {
-      logger.error('credit_wallet RPC failed:', { error: creditErr instanceof Error ? creditErr.message : String(creditErr) })
+      logger.error('credit_wallet_idempotent RPC failed:', { error: creditErr instanceof Error ? creditErr.message : String(creditErr) })
       return NextResponse.json(
         { error: `Wallet credit failed. Contact support with payment ID: ${razorpay_payment_id}` },
         { status: 500 }
       )
     }
-
-    await sb.from('wallet_transactions').insert({
-      user_id:      user.id,
-      amount:       verifiedAmount,
-      type:         'credit',
-      description:  'Wallet recharge',
-      reference_id: razorpay_payment_id,
-    })
 
     const [updated, authUser] = await Promise.all([
       sb.from('users').select('wallet_balance, name').eq('id', user.id).single(),
@@ -134,7 +118,7 @@ export async function PUT(req: NextRequest) {
       amount:    verifiedAmount,
     }).catch(() => {})
 
-    return NextResponse.json({ success: true, newBalance: (updated.data as { wallet_balance?: number } | null)?.wallet_balance ?? 0 })
+    return NextResponse.json({ success: true, newBalance: (updated.data as { wallet_balance?: number } | null)?.wallet_balance ?? newBalance ?? 0 })
   } catch (err) {
     logger.error('Payment verify error:', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json({ error: 'Verification failed' }, { status: 500 })

@@ -231,6 +231,7 @@ export default function DashboardPage() {
   }
 
   async function loadData() {
+   try {
     const { data: { user: u } } = await sb.auth.getUser()
     if (!u) { router.push('/auth?redirect=/dashboard'); return }
     setUser(u)
@@ -262,7 +263,6 @@ export default function DashboardPage() {
       .limit(10)
 
     if (recent) setSessions(recent)
-    setLoading(false)
 
     if (channelRef.current) sb.removeChannel(channelRef.current)
     const channel = sb.channel(`dashboard-incoming-${u.id}`)
@@ -277,6 +277,11 @@ export default function DashboardPage() {
       })
       .subscribe()
     channelRef.current = channel
+   } catch (err) {
+     console.error('Dashboard load error:', err)
+   } finally {
+     setLoading(false)   // never hang on the skeleton, even on network error
+   }
   }
 
   async function toggleAvailability() {
@@ -324,10 +329,12 @@ export default function DashboardPage() {
   async function uploadAvatar(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file || !user) return
+    if (!file.type.startsWith('image/')) { alert('Please choose an image file'); return }
     if (file.size > 2 * 1024 * 1024) { alert('Photo must be under 2 MB'); return }
     setUploadingAv(true)
     try {
-      const ext = file.name.split('.').pop()
+      // Derive extension from MIME type, not the user-controlled filename
+      const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg'
       const path = `${user.id}.${ext}`
       const { error: upErr } = await sb.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type })
       if (upErr) throw upErr

@@ -77,7 +77,8 @@ function isTrustedOrigin(origin: string, reqHostname: string): boolean {
     const oh = new URL(origin).hostname
     if (oh === reqHostname) return true
     if (oh === 'www.' + reqHostname || reqHostname === 'www.' + oh) return true
-    if (oh.endsWith('.vercel.app')) return true
+    // Only trust THIS project's Vercel preview deployments, not all *.vercel.app
+    if (/^lean-?on[a-z0-9-]*\.vercel\.app$/i.test(oh)) return true
   } catch { /* malformed origin → deny */ }
   return false
 }
@@ -92,8 +93,20 @@ export async function middleware(req: NextRequest) {
     if (isMutation && pathname.startsWith('/api/')) {
       const origin = req.headers.get('origin')
       const isWebhook = pathname.startsWith('/api/webhooks')
-      if (origin && !isWebhook && !isTrustedOrigin(origin, req.nextUrl.hostname)) {
-        return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+      if (!isWebhook) {
+        // Reject cross-origin OR origin-less state-changing requests.
+        // A missing Origin on a mutation is treated as untrusted unless the
+        // request is same-site per Sec-Fetch-Site (sent by modern browsers).
+        const secFetchSite = req.headers.get('sec-fetch-site')
+        const sameSite = secFetchSite === 'same-origin' || secFetchSite === 'same-site' || secFetchSite === 'none'
+        if (origin) {
+          if (!isTrustedOrigin(origin, req.nextUrl.hostname)) {
+            return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+          }
+        } else if (secFetchSite && !sameSite) {
+          // Origin absent but browser says cross-site → reject
+          return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+        }
       }
     }
     return NextResponse.next()

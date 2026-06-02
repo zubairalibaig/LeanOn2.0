@@ -51,10 +51,14 @@ export async function PATCH(req: NextRequest) {
         .eq('user_id', user.id)
         .eq('is_read', false)
     } else if (Array.isArray(ids) && ids.length > 0) {
-      await sb.from('notifications')
-        .update({ is_read: true })
-        .eq('user_id', user.id)
-        .in('id', ids.slice(0, 100))
+      const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+      const validIds = ids.filter((x: unknown) => typeof x === 'string' && UUID_RE.test(x)).slice(0, 100)
+      if (validIds.length > 0) {
+        await sb.from('notifications')
+          .update({ is_read: true })
+          .eq('user_id', user.id)
+          .in('id', validIds)
+      }
     }
 
     return NextResponse.json({ ok: true })

@@ -98,10 +98,12 @@ export default function ProfilePage() {
   async function uploadAvatar(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file || !userId) return
+    if (!file.type.startsWith('image/')) { alert('Please choose an image file'); return }
     if (file.size > 2 * 1024 * 1024) { alert('Photo must be under 2 MB'); return }
     setUploadingAvatar(true)
     try {
-      const ext = file.name.split('.').pop()
+      // Derive extension from MIME type, not the user-controlled filename
+      const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg'
       const path = `${userId}.${ext}`
       const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type })
       if (upErr) throw upErr

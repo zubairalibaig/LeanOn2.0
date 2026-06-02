@@ -44,37 +44,21 @@ export async function POST(req: NextRequest) {
 
       const sb = createAdminClient()
 
-      // Idempotency — skip if already credited via the client-side PUT handler
-      const { data: existing } = await sb
-        .from('wallet_transactions')
-        .select('id')
-        .eq('reference_id', paymentId)
-        .maybeSingle()
-
-      if (existing) {
-        return NextResponse.json({ received: true }) // already processed
-      }
-
-      // Credit wallet atomically
-      const { error: creditErr } = await sb.rpc('credit_wallet', {
-        p_user_id: userId,
-        p_amount:  amountRs,
+      // Atomic + idempotent credit — keyed on paymentId. If the client-side PUT
+      // already credited this payment, the RPC is a no-op (no double-credit).
+      const { error: creditErr } = await sb.rpc('credit_wallet_idempotent', {
+        p_user_id:      userId,
+        p_amount:       amountRs,
+        p_reference_id: paymentId,
+        p_description:  'Wallet recharge (webhook)',
       })
 
       if (creditErr) {
-        logger.error('Webhook: credit_wallet RPC failed for payment', { paymentId, creditErr: creditErr as unknown })
+        logger.error('Webhook: credit_wallet_idempotent RPC failed for payment', { paymentId, creditErr: creditErr as unknown })
         return NextResponse.json({ error: 'Credit failed' }, { status: 500 })
       }
 
-      await sb.from('wallet_transactions').insert({
-        user_id:      userId,
-        amount:       amountRs,
-        type:         'credit',
-        description:  'Wallet recharge (webhook)',
-        reference_id: paymentId,
-      })
-
-      logger.info('Webhook: credited wallet', { amountRs, userId, paymentId })
+      logger.info('Webhook: credited wallet (idempotent)', { amountRs, userId, paymentId })
     }
 
     return NextResponse.json({ received: true })

@@ -29,6 +29,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { reportedUserId, sessionId, type, description } = await req.json()
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
     if (!VALID_REPORT_TYPES.includes(type)) {
       return NextResponse.json({ error: 'Invalid report type' }, { status: 400 })
@@ -38,6 +39,12 @@ export async function POST(req: NextRequest) {
     }
     if (!reportedUserId && !sessionId) {
       return NextResponse.json({ error: 'Provide either reportedUserId or sessionId' }, { status: 400 })
+    }
+    if (reportedUserId && !UUID_RE.test(reportedUserId)) {
+      return NextResponse.json({ error: 'Invalid reportedUserId' }, { status: 400 })
+    }
+    if (sessionId && !UUID_RE.test(sessionId)) {
+      return NextResponse.json({ error: 'Invalid sessionId' }, { status: 400 })
     }
 
     const sb = createAdminClient()

@@ -120,6 +120,11 @@ export default function WalletPage() {
 
   async function handleRecharge() {
     if (!userId) return
+    // Guard: Razorpay script must be loaded before we construct the checkout
+    if (typeof window === 'undefined' || !window.Razorpay) {
+      alert('Payment is still loading. Please wait a moment and try again.')
+      return
+    }
     setLoading(true)
     try {
       // Create order
@@ -128,7 +133,18 @@ export default function WalletPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: selected }),
       })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        alert(err.error || 'Could not start payment. Please try again.')
+        setLoading(false)
+        return
+      }
       const { orderId } = await res.json()
+      if (!orderId) {
+        alert('Could not start payment. Please try again.')
+        setLoading(false)
+        return
+      }
 
       // Open Razorpay checkout
       const rzp = new window.Razorpay({
@@ -197,7 +213,7 @@ export default function WalletPage() {
               Top up your wallet to start a session. Your first 5 minutes are always free — no top-up needed for that!
             </p>
             <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:12,maxWidth:320,margin:'0 auto 20px'}}>
-              {[199,499,999,1999].map(amt => (
+              {[200,500,1000,2000].map(amt => (
                 <button key={amt} onClick={() => setSelected(amt)}
                   style={{background: selected===amt ? '#FFF8F0' : 'white',border:`2px solid ${selected===amt?'var(--orange)':'var(--border)'}`,borderRadius:16,padding:'16px 8px',textAlign:'center',cursor:'pointer',fontFamily:'Nunito,sans-serif',fontWeight:900,fontSize:20,color:'var(--navy)'}}>
                   ₹{amt}

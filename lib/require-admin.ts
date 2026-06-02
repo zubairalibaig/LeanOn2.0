@@ -1,5 +1,19 @@
+import crypto from 'crypto'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
+
+// Constant-time string comparison — avoids timing side-channels on the PIN.
+function timingSafeEqual(a: string, b: string): boolean {
+  const ab = Buffer.from(a)
+  const bb = Buffer.from(b)
+  if (ab.length !== bb.length) {
+    // Compare against self to keep timing uniform, then return false.
+    crypto.timingSafeEqual(ab, ab)
+    return false
+  }
+  return crypto.timingSafeEqual(ab, bb)
+}
 
 /**
  * Shared admin auth check for all /api/admin/* routes.
@@ -87,9 +101,13 @@ export async function requireAdmin(req: Request) {
 
   // ── Step 3: PIN check (only for confirmed admins) ────────────────────────
   if (adminPin) {
+    // Rate-limit PIN attempts per admin user — 5 per minute — to block brute force.
+    if (!checkRateLimit(`admin-pin:${user.id}`, 5, 60_000)) {
+      return { error: 'Too many attempts. Please wait.', code: 'PIN_RATE_LIMITED', status: 429 as const, user: null }
+    }
     const authHeader = req.headers.get('x-admin-pin') ?? req.headers.get('authorization')
-    const providedPin = authHeader?.replace(/^Bearer\s+/i, '')
-    if (providedPin !== adminPin) {
+    const providedPin = (authHeader?.replace(/^Bearer\s+/i, '') ?? '')
+    if (!timingSafeEqual(providedPin, adminPin)) {
       return { error: 'PIN required', code: 'PIN_REQUIRED', status: 403 as const, user: null }
     }
   }
