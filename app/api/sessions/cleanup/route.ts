@@ -23,15 +23,27 @@ export async function POST(req: Request) {
     if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
+  function cronOk(secret: string, header: string | null): boolean {
+    const expected = `Bearer ${secret}`
+    const actual   = header ?? ''
+    if (actual.length !== expected.length) return false
+    return require('crypto').timingSafeEqual(Buffer.from(actual), Buffer.from(expected))
+  }
+
   if (cronSecret) {
-    if (authHeader === `Bearer ${cronSecret}`) {
+    if (cronOk(cronSecret, authHeader)) {
       // Verified cron call — proceed
     } else {
       // Not the cron secret — require a valid user session (self-heal path)
       const { createServerSupabaseClient } = await import('@/lib/supabase-server')
+      const { checkRateLimit } = await import('@/lib/rate-limit')
       const userSb = createServerSupabaseClient()
       const { data: { user } } = await userSb.auth.getUser()
       if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+      // Rate-limit self-heal: 1 per user per minute to prevent DoS/cost amplification
+      if (!checkRateLimit(`session-cleanup:${user.id}`, 1, 60_000)) {
+        return NextResponse.json({ cleaned: 0, checked: 0, staleCancelled: 0 })
+      }
     }
   }
 

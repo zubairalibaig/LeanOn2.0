@@ -33,6 +33,10 @@ const IGNORED_JS_ERRORS = [
   'Hydration failed',
   'react-hydration-error',
   'switching to client rendering',
+  // Production (minified) equivalents of the above hydration warnings
+  'Minified React error #418',
+  'Minified React error #423',
+  'Minified React error #425',
 ]
 
 function collectJsErrors(page: Page) {

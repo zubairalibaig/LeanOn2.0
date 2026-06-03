@@ -70,27 +70,30 @@ export default function ProfilePage() {
 
   useEffect(() => {
     async function loadProfile() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { router.push('/auth'); return }
-      setUserId(user.id)
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) { router.push('/auth'); return }
+        setUserId(user.id)
 
-      const [profileRes, sessionsRes, listenerRes] = await Promise.all([
-        supabase.from('users').select('id,name,wallet_balance,created_at,phone,avatar_url').eq('id', user.id).single(),
-        supabase.from('sessions').select('id', { count: 'exact', head: true }).eq('seeker_id', user.id).eq('status', 'completed'),
-        supabase.from('listener_profiles').select('id').eq('user_id', user.id).maybeSingle(),
-      ])
+        const [profileRes, sessionsRes, listenerRes] = await Promise.all([
+          supabase.from('users').select('id,name,wallet_balance,created_at,phone,avatar_url').eq('id', user.id).single(),
+          supabase.from('sessions').select('id', { count: 'exact', head: true }).eq('seeker_id', user.id).eq('status', 'completed'),
+          supabase.from('listener_profiles').select('id').eq('user_id', user.id).maybeSingle(),
+        ])
 
-      if (profileRes.data) {
-        setName(profileRes.data.name || '')
-        setNameInput(profileRes.data.name || '')
-        setWalletBalance(profileRes.data.wallet_balance || 0)
-        setCreatedAt(profileRes.data.created_at || '')
-        setPhone(profileRes.data.phone || user.phone || '')
-        setAvatarUrl(profileRes.data.avatar_url || null)
+        if (profileRes.data) {
+          setName(profileRes.data.name || '')
+          setNameInput(profileRes.data.name || '')
+          setWalletBalance(profileRes.data.wallet_balance || 0)
+          setCreatedAt(profileRes.data.created_at || '')
+          setPhone(profileRes.data.phone || user.phone || '')
+          setAvatarUrl(profileRes.data.avatar_url || null)
+        }
+        setSessionCount(sessionsRes.count || 0)
+        setIsListener(!!listenerRes.data)
+      } finally {
+        setLoading(false)
       }
-      setSessionCount(sessionsRes.count || 0)
-      setIsListener(!!listenerRes.data)
-      setLoading(false)
     }
     loadProfile()
   }, [])

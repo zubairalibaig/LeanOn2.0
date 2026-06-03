@@ -28,8 +28,8 @@ export async function GET(req: NextRequest) {
   const [{ data: pendingListeners, count: lpCount }, { data: pendingPayouts, count: prCount }, { data: refundRequests }] = await Promise.all([
     admin
       .from('listener_applications')
-      .select(`id, user_id, status, created_at,
-        listener_profiles ( bio, rate_per_min, specialty_tags, aadhaar_last4, bank_account, ifsc_code, phone ),
+      .select(`id, user_id, status, created_at, aadhaar_last4, bank_account, ifsc_code, phone,
+        listener_profiles ( bio, rate_per_min, specialty_tags ),
         users ( name, email )`, { count: 'exact' })
       .eq('status', 'pending')
       .order('created_at', { ascending: false })
@@ -106,15 +106,15 @@ export async function POST(req: NextRequest) {
         .update({ status: 'approved' })
         .eq('user_id', id),
     ])
-    if (r1.error) return NextResponse.json({ error: r1.error.message }, { status: 500 })
-    if (r2.error) return NextResponse.json({ error: r2.error.message }, { status: 500 })
+    if (r1.error) { logger.error('admin approve_listener r1 failed:', { error: r1.error.message }); return NextResponse.json({ error: 'Server error' }, { status: 500 }) }
+    if (r2.error) { logger.error('admin approve_listener r2 failed:', { error: r2.error.message }); return NextResponse.json({ error: 'Server error' }, { status: 500 }) }
     await auditLog(admin, user!.id, 'approve_listener', id)
     return NextResponse.json({ ok: true })
   }
 
   if (action === 'reject_listener') {
     const { error: err } = await admin.from('listener_applications').update({ status: 'rejected' }).eq('user_id', id)
-    if (err) return NextResponse.json({ error: err.message }, { status: 500 })
+    if (err) { logger.error('admin reject_listener failed:', { error: err.message }); return NextResponse.json({ error: 'Server error' }, { status: 500 }) }
     await auditLog(admin, user!.id, 'reject_listener', id)
     return NextResponse.json({ ok: true })
   }
@@ -140,7 +140,7 @@ export async function POST(req: NextRequest) {
     // Use the UPDATE as an optimistic lock (eq status='pending') to prevent double-processing
     const { error: err } = await admin.from('payout_requests')
       .update({ status: 'completed' }).eq('id', id).eq('status', 'pending')
-    if (err) return NextResponse.json({ error: err.message }, { status: 500 })
+    if (err) { logger.error('admin complete_payout update failed:', { error: err.message }); return NextResponse.json({ error: 'Server error' }, { status: 500 }) }
 
     await admin.from('wallet_transactions').insert({
       user_id: pr.user_id, amount: pr.amount, type: 'debit', description: 'Payout disbursed',

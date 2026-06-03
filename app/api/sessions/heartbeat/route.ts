@@ -11,8 +11,9 @@ import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-se
 // The cleanup job (/api/sessions/cleanup) reads these to detect abandonment.
 export async function POST(req: NextRequest) {
   try {
-    const { sessionId } = await req.json()
-    if (!sessionId) return NextResponse.json({ ok: true }) // fire-and-forget
+    const { sessionId } = await req.json().catch(() => ({}))
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (!sessionId || !UUID_RE.test(sessionId)) return NextResponse.json({ ok: true }) // fire-and-forget
 
     const userSb = createServerSupabaseClient()
     const { data: { user } } = await userSb.auth.getUser()

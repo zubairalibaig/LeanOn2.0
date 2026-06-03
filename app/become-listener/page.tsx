@@ -1,5 +1,4 @@
 'use client'
-export const dynamic = 'force-dynamic'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, LANGUAGES } from '@/lib/constants'
@@ -370,14 +369,10 @@ export default function BecomeListenerPage() {
     }
   }
 
-  if (!guardChecked) return (
-    <>
-      <style>{S}</style>
-      <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',fontFamily:'Nunito,sans-serif',color:'#0F4867'}}>Loading...</div>
-    </>
-  )
-
-  if (alreadyRegistered) return (
+  // guardChecked: show "already registered" only after the check resolves.
+  // Don't blank the page — form renders immediately (fast perceived load,
+  // tests can find the phone input without waiting for the session check).
+  if (guardChecked && alreadyRegistered) return (
     <>
       <style>{S}</style>
       <div className="page">
@@ -489,7 +484,7 @@ export default function BecomeListenerPage() {
                   <button
                     style={{width:'100%',padding:'12px',fontFamily:'Nunito,sans-serif',fontSize:14,fontWeight:700,color:'var(--teal)',background:'rgba(26,143,160,0.08)',border:'1.5px solid rgba(26,143,160,0.3)',borderRadius:12,cursor:'pointer',marginBottom:4}}
                     onClick={sendOtp}
-                    disabled={otpLoading || digits().length < 10}
+                    disabled={otpLoading}
                   >
                     {otpLoading ? <span className="spin">⟳</span> : '📱 Send OTP to verify phone →'}
                   </button>

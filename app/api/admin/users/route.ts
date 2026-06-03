@@ -79,6 +79,12 @@ export async function PATCH(req: NextRequest) {
   const { error, code, status, user } = await requireAdmin(req)
   if (error) return NextResponse.json({ error, code }, { status })
 
+  // Rate limit admin mutations — same threshold as sibling admin routes
+  const { checkRateLimit } = await import('@/lib/rate-limit')
+  if (!checkRateLimit(`admin:${user!.id}`, 30, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
+
   let body: { userId?: string; action?: string; notes?: string }
   try {
     body = await req.json()

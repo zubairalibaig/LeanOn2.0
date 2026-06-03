@@ -38,10 +38,10 @@ export default function ListenerStatusPage() {
 
   useEffect(() => {
     async function load() {
-      const { data: { user } } = await sb.auth.getUser()
-      if (!user) { router.push('/auth'); return }
-
       try {
+        const { data: { user } } = await sb.auth.getUser()
+        if (!user) { router.push('/auth'); return }
+
         const res = await fetch('/api/listener/verify')
         if (res.ok) {
           const data = await res.json()
@@ -52,8 +52,9 @@ export default function ListenerStatusPage() {
         }
       } catch {
         setStatus('pending')
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
     }
     load()
   }, [])

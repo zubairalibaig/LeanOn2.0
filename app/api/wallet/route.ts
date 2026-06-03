@@ -64,7 +64,10 @@ export async function PUT(req: NextRequest) {
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest('hex')
 
-    if (expected !== razorpay_signature) {
+    const sigBuf = Buffer.from(razorpay_signature)
+    const expBuf = Buffer.from(expected)
+    const sigValid = sigBuf.length === expBuf.length && crypto.timingSafeEqual(sigBuf, expBuf)
+    if (!sigValid) {
       return NextResponse.json({ error: 'Invalid payment signature' }, { status: 400 })
     }
 

@@ -67,7 +67,7 @@ const S = `
   .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#0F4867;color:white;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;padding:12px 24px;border-radius:50px;z-index:200;}
 `
 
-function fmt(paise: number) { return `₹${Math.round(paise / 100 * 10) / 10}` }
+function fmt(rupees: number) { return `₹${rupees.toLocaleString('en-IN')}` }
 function fmtDate(iso: string) { return new Date(iso).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) }
 
 export default function EarningsPage() {

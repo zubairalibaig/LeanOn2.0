@@ -146,9 +146,9 @@ export default function Home() {
         }
         .nav-logo{height:90px;width:auto;}
         .nav-right{display:flex;align-items:center;gap:12px;}
-        .btn-ghost{background:transparent;color:var(--teal);font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;padding:9px 18px;border-radius:50px;border:2px solid var(--teal);cursor:pointer;transition:all 0.2s;display:none;}
+        .btn-ghost{background:transparent;color:var(--teal);font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;padding:7px 12px;border-radius:50px;border:2px solid var(--teal);cursor:pointer;transition:all 0.2s;display:block;white-space:nowrap;}
         .btn-ghost:hover{background:var(--teal);color:white;}
-        @media(min-width:520px){.btn-ghost{display:block;}}
+        @media(min-width:520px){.btn-ghost{font-size:14px;padding:9px 18px;}}
         .btn-nav{background:var(--teal);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;padding:11px 24px;border-radius:50px;border:none;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 12px rgba(26,143,160,0.35);}
         .btn-nav:hover{background:#167a8a;transform:translateY(-1px);}
         .btn-listener{background:transparent;color:var(--navy);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;padding:9px 16px;border-radius:50px;border:1.5px solid var(--border);cursor:pointer;transition:all 0.2s;display:none;white-space:nowrap;}
@@ -281,9 +281,9 @@ export default function Home() {
       <nav className="nav">
         <a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a>
         <div className="nav-right">
+          <a href="/auth" className="btn-nav">Sign in</a>
           <a href="/become-listener" className="btn-ghost">Become a listener</a>
           <a href="/auth?mode=listener" className="btn-listener">Listener login</a>
-          <a href="/auth" className="btn-nav">Sign in</a>
         </div>
       </nav>
 

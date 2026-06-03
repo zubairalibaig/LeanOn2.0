@@ -11,11 +11,22 @@ export async function GET(req: NextRequest) {
   const cronSecret = process.env.CRON_SECRET
   const authHeader = req.headers.get('authorization')
 
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    // Not the cron secret — require a valid user session
+  function cronOk(secret: string, header: string | null): boolean {
+    const expected = `Bearer ${secret}`
+    const actual   = header ?? ''
+    if (actual.length !== expected.length) return false
+    return require('crypto').timingSafeEqual(Buffer.from(actual), Buffer.from(expected))
+  }
+
+  if (cronSecret && !cronOk(cronSecret, authHeader)) {
+    // Not the cron secret — require a valid user session (self-heal path)
+    const { checkRateLimit } = await import('@/lib/rate-limit')
     const userSb = createServerSupabaseClient()
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    if (!checkRateLimit(`session-expire:${user.id}`, 1, 60_000)) {
+      return NextResponse.json({ expired: 0 })
+    }
   } else if (!cronSecret && process.env.NODE_ENV === 'production') {
     // Production without CRON_SECRET configured — require auth
     const userSb = createServerSupabaseClient()

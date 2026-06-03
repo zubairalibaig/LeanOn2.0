@@ -78,21 +78,33 @@ export default function BottomNav() {
       `}</style>
       <nav className="bottom-nav">
         <div className="bottom-nav-inner">
-          {TABS.map(tab => (
-            <button
-              key={tab.href}
-              className={`nav-tab${pathname === tab.href || pathname.startsWith(tab.href + '/') ? ' active' : ''}`}
-              onClick={() => router.push(tab.href)}
-            >
-              <span className="nav-tab-icon">
-                {tab.icon === null
-                  ? <NotificationsBell />
-                  : tab.icon
-                }
-              </span>
-              {tab.label}
-            </button>
-          ))}
+          {TABS.map(tab => {
+            const isActive = pathname === tab.href || pathname.startsWith(tab.href + '/')
+            // Notifications tab: render as a plain div to avoid nesting <button> inside <button>
+            // (NotificationsBell is itself a <button>)
+            if (tab.icon === null) {
+              return (
+                <div
+                  key={tab.href}
+                  className={`nav-tab${isActive ? ' active' : ''}`}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <span className="nav-tab-icon"><NotificationsBell /></span>
+                  {tab.label}
+                </div>
+              )
+            }
+            return (
+              <button
+                key={tab.href}
+                className={`nav-tab${isActive ? ' active' : ''}`}
+                onClick={() => router.push(tab.href)}
+              >
+                <span className="nav-tab-icon">{tab.icon}</span>
+                {tab.label}
+              </button>
+            )
+          })}
         </div>
       </nav>
     </>

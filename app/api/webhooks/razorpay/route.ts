@@ -21,7 +21,10 @@ export async function POST(req: NextRequest) {
     const expected = crypto.createHmac('sha256', webhookSecret)
       .update(body).digest('hex')
 
-    if (expected !== signature) {
+    const sigBuf = Buffer.from(signature)
+    const expBuf = Buffer.from(expected)
+    const sigValid = sigBuf.length === expBuf.length && crypto.timingSafeEqual(sigBuf, expBuf)
+    if (!sigValid) {
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
     }
 

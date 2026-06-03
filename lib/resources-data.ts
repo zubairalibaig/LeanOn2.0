@@ -7,7 +7,7 @@ export type Resource = {
 
 export const RESOURCES: Resource[] = [
   {
-    slug: 'active-listening',
+    slug: 'what-is-active-listening',
     title: 'What Is Active Listening? A Complete Guide',
     description: 'Active listening goes beyond simply hearing words. It is a skill that transforms conversations into genuine connection — and it can be learned.',
     content: `Active listening is one of the most powerful skills a human being can develop — and one of the least taught. It goes far beyond simply staying quiet while someone else speaks. Active listening means being fully present, processing what the other person is saying, and responding in a way that makes them feel genuinely heard.

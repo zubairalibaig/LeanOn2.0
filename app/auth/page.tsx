@@ -1,5 +1,4 @@
 'use client'
-export const dynamic = 'force-dynamic'
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
@@ -62,7 +61,6 @@ export default function AuthPage() {
   const [otp, setOtp]           = useState(['','','','','',''])
   const [name, setName]         = useState('')
   const [loading, setLoading]   = useState(false)
-  const [checkingSession, setCheckingSession] = useState(true)
   const [error, setError]       = useState('')
   const [countdown, setCountdown] = useState(0)
   const otpRefs = useRef<(HTMLInputElement|null)[]>([])
@@ -95,12 +93,8 @@ export default function AuthPage() {
         )
         sessionStorage.removeItem('auth_redirect')
         router.replace(dest)
-        // Still set checkingSession=false so if navigation fails the form shows
       }
-      setCheckingSession(false)
-    }).catch(() => {
-      setCheckingSession(false)
-    })
+    }).catch(() => {})
 
     // Also listen for auth state changes (handles Supabase OTP callback)
     const { data: { subscription } } = sb.auth.onAuthStateChange((event, session) => {
@@ -228,13 +222,6 @@ export default function AuthPage() {
   function handleOtpKey(i: number, e: React.KeyboardEvent) {
     if (e.key === 'Backspace' && !otp[i] && i > 0) otpRefs.current[i-1]?.focus()
   }
-
-  if (checkingSession) return (
-    <>
-      <style>{S}</style>
-      <div className="loading-screen">Checking session...</div>
-    </>
-  )
 
   return (
     <>

@@ -42,7 +42,8 @@ export async function PATCH(req: NextRequest) {
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
-    const { ids, all } = await req.json()
+    const body = await req.json().catch(() => ({}))
+    const { ids, all } = body
     const sb = createAdminClient()
 
     if (all) {

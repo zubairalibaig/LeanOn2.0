@@ -1,6 +1,6 @@
 'use client'
-import { useState, useEffect, useRef, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { LANGUAGES } from '@/lib/constants'
 import { showToast } from '@/lib/toast'
@@ -135,10 +135,9 @@ a{text-decoration:none;color:inherit;}
 
 function BrowseContent() {
   const router  = useRouter()
-  const params  = useSearchParams()
   const client  = createClient()
 
-  const [tag, setTag]         = useState(params.get('topic') || 'all')
+  const [tag, setTag]         = useState('all')
   const [lang, setLang]       = useState('all')
   const [query, setQuery]     = useState('')
   const [listeners, setListeners] = useState<Listener[]>([])
@@ -148,6 +147,13 @@ function BrowseContent() {
     id: string; duration_mins: number; session_type: string; amount_held: number
   } | null>(null)
   const channelRef = useRef<ReturnType<typeof client.channel> | null>(null)
+
+  // Read ?topic= from URL after hydration to avoid SSR mismatch
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const topic = params.get('topic')
+    if (topic) setTag(topic)
+  }, [])
 
   useEffect(() => { loadListeners() }, [tag, lang])
 
@@ -362,8 +368,6 @@ function BrowseContent() {
 
 export default function BrowsePage() {
   return (
-    <Suspense fallback={<div style={{padding:40,textAlign:'center',fontFamily:'Nunito,sans-serif'}}>Loading...</div>}>
-      <BrowseContent/>
-    </Suspense>
+    <BrowseContent/>
   )
 }
