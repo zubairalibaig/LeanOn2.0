@@ -30,6 +30,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'already_pending', message: 'You already have a pending payout request.' }, { status: 409 })
   }
 
+  // Also block if a pending REFUND exists — both claim the full balance with no
+  // hold; allowing both would present admin with two full-balance disbursements.
+  const { data: pendingRefund } = await sb
+    .from('refund_requests')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('status', 'pending')
+    .limit(1)
+
+  if (pendingRefund && pendingRefund.length > 0) {
+    return NextResponse.json({ error: 'already_pending', message: 'You have a pending refund request. Please wait for it to be processed before requesting a payout.' }, { status: 409 })
+  }
+
   // Fetch listener profile — SECURITY: only approved listeners may request payouts.
   // NOTE: wallet_balance lives on the users table, NOT listener_profiles — selecting
   // a nonexistent column here previously errored and 403'd every listener.

@@ -87,17 +87,20 @@ export default function EarningsPage() {
 
   useEffect(() => {
     async function load() {
-      const { data: { user } } = await sb.auth.getUser()
-      if (!user) { router.push('/auth?redirect=/dashboard/earnings'); return }
+      try {
+        const { data: { user } } = await sb.auth.getUser()
+        if (!user) { router.push('/auth?redirect=/dashboard/earnings'); return }
 
-      const [e, p] = await Promise.all([
-        sb.from('listener_earnings').select('*').eq('listener_id', user.id).order('created_at', { ascending: false }).limit(50),
-        sb.from('payout_requests').select('id, amount, status, upi_id, created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(20),
-      ])
+        const [e, p] = await Promise.all([
+          sb.from('listener_earnings').select('*').eq('listener_id', user.id).order('created_at', { ascending: false }).limit(50),
+          sb.from('payout_requests').select('id, amount, status, upi_id, created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(20),
+        ])
 
-      setEarnings((e.data ?? []) as Earning[])
-      setPayouts((p.data ?? []).map(r => ({ ...r, requested_at: r.created_at })) as PayoutRequest[])
-      setLoading(false)
+        setEarnings((e.data ?? []) as Earning[])
+        setPayouts((p.data ?? []).map(r => ({ ...r, requested_at: r.created_at })) as PayoutRequest[])
+      } finally {
+        setLoading(false)
+      }
     }
     load()
   }, [router])

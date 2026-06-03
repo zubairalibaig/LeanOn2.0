@@ -56,7 +56,7 @@ export async function notifySessionComplete(opts: {
         <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;">
           <img src="https://leanon.app/logo.png" alt="LeanOn" style="height:40px;margin-bottom:20px;" />
           <h2 style="color:#0F4867;">Your session is complete 🙏</h2>
-          <p style="color:#5A7A8A;">You just had a ${durationMins}-min ${sessionType} session with <strong>${esc(listenerName)}</strong>.</p>
+          <p style="color:#5A7A8A;">You just had a ${esc(durationMins)}-min ${esc(sessionType)} session with <strong>${esc(listenerName)}</strong>.</p>
           <p style="color:#5A7A8A;">We hope it helped. You can rate your session and book again anytime.</p>
           <a href="https://leanon.app/sessions" style="display:inline-block;background:#FF9933;color:white;padding:12px 28px;border-radius:50px;font-weight:700;text-decoration:none;margin-top:16px;">View my sessions →</a>
           <p style="font-size:12px;color:#8AAAB8;margin-top:24px;">In crisis? Call Tele-MANAS 14416 (free, 24/7).</p>
@@ -75,7 +75,7 @@ export async function notifySessionComplete(opts: {
         <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;">
           <img src="https://leanon.app/logo.png" alt="LeanOn" style="height:40px;margin-bottom:20px;" />
           <h2 style="color:#0F4867;">Great session, ${esc(listenerName)}! 🎉</h2>
-          <p style="color:#5A7A8A;">Your ${durationMins}-min ${sessionType} session is complete.</p>
+          <p style="color:#5A7A8A;">Your ${esc(durationMins)}-min ${esc(sessionType)} session is complete.</p>
           <p style="color:#5A7A8A;"><strong>₹${listenerEarning} has been credited to your LeanOn wallet.</strong></p>
           <a href="https://leanon.app/dashboard" style="display:inline-block;background:#1A8FA0;color:white;padding:12px 28px;border-radius:50px;font-weight:700;text-decoration:none;margin-top:16px;">View dashboard →</a>
         </div>

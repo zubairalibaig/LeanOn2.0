@@ -59,34 +59,37 @@ export default function SessionsPage() {
 
   useEffect(() => {
     async function load() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { router.push('/auth'); return }
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) { router.push('/auth'); return }
 
-      const { data } = await supabase
-        .from('sessions')
-        .select('*, listener_profiles!listener_id(users!inner(name))')
-        .eq('seeker_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(20)
+        const { data } = await supabase
+          .from('sessions')
+          .select('*, listener_profiles!listener_id(users!inner(name))')
+          .eq('seeker_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(20)
 
-      const mapped: Session[] = (data || []).map((s: Record<string, unknown>) => {
-        const lp = s.listener_profiles as { users: { name: string } } | null
-        const fullName = lp?.users?.name || 'Listener'
-        const firstName = fullName.split(' ')[0]
-        return {
-          id: s.id as string,
-          status: s.status as string,
-          session_type: s.session_type as string,
-          duration_mins: (s.duration_mins as number) || 0,
-          amount_held: (s.amount_held as number) || 0,
-          seeker_rating: s.seeker_rating as number | null,
-          created_at: s.created_at as string,
-          listener_id: s.listener_id as string,
-          listener_name: firstName,
-        }
-      })
-      setSessions(mapped)
-      setLoading(false)
+        const mapped: Session[] = (data || []).map((s: Record<string, unknown>) => {
+          const lp = s.listener_profiles as { users: { name: string } } | null
+          const fullName = lp?.users?.name || 'Listener'
+          const firstName = fullName.split(' ')[0]
+          return {
+            id: s.id as string,
+            status: s.status as string,
+            session_type: s.session_type as string,
+            duration_mins: (s.duration_mins as number) || 0,
+            amount_held: (s.amount_held as number) || 0,
+            seeker_rating: s.seeker_rating as number | null,
+            created_at: s.created_at as string,
+            listener_id: s.listener_id as string,
+            listener_name: firstName,
+          }
+        })
+        setSessions(mapped)
+      } finally {
+        setLoading(false)
+      }
     }
     load()
   }, [])

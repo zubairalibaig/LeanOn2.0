@@ -89,12 +89,15 @@ export default function NotificationsPage() {
     const { data: { user } } = await sb.auth.getUser()
     if (!user) { router.replace('/auth?redirect=/notifications'); return }
 
-    const res = await fetch(`/api/notifications?page=${p}&limit=${LIMIT}`).catch(() => null)
-    if (!res?.ok) return
-    const json = await res.json()
-    setNotifs(prev => p === 0 ? json.notifications : [...prev, ...json.notifications])
-    setTotal(json.total ?? 0)
-    setLoading(false)
+    try {
+      const res = await fetch(`/api/notifications?page=${p}&limit=${LIMIT}`).catch(() => null)
+      if (!res?.ok) return
+      const json = await res.json()
+      setNotifs(prev => p === 0 ? json.notifications : [...prev, ...json.notifications])
+      setTotal(json.total ?? 0)
+    } finally {
+      setLoading(false)  // never leave the skeleton hanging on failure
+    }
   }, [router])
 
   useEffect(() => {

@@ -37,8 +37,10 @@ export async function GET(req: NextRequest) {
       else if (userStatus === 'suspended') query = query.eq('is_suspended', true)
 
       if (search) {
-        // search on joined users table
-        query = query.ilike('users.name', `%${search}%`)
+        // Strip PostgREST/LIKE metacharacters before embedding in the filter,
+        // consistent with the regular-users branch below.
+        const safe = search.replace(/[,()*:\\%_]/g, '').slice(0, 100)
+        if (safe) query = query.ilike('users.name', `%${safe}%`)
       }
 
       const { data, count, error: qErr } = await query

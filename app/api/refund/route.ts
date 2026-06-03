@@ -36,6 +36,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'You already have a pending refund request. We will process it within 3–5 business days.' }, { status: 400 })
     }
 
+    // Also block if a pending PAYOUT exists — both claim the full balance with no
+    // hold, so allowing both would present admin with two full-balance disbursements.
+    const { data: pendingPayout } = await sb
+      .from('payout_requests')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('status', 'pending')
+      .limit(1)
+
+    if (pendingPayout && pendingPayout.length > 0) {
+      return NextResponse.json({ error: 'You have a pending payout request. Please wait for it to be processed before requesting a refund.' }, { status: 400 })
+    }
+
     await sb.from('refund_requests').insert({
       user_id: user.id,
       amount: u.wallet_balance,

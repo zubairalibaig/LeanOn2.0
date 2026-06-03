@@ -61,6 +61,20 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // If only reportedUserId is provided (no sessionId) — require a prior
+    // session between reporter and target. Prevents targeted abuse-report
+    // spam (incl. auto-escalating self_harm_risk) against arbitrary UUIDs.
+    if (reportedUserId && !sessionId) {
+      const { data: shared } = await sb
+        .from('sessions')
+        .select('id')
+        .or(`and(seeker_id.eq.${user.id},listener_id.eq.${reportedUserId}),and(seeker_id.eq.${reportedUserId},listener_id.eq.${user.id})`)
+        .limit(1)
+      if (!shared || shared.length === 0) {
+        return NextResponse.json({ error: 'You can only report users you have had a session with.' }, { status: 403 })
+      }
+    }
+
     // Save report to DB
     const { error: dbErr } = await sb.from('reports').insert({
       reporter_id:      user.id,
