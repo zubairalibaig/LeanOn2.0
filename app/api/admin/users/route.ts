@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
           user_id, bio, specialty_tags, rate_per_min, rating, total_sessions,
           is_active, is_approved, is_available, is_verified, is_suspended,
           created_at,
-          users!inner(id, name, email, created_at, is_active, is_suspended, wallet_balance)
+          users!inner(id, name, email, phone, created_at, is_active, is_suspended, wallet_balance)
         `, { count: 'exact' })
         .order('created_at', { ascending: false })
         .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)

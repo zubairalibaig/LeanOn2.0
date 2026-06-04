@@ -17,7 +17,7 @@ type UserRow = { id: string; name?: string; phone?: string; email?: string; crea
 type ListenerRow = {
   user_id: string; bio?: string; specialty_tags?: string[]; rate_per_min?: number; rating?: number; total_sessions?: number
   is_active: boolean; is_approved: boolean; is_available: boolean; is_verified?: boolean; is_suspended?: boolean; created_at: string
-  users: { id: string; name?: string; email?: string; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number }
+  users: { id: string; name?: string; email?: string; phone?: string; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number }
 }
 type SessionRow = {
   id: string; seeker_id: string; listener_id: string; session_type: string; duration_mins: number
@@ -35,7 +35,7 @@ type VerificationRow = {
   selfie_url: string | null; id_doc_url: string | null; status: string
   submitted_at: string; admin_notes: string | null
 }
-type PayoutRow = { id: string; amount: number; status: string; created_at: string; users: { name?: string; email?: string } | null }
+type PayoutRow = { id: string; amount: number; upi_id?: string; status: string; created_at: string; users: { name?: string; email?: string; phone?: string } | null }
 
 type Tab = 'overview' | 'users' | 'listeners' | 'sessions' | 'reports' | 'payouts' | 'verifications'
 
@@ -137,6 +137,7 @@ export default function AdminPage() {
   const [loginLoading, setLoginLoading] = useState(false)
   const [loginError, setLoginError] = useState('')
   const [loginCountdown, setLoginCountdown] = useState(0)
+  const [otpActuallySent, setOtpActuallySent] = useState(false)
 
   useEffect(() => {
     if (loginCountdown <= 0) return
@@ -162,6 +163,7 @@ export default function AdminPage() {
     }
     // Always advance to OTP step regardless of whether OTP was sent
     // (prevents revealing which phone is admin)
+    setOtpActuallySent(json.sent === true)
     setLoginStep('otp')
     setLoginCountdown(30)
   }
@@ -555,7 +557,12 @@ export default function AdminPage() {
               <div style={{fontSize:36,marginBottom:12}}>🔐</div>
               <h2 style={{fontSize:20,fontWeight:900,color:'#0F4867',marginBottom:6}}>Admin Access</h2>
               <p style={{fontSize:13,color:'#5A7A8A',fontWeight:600,lineHeight:1.5}}>
-                {loginStep === 'phone' ? 'Enter the admin mobile number to continue.' : `Enter the OTP sent to +91 ${loginPhone.replace(/\D/g,'').slice(-10)}`}
+                {loginStep === 'phone'
+                ? 'Enter the admin mobile number to continue.'
+                : otpActuallySent
+                  ? `OTP sent to +91 ${loginPhone.replace(/\D/g,'').slice(-10)} — check your SMS.`
+                  : `Enter the OTP for +91 ${loginPhone.replace(/\D/g,'').slice(-10)}.`
+              }
               </p>
             </div>
 
@@ -607,7 +614,7 @@ export default function AdminPage() {
                 <div style={{textAlign:'center',marginTop:10}}>
                   {loginCountdown > 0
                     ? <span style={{fontSize:13,color:'#5A7A8A',fontWeight:600}}>Resend in {loginCountdown}s</span>
-                    : <button onClick={() => { setLoginOtp(['','','','','','']); adminSendOtp() }} style={{background:'none',border:'none',fontFamily:'Nunito,sans-serif',fontSize:13,fontWeight:700,color:'#1A8FA0',cursor:'pointer'}}>Resend OTP</button>
+                    : <button onClick={() => { setLoginOtp(['','','','','','']); setOtpActuallySent(false); adminSendOtp() }} style={{background:'none',border:'none',fontFamily:'Nunito,sans-serif',fontSize:13,fontWeight:700,color:'#1A8FA0',cursor:'pointer'}}>Resend OTP</button>
                   }
                 </div>
                 <button
@@ -923,7 +930,7 @@ export default function AdminPage() {
                     <thead>
                       <tr>
                         <th>Name</th>
-                        <th>Email</th>
+                        <th>Phone / Email</th>
                         <th>Rate</th>
                         <th>Rating</th>
                         <th>Sessions</th>
@@ -935,13 +942,23 @@ export default function AdminPage() {
                       {listeners.map(l => {
                         const u = l.users
                         const isPending = !l.is_approved && !l.is_active
+                        // Detect if this listener is the currently logged-in admin
+                        const isSelf = !!(authUser && (
+                          (authUser.phone && u?.phone && authUser.phone.replace(/\D/g, '').slice(-10) === u.phone.replace(/\D/g, '').slice(-10)) ||
+                          (authUser.email && u?.email && authUser.email === u.email)
+                        ))
                         return (
                           <tr key={l.user_id} className={isPending ? 'pending-row' : ''}>
                             <td style={{ fontWeight: 700 }}>
                               {u?.name || '—'}
+                              {isSelf && <span className="badge badge-orange" style={{ marginLeft: 6, fontSize: 10 }}>YOU</span>}
                               {l.is_verified && <span className="badge badge-teal" style={{ marginLeft: 6, fontSize: 10 }}>Verified</span>}
                             </td>
-                            <td style={{ color: 'var(--gray)' }}>{u?.email || '—'}</td>
+                            <td style={{ color: 'var(--gray)', fontSize: 12 }}>
+                              {u?.phone ? <div>{u.phone}</div> : null}
+                              {u?.email ? <div style={{ color: 'var(--gray)' }}>{u.email}</div> : null}
+                              {!u?.phone && !u?.email ? '—' : null}
+                            </td>
                             <td>₹{l.rate_per_min ?? '—'}/min</td>
                             <td>{l.rating ? `${l.rating.toFixed(1)} ★` : '—'}</td>
                             <td>{l.total_sessions ?? 0}</td>
@@ -1137,6 +1154,9 @@ export default function AdminPage() {
               Pending Payout Requests
               {payouts.length > 0 && <span className="count-badge">{payouts.length}</span>}
             </div>
+            <div style={{ background: '#FFF8E7', border: '1.5px solid #FFD580', borderRadius: 12, padding: '12px 16px', marginBottom: 16, fontSize: 13, fontWeight: 600, color: '#7A5000', lineHeight: 1.6 }}>
+              <strong>Manual payout process:</strong> Payouts are NOT processed automatically. When a listener requests a payout, you must manually transfer funds via UPI/NEFT using the bank details stored in their listener application. Once transferred, click <strong>Mark Paid</strong> to update the internal ledger.
+            </div>
             {kpis && payouts.length > 0 && (
               <div style={{ background: 'white', border: '1.5px solid var(--border)', borderRadius: 12, padding: '12px 18px', marginBottom: 16, display: 'flex', gap: 32 }}>
                 <div>
@@ -1157,11 +1177,18 @@ export default function AdminPage() {
               <div className="empty">No pending payout requests — all clear!</div>
             ) : payouts.map((p: PayoutRow) => (
               <div key={p.id} style={{ background: 'white', border: '1.5px solid var(--border)', borderRadius: 16, padding: '16px 20px', marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-                <div>
+                <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--navy)' }}>{p.users?.name || '—'}</div>
                   <div style={{ fontSize: 12, color: 'var(--gray)', fontWeight: 600, marginTop: 2 }}>
-                    {p.users?.email || ''}{p.created_at ? ` · Requested ${fmtDate(p.created_at)}` : ''}
+                    {p.users?.phone ? <span style={{ marginRight: 8 }}>Phone: {p.users.phone}</span> : null}
+                    {p.users?.email ? <span style={{ marginRight: 8 }}>{p.users.email}</span> : null}
+                    {p.created_at ? <span>Requested {fmtDate(p.created_at)}</span> : null}
                   </div>
+                  {p.upi_id && (
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--teal)', marginTop: 4 }}>
+                      UPI: <span style={{ userSelect: 'all', background: '#F0F8FC', padding: '2px 8px', borderRadius: 6 }}>{p.upi_id}</span>
+                    </div>
+                  )}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                   <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--navy)' }}>₹{p.amount}</div>

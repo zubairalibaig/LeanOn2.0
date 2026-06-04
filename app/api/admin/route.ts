@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
 
     admin
       .from('payout_requests')
-      .select(`id, amount, status, created_at, users ( name, email )`, { count: 'exact' })
+      .select(`id, amount, upi_id, status, created_at, users ( name, email, phone )`, { count: 'exact' })
       .eq('status', 'pending')
       .order('created_at', { ascending: false })
       .range(prPage * PAGE_SIZE, prPage * PAGE_SIZE + PAGE_SIZE - 1),
