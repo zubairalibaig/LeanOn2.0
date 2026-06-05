@@ -42,11 +42,28 @@ export default function ListenerStatusPage() {
         const { data: { user } } = await sb.auth.getUser()
         if (!user) { router.push('/auth'); return }
 
-        const res = await fetch('/api/listener/verify')
-        if (res.ok) {
-          const data = await res.json()
-          setStatus(data.status || 'pending')
-          setNotes(data.admin_notes || null)
+        // Read application status from listener_applications (the admin approval flow)
+        const { data: app } = await sb
+          .from('listener_applications')
+          .select('status, admin_notes')
+          .eq('user_id', user.id)
+          .maybeSingle()
+
+        // Also check listener_profiles.is_approved (authoritative approved flag)
+        const { data: profile } = await sb
+          .from('listener_profiles')
+          .select('is_approved, is_active')
+          .eq('user_id', user.id)
+          .maybeSingle()
+
+        if (profile?.is_approved) {
+          setStatus('approved')
+        } else if (app?.status === 'rejected') {
+          setStatus('rejected')
+          setNotes(app.admin_notes || null)
+        } else if (app?.status === 'needs_resubmission') {
+          setStatus('needs_resubmission')
+          setNotes(app.admin_notes || null)
         } else {
           setStatus('pending')
         }
@@ -96,7 +113,7 @@ export default function ListenerStatusPage() {
       <style>{S}</style>
       <div className="page">
         <div className="topbar">
-          <button className="back" onClick={() => router.push('/become-listener')}>←</button>
+          <button className="back" onClick={() => router.push('/')}>←</button>
           <h1>Application Status</h1>
         </div>
 

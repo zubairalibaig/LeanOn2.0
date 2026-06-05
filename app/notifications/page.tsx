@@ -83,11 +83,14 @@ export default function NotificationsPage() {
   const [loading, setLoading] = useState(true)
   const observerRef = useRef<IntersectionObserver | null>(null)
 
+  const [userId, setUserId] = useState<string | null>(null)
+
   const load = useCallback(async (p: number) => {
     const { data: { session } } = await sb.auth.getSession()
     if (!session) { router.replace('/auth?redirect=/notifications'); return }
     const { data: { user } } = await sb.auth.getUser()
     if (!user) { router.replace('/auth?redirect=/notifications'); return }
+    setUserId(user.id)
 
     try {
       const res = await fetch(`/api/notifications?page=${p}&limit=${LIMIT}`).catch(() => null)
@@ -107,6 +110,24 @@ export default function NotificationsPage() {
       load(0)
     })
   }, [load, router])
+
+  // Realtime — prepend new notifications without page reload
+  useEffect(() => {
+    if (!userId) return
+    const channel = sb
+      .channel(`notifs-page:${userId}`)
+      .on('postgres_changes' as 'postgres_changes', {
+        event:  'INSERT',
+        schema: 'public',
+        table:  'notifications',
+        filter: `user_id=eq.${userId}`,
+      }, (payload: { new: Notification }) => {
+        setNotifs(prev => [payload.new, ...prev])
+        setTotal(t => t + 1)
+      })
+      .subscribe()
+    return () => { sb.removeChannel(channel) }
+  }, [userId])
 
   // Mark visible unread notifications as read via IntersectionObserver
   useEffect(() => {

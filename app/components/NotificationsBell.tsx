@@ -94,7 +94,7 @@ export default function NotificationsBell() {
   return (
     <div ref={dropdownRef} style={{ position: 'relative' }}>
       <button
-        onClick={() => { setOpen(o => !o); if (!open && unread > 0) markAllRead() }}
+        onClick={() => { setOpen(o => !o) }}
         aria-label={`Notifications${unread > 0 ? ` — ${unread} unread` : ''}`}
         style={{
           background: 'none', border: 'none', cursor: 'pointer',
@@ -131,9 +131,19 @@ export default function NotificationsBell() {
             padding: '12px 16px', borderBottom: '1.5px solid #D5EEF6',
           }}>
             <span style={{ fontWeight: 800, fontSize: 14, color: '#0F4867' }}>Notifications</span>
-            <a href="/notifications" style={{ fontSize: 12, fontWeight: 700, color: '#1A8FA0', textDecoration: 'none' }}>
-              View all
-            </a>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+              {unread > 0 && (
+                <button
+                  onClick={markAllRead}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 700, color: '#5A7A8A' }}
+                >
+                  Mark all read
+                </button>
+              )}
+              <a href="/notifications" style={{ fontSize: 12, fontWeight: 700, color: '#1A8FA0', textDecoration: 'none' }}>
+                View all
+              </a>
+            </div>
           </div>
 
           {notifs.length === 0 ? (

@@ -244,11 +244,12 @@ function SessionContent() {
     })
   }, [])
 
-  // Sync timer + listener name + listener ID from DB — survives page refresh
+  // Sync timer + peer name + IDs from DB — survives page refresh
+  // We fetch both listener and seeker names so each party sees the OTHER person's name.
   useEffect(() => {
     if (!sessionId) return
     supabase.from('sessions')
-      .select('started_at, duration_mins, listener_id, listener:users!listener_id(name)')
+      .select('started_at, duration_mins, listener_id, seeker_id, listener:users!listener_id(name), seeker:users!seeker_id(name)')
       .eq('id', sessionId)
       .single()
       .then(({ data }) => {
@@ -259,9 +260,14 @@ function SessionContent() {
           setSecs(remaining)
           if (remaining <= 0) setEnded(true)
         }
-        const name = (data?.listener as { name?: string } | null)?.name
-        if (name) setResolvedListenerName(name)
         if (data?.listener_id) setListenerId(data.listener_id)
+        // Show the OTHER person's name — listener sees seeker's name, seeker sees listener's name
+        const myId = userIdRef.current
+        const isListener = myId === data?.listener_id
+        const peerName = isListener
+          ? (data?.seeker as { name?: string } | null)?.name
+          : (data?.listener as { name?: string } | null)?.name
+        if (peerName) setResolvedListenerName(peerName)
       })
   }, [sessionId])
 
@@ -345,6 +351,9 @@ function SessionContent() {
           typingTimeoutRef.current = setTimeout(() => setIsOtherTyping(false), 3000)
         }
       })
+      .on('broadcast', { event: 'session_ended' }, () => {
+        setEnded(true)
+      })
       .subscribe((status: string) => {
         setConnected(status === 'SUBSCRIBED')
         if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
@@ -372,6 +381,8 @@ function SessionContent() {
   useEffect(() => {
     if (!ended || completedRef.current || !sessionId) return
     completedRef.current = true
+    // Notify the other participant via realtime broadcast
+    channelRef.current?.send({ type: 'broadcast', event: 'session_ended', payload: {} }).catch?.(() => {})
     fetch('/api/sessions', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },

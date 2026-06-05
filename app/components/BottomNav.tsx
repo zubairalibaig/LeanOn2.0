@@ -88,6 +88,7 @@ export default function BottomNav() {
                   key={tab.href}
                   className={`nav-tab${isActive ? ' active' : ''}`}
                   style={{ cursor: 'pointer' }}
+                  onClick={() => router.push(tab.href)}
                 >
                   <span className="nav-tab-icon"><NotificationsBell /></span>
                   {tab.label}

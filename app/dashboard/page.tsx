@@ -286,9 +286,17 @@ export default function DashboardPage() {
 
   async function toggleAvailability() {
     if (!user) return
-    const next = !avail
-    setAvail(next)
-    await sb.from('listener_profiles').update({ is_available: next }).eq('user_id', user.id)
+    const prev = avail
+    setAvail(!prev) // optimistic
+    const res = await fetch('/api/listener/availability', { method: 'PATCH' }).catch(() => null)
+    if (!res?.ok) {
+      setAvail(prev) // revert on failure
+      const body = await res?.json().catch(() => ({}))
+      alert(body?.error || 'Could not update availability. Please try again.')
+    } else {
+      const data = await res.json().catch(() => ({}))
+      if (typeof data.is_available === 'boolean') setAvail(data.is_available)
+    }
   }
 
   async function requestPayout() {
@@ -652,7 +660,7 @@ export default function DashboardPage() {
           <div className="profile-actions">
             <button className="btn-edit" onClick={openEdit}>✏️ Edit profile</button>
             <button className="btn-share" onClick={() => {
-              navigator.clipboard?.writeText(`https://www.leanon.app/listener/${user?.id}`)
+              navigator.clipboard?.writeText(`${window.location.origin}/listener/${user?.id}`)
               alert('Profile link copied!')
             }}>🔗 Share profile</button>
           </div>
