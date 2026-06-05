@@ -130,100 +130,63 @@ export default function AdminPage() {
   const [pinVerified, setPinVerified] = useState(false)
   const [denied, setDenied] = useState(false)
 
-  // Embedded admin login state (only shown when not authenticated)
-  const [loginPhone, setLoginPhone] = useState('')
-  const [loginOtp, setLoginOtp] = useState(['','','','','',''])
-  const [loginStep, setLoginStep] = useState<'phone'|'otp'>('phone')
+  // Password login state
+  const [loginPassword, setLoginPassword] = useState('')
   const [loginLoading, setLoginLoading] = useState(false)
   const [loginError, setLoginError] = useState('')
-  const [loginCountdown, setLoginCountdown] = useState(0)
-  const [otpActuallySent, setOtpActuallySent] = useState(false)
+  // Stores the admin password for all subsequent API headers (password-based auth)
+  const adminPasswordRef = useRef<string>('')
 
-  useEffect(() => {
-    if (loginCountdown <= 0) return
-    const t = setTimeout(() => setLoginCountdown(c => c - 1), 1000)
-    return () => clearTimeout(t)
-  }, [loginCountdown])
-
-  async function adminSendOtp() {
-    setLoginError('')
-    const digits = loginPhone.replace(/\D/g, '').slice(-10)
-    if (digits.length < 10) { setLoginError('Enter a valid 10-digit mobile number'); return }
+  async function tryPasswordLogin() {
+    const pw = loginPassword.trim()
+    if (!pw) { setLoginError('Enter the admin password'); return }
     setLoginLoading(true)
-    const res = await fetch('/api/admin/send-otp', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone: digits }),
-    })
+    setLoginError('')
+    const res = await fetch('/api/admin/kpis', {
+      headers: { 'x-admin-password': pw },
+    }).catch(() => null)
     setLoginLoading(false)
-    const json = await res.json().catch(() => ({}))
-    if (!res.ok || json.ok === false) {
-      setLoginError(json.error || 'Could not send OTP. Please try again.')
-      return
-    }
-    // Always advance to OTP step regardless of whether OTP was sent
-    // (prevents revealing which phone is admin)
-    setOtpActuallySent(json.sent === true)
-    setLoginStep('otp')
-    setLoginCountdown(30)
-  }
-
-  async function adminVerifyOtp(codeOverride?: string) {
-    const sb = createClient()
-    const code = codeOverride ?? loginOtp.join('')
-    if (code.length < 6) { setLoginError('Enter the full 6-digit code'); return }
-    setLoginLoading(true)
-    setLoginError('')
-    const digits = loginPhone.replace(/\D/g, '').slice(-10)
-    const formattedPhone = '+91' + digits
-    const { data, error: err } = await sb.auth.verifyOtp({
-      phone: formattedPhone,
-      token: code,
-      type: 'sms',
-    })
-    if (err || !data.user) {
-      setLoginLoading(false)
-      setLoginError('Invalid OTP. Please try again.')
-      return
-    }
-    // Create/update public.users row
-    await sb.from('users').upsert({ id: data.user.id, phone: formattedPhone, is_active: true }, { onConflict: 'id' })
-    setAuthUser(data.user as { id: string; email?: string; phone?: string })
+    if (!res) { setLoginError('Connection error. Try again.'); return }
+    if (res.status === 429) { setLoginError('Too many attempts. Please wait a minute.'); return }
+    if (!res.ok) { setLoginError('Incorrect password.'); setLoginPassword(''); return }
+    // Success — store password and enter dashboard
+    adminPasswordRef.current = pw
+    try { sessionStorage.setItem('adminPw', pw) } catch {}
+    const json = await res.json().catch(() => null)
+    if (json) { setKpis(json); setKpisLoading(false) }
+    setAuthUser({ id: 'password-admin', email: undefined })
     setDenied(false)
     setAuthChecking(false)
-    setLoginLoading(false)
-    // loadKPIs will fire via the useEffect that watches authChecking + authUser
   }
 
-  function handleAdminOtpChange(i: number, val: string) {
-    if (!/^\d*$/.test(val)) return
-    const next = [...loginOtp]; next[i] = val.slice(-1); setLoginOtp(next)
-    if (val && i < 5) {
-      (document.querySelectorAll('.admin-otp-box')[i + 1] as HTMLInputElement)?.focus()
-    }
-    if (next.every(d => d)) {
-      const code = next.join('')
-      setTimeout(() => adminVerifyOtp(code), 100)
-    }
-  }
-
-  // Check auth on mount — client-side only (avoids SSR cookie detection issues on Vercel).
-  // Use getUser() (server-validated JWT), not getSession() (localStorage only),
-  // so a stale/expired token doesn't render the admin shell.
+  // On mount: check sessionStorage for a stored password, then fall back to Supabase session.
   useEffect(() => {
-    const sb = createClient()
-    sb.auth.getUser().then(({ data: { user } }) => {
-      if (!user) {
-        setAuthChecking(false)
-        setDenied(true) // not logged in → show embedded login
-        return
+    async function init() {
+      let storedPw = ''
+      try { storedPw = sessionStorage.getItem('adminPw') ?? '' } catch {}
+      if (storedPw) {
+        adminPasswordRef.current = storedPw
+        const res = await fetch('/api/admin/kpis', { headers: { 'x-admin-password': storedPw } }).catch(() => null)
+        if (res?.ok) {
+          const json = await res.json().catch(() => null)
+          if (json) { setKpis(json); setKpisLoading(false) }
+          setAuthUser({ id: 'password-admin', email: undefined })
+          setAuthChecking(false)
+          return
+        }
+        // Stored password no longer valid — clear it and fall through.
+        adminPasswordRef.current = ''
+        try { sessionStorage.removeItem('adminPw') } catch {}
       }
-      setAuthUser(user as { id: string; email?: string; phone?: string })
-      setAuthChecking(false)
-    }).catch(() => {
-      setAuthChecking(false)
-      setDenied(true)
-    })
+      // Fall back to Supabase session check (for existing OTP-authenticated admins).
+      const sb = createClient()
+      sb.auth.getUser().then(({ data: { user } }) => {
+        if (!user) { setAuthChecking(false); setDenied(true); return }
+        setAuthUser(user as { id: string; email?: string; phone?: string })
+        setAuthChecking(false)
+      }).catch(() => { setAuthChecking(false); setDenied(true) })
+    }
+    init()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
   const [tab, setTab] = useState<Tab>('overview')
   const [toast, setToast] = useState<string | null>(null)
@@ -307,6 +270,7 @@ export default function AdminPage() {
   // Returns Authorization headers including the admin PIN when it has been verified
   function adminHeaders(extra: Record<string, string> = {}): Record<string, string> {
     const h: Record<string, string> = { ...extra }
+    if (adminPasswordRef.current) h['x-admin-password'] = adminPasswordRef.current
     if (verifiedPinRef.current) h['x-admin-pin'] = verifiedPinRef.current
     return h
   }
@@ -551,80 +515,32 @@ export default function AdminPage() {
             </p>
           </div>
         ) : (
-          // Not logged in — show embedded admin login (phone + OTP)
+          // Not logged in — password-based admin login
           <div style={{background:'white',borderRadius:24,padding:'36px 28px',boxShadow:'0 8px 40px rgba(15,72,103,0.12)',maxWidth:360,width:'100%'}}>
             <div style={{textAlign:'center',marginBottom:24}}>
               <div style={{fontSize:36,marginBottom:12}}>🔐</div>
               <h2 style={{fontSize:20,fontWeight:900,color:'#0F4867',marginBottom:6}}>Admin Access</h2>
               <p style={{fontSize:13,color:'#5A7A8A',fontWeight:600,lineHeight:1.5}}>
-                {loginStep === 'phone'
-                ? 'Enter the admin mobile number to continue.'
-                : otpActuallySent
-                  ? `OTP sent to +91 ${loginPhone.replace(/\D/g,'').slice(-10)} — check your SMS.`
-                  : `Enter the OTP for +91 ${loginPhone.replace(/\D/g,'').slice(-10)}.`
-              }
+                Enter your admin password to continue.
               </p>
             </div>
-
-            {loginStep === 'phone' ? (
-              <>
-                <div style={{display:'flex',alignItems:'center',background:'white',border:'2px solid #D5EEF6',borderRadius:14,overflow:'hidden',marginBottom:8}}>
-                  <span style={{padding:'13px 12px 13px 16px',fontWeight:800,color:'#5A7A8A',borderRight:'2px solid #D5EEF6'}}>+91</span>
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    maxLength={10}
-                    placeholder="Mobile number"
-                    value={loginPhone}
-                    onChange={e => { setLoginPhone(e.target.value.replace(/\D/g,'')); setLoginError('') }}
-                    onKeyDown={e => { if (e.key === 'Enter') adminSendOtp() }}
-                    style={{flex:1,padding:'13px 14px',fontFamily:'Nunito,sans-serif',fontSize:16,fontWeight:700,color:'#0F4867',border:'none',outline:'none',background:'transparent'}}
-                    autoFocus
-                  />
-                </div>
-                {loginError && <p style={{color:'#E53935',fontSize:13,fontWeight:700,marginBottom:8}}>{loginError}</p>}
-                <button
-                  onClick={adminSendOtp}
-                  disabled={loginLoading || loginPhone.replace(/\D/g,'').length < 10}
-                  style={{width:'100%',padding:'14px',background:'#0F4867',color:'white',border:'none',borderRadius:50,fontFamily:'Nunito,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',opacity:(loginLoading || loginPhone.replace(/\D/g,'').length < 10)?0.5:1,marginTop:8}}
-                >
-                  {loginLoading ? '⟳' : 'Send OTP →'}
-                </button>
-              </>
-            ) : (
-              <>
-                <div style={{display:'flex',gap:8,justifyContent:'center',marginBottom:8}}>
-                  {loginOtp.map((d, i) => (
-                    <input
-                      key={i}
-                      className="admin-otp-box"
-                      type="text"
-                      inputMode="numeric"
-                      maxLength={1}
-                      value={d}
-                      autoFocus={i === 0}
-                      onChange={e => handleAdminOtpChange(i, e.target.value)}
-                      onKeyDown={e => { if (e.key === 'Backspace' && !d && i > 0) (document.querySelectorAll('.admin-otp-box')[i-1] as HTMLInputElement)?.focus() }}
-                      style={{width:44,height:52,border:'2px solid #D5EEF6',borderRadius:12,fontFamily:'Nunito,sans-serif',fontSize:22,fontWeight:900,color:'#0F4867',textAlign:'center',background:'white',outline:'none'}}
-                    />
-                  ))}
-                </div>
-                {loginError && <p style={{color:'#E53935',fontSize:13,fontWeight:700,marginBottom:8,textAlign:'center'}}>{loginError}</p>}
-                {loginLoading && <p style={{textAlign:'center',fontSize:13,color:'#5A7A8A',marginBottom:8}}>Verifying…</p>}
-                <div style={{textAlign:'center',marginTop:10}}>
-                  {loginCountdown > 0
-                    ? <span style={{fontSize:13,color:'#5A7A8A',fontWeight:600}}>Resend in {loginCountdown}s</span>
-                    : <button onClick={() => { setLoginOtp(['','','','','','']); setOtpActuallySent(false); adminSendOtp() }} style={{background:'none',border:'none',fontFamily:'Nunito,sans-serif',fontSize:13,fontWeight:700,color:'#1A8FA0',cursor:'pointer'}}>Resend OTP</button>
-                  }
-                </div>
-                <button
-                  onClick={() => { setLoginStep('phone'); setLoginOtp(['','','','','','']); setLoginError('') }}
-                  style={{width:'100%',padding:'10px',background:'transparent',color:'#5A7A8A',border:'none',fontFamily:'Nunito,sans-serif',fontWeight:700,fontSize:13,cursor:'pointer',marginTop:8}}
-                >
-                  ← Back
-                </button>
-              </>
-            )}
+            <input
+              type="password"
+              placeholder="Admin password"
+              value={loginPassword}
+              onChange={e => { setLoginPassword(e.target.value); setLoginError('') }}
+              onKeyDown={e => { if (e.key === 'Enter') tryPasswordLogin() }}
+              style={{width:'100%',padding:'13px 16px',border:'2px solid #D5EEF6',borderRadius:14,fontFamily:'Nunito,sans-serif',fontSize:15,fontWeight:700,color:'#0F4867',outline:'none',boxSizing:'border-box',marginBottom:8,background:'white'}}
+              autoFocus
+            />
+            {loginError && <p style={{color:'#E53935',fontSize:13,fontWeight:700,marginBottom:8}}>{loginError}</p>}
+            <button
+              onClick={tryPasswordLogin}
+              disabled={loginLoading || !loginPassword.trim()}
+              style={{width:'100%',padding:'14px',background:'#0F4867',color:'white',border:'none',borderRadius:50,fontFamily:'Nunito,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',opacity:(loginLoading || !loginPassword.trim())?0.5:1,marginTop:8}}
+            >
+              {loginLoading ? '⟳ Verifying…' : 'Access Dashboard →'}
+            </button>
           </div>
         )}
       </div>

@@ -3,38 +3,60 @@ import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-se
 import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 
-// Constant-time string comparison — avoids timing side-channels on the PIN.
+// Constant-time string comparison — avoids timing side-channels on the PIN/password.
 function timingSafeEqual(a: string, b: string): boolean {
   const ab = Buffer.from(a)
   const bb = Buffer.from(b)
   if (ab.length !== bb.length) {
-    // Compare against self to keep timing uniform, then return false.
     crypto.timingSafeEqual(ab, ab)
     return false
   }
   return crypto.timingSafeEqual(ab, bb)
 }
 
+// Synthetic user ID returned for password-authenticated admin sessions.
+const ADMIN_PASSWORD_USER_ID = '00000000-0000-0000-0000-000000000001'
+
 /**
  * Shared admin auth check for all /api/admin/* routes.
- * ALWAYS pass `req` — the PIN check requires it.
+ * ALWAYS pass `req` — the header checks require it.
  *
- * Returns different error codes so the client can distinguish:
+ * Two auth paths:
+ *   A. x-admin-password header matching ADMIN_PASSWORD env var
+ *      → bypasses Supabase session entirely; no OTP or phone needed.
+ *   B. Valid Supabase session whose user matches ADMIN_PHONE/ADMIN_EMAIL/is_admin
+ *      → phone-OTP flow; optionally gated by ADMIN_PIN second factor.
+ *
+ * Error codes:
  *   code:'NOT_ADMIN'    → user is logged in but is not admin → show Access Denied
  *   code:'PIN_REQUIRED' → user IS admin but PIN missing/wrong → show PIN gate
- *
- * Identity check order (ANY match = admin):
- *   1. user.phone === ADMIN_PHONE env var  (phone-OTP logins, digits-only normalized)
- *   2. user.email === ADMIN_EMAIL env var  (email logins)
- *   3. users.is_admin = true in DB        (explicit grant)
- *   4. users.role = 'admin' in DB         (role-based grant)
  */
 
-// Strip all non-digit characters for phone comparison, handles +91 prefix differences
 const normalizePhone = (p: string | null | undefined) => (p ?? '').replace(/\D/g, '')
 
 export async function requireAdmin(req: Request) {
-  // ── Step 1: verify session ───────────────────────────────────────────────
+  // ── Step 0: ADMIN_PASSWORD header — password-based admin auth ───────────────
+  const adminPassword = process.env.ADMIN_PASSWORD
+  if (adminPassword) {
+    const providedPw = req.headers.get('x-admin-password') ?? ''
+    if (providedPw) {
+      // Rate-limit password attempts per IP to block brute force.
+      const clientIp = (req.headers.get('x-forwarded-for') ?? 'unknown').split(',')[0].trim()
+      if (!checkRateLimit(`admin-pw:${clientIp}`, 10, 60_000)) {
+        return { error: 'Too many attempts. Please wait.', code: 'PIN_RATE_LIMITED', status: 429 as const, user: null }
+      }
+      if (timingSafeEqual(providedPw, adminPassword)) {
+        return {
+          error: null, code: null, status: 200 as const,
+          user: { id: ADMIN_PASSWORD_USER_ID, email: process.env.ADMIN_EMAIL } as { id: string; email?: string; phone?: string },
+        }
+      }
+      // Wrong password — fail fast; do not fall through to Supabase check.
+      return { error: 'Forbidden', code: 'NOT_ADMIN', status: 403 as const, user: null }
+    }
+  }
+
+  // ── Step 1: verify Supabase session ─────────────────────────────────────────
   const supabase = createServerSupabaseClient()
   const { data: { user }, error: authErr } = await supabase.auth.getUser()
 
@@ -49,8 +71,7 @@ export async function requireAdmin(req: Request) {
   const adminPhone = process.env.ADMIN_PHONE
   const adminPin   = process.env.ADMIN_PIN
 
-  // ── Step 2: identity check (env vars first — no DB dependency) ──────────
-  // Normalize both sides to digits-only to handle +91 vs 91 prefix differences
+  // ── Step 2: identity check (env vars first — no DB dependency) ──────────────
   const isAdminByPhone = !!(
     adminPhone &&
     user.phone &&
@@ -58,8 +79,6 @@ export async function requireAdmin(req: Request) {
   )
   const isAdminByEmail = !!(adminEmail && user.email && user.email === adminEmail)
 
-  // DB check — treat query errors as "not found" but log them
-  // Check both is_admin flag AND role column (real DB has role='admin' as alternative)
   let isAdminByDB = false
   try {
     const sb = createAdminClient()
@@ -83,7 +102,6 @@ export async function requireAdmin(req: Request) {
     })
   }
 
-  // Log the identity resolution to help diagnose auth failures
   logger.info('requireAdmin: identity check', {
     userId: user.id,
     userPhoneNorm: normalizePhone(user.phone) || '(none)',
@@ -99,9 +117,8 @@ export async function requireAdmin(req: Request) {
     return { error: 'Forbidden', code: 'NOT_ADMIN', status: 403 as const, user: null }
   }
 
-  // ── Step 3: PIN check (only for confirmed admins) ────────────────────────
+  // ── Step 3: PIN check (only for confirmed Supabase-session admins) ───────────
   if (adminPin) {
-    // Rate-limit PIN attempts per admin user — 5 per minute — to block brute force.
     if (!checkRateLimit(`admin-pin:${user.id}`, 5, 60_000)) {
       return { error: 'Too many attempts. Please wait.', code: 'PIN_RATE_LIMITED', status: 429 as const, user: null }
     }

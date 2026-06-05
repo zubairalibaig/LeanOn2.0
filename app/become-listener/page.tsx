@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, LANGUAGES } from '@/lib/constants'
+import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, PLATFORM_FEE, LANGUAGES } from '@/lib/constants'
 import { createClient } from '@/lib/supabase'
 
 const TAGS = [
@@ -194,13 +194,15 @@ export default function BecomeListenerPage() {
     }).catch(() => setGuardChecked(true)) // never hang on the Loading screen
   }, [])
 
-  const rateNum     = Math.min(Math.max(parseInt(rate) || MIN_LISTENER_RATE, MIN_LISTENER_RATE), MAX_LISTENER_RATE)
+  // Use raw input for the live preview — validation blocks invalid values on submit.
+  const rateNum     = Math.max(0, parseInt(rate) || 0)
   const earn15      = rateNum * 15
   const earn30      = rateNum * 30
   const earn45      = rateNum * 45
-  const userPays15  = earn15 + 15
-  const userPays30  = earn30 + 15
-  const userPays45  = earn45 + 15
+  const platformFee = PLATFORM_FEE  // flat ₹15 added to every session (paid by seeker)
+  const userPays15  = earn15 + platformFee
+  const userPays30  = earn30 + platformFee
+  const userPays45  = earn45 + platformFee
 
   function toggleTag(t: string) {
     setTags(p => p.includes(t) ? p.filter(x => x !== t) : [...p, t])
@@ -602,18 +604,18 @@ export default function BecomeListenerPage() {
             </div>
 
             <div className="rate-preview">
-              <p>At <strong>₹{rateNum}/min</strong> you earn:</p>
-              <p>15 min → you earn <strong>₹{earn15}</strong> · user pays <strong>₹{userPays15}</strong></p>
-              <p>30 min → you earn <strong>₹{earn30}</strong> · user pays <strong>₹{userPays30}</strong></p>
-              <p>45 min → you earn <strong>₹{earn45}</strong> · user pays <strong>₹{userPays45}</strong></p>
+              <p>At <strong>₹{rateNum.toLocaleString('en-IN')}/min</strong> you earn:</p>
+              <p>15 min → you earn <strong>₹{earn15.toLocaleString('en-IN')}</strong> · user pays <strong>₹{userPays15.toLocaleString('en-IN')}</strong></p>
+              <p>30 min → you earn <strong>₹{earn30.toLocaleString('en-IN')}</strong> · user pays <strong>₹{userPays30.toLocaleString('en-IN')}</strong></p>
+              <p>45 min → you earn <strong>₹{earn45.toLocaleString('en-IN')}</strong> · user pays <strong>₹{userPays45.toLocaleString('en-IN')}</strong></p>
             </div>
 
             <div className="fee-box">
-              <h3>How the ₹15 platform fee works</h3>
-              <div className="fee-row"><span className="label">Your rate (15 min at ₹{rateNum}/min)</span><span className="value">₹{earn15}</span></div>
-              <div className="fee-row"><span className="label">LeanOn platform fee (paid by user)</span><span className="value">+ ₹15</span></div>
+              <h3>How the ₹{platformFee} platform fee works</h3>
+              <div className="fee-row"><span className="label">Your rate (15 min at ₹{rateNum}/min)</span><span className="value">₹{earn15.toLocaleString('en-IN')}</span></div>
+              <div className="fee-row"><span className="label">LeanOn platform fee (paid by user)</span><span className="value">+ ₹{platformFee}</span></div>
               <div className="fee-row"><span className="label">Razorpay fee (paid by LeanOn)</span><span className="value">~ −₹3</span></div>
-              <div className="fee-row highlight"><span className="label">You receive</span><span className="value">₹{earn15} ✓</span></div>
+              <div className="fee-row highlight"><span className="label">You receive</span><span className="value">₹{earn15.toLocaleString('en-IN')} ✓</span></div>
             </div>
 
             <label className="lbl">Bank account number (9–18 digits)</label>
