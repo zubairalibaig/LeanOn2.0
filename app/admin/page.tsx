@@ -21,7 +21,7 @@ type ListenerRow = {
 }
 type SessionRow = {
   id: string; seeker_id: string; listener_id: string; session_type: string; duration_mins: number
-  amount_held: number; status: string; is_free_trial: boolean; started_at: string; ended_at?: string
+  amount_held: number; status: string; is_free_trial: boolean; started_at: string | null; ended_at?: string | null
   seeker?: { name?: string }; listener?: { name?: string }
 }
 type ReportRow = {
@@ -36,6 +36,7 @@ type VerificationRow = {
   submitted_at: string; admin_notes: string | null
 }
 type PayoutRow = { id: string; amount: number; upi_id?: string; status: string; created_at: string; users: { name?: string; email?: string; phone?: string } | null }
+type RefundRow  = { id: string; amount: number; reason?: string; status: string; created_at: string; users: { name?: string; email?: string } | null }
 
 type Tab = 'overview' | 'users' | 'listeners' | 'sessions' | 'reports' | 'payouts' | 'verifications'
 
@@ -114,7 +115,8 @@ const S = `
 
 function fmt(n: number) { return n.toLocaleString('en-IN') }
 function fmtRs(paise: number) { return `₹${fmt(Math.round(paise))}` }
-function fmtDate(iso: string) {
+function fmtDate(iso: string | null | undefined) {
+  if (!iso) return '—'
   return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
@@ -227,9 +229,12 @@ export default function AdminPage() {
   const [reportsLoading, setReportsLoading] = useState(false)
   const [reportRejectNotes, setReportRejectNotes] = useState<Record<string, string>>({})
 
-  // Payouts
+  // Payouts + Refunds
   const [payouts, setPayouts] = useState<PayoutRow[]>([])
+  const [refunds, setRefunds] = useState<RefundRow[]>([])
   const [payoutsLoading, setPayoutsLoading] = useState(false)
+  // Inline confirm state for destructive ban action (window.confirm blocked in mobile)
+  const [confirmBanId, setConfirmBanId] = useState<string | null>(null)
 
   // Verifications
   const [verifs, setVerifs] = useState<VerificationRow[]>([])
@@ -337,6 +342,7 @@ export default function AdminPage() {
     if (res.ok) {
       const json = await res.json()
       setPayouts(json.pendingPayouts ?? [])
+      setRefunds(json.refundRequests ?? [])
     }
     setPayoutsLoading(false)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -810,9 +816,15 @@ export default function AdminPage() {
                                     {busy === `activate:${u.id}` ? '…' : 'Activate'}
                                   </button>
                               }
-                              <button className="btn btn-red" disabled={busy !== null} onClick={() => { if (window.confirm('Ban this user?')) userAction(u.id, 'ban') }}>
-                                Ban
-                              </button>
+                              {confirmBanId === u.id ? (
+                                <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
+                                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--red)' }}>Ban?</span>
+                                  <button className="btn btn-red" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => { setConfirmBanId(null); userAction(u.id, 'ban') }}>Yes</button>
+                                  <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setConfirmBanId(null)}>No</button>
+                                </span>
+                              ) : (
+                                <button className="btn btn-red" disabled={busy !== null} onClick={() => setConfirmBanId(u.id)}>Ban</button>
+                              )}
                             </div>
                           </td>
                         </tr>
@@ -1127,6 +1139,42 @@ export default function AdminPage() {
                   <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--navy)' }}>₹{p.amount}</div>
                   <button className="btn btn-teal" disabled={busy !== null} onClick={() => adminAction('complete_payout', p.id, `Marked ₹${p.amount} payout complete`)}>
                     {busy === `complete_payout:${p.id}` ? 'Saving…' : 'Mark Paid'}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </>
+        )}
+
+        {/* ─── REFUND REQUESTS (inside payouts tab) ─────────────────────────── */}
+        {tab === 'payouts' && (
+          <>
+            <div className="section-title" style={{ marginTop: 28 }}>
+              Pending Wallet Refund Requests
+              {refunds.length > 0 && <span className="count-badge">{refunds.length}</span>}
+            </div>
+            {refunds.length === 0 ? (
+              <div className="empty">No pending wallet refund requests — all clear!</div>
+            ) : refunds.map((r: RefundRow) => (
+              <div key={r.id} style={{ background: 'white', border: '1.5px solid var(--border)', borderRadius: 16, padding: '16px 20px', marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--navy)' }}>{r.users?.name || '—'}</div>
+                  <div style={{ fontSize: 12, color: 'var(--gray)', fontWeight: 600, marginTop: 2 }}>
+                    {r.users?.email ? <span style={{ marginRight: 8 }}>{r.users.email}</span> : null}
+                    {r.created_at ? <span>Requested {fmtDate(r.created_at)}</span> : null}
+                  </div>
+                  {r.reason && (
+                    <div style={{ fontSize: 13, color: 'var(--gray)', marginTop: 4 }}>Reason: {r.reason}</div>
+                  )}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--navy)' }}>₹{r.amount}</div>
+                  <button
+                    className="btn btn-teal"
+                    disabled={busy !== null}
+                    onClick={() => adminAction('complete_refund', r.id, `Refund of ₹${r.amount} marked complete`)}
+                  >
+                    {busy === `complete_refund:${r.id}` ? 'Saving…' : 'Mark Processed'}
                   </button>
                 </div>
               </div>
