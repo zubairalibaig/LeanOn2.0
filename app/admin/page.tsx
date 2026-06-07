@@ -182,11 +182,22 @@ export default function AdminPage() {
         try { sessionStorage.removeItem('adminPw') } catch {}
       }
       // Fall back to Supabase session check (for existing OTP-authenticated admins).
+      // IMPORTANT: verify the session is actually admin via ping BEFORE setting authUser.
+      // Without this, a regular logged-in user would see "Access Denied" with no way
+      // to enter the admin password — loadKPIs would set denied=true while authUser
+      // was already set from their session, showing the wrong screen.
       const sb = createClient()
-      sb.auth.getUser().then(({ data: { user } }) => {
+      sb.auth.getUser().then(async ({ data: { user } }) => {
         if (!user) { setAuthChecking(false); setDenied(true); return }
-        setAuthUser(user as { id: string; email?: string; phone?: string })
-        setAuthChecking(false)
+        const pingRes = await fetch('/api/admin/ping').catch(() => null)
+        if (pingRes?.ok) {
+          setAuthUser(user as { id: string; email?: string; phone?: string })
+          setAuthChecking(false)
+        } else {
+          // Has a Supabase session but not an admin — show password login form
+          setAuthChecking(false)
+          setDenied(true)
+        }
       }).catch(() => { setAuthChecking(false); setDenied(true) })
     }
     init()
@@ -284,12 +295,12 @@ export default function AdminPage() {
   const loadKPIs = useCallback(async () => {
     setKpisLoading(true)
     const res = await fetch('/api/admin/kpis', { headers: adminHeaders() })
-    if (res.status === 401) { setDenied(true); setKpisLoading(false); return }
+    if (res.status === 401) { setAuthUser(null); setDenied(true); setKpisLoading(false); return }
     if (res.status === 403) {
       const body = await res.json().catch(() => ({}))
       // PIN_REQUIRED → user IS admin but PIN missing/wrong — show PIN gate
-      // NOT_ADMIN / anything else → user is not admin — show Access Denied
-      if (body.code === 'PIN_REQUIRED') { setPinRequired(true) } else { setDenied(true) }
+      // NOT_ADMIN / anything else → clear session and show login form
+      if (body.code === 'PIN_REQUIRED') { setPinRequired(true) } else { setAuthUser(null); setDenied(true) }
       setKpisLoading(false)
       return
     }
