@@ -35,8 +35,10 @@ const ADMIN_PASSWORD_USER_ID = '00000000-0000-0000-0000-000000000001'
 const normalizePhone = (p: string | null | undefined) => (p ?? '').replace(/\D/g, '')
 
 export async function requireAdmin(req: Request) {
-  // ── Step 0: ADMIN_PASSWORD header — password-based admin auth ───────────────
-  const adminPassword = process.env.ADMIN_PASSWORD
+  // ── Step 0: ADMIN_PASSWORD / ADMIN_SECRET header — password-based admin auth ─
+  // Support both names: ADMIN_SECRET (documented in .env.example) and
+  // ADMIN_PASSWORD (legacy name). ADMIN_SECRET takes priority.
+  const adminPassword = process.env.ADMIN_SECRET || process.env.ADMIN_PASSWORD
   if (adminPassword) {
     const providedPw = req.headers.get('x-admin-password') ?? ''
     if (providedPw) {

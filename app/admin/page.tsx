@@ -142,21 +142,23 @@ export default function AdminPage() {
     if (!pw) { setLoginError('Enter the admin password'); return }
     setLoginLoading(true)
     setLoginError('')
-    const res = await fetch('/api/admin/kpis', {
+    // Use /api/admin/ping for auth-only check — avoids false failures
+    // from DB query errors in the KPI endpoint masking a correct password.
+    const res = await fetch('/api/admin/ping', {
       headers: { 'x-admin-password': pw },
     }).catch(() => null)
     setLoginLoading(false)
     if (!res) { setLoginError('Connection error. Try again.'); return }
     if (res.status === 429) { setLoginError('Too many attempts. Please wait a minute.'); return }
-    if (!res.ok) { setLoginError('Incorrect password.'); setLoginPassword(''); return }
-    // Success — store password and enter dashboard
+    if (res.status === 403) { setLoginError('Incorrect password.'); setLoginPassword(''); return }
+    if (!res.ok) { setLoginError('Server error. Please try again.'); return }
+    // Auth confirmed — store password, enter dashboard, then load KPIs in background
     adminPasswordRef.current = pw
     try { sessionStorage.setItem('adminPw', pw) } catch {}
-    const json = await res.json().catch(() => null)
-    if (json) { setKpis(json); setKpisLoading(false) }
     setAuthUser({ id: 'password-admin', email: undefined })
     setDenied(false)
     setAuthChecking(false)
+    // KPIs load automatically via the authUser useEffect
   }
 
   // On mount: check sessionStorage for a stored password, then fall back to Supabase session.
@@ -166,13 +168,12 @@ export default function AdminPage() {
       try { storedPw = sessionStorage.getItem('adminPw') ?? '' } catch {}
       if (storedPw) {
         adminPasswordRef.current = storedPw
-        const res = await fetch('/api/admin/kpis', { headers: { 'x-admin-password': storedPw } }).catch(() => null)
+        // Use ping endpoint — avoids KPI DB errors masking a valid stored password
+        const res = await fetch('/api/admin/ping', { headers: { 'x-admin-password': storedPw } }).catch(() => null)
         if (res?.ok) {
-          const json = await res.json().catch(() => null)
-          if (json) { setKpis(json); setKpisLoading(false) }
           setAuthUser({ id: 'password-admin', email: undefined })
           setAuthChecking(false)
-          return
+          return  // KPIs load via authUser useEffect
         }
         // Stored password no longer valid — clear it and fall through.
         adminPasswordRef.current = ''

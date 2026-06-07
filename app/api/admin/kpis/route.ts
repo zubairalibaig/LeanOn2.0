@@ -15,30 +15,9 @@ export async function GET(req: NextRequest) {
     const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
     const last30Days = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString()
 
-    const [
-      totalUsers,
-      activeUsers,
-      newUsersToday,
-      newUsersThisMonth,
-      totalListeners,
-      activeListeners,
-      pendingListeners,
-      onlineListeners,
-      totalSessions,
-      sessionsToday,
-      sessionsThisMonth,
-      activeSessions,
-      totalRevenue,
-      revenueThisMonth,
-      revenueToday,
-      pendingPayouts,
-      totalPayouts,
-      pendingReports,
-      totalEarnings,
-      avgSessionDuration,
-      freeTrialSessions,
-      paidSessions,
-    ] = await Promise.all([
+    // Use Promise.allSettled so a missing/errored table doesn't crash the whole response.
+    // Auth has already been verified above — we never want a DB hiccup to look like a login failure.
+    const results = await Promise.allSettled([
       // User KPIs
       sb.from('users').select('id', { count: 'exact', head: true }),
       sb.from('users').select('id', { count: 'exact', head: true }).eq('is_active', true).gte('updated_at', last30Days),
@@ -79,6 +58,37 @@ export async function GET(req: NextRequest) {
       sb.from('sessions').select('id', { count: 'exact', head: true }).eq('is_free_trial', true),
       sb.from('sessions').select('id', { count: 'exact', head: true }).eq('is_free_trial', false).eq('status', 'completed'),
     ])
+
+    // Extract values safely — failed queries return zero/null defaults
+    type QR<T> = { data: T[] | null; count: number | null }
+    const extract = <T>(i: number): QR<T> => {
+      const r = results[i]
+      if (r.status === 'fulfilled') return r.value as QR<T>
+      return { data: null, count: null }
+    }
+
+    const totalUsers        = extract<{ id: string }>(0)
+    const activeUsers       = extract<{ id: string }>(1)
+    const newUsersToday     = extract<{ id: string }>(2)
+    const newUsersThisMonth = extract<{ id: string }>(3)
+    const totalListeners    = extract<{ id: string }>(4)
+    const activeListeners   = extract<{ id: string }>(5)
+    const pendingListeners  = extract<{ id: string }>(6)
+    const onlineListeners   = extract<{ id: string }>(7)
+    const totalSessions     = extract<{ id: string }>(8)
+    const sessionsToday     = extract<{ id: string }>(9)
+    const sessionsThisMonth = extract<{ id: string }>(10)
+    const activeSessions    = extract<{ id: string }>(11)
+    const totalRevenue      = extract<{ amount: number }>(12)
+    const revenueThisMonth  = extract<{ amount: number }>(13)
+    const revenueToday      = extract<{ amount: number }>(14)
+    const pendingPayouts    = extract<{ amount: number }>(15)
+    const totalPayouts      = extract<{ amount: number }>(16)
+    const pendingReports    = extract<{ id: string }>(17)
+    const totalEarnings     = extract<{ net_amount: number }>(18)
+    const avgSessionDuration = extract<{ duration_mins: number }>(19)
+    const freeTrialSessions = extract<{ id: string }>(20)
+    const paidSessions      = extract<{ id: string }>(21)
 
     const sum = (rows: { amount?: number; net_amount?: number }[] | null, field: 'amount' | 'net_amount' = 'amount') =>
       (rows ?? []).reduce((s, r) => s + (r[field] ?? 0), 0)
