@@ -23,6 +23,9 @@ export async function POST(req: NextRequest) {
     if (!UUID_RE.test(listenerId)) {
       return NextResponse.json({ error: 'Invalid listener' }, { status: 400 })
     }
+    if (listenerId === user.id) {
+      return NextResponse.json({ error: 'Cannot book a session with yourself' }, { status: 400 })
+    }
     if (!(SESSION_DURATIONS as readonly number[]).includes(durationMins)) {
       return NextResponse.json({ error: 'Invalid session duration' }, { status: 400 })
     }

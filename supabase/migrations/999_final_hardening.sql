@@ -146,7 +146,33 @@ BEGIN
   END IF;
 END $$;
 
--- ── 5. FINAL pass: pin search_path on every function + lock down
+-- ── 5. Re-assert lp_guard_privileged BEFORE UPDATE trigger (from migration 025)
+--       20250512_complete_schema.sql drops and recreates listener_profiles without
+--       the trigger, so we must re-create it here as the last word. ──
+CREATE OR REPLACE FUNCTION public.guard_lp_privileged_cols()
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = public, pg_temp AS $$
+BEGIN
+  IF public.is_service_role() THEN
+    RETURN NEW;
+  END IF;
+  -- Listeners may edit bio/tags/languages/rate/availability,
+  -- but NOT approval/verification/suspension/rating/session count.
+  NEW.is_approved     := OLD.is_approved;
+  NEW.is_verified     := OLD.is_verified;
+  NEW.is_suspended    := OLD.is_suspended;
+  NEW.rating          := OLD.rating;
+  NEW.total_sessions  := OLD.total_sessions;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS lp_guard_privileged ON public.listener_profiles;
+CREATE TRIGGER lp_guard_privileged
+  BEFORE UPDATE ON public.listener_profiles
+  FOR EACH ROW EXECUTE FUNCTION public.guard_lp_privileged_cols();
+
+-- ── 6. FINAL pass: pin search_path on every function + lock down
 --       EXECUTE on SECURITY DEFINER functions (re-assert 026, last word). ──
 DO $$
 DECLARE r RECORD;

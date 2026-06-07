@@ -215,6 +215,7 @@ function SessionContent() {
   const bottomRef       = useRef<HTMLDivElement>(null)
   const userIdRef       = useRef<string | null>(null)
   const completedRef    = useRef(false)
+  const peerEndedRef    = useRef(false) // true when session_ended arrived from the other side
   const [crisisAlert, setCrisisAlert] = useState(false)
   const [reconnectTick, setReconnectTick] = useState(0)
   // Agora SDK is a dynamic import; typed with eslint-disable to avoid any
@@ -352,6 +353,7 @@ function SessionContent() {
         }
       })
       .on('broadcast', { event: 'session_ended' }, () => {
+        peerEndedRef.current = true
         setEnded(true)
       })
       .subscribe((status: string) => {
@@ -377,17 +379,20 @@ function SessionContent() {
   }, [ended])
 
   // Auto-complete session in DB when ended (timer expiry or manual end)
-  // Uses a ref so it fires exactly once even if component re-renders
+  // Uses a ref so it fires exactly once even if component re-renders.
+  // Skip broadcast + PATCH if the other side already sent session_ended —
+  // they already called PATCH; we only need to show the end screen.
   useEffect(() => {
     if (!ended || completedRef.current || !sessionId) return
     completedRef.current = true
-    // Notify the other participant via realtime broadcast
-    channelRef.current?.send({ type: 'broadcast', event: 'session_ended', payload: {} }).catch?.(() => {})
-    fetch('/api/sessions', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sessionId }),
-    }).catch(() => {}) // fire and forget — user will rate separately
+    if (!peerEndedRef.current) {
+      channelRef.current?.send({ type: 'broadcast', event: 'session_ended', payload: {} }).catch?.(() => {})
+      fetch('/api/sessions', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId }),
+      }).catch(() => {})
+    }
   }, [ended, sessionId])
 
   // Session heartbeat — keeps session alive and enables listener disconnect detection
@@ -570,6 +575,8 @@ function SessionContent() {
           console.error('Agora join error:', err)
           setVoiceStatus('error')
           setVoiceError((err instanceof Error ? err.message : null) || 'Failed to connect voice call. Please check your microphone and try again.')
+          // End the session immediately so the timer doesn't run and charge the seeker
+          setEnded(true)
         }
       }
     }
@@ -788,7 +795,7 @@ function SessionContent() {
           <div className="voice-status">Voice call · {fmtTimer(secs)} remaining</div>
         )}
         {voiceStatus === 'error' && (
-          <div className="voice-status">Connection error — your wallet has not been charged</div>
+          <div className="voice-status">Connection error — session ended, unused time refunded</div>
         )}
 
         <div className={`voice-timer${voiceTimerClass}`}>
@@ -849,6 +856,10 @@ function SessionContent() {
   const timerClass = secs < 60 ? ' low' : secs < 120 ? ' warn' : ''
 
   async function handleLeaveSession() {
+    // Mark completed so the ended useEffect doesn't fire again after navigation
+    completedRef.current = true
+    // Notify the other participant before navigating away
+    channelRef.current?.send({ type: 'broadcast', event: 'session_ended', payload: {} }).catch?.(() => {})
     await fetch('/api/sessions', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },

@@ -51,7 +51,10 @@ export async function requireAdmin(req: Request) {
           user: { id: ADMIN_PASSWORD_USER_ID, email: process.env.ADMIN_EMAIL } as { id: string; email?: string; phone?: string },
         }
       }
-      // Wrong password — fail fast; do not fall through to Supabase check.
+      // Wrong password — add artificial delay to slow brute-force across serverless containers.
+      // The in-memory rate limiter is per-container and cannot be relied on in serverless,
+      // so a timing delay is the primary defense until Redis rate limiting is configured.
+      await new Promise(r => setTimeout(r, 1000))
       return { error: 'Forbidden', code: 'NOT_ADMIN', status: 403 as const, user: null }
     }
   }

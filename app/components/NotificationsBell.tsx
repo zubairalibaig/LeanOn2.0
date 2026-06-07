@@ -94,7 +94,7 @@ export default function NotificationsBell() {
   return (
     <div ref={dropdownRef} style={{ position: 'relative' }}>
       <button
-        onClick={() => { setOpen(o => !o) }}
+        onClick={(e) => { e.stopPropagation(); setOpen(o => !o) }}
         aria-label={`Notifications${unread > 0 ? ` — ${unread} unread` : ''}`}
         style={{
           background: 'none', border: 'none', cursor: 'pointer',
