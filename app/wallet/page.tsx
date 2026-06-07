@@ -1,6 +1,6 @@
 'use client'
 export const dynamic = 'force-dynamic'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 const S = `
@@ -65,9 +65,13 @@ export default function WalletPage() {
   const [userId, setUserId]     = useState<string|null>(null)
   const [refunding, setRefunding] = useState(false)
   const [paymentPending, setPaymentPending] = useState(false)
+  const [showRefundConfirm, setShowRefundConfirm] = useState(false)
+  const rzpScriptRef = useRef(false)
 
   useEffect(() => {
-    // Load Razorpay script
+    // Load Razorpay script — guard against double-inject on remount
+    if (rzpScriptRef.current || document.querySelector('script[src*="checkout.razorpay.com"]')) return
+    rzpScriptRef.current = true
     const script = document.createElement('script')
     script.src = 'https://checkout.razorpay.com/v1/checkout.js'
     document.body.appendChild(script)
@@ -107,9 +111,9 @@ export default function WalletPage() {
     if (txns) setTransactions(txns)
   }
 
-  async function handleRefund() {
+  async function confirmRefund() {
     if (!userId || !balance || balance <= 0) return
-    if (!confirm(`Request a refund of ₹${balance} to your original payment method? We'll process it within 3–5 business days.`)) return
+    setShowRefundConfirm(false)
     setRefunding(true)
     const res = await fetch('/api/refund', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) })
     const data = await res.json()
@@ -200,9 +204,25 @@ export default function WalletPage() {
           <div className="balance-label">AVAILABLE BALANCE</div>
           <div className="balance-amount">₹{balance ?? '—'}</div>
           <div className="balance-sub">{balance !== null ? `~${Math.floor(balance/165)} sessions remaining` : 'Loading...'}</div>
-          <button className="refund-btn" onClick={handleRefund} disabled={refunding || !balance || balance <= 0}>
-            {refunding ? 'Submitting…' : 'Request refund of balance'}
-          </button>
+          {showRefundConfirm ? (
+            <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.12)', borderRadius: 14, padding: '14px 16px', textAlign: 'left' }}>
+              <p style={{ fontSize: 13, color: 'white', fontWeight: 600, marginBottom: 12, lineHeight: 1.5 }}>
+                Request a refund of ₹{balance} to your original payment method? We&apos;ll process it within 3–5 business days.
+              </p>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button onClick={confirmRefund} style={{ flex: 1, padding: '9px 0', borderRadius: 50, background: 'white', color: 'var(--navy)', border: 'none', fontFamily: 'Nunito,sans-serif', fontWeight: 800, fontSize: 13, cursor: 'pointer' }}>
+                  Yes, refund
+                </button>
+                <button onClick={() => setShowRefundConfirm(false)} style={{ flex: 1, padding: '9px 0', borderRadius: 50, background: 'transparent', color: 'rgba(255,255,255,0.8)', border: '1px solid rgba(255,255,255,0.3)', fontFamily: 'Nunito,sans-serif', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button className="refund-btn" onClick={() => setShowRefundConfirm(true)} disabled={refunding || !balance || balance <= 0}>
+              {refunding ? 'Submitting…' : 'Request refund of balance'}
+            </button>
+          )}
         </div>
 
         {balance === 0 && (

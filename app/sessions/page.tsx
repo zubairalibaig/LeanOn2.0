@@ -47,6 +47,7 @@ type Session = {
   amount_held: number
   seeker_rating: number | null
   created_at: string
+  started_at: string | null
   listener_id: string
   listener_name: string
 }
@@ -65,7 +66,7 @@ export default function SessionsPage() {
 
         const { data } = await supabase
           .from('sessions')
-          .select('*, listener_profiles!listener_id(users!inner(name))')
+          .select('*, listener_profiles!listener_id(users!inner(name)), started_at')
           .eq('seeker_id', user.id)
           .order('created_at', { ascending: false })
           .limit(20)
@@ -82,6 +83,7 @@ export default function SessionsPage() {
             amount_held: (s.amount_held as number) || 0,
             seeker_rating: s.seeker_rating as number | null,
             created_at: s.created_at as string,
+            started_at: (s.started_at as string | null) ?? null,
             listener_id: s.listener_id as string,
             listener_name: firstName,
           }
@@ -159,7 +161,13 @@ export default function SessionsPage() {
             {s.status === 'active' && (
               <button
                 className="rejoin-btn"
-                onClick={() => router.push(`/session/${s.id}?name=${encodeURIComponent(s.listener_name)}&duration=${s.duration_mins}&type=${s.session_type}`)}
+                onClick={() => {
+                  const elapsed = s.started_at
+                    ? Math.floor((Date.now() - new Date(s.started_at).getTime()) / 60_000)
+                    : 0
+                  const remaining = Math.max(1, s.duration_mins - elapsed)
+                  router.push(`/session/${s.id}?name=${encodeURIComponent(s.listener_name)}&duration=${remaining}&type=${s.session_type}`)
+                }}
               >
                 Rejoin →
               </button>

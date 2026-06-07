@@ -143,7 +143,7 @@ export default function ProfilePage() {
     router.push('/')
   }
 
-  const ini = (n: string) => n.split(' ').map((x: string) => x[0]).join('').slice(0, 2).toUpperCase() || '?'
+  const ini = (n: string) => n.split(' ').map((x: string) => x[0] || '').join('').slice(0, 2).toUpperCase() || '?'
 
   const formatDate = (iso: string) => {
     if (!iso) return '—'

@@ -150,9 +150,8 @@ export default function ListenerClient({ id }: { id: string }) {
     </>
   )
 
-  const ini    = (n:string) => n.split(' ').map((x:string)=>x[0]).join('').slice(0,2).toUpperCase()
-  const cost   = duration === 5 ? 0 : listener.rate_per_min * duration + PLATFORM_FEE
-  const canPay = duration === 5 || balance >= cost
+  const ini  = (n:string) => n.split(' ').map((x:string)=>x[0]||'').join('').slice(0,2).toUpperCase()||'?'
+  const cost = duration === 5 ? 0 : listener.rate_per_min * duration + PLATFORM_FEE
 
   const ERROR_MESSAGES: Record<string, string> = {
     listener_unavailable: 'This listener is currently unavailable.',
@@ -275,7 +274,7 @@ export default function ListenerClient({ id }: { id: string }) {
           {([5,15,30,45] as const).map(d => (
             <div key={d} className={`book-opt${duration===d?' sel':''}`} onClick={()=>setDuration(d)} role="button" aria-pressed={duration===d} aria-label={`${d} minute session${d===5?' free':''}`}>
               <div className="opt-label">{d} min</div>
-              <div className="opt-price">{d===5 ? '—' : `₹${listener.rate_per_min*d+15}`}</div>
+              <div className="opt-price">{d===5 ? '—' : `₹${listener.rate_per_min*d+PLATFORM_FEE}`}</div>
               {d===5 && <div className="opt-free">FREE</div>}
             </div>
           ))}

@@ -175,8 +175,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Wallet deduction failed. Please retry.' }, { status: 500 })
     }
 
-    await admin.from('refund_requests')
+    const { error: updateErr } = await admin.from('refund_requests')
       .update({ status: 'completed' }).eq('id', id).eq('status', 'pending')
+
+    if (updateErr) {
+      logger.error('refund_requests update failed — wallet already deducted, manual fix needed:', { id, updateErr: updateErr as unknown })
+      return NextResponse.json({ error: 'Status update failed after wallet deduction. Please check manually.' }, { status: 500 })
+    }
 
     await admin.from('wallet_transactions').insert({
       user_id: rr.user_id, amount: rr.amount, type: 'debit', description: 'Wallet refund processed',
@@ -187,8 +192,16 @@ export async function POST(req: NextRequest) {
   }
 
   if (action === 'reactivate_user') {
-    await admin.from('users').update({ is_active: true }).eq('id', id)
-    await admin.from('listener_profiles').update({ is_active: true }).eq('user_id', id)
+    await admin.from('users').update({ is_active: true, is_suspended: false }).eq('id', id)
+    // Restore is_approved for previously-approved listeners so they can go active again.
+    // lp_guard_privileged trigger only blocks self-approval — admin updates bypass it via service-role key.
+    const { data: lp } = await admin.from('listener_profiles')
+      .select('is_active')
+      .eq('user_id', id)
+      .maybeSingle()
+    if (lp) {
+      await admin.from('listener_profiles').update({ is_active: true, is_approved: true }).eq('user_id', id)
+    }
     await auditLog(admin, user!.id, 'reactivate_user', id)
     return NextResponse.json({ ok: true })
   }

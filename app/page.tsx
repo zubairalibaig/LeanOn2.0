@@ -510,7 +510,7 @@ export default function Home() {
           </div>
           <div className="flis">
             <div><p>Have lived experience to share?</p><span>Listeners keep 100% of their rate. You set your own price.</span></div>
-            <a href="/become-listener"><button className="btn-lis">Join as listener →</button></a>
+            <a href="/become-listener" className="btn-lis">Join as listener →</a>
           </div>
           <p className="fcp">© 2025 LeanOn (Lean On) · leanon.app · Peer support platform · Made in India 🇮🇳</p>
         </div>

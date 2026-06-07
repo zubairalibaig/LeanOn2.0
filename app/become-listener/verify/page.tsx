@@ -204,7 +204,13 @@ export default function VerifyPage() {
                   <input
                     type="file" accept="image/*" capture="user"
                     style={{ display: 'none' }}
-                    onChange={e => { if (e.target.files?.[0]) setSelfie(e.target.files[0]) }}
+                    onChange={e => {
+                      const file = e.target.files?.[0]
+                      if (!file) return
+                      if (file.size > 5 * 1024 * 1024) { setError('Selfie must be under 5 MB'); return }
+                      setError('')
+                      setSelfie(file)
+                    }}
                   />
                   <div className="upload-icon">{selfie ? '✅' : '🤳'}</div>
                   <div className="upload-label">{selfie ? selfie.name : 'Tap to take selfie'}</div>
@@ -231,7 +237,13 @@ export default function VerifyPage() {
                   <input
                     type="file" accept="image/*"
                     style={{ display: 'none' }}
-                    onChange={e => { if (e.target.files?.[0]) setIdDoc(e.target.files[0]) }}
+                    onChange={e => {
+                      const file = e.target.files?.[0]
+                      if (!file) return
+                      if (file.size > 5 * 1024 * 1024) { setError('ID document must be under 5 MB'); return }
+                      setError('')
+                      setIdDoc(file)
+                    }}
                   />
                   <div className="upload-icon">{idDoc ? '✅' : '📄'}</div>
                   <div className="upload-label">{idDoc ? idDoc.name : 'Tap to upload ID'}</div>

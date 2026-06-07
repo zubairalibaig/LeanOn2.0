@@ -19,7 +19,9 @@ export async function GET(req: NextRequest) {
     let query = sb.from('sessions')
       .select(`
         id, seeker_id, listener_id, session_type, duration_mins,
-        amount_held, status, is_free_trial, started_at, ended_at, platform_fee
+        amount_held, status, is_free_trial, started_at, ended_at, platform_fee,
+        seeker:users!seeker_id(name),
+        listener:users!listener_id(name)
       `, { count: 'exact' })
       .order('started_at', { ascending: false })
       .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)

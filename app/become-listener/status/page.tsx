@@ -147,7 +147,7 @@ export default function ListenerStatusPage() {
             { label: 'Application submitted', done: true },
             { label: 'Background check in progress', done: status !== 'pending' },
             { label: 'Profile review', done: status === 'approved' },
-            { label: 'Start earning as a listener', done: false },
+            { label: 'Start earning as a listener', done: status === 'approved' },
           ].map((step, i) => (
             <div key={i} className="step">
               <div className={`step-num${step.done ? ' done' : ''}`}>{step.done ? '✓' : i + 1}</div>

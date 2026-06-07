@@ -202,13 +202,15 @@ export default function NotificationsPage() {
               <div key={group.label}>
                 <div className="group-label">{group.label}</div>
                 {group.items.map(n => (
-                  <a
+                  <div
                     key={n.id}
-                    href={n.action_url ?? '#'}
                     className={`notif-row${!n.is_read ? ' unread' : ''}`}
                     data-id={n.id}
                     data-unread={String(!n.is_read)}
                     ref={attachObserver}
+                    onClick={() => n.action_url && router.push(n.action_url)}
+                    style={{ cursor: n.action_url ? 'pointer' : 'default' }}
+                    role={n.action_url ? 'button' : undefined}
                   >
                     <div className={`notif-dot${n.is_read ? ' read' : ''}`} />
                     <div className="notif-body">
@@ -216,7 +218,7 @@ export default function NotificationsPage() {
                       <div className="notif-text">{n.body}</div>
                       <div className="notif-time">{timeAgo(n.created_at)}</div>
                     </div>
-                  </a>
+                  </div>
                 ))}
               </div>
             ))}

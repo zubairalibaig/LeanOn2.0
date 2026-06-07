@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
-import { LANGUAGES } from '@/lib/constants'
+import { LANGUAGES, PLATFORM_FEE } from '@/lib/constants'
 import { showToast } from '@/lib/toast'
 
 // Post-login welcome banner (Item 5)
@@ -345,7 +345,7 @@ function BrowseContent() {
                 className={`btn-chat ${l.is_available ? 'avail' : 'offline'}`}
                 onClick={e=>{e.stopPropagation(); if(l.is_available) router.push(`/listener/${l.user_id}?type=text`)}}
               >
-                💬 {l.is_available ? `Chat now — ₹${Math.round(l.rate_per_min*15)+15}` : 'Currently offline'}
+                💬 {l.is_available ? `Chat now — ₹${Math.round(l.rate_per_min*15)+PLATFORM_FEE}` : 'Currently offline'}
               </button>
               {l.is_available && (
                 <button className="btn-voice" onClick={e=>{e.stopPropagation();router.push(`/listener/${l.user_id}?type=voice`)}}>

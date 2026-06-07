@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
-import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE } from '@/lib/constants'
+import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE, PLATFORM_FEE } from '@/lib/constants'
 
 let _sb: ReturnType<typeof createBrowserClient> | null = null
 function initSb() {
@@ -534,9 +534,9 @@ export default function DashboardPage() {
                 return (
                   <div style={{marginTop:10,background:'var(--light)',borderRadius:12,padding:'10px 14px',fontSize:12,color:'var(--gray)',fontWeight:600,lineHeight:1.9}}>
                     📅 Sessions are booked in <strong style={{color:'var(--navy)'}}>15 / 30 / 45 min slots</strong>
-                    <br/>15 min → you earn <strong style={{color:'var(--navy)'}}>₹{r*15}</strong> · user pays ₹{r*15+15}
-                    <br/>30 min → you earn <strong style={{color:'var(--navy)'}}>₹{r*30}</strong> · user pays ₹{r*30+15}
-                    <br/>45 min → you earn <strong style={{color:'var(--navy)'}}>₹{r*45}</strong> · user pays ₹{r*45+15}
+                    <br/>15 min → you earn <strong style={{color:'var(--navy)'}}>₹{r*15}</strong> · user pays ₹{r*15+PLATFORM_FEE}
+                    <br/>30 min → you earn <strong style={{color:'var(--navy)'}}>₹{r*30}</strong> · user pays ₹{r*30+PLATFORM_FEE}
+                    <br/>45 min → you earn <strong style={{color:'var(--navy)'}}>₹{r*45}</strong> · user pays ₹{r*45+PLATFORM_FEE}
                   </div>
                 )
               })()}
@@ -640,6 +640,9 @@ export default function DashboardPage() {
             </button>
           </div>
           <p className="payout-note">Transfers to your registered bank account within 3 business days.</p>
+          <a href="/dashboard/earnings" style={{display:'block',textAlign:'center',marginTop:10,fontSize:13,fontWeight:700,color:'var(--teal)',textDecoration:'none'}}>
+            View full earnings history →
+          </a>
         </div>
 
         <div className="section-title">Your listener profile</div>

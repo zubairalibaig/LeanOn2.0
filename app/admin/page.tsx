@@ -570,13 +570,29 @@ export default function AdminPage() {
             <h1>Admin Panel</h1>
             <p>LeanOn platform management</p>
           </div>
-          <button
-            className="btn btn-teal"
-            style={{ fontSize: 13 }}
-            onClick={loadKPIs}
-          >
-            Refresh KPIs
-          </button>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <button
+              className="btn btn-teal"
+              style={{ fontSize: 13 }}
+              onClick={loadKPIs}
+            >
+              Refresh KPIs
+            </button>
+            <button
+              className="btn"
+              style={{ fontSize: 13, background: 'white', color: 'var(--gray)', border: '1.5px solid var(--border)' }}
+              onClick={() => {
+                try { sessionStorage.removeItem('adminPw') } catch {}
+                adminPasswordRef.current = ''
+                setAuthUser(null)
+                setDenied(true)
+                setPinVerified(false)
+                verifiedPinRef.current = ''
+              }}
+            >
+              Sign out
+            </button>
+          </div>
         </div>
 
         {/* Tab Nav */}
@@ -982,8 +998,8 @@ export default function AdminPage() {
                     {sessions.map((s: SessionRow) => (
                       <tr key={s.id}>
                         <td style={{ color: 'var(--gray)', fontSize: 12 }}>{fmtDate(s.started_at)}</td>
-                        <td>{s.seeker_id.slice(0, 8)}…</td>
-                        <td>{s.listener_id.slice(0, 8)}…</td>
+                        <td>{s.seeker?.name || s.seeker_id.slice(0, 8) + '…'}</td>
+                        <td>{s.listener?.name || s.listener_id.slice(0, 8) + '…'}</td>
                         <td><span className="badge badge-teal">{s.session_type}</span></td>
                         <td>{s.duration_mins} min</td>
                         <td>{s.is_free_trial ? <span className="badge badge-gray">Free</span> : `₹${s.amount_held}`}</td>
