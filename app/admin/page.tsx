@@ -153,6 +153,7 @@ export default function AdminPage() {
     if (!res) { setLoginError('Connection error. Try again.'); return }
     if (res.status === 429) { setLoginError('Too many attempts. Please wait a minute.'); return }
     if (res.status === 403) { setLoginError('Incorrect password.'); setLoginPassword(''); return }
+    if (res.status === 401) { setLoginError('Admin password is not configured on this server. Set ADMIN_SECRET in environment variables.'); return }
     if (!res.ok) { setLoginError('Server error. Please try again.'); return }
     // Auth confirmed — store password, enter dashboard, then load KPIs in background
     adminPasswordRef.current = pw
