@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 
 type Notification = {
@@ -29,6 +30,7 @@ function timeAgo(iso: string): string {
 }
 
 export default function NotificationsBell() {
+  const router = useRouter()
   const [open,         setOpen]         = useState(false)
   const [notifs,       setNotifs]       = useState<Notification[]>([])
   const [unread,       setUnread]       = useState(0)
@@ -155,18 +157,19 @@ export default function NotificationsBell() {
               {notifs.map(n => (
                 <a
                   key={n.id}
-                  href={n.action_url ?? '#'}
-                  onClick={() => setOpen(false)}
+                  href={n.action_url || undefined}
+                  onClick={(e) => { e.preventDefault(); setOpen(false); if (n.action_url) router.push(n.action_url) }}
                   style={{
                     display: 'block', padding: '12px 16px',
                     borderBottom: '1px solid #EFF6FA',
                     textDecoration: 'none',
+                    cursor: n.action_url ? 'pointer' : 'default',
                     background: n.is_read ? 'white' : '#F0F8FC',
                   }}
                 >
                   <div style={{ fontSize: 13, fontWeight: 700, color: '#0F4867', marginBottom: 3 }}>{n.title}</div>
                   <div style={{ fontSize: 12, color: '#5A7A8A', fontWeight: 500, lineHeight: 1.5, marginBottom: 4 }}>
-                    {n.body.slice(0, 80)}{n.body.length > 80 ? '…' : ''}
+                    {(n.body ?? '').slice(0, 80)}{(n.body ?? '').length > 80 ? '…' : ''}
                   </div>
                   <div style={{ fontSize: 11, color: '#8AAAB8', fontWeight: 600 }}>{timeAgo(n.created_at)}</div>
                 </a>

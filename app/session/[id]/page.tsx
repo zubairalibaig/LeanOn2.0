@@ -155,7 +155,7 @@ function fmtTime(iso: string) {
   return new Date(iso).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
 }
 function ini(n: string) {
-  return n.split(' ').map(x => x[0]).join('').slice(0, 2).toUpperCase()
+  return n.split(' ').map(x => x[0] || '').join('').slice(0, 2).toUpperCase() || '?'
 }
 
 type Msg = {

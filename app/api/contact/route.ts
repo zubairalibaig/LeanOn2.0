@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     if (dbErr) throw dbErr
 
     // Notify admin — non-blocking, failure doesn't affect the user response
-    const adminTo = process.env.ADMIN_NOTIFICATION_EMAIL
+    const adminTo = process.env.ADMIN_EMAIL
     const fromAddr = process.env.RESEND_FROM || 'LeanOn <onboarding@resend.dev>'
     if (process.env.RESEND_API_KEY && adminTo) {
       const resend = getResend()
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
         logger.error('Resend network failure:', { error: err instanceof Error ? err.message : String(err) })
       }
     } else if (!adminTo) {
-      logger.warn('ADMIN_NOTIFICATION_EMAIL not set — contact form saved to DB only')
+      logger.warn('ADMIN_EMAIL not set — contact form saved to DB only')
     }
 
     return NextResponse.json({ success: true })

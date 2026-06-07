@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
     if (dbErr) throw dbErr
 
     // Auto-escalate self-harm reports — send immediate admin email
-    if (type === 'self_harm_risk' && process.env.RESEND_API_KEY && process.env.ADMIN_NOTIFICATION_EMAIL) {
+    if (type === 'self_harm_risk' && process.env.RESEND_API_KEY && process.env.ADMIN_EMAIL) {
       try {
         // Escape user-supplied content before inserting into HTML to prevent injection
         const escHtml = (s: string) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
         const resend = new Resend(process.env.RESEND_API_KEY)
         await resend.emails.send({
           from: process.env.RESEND_FROM || 'LeanOn <onboarding@resend.dev>',
-          to: process.env.ADMIN_NOTIFICATION_EMAIL,
+          to: process.env.ADMIN_EMAIL,
           subject: '🚨 URGENT: Self-harm risk report on LeanOn',
           html: `
             <p><strong>A self-harm risk report has been submitted.</strong></p>

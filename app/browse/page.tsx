@@ -208,7 +208,7 @@ function BrowseContent() {
     ? listeners.filter(l => l.name.toLowerCase().includes(query.toLowerCase()) || l.bio?.toLowerCase().includes(query.toLowerCase()))
     : listeners
 
-  const ini = (n:string) => n.split(' ').map((x:string)=>x[0]).join('').slice(0,2).toUpperCase()
+  const ini = (n:string) => n.split(' ').map((x:string)=>x[0]||'').join('').slice(0,2).toUpperCase()||'?'
   const tagInfo = (id:string) => TAGS.find(t=>t.id===id)
 
   return (

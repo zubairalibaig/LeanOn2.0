@@ -1,6 +1,6 @@
 // Notification helper — sends transactional emails via Resend.
 // All functions are fire-and-forget: they never throw, only log errors.
-// Set RESEND_API_KEY + RESEND_FROM + ADMIN_NOTIFICATION_EMAIL in Vercel env vars.
+// Set RESEND_API_KEY + RESEND_FROM + ADMIN_EMAIL in Vercel env vars.
 
 import { Resend } from 'resend'
 
