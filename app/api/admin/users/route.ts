@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
+import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
 import { requireAdmin } from '@/lib/require-admin'
 
@@ -22,8 +22,8 @@ export async function GET(req: NextRequest) {
 
   try {
     if (type === 'listener') {
-      // For the 'pending' filter, the source of truth is listener_applications.status,
-      // not is_approved/is_active (which default to TRUE/FALSE in ways that vary by DB state).
+      // For 'pending', source of truth is listener_applications.status (not is_approved/is_active,
+      // which can be ambiguous for new applicants whose is_active defaults to TRUE).
       let userIdFilter: string[] | null = null
       if (userStatus === 'pending') {
         const { data: pendingApps } = await sb.from('listener_applications')
@@ -35,44 +35,58 @@ export async function GET(req: NextRequest) {
         }
       }
 
-      let query = sb.from('listener_profiles')
-        .select(`
-          user_id, bio, specialty_tags, rate_per_min, rating, total_sessions,
-          is_active, is_approved, is_available, is_verified, is_suspended,
-          created_at,
-          users!inner(id, name, email, phone, created_at, is_active, is_suspended, wallet_balance)
-        `, { count: 'exact' })
-        .order('created_at', { ascending: false })
-        .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)
+      // Try with is_verified first (added by migration 008/014).
+      // Fall back without it if the column doesn't exist yet.
+      const selectWithVerified = `
+        user_id, bio, specialty_tags, rate_per_min, rating, total_sessions,
+        is_active, is_approved, is_available, is_verified, is_suspended, created_at,
+        users!inner(id, name, email, phone, created_at, is_active, is_suspended, wallet_balance)
+      `
+      const selectWithoutVerified = `
+        user_id, bio, specialty_tags, rate_per_min, rating, total_sessions,
+        is_active, is_approved, is_available, is_suspended, created_at,
+        users!inner(id, name, email, phone, created_at, is_active, is_suspended, wallet_balance)
+      `
 
-      if (userIdFilter !== null) {
-        query = query.in('user_id', userIdFilter)
-      } else if (userStatus === 'active') {
-        query = query.eq('is_active', true).eq('is_approved', true)
-      } else if (userStatus === 'suspended') {
-        query = query.eq('is_suspended', true)
+      const buildQuery = (selectStr: string) => {
+        let q = sb.from('listener_profiles')
+          .select(selectStr, { count: 'exact' })
+          .order('created_at', { ascending: false })
+          .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)
+
+        if (userIdFilter !== null) {
+          q = q.in('user_id', userIdFilter)
+        } else if (userStatus === 'active') {
+          q = q.eq('is_active', true).eq('is_approved', true)
+        } else if (userStatus === 'suspended') {
+          q = q.eq('is_suspended', true)
+        }
+
+        if (search) {
+          const safe = search.replace(/[,()*:\\%_]/g, '').slice(0, 100)
+          if (safe) q = q.ilike('users.name', `%${safe}%`)
+        }
+        return q
       }
 
-      if (search) {
-        const safe = search.replace(/[,()*:\\%_]/g, '').slice(0, 100)
-        if (safe) query = query.ilike('users.name', `%${safe}%`)
+      let { data, count, error: qErr } = await buildQuery(selectWithVerified)
+      if (qErr) {
+        // Column is_verified may not exist — retry without it
+        const fallback = await buildQuery(selectWithoutVerified)
+        if (fallback.error) throw fallback.error
+        data = fallback.data
+        count = fallback.count
       }
 
-      const { data, count, error: qErr } = await query
-      if (qErr) throw qErr
-
-      // Enrich each listener row with their application status/notes/payment info.
-      // This requires a second query since listener_profiles and listener_applications
-      // share no direct FK — both reference users(id) via user_id.
-      // admin_notes column requires migration 029 — fall back gracefully if it doesn't exist yet.
-      let items: Record<string, unknown>[] = (data ?? []) as Record<string, unknown>[]
+      // Enrich each listener row with application status/notes/payment info.
+      // listener_profiles and listener_applications share no direct FK, so a second query is needed.
+      // admin_notes requires migration 029 — fall back gracefully if column missing.
+      let items: Record<string, unknown>[] = (data ?? []) as unknown as Record<string, unknown>[]
       if (items.length > 0) {
         const userIds = items.map(p => p.user_id as string)
-        // eslint-disable-next-line prefer-const
-        let { data: appsWithNotes, error: appsErr } = await sb.from('listener_applications')
+        const { data: appsWithNotes, error: appsErr } = await sb.from('listener_applications')
           .select('user_id, status, admin_notes, upi_id, bank_account, ifsc_code')
           .in('user_id', userIds)
-        // Fallback: select without admin_notes if migration 029 hasn't been run yet
         const appsData: Record<string, unknown>[] = appsWithNotes
           ? (appsWithNotes as Record<string, unknown>[])
           : appsErr
@@ -98,7 +112,6 @@ export async function GET(req: NextRequest) {
     else if (userStatus === 'suspended') query = query.eq('is_suspended', true)
 
     if (search) {
-      // Strip PostgREST filter metacharacters to prevent filter injection via .or()
       const safe = search.replace(/[,()*:\\]/g, '').slice(0, 100)
       if (safe) query = query.or(`name.ilike.%${safe}%,phone.ilike.%${safe}%`)
     }
@@ -118,7 +131,6 @@ export async function PATCH(req: NextRequest) {
   const { error, code, status, user } = await requireAdmin(req)
   if (error) return NextResponse.json({ error, code }, { status })
 
-  // Rate limit admin mutations — same threshold as sibling admin routes
   const { checkRateLimit } = await import('@/lib/rate-limit')
   if (!checkRateLimit(`admin:${user!.id}`, 30, 60_000)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
@@ -141,9 +153,23 @@ export async function PATCH(req: NextRequest) {
 
   try {
     switch (action) {
-      case 'approve_listener':
-        await sb.from('listener_profiles').update({ is_approved: true, is_active: true }).eq('user_id', userId)
-        await sb.from('listener_applications').update({ status: 'approved' }).eq('user_id', userId).then(() => {}, () => {})
+      case 'approve_listener': {
+        // listener_profiles is the authoritative approval gate — must succeed.
+        const { error: lpErr } = await sb.from('listener_profiles')
+          .update({ is_approved: true, is_active: true })
+          .eq('user_id', userId)
+        if (lpErr) {
+          logger.error('approve_listener: listener_profiles update failed', { userId, error: lpErr.message })
+          return NextResponse.json({ error: `Failed to approve listener: ${lpErr.message}` }, { status: 500 })
+        }
+        // Sync application status so the pending filter removes this listener.
+        const { error: laErr } = await sb.from('listener_applications')
+          .update({ status: 'approved' })
+          .eq('user_id', userId)
+        if (laErr) {
+          logger.warn('approve_listener: listener_applications sync failed (listener IS approved)', { userId, error: laErr.message })
+          // Not fatal — profile is approved; the application row is a secondary record.
+        }
         await sb.from('notifications').insert({
           user_id: userId,
           type: 'verification_update',
@@ -152,15 +178,24 @@ export async function PATCH(req: NextRequest) {
           action_url: '/dashboard',
         }).then(() => {}, () => {})
         break
+      }
 
-      case 'reject_listener':
-        await sb.from('listener_profiles').update({ is_approved: false, is_active: false }).eq('user_id', userId)
-        // Status update is critical — always do this first, without admin_notes (which requires migration 029).
-        await sb.from('listener_applications')
+      case 'reject_listener': {
+        const { error: lpErr } = await sb.from('listener_profiles')
+          .update({ is_approved: false, is_active: false })
+          .eq('user_id', userId)
+        if (lpErr) {
+          logger.error('reject_listener: listener_profiles update failed', { userId, error: lpErr.message })
+          return NextResponse.json({ error: `Failed to reject listener: ${lpErr.message}` }, { status: 500 })
+        }
+        // Update status — critical so listener leaves the pending queue.
+        const { error: laErr } = await sb.from('listener_applications')
           .update({ status: 'rejected' })
           .eq('user_id', userId)
-          .then(() => {}, () => {})
-        // Best-effort: store rejection notes (no-ops if admin_notes column not yet present)
+        if (laErr) {
+          logger.warn('reject_listener: listener_applications status update failed', { userId, error: laErr.message })
+        }
+        // Best-effort: store rejection notes (requires migration 029).
         if (notes) {
           await sb.from('listener_applications')
             .update({ admin_notes: notes })
@@ -175,26 +210,59 @@ export async function PATCH(req: NextRequest) {
           action_url: '/become-listener/status',
         }).then(() => {}, () => {})
         break
+      }
 
       case 'suspend':
-      case 'ban':
-        await sb.from('users').update({ is_suspended: true, is_active: false }).eq('id', userId)
-        await sb.from('listener_profiles').update({ is_active: false, is_available: false, is_suspended: true }).eq('user_id', userId)
+      case 'ban': {
+        const { error: uErr } = await sb.from('users')
+          .update({ is_suspended: true, is_active: false })
+          .eq('id', userId)
+        if (uErr) {
+          logger.error('suspend: users update failed', { userId, error: uErr.message })
+          return NextResponse.json({ error: `Failed to suspend user: ${uErr.message}` }, { status: 500 })
+        }
+        // Listener profile — best-effort (user might not be a listener)
+        await sb.from('listener_profiles')
+          .update({ is_active: false, is_available: false, is_suspended: true })
+          .eq('user_id', userId)
+          .then(() => {}, () => {})
         await sb.auth.admin.signOut(userId, 'global').then(() => {}, () => {})
         break
+      }
 
-      case 'unsuspend':
-        await sb.from('users').update({ is_suspended: false, is_active: true }).eq('id', userId)
-        await sb.from('listener_profiles').update({ is_active: true, is_suspended: false }).eq('user_id', userId)
+      case 'unsuspend': {
+        const { error: uErr } = await sb.from('users')
+          .update({ is_suspended: false, is_active: true })
+          .eq('id', userId)
+        if (uErr) {
+          logger.error('unsuspend: users update failed', { userId, error: uErr.message })
+          return NextResponse.json({ error: `Failed to unsuspend user: ${uErr.message}` }, { status: 500 })
+        }
+        // For listeners: restore is_active but preserve is_approved (admin must re-approve if needed).
+        await sb.from('listener_profiles')
+          .update({ is_active: true, is_suspended: false })
+          .eq('user_id', userId)
+          .then(() => {}, () => {})
         break
+      }
 
-      case 'deactivate':
-        await sb.from('users').update({ is_active: false }).eq('id', userId)
+      case 'deactivate': {
+        const { error: uErr } = await sb.from('users').update({ is_active: false }).eq('id', userId)
+        if (uErr) {
+          logger.error('deactivate: users update failed', { userId, error: uErr.message })
+          return NextResponse.json({ error: `Failed to deactivate user: ${uErr.message}` }, { status: 500 })
+        }
         break
+      }
 
-      case 'activate':
-        await sb.from('users').update({ is_active: true }).eq('id', userId)
+      case 'activate': {
+        const { error: uErr } = await sb.from('users').update({ is_active: true }).eq('id', userId)
+        if (uErr) {
+          logger.error('activate: users update failed', { userId, error: uErr.message })
+          return NextResponse.json({ error: `Failed to activate user: ${uErr.message}` }, { status: 500 })
+        }
         break
+      }
     }
 
     await sb.from('admin_audit_logs').insert({
