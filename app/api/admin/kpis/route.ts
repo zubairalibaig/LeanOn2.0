@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
       // Listener KPIs
       sb.from('listener_profiles').select('id', { count: 'exact', head: true }),
       sb.from('listener_profiles').select('id', { count: 'exact', head: true }).eq('is_active', true).eq('is_approved', true),
-      sb.from('listener_profiles').select('id', { count: 'exact', head: true }).eq('is_approved', false),
+      sb.from('listener_applications').select('user_id', { count: 'exact', head: true }).eq('status', 'pending'),
       sb.from('listener_profiles').select('id', { count: 'exact', head: true }).eq('is_available', true),
 
       // Session KPIs
@@ -73,7 +73,7 @@ export async function GET(req: NextRequest) {
     const newUsersThisMonth = extract<{ id: string }>(3)
     const totalListeners    = extract<{ id: string }>(4)
     const activeListeners   = extract<{ id: string }>(5)
-    const pendingListeners  = extract<{ id: string }>(6)
+    const pendingListeners  = extract<{ user_id: string }>(6)
     const onlineListeners   = extract<{ id: string }>(7)
     const totalSessions     = extract<{ id: string }>(8)
     const sessionsToday     = extract<{ id: string }>(9)

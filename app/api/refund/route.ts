@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 
 export async function POST(req: NextRequest) {
@@ -7,6 +8,11 @@ export async function POST(req: NextRequest) {
     const userSb = createServerSupabaseClient()
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+
+    // 3 refund requests per hour per user — prevents spam
+    if (!checkRateLimit(`refund:${user.id}`, 3, 60 * 60_000)) {
+      return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 })
+    }
 
     const body = await req.json().catch(() => ({}))
     const reason: string | null = (typeof body?.reason === 'string' && body.reason.length <= 500)

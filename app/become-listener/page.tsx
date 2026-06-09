@@ -332,7 +332,8 @@ export default function BecomeListenerPage() {
         specialty_tags:   tags,
         languages_spoken: langs,
         rate_per_min:     rateNum,
-        is_approved:      false,
+        // is_approved intentionally omitted — DB DEFAULT false on INSERT;
+        // on UPDATE (resubmission) the existing approval status is preserved.
         is_available:     false,
       }, { onConflict: 'user_id' })
       if (profileErr) throw profileErr

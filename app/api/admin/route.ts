@@ -72,8 +72,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 
-  const body = await req.json()
-  const { action, id } = body as { action: string; id: string }
+  let body: { action?: string; id?: string }
+  try {
+    body = await req.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+  }
+  const { action, id } = body
 
   if (!action || !id) {
     return NextResponse.json({ error: 'Missing action or id' }, { status: 400 })
@@ -142,16 +147,18 @@ export async function POST(req: NextRequest) {
       .update({ status: 'completed' }).eq('id', id).eq('status', 'pending')
     if (err) { logger.error('admin complete_payout update failed:', { error: err.message }); return NextResponse.json({ error: 'Server error' }, { status: 500 }) }
 
-    await admin.from('wallet_transactions').insert({
+    const { error: txErr1 } = await admin.from('wallet_transactions').insert({
       user_id: pr.user_id, amount: pr.amount, type: 'debit', description: 'Payout disbursed',
     })
+    if (txErr1) logger.error('wallet_transactions ledger insert failed for payout — reconciliation needed:', { id, error: txErr1.message })
 
     await auditLog(admin, user!.id, 'complete_payout', id)
     return NextResponse.json({ ok: true })
   }
 
   if (action === 'deactivate_user') {
-    await admin.from('users').update({ is_active: false }).eq('id', id)
+    const { error: deactErr } = await admin.from('users').update({ is_active: false }).eq('id', id)
+    if (deactErr) { logger.error('deactivate_user failed:', { error: deactErr.message }); return NextResponse.json({ error: 'Server error' }, { status: 500 }) }
     await admin.from('listener_profiles').update({ is_active: false, is_available: false }).eq('user_id', id)
     await admin.auth.admin.signOut(id, 'global')
     await auditLog(admin, user!.id, 'deactivate_user', id)
@@ -183,24 +190,35 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Status update failed after wallet deduction. Please check manually.' }, { status: 500 })
     }
 
-    await admin.from('wallet_transactions').insert({
+    const { error: txErr2 } = await admin.from('wallet_transactions').insert({
       user_id: rr.user_id, amount: rr.amount, type: 'debit', description: 'Wallet refund processed',
     })
+    if (txErr2) logger.error('wallet_transactions ledger insert failed for refund — reconciliation needed:', { id, error: txErr2.message })
 
     await auditLog(admin, user!.id, 'complete_refund', id)
     return NextResponse.json({ ok: true })
   }
 
   if (action === 'reactivate_user') {
-    await admin.from('users').update({ is_active: true, is_suspended: false }).eq('id', id)
-    // Restore is_approved for previously-approved listeners so they can go active again.
-    // lp_guard_privileged trigger only blocks self-approval — admin updates bypass it via service-role key.
+    const { error: reactErr } = await admin.from('users').update({ is_active: true, is_suspended: false }).eq('id', id)
+    if (reactErr) { logger.error('reactivate_user users update failed:', { error: reactErr.message }); return NextResponse.json({ error: 'Server error' }, { status: 500 }) }
+    // Only restore is_approved if their application was previously approved.
+    // Do NOT unconditionally set is_approved=true — that would approve rejected applicants.
     const { data: lp } = await admin.from('listener_profiles')
-      .select('is_active')
+      .select('is_approved')
       .eq('user_id', id)
       .maybeSingle()
     if (lp) {
-      await admin.from('listener_profiles').update({ is_active: true, is_approved: true }).eq('user_id', id)
+      const { data: app } = await admin.from('listener_applications')
+        .select('status')
+        .eq('user_id', id)
+        .maybeSingle()
+      const wasApproved = lp.is_approved || app?.status === 'approved'
+      await admin.from('listener_profiles').update({
+        is_active:    wasApproved,
+        is_approved:  wasApproved,
+        is_suspended: false,
+      }).eq('user_id', id)
     }
     await auditLog(admin, user!.id, 'reactivate_user', id)
     return NextResponse.json({ ok: true })

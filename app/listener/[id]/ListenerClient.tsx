@@ -104,7 +104,10 @@ export default function ListenerClient({ id }: { id: string }) {
   useEffect(() => {
     client.from('listener_profiles')
       .select('*, users!inner(name, avatar_url)')
-      .eq('user_id', id).single()
+      .eq('user_id', id)
+      .eq('is_approved', true)
+      .eq('is_active', true)
+      .single()
       .then(({data, error}) => {
         if (data) {
           setListener({

@@ -154,16 +154,19 @@ export default function NotificationsBell() {
             </div>
           ) : (
             <div>
-              {notifs.map(n => (
+              {notifs.map(n => {
+                const safeUrl = n.action_url && n.action_url.startsWith('/') && !n.action_url.startsWith('//')
+                  ? n.action_url : null
+                return (
                 <a
                   key={n.id}
-                  href={n.action_url || undefined}
-                  onClick={(e) => { e.preventDefault(); setOpen(false); if (n.action_url) router.push(n.action_url) }}
+                  href={safeUrl || undefined}
+                  onClick={(e) => { e.preventDefault(); setOpen(false); if (safeUrl) router.push(safeUrl) }}
                   style={{
                     display: 'block', padding: '12px 16px',
                     borderBottom: '1px solid #EFF6FA',
                     textDecoration: 'none',
-                    cursor: n.action_url ? 'pointer' : 'default',
+                    cursor: safeUrl ? 'pointer' : 'default',
                     background: n.is_read ? 'white' : '#F0F8FC',
                   }}
                 >
@@ -173,7 +176,8 @@ export default function NotificationsBell() {
                   </div>
                   <div style={{ fontSize: 11, color: '#8AAAB8', fontWeight: 600 }}>{timeAgo(n.created_at)}</div>
                 </a>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>

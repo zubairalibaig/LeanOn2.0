@@ -86,8 +86,6 @@ export default function NotificationsPage() {
   const [userId, setUserId] = useState<string | null>(null)
 
   const load = useCallback(async (p: number) => {
-    const { data: { session } } = await sb.auth.getSession()
-    if (!session) { router.replace('/auth?redirect=/notifications'); return }
     const { data: { user } } = await sb.auth.getUser()
     if (!user) { router.replace('/auth?redirect=/notifications'); return }
     setUserId(user.id)
@@ -104,12 +102,8 @@ export default function NotificationsPage() {
   }, [router])
 
   useEffect(() => {
-    // Fast session check (reads local storage/cookie — no network request)
-    sb.auth.getSession().then(({ data: { session } }) => {
-      if (!session) { router.replace('/auth?redirect=/notifications'); return }
-      load(0)
-    })
-  }, [load, router])
+    load(0)
+  }, [load])
 
   // Realtime — prepend new notifications without page reload
   useEffect(() => {
@@ -208,7 +202,11 @@ export default function NotificationsPage() {
                     data-id={n.id}
                     data-unread={String(!n.is_read)}
                     ref={attachObserver}
-                    onClick={() => n.action_url && router.push(n.action_url)}
+                    onClick={() => {
+                      const safeUrl = n.action_url && n.action_url.startsWith('/') && !n.action_url.startsWith('//')
+                        ? n.action_url : null
+                      if (safeUrl) router.push(safeUrl)
+                    }}
                     style={{ cursor: n.action_url ? 'pointer' : 'default' }}
                     role={n.action_url ? 'button' : undefined}
                   >

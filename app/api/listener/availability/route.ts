@@ -16,12 +16,14 @@ export async function PATCH() {
     const sb = createAdminClient()
     const { data: lp } = await sb
       .from('listener_profiles')
-      .select('is_available, is_approved')
+      .select('is_available, is_approved, is_active, is_suspended')
       .eq('user_id', user.id)
       .single()
 
     if (!lp) return NextResponse.json({ error: 'Listener profile not found' }, { status: 404 })
     if (!lp.is_approved) return NextResponse.json({ error: 'Your application is still under review' }, { status: 403 })
+    if (lp.is_suspended) return NextResponse.json({ error: 'Your account is suspended' }, { status: 403 })
+    if (!lp.is_active) return NextResponse.json({ error: 'Your account is not active' }, { status: 403 })
 
     const next = !lp.is_available
     await sb.from('listener_profiles').update({ is_available: next }).eq('user_id', user.id)

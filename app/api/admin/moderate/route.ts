@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
+import { createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 import { requireAdmin } from '@/lib/require-admin'
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
 
     if (action === 'suspend' && targetUserId) {
       await sb.from('users').update({ is_suspended: true, is_active: false }).eq('id', targetUserId)
-      await sb.from('listener_profiles').update({ is_active: false, is_available: false }).eq('user_id', targetUserId)
+      await sb.from('listener_profiles').update({ is_active: false, is_available: false, is_suspended: true }).eq('user_id', targetUserId)
       await sb.auth.admin.signOut(targetUserId, 'global').then(() => {}, () => {})
     }
 
@@ -80,12 +80,15 @@ export async function GET(req: NextRequest) {
 
   const url = new URL(req.url)
   const statusFilter = url.searchParams.get('status') || 'pending'
+  if (!['pending', 'reviewed', 'resolved', 'dismissed'].includes(statusFilter)) {
+    return NextResponse.json({ error: 'Invalid status filter' }, { status: 400 })
+  }
   const PAGE_SIZE = 20
   const page = Math.max(0, parseInt(url.searchParams.get('page') || '0', 10) || 0)
 
   const sb = createAdminClient()
 
-  const { data, count } = await sb.from('reports')
+  const { data, count, error: qErr } = await sb.from('reports')
     .select(`
       id, type, description, status, created_at, session_id, reported_user_id,
       reporter:users!reporter_id(name, email),
@@ -94,6 +97,11 @@ export async function GET(req: NextRequest) {
     .eq('status', statusFilter)
     .order('created_at', { ascending: false })
     .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)
+
+  if (qErr) {
+    logger.error('moderate GET error:', { error: qErr.message })
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+  }
 
   return NextResponse.json({ reports: data ?? [], total: count ?? 0, page })
 }

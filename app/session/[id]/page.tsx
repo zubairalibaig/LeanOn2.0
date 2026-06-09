@@ -4,6 +4,7 @@ import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { showToast } from '@/lib/toast'
 import ReportModal from '@/app/components/ReportModal'
+import { SESSION_DURATIONS } from '@/lib/constants'
 
 // ── CRITICAL FIX 1: Create client ONCE outside component
 // Previously inside component = new WebSocket on every render
@@ -176,9 +177,11 @@ function SessionContent() {
 
   const sessionId    = routeParams.id as string
   const listenerName = decodeURIComponent(searchParams.get('name') || 'Listener')
-  const durationMins = parseInt(searchParams.get('duration') || '15')
-  const sessionType  = searchParams.get('type') || 'text'
-  const isVoice      = sessionType === 'voice'
+  // Validate duration against allowed values — prevents NaN crash and URL manipulation
+  const rawDuration  = parseInt(searchParams.get('duration') || '15')
+  const durationMins = (SESSION_DURATIONS as readonly number[]).includes(rawDuration) ? rawDuration : 15
+  const sessionType  = searchParams.get('type') === 'voice' ? 'voice' : 'text'
+  const [isVoice, setIsVoice] = useState(sessionType === 'voice')
 
   const [msgs, setMsgs]       = useState<Msg[]>([])
   const [input, setInput]     = useState('')
@@ -250,7 +253,7 @@ function SessionContent() {
   useEffect(() => {
     if (!sessionId) return
     supabase.from('sessions')
-      .select('started_at, duration_mins, listener_id, seeker_id, listener:users!listener_id(name), seeker:users!seeker_id(name)')
+      .select('started_at, duration_mins, session_type, listener_id, seeker_id, listener:users!listener_id(name), seeker:users!seeker_id(name)')
       .eq('id', sessionId)
       .single()
       .then(({ data }) => {
@@ -261,6 +264,7 @@ function SessionContent() {
           setSecs(remaining)
           if (remaining <= 0) setEnded(true)
         }
+        if (data?.session_type) setIsVoice(data.session_type === 'voice')
         if (data?.listener_id) setListenerId(data.listener_id)
         // Show the OTHER person's name — listener sees seeker's name, seeker sees listener's name
         const myId = userIdRef.current

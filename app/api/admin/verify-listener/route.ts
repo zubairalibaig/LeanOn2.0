@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
+import { createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 import { requireAdmin } from '@/lib/require-admin'
@@ -86,13 +86,21 @@ export async function GET(req: NextRequest) {
 
   const url = new URL(req.url)
   const statusFilter = url.searchParams.get('status') || 'pending'
+  if (!['pending', 'approved', 'rejected', 'needs_resubmission'].includes(statusFilter)) {
+    return NextResponse.json({ error: 'Invalid status filter' }, { status: 400 })
+  }
 
   const sb = createAdminClient()
-  const { data } = await sb.from('listener_verifications')
+  const { data, error: qErr } = await sb.from('listener_verifications')
     .select('id, listener_id, full_name, id_type, selfie_url, id_doc_url, status, submitted_at, admin_notes')
     .eq('status', statusFilter)
     .order('submitted_at', { ascending: false })
     .limit(50)
+
+  if (qErr) {
+    logger.error('verify-listener GET error:', { error: qErr.message })
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+  }
 
   return NextResponse.json({ verifications: data ?? [] })
 }
