@@ -22,6 +22,19 @@ export async function GET(req: NextRequest) {
 
   try {
     if (type === 'listener') {
+      // For the 'pending' filter, the source of truth is listener_applications.status,
+      // not is_approved/is_active (which default to TRUE/FALSE in ways that vary by DB state).
+      let userIdFilter: string[] | null = null
+      if (userStatus === 'pending') {
+        const { data: pendingApps } = await sb.from('listener_applications')
+          .select('user_id')
+          .eq('status', 'pending')
+        userIdFilter = pendingApps?.map((a: { user_id: string }) => a.user_id) ?? []
+        if (userIdFilter.length === 0) {
+          return NextResponse.json({ items: [], total: 0, page, type: 'listener' })
+        }
+      }
+
       let query = sb.from('listener_profiles')
         .select(`
           user_id, bio, specialty_tags, rate_per_min, rating, total_sessions,
@@ -32,20 +45,36 @@ export async function GET(req: NextRequest) {
         .order('created_at', { ascending: false })
         .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)
 
-      if (userStatus === 'pending') query = query.eq('is_approved', false).eq('is_active', false)
-      else if (userStatus === 'active') query = query.eq('is_active', true).eq('is_approved', true)
-      else if (userStatus === 'suspended') query = query.eq('is_suspended', true)
+      if (userIdFilter !== null) {
+        query = query.in('user_id', userIdFilter)
+      } else if (userStatus === 'active') {
+        query = query.eq('is_active', true).eq('is_approved', true)
+      } else if (userStatus === 'suspended') {
+        query = query.eq('is_suspended', true)
+      }
 
       if (search) {
-        // Strip PostgREST/LIKE metacharacters before embedding in the filter,
-        // consistent with the regular-users branch below.
         const safe = search.replace(/[,()*:\\%_]/g, '').slice(0, 100)
         if (safe) query = query.ilike('users.name', `%${safe}%`)
       }
 
       const { data, count, error: qErr } = await query
       if (qErr) throw qErr
-      return NextResponse.json({ items: data ?? [], total: count ?? 0, page, type: 'listener' })
+
+      // Enrich each listener row with their application status/notes/payment info.
+      // This requires a second query since listener_profiles and listener_applications
+      // share no direct FK — both reference users(id) via user_id.
+      let items: Record<string, unknown>[] = (data ?? []) as Record<string, unknown>[]
+      if (items.length > 0) {
+        const userIds = items.map(p => p.user_id as string)
+        const { data: apps } = await sb.from('listener_applications')
+          .select('user_id, status, admin_notes, upi_id, bank_account, ifsc_code')
+          .in('user_id', userIds)
+        const appMap = new Map((apps ?? []).map(a => [a.user_id, a]))
+        items = items.map(p => ({ ...p, application: appMap.get(p.user_id as string) ?? null }))
+      }
+
+      return NextResponse.json({ items, total: count ?? 0, page, type: 'listener' })
     }
 
     // Regular users
@@ -116,7 +145,10 @@ export async function PATCH(req: NextRequest) {
 
       case 'reject_listener':
         await sb.from('listener_profiles').update({ is_approved: false, is_active: false }).eq('user_id', userId)
-        await sb.from('listener_applications').update({ status: 'rejected' }).eq('user_id', userId).then(() => {}, () => {})
+        await sb.from('listener_applications')
+          .update({ status: 'rejected', admin_notes: notes ?? null })
+          .eq('user_id', userId)
+          .then(() => {}, () => {})
         await sb.from('notifications').insert({
           user_id: userId,
           type: 'verification_update',

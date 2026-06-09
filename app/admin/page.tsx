@@ -18,6 +18,7 @@ type ListenerRow = {
   user_id: string; bio?: string; specialty_tags?: string[]; rate_per_min?: number; rating?: number; total_sessions?: number
   is_active: boolean; is_approved: boolean; is_available: boolean; is_verified?: boolean; is_suspended?: boolean; created_at: string
   users: { id: string; name?: string; email?: string; phone?: string; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number }
+  application?: { status: string; admin_notes: string | null; upi_id?: string | null; bank_account?: string | null; ifsc_code?: string | null } | null
 }
 type SessionRow = {
   id: string; seeker_id: string; listener_id: string; session_type: string; duration_mins: number
@@ -75,6 +76,7 @@ const S = `
   td{font-size:13px;font-weight:600;color:var(--navy);padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle;}
   tr:last-child td{border-bottom:none;}
   tr.pending-row{background:#FFFBF0;}
+  tr.rejected-row{background:#FFF5F5;}
   .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:50px;font-size:11px;font-weight:800;}
   .badge-green{background:rgba(52,199,89,.15);color:#1a7a2a;}
   .badge-red{background:rgba(255,59,48,.15);color:#c0392b;}
@@ -898,14 +900,16 @@ export default function AdminPage() {
                     <tbody>
                       {listeners.map(l => {
                         const u = l.users
-                        const isPending = !l.is_approved && !l.is_active
+                        const appStatus = l.application?.status ?? null
+                        const isPending = !l.is_approved && (appStatus === 'pending' || appStatus === null)
+                        const isRejected = !l.is_approved && appStatus === 'rejected'
                         // Detect if this listener is the currently logged-in admin
                         const isSelf = !!(authUser && (
                           (authUser.phone && u?.phone && authUser.phone.replace(/\D/g, '').slice(-10) === u.phone.replace(/\D/g, '').slice(-10)) ||
                           (authUser.email && u?.email && authUser.email === u.email)
                         ))
                         return (
-                          <tr key={l.user_id} className={isPending ? 'pending-row' : ''}>
+                          <tr key={l.user_id} className={isPending ? 'pending-row' : isRejected ? 'rejected-row' : ''}>
                             <td style={{ fontWeight: 700 }}>
                               {u?.name || '—'}
                               {isSelf && <span className="badge badge-orange" style={{ marginLeft: 6, fontSize: 10 }}>YOU</span>}
@@ -921,12 +925,14 @@ export default function AdminPage() {
                             <td>{l.total_sessions ?? 0}</td>
                             <td>
                               {isPending
-                                ? <span className="badge badge-orange">Pending</span>
-                                : l.is_suspended
-                                  ? <span className="badge badge-red">Suspended</span>
-                                  : l.is_active
-                                    ? <span className="badge badge-green">Active</span>
-                                    : <span className="badge badge-gray">Inactive</span>}
+                                ? <span className="badge badge-orange">Pending Approval</span>
+                                : isRejected
+                                  ? <span className="badge badge-red">Rejected</span>
+                                  : l.is_suspended
+                                    ? <span className="badge badge-red">Suspended</span>
+                                    : l.is_active
+                                      ? <span className="badge badge-green">Active</span>
+                                      : <span className="badge badge-gray">Inactive</span>}
                             </td>
                             <td>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -949,8 +955,22 @@ export default function AdminPage() {
                                     </div>
                                   </div>
                                 )}
+                                {isRejected && (
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                    {l.application?.admin_notes && (
+                                      <div style={{ fontSize: 11, color: 'var(--gray)', fontStyle: 'italic', maxWidth: 180 }}>
+                                        Note: {l.application.admin_notes}
+                                      </div>
+                                    )}
+                                    <div className="action-row">
+                                      <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'approve_listener')}>
+                                        {busy === `approve_listener:${l.user_id}` ? 'Approving…' : 'Re-approve'}
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
                                 <div className="action-row">
-                                  {!isPending && (
+                                  {!isPending && !isRejected && (
                                     l.is_suspended || !l.is_active
                                       ? <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'unsuspend')}>
                                           {busy === `unsuspend:${l.user_id}` ? '…' : 'Unsuspend'}
