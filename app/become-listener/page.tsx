@@ -337,7 +337,9 @@ export default function BecomeListenerPage() {
       }, { onConflict: 'user_id' })
       if (profileErr) throw profileErr
 
-      // Try with upi_id first (available after migration 022); fall back without it
+      // Upsert application details. Do NOT include status in the payload — on initial INSERT
+      // the DB DEFAULT 'pending' applies; on UPDATE (resubmission) the existing status is
+      // preserved so an already-approved listener doesn't get reset back to pending.
       let appErr = (await sb.from('listener_applications').upsert({
         user_id:      user.id,
         name:         name.trim(),
@@ -345,7 +347,6 @@ export default function BecomeListenerPage() {
         bank_account: bank.trim(),
         ifsc_code:    ifsc.trim().toUpperCase(),
         upi_id:       upi.trim() || null,
-        status:       'pending',
       }, { onConflict: 'user_id' })).error
 
       if (appErr?.message?.includes('upi_id')) {
@@ -356,7 +357,6 @@ export default function BecomeListenerPage() {
           phone:        phone.trim(),
           bank_account: bank.trim(),
           ifsc_code:    ifsc.trim().toUpperCase(),
-          status:       'pending',
         }, { onConflict: 'user_id' })).error
       }
       if (appErr) throw appErr

@@ -64,13 +64,23 @@ export async function GET(req: NextRequest) {
       // Enrich each listener row with their application status/notes/payment info.
       // This requires a second query since listener_profiles and listener_applications
       // share no direct FK — both reference users(id) via user_id.
+      // admin_notes column requires migration 029 — fall back gracefully if it doesn't exist yet.
       let items: Record<string, unknown>[] = (data ?? []) as Record<string, unknown>[]
       if (items.length > 0) {
         const userIds = items.map(p => p.user_id as string)
-        const { data: apps } = await sb.from('listener_applications')
+        // eslint-disable-next-line prefer-const
+        let { data: appsWithNotes, error: appsErr } = await sb.from('listener_applications')
           .select('user_id, status, admin_notes, upi_id, bank_account, ifsc_code')
           .in('user_id', userIds)
-        const appMap = new Map((apps ?? []).map(a => [a.user_id, a]))
+        // Fallback: select without admin_notes if migration 029 hasn't been run yet
+        const appsData: Record<string, unknown>[] = appsWithNotes
+          ? (appsWithNotes as Record<string, unknown>[])
+          : appsErr
+            ? ((await sb.from('listener_applications')
+                .select('user_id, status, upi_id, bank_account, ifsc_code')
+                .in('user_id', userIds)).data ?? []) as Record<string, unknown>[]
+            : []
+        const appMap = new Map(appsData.map(a => [a.user_id as string, a]))
         items = items.map(p => ({ ...p, application: appMap.get(p.user_id as string) ?? null }))
       }
 
@@ -145,10 +155,18 @@ export async function PATCH(req: NextRequest) {
 
       case 'reject_listener':
         await sb.from('listener_profiles').update({ is_approved: false, is_active: false }).eq('user_id', userId)
+        // Status update is critical — always do this first, without admin_notes (which requires migration 029).
         await sb.from('listener_applications')
-          .update({ status: 'rejected', admin_notes: notes ?? null })
+          .update({ status: 'rejected' })
           .eq('user_id', userId)
           .then(() => {}, () => {})
+        // Best-effort: store rejection notes (no-ops if admin_notes column not yet present)
+        if (notes) {
+          await sb.from('listener_applications')
+            .update({ admin_notes: notes })
+            .eq('user_id', userId)
+            .then(() => {}, () => {})
+        }
         await sb.from('notifications').insert({
           user_id: userId,
           type: 'verification_update',
