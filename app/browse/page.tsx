@@ -47,6 +47,7 @@ type Listener = {
   total_sessions: number
   rate_per_min: number
   is_available: boolean
+  is_verified?: boolean
   specialty_tags: string[]
   languages_spoken: string[]
   avatar_url?: string
@@ -317,7 +318,7 @@ function BrowseContent() {
               </div>
               <div className="meta">
                 <div className="name">
-                  {l.name}&nbsp;<span className="verified-chip">✓ Verified</span>
+                  {l.name}{l.is_verified && <>&nbsp;<span className="verified-chip">✓ Verified</span></>}
                 </div>
                 <div className="stats">
                   {l.rating > 0 && <span>⭐ {(+l.rating).toFixed(1)}</span>}
