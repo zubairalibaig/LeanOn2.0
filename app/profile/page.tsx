@@ -112,7 +112,8 @@ export default function ProfilePage() {
       if (upErr) throw upErr
       const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path)
       const url = `${publicUrl}?t=${Date.now()}` // cache bust
-      await supabase.from('users').update({ avatar_url: url }).eq('id', userId)
+      const { error: dbErr } = await supabase.from('users').update({ avatar_url: url }).eq('id', userId)
+      if (dbErr) throw dbErr
       setAvatarUrl(url)
     } catch (err) {
       console.error('Avatar upload error:', err)
@@ -125,10 +126,11 @@ export default function ProfilePage() {
   async function saveName() {
     if (!userId || !nameInput.trim()) return
     setSaving(true)
-    await supabase.from('users').update({ name: nameInput.trim() }).eq('id', userId)
+    const { error: nameErr } = await supabase.from('users').update({ name: nameInput.trim() }).eq('id', userId)
+    setSaving(false)
+    if (nameErr) { alert('Failed to save name. Please try again.'); return }
     setName(nameInput.trim())
     setEditingName(false)
-    setSaving(false)
   }
 
   async function handleLogout() {

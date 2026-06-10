@@ -56,7 +56,7 @@ async function hashString(str: string): Promise<string> {
 }
 
 async function uploadFile(userId: string, folder: string, file: File): Promise<string | null> {
-  const ext  = file.name.split('.').pop() || 'jpg'
+  const ext  = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg'
   const path = `${folder}/${userId}.${ext}`
   const { error } = await sb.storage.from('verifications').upload(path, file, { upsert: true })
   if (error) return null

@@ -380,12 +380,17 @@ export default function DashboardPage() {
       return
     }
     setSavingEdit(true)
-    await sb.from('listener_profiles').update({
+    const { error: updateErr } = await sb.from('listener_profiles').update({
       bio: editBio.trim(),
       specialty_tags: editTags,
       languages_spoken: editLangs,
       rate_per_min: rate,
     }).eq('user_id', user.id)
+    setSavingEdit(false)
+    if (updateErr) {
+      alert('Failed to save profile. Please try again.')
+      return
+    }
     setProfile((prev) => prev ? {
       ...prev,
       bio: editBio.trim(),
@@ -394,7 +399,6 @@ export default function DashboardPage() {
       rate_per_min: rate,
       avatar_url: editAvatar,
     } : null)
-    setSavingEdit(false)
     setShowEdit(false)
   }
 
