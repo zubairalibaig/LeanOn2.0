@@ -1,202 +1,220 @@
-# LeanOn 2.0 — Project Bible
+# LeanOn 2.0 — Project Bible (Source of Truth)
 
-> Last updated: May 2025
-> Live URL: https://leanon.app
-> Domain: leanon.app
+> This file is the durable contract for how LeanOn works. It changes rarely.
+> Roadmap, build status, account credentials, and cost estimates live in a
+> SEPARATE file (STATUS.md). Do NOT put volatile information here.
+>
+> **Claude: read this file in full before writing or modifying any feature.
+> If a request contradicts anything here, stop and flag it — do not silently
+> reinterpret. If a detail you need is not specified here, ask rather than invent.**
 
 ---
 
-## 🎯 The One-Line Mission
+## 0. How to Use This File
+
+- This is the authority on **mission, positioning, workflows, data contracts, and invariants.**
+- The tech stack listed in §6 is fixed. Do not substitute libraries or services without an explicit decision being recorded here first.
+- When in doubt about *why* a rule exists, see §2 and §4 — the reasoning is intentionally preserved so judgment calls stay aligned.
+
+---
+
+## 1. Mission (One Line)
 
 **Connect lonely, overwhelmed people with real humans who have lived through the same thing — instantly, affordably, and safely.**
 
 ---
 
-## 💡 The Core Insight (never forget this)
+## 2. The Core Insight (never forget this)
 
-AstroTalk's founder discovered that a massive % of night-session bookings were not about astrology.
-People were booking astrologers just to talk. Because they were lonely.
+AstroTalk's founder discovered that a large share of night-session bookings were not about astrology. People booked astrologers just to talk, because they were lonely.
 
-LeanOn removes the astrology wrapper and monetises the real thing: **human connection and lived-experience guidance**.
+LeanOn removes the astrology wrapper and monetises the real thing: **human connection and lived-experience guidance.**
 
-- India has millions of emotionally isolated people
-- Almost no affordable emotional support exists
-- Therapy stigma is real and deep
-- Joint families mean people need text privacy
-- People are willing to pay at 2 AM when they are hurting
+- India has millions of emotionally isolated people.
+- Almost no affordable emotional support exists.
+- Therapy stigma is real and deep.
+- Joint families mean people need text privacy.
+- People are willing to pay at 2 AM when they are hurting.
+
+This insight is the reason the product exists. Every feature should serve it.
 
 ---
 
-## 🚫 What LeanOn Is NOT (critical positioning)
+## 3. What LeanOn Is NOT (critical positioning)
 
-This is a **PEER SUPPORT** platform. Not a mental health platform.
+LeanOn is a **PEER SUPPORT** platform. It is not a mental health, clinical, or therapy platform.
 
-- ❌ Not therapy
-- ❌ Not counselling
-- ❌ Not clinical mental health support
-- ❌ Not a substitute for professional psychiatric care
+- ❌ Not therapy, counselling, or treatment
+- ❌ Not clinical or psychiatric care
+- ❌ Not a substitute for professional help
 - ✅ Real people with lived experience
 - ✅ Pay-per-session peer conversations
 - ✅ Emotional support from someone who has been there
 
-**Why this matters:** MH professionals will attack any platform that blurs the line.
-LeanOn must be crystal clear: we are the peer support layer, not the clinical layer.
-Like AA is to rehab. Like a support group is to therapy. Legitimate, needed, different.
+**Language rules (enforce in all UI, copy, and data models):**
+- NEVER use the words *therapy, counselling, counsellor, treatment, patient, clinician, diagnosis* anywhere user-facing or in schema names.
+- Use *listener, seeker, session, lived experience, peer support.*
 
-**Legal protection:** "Peer support" does not require clinical licensing.
-"Counselling" and "therapy" do. Never use those words for our listeners.
+**Why it matters:** "Peer support" does not require clinical licensing; "counselling" and "therapy" do. This is both the legal shield and the ethical line. Analogy: LeanOn is to therapy what a support group (or AA) is to clinical rehab — legitimate, needed, and deliberately different.
 
----
-
-## 👥 Who Uses LeanOn
-
-### Seekers (people who book sessions)
-- Urban Indians 22–45
-- Lonely at night (joint families, need text privacy)
-- Going through: breakups, career confusion, startup stress, grief, loneliness, student pressure
-- Cannot afford ₹2000/session therapy
-- Don't need diagnosis — need to be heard
-
-### Listeners (people who earn)
-- People with lived experience in specific situations
-- NOT professionals (that's LeanOn v1 — it failed)
-- Examples: startup founder who survived, person who recovered from grief, career changer, student who got through exams
-- Earn ₹8–25/min (₹13,500–₹72,000/month depending on volume)
-- Work from phone, anytime
+**Do not build:** diagnostic tools, assessment forms, symptom trackers, or medical intake logs.
 
 ---
 
-## 💰 Business Model
+## 4. Who Uses LeanOn
 
-| Element | Detail |
+### Seekers (book sessions)
+- Urban Indians, ~22–45.
+- Lonely, often at night; joint-family households needing text privacy.
+- Going through breakups, career confusion, startup stress, grief, loneliness, student pressure.
+- Cannot afford ₹2000/session therapy. Don't want a diagnosis — want to be heard.
+
+### Listeners (earn)
+- Everyday people with **lived experience** in a specific situation — NOT professionals.
+  (LeanOn v1 used professionals and failed on supply. v2 must work differently — see §11.)
+- Examples: a founder who survived a failed startup, someone who recovered from grief, a career changer, a student who got through exams.
+- Work from their phone, anytime.
+
+---
+
+## 5. Business & Wallet Model
+
+| Element | Specification |
 |---|---|
-| Session pricing | ₹10/min base (listeners set ₹8–25/min) |
-| Session lengths | 15 min (₹165) and 30 min (₹330) |
-| Free trial | 5 min text chat for new users |
-| Platform fee | 10% of session value (transparent line item) |
-| Payment gateway | Razorpay — 2% per transaction |
-| Listener keeps | 90% of their stated rate |
-| Wallet model | Recharge-based (₹200/₹500/₹1000), refundable anytime |
+| Base rate | ₹10/min base; listeners set ₹8–25/min |
+| Session blocks | Fixed only: **15 min** or **30 min**. No open-ended metered calls. |
+| Free trial | One-time 5-minute text chat for newly registered seekers. |
+| Platform fee | 10% of session value, shown as a **separate, transparent line item.** |
+| Listener keeps | 90% of their stated rate. |
+| Wallet | Recharge in fixed pools: ₹200 / ₹500 / ₹1000. **Refundable anytime.** |
+| Payments | Razorpay. |
 
-### Revenue projection
-- 100 sessions/day → ₹15,000/day platform fee → ₹4.5L/month
-- 500 sessions/day → ₹75,000/day → ₹22.5L/month
-- Break-even estimate: ~30–50 sessions/day
+**Wallet integrity:** balance must be validated **server-side** before any session is matched. See §9 race-condition rules.
 
 ---
 
-## 🛠️ Tech Stack
+## 6. Tech Stack (FIXED — do not substitute)
 
-| Layer | Tool | Cost |
+| Layer | Tool |
+|---|---|
+| Frontend + Backend | Next.js 14 (App Router, TypeScript, Tailwind CSS) |
+| Database + Auth + Realtime | Supabase (PostgreSQL, Auth, Realtime) |
+| Phone OTP auth | **Supabase Auth phone OTP** (not a third-party SMS verifier) |
+| Voice calls | Agora.io Web SDK (RTC tokens generated server-side, never client-side) |
+| Payments | Razorpay (server-created orders; webhook-validated) |
+| AI moderation | Claude API (Haiku) — first-line content moderation |
+| Email (OTP fallback / receipts) | Resend |
+| Admin panel | Internal secure Next.js API routes + admin UI (Retool acceptable as interim external option) |
+| Hosting | Vercel |
+| KYC (later) | Surepass (Aadhaar OTP) |
+
+> If any service above needs to change, record the decision in this file **before** building against the new service.
+
+---
+
+## 7. Screens & Routing Map
+
+| Path | Access scope | Notes |
 |---|---|---|
-| Frontend + Backend | Next.js 14 (App Router) | Free |
-| Database + Auth + Realtime | Supabase | Free → ₹2,100/mo |
-| Voice calls | Agora.io | Free (10K min/mo) |
-| Payments | Razorpay | 2% per txn |
-| AI moderation | Claude API (Haiku) | ~₹2,000/mo |
-| Hosting | Vercel | Free |
-| Email | Resend | Free |
-| Admin panel | Retool (connect to Supabase) | Free |
-| KYC (later) | Surepass (Aadhaar OTP) | ₹3–5/verify |
-| Total at beta | — | ₹5,000–9,000/mo |
+| `/` | Public | Landing / conversion |
+| `/auth` | Public | Phone + OTP |
+| `/browse` | Authenticated seekers | Listener card grid |
+| `/listener/[id]` | Authenticated seekers | Single profile |
+| `/wallet` | Authenticated seekers | Recharge portal |
+| `/session/[id]` | Validated seeker + assigned listener only | Live session |
+| `/dashboard` | Verified listeners only | Availability + earnings ledger |
+| `/become-listener` | Authenticated users | Onboarding form |
+| `/privacy` | Public | Privacy policy |
+| `/terms` | Public | Terms of use |
+| Admin | Admin role only | Verification, finance, moderation |
+
+Build status for each lives in STATUS.md, not here.
 
 ---
 
-## 📱 Pages / Screens
+## 8. Core Workflows
 
-| Screen | Path | Status |
-|---|---|---|
-| Landing page | / | ✅ Live |
-| Auth (phone OTP) | /auth | 🔲 Built, not deployed |
-| Browse listeners | /browse | 🔲 Built, not deployed |
-| Listener profile | /listener/[id] | 🔲 Built, not deployed |
-| Wallet & recharge | /wallet | 🔲 Built, not deployed |
-| Live session | /session/[id] | 🔲 Built, not deployed |
-| Listener dashboard | /dashboard | 🔲 Built, not deployed |
-| Become a listener | /become-listener | 🔲 Built, not deployed |
-| Admin panel | Retool (external) | 🔲 Not started |
-| Privacy policy | /privacy | 🔲 Not started |
-| Terms of use | /terms | 🔲 Not started |
+### 8.1 Seeker workflow
+1. **Auth:** phone number → Supabase phone OTP → session.
+2. **Discovery:** browse online listeners; filter by language and category tags. Profiles show text bio + lived-experience bullets. **No prominent profile photos** (see §10).
+3. **Recharge:** user initiates → backend creates Razorpay order → frontend checkout → **webhook** validates → wallet credited atomically.
+4. **Booking:**
+   a. Server checks `balance >= (rate × duration) + platform_fee`.
+   b. If sufficient, an RPC reserves funds, moves seeker to a waiting state, and fires a realtime notification to the listener.
+   c. On acceptance → status `active`, channels open.
 
----
+### 8.2 Listener workflow
+1. **Onboarding & vetting:** sign up → profile details → identity verification (placeholder for manual/Surepass) → payout bank details (account no. + IFSC).
+2. **Profile status lifecycle:** `unverified` → `pending_review` (on submission) → `verified` (on admin approval).
+3. **Availability:** persistent Online/Offline toggle.
+   - *Heartbeat guard:* going online sets `is_online = true` and updates `last_seen_at`. A background check removes a listener from public discovery after **3 minutes** of inactivity (handles dropped tabs/connections).
+4. **Incoming session:** banner with **60-second countdown**. Accept or decline. If ignored, slot times out and the seeker's reservation reverts.
+5. **Earnings ledger:** on completion, `payout = session_value − 10% fee` is appended to the listener's internal balance ledger.
 
-## 🗓️ Build Roadmap
-
-### Week 1–2 (done)
-- [x] Business model finalised
-- [x] Tech stack chosen
-- [x] Database schema written
-- [x] GitHub + Vercel + Supabase set up
-- [x] Landing page live
-
-### Week 3–4 (now)
-- [ ] Auth page (phone OTP) live
-- [ ] Browse page live
-- [ ] Listener profile page live
-- [ ] Wallet + Razorpay recharge live
-- [ ] First end-to-end test session
-
-### Week 5–6
-- [ ] Voice calls (Agora) integrated
-- [ ] Live text chat (Supabase Realtime)
-- [ ] Session timer + auto-end
-- [ ] Listener payout dashboard
-- [ ] Retool admin panel
-
-### Month 2
-- [ ] Onboard 15–20 real peer listeners (manual DM outreach)
-- [ ] Run 10 real paid sessions
-- [ ] Aadhaar KYC via Surepass
-- [ ] Bank account verification via Razorpay
-- [ ] Android PWA — "Add to Home Screen" prompt
-- [ ] Hire growth person / bring on co-founder
+### 8.3 Admin workflow
+1. **Verification desk:** list profiles in `pending_review`; Approve / Reject actions flip verification flags.
+2. **Financial exceptions:** list wallet transactions; allow manual reversal/refund to the original Razorpay source for failed sessions.
+3. **Moderation ledger:** show transcripts flagged by the Claude moderation layer. **All identities masked** as `Seeker_ID_Ref` / `Listener_ID_Ref` in admin views.
 
 ---
 
-## 🔴 Key Risks (never forget)
+## 9. Critical State & Data Contracts
 
-1. **Supply side** — LeanOn v1 failed because counselors wouldn't onboard. v2 targets peer listeners (not professionals). This MUST work differently.
-2. **Platform drift** — Monetising attention always risks drift toward parasocial/romantic dynamics. Every product decision must structurally prevent this.
-3. **AI companions** — ChatGPT, Claude etc. are getting better at emotional support. Our moat is HUMAN lived experience. Lean into it.
-4. **MHP backlash** — Mental health professionals will critique us. Positioning as "peer support" (not therapy) is our legal and ethical shield.
-5. **Moderation** — Sexual content, manipulation, fake identities. Claude API moderation is first line. Human review is necessary at scale.
+### 9.1 Session status enum (authoritative)
+- `requested` — funds reserved; awaiting listener response.
+- `active` — live; timer running; sockets open.
+- `completed` — ended by timer expiry or clean mutual exit; funds transferred.
+- `cancelled` — declined by listener or cancelled by seeker before acceptance.
+- `timed_out` — no listener response within the 60-second window.
+
+No other session states may exist. Any new state requires updating this file first.
+
+### 9.2 Race-condition protection (non-negotiable)
+- Wallet balance checks and fund allocation must **never** run on the client or as two separate client queries.
+- They must execute inside a **single Supabase RPC** using row locking (`SELECT ... FOR UPDATE`) to prevent multi-click wallet-drain exploits.
+- Fund reservation and session creation happen in the same transaction.
+
+### 9.3 Token & secret rules
+- Agora RTC tokens: server-generated only.
+- Razorpay order creation and webhook verification: server-side only.
+- No API keys or secrets in client code or in this repo's committed files.
 
 ---
 
-## ✅ Non-Negotiable Product Principles
+## 10. Non-Negotiable Product Principles
 
-1. **Phone OTP only** — No email friction. India is mobile-first.
-2. **Session-based, not open-ended** — 15 or 30 min blocks. No meter anxiety.
-3. **Wallet refundable anytime** — Trust driver. Users recharge more when they know they can get it back.
-4. **10% platform fee, shown transparently** — Listeners see their full rate. Users see fee as separate line. No hidden cuts.
-5. **No photos in profile prominence** — Specialty + lived experience first. Prevents attractiveness-based selection.
-6. **No tipping, gifting, or streaks** — These create emotional dependency. Do not build them.
-7. **Text-first** — Voice is secondary. Most Indian users need privacy from joint family.
-8. **Same-gender default** — Users can choose, but default protects everyone and reduces drift risk.
+1. **Phone OTP only.** No email/password friction. Mobile-first.
+2. **Session-based, not open-ended.** 15 or 30 min blocks. No meter anxiety.
+3. **Wallet refundable anytime.** Trust driver.
+4. **10% fee, shown transparently.** Listener sees full rate; seeker sees fee as a separate line.
+5. **No photo prominence.** Specialty + lived experience first; prevents attractiveness-based selection.
+6. **No parasocial hooks.** No tipping, gifting, gift delivery, public comments, profile-photo enlargement, or login streaks. These create dependency — do not build them.
+7. **Text-first.** Voice is secondary; most users need privacy from joint family.
+8. **Same-gender default.** Users may toggle, but default-on reduces drift risk.
+9. **Mobile-width layout.** Lock content to a centered mobile container (`max-w-md` / ~480px) to mimic a native app feel.
 
 ---
 
-## 📞 Crisis Resources (always show these)
+## 11. Key Risks (keep front of mind)
 
-If a user appears in crisis, the platform must surface ONLY these two
-official helplines (no others are permitted anywhere on the platform):
+1. **Supply side.** v1 failed because professionals wouldn't onboard. v2 targets peer listeners; recruitment and vetting must be lightweight.
+2. **Platform drift.** Monetising attention risks parasocial/romantic dynamics. Every decision must structurally prevent this (see §10.5–10.8).
+3. **AI companions.** General AI keeps improving at emotional support. The moat is **human lived experience** — lean into it.
+4. **MHP backlash.** Strict "peer support" positioning (§3) is the legal and ethical shield.
+5. **Moderation.** Sexual content, manipulation, fake identities. Claude (Haiku) moderation is first line; human review required at scale.
+
+---
+
+## 12. Crisis Safety Rail (mandatory)
+
+Every screen showing an active or pending conversation must render a fixed, **un-dismissible** footer with **only** these two official helplines — no others permitted anywhere on the platform:
+
 - **NIMHANS:** 080-46110007
 - **Tele-MANAS:** 14416
 
----
-
-## 🔑 Accounts & Access
-
-| Service | Account | Notes |
-|---|---|---|
-| GitHub | (private) | LeanOn2.0 repo |
-| Vercel | Connected to GitHub | Auto-deploys on push |
-| Supabase | — | Mumbai region |
-| Razorpay | Registered | Individual/sole prop |
-| Agora.io | To create | Free 10K min/mo |
-| Resend | To create | Email OTPs |
-| Retool | To create | Admin panel |
+If a user appears to be in crisis, surface these and do not attempt to handle the crisis through the peer-support flow.
 
 ---
 
-*This document is the source of truth for LeanOn 2.0. Update it when major decisions are made.*
+*Source of truth for LeanOn 2.0. Update only on major, deliberate decisions.
+Volatile items — roadmap, build status, accounts, costs — belong in STATUS.md.*
