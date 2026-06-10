@@ -69,6 +69,34 @@ export async function requireAdmin(req: Request) {
     }
   }
 
+  // ── Step 0b: Phone + PIN header auth (two-step login from admin UI) ─────────
+  const phonePinHeader = req.headers.get('x-admin-phone') ?? ''
+  if (phonePinHeader) {
+    const clientIp = (req.headers.get('x-forwarded-for') ?? 'unknown').split(',')[0].trim()
+    if (!checkRateLimit(`admin-phone:${clientIp}`, 10, 60_000)) {
+      return { error: 'Too many attempts. Please wait.', code: 'PIN_RATE_LIMITED', status: 429 as const, user: null }
+    }
+    const adminPhone = process.env.ADMIN_PHONE
+    if (!adminPhone || normalizePhone(phonePinHeader) !== normalizePhone(adminPhone)) {
+      await new Promise(r => setTimeout(r, 1000))
+      return { error: 'Invalid phone number', code: 'NOT_ADMIN', status: 403 as const, user: null }
+    }
+    // Phone matched — now check PIN
+    const adminPin = process.env.ADMIN_PIN
+    const providedPin = req.headers.get('x-admin-pin') ?? ''
+    if (!providedPin) {
+      return { error: 'PIN required', code: 'PHONE_VERIFIED', status: 403 as const, user: null }
+    }
+    if (!adminPin || !timingSafeEqual(providedPin, adminPin)) {
+      await new Promise(r => setTimeout(r, 500))
+      return { error: 'Incorrect PIN', code: 'PIN_REQUIRED', status: 403 as const, user: null }
+    }
+    return {
+      error: null, code: null, status: 200 as const,
+      user: { id: ADMIN_PASSWORD_USER_ID, email: process.env.ADMIN_EMAIL } as { id: string; email?: string; phone?: string },
+    }
+  }
+
   // ── Step 1: verify Supabase session ─────────────────────────────────────────
   const supabase = createServerSupabaseClient()
   const { data: { user }, error: authErr } = await supabase.auth.getUser()

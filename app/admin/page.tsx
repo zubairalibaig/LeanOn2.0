@@ -134,55 +134,75 @@ export default function AdminPage() {
   const [pinVerified, setPinVerified] = useState(false)
   const [denied, setDenied] = useState(false)
 
-  // Password login state
-  const [loginPassword, setLoginPassword] = useState('')
+  // Phone + PIN login state
+  const [loginPhone, setLoginPhone] = useState('')
+  const [phoneVerified, setPhoneVerified] = useState(false)
+  const [loginPin, setLoginPin] = useState('')
   const [loginLoading, setLoginLoading] = useState(false)
   const [loginError, setLoginError] = useState('')
-  // Stores the admin password for all subsequent API headers (password-based auth)
-  const adminPasswordRef = useRef<string>('')
+  // Stores auth headers for all subsequent API calls
+  const adminPhoneRef = useRef<string>('')
+  const adminPinRef = useRef<string>('')
 
-  async function tryPasswordLogin() {
-    const pw = loginPassword.trim()
-    if (!pw) { setLoginError('Enter the admin password'); return }
+  async function tryPhoneVerify() {
+    const phone = loginPhone.trim()
+    if (!phone) { setLoginError('Enter your phone number'); return }
     setLoginLoading(true)
     setLoginError('')
-    // Use /api/admin/ping for auth-only check — avoids false failures
-    // from DB query errors in the KPI endpoint masking a correct password.
     const res = await fetch('/api/admin/ping', {
-      headers: { 'x-admin-password': pw },
+      headers: { 'x-admin-phone': phone },
     }).catch(() => null)
     setLoginLoading(false)
     if (!res) { setLoginError('Connection error. Try again.'); return }
     if (res.status === 429) { setLoginError('Too many attempts. Please wait a minute.'); return }
-    if (res.status === 403) { setLoginError('Incorrect password.'); setLoginPassword(''); return }
-    if (res.status === 401) { setLoginError('Admin password is not configured on this server. Set ADMIN_SECRET in environment variables.'); return }
+    const body = await res.json().catch(() => ({}))
+    if (body.code === 'PHONE_VERIFIED') {
+      adminPhoneRef.current = phone
+      setPhoneVerified(true)
+      setLoginError('')
+      return
+    }
+    if (res.status === 403) { setLoginError('Phone number not recognized.'); return }
+    setLoginError('Server error. Please try again.')
+  }
+
+  async function tryPinLogin() {
+    const pin = loginPin.trim()
+    if (!pin) { setLoginError('Enter your PIN'); return }
+    setLoginLoading(true)
+    setLoginError('')
+    const res = await fetch('/api/admin/ping', {
+      headers: { 'x-admin-phone': adminPhoneRef.current, 'x-admin-pin': pin },
+    }).catch(() => null)
+    setLoginLoading(false)
+    if (!res) { setLoginError('Connection error. Try again.'); return }
+    if (res.status === 429) { setLoginError('Too many attempts. Please wait a minute.'); return }
+    if (res.status === 403) { setLoginError('Incorrect PIN.'); setLoginPin(''); return }
     if (!res.ok) { setLoginError('Server error. Please try again.'); return }
-    // Auth confirmed — store password, enter dashboard, then load KPIs in background
-    adminPasswordRef.current = pw
-    try { sessionStorage.setItem('adminPw', pw) } catch {}
+    adminPinRef.current = pin
+    try { sessionStorage.setItem('adminPhone', adminPhoneRef.current); sessionStorage.setItem('adminPin', pin) } catch {}
     setAuthUser({ id: 'password-admin', email: undefined })
     setDenied(false)
     setAuthChecking(false)
-    // KPIs load automatically via the authUser useEffect
   }
 
-  // On mount: check sessionStorage for a stored password, then fall back to Supabase session.
+  // On mount: check sessionStorage for stored phone+PIN, then fall back to Supabase session.
   useEffect(() => {
     async function init() {
-      let storedPw = ''
-      try { storedPw = sessionStorage.getItem('adminPw') ?? '' } catch {}
-      if (storedPw) {
-        adminPasswordRef.current = storedPw
-        // Use ping endpoint — avoids KPI DB errors masking a valid stored password
-        const res = await fetch('/api/admin/ping', { headers: { 'x-admin-password': storedPw } }).catch(() => null)
+      let storedPhone = '', storedPin = ''
+      try { storedPhone = sessionStorage.getItem('adminPhone') ?? ''; storedPin = sessionStorage.getItem('adminPin') ?? '' } catch {}
+      if (storedPhone && storedPin) {
+        adminPhoneRef.current = storedPhone
+        adminPinRef.current = storedPin
+        const res = await fetch('/api/admin/ping', { headers: { 'x-admin-phone': storedPhone, 'x-admin-pin': storedPin } }).catch(() => null)
         if (res?.ok) {
           setAuthUser({ id: 'password-admin', email: undefined })
           setAuthChecking(false)
-          return  // KPIs load via authUser useEffect
+          return
         }
-        // Stored password no longer valid — clear it and fall through.
-        adminPasswordRef.current = ''
-        try { sessionStorage.removeItem('adminPw') } catch {}
+        adminPhoneRef.current = ''
+        adminPinRef.current = ''
+        try { sessionStorage.removeItem('adminPhone'); sessionStorage.removeItem('adminPin') } catch {}
       }
       // Fall back to Supabase session check (for existing OTP-authenticated admins).
       // IMPORTANT: verify the session is actually admin via ping BEFORE setting authUser.
@@ -290,7 +310,10 @@ export default function AdminPage() {
   // Returns Authorization headers including the admin PIN when it has been verified
   function adminHeaders(extra: Record<string, string> = {}): Record<string, string> {
     const h: Record<string, string> = { ...extra }
-    if (adminPasswordRef.current) h['x-admin-password'] = adminPasswordRef.current
+    if (adminPhoneRef.current && adminPinRef.current) {
+      h['x-admin-phone'] = adminPhoneRef.current
+      h['x-admin-pin'] = adminPinRef.current
+    }
     if (verifiedPinRef.current) h['x-admin-pin'] = verifiedPinRef.current
     return h
   }
@@ -545,32 +568,62 @@ export default function AdminPage() {
             </p>
           </div>
         ) : (
-          // Not logged in — password-based admin login
+          // Not logged in — phone + PIN admin login
           <div style={{background:'white',borderRadius:24,padding:'36px 28px',boxShadow:'0 8px 40px rgba(15,72,103,0.12)',maxWidth:360,width:'100%'}}>
             <div style={{textAlign:'center',marginBottom:24}}>
               <div style={{fontSize:36,marginBottom:12}}>🔐</div>
               <h2 style={{fontSize:20,fontWeight:900,color:'#0F4867',marginBottom:6}}>Admin Access</h2>
               <p style={{fontSize:13,color:'#5A7A8A',fontWeight:600,lineHeight:1.5}}>
-                Enter your admin password to continue.
+                {phoneVerified ? 'Enter your admin PIN to continue.' : 'Enter your admin phone number to continue.'}
               </p>
             </div>
-            <input
-              type="password"
-              placeholder="Admin password"
-              value={loginPassword}
-              onChange={e => { setLoginPassword(e.target.value); setLoginError('') }}
-              onKeyDown={e => { if (e.key === 'Enter') tryPasswordLogin() }}
-              style={{width:'100%',padding:'13px 16px',border:'2px solid #D5EEF6',borderRadius:14,fontFamily:'Nunito,sans-serif',fontSize:15,fontWeight:700,color:'#0F4867',outline:'none',boxSizing:'border-box',marginBottom:8,background:'white'}}
-              autoFocus
-            />
-            {loginError && <p style={{color:'#E53935',fontSize:13,fontWeight:700,marginBottom:8}}>{loginError}</p>}
-            <button
-              onClick={tryPasswordLogin}
-              disabled={loginLoading || !loginPassword.trim()}
-              style={{width:'100%',padding:'14px',background:'#0F4867',color:'white',border:'none',borderRadius:50,fontFamily:'Nunito,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',opacity:(loginLoading || !loginPassword.trim())?0.5:1,marginTop:8}}
-            >
-              {loginLoading ? '⟳ Verifying…' : 'Access Dashboard →'}
-            </button>
+            {!phoneVerified ? (
+              <>
+                <input
+                  type="tel"
+                  placeholder="Phone number (e.g. +91...)"
+                  value={loginPhone}
+                  onChange={e => { setLoginPhone(e.target.value); setLoginError('') }}
+                  onKeyDown={e => { if (e.key === 'Enter') tryPhoneVerify() }}
+                  style={{width:'100%',padding:'13px 16px',border:'2px solid #D5EEF6',borderRadius:14,fontFamily:'Nunito,sans-serif',fontSize:15,fontWeight:700,color:'#0F4867',outline:'none',boxSizing:'border-box',marginBottom:8,background:'white'}}
+                  autoFocus
+                />
+                {loginError && <p style={{color:'#E53935',fontSize:13,fontWeight:700,marginBottom:8}}>{loginError}</p>}
+                <button
+                  onClick={tryPhoneVerify}
+                  disabled={loginLoading || !loginPhone.trim()}
+                  style={{width:'100%',padding:'14px',background:'#0F4867',color:'white',border:'none',borderRadius:50,fontFamily:'Nunito,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',opacity:(loginLoading || !loginPhone.trim())?0.5:1,marginTop:8}}
+                >
+                  {loginLoading ? '⟳ Verifying…' : 'Continue →'}
+                </button>
+              </>
+            ) : (
+              <>
+                <input
+                  type="password"
+                  placeholder="Enter PIN"
+                  value={loginPin}
+                  onChange={e => { setLoginPin(e.target.value); setLoginError('') }}
+                  onKeyDown={e => { if (e.key === 'Enter') tryPinLogin() }}
+                  style={{width:'100%',padding:'13px 16px',border:'2px solid #D5EEF6',borderRadius:14,fontFamily:'Nunito,sans-serif',fontSize:15,fontWeight:700,color:'#0F4867',outline:'none',boxSizing:'border-box',marginBottom:8,background:'white'}}
+                  autoFocus
+                />
+                {loginError && <p style={{color:'#E53935',fontSize:13,fontWeight:700,marginBottom:8}}>{loginError}</p>}
+                <button
+                  onClick={tryPinLogin}
+                  disabled={loginLoading || !loginPin.trim()}
+                  style={{width:'100%',padding:'14px',background:'#0F4867',color:'white',border:'none',borderRadius:50,fontFamily:'Nunito,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',opacity:(loginLoading || !loginPhone.trim())?0.5:1,marginTop:8}}
+                >
+                  {loginLoading ? '⟳ Verifying…' : 'Access Dashboard →'}
+                </button>
+                <button
+                  onClick={() => { setPhoneVerified(false); setLoginPin(''); setLoginError('') }}
+                  style={{width:'100%',padding:'10px',background:'transparent',color:'var(--gray)',border:'none',fontFamily:'Nunito,sans-serif',fontWeight:700,fontSize:13,cursor:'pointer',marginTop:4}}
+                >
+                  ← Change phone number
+                </button>
+              </>
+            )}
           </div>
         )}
       </div>
@@ -612,8 +665,12 @@ export default function AdminPage() {
               className="btn"
               style={{ fontSize: 13, background: 'white', color: 'var(--gray)', border: '1.5px solid var(--border)' }}
               onClick={() => {
-                try { sessionStorage.removeItem('adminPw') } catch {}
-                adminPasswordRef.current = ''
+                try { sessionStorage.removeItem('adminPhone'); sessionStorage.removeItem('adminPin') } catch {}
+                adminPhoneRef.current = ''
+                adminPinRef.current = ''
+                setPhoneVerified(false)
+                setLoginPhone('')
+                setLoginPin('')
                 setAuthUser(null)
                 setDenied(true)
                 setPinVerified(false)
