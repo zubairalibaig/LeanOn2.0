@@ -15,7 +15,15 @@ function timingSafeEqual(a: string, b: string): boolean {
 }
 
 // Synthetic user ID returned for password-authenticated admin sessions.
-const ADMIN_PASSWORD_USER_ID = '00000000-0000-0000-0000-000000000001'
+// NOT a real users row — never write it into columns with an FK to users(id);
+// use dbUserIdOrNull() for those.
+export const ADMIN_PASSWORD_USER_ID = '00000000-0000-0000-0000-000000000001'
+
+// Returns the admin's user id if it maps to a real users row, else null.
+// Use for FK columns like reports.resolved_by / listener_verifications.reviewed_by.
+export function dbUserIdOrNull(userId: string): string | null {
+  return userId === ADMIN_PASSWORD_USER_ID ? null : userId
+}
 
 /**
  * Shared admin auth check for all /api/admin/* routes.

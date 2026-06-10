@@ -125,32 +125,31 @@ export async function POST(req: NextRequest) {
   }
 
   if (action === 'complete_payout') {
-    // First fetch so we have user_id/amount for the deduction
-    const { data: pr } = await admin.from('payout_requests')
-      .select('user_id, amount')
+    // Claim the row FIRST (atomic optimistic lock on status='pending').
+    // Two concurrent requests can't both claim it, so the wallet can never be
+    // deducted twice. If the deduction then fails, revert to 'pending' for retry.
+    const { data: pr, error: claimErr } = await admin.from('payout_requests')
+      .update({ status: 'completed' })
       .eq('id', id)
       .eq('status', 'pending')
+      .select('user_id, amount')
       .single()
 
-    if (!pr) return NextResponse.json({ error: 'Payout request not found or already processed' }, { status: 404 })
+    if (claimErr || !pr) {
+      return NextResponse.json({ error: 'Payout request not found or already processed' }, { status: 404 })
+    }
 
-    // Deduct wallet BEFORE marking complete.
-    // If deduct fails the record stays 'pending' and the admin can retry safely.
     const { error: deductErr } = await admin.rpc('deduct_wallet', { p_user_id: pr.user_id, p_amount: pr.amount })
     if (deductErr) {
-      logger.error('deduct_wallet failed for payout — aborting status change:', { id, deductErr: deductErr as unknown })
+      logger.error('deduct_wallet failed for payout — reverting claim:', { id, deductErr: deductErr as unknown })
+      await admin.from('payout_requests').update({ status: 'pending' }).eq('id', id)
       return NextResponse.json({ error: 'Wallet deduction failed. Please retry.' }, { status: 500 })
     }
 
-    // Use the UPDATE as an optimistic lock (eq status='pending') to prevent double-processing
-    const { error: err } = await admin.from('payout_requests')
-      .update({ status: 'completed' }).eq('id', id).eq('status', 'pending')
-    if (err) { logger.error('admin complete_payout update failed:', { error: err.message }); return NextResponse.json({ error: 'Server error' }, { status: 500 }) }
-
-    const { error: txErr1 } = await admin.from('wallet_transactions').insert({
+    const { error: txErr } = await admin.from('wallet_transactions').insert({
       user_id: pr.user_id, amount: pr.amount, type: 'debit', description: 'Payout disbursed',
     })
-    if (txErr1) logger.error('wallet_transactions ledger insert failed for payout — reconciliation needed:', { id, error: txErr1.message })
+    if (txErr) logger.error('payout wallet_transactions insert failed (ledger gap):', { id, error: txErr.message })
 
     await auditLog(admin, user!.id, 'complete_payout', id)
     return NextResponse.json({ ok: true })
@@ -166,34 +165,30 @@ export async function POST(req: NextRequest) {
   }
 
   if (action === 'complete_refund') {
-    const { data: rr } = await admin.from('refund_requests')
-      .select('user_id, amount')
+    // Claim-first pattern — same as complete_payout. Atomic claim prevents
+    // concurrent double-deduction; revert on deduct failure for safe retry.
+    const { data: rr, error: claimErr } = await admin.from('refund_requests')
+      .update({ status: 'completed' })
       .eq('id', id)
       .eq('status', 'pending')
+      .select('user_id, amount')
       .single()
 
-    if (!rr) return NextResponse.json({ error: 'Refund request not found or already processed' }, { status: 404 })
+    if (claimErr || !rr) {
+      return NextResponse.json({ error: 'Refund request not found or already processed' }, { status: 404 })
+    }
 
-    // Deduct wallet BEFORE marking complete — same pattern as complete_payout.
-    // If deduct fails the record stays 'pending' so the admin can retry.
     const { error: deductErr } = await admin.rpc('deduct_wallet', { p_user_id: rr.user_id, p_amount: rr.amount })
     if (deductErr) {
-      logger.error('deduct_wallet failed for refund — aborting status change:', { id, deductErr: deductErr as unknown })
+      logger.error('deduct_wallet failed for refund — reverting claim:', { id, deductErr: deductErr as unknown })
+      await admin.from('refund_requests').update({ status: 'pending' }).eq('id', id)
       return NextResponse.json({ error: 'Wallet deduction failed. Please retry.' }, { status: 500 })
     }
 
-    const { error: updateErr } = await admin.from('refund_requests')
-      .update({ status: 'completed' }).eq('id', id).eq('status', 'pending')
-
-    if (updateErr) {
-      logger.error('refund_requests update failed — wallet already deducted, manual fix needed:', { id, updateErr: updateErr as unknown })
-      return NextResponse.json({ error: 'Status update failed after wallet deduction. Please check manually.' }, { status: 500 })
-    }
-
-    const { error: txErr2 } = await admin.from('wallet_transactions').insert({
+    const { error: txErr } = await admin.from('wallet_transactions').insert({
       user_id: rr.user_id, amount: rr.amount, type: 'debit', description: 'Wallet refund processed',
     })
-    if (txErr2) logger.error('wallet_transactions ledger insert failed for refund — reconciliation needed:', { id, error: txErr2.message })
+    if (txErr) logger.error('refund wallet_transactions insert failed (ledger gap):', { id, error: txErr.message })
 
     await auditLog(admin, user!.id, 'complete_refund', id)
     return NextResponse.json({ ok: true })

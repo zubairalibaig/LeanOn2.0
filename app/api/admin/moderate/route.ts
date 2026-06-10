@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
-import { requireAdmin } from '@/lib/require-admin'
+import { requireAdmin, dbUserIdOrNull } from '@/lib/require-admin'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -31,25 +31,56 @@ export async function POST(req: NextRequest) {
 
     const sb = createAdminClient()
 
+    // Fetch the report so warn/suspend can resolve a target even when the
+    // report was filed against a session (reported_user_id null) — the target
+    // is the session party who is NOT the reporter.
+    const { data: report, error: reportErr } = await sb.from('reports')
+      .select('reporter_id, reported_user_id, session_id')
+      .eq('id', reportId)
+      .single()
+    if (reportErr || !report) {
+      return NextResponse.json({ error: 'Report not found' }, { status: 404 })
+    }
+
+    let target: string | null = targetUserId ?? report.reported_user_id ?? null
+    if (!target && report.session_id && action !== 'dismiss') {
+      const { data: s } = await sb.from('sessions')
+        .select('seeker_id, listener_id')
+        .eq('id', report.session_id)
+        .single()
+      if (s) target = s.seeker_id === report.reporter_id ? s.listener_id : s.seeker_id
+    }
+    if (action !== 'dismiss' && !target) {
+      return NextResponse.json({ error: 'Could not determine which user to act on for this report' }, { status: 400 })
+    }
+
     const newStatus = action === 'dismiss' ? 'dismissed' : 'resolved'
 
     const { error: updateErr } = await sb.from('reports').update({
       status:      newStatus,
-      resolved_by: user!.id,
+      // resolved_by has an FK to users(id) — the synthetic password-admin id
+      // would violate it and fail the whole update.
+      resolved_by: dbUserIdOrNull(user!.id),
       updated_at:  new Date().toISOString(),
     }).eq('id', reportId)
 
     if (updateErr) throw updateErr
 
-    if (action === 'suspend' && targetUserId) {
-      await sb.from('users').update({ is_suspended: true, is_active: false }).eq('id', targetUserId)
-      await sb.from('listener_profiles').update({ is_active: false, is_available: false, is_suspended: true }).eq('user_id', targetUserId)
-      await sb.auth.admin.signOut(targetUserId, 'global').then(() => {}, () => {})
+    if (action === 'suspend' && target) {
+      const { error: suspendErr } = await sb.from('users')
+        .update({ is_suspended: true, is_active: false })
+        .eq('id', target)
+      if (suspendErr) throw suspendErr
+      await sb.from('listener_profiles')
+        .update({ is_active: false, is_available: false, is_suspended: true })
+        .eq('user_id', target)
+        .then(() => {}, () => {})
+      await sb.auth.admin.signOut(target, 'global').then(() => {}, () => {})
     }
 
-    if (action === 'warn' && targetUserId) {
+    if (action === 'warn' && target) {
       await sb.from('notifications').insert({
-        user_id:    targetUserId,
+        user_id:    target,
         type:       'system',
         title:      'Account warning',
         body:       'Your account has received a warning for violating our community guidelines. Continued violations may result in suspension.',
@@ -60,7 +91,7 @@ export async function POST(req: NextRequest) {
     await sb.from('admin_audit_logs').insert({
       admin_id:  user!.id,
       action:    `moderate_report_${action}`,
-      target_id: targetUserId ?? reportId,
+      target_id: target ?? reportId,
     }).then(() => {}, () => {})
 
     return NextResponse.json({ ok: true })

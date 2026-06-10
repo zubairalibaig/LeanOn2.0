@@ -314,11 +314,13 @@ export default function AdminPage() {
   const loadUsers = useCallback(async (pg = usersPage, st = usersStatus, q = usersSearch) => {
     setUsersLoading(true)
     const params = new URLSearchParams({ type: 'user', page: String(pg), status: st, search: q })
-    const res = await fetch(`/api/admin/users?${params}`, { headers: adminHeaders() })
-    if (res.ok) {
+    const res = await fetch(`/api/admin/users?${params}`, { headers: adminHeaders() }).catch(() => null)
+    if (res?.ok) {
       const json = await res.json()
       setUsers(json.items)
       setUsersTotal(json.total)
+    } else {
+      showToast('Failed to load users — tap a filter to retry')
     }
     setUsersLoading(false)
   }, [usersPage, usersStatus, usersSearch]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -326,11 +328,13 @@ export default function AdminPage() {
   const loadListeners = useCallback(async (pg = listenersPage, st = listenersStatus) => {
     setListenersLoading(true)
     const params = new URLSearchParams({ type: 'listener', page: String(pg), status: st })
-    const res = await fetch(`/api/admin/users?${params}`, { headers: adminHeaders() })
-    if (res.ok) {
+    const res = await fetch(`/api/admin/users?${params}`, { headers: adminHeaders() }).catch(() => null)
+    if (res?.ok) {
       const json = await res.json()
       setListeners(json.items)
       setListenersTotal(json.total)
+    } else {
+      showToast('Failed to load listeners — tap a filter to retry')
     }
     setListenersLoading(false)
   }, [listenersPage, listenersStatus]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -338,33 +342,38 @@ export default function AdminPage() {
   const loadSessions = useCallback(async (st = sessionsStatus) => {
     setSessionsLoading(true)
     const params = new URLSearchParams({ status: st !== 'all' ? st : '' })
-    const res = await fetch(`/api/admin/sessions?${params}`, { headers: adminHeaders() })
-    if (res.ok) setSessions((await res.json()).sessions ?? [])
+    const res = await fetch(`/api/admin/sessions?${params}`, { headers: adminHeaders() }).catch(() => null)
+    if (res?.ok) setSessions((await res.json()).sessions ?? [])
+    else showToast('Failed to load sessions — tap Refresh to retry')
     setSessionsLoading(false)
   }, [sessionsStatus]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadReports = useCallback(async (st = reportsStatus) => {
     setReportsLoading(true)
-    const res = await fetch(`/api/admin/moderate?status=${st}`, { headers: adminHeaders() })
-    if (res.ok) setReports((await res.json()).reports ?? [])
+    const res = await fetch(`/api/admin/moderate?status=${st}`, { headers: adminHeaders() }).catch(() => null)
+    if (res?.ok) setReports((await res.json()).reports ?? [])
+    else showToast('Failed to load reports — tap a filter to retry')
     setReportsLoading(false)
   }, [reportsStatus]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadPayouts = useCallback(async () => {
     setPayoutsLoading(true)
-    const res = await fetch('/api/admin?prPage=0&lpPage=0', { headers: adminHeaders() })
-    if (res.ok) {
+    const res = await fetch('/api/admin?prPage=0&lpPage=0', { headers: adminHeaders() }).catch(() => null)
+    if (res?.ok) {
       const json = await res.json()
       setPayouts(json.pendingPayouts ?? [])
       setRefunds(json.refundRequests ?? [])
+    } else {
+      showToast('Failed to load payouts — switch tabs to retry')
     }
     setPayoutsLoading(false)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadVerifs = useCallback(async (st = verifsStatus) => {
     setVerifsLoading(true)
-    const res = await fetch(`/api/admin/verify-listener?status=${st}`, { headers: adminHeaders() })
-    if (res.ok) setVerifs((await res.json()).verifications ?? [])
+    const res = await fetch(`/api/admin/verify-listener?status=${st}`, { headers: adminHeaders() }).catch(() => null)
+    if (res?.ok) setVerifs((await res.json()).verifications ?? [])
+    else showToast('Failed to load verifications — tap a filter to retry')
     setVerifsLoading(false)
   }, [verifsStatus]) // eslint-disable-line react-hooks/exhaustive-deps
 

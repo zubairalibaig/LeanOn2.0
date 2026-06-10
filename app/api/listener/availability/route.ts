@@ -22,11 +22,16 @@ export async function PATCH() {
 
     if (!lp) return NextResponse.json({ error: 'Listener profile not found' }, { status: 404 })
     if (!lp.is_approved) return NextResponse.json({ error: 'Your application is still under review' }, { status: 403 })
-    if (lp.is_suspended) return NextResponse.json({ error: 'Your account is suspended' }, { status: 403 })
-    if (!lp.is_active) return NextResponse.json({ error: 'Your account is not active' }, { status: 403 })
+    if (lp.is_suspended) return NextResponse.json({ error: 'Your listener account is suspended' }, { status: 403 })
+    if (!lp.is_active) return NextResponse.json({ error: 'Your listener profile is deactivated' }, { status: 403 })
 
     const next = !lp.is_available
-    await sb.from('listener_profiles').update({ is_available: next }).eq('user_id', user.id)
+    const { error: updateErr } = await sb.from('listener_profiles')
+      .update({ is_available: next })
+      .eq('user_id', user.id)
+    if (updateErr) {
+      return NextResponse.json({ error: 'Could not update availability. Please try again.' }, { status: 500 })
+    }
 
     return NextResponse.json({ is_available: next })
   } catch {

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
-import { requireAdmin } from '@/lib/require-admin'
+import { requireAdmin, dbUserIdOrNull } from '@/lib/require-admin'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -37,17 +37,27 @@ export async function POST(req: NextRequest) {
 
     const newStatus = action === 'approve' ? 'approved' : 'rejected'
 
-    await sb.from('listener_verifications').update({
+    const { error: vErr } = await sb.from('listener_verifications').update({
       status:      newStatus,
       admin_notes: notes ?? null,
       reviewed_at: new Date().toISOString(),
-      reviewed_by: user!.id,
+      // reviewed_by has an FK to users(id) — the synthetic password-admin id
+      // would violate it and fail the whole update.
+      reviewed_by: dbUserIdOrNull(user!.id),
     }).eq('id', verificationId)
+    if (vErr) {
+      logger.error('verify-listener: verification update failed', { verificationId, error: vErr.message })
+      return NextResponse.json({ error: 'Failed to update verification' }, { status: 500 })
+    }
 
     if (action === 'approve') {
-      await sb.from('listener_profiles')
+      const { error: lpErr } = await sb.from('listener_profiles')
         .update({ is_verified: true })
         .eq('user_id', verification.listener_id)
+      if (lpErr) {
+        logger.error('verify-listener: is_verified update failed', { listenerId: verification.listener_id, error: lpErr.message })
+        return NextResponse.json({ error: 'Verification approved but badge update failed. Run migration 008/014 (is_verified column) and retry.' }, { status: 500 })
+      }
     }
 
     // Notify the listener

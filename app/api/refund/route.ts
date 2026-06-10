@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
 
     // 3 refund requests per hour per user — prevents spam
     if (!checkRateLimit(`refund:${user.id}`, 3, 60 * 60_000)) {
-      return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 })
+      return NextResponse.json({ error: 'Too many refund requests. Please try again later.' }, { status: 429 })
     }
 
     const body = await req.json().catch(() => ({}))
@@ -55,12 +55,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'You have a pending payout request. Please wait for it to be processed before requesting a refund.' }, { status: 400 })
     }
 
-    await sb.from('refund_requests').insert({
+    const { error: insertErr } = await sb.from('refund_requests').insert({
       user_id: user.id,
       amount: u.wallet_balance,
       reason: reason || null,
       status: 'pending',
     })
+    if (insertErr) {
+      logger.error('Refund insert failed:', { error: insertErr.message })
+      return NextResponse.json({ error: 'Failed to submit refund request. Please try again.' }, { status: 500 })
+    }
 
     return NextResponse.json({ ok: true, amount: u.wallet_balance })
   } catch (err: unknown) {
