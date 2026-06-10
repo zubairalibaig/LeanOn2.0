@@ -182,12 +182,19 @@ export default function BecomeListenerPage() {
     return () => clearTimeout(t)
   }, [countdown])
 
-  // Guard: check if already registered
+  // Guard: check if already registered. Rejected / needs_resubmission
+  // applicants must NOT be blocked — the status page sends them here to
+  // resubmit, so blocking on the mere existence of a listener_profiles row
+  // would make resubmission a dead end.
   useEffect(() => {
     sb.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) { setGuardChecked(true); return }
-      const { data: existing } = await sb.from('listener_profiles').select('id, is_approved').eq('user_id', user.id).maybeSingle()
-      if (existing) {
+      const [{ data: existing }, { data: app }] = await Promise.all([
+        sb.from('listener_profiles').select('id, is_approved').eq('user_id', user.id).maybeSingle(),
+        sb.from('listener_applications').select('status').eq('user_id', user.id).maybeSingle(),
+      ])
+      const canResubmit = app?.status === 'rejected' || app?.status === 'needs_resubmission'
+      if (existing && !canResubmit) {
         setAlreadyRegistered(true)
       }
       setGuardChecked(true)
@@ -338,9 +345,11 @@ export default function BecomeListenerPage() {
       }, { onConflict: 'user_id' })
       if (profileErr) throw profileErr
 
-      // Upsert application details. Do NOT include status in the payload — on initial INSERT
-      // the DB DEFAULT 'pending' applies; on UPDATE (resubmission) the existing status is
-      // preserved so an already-approved listener doesn't get reset back to pending.
+      // Upsert application details WITH status:'pending' — a rejected applicant
+      // resubmitting must land back in the admin review queue. The DB guard
+      // trigger (migration 031) only permits rejected/needs_resubmission →
+      // pending for normal users, so an approved application can't be reset.
+      // Approved listeners never reach this code anyway (alreadyRegistered guard).
       let appErr = (await sb.from('listener_applications').upsert({
         user_id:      user.id,
         name:         name.trim(),
@@ -348,6 +357,7 @@ export default function BecomeListenerPage() {
         bank_account: bank.trim(),
         ifsc_code:    ifsc.trim().toUpperCase(),
         upi_id:       upi.trim() || null,
+        status:       'pending',
       }, { onConflict: 'user_id' })).error
 
       if (appErr?.message?.includes('upi_id')) {
@@ -358,6 +368,7 @@ export default function BecomeListenerPage() {
           phone:        phone.trim(),
           bank_account: bank.trim(),
           ifsc_code:    ifsc.trim().toUpperCase(),
+          status:       'pending',
         }, { onConflict: 'user_id' })).error
       }
       if (appErr) throw appErr

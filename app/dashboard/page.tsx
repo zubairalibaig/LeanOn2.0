@@ -150,7 +150,7 @@ function fmtDate(iso: string) {
 type DashProfile = {
   user_id: string; bio?: string; rate_per_min: number; specialty_tags: string[]
   languages_spoken: string[]; total_sessions: number; rating: number
-  is_available: boolean; avatar_url?: string | null; balance: number
+  is_available: boolean; is_approved?: boolean; avatar_url?: string | null; balance: number
   bank_account?: string; ifsc_code?: string; aadhaar_last4?: string
   name?: string; wallet_balance?: number
 }
@@ -173,6 +173,7 @@ export default function DashboardPage() {
   const [sessions, setSessions]   = useState<DashSession[]>([])
   const [avail, setAvail]         = useState(false)
   const [loading, setLoading]     = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [payoutLoading, setPayoutLoading] = useState(false)
   const [incomingSession, setIncomingSession] = useState<IncomingSession | null>(null)
   const [countdown, setCountdown] = useState(30)
@@ -236,14 +237,26 @@ export default function DashboardPage() {
     if (!u) { router.push('/auth?redirect=/dashboard'); return }
     setUser(u)
 
-    const { data: lp } = await sb
+    // Two separate queries instead of users!inner join — an RLS or join failure
+    // on users must not silently filter out the profile row and show the
+    // misleading "you haven't applied" screen to a real listener.
+    const { data: lp, error: lpErr } = await sb
       .from('listener_profiles')
-      .select('*, users!inner(name, wallet_balance, avatar_url)')
+      .select('*')
       .eq('user_id', u.id)
-      .single()
+      .maybeSingle()
+
+    if (lpErr) {
+      setLoadError('Could not load your listener profile. Please retry.')
+      return
+    }
 
     if (lp) {
-      const usr = lp.users as { name?: string; wallet_balance?: number; avatar_url?: string } | null
+      const { data: usr } = await sb
+        .from('users')
+        .select('name, wallet_balance, avatar_url')
+        .eq('id', u.id)
+        .maybeSingle()
       const avatarUrl = usr?.avatar_url || null
       setProfile({ ...lp, name: usr?.name || 'Listener', balance: usr?.wallet_balance || 0, avatar_url: avatarUrl })
       setAvail(lp.is_available)
@@ -279,6 +292,7 @@ export default function DashboardPage() {
     channelRef.current = channel
    } catch (err) {
      console.error('Dashboard load error:', err)
+     setLoadError('Something went wrong loading your dashboard. Please retry.')
    } finally {
      setLoading(false)   // never hang on the skeleton, even on network error
    }
@@ -421,6 +435,22 @@ export default function DashboardPage() {
         <div className="topbar"><h1>My Dashboard</h1></div>
         <div className="stats-grid">
           {[1,2,3,4].map(i => <div key={i} className="skeleton" style={{height:80}} />)}
+        </div>
+      </div>
+    </>
+  )
+
+  if (loadError) return (
+    <>
+      <style>{S}</style>
+      <div className="page">
+        <div className="topbar"><h1>My Dashboard</h1></div>
+        <div className="not-listener">
+          <div style={{fontSize:48,marginBottom:16}}>⚠️</div>
+          <p>{loadError}</p>
+          <button className="btn-apply" onClick={() => { setLoadError(null); setLoading(true); loadData() }}>
+            Retry
+          </button>
         </div>
       </div>
     </>
@@ -594,6 +624,14 @@ export default function DashboardPage() {
             {avail ? 'Go offline' : 'Go online'}
           </button>
         </div>
+
+        {profile.is_approved === false && (
+          <div style={{background:'#FFFBF0',border:'1.5px solid #FFE0B2',borderRadius:14,padding:'14px 16px',marginBottom:18,fontSize:13,fontWeight:700,color:'#b35c00',lineHeight:1.6}}>
+            ⏳ Your listener application is under review. You can edit your profile, but you won&apos;t
+            appear in search or receive sessions until you&apos;re approved.{' '}
+            <a href="/become-listener/status" style={{color:'#0F4867',textDecoration:'underline'}}>Check status →</a>
+          </div>
+        )}
 
         <div className="stats-grid">
           <div className="stat-card accent">

@@ -194,13 +194,20 @@ export default function AuthPage() {
     const { data: { user } } = await sb.auth.getUser()
     if (!user) { setError('Session expired. Please try again.'); setLoading(false); return }
     // Upsert (not update) — ensures the row exists even if the post-verifyOtp upsert failed
-    await sb.from('users').upsert({
+    const { error: saveErr } = await sb.from('users').upsert({
       id: user.id,
       name: name.trim(),
       phone: user.phone ?? undefined,
       is_active: true,
     }, { onConflict: 'id' })
     setLoading(false)
+    if (saveErr) {
+      // Without a users row, every downstream flow (wallet, sessions, listener
+      // application) breaks — block here instead of failing mysteriously later.
+      console.error('users upsert failed in saveName:', saveErr.message)
+      setError('Could not save your profile. Please try again.')
+      return
+    }
 
     const dest = getDestination()
     sessionStorage.removeItem('auth_redirect')
