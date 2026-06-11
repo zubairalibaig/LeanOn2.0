@@ -159,21 +159,12 @@ export default function AuthPage() {
       return
     }
 
-    // Create or update the public.users row NOW — this is the authoritative
-    // creation point for phone users. The DB trigger intentionally skips
-    // phone-only users at OTP-send time to prevent ghost accounts.
-    const { error: upsertErr } = await sb.from('users').upsert({
-      id: data.user!.id,
-      phone: formatted(),
-      is_active: true,
-    }, { onConflict: 'id' })
-
-    if (upsertErr) {
-      // Non-fatal: log and continue — user may already exist
-      console.warn('users upsert after OTP:', upsertErr.message)
-    }
-
-    const { data: userData } = await sb.from('users').select('name').eq('id', data.user!.id).single()
+    // Decide new-vs-returning by looking for an existing named profile.
+    // Row creation for phone users happens server-side in saveName() (via
+    // /api/auth/profile) — we do NOT write users from the browser here,
+    // because the RLS-restricted client INSERT is unreliable across the
+    // overlapping policies/triggers in migrations 031/20250512/999.
+    const { data: userData } = await sb.from('users').select('name').eq('id', data.user!.id).maybeSingle()
     setLoading(false)
 
     if (!userData?.name) {
@@ -207,19 +198,30 @@ export default function AuthPage() {
     setLoading(true)
     const { data: { user } } = await sb.auth.getUser()
     if (!user) { setError('Session expired. Please try again.'); setLoading(false); return }
-    // Upsert (not update) — ensures the row exists even if the post-verifyOtp upsert failed
-    const { error: saveErr } = await sb.from('users').upsert({
-      id: user.id,
-      name: name.trim(),
-      phone: user.phone ?? undefined,
-      is_active: true,
-    }, { onConflict: 'id' })
+
+    // Create the public.users row server-side with the service-role client.
+    // The browser (RLS-restricted) INSERT path is fragile — any drift in the
+    // users INSERT policy / grants / guard trigger breaks every signup. The
+    // server route bypasses RLS and always succeeds when the session is valid.
+    let saveErrMsg: string | null = null
+    try {
+      const res = await fetch('/api/auth/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name.trim() }),
+      })
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}))
+        saveErrMsg = json.error || 'Could not save your profile. Please try again.'
+      }
+    } catch {
+      saveErrMsg = 'Network error. Please check your connection and try again.'
+    }
     setLoading(false)
-    if (saveErr) {
+    if (saveErrMsg) {
       // Without a users row, every downstream flow (wallet, sessions, listener
       // application) breaks — block here instead of failing mysteriously later.
-      console.error('users upsert failed in saveName:', saveErr.message)
-      setError('Could not save your profile. Please try again.')
+      setError(saveErrMsg)
       return
     }
 
