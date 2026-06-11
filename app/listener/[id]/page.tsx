@@ -4,13 +4,23 @@ import ListenerClient from './ListenerClient'
 
 type Props = { params: { id: string } }
 
+// SEO enrichment must never 500 the profile page — degrade to defaults on any failure
+async function fetchProfile(id: string) {
+  try {
+    const sb = createAdminClient()
+    const { data } = await sb
+      .from('listener_profiles')
+      .select('bio, rating, total_sessions, specialty_tags, users!inner(name)')
+      .eq('user_id', id)
+      .single()
+    return data
+  } catch {
+    return null
+  }
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const sb = createAdminClient()
-  const { data } = await sb
-    .from('listener_profiles')
-    .select('bio, rating, total_sessions, specialty_tags, users!inner(name)')
-    .eq('user_id', params.id)
-    .single()
+  const data = await fetchProfile(params.id)
 
   if (!data) {
     return { title: 'Listener — LeanOn', description: 'Peer support listener on LeanOn.' }
@@ -45,12 +55,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ListenerPage({ params }: Props) {
-  const sb = createAdminClient()
-  const { data } = await sb
-    .from('listener_profiles')
-    .select('bio, rating, total_sessions, specialty_tags, users!inner(name)')
-    .eq('user_id', params.id)
-    .single()
+  const data = await fetchProfile(params.id)
 
   const usersData = data?.users as { name: string } | { name: string }[] | null
   const name = (Array.isArray(usersData) ? usersData[0]?.name : usersData?.name) || 'Listener'
