@@ -134,28 +134,51 @@ export async function middleware(req: NextRequest) {
   }
 
   const res = NextResponse.next()
+  // CRITICAL: @supabase/ssr v0.3.0 cookie API is get/set/remove.
+  // getAll/setAll only exist in v0.4+ — passing them here type-checks
+  // (all methods are optional) but the client silently reads NO cookies,
+  // so getUser() is always null and every auth-required route bounces
+  // to /auth even for logged-in users.
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll: () => req.cookies.getAll(),
-        setAll: (cookies: Array<{ name: string; value: string; options: CookieOptions }>) =>
-          cookies.forEach(({ name, value, options }) => res.cookies.set(name, value, options)),
+        get: (name: string) => req.cookies.get(name)?.value,
+        set: (name: string, value: string, options: CookieOptions) => {
+          req.cookies.set(name, value)
+          res.cookies.set({ name, value, ...options })
+        },
+        remove: (name: string, options: CookieOptions) => {
+          req.cookies.set(name, '')
+          res.cookies.set({ name, value: '', ...options })
+        },
       },
     }
   )
 
   // getUser() validates the JWT server-side — more secure than getSession()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
 
   if (!user) {
+    // Transient Supabase outage/network error while a session cookie exists:
+    // let the request through rather than bouncing a logged-in user to /auth.
+    // Page-level code and API routes still enforce their own auth.
+    const hasAuthCookie = req.cookies.getAll().some(c => c.name.includes('-auth-token'))
+    const transient = !!authError && authError.status !== 400 && authError.status !== 401 && authError.status !== 403
+    if (hasAuthCookie && transient) {
+      return res
+    }
+
     // Only redirect to same-origin paths — prevents open redirect attacks.
     // pathname + search are from req.nextUrl which is always same-origin.
     const dest = pathname + search
     const loginUrl = new URL('/auth', req.url)
     loginUrl.searchParams.set('redirect', dest)
-    return NextResponse.redirect(loginUrl)
+    const redirect = NextResponse.redirect(loginUrl)
+    // Carry any cookie changes (e.g. cleared stale tokens) onto the redirect
+    res.cookies.getAll().forEach(c => redirect.cookies.set(c))
+    return redirect
   }
 
   return res
