@@ -56,7 +56,7 @@ export default function NeedSomeoneToTalkToIndia() {
         </p>
 
         <div className="crisis-box">
-          <p>🆘 In immediate crisis? Call <strong>NIMHANS: 080-46110007</strong> or <strong>Tele-MANAS: 14416</strong> (free · 24/7 · Govt of India)</p>
+          <p>🆘 In immediate crisis? Call <strong><a href="tel:08046110007">NIMHANS: 080-46110007</a></strong> or <strong><a href="tel:14416">Tele-MANAS: 14416</a></strong> (free · 24/7 · Govt of India)</p>
         </div>
 
         <div className="section">

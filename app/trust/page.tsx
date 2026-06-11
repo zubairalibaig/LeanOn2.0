@@ -117,8 +117,8 @@ export default function TrustPage() {
         <div className="crisis-box">
           <h3>🆘 In a mental health crisis?</h3>
           <p>LeanOn peer listeners are not crisis counsellors. If you are in immediate danger or having thoughts of self-harm:<br/><br/>
-          Call <strong>NIMHANS: 080-46110007</strong> (Bengaluru, 24/7)<br/>
-          Call <strong>Tele-MANAS: 14416</strong> (free · all India · 24/7 · Govt of India)<br/><br/>
+          Call <strong><a href="tel:08046110007">NIMHANS: 080-46110007</a></strong> (Bengaluru, 24/7)<br/>
+          Call <strong><a href="tel:14416">Tele-MANAS: 14416</a></strong> (free · all India · 24/7 · Govt of India)<br/><br/>
           These are free, confidential, and available around the clock.
           </p>
         </div>

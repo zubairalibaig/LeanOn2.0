@@ -146,7 +146,18 @@ export default function AuthPage() {
       token: code,
       type: 'sms',
     })
-    if (err) { setLoading(false); setError('Invalid OTP. Please try again.'); return }
+    if (err) {
+      setLoading(false)
+      const msg = err.message?.toLowerCase() ?? ''
+      if (msg.includes('expired') || msg.includes('not found')) {
+        setError('OTP expired. Please request a new one.')
+      } else if (msg.includes('invalid') || msg.includes('incorrect')) {
+        setError('Incorrect OTP. Double-check and try again.')
+      } else {
+        setError('Verification failed. Please try again.')
+      }
+      return
+    }
 
     // Create or update the public.users row NOW — this is the authoritative
     // creation point for phone users. The DB trigger intentionally skips
@@ -183,6 +194,9 @@ export default function AuthPage() {
       }
 
       handledRef.current = true
+      // refresh() propagates the new session cookie to the Next.js middleware
+      // before the subsequent replace() navigation — prevents SSR redirect loops.
+      router.refresh()
       router.replace(dest)
     }
   }
@@ -215,6 +229,8 @@ export default function AuthPage() {
     sessionStorage.setItem('leanon_welcome_new', '1')
 
     handledRef.current = true
+    // refresh() propagates the new session cookie before navigation
+    router.refresh()
     router.replace(dest)
   }
 
@@ -236,7 +252,7 @@ export default function AuthPage() {
       <div className="page">
         <div className="topbar">
           {step !== 'phone'
-            ? <button className="back" onClick={() => { setStep(step === 'otp' ? 'phone' : 'otp'); setError('') }}>←</button>
+            ? <button className="back" onClick={() => { if (step === 'otp') { setOtp(['','','','','','']); setCountdown(0) } setStep(step === 'otp' ? 'phone' : 'otp'); setError('') }}>←</button>
             : <a href="/" className="back">←</a>
           }
           <span className="logo">Lean<span>On</span></span>

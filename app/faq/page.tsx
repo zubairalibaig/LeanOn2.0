@@ -41,11 +41,11 @@ const faqs = [
     items: [
       {
         q: 'How do I start using LeanOn?',
-        a: 'Sign up with your mobile number (OTP verified — 30 seconds). Browse peer listeners for free — read bios, topics, and ratings. When you\'re ready, pick a session length and start immediately. Your first 5-minute session is completely free.',
+        a: 'Sign up with your mobile number (OTP verified — 30 seconds). Browse peer listeners for free — read bios, topics, and ratings. When you\'re ready, pick a session length and start immediately. New users get up to 5 free 5-minute sessions to try different listeners.',
       },
       {
         q: 'Is it really free to start?',
-        a: 'Yes. Your first 5-minute session is completely free — no credit card, no wallet top-up needed. You just need to sign up with your phone number.',
+        a: 'Yes. New users get up to 5 free 5-minute sessions — one per listener — no credit card or wallet top-up needed. You just need to sign up with your phone number.',
       },
       {
         q: 'Do I need to book in advance?',
@@ -91,7 +91,7 @@ const faqs = [
       },
       {
         q: 'What if I\'m in a mental health crisis?',
-        a: 'LeanOn is peer support, not a crisis service. If you are in crisis or having thoughts of self-harm, please call NIMHANS at 080-46110007 or Tele-MANAS at 14416 (free, 24/7, Govt of India).',
+        a: 'LeanOn is peer support, not a crisis service. If you are in crisis or having thoughts of self-harm, please call NIMHANS at <a href="tel:08046110007">080-46110007</a> or Tele-MANAS at <a href="tel:14416">14416</a> (free, 24/7, Govt of India).',
       },
     ],
   },

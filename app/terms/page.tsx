@@ -34,7 +34,7 @@ export default function TermsPage() {
         <p className="updated">Last updated: May 2025</p>
 
         <div className="warning-box">
-          <p>⚠️ LeanOn is a peer support platform only. It is NOT a mental health service, therapy platform, or medical service. Listeners are not licensed therapists, psychologists, or counselors. If you are in crisis, call <strong>NIMHANS 080-46110007</strong> or the national Tele-MANAS helpline: <strong>14416</strong> (free, 24/7, Govt of India).</p>
+          <p>⚠️ LeanOn is a peer support platform only. It is NOT a mental health service, therapy platform, or medical service. Listeners are not licensed therapists, psychologists, or counselors. If you are in crisis, call <strong><a href="tel:08046110007">NIMHANS 080-46110007</a></strong> or the national Tele-MANAS helpline: <strong><a href="tel:14416">14416</a></strong> (free, 24/7, Govt of India).</p>
         </div>
 
         <h2>1. What LeanOn is</h2>
@@ -65,7 +65,7 @@ export default function TermsPage() {
           <li>Wallet top-ups are processed via Razorpay</li>
           <li>Unused wallet balance is fully refundable on request</li>
           <li>Completed sessions are non-refundable unless a safety violation occurred</li>
-          <li>LeanOn charges a 10% platform fee per session, shown transparently</li>
+          <li>LeanOn adds a flat ₹15 platform fee per session, shown transparently at checkout — listeners keep 100% of their stated rate</li>
         </ul>
 
         <h2>6. Content moderation</h2>

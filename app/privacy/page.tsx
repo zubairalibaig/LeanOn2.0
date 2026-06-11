@@ -60,8 +60,8 @@ export default function PrivacyPage() {
         <h2>4. Data storage</h2>
         <p>Your data is stored on Supabase servers hosted in the Asia South (Mumbai) region. We comply with India&apos;s Digital Personal Data Protection Act (DPDP Act 2023).</p>
 
-        <h2>5. Aadhaar data</h2>
-        <p>Aadhaar numbers collected from listeners for identity verification are processed via a third-party KYC provider (Surepass) and are never stored in plain text on our servers.</p>
+        <h2>5. Listener identity verification</h2>
+        <p>Listeners are required to submit a government-issued photo ID and a selfie for manual identity verification. Only the last 4 digits of any ID number are retained for reference; full ID numbers and document images are reviewed by our admin team, stored securely in encrypted cloud storage, and deleted once verification is complete. We do not share this data with third parties.</p>
 
         <h2>6. Your rights</h2>
         <ul>

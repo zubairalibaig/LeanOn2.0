@@ -63,7 +63,7 @@ const faqSchema = {
   mainEntity: [
     { '@type': 'Question', name: 'What is LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is a peer support platform — someone to lean on anytime you need it. You talk to real people in India who have lived through what you\'re facing: loneliness, burnout, anxiety, grief, relationships, and more. It is not therapy, but genuine human connection available 24/7.' } },
     { '@type': 'Question', name: 'What does "lean on" mean in LeanOn?', acceptedAnswer: { '@type': 'Answer', text: '"Lean on" means having someone you can rely on emotionally — someone who supports you without judgment when you\'re going through something hard. LeanOn (the platform) gives everyone access to that kind of support through verified peer listeners who have lived experience.' } },
-    { '@type': 'Question', name: 'Is LeanOn free?', acceptedAnswer: { '@type': 'Answer', text: 'Your first 5-minute session is completely free — no credit card needed. After that, sessions cost ₹8–25 per minute depending on the listener, billed in 15-minute slots.' } },
+    { '@type': 'Question', name: 'Is LeanOn free?', acceptedAnswer: { '@type': 'Answer', text: 'Each new user gets up to 5 free 5-minute sessions (one per listener) — no credit card needed, no wallet required. After that, sessions cost ₹8–25 per minute depending on the listener, billed in 15-minute slots.' } },
     { '@type': 'Question', name: 'How is LeanOn different from therapy?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are real people with lived experience, not licensed therapists. They offer empathy and peer support, not clinical diagnosis or treatment. LeanOn is ideal when you need someone to lean on — not a diagnosis.' } },
     { '@type': 'Question', name: 'Is LeanOn confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. All sessions are private and confidential. LeanOn never shares your personal information or conversation content with anyone.' } },
     { '@type': 'Question', name: 'How do I become a listener on LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'Apply at leanon.app/become-listener. Share your lived experience, complete a brief verification, and start earning ₹8–25 per minute helping others who need someone to lean on.' } },
@@ -392,7 +392,7 @@ export default function Home() {
         <p className="ss">Listeners keep 100% of their rate. LeanOn adds a flat ₹15 platform fee.</p>
         <div className="pc">
           {[
-            {l:'Free trial',d:'5 minutes · Text only · No wallet needed',p:'₹0',b:'First session free',feat:false},
+            {l:'Free trial',d:'5 minutes · Text only · No wallet needed · Up to 5 trials',p:'₹0',b:'Free to start',feat:false},
             {l:'Quick chat',d:'15 minutes · Listener earns ₹150 · You pay ₹165',p:'₹165',b:'',feat:false},
             {l:'Deep dive',d:'30 minutes · Listener earns ₹300 · You pay ₹315',p:'₹315',b:'Most popular',feat:true},
           ].map((item,i)=>(
@@ -444,7 +444,7 @@ export default function Home() {
           <h3>ℹ️ LeanOn is peer support — not therapy</h3>
           <p><strong>Our listeners are real people with lived experience — not licensed therapists or counselors.</strong> Peer support is legitimate and valuable. It is different from, and not a replacement for, professional mental health treatment.</p>
           <p>If you need clinical mental health support, please consult a qualified professional.</p>
-          <div className="cb"><p>🆘 <strong>In crisis?</strong> Call <strong>NIMHANS 080-46110007</strong> or <strong>Tele-MANAS 14416</strong> (free · 24/7 · Govt of India)</p></div>
+          <div className="cb"><p>🆘 <strong>In crisis?</strong> Call <strong><a href="tel:08046110007" style={{color:'inherit'}}>NIMHANS 080-46110007</a></strong> or <strong><a href="tel:14416" style={{color:'inherit'}}>Tele-MANAS 14416</a></strong> (free · 24/7 · Govt of India)</p></div>
         </div>
       </div>
 
@@ -454,7 +454,7 @@ export default function Home() {
           <h2>Frequently asked questions</h2>
           {[
             { q: 'What is LeanOn?', a: 'LeanOn is a peer support platform where you talk to real people who have lived through what you\'re facing — loneliness, burnout, anxiety, grief, relationships, and more. It\'s not therapy, but real human connection available 24/7 across India.' },
-            { q: 'Is LeanOn free?', a: 'Your first 5-minute session is completely free — no credit card needed. After that, sessions cost ₹8–25 per minute depending on the listener, billed in 15-minute slots.' },
+            { q: 'Is LeanOn free?', a: 'Each new user gets up to 5 free 5-minute sessions (one per listener) — no credit card needed, no wallet required. After that, sessions cost ₹8–25 per minute depending on the listener, billed in 15-minute slots.' },
             { q: 'How is this different from therapy or counselling?', a: 'Listeners on LeanOn are real people with lived experience, not licensed therapists. They offer empathy and peer support, not clinical diagnosis. LeanOn is ideal when you need someone who truly gets it — not a diagnosis.' },
             { q: 'Is my conversation private?', a: 'Yes. All sessions are private and end-to-end. LeanOn never shares your personal details or conversation content.' },
             { q: 'Can I become a listener?', a: 'Yes! If you\'ve been through something difficult and want to help others, apply at leanon.app/become-listener. Earn ₹8–25 per minute on your own schedule.' },
@@ -512,7 +512,7 @@ export default function Home() {
             <div><p>Have lived experience to share?</p><span>Listeners keep 100% of their rate. You set your own price.</span></div>
             <a href="/become-listener" className="btn-lis">Join as listener →</a>
           </div>
-          <p className="fcp">© 2025 LeanOn (Lean On) · leanon.app · Peer support platform · Made in India 🇮🇳</p>
+          <p className="fcp">© 2026 LeanOn (Lean On) · leanon.app · Peer support platform · Made in India 🇮🇳</p>
         </div>
       </footer>
     </>
