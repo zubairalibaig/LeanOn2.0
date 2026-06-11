@@ -297,7 +297,7 @@ export default function Home() {
           <a href="/auth" className="btn-primary">Start your free 5-min chat</a>
           <a href="/browse" className="btn-outline">Browse peer listeners</a>
         </div>
-        <p className="hero-note">First session free · No credit card needed · Affordable from ₹165</p>
+        <p className="hero-note">First session free · No credit card needed · Affordable from ₹160</p>
       </section>
 
       {/* TOPICS */}
@@ -387,15 +387,15 @@ export default function Home() {
         </div>
       </div>
 
-      {/* PRICING — FIXED: listener keeps 100%, flat ₹15 added on top */}
+      {/* PRICING — FIXED: listener keeps 100%, flat ₹10 added on top */}
       <div className="inner">
         <h2 className="sh">Simple, honest pricing</h2>
-        <p className="ss">Listeners keep 100% of their rate. LeanOn adds a flat ₹15 platform fee.</p>
+        <p className="ss">Listeners keep 100% of their rate. LeanOn adds a flat ₹10 platform fee.</p>
         <div className="pc">
           {[
             {l:'Free trial',d:'5 minutes · Text only · No wallet needed · Up to 5 trials',p:'₹0',b:'Free to start',feat:false},
-            {l:'Quick chat',d:'15 minutes · Listener earns ₹150 · You pay ₹165',p:'₹165',b:'',feat:false},
-            {l:'Deep dive',d:'30 minutes · Listener earns ₹300 · You pay ₹315',p:'₹315',b:'Most popular',feat:true},
+            {l:'Quick chat',d:'15 minutes · Listener earns ₹150 · You pay ₹160',p:'₹160',b:'',feat:false},
+            {l:'Deep dive',d:'30 minutes · Listener earns ₹300 · You pay ₹310',p:'₹310',b:'Most popular',feat:true},
           ].map((item,i)=>(
             <div key={i} className={`pcard${item.feat?' feat':''}`}>
               <div><div className="pl">{item.l}</div><div className="pd">{item.d}</div>{item.b&&<div className="pb">{item.b}</div>}</div>
@@ -405,7 +405,7 @@ export default function Home() {
         </div>
         <div className="fee-note">
           <span>💡</span>
-          <span><strong>How pricing works:</strong> Listeners set their own rate (₹8–25/min). LeanOn adds a flat ₹15 platform fee on top — that&apos;s how we keep the lights on. Listeners receive 100% of what they charge. Unused wallet balance is fully refundable, anytime.</span>
+          <span><strong>How pricing works:</strong> Listeners set their own rate (₹8–25/min). LeanOn adds a flat ₹10 platform fee on top — that&apos;s how we keep the lights on. Listeners receive 100% of what they charge. Unused wallet balance is fully refundable, anytime.</span>
         </div>
       </div>
 

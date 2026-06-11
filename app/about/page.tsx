@@ -71,7 +71,7 @@ export default function AboutPage() {
             {icon:'🤝',title:'Human first',desc:'Every session is a real human conversation. No bots, no scripted responses, no clinical detachment.'},
             {icon:'⚡',title:'Instant access',desc:'No appointments. No wait lists. When you need support, it should be available now.'},
             {icon:'🔒',title:'Private always',desc:'Your sessions are private. We will never share your conversations or identity.'},
-            {icon:'💰',title:'Genuinely affordable',desc:'Starting at ₹165 for 15 minutes. Less than a cup of coffee at most cafes.'},
+            {icon:'💰',title:'Genuinely affordable',desc:'Starting at ₹160 for 15 minutes. Less than a cup of coffee at most cafes.'},
             {icon:'🇮🇳',title:'Built for India',desc:'Text-first for joint family privacy. Phone OTP, UPI payments, 12 Indian languages.'},
             {icon:'❤️',title:'Peer, not clinical',desc:'We are not therapy. We are honest about that. Peer support is its own valid category.'},
           ].map((v,i)=>(

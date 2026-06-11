@@ -55,7 +55,7 @@ export default function AlternativesToTherapyPage() {
             <div>
               <div className="alt-title">LeanOn peer support ★ Best for emotional connection</div>
               <div className="alt-desc">Real humans with lived experience. Instant access, 24/7, anonymous. Best for loneliness, stress, grief, burnout, anxiety, and processing difficult feelings. The most human-to-human connection outside of professional therapy.</div>
-              <div className="alt-price">Free first session · ₹165 for 15 min thereafter</div>
+              <div className="alt-price">Free first session · ₹160 for 15 min thereafter</div>
             </div>
           </div>
           <div className="alt-item">

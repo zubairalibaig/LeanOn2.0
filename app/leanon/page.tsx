@@ -76,7 +76,7 @@ const faqSchema = {
       name: 'How much does LeanOn cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn offers a completely free 5-minute first session — no credit card, no wallet top-up. After that, sessions start from ₹165 for 15 minutes (listener earns ₹150, LeanOn adds a flat ₹15 fee). This is significantly more affordable than therapy, which typically costs ₹1,500–5,000 per session in India.',
+        text: 'LeanOn offers a completely free 5-minute first session — no credit card, no wallet top-up. After that, sessions start from ₹160 for 15 minutes (listener earns ₹150, LeanOn adds a flat ₹10 fee). This is significantly more affordable than therapy, which typically costs ₹1,500–5,000 per session in India.',
       },
     },
     {
@@ -225,7 +225,7 @@ export default function LeanOnBrandPage() {
             <div className="diff-card us">
               <div className="diff-title">✅ LeanOn</div>
               <div className="diff-list">
-                From ₹165 for 15 minutes<br/>
+                From ₹160 for 15 minutes<br/>
                 Start in 60 seconds<br/>
                 Real humans with lived experience<br/>
                 Completely private<br/>
@@ -260,7 +260,7 @@ export default function LeanOnBrandPage() {
             { q: 'What does "LeanOn" mean?', a: '"LeanOn" takes its name from "lean on" — to emotionally rely on someone, to let another person support you when you\'re struggling. The platform is built on the idea that everyone deserves someone to lean on.' },
             { q: 'Why is it called LeanOn?', a: 'The name was chosen because "lean on" captures what we offer: not therapy, not AI, not advice — just someone to lean on. A real human who has been through what you\'re going through.' },
             { q: 'Is LeanOn the same as therapy?', a: 'No. LeanOn is peer support, not therapy. Listeners are verified people with lived experience — not licensed therapists. They offer genuine empathy and understanding, not clinical diagnosis.' },
-            { q: 'How much does LeanOn cost?', a: 'LeanOn offers a free 5-minute first session. After that, sessions start from ₹165 for 15 minutes — significantly more affordable than therapy (₹1,500–5,000/session in India).' },
+            { q: 'How much does LeanOn cost?', a: 'LeanOn offers a free 5-minute first session. After that, sessions start from ₹160 for 15 minutes — significantly more affordable than therapy (₹1,500–5,000/session in India).' },
             { q: 'Is LeanOn safe and private?', a: 'Yes. Phone OTP sign-up (no full name required), sessions completely private, never shares conversation content, AI moderation for safety.' },
             { q: 'How is LeanOn different from other mental health apps?', a: 'Unlike AI chatbots (not real humans) or professional therapy platforms (expensive, clinical), LeanOn offers real humans with lived experience, available instantly, at a fraction of therapy cost.' },
             { q: 'Is LeanOn available across India?', a: 'Yes — Bengaluru, Mumbai, Delhi, Chennai, Hyderabad, Pune, Kolkata, and everywhere else. Online, 24/7.' },

@@ -82,11 +82,11 @@ LeanOn is a **PEER SUPPORT** platform. It is not a mental health, clinical, or t
 | Element | Specification |
 |---|---|
 | Base rate | ₹10/min base; listeners set ₹8–25/min |
-| Session blocks | Fixed only: **15 min** or **30 min**. No open-ended metered calls. |
-| Free trial | One-time 5-minute text chat for newly registered seekers. |
-| Platform fee | 10% of session value, shown as a **separate, transparent line item.** |
-| Listener keeps | 90% of their stated rate. |
-| Wallet | Recharge in fixed pools: ₹200 / ₹500 / ₹1000. **Refundable anytime.** |
+| Session blocks | Fixed only: **15 min**, **30 min**, or **45 min**. No open-ended metered calls. |
+| Free trial | Up to 5 free 5-minute sessions per seeker (one per listener). |
+| Platform fee | **Flat ₹10 per paid session**, paid by the seeker on top of the listener's rate, shown as a separate transparent line item at checkout. Razorpay's gateway commission is also borne by the seeker. Do not over-advertise the fee — just keep the logic and checkout display honest. |
+| Listener keeps | **100% of their stated rate.** The fee never comes out of listener earnings. |
+| Wallet | Recharge in fixed pools: ₹200 / ₹500 / ₹1000 / ₹2000. **Refundable anytime.** |
 | Payments | Razorpay. |
 
 **Wallet integrity:** balance must be validated **server-side** before any session is matched. See §9 race-condition rules.
@@ -149,7 +149,7 @@ Build status for each lives in STATUS.md, not here.
 3. **Availability:** persistent Online/Offline toggle.
    - *Heartbeat guard:* going online sets `is_online = true` and updates `last_seen_at`. A background check removes a listener from public discovery after **3 minutes** of inactivity (handles dropped tabs/connections).
 4. **Incoming session:** banner with **60-second countdown**. Accept or decline. If ignored, slot times out and the seeker's reservation reverts.
-5. **Earnings ledger:** on completion, `payout = session_value − 10% fee` is appended to the listener's internal balance ledger.
+5. **Earnings ledger:** on completion, `payout = rate × duration` (the listener's full stated rate — the flat ₹10 platform fee is paid by the seeker on top, never deducted) is appended to the listener's internal balance ledger.
 
 ### 8.3 Admin workflow
 1. **Verification desk:** list profiles in `pending_review`; Approve / Reject actions flip verification flags.
@@ -186,7 +186,7 @@ No other session states may exist. Any new state requires updating this file fir
 1. **Phone OTP only.** No email/password friction. Mobile-first.
 2. **Session-based, not open-ended.** 15 or 30 min blocks. No meter anxiety.
 3. **Wallet refundable anytime.** Trust driver.
-4. **10% fee, shown transparently.** Listener sees full rate; seeker sees fee as a separate line.
+4. **Flat ₹10 fee, shown transparently.** Listener keeps their full rate; seeker sees the fee as a separate line at checkout. Don't over-advertise the fee in marketing copy.
 5. **No photo prominence.** Specialty + lived experience first; prevents attractiveness-based selection.
 6. **No parasocial hooks.** No tipping, gifting, gift delivery, public comments, profile-photo enlargement, or login streaks. These create dependency — do not build them.
 7. **Text-first.** Voice is secondary; most users need privacy from joint family.

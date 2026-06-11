@@ -63,7 +63,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'How do I get emotional support online in India?',
-      acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is India\'s leading peer emotional support platform. Sign up with your phone number (OTP, 30 seconds), browse verified peer listeners, and start a session instantly. Your first 5 minutes are free. Sessions from ₹165 for 15 minutes.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is India\'s leading peer emotional support platform. Sign up with your phone number (OTP, 30 seconds), browse verified peer listeners, and start a session instantly. Your first 5 minutes are free. Sessions from ₹160 for 15 minutes.' },
     },
     {
       '@type': 'Question',
@@ -246,7 +246,7 @@ export default function EmotionalSupportHubPage() {
           <h2>Frequently Asked Questions</h2>
           {[
             { q:'What is emotional support?', a:'Emotional support means having someone listen, understand, and validate your feelings without judgment. Research shows it is one of the strongest predictors of mental wellbeing and recovery.' },
-            { q:'How do I get emotional support online in India?', a:'Sign up on LeanOn with your phone number (OTP, 30 seconds), browse verified peer listeners, and start a session instantly. First 5 minutes free. Sessions from ₹165 for 15 minutes.' },
+            { q:'How do I get emotional support online in India?', a:'Sign up on LeanOn with your phone number (OTP, 30 seconds), browse verified peer listeners, and start a session instantly. First 5 minutes free. Sessions from ₹160 for 15 minutes.' },
             { q:'Is peer emotional support different from therapy?', a:'Yes. Therapy is clinical — licensed professionals for diagnosis and treatment. Peer support is human — people who have lived through the same challenges. Both valuable, but for different needs.' },
             { q:'What topics does LeanOn cover?', a:'Loneliness, anxiety, burnout, grief, breakups, relationship stress, career confusion, student stress, startup challenges, and general emotional support.' },
             { q:'Is online emotional support anonymous?', a:'On LeanOn, you sign up with your phone and first name only. Full name never shared. Sessions private and confidential — ideal for joint families and privacy-sensitive situations.' },

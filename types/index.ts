@@ -83,12 +83,14 @@ export const SESSION_DURATIONS = [
   { mins: 30, label: '30 min', tag: 'Deep dive',   isFree: false },
 ] as const
 
-export const PLATFORM_FEE_RATE = 0.10  // 10%
-export const RAZORPAY_FEE_RATE = 0.02  // 2%
+// Flat ₹10 per session, paid by the seeker on top of the listener's rate.
+// Listeners keep 100% of their stated rate. Razorpay's gateway commission is
+// also borne by the seeker at recharge time. Keep in sync with lib/constants.ts.
+export const PLATFORM_FEE = 10
 
 export function calcSessionCost(ratePerMin: number, durationMins: number) {
   const base = ratePerMin * durationMins
-  const platformFee = Math.round(base * PLATFORM_FEE_RATE)
+  const platformFee = PLATFORM_FEE
   const total = base + platformFee
   return { base, platformFee, total }
 }

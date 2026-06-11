@@ -1,4 +1,9 @@
-export const PLATFORM_FEE       = 15   // flat ₹15 added on top of listener rate
+export const PLATFORM_FEE       = 10   // flat ₹10 per session added on top of listener rate (paid by seeker)
+// Razorpay gateway commission (2%) + 18% GST on the fee — borne by the seeker
+// at recharge time. The wallet is credited the selected tier; the gross charge
+// includes this fee.
+export const GATEWAY_FEE_RATE   = 0.0236
+export const grossRechargeAmount = (amount: number) => Math.ceil(amount * (1 + GATEWAY_FEE_RATE))
 export const MIN_LISTENER_RATE  = 1    // ₹/min (suggestion floor; no hard mandate)
 export const MAX_LISTENER_RATE  = 200  // ₹/min — matches DB CHECK constraint in migration 022
 export const FREE_SESSION_MINS  = 5

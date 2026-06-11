@@ -104,7 +104,7 @@ export default function PressPage() {
               ['Market', 'India — Bengaluru, Mumbai, Delhi, Chennai, Hyderabad and all cities'],
               ['Model', 'Pay-per-session wallet; listeners keep 100% of their rate'],
               ['Free trial', 'First 5 minutes completely free, no payment method required'],
-              ['Pricing', '₹165 for 15 min, ₹315 for 30 min (listener rate + ₹15 platform fee)'],
+              ['Pricing', '₹160 for 15 min, ₹310 for 30 min (listener rate + ₹10 platform fee)'],
               ['Technology', 'Next.js, Supabase, Agora (voice), Razorpay (payments)'],
               ['Languages', 'English + 11 Indian languages'],
               ['Crisis policy', 'NIMHANS (080-46110007) and Tele-MANAS (14416) surfaced in sessions'],

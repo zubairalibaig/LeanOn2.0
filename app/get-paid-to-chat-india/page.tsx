@@ -108,7 +108,7 @@ export default function GetPaidToChatIndia() {
         <div className="section">
           <h2>Earnings potential</h2>
           <p>At ₹10/min (a starting rate), a single 30-minute session earns you ₹300. Do 3 sessions a day and earn ₹900/day — ₹27,000/month, fully flexible. Many experienced listeners charge ₹20–25/min, earning ₹600 per 30-minute session.</p>
-          <p>You keep 100% of your rate. LeanOn charges seekers a flat ₹15 platform fee on top — this never comes out of your earnings. Payouts are processed via UPI within 3 business days.</p>
+          <p>You keep 100% of your rate. LeanOn charges seekers a flat ₹10 platform fee on top — this never comes out of your earnings. Payouts are processed via UPI within 3 business days.</p>
         </div>
 
         <div className="cta-box">

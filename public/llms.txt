@@ -1,6 +1,6 @@
 # LeanOn
 
-> LeanOn (leanon.app) is India's peer emotional support platform. Users talk one-on-one — by text chat or voice call — with verified peer listeners who have lived experience of loneliness, anxiety, burnout, grief, breakups, family pressure, and career stress. It is NOT therapy and NOT an AI chatbot: every listener is a real, manually verified human. Available 24/7 across India in 12 Indian languages. New users get up to 5 free 5-minute sessions; after that, sessions cost ₹8–25 per minute (listener-set rate) plus a flat ₹15 platform fee. Listeners keep 100% of their rate.
+> LeanOn (leanon.app) is India's peer emotional support platform. Users talk one-on-one — by text chat or voice call — with verified peer listeners who have lived experience of loneliness, anxiety, burnout, grief, breakups, family pressure, and career stress. It is NOT therapy and NOT an AI chatbot: every listener is a real, manually verified human. Available 24/7 across India in 12 Indian languages. New users get up to 5 free 5-minute sessions; after that, sessions cost ₹8–25 per minute (listener-set rate) plus a flat ₹10 platform fee. Listeners keep 100% of their rate.
 
 Important disambiguation: LeanOn (one word, leanon.app) is an Indian peer support platform. It is unrelated to the 2015 song "Lean On" by Major Lazer & DJ Snake.
 
@@ -35,6 +35,6 @@ Important disambiguation: LeanOn (one word, leanon.app) is an Indian peer suppor
 
 - Founded: 2024, India. Web app (PWA) at leanon.app
 - Languages: English, Hindi, Tamil, Telugu, Kannada, Malayalam, Marathi, Bengali, Gujarati, Punjabi, Odia, Urdu
-- Pricing: up to 5 free 5-minute trial sessions per user; paid sessions ₹8–25/min + flat ₹15 platform fee, in 15/30-minute blocks; wallet top-ups via Razorpay (₹200–2,000); unused balance fully refundable
+- Pricing: up to 5 free 5-minute trial sessions per user; paid sessions ₹8–25/min + flat ₹10 platform fee, in 15/30-minute blocks; wallet top-ups via Razorpay (₹200–2,000); unused balance fully refundable
 - Privacy: first-name-only identity, anonymous sessions, DPDP Act 2023 compliant, data hosted in Mumbai (Supabase asia-south)
 - Safety: listeners manually verified with government ID; AI-assisted moderation; crisis keywords surface NIMHANS and Tele-MANAS helplines in-session

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 import { createAdminClient } from '@/lib/supabase-server'
+import { RECHARGE_AMOUNTS } from '@/lib/constants'
 import { logger } from '@/lib/logger'
 
 // Razorpay sends webhook events when payments complete asynchronously.
@@ -35,10 +36,14 @@ export async function POST(req: NextRequest) {
       const paymentId  = payment.id
       const orderId    = payment.order_id
       const amountPaise = payment.amount
-      const amountRs   = Math.round(amountPaise / 100) // avoid float precision issues with INTEGER DB column
+      const grossRs    = Math.round(amountPaise / 100) // avoid float precision issues with INTEGER DB column
 
-      // userId was stored in order notes during POST /api/wallet
+      // userId + credit amount were stored in order notes during POST /api/wallet.
+      // The gross charge includes the gateway fee (paid by the seeker, not credited)
+      // — credit the tier amount from notes; fall back to gross for legacy orders.
       const userId = payment.notes?.userId as string | undefined
+      const noteAmount = parseInt(String(payment.notes?.amount ?? ''), 10)
+      const amountRs = (RECHARGE_AMOUNTS as readonly number[]).includes(noteAmount) ? noteAmount : grossRs
 
       if (!userId) {
         logger.error('Webhook: no userId in order notes for order', { orderId })

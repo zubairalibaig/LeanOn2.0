@@ -72,7 +72,7 @@ export default function WhyLeanOnPage() {
             <h3>LeanOn Peer Support</h3>
             <ul>
               <li>Available 24/7 — even at 2 AM</li>
-              <li>First 5 minutes free, then ₹165 for 15 min</li>
+              <li>First 5 minutes free, then ₹160 for 15 min</li>
               <li>No appointment needed</li>
               <li>Completely anonymous</li>
               <li>Real humans with lived experience</li>

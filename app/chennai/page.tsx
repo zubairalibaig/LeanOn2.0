@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'How much does a session cost in Chennai?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'The same as everywhere in India: new users get up to 5 free 5-minute sessions, and paid sessions cost ₹8–25 per minute (set by each listener) plus a flat ₹15 platform fee — far more affordable than therapy in Chennai, which typically runs ₹1,500–3,500 per session.',
+        text: 'The same as everywhere in India: new users get up to 5 free 5-minute sessions, and paid sessions cost ₹8–25 per minute (set by each listener) plus a flat ₹10 platform fee — far more affordable than therapy in Chennai, which typically runs ₹1,500–3,500 per session.',
       },
     },
   ],
@@ -195,7 +195,7 @@ export default function ChennaiPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does a session cost in Chennai?</div>
-            <div className="faq-a">Same as everywhere in India: up to 5 free 5-minute sessions for new users, then ₹8–25 per minute (set by each listener) plus a flat ₹15 platform fee — far more affordable than therapy in Chennai, which typically costs ₹1,500–3,500 per session.</div>
+            <div className="faq-a">Same as everywhere in India: up to 5 free 5-minute sessions for new users, then ₹8–25 per minute (set by each listener) plus a flat ₹10 platform fee — far more affordable than therapy in Chennai, which typically costs ₹1,500–3,500 per session.</div>
           </div>
         </div>
 

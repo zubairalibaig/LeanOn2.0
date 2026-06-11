@@ -56,7 +56,7 @@ const faqSchema = {
       name: 'How much does LeanOn peer support cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn starts at ₹165 for a 15-minute session, with the first 5 minutes free so you can find the right listener before committing. It is significantly more affordable than therapy and available any time — including late nights when loneliness tends to peak.',
+        text: 'LeanOn starts at ₹160 for a 15-minute session, with the first 5 minutes free so you can find the right listener before committing. It is significantly more affordable than therapy and available any time — including late nights when loneliness tends to peak.',
       },
     },
   ],
@@ -253,7 +253,7 @@ export default function LonelinessSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does LeanOn peer support cost?</div>
-            <div className="faq-a">LeanOn starts at ₹165 for a 15-minute session, with the first 5 minutes free. It is significantly more affordable than therapy and available any time — including late nights when loneliness tends to peak.</div>
+            <div className="faq-a">LeanOn starts at ₹160 for a 15-minute session, with the first 5 minutes free. It is significantly more affordable than therapy and available any time — including late nights when loneliness tends to peak.</div>
           </div>
         </div>
 

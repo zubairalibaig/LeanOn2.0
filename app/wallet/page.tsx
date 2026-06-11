@@ -144,17 +144,17 @@ export default function WalletPage() {
         setLoading(false)
         return
       }
-      const { orderId } = await res.json()
+      const { orderId, amount: orderAmountPaise } = await res.json()
       if (!orderId) {
         showToast('Could not start payment. Please try again.', 'error')
         setLoading(false)
         return
       }
 
-      // Open Razorpay checkout
+      // Open Razorpay checkout — order amount includes the gateway fee
       const rzp = new window.Razorpay({
         key:         process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount:      selected * 100,
+        amount:      orderAmountPaise ?? selected * 100,
         currency:    'INR',
         name:        'LeanOn',
         description: 'Wallet recharge',
@@ -244,7 +244,7 @@ export default function WalletPage() {
                 </button>
               ))}
             </div>
-            <p style={{fontSize:13,color:'var(--gray)'}}>₹165 for 15 min · ₹295 for 30 min · ₹395 for 45 min</p>
+            <p style={{fontSize:13,color:'var(--gray)'}}>₹160 for 15 min · ₹310 for 30 min · ₹460 for 45 min</p>
           </div>
         )}
 
@@ -261,7 +261,7 @@ export default function WalletPage() {
 
         <div className="note">
           <span>🔄</span>
-          <span>Unused balance is fully refundable anytime. No expiry. Your money is safe.</span>
+          <span>Unused balance is fully refundable anytime. No expiry. Your money is safe. A small payment-gateway fee is added at checkout.</span>
         </div>
 
         {paymentPending && (

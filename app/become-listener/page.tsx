@@ -206,7 +206,7 @@ export default function BecomeListenerPage() {
   const earn15      = rateNum * 15
   const earn30      = rateNum * 30
   const earn45      = rateNum * 45
-  const platformFee = PLATFORM_FEE  // flat ₹15 added to every session (paid by seeker)
+  const platformFee = PLATFORM_FEE  // flat ₹10 added to every session (paid by seeker)
   const userPays15  = earn15 + platformFee
   const userPays30  = earn30 + platformFee
   const userPays45  = earn45 + platformFee

@@ -61,7 +61,7 @@ export default function LeanOnAppMentalHealth() {
         <div className="section">
           <h2>Why LeanOn works for mental health in India</h2>
           <p>India faces a severe mental health crisis. 1 in 7 Indians experiences a mental health condition, yet fewer than 1% receive any form of support. The reasons? Stigma, cost, availability, and cultural barriers.</p>
-          <p>LeanOn addresses all of these. Sign up anonymously with just your phone number. Pay from ₹165 for a 15-minute session — a fraction of therapy costs. Available even at 2 AM when mental health struggles are often worst. Accessible in English and 11 Indian languages.</p>
+          <p>LeanOn addresses all of these. Sign up anonymously with just your phone number. Pay from ₹160 for a 15-minute session — a fraction of therapy costs. Available even at 2 AM when mental health struggles are often worst. Accessible in English and 11 Indian languages.</p>
           <p>It&apos;s not a replacement for professional mental health care — and we&apos;re honest about that. But for the millions of Indians who need someone to talk to right now, LeanOn fills a gap that nothing else does.</p>
         </div>
 

@@ -210,7 +210,7 @@ export default function SomeoneToTalkToPage() {
           <p>A therapist is a licensed professional who works within a clinical framework — diagnosing conditions, applying evidence-based interventions, and tracking therapeutic progress over time. That structure is exactly right for people who need clinical care. But many people do not need treatment. They need to be heard by someone who has been through something similar and come out the other side.</p>
 
           <h3>Accessibility and Affordability</h3>
-          <p>Therapy in Indian metro cities typically costs ₹1,500–₹3,000 per session, with waiting lists at good practices stretching weeks. LeanOn peer support starts at ₹165 for 15 minutes, with the first 5 minutes free. It is available right now — at midnight, on a Sunday, during a lunch break — whenever you need it most.</p>
+          <p>Therapy in Indian metro cities typically costs ₹1,500–₹3,000 per session, with waiting lists at good practices stretching weeks. LeanOn peer support starts at ₹160 for 15 minutes, with the first 5 minutes free. It is available right now — at midnight, on a Sunday, during a lunch break — whenever you need it most.</p>
 
           <h3>Complementary, Not Competing</h3>
           <p>Many people use peer support alongside therapy — as a way to process between clinical sessions, access support when a therapist is not available, or take a meaningful first step before they are ready for formal treatment. LeanOn listeners are trained to recognise when someone might benefit from professional care and will gently say so when that appears to be the case.</p>

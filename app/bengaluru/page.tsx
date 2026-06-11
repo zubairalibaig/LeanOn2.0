@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'Is LeanOn peer support different from therapy or counselling?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn is peer support, not therapy. Our listeners are trained peers who have lived through the experiences they support — they are not licensed therapists. This makes it more accessible, more affordable (starting at ₹165 for 15 minutes), and available 24/7. For clinical mental health concerns, we always recommend professional help. For the day-to-day weight of modern Bengaluru life, peer support is often exactly what is needed.',
+        text: 'Yes. LeanOn is peer support, not therapy. Our listeners are trained peers who have lived through the experiences they support — they are not licensed therapists. This makes it more accessible, more affordable (starting at ₹160 for 15 minutes), and available 24/7. For clinical mental health concerns, we always recommend professional help. For the day-to-day weight of modern Bengaluru life, peer support is often exactly what is needed.',
       },
     },
   ],
@@ -195,7 +195,7 @@ export default function BengaluruPage() {
           <p>Start by browsing listener profiles at <a href="/browse?city=bengaluru" style={{color:'var(--teal)',fontWeight:700}}>leanon.app/browse</a>. You can filter by topic — loneliness, startup burnout, career confusion, relationships — and read about each listener's personal background before you begin. No cold starts. No awkward first minutes wondering if this person gets it.</p>
 
           <h3>First 5 Minutes Free</h3>
-          <p>Every session starts with a free five-minute window. Use it to gauge the connection before committing. If it feels right, continue. If not, find another listener. Sessions start at ₹165 for 15 minutes — significantly more accessible than therapy and available any time, including late nights when the weight feels heaviest.</p>
+          <p>Every session starts with a free five-minute window. Use it to gauge the connection before committing. If it feels right, continue. If not, find another listener. Sessions start at ₹160 for 15 minutes — significantly more accessible than therapy and available any time, including late nights when the weight feels heaviest.</p>
 
           <h3>Available When You Need It Most</h3>
           <p>Loneliness and burnout do not keep business hours. LeanOn listeners are available around the clock, including midnight on a Tuesday when you are staring at the ceiling in your Koramangala flat wondering if any of this is worth it.</p>
@@ -283,7 +283,7 @@ export default function BengaluruPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn peer support different from therapy or counselling?</div>
-            <div className="faq-a">Yes. LeanOn is peer support, not therapy. Our listeners are trained peers who have lived through the experiences they support — not licensed therapists. This makes it more accessible, more affordable (starting at ₹165 for 15 minutes), and available 24/7. For clinical mental health concerns, we always recommend professional help. For the day-to-day weight of Bengaluru life, peer support is often exactly what is needed.</div>
+            <div className="faq-a">Yes. LeanOn is peer support, not therapy. Our listeners are trained peers who have lived through the experiences they support — not licensed therapists. This makes it more accessible, more affordable (starting at ₹160 for 15 minutes), and available 24/7. For clinical mental health concerns, we always recommend professional help. For the day-to-day weight of Bengaluru life, peer support is often exactly what is needed.</div>
           </div>
         </div>
 
