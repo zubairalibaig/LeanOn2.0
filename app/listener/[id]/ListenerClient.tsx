@@ -102,23 +102,23 @@ export default function ListenerClient({ id }: { id: string }) {
   const [bookError, setBookError] = useState<string | null>(null)
 
   useEffect(() => {
-    client.from('listener_profiles')
-      .select('*, users!inner(name, avatar_url)')
-      .eq('user_id', id)
-      .eq('is_approved', true)
-      .eq('is_active', true)
-      .single()
-      .then(({data, error}) => {
-        if (data) {
+    // Fetch via API route (admin client server-side) — avoids the
+    // users!inner join failing due to RLS drift on users_select_listener_public
+    fetch(`/api/listener/${id}`)
+      .then(r => r.json())
+      .then(json => {
+        if (json.profile) {
+          const lp = json.profile
           setListener({
-            ...data,
-            name: (data.users as {name:string}|null)?.name || 'Listener',
-            avatar_url: (data.users as {avatar_url?:string}|null)?.avatar_url,
+            ...lp,
+            name: (lp.users as {name:string}|null)?.name || 'Listener',
+            avatar_url: (lp.users as {avatar_url?:string}|null)?.avatar_url,
           })
-        } else if (error) {
+        } else {
           setNotFound(true)
         }
       })
+      .catch(() => setNotFound(true))
 
     client.from('sessions')
       .select('seeker_rating, seeker_review, users!seeker_id(name)')
