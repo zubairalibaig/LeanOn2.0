@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
+import { showToast } from '@/lib/toast'
 const S = `
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -10,7 +11,7 @@ const S = `
   body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:antialiased;
     background:radial-gradient(ellipse 90% 55% at 0% 0%, #C2E4F2 0%, #DAEEF8 22%, #FFFFFF 58%) fixed;}
   a{text-decoration:none;color:inherit;}
-  .page{max-width:460px;margin:0 auto;padding:0 20px 88px;}
+  .page{max-width:480px;margin:0 auto;padding:0 20px 88px;}
   .topbar{display:flex;align-items:center;gap:12px;padding:16px 0 20px;}
   .back{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,0.8);border:1.5px solid var(--border);cursor:pointer;font-size:18px;color:var(--navy);display:flex;align-items:center;justify-content:center;}
   h1{font-size:22px;font-weight:900;color:var(--navy);}
@@ -118,15 +119,15 @@ export default function WalletPage() {
     const res = await fetch('/api/refund', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) })
     const data = await res.json()
     setRefunding(false)
-    if (!res.ok) { alert(data.error || 'Could not submit refund request.'); return }
-    alert(`Refund request for ₹${balance} submitted! You'll receive it in 3–5 business days.`)
+    if (!res.ok) { showToast(data.error || 'Could not submit refund request.', 'error'); return }
+    showToast(`Refund request for ₹${balance} submitted! You'll receive it in 3–5 business days.`, 'success')
   }
 
   async function handleRecharge() {
     if (!userId) return
     // Guard: Razorpay script must be loaded before we construct the checkout
     if (typeof window === 'undefined' || !window.Razorpay) {
-      alert('Payment is still loading. Please wait a moment and try again.')
+      showToast('Payment is still loading. Please wait a moment and try again.', 'warning')
       return
     }
     setLoading(true)
@@ -139,13 +140,13 @@ export default function WalletPage() {
       })
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
-        alert(err.error || 'Could not start payment. Please try again.')
+        showToast(err.error || 'Could not start payment. Please try again.', 'error')
         setLoading(false)
         return
       }
       const { orderId } = await res.json()
       if (!orderId) {
-        alert('Could not start payment. Please try again.')
+        showToast('Could not start payment. Please try again.', 'error')
         setLoading(false)
         return
       }
@@ -163,6 +164,8 @@ export default function WalletPage() {
         handler: async (response: RazorpayResponse) => {
           // Show pending state immediately — webhook may arrive before PUT resolves
           setPaymentPending(true)
+          // Auto-reset pending state after 30s in case handler never fires (network drop)
+          const resetTimer = setTimeout(() => setPaymentPending(false), 30_000)
           // Verify and credit wallet — userId derived server-side from session cookie
           const res = await fetch('/api/wallet', {
             method: 'PUT',
@@ -174,19 +177,20 @@ export default function WalletPage() {
               amount: selected,
             }),
           })
+          clearTimeout(resetTimer)
           setPaymentPending(false)
           if (res.ok) {
             await loadUserData()
-            alert(`₹${selected} added to your wallet!`)
+            showToast(`₹${selected} added to your wallet!`, 'success')
           } else {
             const data = await res.json()
-            alert(data.error || 'Payment verification failed. Contact support.')
+            showToast(data.error || 'Payment verification failed. Contact support.', 'error')
           }
         },
       })
       rzp.open()
     } catch {
-      alert('Payment failed. Please try again.')
+      showToast('Payment failed. Please try again.', 'error')
     }
     setLoading(false)
   }

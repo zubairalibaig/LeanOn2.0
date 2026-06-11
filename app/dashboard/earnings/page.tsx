@@ -115,7 +115,7 @@ export default function EarningsPage() {
         body: JSON.stringify({ upi_id: upiId }),
       })
       const json = await res.json()
-      if (!res.ok) { showToastMsg(json.error || 'Failed to submit'); return }
+      if (!res.ok) { showToastMsg(json.message || json.error || 'Failed to submit payout'); return }
       setShowModal(false)
       showToastMsg('Payout request submitted!')
       setPayouts(prev => [{ id: 'new', amount: available, status: 'pending', upi_id: upiId, requested_at: new Date().toISOString() }, ...prev])

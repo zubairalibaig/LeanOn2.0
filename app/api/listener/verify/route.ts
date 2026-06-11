@@ -76,7 +76,7 @@ export async function GET() {
   const { data } = await sb.from('listener_verifications')
     .select('status, id_type, submitted_at, reviewed_at, admin_notes')
     .eq('listener_id', user.id)
-    .single()
+    .maybeSingle()
 
   return NextResponse.json({ verification: data ?? null })
 }

@@ -23,6 +23,7 @@ type ListenerRow = {
 type SessionRow = {
   id: string; seeker_id: string; listener_id: string; session_type: string; duration_mins: number
   amount_held: number; status: string; is_free_trial: boolean; started_at: string | null; ended_at?: string | null
+  crisis_flagged?: boolean; crisis_flagged_at?: string | null
   seeker?: { name?: string }; listener?: { name?: string }
 }
 type ReportRow = {
@@ -1107,7 +1108,7 @@ export default function AdminPage() {
                   </thead>
                   <tbody>
                     {sessions.map((s: SessionRow) => (
-                      <tr key={s.id}>
+                      <tr key={s.id} style={s.crisis_flagged ? { background: '#FFF0F0' } : undefined}>
                         <td style={{ color: 'var(--gray)', fontSize: 12 }}>{fmtDate(s.started_at)}</td>
                         <td>{s.seeker?.name || s.seeker_id.slice(0, 8) + '…'}</td>
                         <td>{s.listener?.name || s.listener_id.slice(0, 8) + '…'}</td>
@@ -1115,6 +1116,7 @@ export default function AdminPage() {
                         <td>{s.duration_mins} min</td>
                         <td>{s.is_free_trial ? <span className="badge badge-gray">Free</span> : `₹${s.amount_held}`}</td>
                         <td>
+                          {s.crisis_flagged && <span className="badge badge-red" style={{ marginRight: 4 }}>⚠️ Crisis</span>}
                           {s.status === 'active'
                             ? <span className="badge badge-teal">Active</span>
                             : s.status === 'completed'
@@ -1288,13 +1290,13 @@ export default function AdminPage() {
               {verifs.length > 0 && <span className="count-badge">{verifs.length}</span>}
             </div>
             <div className="filter-row">
-              {(['pending', 'approved', 'rejected'] as const).map(s => (
+              {(['pending', 'approved', 'rejected', 'needs_resubmission'] as const).map(s => (
                 <button
                   key={s}
                   className={`filter-btn${verifsStatus === s ? ' active' : ''}`}
                   onClick={() => { setVerifsStatus(s); loadVerifs(s) }}
                 >
-                  {s.charAt(0).toUpperCase() + s.slice(1)}
+                  {s === 'needs_resubmission' ? 'Needs Resubmission' : s.charAt(0).toUpperCase() + s.slice(1)}
                 </button>
               ))}
             </div>

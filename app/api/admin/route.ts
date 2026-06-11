@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
-import { requireAdmin } from '@/lib/require-admin'
+import { requireAdmin, ADMIN_PASSWORD_USER_ID } from '@/lib/require-admin'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -62,7 +62,11 @@ export async function GET(req: NextRequest) {
 }
 
 async function auditLog(admin: ReturnType<typeof createAdminClient>, adminId: string, action: string, targetId: string) {
-  try { await admin.from('admin_audit_logs').insert({ admin_id: adminId, action, target_id: targetId }) } catch {}
+  // Use null for synthetic password-admin ID — admin_audit_logs.admin_id has no FK after migration 030
+  const dbId = adminId === ADMIN_PASSWORD_USER_ID ? null : adminId
+  try { await admin.from('admin_audit_logs').insert({ admin_id: dbId, action, target_id: targetId }) } catch (err) {
+    logger.warn('auditLog failed (audit trail gap):', { adminId, action, targetId, error: String(err) })
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -72,13 +76,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 
-  let body: { action?: string; id?: string }
+  let body: { action?: string; id?: string; notes?: string }
   try {
     body = await req.json()
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
-  const { action, id } = body
+  const { action, id, notes } = body
 
   if (!action || !id) {
     return NextResponse.json({ error: 'Missing action or id' }, { status: 400 })
@@ -120,6 +124,10 @@ export async function POST(req: NextRequest) {
   if (action === 'reject_listener') {
     const { error: err } = await admin.from('listener_applications').update({ status: 'rejected' }).eq('user_id', id)
     if (err) { logger.error('admin reject_listener failed:', { error: err.message }); return NextResponse.json({ error: 'Server error' }, { status: 500 }) }
+    if (notes) {
+      await admin.from('listener_applications').update({ admin_notes: notes }).eq('user_id', id)
+        .then(() => {}, (e) => logger.warn('admin reject_listener: admin_notes update failed:', { id, error: String(e) }))
+    }
     await auditLog(admin, user!.id, 'reject_listener', id)
     return NextResponse.json({ ok: true })
   }

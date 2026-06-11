@@ -10,8 +10,12 @@ const PAGE_SIZE = 25
 // GET — list users or listeners with pagination + filter
 // Query params: ?type=user|listener&status=active|inactive|suspended|pending&page=0&search=
 export async function GET(req: NextRequest) {
-  const { error, code, status } = await requireAdmin(req)
+  const { error, code, status, user: adminUser } = await requireAdmin(req)
   if (error) return NextResponse.json({ error, code }, { status })
+  const { checkRateLimit } = await import('@/lib/rate-limit')
+  if (!checkRateLimit(`admin:${adminUser!.id}`, 30, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
 
   const sb = createAdminClient()
   const url = new URL(req.url)

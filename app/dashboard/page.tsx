@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE, PLATFORM_FEE } from '@/lib/constants'
+import { showToast } from '@/lib/toast'
 
 let _sb: ReturnType<typeof createBrowserClient> | null = null
 function initSb() {
@@ -176,7 +177,7 @@ export default function DashboardPage() {
   const [loadError, setLoadError] = useState<string | null>(null)
   const [payoutLoading, setPayoutLoading] = useState(false)
   const [incomingSession, setIncomingSession] = useState<IncomingSession | null>(null)
-  const [countdown, setCountdown] = useState(30)
+  const [countdown, setCountdown] = useState(60)
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const channelRef   = useRef<ReturnType<typeof sb.channel> | null>(null)
 
@@ -190,6 +191,7 @@ export default function DashboardPage() {
   const [uploadingAv, setUploadingAv] = useState(false)
   const [savingEdit, setSavingEdit]   = useState(false)
   const [deactivating, setDeactivating] = useState(false)
+  const [showDeactivateConfirm, setShowDeactivateConfirm] = useState(false)
 
   useEffect(() => { loadData() }, [])
 
@@ -212,7 +214,7 @@ export default function DashboardPage() {
   }, [user])
 
   function startCountdown(onExpire: () => void) {
-    setCountdown(30)
+    setCountdown(60)
     if (countdownRef.current) clearInterval(countdownRef.current)
     countdownRef.current = setInterval(() => {
       setCountdown(prev => {
@@ -306,7 +308,7 @@ export default function DashboardPage() {
     if (!res?.ok) {
       setAvail(prev) // revert on failure
       const body = await res?.json().catch(() => ({}))
-      alert(body?.error || 'Could not update availability. Please try again.')
+      showToast(body?.error || 'Could not update availability. Please try again.', 'error')
     } else {
       const data = await res.json().catch(() => ({}))
       if (typeof data.is_available === 'boolean') setAvail(data.is_available)
@@ -318,23 +320,22 @@ export default function DashboardPage() {
     setPayoutLoading(true)
     const res = await fetch('/api/payout', { method: 'POST' }).catch(() => null)
     setPayoutLoading(false)
-    if (!res) { alert('Network error. Please try again.'); return }
+    if (!res) { showToast('Network error. Please try again.', 'error'); return }
     const body = await res.json().catch(() => ({}))
-    if (res.status === 409) { alert('You already have a pending payout request. Please wait for it to be processed.'); return }
-    if (!res.ok) { alert(body.message || body.error || 'Failed to submit payout. Please try again.'); return }
-    alert(`Payout request submitted! ₹${body.amount} will be transferred to your bank within 3 business days.`)
+    if (res.status === 409) { showToast('You already have a pending payout request.', 'warning'); return }
+    if (!res.ok) { showToast(body.message || body.error || 'Failed to submit payout. Please try again.', 'error'); return }
+    showToast(`Payout request submitted! ₹${body.amount} will be transferred within 3 business days.`, 'success')
   }
 
   async function deactivateListenerProfile() {
-    if (!confirm('This will deactivate your listener profile. You will no longer appear in search or receive sessions. Your user account stays active. Continue?')) return
     setDeactivating(true)
     const res = await fetch('/api/account', { method: 'PATCH' })
     setDeactivating(false)
     if (res.ok) {
-      alert('Listener profile deactivated. Contact support to reactivate.')
+      showToast('Listener profile deactivated. Contact support to reactivate.', 'info')
       router.push('/browse')
     } else {
-      alert('Something went wrong. Please try again.')
+      showToast('Something went wrong. Please try again.', 'error')
     }
   }
 
@@ -484,7 +485,7 @@ export default function DashboardPage() {
             <div className="modal-title2">New session request!</div>
             <div className="modal-sub">Someone wants to connect with you right now.</div>
             <div className="countdown-bar">
-              <div className="countdown-fill" style={{ width: `${(countdown / 30) * 100}%` }} />
+              <div className="countdown-fill" style={{ width: `${(countdown / 60) * 100}%` }} />
             </div>
             <div className="modal-detail">
               <div className="modal-detail-item">
@@ -706,12 +707,26 @@ export default function DashboardPage() {
             <button className="btn-edit" onClick={openEdit}>✏️ Edit profile</button>
             <button className="btn-share" onClick={() => {
               navigator.clipboard?.writeText(`${window.location.origin}/listener/${user?.id}`)
-              alert('Profile link copied!')
+              showToast('Profile link copied!', 'success')
             }}>🔗 Share profile</button>
           </div>
-          <button className="btn-deactivate" onClick={deactivateListenerProfile} disabled={deactivating}>
-            {deactivating ? '⟳ Deactivating...' : '⚠️ Deactivate listener profile'}
-          </button>
+          {showDeactivateConfirm ? (
+            <div style={{background:'#FFF5F5',border:'1.5px solid #FFCDD2',borderRadius:12,padding:'14px 16px',marginTop:10}}>
+              <p style={{fontSize:13,color:'#7A2020',fontWeight:700,marginBottom:12}}>This will remove you from search and stop incoming sessions. Your account stays active.</p>
+              <div style={{display:'flex',gap:8}}>
+                <button className="btn-deactivate" style={{flex:1,marginTop:0}} onClick={deactivateListenerProfile} disabled={deactivating}>
+                  {deactivating ? '⟳ Deactivating...' : 'Yes, deactivate'}
+                </button>
+                <button style={{flex:1,padding:10,background:'white',border:'1.5px solid var(--border)',borderRadius:10,fontFamily:'Nunito,sans-serif',fontWeight:700,fontSize:12,cursor:'pointer',color:'var(--navy)'}} onClick={() => setShowDeactivateConfirm(false)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button className="btn-deactivate" onClick={() => setShowDeactivateConfirm(true)} disabled={deactivating}>
+              ⚠️ Deactivate listener profile
+            </button>
+          )}
         </div>
 
         {sessions.length > 0 && (

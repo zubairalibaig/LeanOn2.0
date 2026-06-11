@@ -413,7 +413,7 @@ export default function BecomeListenerPage() {
           <div className="success-icon">🎉</div>
           <h2>Application submitted!</h2>
           <p>We&apos;ll review your profile within 24 hours and notify you on {phone}. Once approved, you&apos;ll go live and start earning.</p>
-          <a href="/"><button className="btn" style={{marginTop:28}}>Back to home</button></a>
+          <a href="/become-listener/status"><button className="btn" style={{marginTop:28}}>Check application status →</button></a>
         </div>
       </div>
     </>

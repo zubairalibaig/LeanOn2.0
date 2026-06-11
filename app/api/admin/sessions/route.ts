@@ -1,13 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 import { requireAdmin } from '@/lib/require-admin'
 
 
 // GET /api/admin/sessions — list recent sessions with optional status filter
 export async function GET(req: NextRequest) {
-  const { error, code, status } = await requireAdmin(req)
+  const { error, code, status, user } = await requireAdmin(req)
   if (error) return NextResponse.json({ error, code }, { status })
+  if (!checkRateLimit(`admin:${user!.id}`, 30, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
 
   try {
     const sb = createAdminClient()
@@ -20,6 +24,7 @@ export async function GET(req: NextRequest) {
       .select(`
         id, seeker_id, listener_id, session_type, duration_mins,
         amount_held, status, is_free_trial, started_at, ended_at, platform_fee,
+        crisis_flagged, crisis_flagged_at,
         seeker:users!seeker_id(name),
         listener:users!listener_id(name)
       `, { count: 'exact' })
