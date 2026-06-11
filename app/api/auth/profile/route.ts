@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
+import { ensureUserRow } from '@/lib/ensure-user-row'
 import { logger } from '@/lib/logger'
 
 // POST — create/update the caller's public.users row.
@@ -49,31 +50,21 @@ export async function POST(req: NextRequest) {
     const admin = createAdminClient()
     // Only ever set non-privileged columns. is_admin / role / wallet_balance
     // are intentionally omitted so they keep their safe defaults (insert) or
-    // existing values (update) — the admin client would otherwise be able to
-    // write them, and we must not let a name-save touch them.
-    const { error: upsertErr } = await admin
-      .from('users')
-      .upsert(
-        { id: user.id, name: rawName, phone, is_active: true },
-        { onConflict: 'id' }
-      )
+    // existing values (update). ensureUserRow also reconciles the
+    // users_phone_key constraint: a stale row holding this (OTP-verified)
+    // phone gets its phone released, since auth guarantees one auth user
+    // per phone and the caller just proved ownership.
+    const { error: saveErr, debug } = await ensureUserRow(admin, {
+      id: user.id,
+      name: rawName,
+      phone,
+      phoneVerified: !!user.phone,
+    })
 
-    if (upsertErr) {
-      const code = (upsertErr as { code?: string }).code ?? null
-      const details = (upsertErr as { details?: string }).details ?? null
-      const hint = (upsertErr as { hint?: string }).hint ?? null
-      logger.error('profile upsert (admin) failed:', {
-        userId: user.id, error: upsertErr.message, details, hint, code,
-      })
-      // TEMP DIAGNOSTIC: include the real DB error so the cause is visible
-      // on-screen during launch testing. Remove the `debug` field afterwards.
-      return NextResponse.json(
-        {
-          error: 'Could not save your profile. Please try again.',
-          debug: `[${code ?? 'no-code'}] ${upsertErr.message}${details ? ' | ' + details : ''}${hint ? ' | hint: ' + hint : ''}`,
-        },
-        { status: 500 }
-      )
+    if (saveErr) {
+      // TEMP DIAGNOSTIC: `debug` carries the real DB error during launch
+      // testing. Remove once flows are confirmed live.
+      return NextResponse.json({ error: saveErr, debug }, { status: 500 })
     }
 
     return NextResponse.json({ success: true })

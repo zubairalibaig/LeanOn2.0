@@ -322,61 +322,36 @@ export default function BecomeListenerPage() {
         return
       }
 
-      // Upsert public.users FIRST — listener_profiles has a FK to users(id).
-      // Phone-only users aren't created by the DB trigger, so we must create
-      // the row here before inserting any child records.
-      const { error: userErr } = await sb.from('users').upsert({
-        id:        user.id,
-        name:      name.trim(),
-        phone:     user.phone ?? ('+91' + phone.replace(/\D/g, '').slice(-10)),
-        is_active: true,
-      }, { onConflict: 'id' })
-      if (userErr) throw userErr
-
-      const { error: profileErr } = await sb.from('listener_profiles').upsert({
-        user_id:          user.id,
-        bio:              bio.trim(),
-        specialty_tags:   tags,
-        languages_spoken: langs,
-        rate_per_min:     rateNum,
-        // is_approved intentionally omitted — DB DEFAULT false on INSERT;
-        // on UPDATE (resubmission) the existing approval status is preserved.
-        is_available:     false,
-      }, { onConflict: 'user_id' })
-      if (profileErr) throw profileErr
-
-      // Upsert application details WITH status:'pending' — a rejected applicant
-      // resubmitting must land back in the admin review queue. The DB guard
-      // trigger (migration 031) only permits rejected/needs_resubmission →
-      // pending for normal users, so an approved application can't be reset.
-      // Approved listeners never reach this code anyway (alreadyRegistered guard).
-      let appErr = (await sb.from('listener_applications').upsert({
-        user_id:      user.id,
-        name:         name.trim(),
-        phone:        phone.trim(),
-        bank_account: bank.trim(),
-        ifsc_code:    ifsc.trim().toUpperCase(),
-        upi_id:       upi.trim() || null,
-        status:       'pending',
-      }, { onConflict: 'user_id' })).error
-
-      if (appErr?.message?.includes('upi_id')) {
-        // Column not yet in DB — retry without it (pre-migration 022)
-        appErr = (await sb.from('listener_applications').upsert({
-          user_id:      user.id,
-          name:         name.trim(),
-          phone:        phone.trim(),
-          bank_account: bank.trim(),
-          ifsc_code:    ifsc.trim().toUpperCase(),
-          status:       'pending',
-        }, { onConflict: 'user_id' })).error
+      // All three writes (users row, listener profile, application) happen
+      // server-side with the service-role client — browser RLS writes into
+      // these tables proved fragile (policy/trigger/constraint drift broke
+      // every submission). See /api/listener/apply.
+      const res = await fetch('/api/listener/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name:  name.trim(),
+          phone: phone.trim(),
+          bio:   bio.trim(),
+          tags,
+          langs,
+          rate:  rateNum,
+          bank:  bank.trim(),
+          ifsc:  ifsc.trim().toUpperCase(),
+          upi:   upi.trim(),
+        }),
+      })
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}))
+        const msg = json.debug ? `${json.error || 'Submission failed.'} — ${json.debug}` : (json.error || `Submission failed (HTTP ${res.status}).`)
+        setError(`${msg} Please try again or contact support.`)
+        return
       }
-      if (appErr) throw appErr
 
       setDone(true)
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err)
-      setError(`Submission failed: ${msg}. Please try again or contact support.`)
+      const msg = err instanceof Error ? err.message : 'Network error'
+      setError(`Submission failed: ${msg}. Please check your connection and try again.`)
       console.error('Listener application error:', err)
     } finally {
       setLoading(false)
