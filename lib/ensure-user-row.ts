@@ -38,11 +38,24 @@ export async function ensureUserRow(
   if (phoneConflict && phone) {
     if (phoneVerified) {
       // OTP proved current ownership — release the phone from the stale row.
-      const { error: clearErr } = await admin
+      // Try NULL first; the live DB may have a NOT NULL on phone (schema
+      // drift), in which case park a unique placeholder instead.
+      let { error: clearErr } = await admin
         .from('users')
         .update({ phone: null })
         .eq('phone', phone)
         .neq('id', id)
+      if (clearErr && clearErr.code === '23502') {
+        const { data: staleRows } = await admin
+          .from('users').select('id').eq('phone', phone).neq('id', id)
+        for (const stale of staleRows ?? []) {
+          ;({ error: clearErr } = await admin
+            .from('users')
+            .update({ phone: `released-${stale.id}` })
+            .eq('id', stale.id))
+          if (clearErr) break
+        }
+      }
       if (clearErr) {
         logger.error('ensureUserRow: failed to clear stale phone', { phone, error: clearErr.message })
         return { error: 'Could not save your profile. Please try again.', debug: fmt(clearErr) }
