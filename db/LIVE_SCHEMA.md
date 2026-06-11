@@ -27,13 +27,15 @@ Supabase dashboard (columns, constraints, policies, triggers, auth settings).
 | 2026-06-11 | `sessions_duration_mins_check` only allowed 5/15/30 | Migration 034 adds 45 — **confirmed in snapshot** |
 | 2026-06-11 | `public.users.id` has NO FK to `auth.users` (schema file says CASCADE) | Orphan rows possible — `ensureUserRow` reconciles |
 | 2026-06-11 | `users_select_listener_public` policy missing | Re-asserted via migration 035 — **confirmed in snapshot** |
+| 2026-06-11 | `wallet_txn_payment_id_unique` index missing | Added manually in SQL Editor — **confirmed in snapshot** |
+| 2026-06-11 | `admin_audit_logs.admin_id` was NOT NULL (migration 030 intended nullable) | NOT NULL dropped manually in SQL Editor — **confirmed in snapshot** |
 
 ## Code-vs-DB issues found in validation (2026-06-11)
 
 | Severity | Issue | File | Status |
 |---|---|---|---|
-| 🔴 HIGH | `wallet_txn_payment_id_unique` partial index is **MISSING** — `credit_wallet_idempotent` uses `ON CONFLICT (reference_id) WHERE reference_id IS NOT NULL` but no such index exists; double-credits are possible on network retries | `app/api/wallet/route.ts`, Supabase RPC | **Not fixed — run migration to add index** |
-| 🔴 HIGH | `admin_audit_logs.admin_id` is `NOT NULL` — password-auth admin (`ADMIN_SECRET`) maps to `null` via `dbUserIdOrNull()`; audit log INSERT silently fails (best-effort) for every admin action | `lib/require-admin.ts`, `app/api/admin/users/route.ts` | **Not fixed** |
+| ✅ FIXED | `wallet_txn_payment_id_unique` partial index was missing (double-credit risk) | `app/api/wallet/route.ts`, Supabase RPC | **Fixed 2026-06-11 — index confirmed in snapshot** |
+| ✅ FIXED | `admin_audit_logs.admin_id` was `NOT NULL` — audit log INSERT silently failed for password-auth admin | `lib/require-admin.ts` | **Fixed 2026-06-11 — column now nullable, confirmed in snapshot** |
 | 🟡 MED | `listener_earnings.status` DEFAULT is `'settled'` — new earnings rows are immediately settled; pending→settled flow is bypassed for all new earnings | `supabase/migrations/009_payouts.sql` vs live | Harmless now (no payout pipeline uses pending), but wrong intent |
 | 🟡 MED | Three duplicate SELECT policies on `wallet_transactions`: `wallet_own`, `wallet_transactions_select_own`, `wallet_txns_own` — all identical `auth.uid() = user_id`. Harmless but adds noise | migrations | Cosmetic |
 | 🟡 MED | `sessions` has three SELECT policies: `sessions_own`, `sessions_participant_select`, `sessions_read_participants` — overlapping but harmless (OR logic) | migrations | Cosmetic |
@@ -43,7 +45,7 @@ Supabase dashboard (columns, constraints, policies, triggers, auth settings).
 
 <!-- SNAPSHOT -->
 
-## Snapshot — 2026-06-11
+## Snapshot — 2026-06-11 (second refresh, after idempotency-index + audit-log fixes)
 
 Full dump via `db/dump-live-schema.sql`.
 
@@ -52,7 +54,7 @@ Full dump via `db/dump-live-schema.sql`.
 | table.column | definition |
 | --- | --- |
 | admin_audit_logs.id | uuid NOT NULL DEFAULT gen_random_uuid() |
-| admin_audit_logs.admin_id | uuid NOT NULL |
+| admin_audit_logs.admin_id | uuid |
 | admin_audit_logs.action | text NOT NULL |
 | admin_audit_logs.target_id | text NOT NULL |
 | admin_audit_logs.created_at | timestamp with time zone NOT NULL DEFAULT now() |
@@ -300,7 +302,7 @@ Full dump via `db/dump-live-schema.sql`.
 | wallet_transactions wallet_transactions_type_check | CHECK ((type = ANY (ARRAY['credit','debit','refund']))) |
 | wallet_transactions wallet_transactions_user_id_fkey | FOREIGN KEY (user_id) REFERENCES users(id) |
 
-### 3_INDEXES (55 total)
+### 3_INDEXES (56 total)
 
 | table index | definition |
 | --- | --- |
@@ -359,24 +361,19 @@ Full dump via `db/dump-live-schema.sql`.
 | users users_pkey | CREATE UNIQUE INDEX users_pkey ON public.users USING btree (id) |
 | wallet_transactions idx_wallet_txns_user_id | CREATE INDEX idx_wallet_txns_user_id ON public.wallet_transactions USING btree (user_id) |
 | wallet_transactions wallet_transactions_pkey | CREATE UNIQUE INDEX wallet_transactions_pkey ON public.wallet_transactions USING btree (id) |
+| wallet_transactions wallet_txn_payment_id_unique | CREATE UNIQUE INDEX wallet_txn_payment_id_unique ON public.wallet_transactions USING btree (reference_id) WHERE (reference_id IS NOT NULL) |
 
-> ⚠️ `wallet_txn_payment_id_unique` partial index is **MISSING**. The
-> `credit_wallet_idempotent` RPC uses `ON CONFLICT (reference_id) WHERE
-> reference_id IS NOT NULL` — without this index, Postgres cannot resolve
-> the conflict and will error or double-insert. Run this in SQL Editor:
-> ```sql
-> CREATE UNIQUE INDEX IF NOT EXISTS wallet_txn_payment_id_unique
->   ON public.wallet_transactions (reference_id)
->   WHERE reference_id IS NOT NULL;
-> ```
+> ✅ `wallet_txn_payment_id_unique` confirmed present (added 2026-06-11) —
+> `credit_wallet_idempotent`'s `ON CONFLICT (reference_id) WHERE reference_id
+> IS NOT NULL` now works; recharge double-credits are prevented.
 
 ### 4_RLS_POLICIES (45 total)
 
 | table policy | definition |
 | --- | --- |
-| admin_audit_logs admin_read_audit_logs | SELECT TO public USING (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')) |
+| admin_audit_logs admin_read_audit_logs | SELECT TO public USING (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND (role = 'admin' OR is_admin = true))) |
 | contact_messages contact_insert | INSERT TO public WITH CHECK (char_length(name) BETWEEN 1 AND 200 AND char_length(message) BETWEEN 1 AND 5000) |
-| content_flags admin_all_flags | ALL TO public USING (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')) |
+| content_flags admin_all_flags | ALL TO public USING (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND (role = 'admin' OR is_admin = true))) |
 | content_flags users_insert_content_flags | INSERT TO public WITH CHECK (reporter_id = auth.uid()) |
 | content_flags users_select_own_flags | SELECT TO public USING (reporter_id = auth.uid()) |
 | listener_applications la_own | ALL TO public USING (auth.uid() = user_id) |
@@ -385,13 +382,13 @@ Full dump via `db/dump-live-schema.sql`.
 | listener_profiles lp_insert_own | INSERT TO public WITH CHECK (auth.uid() = user_id) |
 | listener_profiles lp_select_approved | SELECT TO public USING ((is_approved = true) OR (auth.uid() = user_id)) |
 | listener_profiles lp_update_own | UPDATE TO public USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id) |
-| listener_verifications admin_all_verifications | ALL TO public USING (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')) |
+| listener_verifications admin_all_verifications | ALL TO public USING (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND (role = 'admin' OR is_admin = true))) |
 | listener_verifications listener_own_verification_insert | INSERT TO public WITH CHECK (auth.uid() = listener_id) |
 | listener_verifications listener_own_verification_select | SELECT TO public USING (auth.uid() = listener_id) |
 | listener_verifications listener_own_verification_update | UPDATE TO public USING (auth.uid() = listener_id) WITH CHECK (auth.uid() = listener_id) |
-| messages messages_insert | INSERT TO public WITH CHECK (auth.uid() = sender_id AND EXISTS (SELECT 1 FROM sessions WHERE ...)) |
-| messages messages_participant_insert | INSERT TO public WITH CHECK (EXISTS (SELECT 1 FROM sessions WHERE ...)) |
-| messages messages_select_admin | SELECT TO public USING (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')) |
+| messages messages_insert | INSERT TO public WITH CHECK (auth.uid() = sender_id AND participant of session AND session status = 'active') |
+| messages messages_participant_insert | INSERT TO public WITH CHECK (participant of session — NO active-status requirement, NO sender_id check) |
+| messages messages_select_admin | SELECT TO public USING (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND (role = 'admin' OR is_admin = true))) |
 | messages messages_select_participants | SELECT TO public USING (EXISTS (SELECT 1 FROM sessions WHERE ...)) |
 | notifications notif_select_own | SELECT TO public USING (auth.uid() = user_id) |
 | notifications notif_update_own | UPDATE TO public USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id) |
@@ -412,7 +409,7 @@ Full dump via `db/dump-live-schema.sql`.
 | user_blocks users_select_own_blocks | SELECT TO public USING (blocker_id = auth.uid()) |
 | users users_insert_own | INSERT TO public WITH CHECK (auth.uid() = id) |
 | users users_listener_public_read | SELECT TO public USING (id IN (SELECT user_id FROM listener_profiles WHERE is_approved = true)) |
-| users users_select_listener_public | SELECT TO public USING (id IN (SELECT user_id FROM listener_profiles WHERE is_approved = true)) |
+| users users_select_listener_public | SELECT TO public USING (id IN (SELECT user_id FROM listener_profiles WHERE is_approved = true AND is_active = true)) |
 | users users_select_own | SELECT TO public USING (auth.uid() = id) |
 | users users_select_session_participant | SELECT TO public USING (id IN (SELECT listener_id FROM sessions WHERE seeker_id = auth.uid() UNION SELECT seeker_id FROM sessions WHERE listener_id = auth.uid())) |
 | users users_update_own | UPDATE TO public USING (auth.uid() = id) |
@@ -467,6 +464,8 @@ Full dump via `db/dump-live-schema.sql`.
 
 ### 7_FUNCTIONS (15 total)
 
+All functions have `config: search_path=public, pg_temp` (search-path hardening confirmed).
+
 | function | security |
 | --- | --- |
 | complete_session(p_session_id uuid) | SECURITY DEFINER returns void |
@@ -491,10 +490,12 @@ Full dump via `db/dump-live-schema.sql`.
 - `users.phone` is **nullable** since migration 033 (was NOT NULL undocumented)
 - `users.phone` has UNIQUE constraint `users_phone_key` — reconcile stale rows before new sign-ups
 - `public.users.id` has **no FK to auth.users** → deleting an auth user leaves an orphan `public.users` row; phone reconciliation in `lib/ensure-user-row.ts` handles the resulting `users_phone_key` conflicts
-- `admin_audit_logs.admin_id` is **NOT NULL** — best-effort insert in `require-admin.ts` silently fails for password-auth admin; audit trail is incomplete for those actions
+- `admin_audit_logs.admin_id` is **nullable** (fixed 2026-06-11) — password-auth admin actions now log with `admin_id = NULL`
 - Two duplicate `updated_at` triggers on `users` (`set_updated_at` + `handle_updated_at`) — both fire on every UPDATE; harmless but both run
 - `@supabase/ssr` is **v0.3.0**: cookie API is get/set/remove ONLY (`getAll`/`setAll` silently no-op — caused the global login-redirect bug)
-- `wallet_transactions` has NO partial unique index on `reference_id` — `credit_wallet_idempotent` RPC's `ON CONFLICT` cannot work; must add `wallet_txn_payment_id_unique` index in SQL Editor
+- `wallet_txn_payment_id_unique` partial unique index on `wallet_transactions.reference_id` is present (added 2026-06-11) — `credit_wallet_idempotent` is now truly idempotent
+- Admin RLS policies check `role = 'admin' OR is_admin = true` (both columns honored)
+- `users_select_listener_public` requires `is_approved AND is_active`; the older duplicate `users_listener_public_read` only requires `is_approved` — net effect: approved-but-inactive listeners are still publicly readable via the older policy
 - `listener_earnings.status` defaults to `'settled'` (not `'pending'`); new earnings are immediately settled
 - `payout_requests` column is `user_id` (not `listener_id`) — code must use `user_id`
 - `sessions_duration_mins_check` includes 45 — confirmed fixed
