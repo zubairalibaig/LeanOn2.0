@@ -251,6 +251,9 @@ export default function AdminPage() {
   const [listenersPage, setListenersPage] = useState(0)
   const [listenersStatus, setListenersStatus] = useState('all')
   const [listenersLoading, setListenersLoading] = useState(false)
+  // Pending approvals surfaced on Overview — the KPI alone gave admins no
+  // path to act, which made approvals look impossible to do.
+  const [pendingApprovals, setPendingApprovals] = useState<ListenerRow[]>([])
   const [rejectNotes, setRejectNotes] = useState<Record<string, string>>({})
 
   // Sessions
@@ -363,6 +366,15 @@ export default function AdminPage() {
     setListenersLoading(false)
   }, [listenersPage, listenersStatus]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const loadPendingApprovals = useCallback(async () => {
+    const params = new URLSearchParams({ type: 'listener', page: '0', status: 'pending' })
+    const res = await fetch(`/api/admin/users?${params}`, { headers: adminHeaders() }).catch(() => null)
+    if (res?.ok) {
+      const json = await res.json()
+      setPendingApprovals(json.items ?? [])
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   const loadSessions = useCallback(async (st = sessionsStatus) => {
     setSessionsLoading(true)
     const params = new URLSearchParams({ status: st !== 'all' ? st : '' })
@@ -416,6 +428,11 @@ export default function AdminPage() {
     return () => clearInterval(interval)
   }, [authChecking, authUser, denied, pinRequired, pinVerified, loadKPIs])
 
+  // Pending listener approvals must be actionable from Overview
+  useEffect(() => {
+    if (tab === 'overview' && !authChecking && authUser) loadPendingApprovals()
+  }, [tab, authChecking, authUser, loadPendingApprovals])
+
   useEffect(() => {
     if (tab === 'users') loadUsers(0, usersStatus, usersSearch)
   }, [tab]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -455,6 +472,7 @@ export default function AdminPage() {
       showToast(`Action "${action}" completed`)
       if (tab === 'users') loadUsers()
       if (tab === 'listeners') loadListeners()
+      if (tab === 'overview') loadPendingApprovals()
       loadKPIs()
     } else {
       const err = await res.json()
@@ -707,6 +725,48 @@ export default function AdminPage() {
               </div>
             ) : kpis ? (
               <>
+                {pendingApprovals.length > 0 && (
+                  <>
+                    <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--orange)', marginBottom: 10 }}>
+                      ⏳ Pending listener approvals — action needed
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
+                      {pendingApprovals.map(l => {
+                        const u = l.users
+                        return (
+                          <div key={l.user_id} className="kpi-card" style={{ border: '2px solid var(--orange)', display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'space-between' }}>
+                            <div style={{ minWidth: 180, flex: 1 }}>
+                              <div style={{ fontWeight: 800 }}>{u?.name || '—'}</div>
+                              <div style={{ fontSize: 12, color: 'var(--gray)' }}>
+                                {u?.phone || u?.email || '—'} · ₹{l.rate_per_min ?? '—'}/min
+                              </div>
+                              {l.bio && (
+                                <div style={{ fontSize: 12, color: 'var(--gray)', maxWidth: 460, marginTop: 4 }}>
+                                  {String(l.bio).slice(0, 140)}{String(l.bio).length > 140 ? '…' : ''}
+                                </div>
+                              )}
+                            </div>
+                            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                              <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'approve_listener')}>
+                                {busy === `approve_listener:${l.user_id}` ? 'Approving…' : 'Approve'}
+                              </button>
+                              <input
+                                className="reject-input"
+                                style={{ width: 130, marginBottom: 0 }}
+                                placeholder="Reason (opt)"
+                                value={rejectNotes[l.user_id] || ''}
+                                onChange={e => setRejectNotes(prev => ({ ...prev, [l.user_id]: e.target.value }))}
+                              />
+                              <button className="btn btn-red" disabled={busy !== null} onClick={() => userAction(l.user_id, 'reject_listener', rejectNotes[l.user_id])}>
+                                {busy === `reject_listener:${l.user_id}` ? '…' : 'Reject'}
+                              </button>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </>
+                )}
                 <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Users</div>
                 <div className="kpi-grid" style={{ marginBottom: 20 }}>
                   <div className="kpi-card">
@@ -739,9 +799,15 @@ export default function AdminPage() {
                     <div className="kpi-value">{fmt(kpis.listeners.active)}</div>
                     <div className="kpi-sub">approved + active</div>
                   </div>
-                  <div className="kpi-card" style={{ border: kpis.listeners.pending > 0 ? '2px solid var(--orange)' : undefined }}>
+                  <div
+                    className="kpi-card"
+                    style={{ border: kpis.listeners.pending > 0 ? '2px solid var(--orange)' : undefined, cursor: 'pointer' }}
+                    title="View pending listeners"
+                    onClick={() => { setListenersStatus('pending'); setListenersPage(0); setTab('listeners') }}
+                  >
                     <div className="kpi-label">Pending Approval</div>
                     <div className="kpi-value" style={{ color: kpis.listeners.pending > 0 ? 'var(--orange)' : undefined }}>{fmt(kpis.listeners.pending)}</div>
+                    {kpis.listeners.pending > 0 && <div className="kpi-sub" style={{ color: 'var(--orange)' }}>tap to review →</div>}
                   </div>
                   <div className="kpi-card">
                     <div className="kpi-label">Online Now</div>

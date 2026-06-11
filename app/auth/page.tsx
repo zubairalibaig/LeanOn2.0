@@ -185,10 +185,10 @@ export default function AuthPage() {
       }
 
       handledRef.current = true
-      // refresh() propagates the new session cookie to the Next.js middleware
-      // before the subsequent replace() navigation — prevents SSR redirect loops.
-      router.refresh()
-      router.replace(dest)
+      // Hard navigation — the new session cookie reaches the middleware on
+      // first paint, and we skip the slow client-side refresh-then-replace
+      // (which could take tens of seconds on a cold deployment).
+      window.location.assign(dest)
     }
   }
 
@@ -228,15 +228,23 @@ export default function AuthPage() {
       return
     }
 
-    const dest = getDestination()
+    // Reaching the name step means this is a brand-new account. In listener
+    // mode a new user has no listener profile yet — send them to the
+    // application form, not the (empty) dashboard.
+    const storedRedirect = sessionStorage.getItem('auth_redirect')
+    const mode = sessionStorage.getItem('auth_mode')
+    const dest = storedRedirect
+      ? getDestination()
+      : mode === 'listener' ? '/become-listener' : getDestination()
     sessionStorage.removeItem('auth_redirect')
     sessionStorage.removeItem('auth_mode')
     sessionStorage.setItem('leanon_welcome_new', '1')
 
     handledRef.current = true
-    // refresh() propagates the new session cookie before navigation
-    router.refresh()
-    router.replace(dest)
+    // Hard navigation (not router.replace) — guarantees the new session
+    // cookie reaches the middleware on first paint and avoids the slow
+    // refresh-then-navigate dance after signup.
+    window.location.assign(dest)
   }
 
   function handleOtpChange(i: number, val: string) {
