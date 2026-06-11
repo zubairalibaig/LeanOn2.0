@@ -302,7 +302,10 @@ export async function PATCH(req: NextRequest) {
           platform_fee: session.platform_fee ?? 0,
           net_amount:   listenerEarning,
           status:       'settled',
-        }).then(() => {}, () => {})
+        }).then(
+          () => {},
+          (e) => logger.error('listener_earnings insert failed (earnings ledger gap):', { sessionId, error: String(e) }),
+        )
       }
     }
 

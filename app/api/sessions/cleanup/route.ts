@@ -109,7 +109,10 @@ export async function POST(req: Request) {
           platform_fee: session.platform_fee ?? 0,
           net_amount: earning,
           status: 'settled',
-        }).then(() => {}, () => {})
+        }).then(
+          () => {},
+          (e) => logger.error('cleanup: listener_earnings insert failed (earnings ledger gap):', { sessionId: session.id, error: String(e) }),
+        )
       }
     }
 

@@ -158,8 +158,10 @@ export async function POST(req: NextRequest) {
   if (action === 'deactivate_user') {
     const { error: deactErr } = await admin.from('users').update({ is_active: false }).eq('id', id)
     if (deactErr) { logger.error('deactivate_user failed:', { error: deactErr.message }); return NextResponse.json({ error: 'Server error' }, { status: 500 }) }
-    await admin.from('listener_profiles').update({ is_active: false, is_available: false }).eq('user_id', id)
-    await admin.auth.admin.signOut(id, 'global')
+    const { error: lpDeactErr } = await admin.from('listener_profiles').update({ is_active: false, is_available: false }).eq('user_id', id)
+    if (lpDeactErr) logger.warn('deactivate_user: listener_profiles update failed (user IS deactivated):', { id, error: lpDeactErr.message })
+    const { error: signOutErr } = await admin.auth.admin.signOut(id, 'global')
+    if (signOutErr) logger.warn('deactivate_user: global signOut failed:', { id, error: signOutErr.message })
     await auditLog(admin, user!.id, 'deactivate_user', id)
     return NextResponse.json({ ok: true })
   }
@@ -209,11 +211,15 @@ export async function POST(req: NextRequest) {
         .eq('user_id', id)
         .maybeSingle()
       const wasApproved = lp.is_approved || app?.status === 'approved'
-      await admin.from('listener_profiles').update({
+      const { error: lpErr } = await admin.from('listener_profiles').update({
         is_active:    wasApproved,
         is_approved:  wasApproved,
         is_suspended: false,
       }).eq('user_id', id)
+      if (lpErr) {
+        logger.error('reactivate_user: listener_profiles update failed (user IS reactivated):', { id, error: lpErr.message })
+        return NextResponse.json({ error: 'User reactivated, but listener profile update failed. Please retry.' }, { status: 500 })
+      }
     }
     await auditLog(admin, user!.id, 'reactivate_user', id)
     return NextResponse.json({ ok: true })
