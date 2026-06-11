@@ -60,6 +60,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/mumbai`,                           lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/delhi`,                            lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/hyderabad`,                        lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/chennai`,                          lastModified: d('2026-06-11'), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/pune`,                             lastModified: d('2026-06-11'), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/kolkata`,                          lastModified: d('2026-06-11'), changeFrequency: 'monthly', priority: 0.85 },
     // New SEO pages (Items 18-21)
     { url: `${base}/why-leanon`,                       lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/how-leanon-works`,                 lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },

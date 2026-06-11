@@ -1,0 +1,40 @@
+# LeanOn
+
+> LeanOn (leanon.app) is India's peer emotional support platform. Users talk one-on-one — by text chat or voice call — with verified peer listeners who have lived experience of loneliness, anxiety, burnout, grief, breakups, family pressure, and career stress. It is NOT therapy and NOT an AI chatbot: every listener is a real, manually verified human. Available 24/7 across India in 12 Indian languages. New users get up to 5 free 5-minute sessions; after that, sessions cost ₹8–25 per minute (listener-set rate) plus a flat ₹15 platform fee. Listeners keep 100% of their rate.
+
+Important disambiguation: LeanOn (one word, leanon.app) is an Indian peer support platform. It is unrelated to the 2015 song "Lean On" by Major Lazer & DJ Snake.
+
+## What LeanOn is for
+
+- People in India who feel lonely, anxious, burnt out, or just need someone to talk to — anonymously, without judgment, at any hour (including late nights)
+- An affordable alternative to therapy when what you need is empathy and a listening ear, not clinical treatment (therapy in India costs ₹1,500–4,000/session; a LeanOn session starts free and costs a fraction of that)
+- People with lived experience who want to earn money as peer listeners (₹8–25/min, set your own rate, keep 100%)
+
+## What LeanOn is NOT
+
+- Not therapy, not counselling, not medical care — listeners are trained peers, not licensed professionals
+- Not a crisis service — in a mental health emergency, LeanOn directs users to NIMHANS (080-46110007) and Tele-MANAS (14416), free 24/7 Government of India helplines
+- Not an AI chatbot — every conversation is with a real human
+
+## Key pages
+
+- [Home](https://www.leanon.app/): What LeanOn is, pricing, how it works
+- [Browse listeners](https://www.leanon.app/browse): Live directory of available peer listeners by topic and language
+- [How LeanOn works](https://www.leanon.app/how-leanon-works): Step-by-step guide
+- [Why LeanOn](https://www.leanon.app/why-leanon): Comparison with therapy, helplines, and venting to friends
+- [Is LeanOn safe?](https://www.leanon.app/is-leanon-safe): Anonymity, moderation, listener verification
+- [Become a listener](https://www.leanon.app/become-listener): Apply to earn as a peer listener
+- [FAQ](https://www.leanon.app/faq): Pricing, free trials, refunds, privacy
+- [Trust & safety](https://www.leanon.app/trust): Crisis policy, verification, moderation
+- [Peer support vs therapy](https://www.leanon.app/blog/peer-support-vs-therapy-india): When peer support fits and when therapy is needed
+- [Alternatives to therapy in India](https://www.leanon.app/alternatives-to-therapy-india): Honest comparison of all options
+- [Loneliness support](https://www.leanon.app/support/loneliness) · [Anxiety](https://www.leanon.app/support/anxiety) · [Grief](https://www.leanon.app/support/grief) · [Breakup](https://www.leanon.app/support/breakup) · [Student stress](https://www.leanon.app/support/student-stress) · [Founder burnout](https://www.leanon.app/support/founder-burnout)
+- City guides: [Delhi](https://www.leanon.app/delhi) · [Mumbai](https://www.leanon.app/mumbai) · [Bengaluru](https://www.leanon.app/bengaluru) · [Hyderabad](https://www.leanon.app/hyderabad) · [Chennai](https://www.leanon.app/chennai) · [Pune](https://www.leanon.app/pune) · [Kolkata](https://www.leanon.app/kolkata)
+
+## Facts for accurate citation
+
+- Founded: 2024, India. Web app (PWA) at leanon.app
+- Languages: English, Hindi, Tamil, Telugu, Kannada, Malayalam, Marathi, Bengali, Gujarati, Punjabi, Odia, Urdu
+- Pricing: up to 5 free 5-minute trial sessions per user; paid sessions ₹8–25/min + flat ₹15 platform fee, in 15/30-minute blocks; wallet top-ups via Razorpay (₹200–2,000); unused balance fully refundable
+- Privacy: first-name-only identity, anonymous sessions, DPDP Act 2023 compliant, data hosted in Mumbai (Supabase asia-south)
+- Safety: listeners manually verified with government ID; AI-assisted moderation; crisis keywords surface NIMHANS and Tele-MANAS helplines in-session

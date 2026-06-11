@@ -71,6 +71,12 @@ const jsonLd = {
         height: 512,
       },
       description: "LeanOn is India's peer emotional support platform. Real humans with lived experience, available 24/7.",
+      disambiguatingDescription: 'LeanOn (one word) is an Indian peer emotional support web platform at leanon.app — not related to the 2015 song "Lean On" by Major Lazer and DJ Snake.',
+      knowsAbout: [
+        'peer support', 'emotional support', 'loneliness', 'anxiety', 'burnout',
+        'grief support', 'mental health India', 'active listening', 'breakup support',
+        'student stress', 'family pressure India', 'alternatives to therapy India',
+      ],
       foundingDate: '2024',
       foundingLocation: { '@type': 'Place', name: 'India' },
       areaServed: { '@type': 'Country', name: 'India' },
@@ -148,6 +154,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }}
         />
         <meta name="theme-color" content="#1A8FA0" />
+        {/* India geo-targeting signals */}
+        <meta name="geo.region" content="IN" />
+        <meta name="geo.placename" content="India" />
+        <meta name="distribution" content="IN" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
