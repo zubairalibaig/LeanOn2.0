@@ -176,7 +176,7 @@ function SessionContent() {
   const searchParams = useSearchParams()
 
   const sessionId    = routeParams.id as string
-  const listenerName = decodeURIComponent(searchParams.get('name') || 'Listener')
+  const listenerName = (() => { try { return decodeURIComponent(searchParams.get('name') || 'Listener') } catch { return 'Listener' } })()
   // Validate duration against allowed values — prevents NaN crash and URL manipulation
   const rawDuration  = parseInt(searchParams.get('duration') || '15')
   const durationMins = (SESSION_DURATIONS as readonly number[]).includes(rawDuration) ? rawDuration : 15
@@ -250,6 +250,7 @@ function SessionContent() {
 
   // Sync timer + peer name + IDs from DB — survives page refresh
   // We fetch both listener and seeker names so each party sees the OTHER person's name.
+  // Depends on userId so peer name resolves after auth (race condition guard).
   useEffect(() => {
     if (!sessionId) return
     supabase.from('sessions')
@@ -268,13 +269,15 @@ function SessionContent() {
         if (data?.listener_id) setListenerId(data.listener_id)
         // Show the OTHER person's name — listener sees seeker's name, seeker sees listener's name
         const myId = userIdRef.current
+        if (!myId) return
         const isListener = myId === data?.listener_id
         const peerName = isListener
           ? (data?.seeker as { name?: string } | null)?.name
           : (data?.listener as { name?: string } | null)?.name
         if (peerName) setResolvedListenerName(peerName)
       })
-  }, [sessionId])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionId, userId])
 
   // Back button guard — intercept popstate (Item 17)
   useEffect(() => {

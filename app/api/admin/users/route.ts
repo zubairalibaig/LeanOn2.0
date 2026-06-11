@@ -112,7 +112,7 @@ export async function GET(req: NextRequest) {
     else if (userStatus === 'suspended') query = query.eq('is_suspended', true)
 
     if (search) {
-      const safe = search.replace(/[,()*:\\]/g, '').slice(0, 100)
+      const safe = search.replace(/[,()*:\\%_]/g, '').slice(0, 100)
       if (safe) query = query.or(`name.ilike.%${safe}%,phone.ilike.%${safe}%`)
     }
 

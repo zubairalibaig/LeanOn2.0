@@ -360,7 +360,7 @@ function BrowseContent() {
 
       <div className="join-cta">
         <h3>Have lived experience to share?</h3>
-        <p>Listeners keep 100% of their rate.</p>
+        <p>Set your own rate and keep 90% of every session.</p>
         <a href="/become-listener"><button className="btn-join">Join as a listener →</button></a>
       </div>
     </>

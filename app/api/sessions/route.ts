@@ -232,8 +232,9 @@ export async function PATCH(req: NextRequest) {
 
     // Calculate actual duration and pro-rate (Item 27: harassment eject / early session refund)
     const endedAt = completed.ended_at ?? new Date().toISOString()
+    const startedAt = session.started_at ?? endedAt
     const actualMins = Math.max(0, Math.floor(
-      (new Date(endedAt).getTime() - new Date(session.started_at).getTime()) / 60_000
+      (new Date(endedAt).getTime() - new Date(startedAt).getTime()) / 60_000
     ))
     const bookedMins = session.duration_mins as number
     const baseListenerEarning = session.amount_held - (session.platform_fee ?? 0)

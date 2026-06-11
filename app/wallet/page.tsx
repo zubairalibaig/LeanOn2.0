@@ -203,7 +203,7 @@ export default function WalletPage() {
         <div className="balance-card">
           <div className="balance-label">AVAILABLE BALANCE</div>
           <div className="balance-amount">₹{balance ?? '—'}</div>
-          <div className="balance-sub">{balance !== null ? `~${Math.floor(balance/165)} sessions remaining` : 'Loading...'}</div>
+          <div className="balance-sub">{balance !== null ? `~${Math.floor(balance / 10)} min of support available` : 'Loading...'}</div>
           {showRefundConfirm ? (
             <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.12)', borderRadius: 14, padding: '14px 16px', textAlign: 'left' }}>
               <p style={{ fontSize: 13, color: 'white', fontWeight: 600, marginBottom: 12, lineHeight: 1.5 }}>
