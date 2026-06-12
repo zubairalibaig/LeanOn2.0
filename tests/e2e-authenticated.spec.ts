@@ -86,7 +86,7 @@ test.describe('Seeker: login survives navigation (middleware regression)', () =>
   test('wallet page renders balance and recharge tiers', async ({ page }) => {
     await login(page, SEEKER_PHONE, SEEKER_OTP)
     await page.goto('/wallet')
-    await expect(page.getByText('₹200')).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText('₹200', { exact: true })).toBeVisible({ timeout: 15_000 })
   })
 })
 
