@@ -159,8 +159,9 @@ test.describe('Seeker books a free trial with the approved listener', () => {
     await page.goto(`/listener/${listenerId}`)
     await expect(page.locator('.listener-name')).toBeVisible({ timeout: 15_000 })
 
-    // Select the 5-min free option and book.
-    await page.locator('.book-opt', { hasText: '5 min' }).click()
+    // Select the 5-min free option and book. Use the exact accessible name —
+    // hasText '5 min' also substring-matches "15 min" and "45 min".
+    await page.getByRole('button', { name: '5 minute session free', exact: true }).click()
     await page.locator('.btn-book').click()
 
     // Either we land on the session page, or a clear booking error is shown
