@@ -39,8 +39,8 @@ export async function POST(req: NextRequest) {
 
     if (name.length < 2 || name.length > 80)
       return NextResponse.json({ error: 'Please enter your name (2–80 characters).' }, { status: 400 })
-    if (bio.length < 10 || bio.length > 1000)
-      return NextResponse.json({ error: 'Please write a bio (10–1000 characters).' }, { status: 400 })
+    if (bio.length < 30 || bio.length > 400)
+      return NextResponse.json({ error: 'Please write a bio (30–400 characters).' }, { status: 400 })
     if (!Number.isFinite(rate) || rate < MIN_LISTENER_RATE || rate > MAX_LISTENER_RATE)
       return NextResponse.json({ error: `Rate must be between ₹${MIN_LISTENER_RATE} and ₹${MAX_LISTENER_RATE} per minute.` }, { status: 400 })
     if (tags.length === 0)

@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
     }
 
     await sb.from('admin_audit_logs').insert({
-      admin_id:  user!.id,
+      admin_id:  dbUserIdOrNull(user!.id),
       action:    `moderate_report_${action}`,
       target_id: target ?? reportId,
     }).then(() => {}, () => {})

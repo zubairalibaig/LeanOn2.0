@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
-import { requireAdmin } from '@/lib/require-admin'
+import { requireAdmin, dbUserIdOrNull } from '@/lib/require-admin'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const PAGE_SIZE = 25
@@ -270,7 +270,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     await sb.from('admin_audit_logs').insert({
-      admin_id: user!.id,
+      admin_id: dbUserIdOrNull(user!.id),
       action: `user_${action}`,
       target_id: userId,
     }).then(() => {}, () => {})

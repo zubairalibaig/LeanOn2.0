@@ -95,9 +95,9 @@ export async function GET(req: NextRequest) {
         await sb.from('listener_earnings').insert({
           listener_id: session.listener_id,
           session_id: session.id,
-          gross_amount: session.amount_held,
-          platform_fee: session.platform_fee ?? 0,
-          net_amount: listenerEarning,
+          gross_amount: Math.round(session.amount_held),
+          platform_fee: Math.round(session.platform_fee ?? 0),
+          net_amount: Math.round(listenerEarning),
           status: 'settled',
         }).then(() => {}, () => {})
       }

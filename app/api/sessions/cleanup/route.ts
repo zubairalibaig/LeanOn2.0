@@ -105,9 +105,9 @@ export async function POST(req: Request) {
         await sb.from('listener_earnings').insert({
           listener_id: session.listener_id,
           session_id: session.id,
-          gross_amount: session.amount_held,
-          platform_fee: session.platform_fee ?? 0,
-          net_amount: earning,
+          gross_amount: Math.round(session.amount_held),
+          platform_fee: Math.round(session.platform_fee ?? 0),
+          net_amount: Math.round(earning),
           status: 'settled',
         }).then(
           () => {},

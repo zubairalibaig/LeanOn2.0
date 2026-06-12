@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
     }).then(() => {}, () => {})
 
     await sb.from('admin_audit_logs').insert({
-      admin_id:  user!.id,
+      admin_id:  dbUserIdOrNull(user!.id),
       action:    `${action}_verification`,
       target_id: verification.listener_id,
     }).then(() => {}, () => {})
