@@ -1,16 +1,34 @@
 name: E2E Tests
 
+# Runs both Playwright suites against https://www.leanon.app
+#
+# ── ONE-TIME SETUP (owner) ─────────────────────────────────────────────
+# GitHub repo → Settings → Secrets and variables → Actions → New secret:
+#   TEST_ADMIN_PASSWORD = the ADMIN_SECRET value (same as in Vercel)
+# Without it, admin-approval and booking tests skip; everything else runs.
+#
+# Test phone numbers are Supabase test numbers (never send SMS, fixed OTP)
+# configured in Dashboard → Auth → Providers → Phone → Test phone numbers:
+#   911111111111 = 111111   (seeker)
+#   912222222222 = 222222   (listener)
+
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '30 2 * * *' # daily smoke run at 08:00 IST
+
+concurrency:
+  group: e2e-production
+  cancel-in-progress: true
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -25,10 +43,20 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      # Give Vercel time to deploy the commit we are about to test
+      - name: Wait for Vercel deploy
+        if: github.event_name == 'push'
+        run: sleep 120
+
       - name: Run Playwright tests
         env:
           PLAYWRIGHT_BASE_URL: https://www.leanon.app
           VERCEL_BYPASS_SECRET: ${{ secrets.VERCEL_BYPASS_SECRET }}
+          TEST_SEEKER_PHONE: '+911111111111'
+          TEST_SEEKER_OTP: '111111'
+          TEST_LISTENER_PHONE: '+912222222222'
+          TEST_LISTENER_OTP: '222222'
+          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
         run: npx playwright test --project=chromium
 
       - name: Upload test results
@@ -38,5 +66,5 @@ jobs:
           name: playwright-results
           path: |
             test-results/
-            test-results/results.json
-          retention-days: 7
+            playwright-report/
+          retention-days: 14
