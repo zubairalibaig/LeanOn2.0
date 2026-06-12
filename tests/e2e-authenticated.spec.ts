@@ -86,7 +86,9 @@ test.describe('Seeker: login survives navigation (middleware regression)', () =>
   test('wallet page renders balance and recharge tiers', async ({ page }) => {
     await login(page, SEEKER_PHONE, SEEKER_OTP)
     await page.goto('/wallet')
-    await expect(page.getByText('₹200', { exact: true })).toBeVisible({ timeout: 15_000 })
+    // ₹200 appears in both the empty-wallet quick-buttons and the recharge
+    // presets, so scope to the first match to avoid a strict-mode violation.
+    await expect(page.getByText('₹200', { exact: true }).first()).toBeVisible({ timeout: 15_000 })
   })
 })
 

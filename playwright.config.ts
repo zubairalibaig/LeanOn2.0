@@ -6,7 +6,11 @@ export default defineConfig({
   expect: { timeout: 10_000 },
   fullyParallel: false,
   retries: 1,
-  reporter: [['list'], ['json', { outputFile: 'test-results/results.json' }]],
+  // 'github' reporter surfaces failures as GitHub Actions annotations (readable
+  // via the API), since raw job logs live in blob storage.
+  reporter: process.env.CI
+    ? [['list'], ['github'], ['json', { outputFile: 'test-results/results.json' }]]
+    : [['list'], ['json', { outputFile: 'test-results/results.json' }]],
   use: {
     baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000',
     trace: 'on-first-retry',
