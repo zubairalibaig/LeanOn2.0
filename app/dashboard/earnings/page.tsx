@@ -72,17 +72,17 @@ function fmtDate(iso: string) { return new Date(iso).toLocaleDateString('en-IN',
 
 export default function EarningsPage() {
   const router = useRouter()
-  const [earnings, setEarnings]       = useState<Earning[]>([])
-  const [payouts,  setPayouts]        = useState<PayoutRequest[]>([])
-  const [loading,  setLoading]        = useState(true)
-  const [showModal,setShowModal]      = useState(false)
-  const [upiId,    setUpiId]          = useState('')
-  const [submitting,setSubmitting]    = useState(false)
-  const [toast,    setToast]          = useState('')
+  const [earnings,  setEarnings]       = useState<Earning[]>([])
+  const [payouts,   setPayouts]        = useState<PayoutRequest[]>([])
+  const [available, setAvailable]      = useState(0)
+  const [loading,   setLoading]        = useState(true)
+  const [showModal, setShowModal]      = useState(false)
+  const [upiId,     setUpiId]          = useState('')
+  const [submitting,setSubmitting]     = useState(false)
+  const [toast,     setToast]          = useState('')
 
   const totalNet     = earnings.reduce((s, e) => s + (e.status === 'settled' ? e.net_amount : 0), 0)
   const totalPaid    = payouts.filter(p => p.status === 'completed').reduce((s, p) => s + p.amount, 0)
-  const available    = Math.max(0, totalNet - totalPaid)
   const hasPending   = payouts.some(p => p.status === 'pending')
 
   useEffect(() => {
@@ -91,13 +91,15 @@ export default function EarningsPage() {
         const { data: { user } } = await sb.auth.getUser()
         if (!user) { router.push('/auth?redirect=/dashboard/earnings'); return }
 
-        const [e, p] = await Promise.all([
+        const [e, p, u] = await Promise.all([
           sb.from('listener_earnings').select('*').eq('listener_id', user.id).order('created_at', { ascending: false }).limit(50),
           sb.from('payout_requests').select('id, amount, status, upi_id, created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(20),
+          sb.from('users').select('wallet_balance').eq('id', user.id).single(),
         ])
 
         setEarnings((e.data ?? []) as Earning[])
         setPayouts((p.data ?? []).map(r => ({ ...r, requested_at: r.created_at })) as PayoutRequest[])
+        setAvailable(Math.max(0, (u.data as { wallet_balance?: number } | null)?.wallet_balance ?? 0))
       } finally {
         setLoading(false)
       }

@@ -120,7 +120,7 @@ export default function NotificationsBell() {
 
       {open && (
         <div style={{
-          position: 'absolute', right: 0, top: '100%',
+          position: 'absolute', right: 0, bottom: '100%',
           background: 'white', borderRadius: 16,
           border: '1.5px solid #D5EEF6',
           boxShadow: '0 8px 32px rgba(15,72,103,0.15)',

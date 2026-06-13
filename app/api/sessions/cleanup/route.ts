@@ -176,3 +176,6 @@ export async function POST(req: Request) {
   })
   return NextResponse.json({ cleaned, checked: (orphans ?? []).length, staleCancelled })
 }
+
+// Vercel cron sends GET requests — delegate to the same handler
+export { POST as GET }
