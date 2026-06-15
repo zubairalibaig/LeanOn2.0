@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { showToast } from '@/lib/toast'
+import { grossRechargeAmount } from '@/lib/constants'
 const S = `
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -60,6 +61,7 @@ export default function WalletPage() {
   const router = useRouter()
   const sb = createClient()
   const [selected, setSelected] = useState(500)
+  const [customInput, setCustomInput] = useState('')
   const [loading, setLoading]   = useState(false)
   const [balance, setBalance]   = useState<number|null>(null)
   const [transactions, setTransactions] = useState<Txn[]>([])
@@ -180,7 +182,14 @@ export default function WalletPage() {
           clearTimeout(resetTimer)
           setPaymentPending(false)
           if (res.ok) {
-            await loadUserData()
+            const data = await res.json()
+            // Update balance directly from server response — don't rely on a
+            // second DB read which can race with the credit_wallet_idempotent RPC
+            if (typeof data.newBalance === 'number') setBalance(data.newBalance)
+            // Reload transaction history to show the new credit entry
+            sb.from('wallet_transactions')
+              .select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(10)
+              .then(({ data: txns }) => { if (txns) setTransactions(txns) })
             showToast(`₹${selected} added to your wallet!`, 'success')
           } else {
             const data = await res.json()
@@ -251,7 +260,7 @@ export default function WalletPage() {
         <div className="section-title">Recharge wallet</div>
         <div className="presets">
           {PRESETS.map(p => (
-            <div key={p.amount} className={`preset${selected===p.amount?' sel':''}`} onClick={() => setSelected(p.amount)}>
+            <div key={p.amount} className={`preset${selected===p.amount && !customInput?' sel':''}`} onClick={() => { setSelected(p.amount); setCustomInput('') }}>
               <div className="preset-amount">₹{p.amount}</div>
               <div className="preset-sessions">{p.sessions}</div>
               {p.tag && <div className="preset-tag">{p.tag}</div>}
@@ -259,9 +268,44 @@ export default function WalletPage() {
           ))}
         </div>
 
+        {/* Custom amount input */}
+        <div style={{marginBottom:14}}>
+          <div style={{fontSize:13,fontWeight:700,color:'var(--navy)',marginBottom:6}}>Or enter a custom amount (min ₹50)</div>
+          <div style={{display:'flex',alignItems:'center',background:'white',border:`2px solid ${customInput ? 'var(--orange)' : 'var(--border)'}`,borderRadius:14,overflow:'hidden'}}>
+            <span style={{padding:'12px 12px 12px 16px',fontWeight:900,fontSize:18,color:'var(--navy)'}}>₹</span>
+            <input
+              type="number"
+              inputMode="numeric"
+              min={50}
+              max={10000}
+              placeholder="e.g. 100"
+              value={customInput}
+              onChange={e => {
+                const v = e.target.value.replace(/[^0-9]/g,'')
+                setCustomInput(v)
+                const n = parseInt(v, 10)
+                if (!isNaN(n) && n >= 50 && n <= 10000) setSelected(n)
+              }}
+              style={{flex:1,padding:'12px 16px 12px 4px',fontFamily:'Nunito,sans-serif',fontSize:16,fontWeight:700,color:'var(--navy)',border:'none',outline:'none',background:'transparent'}}
+            />
+          </div>
+          {customInput && (() => {
+            const n = parseInt(customInput, 10)
+            if (isNaN(n) || n < 50) return <p style={{fontSize:12,color:'#E53935',fontWeight:600,marginTop:6}}>Minimum ₹50</p>
+            if (n > 10000) return <p style={{fontSize:12,color:'#E53935',fontWeight:600,marginTop:6}}>Maximum ₹10,000</p>
+            return null
+          })()}
+        </div>
+
         <div className="note">
           <span>🔄</span>
-          <span>Unused balance is fully refundable anytime. No expiry. Your money is safe. A small payment-gateway fee is added at checkout.</span>
+          <span>Unused balance is fully refundable anytime. No expiry. Your money is safe.</span>
+        </div>
+
+        {/* Gateway fee callout — show exact charge before user pays */}
+        <div style={{background:'rgba(255,153,51,0.08)',border:'1px solid rgba(255,153,51,0.25)',borderRadius:14,padding:'12px 16px',marginBottom:16,fontSize:13,color:'#7A4000',fontWeight:600,lineHeight:1.5}}>
+          💳 You&apos;ll be charged <strong>₹{grossRechargeAmount(selected)}</strong>{' '}
+          <span style={{fontWeight:500,opacity:0.8}}>(₹{selected} wallet credit + ₹{grossRechargeAmount(selected) - selected} gateway fee)</span>
         </div>
 
         {paymentPending && (
@@ -270,8 +314,8 @@ export default function WalletPage() {
             <span><strong>Processing your payment…</strong> Please wait. Do not close this page.</span>
           </div>
         )}
-        <button className="btn" onClick={handleRecharge} disabled={loading || paymentPending} style={{marginBottom:32}}>
-          {loading || paymentPending ? <span className="spin">⟳</span> : `Recharge ₹${selected} →`}
+        <button className="btn" onClick={handleRecharge} disabled={loading || paymentPending || (!!customInput && (isNaN(parseInt(customInput,10)) || parseInt(customInput,10) < 50 || parseInt(customInput,10) > 10000))} style={{marginBottom:32}}>
+          {loading || paymentPending ? <span className="spin">⟳</span> : `Add ₹${selected} to wallet →`}
         </button>
 
         {transactions.length === 0 && balance !== null && (

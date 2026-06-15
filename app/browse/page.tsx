@@ -158,6 +158,23 @@ function BrowseContent() {
 
   useEffect(() => { loadListeners() }, [tag, lang])
 
+  // Realtime: update listener availability without requiring a full page reload
+  useEffect(() => {
+    const availSub = client.channel('listener-availability')
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'listener_profiles',
+      }, (payload) => {
+        const updated = payload.new as { user_id: string; is_available: boolean }
+        setListeners(prev => prev.map(l =>
+          l.user_id === updated.user_id ? { ...l, is_available: updated.is_available } : l
+        ))
+      })
+      .subscribe()
+    return () => { client.removeChannel(availSub) }
+  }, [])
+
   useEffect(() => {
     client.auth.getUser().then(async ({data:{user}}) => {
       if (!user) return

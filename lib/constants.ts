@@ -5,7 +5,7 @@ export const PLATFORM_FEE       = 10   // flat ₹10 per session added on top of
 export const GATEWAY_FEE_RATE   = 0.0236
 export const grossRechargeAmount = (amount: number) => Math.ceil(amount * (1 + GATEWAY_FEE_RATE))
 export const MIN_LISTENER_RATE  = 1    // ₹/min (suggestion floor; no hard mandate)
-export const MAX_LISTENER_RATE  = 200  // ₹/min — matches DB CHECK constraint in migration 022
+export const MAX_LISTENER_RATE  = 500  // ₹/min — DB CHECK constraint updated in migration 011
 export const FREE_SESSION_MINS  = 5
 export const MAX_FREE_TRIALS    = 5    // each user gets 5 free 5-min trials (try multiple listeners)
 export const SESSION_DURATIONS  = [5, 15, 30, 45] as const

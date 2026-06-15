@@ -4,6 +4,22 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { ensureUserRow } from '@/lib/ensure-user-row'
 import { logger } from '@/lib/logger'
 
+// GET — return the caller's name (and role) without requiring a browser DB read.
+// Used by the auth page to skip the name step for returning users even when
+// the browser-client RLS read of users.name returns null (policy gaps).
+export async function GET() {
+  try {
+    const userSb = createServerSupabaseClient()
+    const { data: { user } } = await userSb.auth.getUser()
+    if (!user) return NextResponse.json({ name: null, role: null })
+    const admin = createAdminClient()
+    const { data } = await admin.from('users').select('name, role').eq('id', user.id).maybeSingle()
+    return NextResponse.json({ name: data?.name ?? null, role: data?.role ?? null })
+  } catch {
+    return NextResponse.json({ name: null, role: null })
+  }
+}
+
 // POST — create/update the caller's public.users row.
 //
 // WHY THIS IS SERVER-SIDE: the public.users INSERT is the single most

@@ -61,6 +61,7 @@ export default function AuthPage() {
   const [otp, setOtp]           = useState(['','','','','',''])
   const [name, setName]         = useState('')
   const [loading, setLoading]   = useState(false)
+  const [checking, setChecking] = useState(true)  // true while verifying existing session
   const [error, setError]       = useState('')
   const [countdown, setCountdown] = useState(0)
   const otpRefs = useRef<(HTMLInputElement|null)[]>([])
@@ -93,8 +94,11 @@ export default function AuthPage() {
         )
         sessionStorage.removeItem('auth_redirect')
         router.replace(dest)
+        // Don't setChecking(false) here — we're navigating away
+        return
       }
-    }).catch(() => {})
+      setChecking(false)
+    }).catch(() => { setChecking(false) })
 
     // Also listen for auth state changes (handles Supabase OTP callback)
     const { data: { subscription } } = sb.auth.onAuthStateChange((event, session) => {
@@ -159,15 +163,21 @@ export default function AuthPage() {
       return
     }
 
-    // Decide new-vs-returning by looking for an existing named profile.
-    // Row creation for phone users happens server-side in saveName() (via
-    // /api/auth/profile) — we do NOT write users from the browser here,
-    // because the RLS-restricted client INSERT is unreliable across the
-    // overlapping policies/triggers in migrations 031/20250512/999.
-    const { data: userData } = await sb.from('users').select('name').eq('id', data.user!.id).maybeSingle()
+    // Decide new-vs-returning by asking the server (admin-client read, bypasses RLS).
+    // Browser-client reads of users.name can silently return null when RLS policies
+    // are mismatched across migrations, causing returning users to hit the name step
+    // every time they sign in.
+    let existingName: string | null = null
+    try {
+      const profileRes = await fetch('/api/auth/profile')
+      if (profileRes.ok) {
+        const profileData = await profileRes.json()
+        existingName = profileData?.name ?? null
+      }
+    } catch { /* network failure — treat as new user */ }
     setLoading(false)
 
-    if (!userData?.name) {
+    if (!existingName) {
       setStep('name')
     } else {
       // Returning user — check if new (no sessions) for welcome toast
@@ -228,14 +238,26 @@ export default function AuthPage() {
       return
     }
 
-    // Reaching the name step means this is a brand-new account. In listener
-    // mode a new user has no listener profile yet — send them to the
-    // application form, not the (empty) dashboard.
+    // For listener mode, check if they already have an application.
+    // A returning listener who hit the name step (e.g. RLS gap resolved) should
+    // go to the dashboard, not the application form.
     const storedRedirect = sessionStorage.getItem('auth_redirect')
     const mode = sessionStorage.getItem('auth_mode')
+    let listenerDest = '/become-listener'
+    if (mode === 'listener' && !storedRedirect) {
+      try {
+        const { data: { user: u } } = await sb.auth.getUser()
+        if (u) {
+          const appRes = await sb.from('listener_applications')
+            .select('id', { count: 'exact', head: true })
+            .eq('user_id', u.id)
+          if ((appRes.count ?? 0) > 0) listenerDest = '/dashboard'
+        }
+      } catch { /* default to /become-listener if check fails */ }
+    }
     const dest = storedRedirect
       ? getDestination()
-      : mode === 'listener' ? '/become-listener' : getDestination()
+      : mode === 'listener' ? listenerDest : getDestination()
     sessionStorage.removeItem('auth_redirect')
     sessionStorage.removeItem('auth_mode')
     sessionStorage.setItem('leanon_welcome_new', '1')
@@ -257,6 +279,15 @@ export default function AuthPage() {
 
   function handleOtpKey(i: number, e: React.KeyboardEvent) {
     if (e.key === 'Backspace' && !otp[i] && i > 0) otpRefs.current[i-1]?.focus()
+  }
+
+  if (checking) {
+    return (
+      <>
+        <style>{S}</style>
+        <div className="loading-screen">Checking your session…</div>
+      </>
+    )
   }
 
   return (

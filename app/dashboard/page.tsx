@@ -558,7 +558,7 @@ export default function DashboardPage() {
 
             {/* Rate */}
             <div className="field-group">
-              <div className="field-label">Your rate (₹{MIN_LISTENER_RATE}–₹{MAX_LISTENER_RATE}/min)</div>
+              <div className="field-label">Your rate /min — suggested ₹5–₹50 (max ₹{MAX_LISTENER_RATE})</div>
               <div className="rate-row">
                 <span style={{fontSize:20,fontWeight:900,color:'var(--navy)'}}>₹</span>
                 <input
@@ -628,10 +628,15 @@ export default function DashboardPage() {
       <div className="page">
         <div className="topbar">
           <h1>My Dashboard</h1>
-          <button className={`avail-toggle ${avail ? 'on' : 'off'}`} onClick={toggleAvailability}>
-            <div className={`avail-dot ${avail ? 'on' : 'off'}`} />
-            {avail ? 'Go offline' : 'Go online'}
-          </button>
+          <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:4}}>
+            <button className={`avail-toggle ${avail ? 'on' : 'off'}`} onClick={toggleAvailability}>
+              <div className={`avail-dot ${avail ? 'on' : 'off'}`} />
+              {avail ? 'Go offline' : 'Go online'}
+            </button>
+            <span style={{fontSize:10,color:'var(--gray)',fontWeight:500,textAlign:'right',maxWidth:140,lineHeight:1.3}}>
+              {avail ? 'Seekers can find and book you now' : 'Go online to receive session requests'}
+            </span>
+          </div>
         </div>
 
         {profile.is_approved === false && (

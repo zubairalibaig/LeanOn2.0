@@ -4,7 +4,10 @@ import crypto from 'crypto'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { notifyWalletRecharge } from '@/lib/notify'
-import { RECHARGE_AMOUNTS, grossRechargeAmount } from '@/lib/constants'
+import { grossRechargeAmount } from '@/lib/constants'
+
+const MIN_RECHARGE = 50
+const MAX_RECHARGE = 10_000
 import { logger } from '@/lib/logger'
 
 function getRzp() {
@@ -31,9 +34,9 @@ export async function POST(req: NextRequest) {
     }
 
     const { amount } = await req.json()
-    // Whitelist valid recharge tiers — prevents crafted amounts and float abuse
-    if (!Number.isInteger(amount) || !(RECHARGE_AMOUNTS as readonly number[]).includes(amount)) {
-      return NextResponse.json({ error: 'Please select a valid recharge amount (₹200, ₹500, ₹1000, or ₹2000)' }, { status: 400 })
+    // Allow any integer between ₹50 and ₹10,000 — prevents crafted floats and extreme values
+    if (!Number.isInteger(amount) || amount < MIN_RECHARGE || amount > MAX_RECHARGE) {
+      return NextResponse.json({ error: `Please enter an amount between ₹${MIN_RECHARGE} and ₹${MAX_RECHARGE}` }, { status: 400 })
     }
 
     // Gross charge includes the Razorpay gateway fee (borne by the seeker).
@@ -84,7 +87,7 @@ export async function PUT(req: NextRequest) {
       const order = await rzp.orders.fetch(razorpay_order_id)
       const grossPaid = Math.round(Number(order.amount) / 100)
       const noteAmount = parseInt(String((order.notes as Record<string, string> | undefined)?.amount ?? ''), 10)
-      if ((RECHARGE_AMOUNTS as readonly number[]).includes(noteAmount)) {
+      if (Number.isInteger(noteAmount) && noteAmount >= MIN_RECHARGE && noteAmount <= MAX_RECHARGE) {
         verifiedAmount = noteAmount
       } else {
         // Order predates gateway-fee pass-through (gross == credit) — use gross
