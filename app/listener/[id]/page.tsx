@@ -10,7 +10,7 @@ async function fetchProfile(id: string) {
     const sb = createAdminClient()
     const { data } = await sb
       .from('listener_profiles')
-      .select('bio, rating, total_sessions, specialty_tags, users!inner(name)')
+      .select('bio, rating, total_sessions, specialty_tags, is_verified, users!inner(name)')
       .eq('user_id', id)
       .single()
     return data
@@ -29,7 +29,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const usersData = data.users as { name: string } | { name: string }[] | null
   const name = (Array.isArray(usersData) ? usersData[0]?.name : usersData?.name) || 'Listener'
   const tags = ((data.specialty_tags as string[]) || []).slice(0, 3).join(', ')
-  const title = `${name} — Verified Peer Listener on LeanOn India`
+  const verified = (data as { is_verified?: boolean }).is_verified === true
+  const title = verified
+    ? `${name} — Verified Peer Listener on LeanOn India`
+    : `${name} — Peer Listener on LeanOn India`
   const description = data.bio
     ? `Talk to ${name} on LeanOn — ${data.bio.slice(0, 130)}… First 5 minutes free.`
     : `Talk to ${name}, a verified peer listener on LeanOn India. ${tags ? `Specialises in: ${tags}.` : ''} Affordable peer support. First 5 minutes free.`

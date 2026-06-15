@@ -82,8 +82,36 @@ export async function POST(req: Request) {
 
     if (!completed) continue // already handled by another process
 
-    // Credit listener earnings for non-free sessions
-    const earning = (session.amount_held as number) - ((session.platform_fee as number) ?? 0)
+    // Pro-rate listener earnings based on actual time used vs booked time
+    const endedAt = completed.ended_at ?? new Date().toISOString()
+    const startedAt = session.started_at ?? endedAt
+    const actualMins = Math.max(0, Math.floor(
+      (new Date(endedAt).getTime() - new Date(startedAt).getTime()) / 60_000
+    ))
+    const bookedMins = session.duration_mins as number
+    const baseEarning = (session.amount_held as number) - ((session.platform_fee as number) ?? 0)
+    const earning = actualMins < 1 ? 0
+      : actualMins >= bookedMins ? baseEarning
+      : Math.floor(baseEarning * actualMins / bookedMins)
+    const refundAmount = session.is_free_trial ? 0
+      : Math.max(0, (session.amount_held as number) - earning - ((session.platform_fee as number) ?? 0))
+
+    // Refund seeker for unused portion
+    if (refundAmount > 0 && !session.is_free_trial) {
+      const { error: refundErr } = await sb.rpc('credit_wallet', { p_user_id: session.seeker_id, p_amount: refundAmount })
+      if (refundErr) {
+        logger.error('cleanup: seeker refund failed — manual reconciliation needed', { sessionId: session.id, seekerId: session.seeker_id, refundAmount })
+      } else {
+        await sb.from('wallet_transactions').insert({
+          user_id: session.seeker_id,
+          amount: refundAmount,
+          type: 'refund',
+          description: `Session refund (auto-closed, ${actualMins}/${bookedMins} min used)`,
+          session_id: session.id,
+        }).then(() => {}, (e) => logger.error('cleanup: seeker refund tx insert failed:', { sessionId: session.id, error: String(e) }))
+      }
+    }
+
     if (earning > 0 && !session.is_free_trial) {
       const { error: creditErr } = await sb.rpc('credit_wallet', {
         p_user_id: session.listener_id,
@@ -98,15 +126,15 @@ export async function POST(req: Request) {
           user_id: session.listener_id,
           amount: earning,
           type: 'credit',
-          description: 'Session earnings (auto-closed)',
+          description: `Session earnings (auto-closed, ${actualMins}/${bookedMins} min)`,
           session_id: session.id,
         })
         // Insert earnings record so it appears in the earnings dashboard
         await sb.from('listener_earnings').insert({
           listener_id: session.listener_id,
           session_id: session.id,
-          gross_amount: Math.round(session.amount_held),
-          platform_fee: Math.round(session.platform_fee ?? 0),
+          gross_amount: Math.round(session.amount_held as number),
+          platform_fee: Math.round((session.platform_fee as number) ?? 0),
           net_amount: Math.round(earning),
           status: 'settled',
         }).then(

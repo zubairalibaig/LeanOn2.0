@@ -114,6 +114,13 @@ export async function GET(req: NextRequest) {
         }).then(() => {}, () => {})
       }
 
+      // Increment total_sessions on listener profile
+      const { data: lp } = await sb.from('listener_profiles')
+        .select('total_sessions').eq('user_id', session.listener_id).maybeSingle()
+      await sb.from('listener_profiles').update({
+        total_sessions: ((lp?.total_sessions as number) || 0) + 1,
+      }).eq('user_id', session.listener_id).then(() => {}, () => {})
+
       logger.info('Auto-expired session', { sessionId: session.id, actualMins, listenerEarning, refundAmount })
     }
 

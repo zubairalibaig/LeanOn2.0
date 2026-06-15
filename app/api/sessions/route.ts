@@ -47,15 +47,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Your account has been suspended. Please contact support.' }, { status: 403 })
     }
 
-    // Up to MAX_FREE_TRIALS free trials per user — lets them try multiple listeners
+    // Up to MAX_FREE_TRIALS free trials per user, ONE per listener — lets seekers try multiple listeners
     if (isFree) {
-      const { count } = await sb
-        .from('sessions')
-        .select('id', { count: 'exact', head: true })
-        .eq('seeker_id', user.id)
-        .eq('is_free_trial', true)
-      if ((count ?? 0) >= MAX_FREE_TRIALS) {
+      const [totalTrials, listenerTrial] = await Promise.all([
+        sb.from('sessions').select('id', { count: 'exact', head: true })
+          .eq('seeker_id', user.id).eq('is_free_trial', true),
+        sb.from('sessions').select('id', { count: 'exact', head: true })
+          .eq('seeker_id', user.id).eq('listener_id', listenerId).eq('is_free_trial', true),
+      ])
+      if ((totalTrials.count ?? 0) >= MAX_FREE_TRIALS) {
         return NextResponse.json({ error: 'free_trial_used', message: `You've used all ${MAX_FREE_TRIALS} of your free 5-min trials. Recharge your wallet to continue.` }, { status: 400 })
+      }
+      if ((listenerTrial.count ?? 0) > 0) {
+        return NextResponse.json({ error: 'free_trial_used', message: 'You already had a free trial with this listener. Select a paid session to continue.' }, { status: 400 })
       }
     }
 
@@ -143,13 +147,14 @@ export async function POST(req: NextRequest) {
     }
 
     if (!isFree) {
-      await sb.from('wallet_transactions').insert({
+      const { error: txErr } = await sb.from('wallet_transactions').insert({
         user_id:     user.id,
         amount:      total,
         type:        'debit',
         description: `${durationMins}-min ${sessionType} session`,
         session_id:  sessionId,
       })
+      if (txErr) logger.error('Session POST: wallet_transactions insert failed (audit gap):', { sessionId, error: txErr.message })
     }
 
     // Send FCM push notification to listener (Item 27)
