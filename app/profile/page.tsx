@@ -112,8 +112,12 @@ export default function ProfilePage() {
       if (upErr) throw upErr
       const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path)
       const url = `${publicUrl}?t=${Date.now()}` // cache bust
-      const { error: dbErr } = await supabase.from('users').update({ avatar_url: url }).eq('id', userId)
-      if (dbErr) throw dbErr
+      const res = await fetch('/api/auth/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ avatar_url: url }),
+      })
+      if (!res.ok) throw new Error((await res.json()).error || 'DB write failed')
       setAvatarUrl(url)
     } catch (err) {
       console.error('Avatar upload error:', err)
@@ -126,9 +130,13 @@ export default function ProfilePage() {
   async function saveName() {
     if (!userId || !nameInput.trim()) return
     setSaving(true)
-    const { error: nameErr } = await supabase.from('users').update({ name: nameInput.trim() }).eq('id', userId)
+    const res = await fetch('/api/auth/profile', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: nameInput.trim() }),
+    })
     setSaving(false)
-    if (nameErr) { alert('Failed to save name. Please try again.'); return }
+    if (!res.ok) { alert('Failed to save name. Please try again.'); return }
     setName(nameInput.trim())
     setEditingName(false)
   }

@@ -62,19 +62,67 @@ export async function POST(req: NextRequest) {
     })
 
     if (saveErr) {
-      // TEMP DIAGNOSTIC: `debug` carries the real DB error during launch
-      // testing. Remove once flows are confirmed live.
-      return NextResponse.json({ error: saveErr, debug }, { status: 500 })
+      if (debug) logger.error('profile route: ensureUserRow debug', { debug })
+      return NextResponse.json({ error: saveErr }, { status: 500 })
     }
 
     return NextResponse.json({ success: true })
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
     logger.error('profile route error:', { error: msg })
-    // TEMP DIAGNOSTIC: surface the thrown error during launch testing.
     return NextResponse.json(
-      { error: 'Could not save your profile. Please try again.', debug: msg },
+      { error: 'Could not save your profile. Please try again.' },
       { status: 500 }
     )
+  }
+}
+
+// PATCH — update name and/or avatar_url for the logged-in user (server-side to bypass RLS)
+export async function PATCH(req: NextRequest) {
+  try {
+    const userSb = createServerSupabaseClient()
+    const { data: { user } } = await userSb.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+
+    if (!checkRateLimit(`profile:${user.id}`, 20, 60_000)) {
+      return NextResponse.json({ error: 'Too many requests. Please wait.' }, { status: 429 })
+    }
+
+    const body = await req.json().catch(() => ({}))
+    const updates: Record<string, string> = {}
+
+    if (typeof body?.name === 'string') {
+      const name = body.name.trim()
+      if (name.length < 2 || name.length > 80) {
+        return NextResponse.json({ error: 'Name must be 2–80 characters.' }, { status: 400 })
+      }
+      updates.name = name
+    }
+
+    if (typeof body?.avatar_url === 'string') {
+      const url = body.avatar_url.trim()
+      // Only allow Supabase Storage URLs (same project) — prevents arbitrary URL injection
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
+      if (!url.startsWith(supabaseUrl + '/storage/')) {
+        return NextResponse.json({ error: 'Invalid avatar URL' }, { status: 400 })
+      }
+      updates.avatar_url = url
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
+    }
+
+    const admin = createAdminClient()
+    const { error: updateErr } = await admin.from('users').update(updates).eq('id', user.id)
+    if (updateErr) {
+      logger.error('profile PATCH error:', { error: updateErr.message })
+      return NextResponse.json({ error: 'Failed to update profile. Please try again.' }, { status: 500 })
+    }
+
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    logger.error('profile PATCH error:', { error: err instanceof Error ? err.message : String(err) })
+    return NextResponse.json({ error: 'An unexpected error occurred.' }, { status: 500 })
   }
 }

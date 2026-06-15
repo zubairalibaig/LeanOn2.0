@@ -275,7 +275,7 @@ export default function DashboardPage() {
       .eq('listener_id', u.id)
       .eq('status', 'completed')
       .order('ended_at', { ascending: false })
-      .limit(10)
+      .limit(100)
 
     if (recent) setSessions(recent)
 
@@ -363,7 +363,11 @@ export default function DashboardPage() {
       if (upErr) throw upErr
       const { data: { publicUrl } } = sb.storage.from('avatars').getPublicUrl(path)
       const url = `${publicUrl}?t=${Date.now()}`
-      await sb.from('users').update({ avatar_url: url }).eq('id', user.id)
+      await fetch('/api/auth/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ avatar_url: url }),
+      })
       setEditAvatar(url)
     } catch (err) {
       console.error('Avatar upload error:', err)
@@ -395,14 +399,18 @@ export default function DashboardPage() {
       return
     }
     setSavingEdit(true)
-    const { error: updateErr } = await sb.from('listener_profiles').update({
-      bio: editBio.trim(),
-      specialty_tags: editTags,
-      languages_spoken: editLangs,
-      rate_per_min: rate,
-    }).eq('user_id', user.id)
+    const res = await fetch('/api/listener/profile', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        bio: editBio.trim(),
+        specialty_tags: editTags,
+        languages_spoken: editLangs,
+        rate_per_min: rate,
+      }),
+    })
     setSavingEdit(false)
-    if (updateErr) {
+    if (!res.ok) {
       alert('Failed to save profile. Please try again.')
       return
     }

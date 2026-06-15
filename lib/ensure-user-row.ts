@@ -24,7 +24,7 @@ export async function ensureUserRow(
   admin: SupabaseClient,
   { id, name, phone, phoneVerified }: EnsureArgs
 ): Promise<{ error: string | null; debug: string | null }> {
-  const row: Record<string, unknown> = { id, is_active: true }
+  const row: Record<string, unknown> = { id }
   if (name) row.name = name
   if (phone) row.phone = phone
 

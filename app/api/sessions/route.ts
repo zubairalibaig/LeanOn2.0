@@ -41,6 +41,12 @@ export async function POST(req: NextRequest) {
     const sb     = createAdminClient()
     const isFree = durationMins === FREE_SESSION_MINS
 
+    // Block suspended/banned seekers from booking any sessions
+    const { data: seekerRow } = await sb.from('users').select('is_suspended').eq('id', user.id).single()
+    if (seekerRow?.is_suspended) {
+      return NextResponse.json({ error: 'Your account has been suspended. Please contact support.' }, { status: 403 })
+    }
+
     // Up to MAX_FREE_TRIALS free trials per user — lets them try multiple listeners
     if (isFree) {
       const { count } = await sb
