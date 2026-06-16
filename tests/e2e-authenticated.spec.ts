@@ -24,6 +24,7 @@
  */
 
 import { test, expect, Page, BrowserContext } from '@playwright/test'
+import { createClient } from '@supabase/supabase-js'
 
 const SEEKER_PHONE   = process.env.TEST_SEEKER_PHONE   ?? ''
 const SEEKER_OTP     = process.env.TEST_SEEKER_OTP     ?? ''
@@ -175,4 +176,39 @@ test.describe('Seeker books a free trial with the approved listener', () => {
 
     await seekerCtx.close()
   })
+})
+
+// ────────────────────────────────────────────────────────────────────────
+// Cleanup: soft-deactivate E2E test accounts after the full run so they
+// don't pollute the browse page or admin queue.
+// Requires SUPABASE_SERVICE_ROLE_KEY env var (set in .env.test or CI secrets).
+test.afterAll(async () => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? ''
+  if (!supabaseUrl || !serviceRoleKey) return
+
+  const admin = createClient(supabaseUrl, serviceRoleKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  })
+
+  const testPhones = [SEEKER_PHONE, LISTENER_PHONE]
+    .filter(Boolean)
+    .map(p => '+' + p.replace(/\D/g, ''))
+
+  if (testPhones.length === 0) return
+
+  // Match both E.164 (+91...) and 10-digit formats stored in the DB
+  const { data: testUsers } = await admin
+    .from('users')
+    .select('id')
+    .in('phone', testPhones)
+
+  for (const u of testUsers ?? []) {
+    await admin.from('users')
+      .update({ is_active: false })
+      .eq('id', u.id)
+    await admin.from('listener_profiles')
+      .update({ is_active: false, is_available: false, is_approved: false })
+      .eq('user_id', u.id)
+  }
 })

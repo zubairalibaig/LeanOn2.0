@@ -24,11 +24,12 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json().catch(() => ({}))
-    const name = typeof body?.name === 'string' ? body.name.trim() : ''
-    const bio  = typeof body?.bio  === 'string' ? body.bio.trim()  : ''
-    const bank = typeof body?.bank === 'string' ? body.bank.trim() : ''
-    const ifsc = typeof body?.ifsc === 'string' ? body.ifsc.trim().toUpperCase() : ''
-    const upi  = typeof body?.upi  === 'string' ? body.upi.trim()  : ''
+    const name      = typeof body?.name       === 'string' ? body.name.trim() : ''
+    const bio       = typeof body?.bio        === 'string' ? body.bio.trim()  : ''
+    const bank      = typeof body?.bank       === 'string' ? body.bank.trim() : ''
+    const ifsc      = typeof body?.ifsc       === 'string' ? body.ifsc.trim().toUpperCase() : ''
+    const upi       = typeof body?.upi        === 'string' ? body.upi.trim()  : ''
+    const avatarUrl = typeof body?.avatar_url === 'string' && body.avatar_url.startsWith('https://') ? body.avatar_url : null
     const formPhone = typeof body?.phone === 'string' ? body.phone.trim() : ''
     const rate = Number(body?.rate)
     const tags  = Array.isArray(body?.tags)  ? body.tags.filter((t: unknown) => typeof t === 'string').slice(0, 10)  : []
@@ -65,6 +66,11 @@ export async function POST(req: NextRequest) {
       phoneVerified: !!user.phone,
     })
     if (userErr) return NextResponse.json({ error: userErr, debug: userDebug }, { status: 500 })
+
+    // Save avatar URL to users row (best-effort — profile can function without it)
+    if (avatarUrl) {
+      await admin.from('users').update({ avatar_url: avatarUrl }).eq('id', user.id).then(() => {}, () => {})
+    }
 
     // 2. listener profile — is_approved intentionally omitted: DB default
     //    false on insert; existing approval preserved on resubmission.

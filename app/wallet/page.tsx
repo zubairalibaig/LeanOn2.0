@@ -67,6 +67,7 @@ export default function WalletPage() {
   const [transactions, setTransactions] = useState<Txn[]>([])
   const [userId, setUserId]     = useState<string|null>(null)
   const [refunding, setRefunding] = useState(false)
+  const [refundSubmitted, setRefundSubmitted] = useState(false)
   const [paymentPending, setPaymentPending] = useState(false)
   const [showRefundConfirm, setShowRefundConfirm] = useState(false)
   const rzpScriptRef = useRef(false)
@@ -141,7 +142,9 @@ export default function WalletPage() {
     const data = await res.json()
     setRefunding(false)
     if (!res.ok) { showToast(data.error || 'Could not submit refund request.', 'error'); return }
-    showToast(`Refund request for ₹${balance} submitted! You'll receive it in 3–5 business days.`, 'success')
+    setBalance(0)
+    setRefundSubmitted(true)
+    showToast(`Refund request submitted! You'll receive it in 3–5 business days.`, 'success')
   }
 
   async function handleRecharge() {
@@ -249,6 +252,10 @@ export default function WalletPage() {
                   Cancel
                 </button>
               </div>
+            </div>
+          ) : refundSubmitted ? (
+            <div style={{marginTop:16,fontSize:13,color:'rgba(255,255,255,0.75)',fontWeight:600,lineHeight:1.5}}>
+              ✓ Refund requested — arrives in 3–5 business days
             </div>
           ) : (
             <button className="refund-btn" onClick={() => setShowRefundConfirm(true)} disabled={refunding || !balance || balance <= 0}>

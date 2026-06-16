@@ -102,6 +102,13 @@ const S = `
   .resend-count{font-size:14px;color:var(--gray);font-weight:600;}
   .already-reg{background:#F0F8FC;border:1.5px solid var(--border);border-radius:16px;padding:20px;text-align:center;margin-bottom:24px;}
   .already-reg p{font-size:15px;color:var(--navy);font-weight:600;margin-bottom:12px;}
+  .photo-box{border:2px dashed var(--border);border-radius:16px;padding:20px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:4px;background:white;position:relative;overflow:hidden;}
+  .photo-box:hover,.photo-box.has-photo{border-color:var(--teal);border-style:solid;}
+  .photo-box.err{border-color:#E53935;border-style:solid;}
+  .photo-preview{width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 8px;display:block;border:3px solid var(--teal);}
+  .photo-placeholder{width:64px;height:64px;border-radius:50%;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 8px;}
+  .photo-label{font-size:13px;font-weight:700;color:var(--teal);display:block;}
+  .photo-sub{font-size:11px;color:var(--gray);font-weight:500;margin-top:3px;}
   .training-box{background:rgba(26,143,160,0.06);border:1.5px solid rgba(26,143,160,0.2);border-radius:14px;padding:14px 16px;margin-bottom:20px;}
   .training-box h3{font-size:13px;font-weight:800;color:var(--navy);margin-bottom:8px;}
   .training-box li{font-size:12px;color:var(--gray);font-weight:600;margin-bottom:4px;list-style:none;padding-left:4px;}
@@ -166,6 +173,11 @@ export default function BecomeListenerPage() {
   const [error, setError] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [shaking, setShaking] = useState(false)
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const [avatarPreview, setAvatarPreview] = useState<string>('')
+  const [avatarUrl, setAvatarUrl] = useState<string>('')
+  const [avatarUploading, setAvatarUploading] = useState(false)
+  const photoInputRef = useRef<HTMLInputElement | null>(null)
 
   // OTP state
   const [otpSent, setOtpSent] = useState(false)
@@ -269,6 +281,7 @@ export default function BecomeListenerPage() {
     if (!otpVerified) errs.push('Please verify your phone number with OTP')
     const be = validateBio(bio); if (be) errs.push(be)
     if (tags.length === 0) errs.push('Please select at least one topic')
+    if (!avatarFile && !avatarUrl) errs.push('Please upload a profile photo')
     return errs
   }
 
@@ -281,7 +294,7 @@ export default function BecomeListenerPage() {
     return errs
   }
 
-  function tryNextFromStep1() {
+  async function tryNextFromStep1() {
     const errs = validateStep1()
     if (errs.length > 0) {
       const fe: Record<string,string> = {}
@@ -290,10 +303,30 @@ export default function BecomeListenerPage() {
       if (!otpVerified) fe.otp = 'Please verify your phone number with OTP'
       const be = validateBio(bio); if (be) fe.bio = be
       if (tags.length === 0) fe.tags = 'Please select at least one topic'
+      if (!avatarFile && !avatarUrl) fe.avatar = 'Please upload a profile photo'
       setFieldErrors(fe)
       setShaking(true)
       setTimeout(() => setShaking(false), 500)
       return
+    }
+    // Upload photo if not already uploaded
+    if (avatarFile && !avatarUrl) {
+      setAvatarUploading(true)
+      try {
+        const { data: { user } } = await sb.auth.getUser()
+        if (!user) { setError('Session expired. Please refresh and try again.'); setAvatarUploading(false); return }
+        const ext = avatarFile.name.split('.').pop() || 'jpg'
+        const path = `listeners/${user.id}.${ext}`
+        const { error: upErr } = await sb.storage.from('avatars').upload(path, avatarFile, { upsert: true, contentType: avatarFile.type })
+        if (upErr) { setFieldErrors(f => ({...f, avatar: 'Photo upload failed. Please try again.'})); setAvatarUploading(false); return }
+        const { data: { publicUrl } } = sb.storage.from('avatars').getPublicUrl(path)
+        setAvatarUrl(publicUrl)
+      } catch {
+        setFieldErrors(f => ({...f, avatar: 'Photo upload failed. Please try again.'}))
+        setAvatarUploading(false)
+        return
+      }
+      setAvatarUploading(false)
     }
     setFieldErrors({})
     setStep(2)
@@ -330,15 +363,16 @@ export default function BecomeListenerPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name:  name.trim(),
-          phone: phone.trim(),
-          bio:   bio.trim(),
+          name:       name.trim(),
+          phone:      phone.trim(),
+          bio:        bio.trim(),
           tags,
           langs,
-          rate:  rateNum,
-          bank:  bank.trim(),
-          ifsc:  ifsc.trim().toUpperCase(),
-          upi:   upi.trim(),
+          rate:       rateNum,
+          bank:       bank.trim(),
+          ifsc:       ifsc.trim().toUpperCase(),
+          upi:        upi.trim(),
+          avatar_url: avatarUrl || undefined,
         }),
       })
       if (!res.ok) {
@@ -528,6 +562,42 @@ export default function BecomeListenerPage() {
             </div>
             {fieldErrors.bio && <span className="field-err">{fieldErrors.bio}</span>}
 
+            <label className="lbl">Profile photo (required — builds trust with seekers)</label>
+            <input
+              ref={photoInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              style={{display:'none'}}
+              onChange={e => {
+                const file = e.target.files?.[0]
+                if (!file) return
+                if (file.size > 5 * 1024 * 1024) { setFieldErrors(f => ({...f, avatar:'Photo must be under 5 MB'})); return }
+                setAvatarFile(file)
+                setAvatarUrl('')
+                const reader = new FileReader()
+                reader.onload = ev => setAvatarPreview(ev.target?.result as string)
+                reader.readAsDataURL(file)
+                if (fieldErrors.avatar) setFieldErrors(f => ({...f, avatar:''}))
+              }}
+            />
+            <div
+              className={`photo-box${avatarPreview ? ' has-photo' : ''}${fieldErrors.avatar ? ' err' : ''}`}
+              onClick={() => photoInputRef.current?.click()}
+            >
+              {avatarPreview
+                ? <img src={avatarPreview} alt="Preview" className="photo-preview" />
+                : <div className="photo-placeholder">📷</div>
+              }
+              <span className="photo-label">
+                {avatarPreview ? 'Change photo' : 'Tap to upload your photo'}
+              </span>
+              <span className="photo-sub">JPG / PNG / WebP · max 5 MB · real photo required</span>
+            </div>
+            {fieldErrors.avatar && <span className="field-err">{fieldErrors.avatar}</span>}
+            <div style={{background:'rgba(26,143,160,0.06)',border:'1px solid rgba(26,143,160,0.2)',borderRadius:10,padding:'10px 14px',marginBottom:16,fontSize:12,color:'#1A5F6A',fontWeight:600,lineHeight:1.5}}>
+              💙 Listeners with a genuine photo receive 3× more bookings. Use a clear, well-lit photo of yourself — no avatars or illustrations.
+            </div>
+
             <label className="lbl">Topics you can speak to (select all that apply)</label>
             {fieldErrors.tags && <span className="field-err">{fieldErrors.tags}</span>}
             <div className="tag-grid">
@@ -557,8 +627,8 @@ export default function BecomeListenerPage() {
               </ul>
             </div>
 
-            <button className="btn" onClick={tryNextFromStep1}>
-              Next: Payment details →
+            <button className="btn" onClick={tryNextFromStep1} disabled={avatarUploading}>
+              {avatarUploading ? <span className="spin">⟳</span> : 'Next: Payment details →'}
             </button>
           </div>
         )}

@@ -92,7 +92,9 @@ a{text-decoration:none;color:inherit;}
 .tag-scroll::-webkit-scrollbar{display:none;}
 .tag-pill{flex-shrink:0;display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:50px;font-size:12px;font-weight:700;border:1.5px solid var(--border);background:white;color:var(--gray);cursor:pointer;transition:all .15s;white-space:nowrap;}
 .tag-pill.active{background:var(--navy);color:white;border-color:var(--navy);}
-.list{padding:16px 20px;display:flex;flex-direction:column;gap:14px;max-width:540px;margin:0 auto;}
+.list{padding:16px 20px;display:grid;grid-template-columns:1fr;gap:14px;max-width:1200px;margin:0 auto;}
+@media(min-width:640px){.list{grid-template-columns:1fr 1fr;}}
+@media(min-width:960px){.list{grid-template-columns:1fr 1fr 1fr;}}
 .card{background:white;border:1.5px solid var(--border);border-radius:20px;padding:18px;cursor:pointer;transition:all .2s;box-shadow:0 1px 4px rgba(15,72,103,.04);}
 .card:hover{border-color:var(--teal);box-shadow:0 4px 20px rgba(15,72,103,.08);transform:translateY(-2px);}
 .card-top{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;}
@@ -301,7 +303,7 @@ function BrowseContent() {
         {loading ? (
           [1,2,3].map(i=><div key={i} className="skeleton"/>)
         ) : filtered.length === 0 ? (
-          <div style={{textAlign:'center',padding:'60px 20px',background:'white',borderRadius:24,border:'1.5px solid var(--border)'}}>
+          <div style={{textAlign:'center',padding:'60px 20px',background:'white',borderRadius:24,border:'1.5px solid var(--border)',gridColumn:'1 / -1'}}>
             <div style={{fontSize:48,marginBottom:16}}>🔍</div>
             <h3 style={{fontSize:20,fontWeight:800,color:'var(--navy)',marginBottom:8}}>No listeners match right now</h3>
             <p style={{fontSize:15,color:'var(--gray)',lineHeight:1.7,marginBottom:24,maxWidth:400,margin:'0 auto 24px'}}>
