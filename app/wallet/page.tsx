@@ -106,8 +106,27 @@ export default function WalletPage() {
     if (!user) { router.push('/auth'); return }
     setUserId(user.id)
 
-    const { data: userData } = await sb.from('users').select('wallet_balance').eq('id', user.id).single()
-    if (userData) setBalance(userData.wallet_balance)
+    // Try browser-client first (RLS: users_select_own). Fall back to the server
+    // API (admin client, bypasses RLS) if the row is missing or inaccessible —
+    // e.g. users who completed payment before their public.users row was created.
+    const { data: userData } = await sb.from('users').select('wallet_balance').eq('id', user.id).maybeSingle()
+    if (userData !== null) {
+      setBalance(userData?.wallet_balance ?? 0)
+    } else {
+      // Browser client returned null — row may be missing or RLS blocked.
+      // Server API uses admin client so it always reaches the row if it exists.
+      try {
+        const res = await fetch('/api/auth/profile')
+        if (res.ok) {
+          const profile = await res.json()
+          setBalance(profile.wallet_balance ?? 0)
+        } else {
+          setBalance(0)
+        }
+      } catch {
+        setBalance(0)
+      }
+    }
 
     const { data: txns } = await sb.from('wallet_transactions')
       .select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(10)

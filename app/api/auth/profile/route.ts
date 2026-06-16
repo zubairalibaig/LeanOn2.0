@@ -4,19 +4,22 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { ensureUserRow } from '@/lib/ensure-user-row'
 import { logger } from '@/lib/logger'
 
-// GET — return the caller's name (and role) without requiring a browser DB read.
-// Used by the auth page to skip the name step for returning users even when
-// the browser-client RLS read of users.name returns null (policy gaps).
+// GET — return the caller's name, role, and wallet_balance (admin-client read, bypasses RLS).
+// Used by auth page (name check) and wallet page (initial balance load).
 export async function GET() {
   try {
     const userSb = createServerSupabaseClient()
     const { data: { user } } = await userSb.auth.getUser()
-    if (!user) return NextResponse.json({ name: null, role: null })
+    if (!user) return NextResponse.json({ name: null, role: null, wallet_balance: null })
     const admin = createAdminClient()
-    const { data } = await admin.from('users').select('name, role').eq('id', user.id).maybeSingle()
-    return NextResponse.json({ name: data?.name ?? null, role: data?.role ?? null })
+    const { data } = await admin.from('users').select('name, role, wallet_balance').eq('id', user.id).maybeSingle()
+    return NextResponse.json({
+      name: data?.name ?? null,
+      role: data?.role ?? null,
+      wallet_balance: data?.wallet_balance ?? null,
+    })
   } catch {
-    return NextResponse.json({ name: null, role: null })
+    return NextResponse.json({ name: null, role: null, wallet_balance: null })
   }
 }
 
