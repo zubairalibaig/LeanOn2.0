@@ -203,22 +203,22 @@ function BrowseContent() {
 
   async function loadListeners() {
     setLoading(true)
-    let q = client.from('listener_profiles')
-      .select('*, users!inner(name, avatar_url)')
-      .eq('is_approved', true)
-      .eq('is_active', true)
-      .eq('is_suspended', false)
-      .order('is_available', {ascending:false})
-      .order('rating', {ascending:false})
-      .limit(20)
-    if (tag !== 'all') q = q.contains('specialty_tags', [tag])
-    if (lang !== 'all') q = q.contains('languages_spoken', [lang])
-    const {data} = await q
-    setListeners((data || []).map((l) => ({
-      ...l, name: (l.users as {name:string}|null)?.name || 'Listener',
-      avatar_url: (l.users as {avatar_url?:string}|null)?.avatar_url,
-      languages_spoken: l.languages_spoken || [],
-    })))
+    const params = new URLSearchParams()
+    if (tag  !== 'all') params.set('tag',  tag)
+    if (lang !== 'all') params.set('lang', lang)
+    try {
+      const res = await fetch(`/api/listeners?${params}`)
+      if (!res.ok) throw new Error('Failed to load')
+      const { listeners: data } = await res.json()
+      setListeners((data || []).map((l: Record<string, unknown>) => ({
+        ...l,
+        name:       ((l.users as { name?: string } | null)?.name) || 'Listener',
+        avatar_url: ((l.users as { avatar_url?: string } | null)?.avatar_url),
+        languages_spoken: (l.languages_spoken as string[]) || [],
+      })))
+    } catch {
+      setListeners([])
+    }
     setLoading(false)
   }
 

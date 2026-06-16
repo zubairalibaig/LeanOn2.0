@@ -941,7 +941,7 @@ export default function AdminPage() {
                     <thead>
                       <tr>
                         <th>Name</th>
-                        <th>Email</th>
+                        <th>Phone</th>
                         <th>Joined</th>
                         <th>Wallet</th>
                         <th>Status</th>
@@ -951,8 +951,8 @@ export default function AdminPage() {
                     <tbody>
                       {users.map(u => (
                         <tr key={u.id}>
-                          <td style={{ fontWeight: 700 }}>{u.name || u.phone || '—'}</td>
-                          <td style={{ color: 'var(--gray)', fontSize: 13 }}>{u.email || (u.phone && !u.name ? u.phone : '—')}</td>
+                          <td style={{ fontWeight: 700 }}>{u.name || '—'}</td>
+                          <td style={{ color: 'var(--gray)', fontSize: 13 }}>{u.phone || '—'}</td>
                           <td style={{ color: 'var(--gray)' }}>{fmtDate(u.created_at)}</td>
                           <td>₹{u.wallet_balance ?? 0}</td>
                           <td>
@@ -1040,7 +1040,7 @@ export default function AdminPage() {
                     <thead>
                       <tr>
                         <th>Name</th>
-                        <th>Phone / Email</th>
+                        <th>Phone</th>
                         <th>Rate</th>
                         <th>Rating</th>
                         <th>Sessions</th>
@@ -1067,9 +1067,7 @@ export default function AdminPage() {
                               {l.is_verified && <span className="badge badge-teal" style={{ marginLeft: 6, fontSize: 10 }}>Verified</span>}
                             </td>
                             <td style={{ color: 'var(--gray)', fontSize: 12 }}>
-                              {u?.phone ? <div>{u.phone}</div> : null}
-                              {u?.email ? <div style={{ color: 'var(--gray)' }}>{u.email}</div> : null}
-                              {!u?.phone && !u?.email ? '—' : null}
+                              {u?.phone || '—'}
                             </td>
                             <td>₹{l.rate_per_min ?? '—'}/min</td>
                             <td>{l.rating ? `${l.rating.toFixed(1)} ★` : '—'}</td>
