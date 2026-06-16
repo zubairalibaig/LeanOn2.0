@@ -61,6 +61,11 @@ export async function GET(req: NextRequest) {
       // Free vs paid
       sb.from('sessions').select('id', { count: 'exact', head: true }).eq('is_free_trial', true),
       sb.from('sessions').select('id', { count: 'exact', head: true }).eq('is_free_trial', false).eq('status', 'completed'),
+
+      // Gateway fee KPIs — amount collected from users to offset Razorpay costs
+      sb.from('wallet_transactions').select('amount').eq('type', 'gateway_fee'),
+      sb.from('wallet_transactions').select('amount').eq('type', 'gateway_fee').gte('created_at', thisMonth),
+      sb.from('wallet_transactions').select('amount').eq('type', 'gateway_fee').gte('created_at', today),
     ])
 
     // Extract values safely — failed queries return zero/null defaults
@@ -91,8 +96,11 @@ export async function GET(req: NextRequest) {
     const pendingReports    = extract<{ id: string }>(17)
     const totalEarnings     = extract<{ net_amount: number }>(18)
     const avgSessionDuration = extract<{ duration_mins: number }>(19)
-    const freeTrialSessions = extract<{ id: string }>(20)
-    const paidSessions      = extract<{ id: string }>(21)
+    const freeTrialSessions   = extract<{ id: string }>(20)
+    const paidSessions        = extract<{ id: string }>(21)
+    const gatewayFeesAllTime  = extract<{ amount: number }>(22)
+    const gatewayFeesMonth    = extract<{ amount: number }>(23)
+    const gatewayFeesToday    = extract<{ amount: number }>(24)
 
     const sum = (rows: { amount?: number; net_amount?: number }[] | null, field: 'amount' | 'net_amount' = 'amount') =>
       (rows ?? []).reduce((s, r) => s + (r[field] ?? 0), 0)
@@ -137,6 +145,11 @@ export async function GET(req: NextRequest) {
       },
       moderation: {
         pendingReports: pendingReports.count ?? 0,
+      },
+      gatewayFees: {
+        allTime:   sum(gatewayFeesAllTime.data),
+        thisMonth: sum(gatewayFeesMonth.data),
+        today:     sum(gatewayFeesToday.data),
       },
     })
   } catch (err) {

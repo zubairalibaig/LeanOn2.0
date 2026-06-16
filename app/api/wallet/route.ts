@@ -83,9 +83,10 @@ export async function PUT(req: NextRequest) {
     // Credit the tier amount from server-set order notes (the gross charge includes
     // the gateway fee, which the seeker pays but is NOT credited to the wallet).
     let verifiedAmount: number
+    let grossPaid = 0
     try {
       const order = await rzp.orders.fetch(razorpay_order_id)
-      const grossPaid = Math.round(Number(order.amount) / 100)
+      grossPaid = Math.round(Number(order.amount) / 100)
       const noteAmount = parseInt(String((order.notes as Record<string, string> | undefined)?.amount ?? ''), 10)
       if (Number.isInteger(noteAmount) && noteAmount >= MIN_RECHARGE && noteAmount <= MAX_RECHARGE) {
         verifiedAmount = noteAmount
@@ -124,6 +125,20 @@ export async function PUT(req: NextRequest) {
         { error: `Wallet credit failed. Contact support with payment ID: ${razorpay_payment_id}` },
         { status: 500 }
       )
+    }
+
+    // Record gateway fee as a separate ledger row so it shows in admin KPIs.
+    // reference_id 'gf_<paymentId>' is unique, so if both PUT and webhook fire,
+    // only the first insert lands (the second silently conflicts and is ignored).
+    const gatewayFee = grossPaid - verifiedAmount
+    if (gatewayFee > 0) {
+      await sb.from('wallet_transactions').insert({
+        user_id:      user.id,
+        amount:       gatewayFee,
+        type:         'gateway_fee',
+        description:  `Razorpay gateway fee (₹${grossPaid} charged − ₹${verifiedAmount} credited)`,
+        reference_id: `gf_${razorpay_payment_id}`,
+      }).then(() => {}, () => {}) // ignore conflict if webhook already recorded it
     }
 
     const [updated, authUser] = await Promise.all([

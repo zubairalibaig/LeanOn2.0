@@ -9,6 +9,7 @@ type KPIs = {
   listeners: { total: number; active: number; pending: number; online: number }
   sessions: { total: number; today: number; thisMonth: number; active: number; freeTrial: number; paid: number; avgDurationMins: number }
   revenue: { totalRechargedPaise: number; thisMonthPaise: number; todayPaise: number; listenerEarningsPaise: number }
+  gatewayFees: { allTime: number; thisMonth: number; today: number }
   payouts: { pendingAmountPaise: number; pendingCount: number; totalPaidPaise: number }
   moderation: { pendingReports: number }
 }
@@ -875,6 +876,23 @@ export default function AdminPage() {
                   <div className="kpi-card" style={{ border: kpis.moderation.pendingReports > 0 ? '2px solid var(--red)' : undefined }}>
                     <div className="kpi-label">Reports Pending</div>
                     <div className="kpi-value" style={{ color: kpis.moderation.pendingReports > 0 ? 'var(--red)' : undefined }}>{kpis.moderation.pendingReports}</div>
+                  </div>
+                </div>
+
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Gateway Fees Collected <span style={{ fontWeight: 500, fontSize: 11 }}>(Razorpay pass-through — offsets payment costs)</span></div>
+                <div className="kpi-grid" style={{ marginBottom: 20 }}>
+                  <div className="kpi-card">
+                    <div className="kpi-label">All Time</div>
+                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.gatewayFees?.allTime ?? 0)}</div>
+                    <div className="kpi-sub">total Razorpay offset</div>
+                  </div>
+                  <div className="kpi-card">
+                    <div className="kpi-label">This Month</div>
+                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.gatewayFees?.thisMonth ?? 0)}</div>
+                  </div>
+                  <div className="kpi-card">
+                    <div className="kpi-label">Today</div>
+                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.gatewayFees?.today ?? 0)}</div>
                   </div>
                 </div>
               </>

@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 import { createAdminClient } from '@/lib/supabase-server'
-import { RECHARGE_AMOUNTS } from '@/lib/constants'
+import { grossRechargeAmount } from '@/lib/constants'
+
+const MIN_RECHARGE = 50
+const MAX_RECHARGE = 10_000
 import { logger } from '@/lib/logger'
 
 // Razorpay sends webhook events when payments complete asynchronously.
@@ -43,7 +46,9 @@ export async function POST(req: NextRequest) {
       // — credit the tier amount from notes; fall back to gross for legacy orders.
       const userId = payment.notes?.userId as string | undefined
       const noteAmount = parseInt(String(payment.notes?.amount ?? ''), 10)
-      const amountRs = (RECHARGE_AMOUNTS as readonly number[]).includes(noteAmount) ? noteAmount : grossRs
+      // Use note amount if it's a valid recharge value; fall back to gross for legacy orders
+      const amountRs = (Number.isInteger(noteAmount) && noteAmount >= MIN_RECHARGE && noteAmount <= MAX_RECHARGE)
+        ? noteAmount : grossRs
 
       if (!userId) {
         logger.error('Webhook: no userId in order notes for order', { orderId })
@@ -66,7 +71,22 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Credit failed' }, { status: 500 })
       }
 
-      logger.info('Webhook: credited wallet (idempotent)', { amountRs, userId, paymentId })
+      // Record gateway fee — idempotent via 'gf_' prefix reference_id.
+      // If the client PUT already recorded it, this insert is a no-op.
+      const gatewayFee = grossRs - amountRs
+      const expectedGross = grossRechargeAmount(amountRs)
+      const feeToRecord = gatewayFee > 0 ? gatewayFee : grossRs - expectedGross + (grossRs - amountRs)
+      if (feeToRecord > 0) {
+        await sb.from('wallet_transactions').insert({
+          user_id:      userId,
+          amount:       feeToRecord,
+          type:         'gateway_fee',
+          description:  `Razorpay gateway fee (₹${grossRs} charged − ₹${amountRs} credited)`,
+          reference_id: `gf_${paymentId}`,
+        }).then(() => {}, () => {})
+      }
+
+      logger.info('Webhook: credited wallet (idempotent)', { amountRs, gatewayFee: feeToRecord, userId, paymentId })
     }
 
     return NextResponse.json({ received: true })
