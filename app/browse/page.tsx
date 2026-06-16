@@ -183,19 +183,23 @@ function BrowseContent() {
       const {data} = await client.from('users').select('wallet_balance').eq('id',user.id).single()
       if (data) setBalance(data.wallet_balance)
 
-      // Subscribe to incoming session requests (in case user is a listener browsing)
-      if (channelRef.current) client.removeChannel(channelRef.current)
-      const channel = client.channel(`browse-incoming-${user.id}`)
-        .on('postgres_changes', {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'sessions',
-          filter: `listener_id=eq.${user.id}`,
-        }, (payload) => {
-          setIncomingSession(payload.new as { id: string; duration_mins: number; session_type: string; amount_held: number })
-        })
-        .subscribe()
-      channelRef.current = channel
+      // Only subscribe to incoming sessions if user is an approved listener — avoids
+      // wasteful realtime connections for regular seekers
+      const { data: lp } = await client.from('listener_profiles').select('is_approved').eq('user_id', user.id).maybeSingle()
+      if (lp?.is_approved) {
+        if (channelRef.current) client.removeChannel(channelRef.current)
+        const channel = client.channel(`browse-incoming-${user.id}`)
+          .on('postgres_changes', {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'sessions',
+            filter: `listener_id=eq.${user.id}`,
+          }, (payload) => {
+            setIncomingSession(payload.new as { id: string; duration_mins: number; session_type: string; amount_held: number })
+          })
+          .subscribe()
+        channelRef.current = channel
+      }
     })
 
     return () => {
@@ -379,7 +383,7 @@ function BrowseContent() {
 
       <div className="join-cta">
         <h3>Have lived experience to share?</h3>
-        <p>Set your own rate (₹8–25/min) and keep 100% of it.</p>
+        <p>Set your own rate and keep 100% of it.</p>
         <a href="/become-listener"><button className="btn-join">Join as a listener →</button></a>
       </div>
     </>

@@ -110,6 +110,9 @@ export async function middleware(req: NextRequest) {
           // Origin absent but browser says cross-site → reject
           return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
         }
+        // When both Origin and Sec-Fetch-Site are absent (non-browser callers like curl),
+        // fall through — all mutating API routes enforce their own auth (Supabase session
+        // + admin secret), so server-to-server calls without session cookies do no harm.
       }
     }
     return NextResponse.next()

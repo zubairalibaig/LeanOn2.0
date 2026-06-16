@@ -431,7 +431,11 @@ export default function DashboardPage() {
     const now = new Date()
     return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
   })
-  const thisMonthEarned = thisMonthSessions.reduce((sum, s) => sum + (s.amount_held - (s.platform_fee ?? 0)), 0)
+  // Only include sessions where platform_fee is populated (post-migration rows).
+  // Pre-migration rows have null platform_fee; using them would overstate earnings.
+  const thisMonthEarned = thisMonthSessions
+    .filter(s => s.platform_fee != null)
+    .reduce((sum, s) => sum + (s.amount_held - s.platform_fee!), 0)
   const totalSessions   = profile?.total_sessions || 0
   const rating          = profile?.rating || 0
   const nextTierAt      = 200
@@ -696,8 +700,8 @@ export default function DashboardPage() {
             </button>
           </div>
           <p className="payout-note">Transfers to your registered bank account within 3 business days.</p>
-          <a href="/dashboard/earnings" style={{display:'block',textAlign:'center',marginTop:10,fontSize:13,fontWeight:700,color:'var(--teal)',textDecoration:'none'}}>
-            View full earnings history →
+          <a href="/history" style={{display:'block',textAlign:'center',marginTop:10,fontSize:13,fontWeight:700,color:'var(--teal)',textDecoration:'none'}}>
+            View full session history →
           </a>
         </div>
 
@@ -753,7 +757,7 @@ export default function DashboardPage() {
                   ? seeker.split(' ').map((p: string) => p[0] || '').join('.') + '.'
                   : 'User'
                 return (
-                  <div key={i} className="session-item">
+                  <div key={s.id} className="session-item">
                     <div>
                       <div className="session-user">
                         {seekerDisplay} · {s.duration_mins} min {s.session_type}

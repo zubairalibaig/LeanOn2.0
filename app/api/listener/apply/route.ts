@@ -29,7 +29,10 @@ export async function POST(req: NextRequest) {
     const bank      = typeof body?.bank       === 'string' ? body.bank.trim() : ''
     const ifsc      = typeof body?.ifsc       === 'string' ? body.ifsc.trim().toUpperCase() : ''
     const upi       = typeof body?.upi        === 'string' ? body.upi.trim()  : ''
-    const avatarUrl = typeof body?.avatar_url === 'string' && body.avatar_url.startsWith('https://') ? body.avatar_url : null
+    // Validate avatar_url is from this project's Supabase Storage — prevents
+    // injection of arbitrary external URLs into the users row.
+    const supabaseStorageBase = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '') + '/storage/'
+    const avatarUrl = typeof body?.avatar_url === 'string' && body.avatar_url.startsWith(supabaseStorageBase) ? body.avatar_url : null
     const formPhone = typeof body?.phone === 'string' ? body.phone.trim() : ''
     const rate = Number(body?.rate)
     const tags  = Array.isArray(body?.tags)  ? body.tags.filter((t: unknown) => typeof t === 'string').slice(0, 10)  : []

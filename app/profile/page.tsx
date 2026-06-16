@@ -148,7 +148,13 @@ export default function ProfilePage() {
 
   async function handleDeleteAccount() {
     setDeleting(true)
-    await fetch('/api/account', { method: 'POST' })
+    const res = await fetch('/api/account', { method: 'POST' })
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}))
+      alert(body.error || 'Account deletion failed. Please try again or contact support.')
+      setDeleting(false)
+      return
+    }
     await supabase.auth.signOut()
     router.push('/')
   }

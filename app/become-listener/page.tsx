@@ -149,7 +149,9 @@ function validateIFSC(v: string): string {
   return ''
 }
 function validateUPI(v: string): string {
-  if (!v.includes('@') || v.split('@')[0].length < 3) return 'Enter a valid UPI ID (e.g. name@upi)'
+  // UPI IDs: at least 3 chars before @, at least 4 chars after (e.g. @okaxis)
+  const parts = v.split('@')
+  if (parts.length !== 2 || parts[0].length < 3 || parts[1].length < 4) return 'Enter a valid UPI ID (e.g. yourname@okaxis)'
   return ''
 }
 
@@ -173,6 +175,8 @@ export default function BecomeListenerPage() {
   const [error, setError] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [shaking, setShaking] = useState(false)
+  const [step1Submitted, setStep1Submitted] = useState(false)
+  const [step2Submitted, setStep2Submitted] = useState(false)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [avatarPreview, setAvatarPreview] = useState<string>('')
   const [avatarUrl, setAvatarUrl] = useState<string>('')
@@ -295,6 +299,7 @@ export default function BecomeListenerPage() {
   }
 
   async function tryNextFromStep1() {
+    setStep1Submitted(true)
     const errs = validateStep1()
     if (errs.length > 0) {
       const fe: Record<string,string> = {}
@@ -315,8 +320,9 @@ export default function BecomeListenerPage() {
       try {
         const { data: { user } } = await sb.auth.getUser()
         if (!user) { setError('Session expired. Please refresh and try again.'); setAvatarUploading(false); return }
-        const ext = avatarFile.name.split('.').pop() || 'jpg'
-        const path = `listeners/${user.id}.${ext}`
+        // Derive extension from MIME type — never trust the user-controlled filename
+        const ext = avatarFile.type === 'image/png' ? 'png' : avatarFile.type === 'image/webp' ? 'webp' : 'jpg'
+        const path = `${user.id}.${ext}`
         const { error: upErr } = await sb.storage.from('avatars').upload(path, avatarFile, { upsert: true, contentType: avatarFile.type })
         if (upErr) { setFieldErrors(f => ({...f, avatar: 'Photo upload failed. Please try again.'})); setAvatarUploading(false); return }
         const { data: { publicUrl } } = sb.storage.from('avatars').getPublicUrl(path)
@@ -333,6 +339,7 @@ export default function BecomeListenerPage() {
   }
 
   async function submit() {
+    setStep2Submitted(true)
     const errs = validateStep2()
     if (errs.length > 0) {
       const fe: Record<string,string> = {}
@@ -428,8 +435,9 @@ export default function BecomeListenerPage() {
     </>
   )
 
-  const step1Errors = step === 1 && shaking ? validateStep1() : []
-  const step2Errors = step === 2 && shaking ? validateStep2() : []
+  // Show persistent error list after first submit attempt (not just during the 500ms shake)
+  const step1Errors = step === 1 && step1Submitted ? validateStep1() : []
+  const step2Errors = step === 2 && step2Submitted ? validateStep2() : []
 
   return (
     <>
@@ -447,7 +455,7 @@ export default function BecomeListenerPage() {
             <h1>Earn by listening 🎧</h1>
             <p>You keep 100% of your rate. LeanOn adds a small flat fee on top — paid by the user, not taken from you.</p>
             <div className="earn-row">
-              <div className="earn-item"><div className="amount">₹10+</div><div className="label">per minute (you choose)</div></div>
+              <div className="earn-item"><div className="amount">₹{MIN_LISTENER_RATE}+</div><div className="label">per minute (you choose)</div></div>
               <div className="earn-item"><div className="amount">₹13K+</div><div className="label">per month possible</div></div>
               <div className="earn-item"><div className="amount">100%</div><div className="label">of your rate you keep</div></div>
             </div>
@@ -649,7 +657,7 @@ export default function BecomeListenerPage() {
             <label className="lbl">Your rate per minute — <span style={{fontWeight:500,color:'var(--gray)'}}>suggestion: ₹10–₹50/min</span></label>
             <div className={`rate-wrap${fieldErrors.rate ? ' err' : ''}`}>
               <span className="rate-prefix">₹</span>
-              <input className="rate-input" type="number" min={1} max={200} value={rate}
+              <input className="rate-input" type="number" min={1} max={MAX_LISTENER_RATE} value={rate}
                 onChange={e => { setRate(e.target.value); if (fieldErrors.rate) setFieldErrors(f => ({...f, rate: ''})) }} />
               <span className="rate-suffix">/ minute</span>
             </div>

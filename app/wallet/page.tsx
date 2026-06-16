@@ -238,7 +238,7 @@ export default function WalletPage() {
         <div className="balance-card">
           <div className="balance-label">AVAILABLE BALANCE</div>
           <div className="balance-amount">₹{balance ?? '—'}</div>
-          <div className="balance-sub">{balance !== null ? `~${Math.floor(balance / 10)} min of support available` : 'Loading...'}</div>
+          <div className="balance-sub">{balance !== null ? `Available for sessions — rates vary by listener` : 'Loading...'}</div>
           {showRefundConfirm ? (
             <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.12)', borderRadius: 14, padding: '14px 16px', textAlign: 'left' }}>
               <p style={{ fontSize: 13, color: 'white', fontWeight: 600, marginBottom: 12, lineHeight: 1.5 }}>
@@ -340,9 +340,14 @@ export default function WalletPage() {
             <span><strong>Processing your payment…</strong> Please wait. Do not close this page.</span>
           </div>
         )}
-        <button className="btn" onClick={handleRecharge} disabled={loading || paymentPending || (!!customInput && (isNaN(parseInt(customInput,10)) || parseInt(customInput,10) < 50 || parseInt(customInput,10) > 10000))} style={{marginBottom:32}}>
-          {loading || paymentPending ? <span className="spin">⟳</span> : `Add ₹${selected} to wallet →`}
-        </button>
+        {(() => {
+          const customInvalid = !!customInput && (isNaN(parseInt(customInput,10)) || parseInt(customInput,10) < 50 || parseInt(customInput,10) > 10000)
+          return (
+            <button className="btn" onClick={handleRecharge} disabled={loading || paymentPending || customInvalid} style={{marginBottom:32}}>
+              {loading || paymentPending ? <span className="spin">⟳</span> : customInvalid ? 'Enter a valid amount (₹50–₹10,000)' : `Add ₹${selected} to wallet →`}
+            </button>
+          )
+        })()}
 
         {transactions.length === 0 && balance !== null && (
           <div style={{background:'white',borderRadius:16,padding:'24px',textAlign:'center',marginBottom:24,border:'1.5px solid var(--border)'}}>

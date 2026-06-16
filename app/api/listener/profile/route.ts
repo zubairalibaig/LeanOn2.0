@@ -18,16 +18,18 @@ export async function PATCH(req: NextRequest) {
 
     const sb = createAdminClient()
 
-    // Verify caller is an approved listener
-    const { data: lp } = await sb.from('listener_profiles').select('is_approved').eq('user_id', user.id).maybeSingle()
+    // Verify caller is an active listener
+    const { data: lp } = await sb.from('listener_profiles').select('is_approved, is_suspended').eq('user_id', user.id).maybeSingle()
     if (!lp) return NextResponse.json({ error: 'Not a listener' }, { status: 403 })
+    if (lp.is_suspended) return NextResponse.json({ error: 'Your account is suspended' }, { status: 403 })
 
     const body = await req.json().catch(() => ({}))
     const updates: Record<string, unknown> = {}
 
     if (typeof body?.bio === 'string') {
       const bio = body.bio.trim()
-      if (bio.length > 1000) return NextResponse.json({ error: 'Bio must be under 1000 characters.' }, { status: 400 })
+      // Match the apply validation (30–400 chars) for consistency
+      if (bio.length < 30 || bio.length > 400) return NextResponse.json({ error: 'Bio must be 30–400 characters.' }, { status: 400 })
       updates.bio = bio
     }
 

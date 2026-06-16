@@ -100,17 +100,7 @@ export default function AuthPage() {
       setChecking(false)
     }).catch(() => { setChecking(false) })
 
-    // Also listen for auth state changes (handles Supabase OTP callback)
-    const { data: { subscription } } = sb.auth.onAuthStateChange((event, session) => {
-      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session && !handledRef.current) {
-        // Only handle if we're past the OTP step (name step redirect happens in saveName)
-        // Don't double-redirect from the name step
-        if (step !== 'name') {
-          // Let verifyOtp handle the redirect logic
-        }
-      }
-    })
-    return () => subscription.unsubscribe()
+    return () => {}
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -296,7 +286,7 @@ export default function AuthPage() {
       <div className="page">
         <div className="topbar">
           {step !== 'phone'
-            ? <button className="back" onClick={() => { if (step === 'otp') { setOtp(['','','','','','']); setCountdown(0) } setStep(step === 'otp' ? 'phone' : 'otp'); setError('') }}>←</button>
+            ? <button className="back" onClick={() => { if (step === 'otp') setOtp(['','','','','','']); setStep(step === 'otp' ? 'phone' : 'otp'); setError('') }}>←</button>
             : <a href="/" className="back">←</a>
           }
           <span className="logo">Lean<span>On</span></span>
