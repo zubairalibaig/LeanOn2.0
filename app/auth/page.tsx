@@ -212,10 +212,7 @@ export default function AuthPage() {
       })
       if (!res.ok) {
         const json = await res.json().catch(() => ({}))
-        // TEMP: show the diagnostic detail during launch testing.
-        saveErrMsg = json.debug
-          ? `${json.error || 'Could not save your profile.'} — ${json.debug}`
-          : (json.error || 'Could not save your profile. Please try again.')
+        saveErrMsg = json.error || 'Could not save your profile. Please try again.'
       }
     } catch {
       saveErrMsg = 'Network error. Please check your connection and try again.'

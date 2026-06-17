@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 // GET — public listener list for the browse page.
 // Uses admin client (bypasses RLS) to avoid the silent-empty issue with
@@ -29,13 +30,17 @@ export async function GET(req: NextRequest) {
     const { data, error } = await q
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      // Don't leak the raw Postgres/network error string to clients — log it
+      // server-side and return a generic message.
+      logger.error('listeners query failed:', { error: error.message })
+      return NextResponse.json({ error: 'Failed to fetch listeners. Please try again.' }, { status: 503 })
     }
 
     return NextResponse.json({ listeners: data ?? [] }, {
       headers: { 'Cache-Control': 's-maxage=10, stale-while-revalidate=30' },
     })
   } catch (err) {
-    return NextResponse.json({ error: 'Failed to fetch listeners' }, { status: 503 })
+    logger.error('listeners route error:', { error: err instanceof Error ? err.message : String(err) })
+    return NextResponse.json({ error: 'Failed to fetch listeners. Please try again.' }, { status: 503 })
   }
 }

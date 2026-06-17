@@ -398,6 +398,17 @@ export default function DashboardPage() {
       alert(`Rate must be between ₹${MIN_LISTENER_RATE} and ₹${MAX_LISTENER_RATE} per minute`)
       return
     }
+    // Match the server's bio length validation (30–400) so the user gets a
+    // specific message instead of a generic "Failed to save" from the API.
+    const bioLen = editBio.trim().length
+    if (bioLen < 30 || bioLen > 400) {
+      alert(`Your bio must be 30–400 characters (currently ${bioLen}).`)
+      return
+    }
+    if (editLangs.length === 0) {
+      alert('Please select at least one language you speak.')
+      return
+    }
     setSavingEdit(true)
     const res = await fetch('/api/listener/profile', {
       method: 'PATCH',
