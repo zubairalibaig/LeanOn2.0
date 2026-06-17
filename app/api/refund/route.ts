@@ -33,17 +33,20 @@ export async function POST(req: NextRequest) {
     // Check for existing pending refund request
     const { data: existing } = await sb
       .from('refund_requests')
-      .select('id')
+      .select('id, amount')
       .eq('user_id', user.id)
       .eq('status', 'pending')
       .limit(1)
 
     if (existing && existing.length > 0) {
-      return NextResponse.json({ error: 'You already have a pending refund request. We will process it within 3–5 business days.' }, { status: 400 })
+      // If balance is already 0 (deducted at request time), tell them it's pending.
+      // If somehow balance is non-zero (legacy request pre-fix), just report pending.
+      return NextResponse.json({
+        error: 'You already have a pending refund request. We will process it within 3–5 business days.',
+      }, { status: 400 })
     }
 
-    // Also block if a pending PAYOUT exists — both claim the full balance with no
-    // hold, so allowing both would present admin with two full-balance disbursements.
+    // Block if a pending PAYOUT exists — both claim the full balance.
     const { data: pendingPayout } = await sb
       .from('payout_requests')
       .select('id')
@@ -55,9 +58,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'You have a pending payout request. Please wait for it to be processed before requesting a refund.' }, { status: 400 })
     }
 
+    const amount = Number(u.wallet_balance)
+
+    // Insert refund request FIRST (idempotency anchor)
     const { error: insertErr } = await sb.from('refund_requests').insert({
       user_id: user.id,
-      amount: u.wallet_balance,
+      amount,
       reason: reason || null,
       status: 'pending',
     })
@@ -66,7 +72,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to submit refund request. Please try again.' }, { status: 500 })
     }
 
-    return NextResponse.json({ ok: true, amount: u.wallet_balance })
+    // IMMEDIATELY zero the wallet balance so the UI shows ₹0 and the seeker cannot
+    // spend funds that are earmarked for refund. The balance change fires the
+    // Supabase realtime subscription on the wallet page — no page refresh needed.
+    // The admin processes the cash refund (Razorpay/UPI) based on refund_requests.amount.
+    const { error: deductErr } = await sb.rpc('deduct_wallet', { p_user_id: user.id, p_amount: amount })
+    if (deductErr) {
+      // Deduction failed — revert the refund request so the user can retry.
+      logger.error('Refund deduct_wallet failed — reverting request:', { userId: user.id, amount, error: deductErr.message })
+      await sb.from('refund_requests').update({ status: 'cancelled' }).eq('user_id', user.id).eq('status', 'pending')
+      return NextResponse.json({ error: 'Could not process your refund request. Please try again.' }, { status: 500 })
+    }
+
+    // Write a ledger entry so the wallet transaction history shows the hold.
+    await sb.from('wallet_transactions').insert({
+      user_id:     user.id,
+      amount,
+      type:        'debit',
+      description: 'Wallet refund requested — cash will arrive in 3–5 business days',
+    }).then(() => {}, (e) => logger.error('Refund wallet_transactions insert failed (audit gap):', { userId: user.id, error: String(e) }))
+
+    return NextResponse.json({ ok: true, amount })
   } catch (err: unknown) {
     logger.error('Refund request error:', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })

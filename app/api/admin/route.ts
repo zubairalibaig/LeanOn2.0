@@ -175,8 +175,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (action === 'complete_refund') {
-    // Claim-first pattern — same as complete_payout. Atomic claim prevents
-    // concurrent double-deduction; revert on deduct failure for safe retry.
+    // Claim the request atomically — prevents concurrent double-processing.
     const { data: rr, error: claimErr } = await admin.from('refund_requests')
       .update({ status: 'completed' })
       .eq('id', id)
@@ -188,48 +187,37 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Refund request not found or already processed' }, { status: 404 })
     }
 
-    // The amount snapshotted at request time (rr.amount) can be STALE: refunds
-    // place no hold on the wallet, so the seeker may have spent some balance on
-    // sessions between requesting and now. Refund only what's actually in the
-    // wallet today — capped at the requested amount. This both prevents
-    // over-refunding (paying out cash the seeker already spent in-app) and
-    // avoids the request becoming permanently un-processable (deduct_wallet of
-    // the full snapshot would fail forever once any balance was spent).
+    // Since the June 2026 fix, the wallet balance is zeroed IMMEDIATELY when the
+    // seeker submits a refund request (deduct_wallet fires in /api/refund/route.ts).
+    // At processing time, the balance is already 0 — no deduction needed here.
+    // The admin's job is to:
+    //  1. Confirm this action (done — the claim above marks it 'completed')
+    //  2. Send the cash manually via Razorpay dashboard or UPI for the amount in rr.amount
+    //
+    // Legacy requests submitted BEFORE the fix may still have a non-zero balance.
+    // Detect and handle those: if balance > 0, deduct now (old behaviour).
     const { data: liveU } = await admin.from('users').select('wallet_balance').eq('id', rr.user_id).single()
     const liveBalance = Number(liveU?.wallet_balance ?? 0)
-    const refundAmt = Math.min(Number(rr.amount), liveBalance)
 
-    if (refundAmt <= 0) {
-      // Nothing left to refund — close the request without a wallet movement,
-      // and record the actually-refunded amount (0) so admin doesn't pay cash.
-      await admin.from('refund_requests').update({ amount: 0 }).eq('id', id)
+    if (liveBalance > 0) {
+      // Legacy request — balance wasn't zeroed at request time; do it now.
+      const deductAmt = Math.min(Number(rr.amount), liveBalance)
+      const { error: deductErr } = await admin.rpc('deduct_wallet', { p_user_id: rr.user_id, p_amount: deductAmt })
+      if (deductErr) {
+        logger.error('complete_refund: legacy deduct_wallet failed — reverting:', { id, error: deductErr.message })
+        await admin.from('refund_requests').update({ status: 'pending' }).eq('id', id)
+        return NextResponse.json({ error: 'Wallet deduction failed. Please retry.' }, { status: 500 })
+      }
+      if (deductAmt !== Number(rr.amount)) {
+        await admin.from('refund_requests').update({ amount: deductAmt }).eq('id', id)
+      }
       await admin.from('wallet_transactions').insert({
-        user_id: rr.user_id, amount: 0, type: 'debit', description: 'Wallet refund processed — no balance remaining',
-      })
-      await auditLog(admin, user!.id, 'complete_refund', id)
-      return NextResponse.json({ ok: true, amount: 0 })
+        user_id: rr.user_id, amount: deductAmt, type: 'debit', description: 'Wallet refund processed (legacy)',
+      }).then(() => {}, (e) => logger.error('refund tx insert failed:', { error: String(e) }))
     }
-
-    const { error: deductErr } = await admin.rpc('deduct_wallet', { p_user_id: rr.user_id, p_amount: refundAmt })
-    if (deductErr) {
-      logger.error('deduct_wallet failed for refund — reverting claim:', { id, deductErr: deductErr as unknown })
-      await admin.from('refund_requests').update({ status: 'pending' }).eq('id', id)
-      return NextResponse.json({ error: 'Wallet deduction failed. Please retry.' }, { status: 500 })
-    }
-
-    // Persist the actually-refunded amount so the admin pays out the correct
-    // figure (cash refund is manual via Razorpay/UPI).
-    if (refundAmt !== Number(rr.amount)) {
-      await admin.from('refund_requests').update({ amount: refundAmt }).eq('id', id)
-    }
-
-    const { error: txErr } = await admin.from('wallet_transactions').insert({
-      user_id: rr.user_id, amount: refundAmt, type: 'debit', description: 'Wallet refund processed',
-    })
-    if (txErr) logger.error('refund wallet_transactions insert failed (ledger gap):', { id, error: txErr.message })
 
     await auditLog(admin, user!.id, 'complete_refund', id)
-    return NextResponse.json({ ok: true, amount: refundAmt })
+    return NextResponse.json({ ok: true, amount: rr.amount })
   }
 
   if (action === 'reactivate_user') {

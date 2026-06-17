@@ -68,6 +68,7 @@ export default function WalletPage() {
   const [userId, setUserId]     = useState<string|null>(null)
   const [refunding, setRefunding] = useState(false)
   const [refundSubmitted, setRefundSubmitted] = useState(false)
+  const [refundPendingAmount, setRefundPendingAmount] = useState<number|null>(null)
   const [paymentPending, setPaymentPending] = useState(false)
   const [showRefundConfirm, setShowRefundConfirm] = useState(false)
   const rzpScriptRef = useRef(false)
@@ -132,6 +133,17 @@ export default function WalletPage() {
     const { data: txns } = await sb.from('wallet_transactions')
       .select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(10)
     if (txns) setTransactions(txns)
+
+    // Check for a pre-existing pending refund so the banner shows on reload
+    const { data: pendingRefund } = await sb
+      .from('refund_requests')
+      .select('amount')
+      .eq('user_id', user.id)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+    if (pendingRefund) setRefundPendingAmount(Number(pendingRefund.amount))
   }
 
   async function confirmRefund() {
@@ -142,9 +154,13 @@ export default function WalletPage() {
     const data = await res.json()
     setRefunding(false)
     if (!res.ok) { showToast(data.error || 'Could not submit refund request.', 'error'); return }
+    // Balance is now 0 in the DB (zeroed atomically at request time).
+    // The realtime subscription will pick up the DB change; also set it locally
+    // for instant feedback.
     setBalance(0)
     setRefundSubmitted(true)
-    showToast(`Refund request submitted! You'll receive it in 3–5 business days.`, 'success')
+    setRefundPendingAmount(balance)
+    showToast(`Refund request submitted! You'll receive ₹${balance} in 3–5 business days.`, 'success')
   }
 
   async function handleRecharge() {
@@ -253,9 +269,9 @@ export default function WalletPage() {
                 </button>
               </div>
             </div>
-          ) : refundSubmitted ? (
-            <div style={{marginTop:16,fontSize:13,color:'rgba(255,255,255,0.75)',fontWeight:600,lineHeight:1.5}}>
-              ✓ Refund requested — arrives in 3–5 business days
+          ) : (refundSubmitted || refundPendingAmount !== null) ? (
+            <div style={{marginTop:16,fontSize:13,color:'rgba(255,255,255,0.85)',fontWeight:600,lineHeight:1.5,background:'rgba(255,255,255,0.12)',borderRadius:12,padding:'12px 14px'}}>
+              ✓ Refund of ₹{refundPendingAmount ?? balance} requested — your wallet has been cleared and the cash will arrive in 3–5 business days via your original payment method. Razorpay does not auto-refund; we process it manually.
             </div>
           ) : (
             <button className="refund-btn" onClick={() => setShowRefundConfirm(true)} disabled={refunding || !balance || balance <= 0}>

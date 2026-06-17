@@ -160,7 +160,11 @@ function BrowseContent() {
 
   useEffect(() => { loadListeners() }, [tag, lang])
 
-  // Realtime: update listener availability without requiring a full page reload
+  // Realtime: update listener availability without requiring a full page reload.
+  // Re-sort after update so newly-online listeners rise to the top (same order
+  // as the server: is_available DESC, rating DESC). Without re-sorting, a
+  // listener who was offline on initial load stays at the bottom even after
+  // they go online, making them appear to have "disappeared" on short screens.
   useEffect(() => {
     const availSub = client.channel('listener-availability')
       .on('postgres_changes', {
@@ -169,9 +173,15 @@ function BrowseContent() {
         table: 'listener_profiles',
       }, (payload) => {
         const updated = payload.new as { user_id: string; is_available: boolean }
-        setListeners(prev => prev.map(l =>
-          l.user_id === updated.user_id ? { ...l, is_available: updated.is_available } : l
-        ))
+        setListeners(prev => {
+          const mapped = prev.map(l =>
+            l.user_id === updated.user_id ? { ...l, is_available: updated.is_available } : l
+          )
+          return [...mapped].sort((a, b) => {
+            if (a.is_available !== b.is_available) return a.is_available ? -1 : 1
+            return (b.rating || 0) - (a.rating || 0)
+          })
+        })
       })
       .subscribe()
     return () => { client.removeChannel(availSub) }
