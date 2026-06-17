@@ -384,7 +384,7 @@ export default function BecomeListenerPage() {
       })
       if (!res.ok) {
         const json = await res.json().catch(() => ({}))
-        const msg = json.debug ? `${json.error || 'Submission failed.'} — ${json.debug}` : (json.error || `Submission failed (HTTP ${res.status}).`)
+        const msg = json.error || `Submission failed (HTTP ${res.status}).`
         setError(`${msg} Please try again or contact support.`)
         return
       }

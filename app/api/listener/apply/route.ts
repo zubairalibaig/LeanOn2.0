@@ -68,7 +68,10 @@ export async function POST(req: NextRequest) {
       phone: sessionPhone,
       phoneVerified: !!user.phone,
     })
-    if (userErr) return NextResponse.json({ error: userErr, debug: userDebug }, { status: 500 })
+    if (userErr) {
+      if (userDebug) logger.error('listener apply: ensureUserRow debug', { userId: user.id, debug: userDebug })
+      return NextResponse.json({ error: userErr }, { status: 500 })
+    }
 
     // Save avatar URL to users row (best-effort — profile can function without it)
     if (avatarUrl) {
@@ -87,10 +90,16 @@ export async function POST(req: NextRequest) {
     }, { onConflict: 'user_id' })
     if (profileErr) {
       logger.error('listener apply: profile upsert failed', { userId: user.id, error: profileErr.message, code: profileErr.code })
-      return NextResponse.json(
-        { error: 'Could not save your listener profile.', debug: `[${profileErr.code}] ${profileErr.message}` },
-        { status: 500 }
-      )
+      // A CHECK violation (23514) here is almost always the rate_per_min range
+      // constraint — give a clear message instead of an opaque 500. (The live
+      // DB cap may lag MAX_LISTENER_RATE until migration 039 is applied.)
+      if (profileErr.code === '23514') {
+        return NextResponse.json(
+          { error: `Your rate is outside the allowed range (₹${MIN_LISTENER_RATE}–₹${MAX_LISTENER_RATE} per minute). Please adjust it and try again.` },
+          { status: 400 }
+        )
+      }
+      return NextResponse.json({ error: 'Could not save your listener profile.' }, { status: 500 })
     }
 
     // 3. application — the service role bypasses the migration-031 status
@@ -123,16 +132,13 @@ export async function POST(req: NextRequest) {
     }
     if (appErr) {
       logger.error('listener apply: application upsert failed', { userId: user.id, error: appErr.message, code: appErr.code })
-      return NextResponse.json(
-        { error: 'Could not save your application.', debug: `[${appErr.code}] ${appErr.message}` },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: 'Could not save your application.' }, { status: 500 })
     }
 
     return NextResponse.json({ success: true })
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
     logger.error('listener apply route error:', { error: msg })
-    return NextResponse.json({ error: 'Submission failed. Please try again.', debug: msg }, { status: 500 })
+    return NextResponse.json({ error: 'Submission failed. Please try again.' }, { status: 500 })
   }
 }
