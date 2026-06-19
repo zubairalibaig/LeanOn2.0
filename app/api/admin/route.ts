@@ -184,16 +184,27 @@ export async function POST(req: NextRequest) {
 
   if (action === 'complete_refund') {
     // Claim the request atomically — prevents concurrent double-processing.
+    // IMPORTANT: do NOT select razorpay_payment_id here — that column only exists
+    // after migration 040 runs. A missing column in RETURNING makes the whole UPDATE
+    // fail and roll back, causing a false 404. Fetch it in a separate query instead.
     const { data: rr, error: claimErr } = await admin.from('refund_requests')
       .update({ status: 'completed' })
       .eq('id', id)
       .eq('status', 'pending')
-      .select('user_id, amount, razorpay_payment_id')
+      .select('user_id, amount')
       .single()
 
     if (claimErr || !rr) {
       return NextResponse.json({ error: 'Refund request not found or already processed' }, { status: 404 })
     }
+
+    // Fetch razorpay_payment_id separately — column may not exist yet (migration 040).
+    // If query fails or returns null, fall back to manual refund path.
+    const { data: rzpRow } = await admin.from('refund_requests')
+      .select('razorpay_payment_id')
+      .eq('id', id)
+      .single()
+    const razorpayPaymentId: string | null = (rzpRow as { razorpay_payment_id?: string | null } | null)?.razorpay_payment_id ?? null
 
     // Since the June 2026 fix, the wallet balance is zeroed IMMEDIATELY when the
     // seeker submits a refund request (deduct_wallet fires in /api/refund/route.ts).
@@ -223,24 +234,24 @@ export async function POST(req: NextRequest) {
     // Auto-issue Razorpay refund if we have the original payment_id.
     // Amount in Razorpay API is in paise (multiply by 100).
     let rzpRefundId: string | null = null
-    if (rr.razorpay_payment_id) {
+    if (razorpayPaymentId) {
       try {
         const rzp = getRzp()
         const refundAmountPaise = Math.round(Number(rr.amount) * 100)
-        const rzpRefund = await rzp.payments.refund(rr.razorpay_payment_id, {
+        const rzpRefund = await rzp.payments.refund(razorpayPaymentId, {
           amount: refundAmountPaise,
           notes: { reason: 'LeanOn wallet refund', refund_request_id: id },
         })
         rzpRefundId = rzpRefund.id
-        logger.info('Razorpay refund issued automatically:', { id, rzpRefundId, amount: rr.amount, paymentId: rr.razorpay_payment_id })
-        // Store Razorpay refund ID in notes for audit trail
+        logger.info('Razorpay refund issued automatically:', { id, rzpRefundId, amount: rr.amount, paymentId: razorpayPaymentId })
+        // Store Razorpay refund ID in admin_notes for audit trail (column exists after migration 040)
         await admin.from('refund_requests').update({ admin_notes: `Razorpay refund: ${rzpRefundId}` }).eq('id', id)
           .then(() => {}, (e) => logger.warn('refund admin_notes update failed:', { id, error: String(e) }))
       } catch (rzpErr) {
         // Log the failure but do NOT revert the claim — the wallet is already zeroed and the
         // admin has confirmed intent. They must issue the Razorpay refund manually from the dashboard.
         logger.error('complete_refund: Razorpay refund API failed — manual action required:', {
-          id, paymentId: rr.razorpay_payment_id, amount: rr.amount,
+          id, paymentId: razorpayPaymentId, amount: rr.amount,
           error: rzpErr instanceof Error ? rzpErr.message : String(rzpErr),
         })
       }
