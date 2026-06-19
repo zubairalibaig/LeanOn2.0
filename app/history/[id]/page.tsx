@@ -2,12 +2,7 @@
 export const dynamic = 'force-dynamic'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import { createBrowserClient } from '@supabase/ssr'
-
-const sb = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+import { createClient } from '@/lib/supabase'
 
 const S = `
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
@@ -17,7 +12,8 @@ const S = `
   .wrap{display:flex;flex-direction:column;height:100dvh;max-width:480px;margin:0 auto;background:#E8F4FD;}
   .hdr{background:var(--navy);padding:10px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:sticky;top:0;z-index:50;}
   .back-btn{background:none;border:none;cursor:pointer;font-size:20px;color:white;padding:4px;line-height:1;flex-shrink:0;}
-  .av{width:40px;height:40px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:white;flex-shrink:0;}
+  .av{width:40px;height:40px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:white;flex-shrink:0;overflow:hidden;}
+  .av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
   .hdr-info{flex:1;}
   .hdr-name{font-size:16px;font-weight:700;color:white;}
   .hdr-sub{font-size:12px;color:rgba(255,255,255,0.7);font-weight:500;}
@@ -44,11 +40,13 @@ const S = `
 `
 
 type Msg = { id: string; sender_id: string; content: string; created_at: string }
+type Party = { name?: string; avatar_url?: string }
 type SessionInfo = {
   id: string; duration_mins: number; session_type: string
-  started_at: string; ended_at?: string | null
+  started_at: string | null; ended_at?: string | null
   seeker_id: string; listener_id: string
-  seeker: { name?: string; avatar_url?: string } | null
+  other: Party | null
+  iAmListener: boolean
 }
 
 function ini(n?: string | null) {
@@ -64,10 +62,16 @@ function fmtDate(iso: string) {
 function sameDay(a: string, b: string) {
   return new Date(a).toDateString() === new Date(b).toDateString()
 }
+function one(v: unknown): Party | null {
+  if (!v) return null
+  if (Array.isArray(v)) return (v.length > 0 ? v[0] : null) as Party | null
+  return v as Party
+}
 
 export default function ChatHistoryPage() {
   const router = useRouter()
   const params = useParams()
+  const sb = createClient()
   const sessionId = params.id as string
   const [session, setSession] = useState<SessionInfo | null>(null)
   const [msgs, setMsgs] = useState<Msg[]>([])
@@ -89,23 +93,20 @@ export default function ChatHistoryPage() {
 
     const { data: sess, error: sErr } = await sb
       .from('sessions')
-      .select('id, duration_mins, session_type, started_at, ended_at, seeker_id, listener_id, users!seeker_id(name, avatar_url)')
+      .select(`id, duration_mins, session_type, started_at, ended_at, seeker_id, listener_id,
+        listener:users!listener_id(name, avatar_url),
+        seeker:users!seeker_id(name, avatar_url)`)
       .eq('id', sessionId)
       .single()
 
-    if (sErr || !sess) { setError('Session not found.'); setLoading(false); return }
+    if (sErr || !sess) { setError('Conversation not found.'); setLoading(false); return }
 
-    // Only the listener for this session may view it here
-    if (sess.listener_id !== user.id) { router.push('/listener/chats'); return }
+    // Either participant may view their own session history.
+    if (sess.listener_id !== user.id && sess.seeker_id !== user.id) { router.push('/history'); return }
 
-    const seekerRaw = sess.users as unknown
-    const seeker = seekerRaw && !Array.isArray(seekerRaw)
-      ? seekerRaw as SessionInfo['seeker']
-      : Array.isArray(seekerRaw) && (seekerRaw as SessionInfo['seeker'][]).length > 0
-        ? (seekerRaw as SessionInfo['seeker'][])[0]
-        : null
-
-    setSession({ ...sess, seeker })
+    const iAmListener = sess.listener_id === user.id
+    const other = iAmListener ? one(sess.seeker) : one(sess.listener)
+    setSession({ ...sess, other, iAmListener })
 
     const { data: messages } = await sb
       .from('messages')
@@ -132,16 +133,16 @@ export default function ChatHistoryPage() {
         <style>{S}</style>
         <div className="wrap">
           <div className="hdr">
-            <button className="back-btn" onClick={() => router.push('/listener/chats')}>←</button>
+            <button className="back-btn" onClick={() => router.push('/history')}>←</button>
             <div className="hdr-info"><div className="hdr-name">Chat history</div></div>
           </div>
-          <div className="loading">{error || 'Session not found.'}</div>
+          <div className="loading">{error || 'Conversation not found.'}</div>
         </div>
       </>
     )
   }
 
-  const seekerName = session.seeker?.name || 'Seeker'
+  const otherName = session.other?.name || (session.iAmListener ? 'Seeker' : 'Listener')
   const sessionDate = session.started_at ? fmtDate(session.started_at) : ''
   const endedAt = session.ended_at
     ? new Date(session.ended_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
@@ -152,11 +153,13 @@ export default function ChatHistoryPage() {
       <style>{S}</style>
       <div className="wrap">
         <div className="hdr">
-          <button className="back-btn" onClick={() => router.push('/listener/chats')}>←</button>
-          <div className="av">{ini(seekerName)}</div>
+          <button className="back-btn" onClick={() => router.push('/history')}>←</button>
+          <div className="av">
+            {session.other?.avatar_url ? <img src={session.other.avatar_url} alt="" /> : ini(otherName)}
+          </div>
           <div className="hdr-info">
-            <div className="hdr-name">{seekerName}</div>
-            <div className="hdr-sub">{session.duration_mins}-min {session.session_type} · {sessionDate}</div>
+            <div className="hdr-name">{otherName}</div>
+            <div className="hdr-sub">{session.duration_mins}-min {session.session_type}{sessionDate ? ` · ${sessionDate}` : ''}</div>
           </div>
         </div>
 
@@ -178,9 +181,7 @@ export default function ChatHistoryPage() {
               </div>
             )
           })}
-          {endedAt && (
-            <div className="ended-note">Session ended at {endedAt}</div>
-          )}
+          {endedAt && <div className="ended-note">Session ended at {endedAt}</div>}
           <div ref={bottomRef} />
         </div>
 

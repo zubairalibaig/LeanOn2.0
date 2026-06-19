@@ -18,6 +18,8 @@ export default function BottomNav() {
     pathname === '/' ||
     pathname === '/auth' ||
     pathname.startsWith('/session/') ||
+    // Full-height read-only chat detail (/history/<id>) — but keep nav on /history itself
+    (pathname.startsWith('/history/') && pathname !== '/history') ||
     pathname === '/become-listener' ||
     pathname === '/about' ||
     pathname === '/privacy' ||

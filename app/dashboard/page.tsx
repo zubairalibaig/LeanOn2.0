@@ -783,7 +783,7 @@ export default function DashboardPage() {
 
         {/* My Chats shortcut */}
         <button
-          onClick={() => router.push('/listener/chats')}
+          onClick={() => router.push('/history')}
           style={{ width:'100%', background:'white', border:'1.5px solid var(--border)', borderRadius:18, padding:'16px 20px', marginBottom:20, display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer', textAlign:'left' }}
         >
           <div>
