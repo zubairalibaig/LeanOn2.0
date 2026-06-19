@@ -213,6 +213,30 @@ export default function DashboardPage() {
     return () => window.removeEventListener('beforeunload', handleUnload)
   }, [user])
 
+  // Presence heartbeat — every 60s when online
+  useEffect(() => {
+    if (!avail) return
+    const iv = setInterval(() => {
+      fetch('/api/presence', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ heartbeat: true }),
+      }).catch(() => {})
+    }, 60_000)
+    return () => clearInterval(iv)
+  }, [avail])
+
+  // visibilitychange — set offline when tab hides (mobile)
+  useEffect(() => {
+    function handleVis() {
+      if (document.visibilityState === 'hidden' && avail) {
+        navigator.sendBeacon('/api/presence', JSON.stringify({ available: false }))
+      }
+    }
+    document.addEventListener('visibilitychange', handleVis)
+    return () => document.removeEventListener('visibilitychange', handleVis)
+  }, [avail])
+
   function startCountdown(onExpire: () => void) {
     setCountdown(60)
     if (countdownRef.current) clearInterval(countdownRef.current)
@@ -756,6 +780,18 @@ export default function DashboardPage() {
             </button>
           )}
         </div>
+
+        {/* My Chats shortcut */}
+        <button
+          onClick={() => router.push('/listener/chats')}
+          style={{ width:'100%', background:'white', border:'1.5px solid var(--border)', borderRadius:18, padding:'16px 20px', marginBottom:20, display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer', textAlign:'left' }}
+        >
+          <div>
+            <div style={{ fontSize:16, fontWeight:800, color:'var(--navy)' }}>My Chats</div>
+            <div style={{ fontSize:13, color:'var(--gray)', fontWeight:600, marginTop:2 }}>View all conversations and session history</div>
+          </div>
+          <span style={{ fontSize:20 }}>💬</span>
+        </button>
 
         {sessions.length > 0 && (
           <>
