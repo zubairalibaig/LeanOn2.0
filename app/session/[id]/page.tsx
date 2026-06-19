@@ -772,6 +772,10 @@ function SessionContent() {
               </button>
             )}
           </div>
+          {/* Crisis helpline footer — kept visible right after a session too. */}
+          <div className="crisis-footer">
+            🆘 Crisis: <a href="tel:08046110007">NIMHANS 080-46110007</a> · <a href="tel:14416">Tele-MANAS 14416</a>
+          </div>
         </div>
         {showReport && listenerId && (
           <ReportModal

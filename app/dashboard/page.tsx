@@ -177,6 +177,7 @@ export default function DashboardPage() {
   const [loadError, setLoadError] = useState<string | null>(null)
   const [payoutLoading, setPayoutLoading] = useState(false)
   const [incomingSession, setIncomingSession] = useState<IncomingSession | null>(null)
+  const [monthEarned, setMonthEarned] = useState<number | null>(null)
   const [countdown, setCountdown] = useState(60)
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const channelRef   = useRef<ReturnType<typeof sb.channel> | null>(null)
@@ -213,24 +214,34 @@ export default function DashboardPage() {
     return () => window.removeEventListener('beforeunload', handleUnload)
   }, [user])
 
-  // Presence heartbeat — every 60s when online
+  // Presence heartbeat — immediately on going online, then every 60s. The
+  // leading-edge ping closes the window after a page load / returning from a
+  // session where the browse query would otherwise treat the listener as stale.
   useEffect(() => {
     if (!avail) return
-    const iv = setInterval(() => {
-      fetch('/api/presence', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ heartbeat: true }),
-      }).catch(() => {})
-    }, 60_000)
+    const ping = () => fetch('/api/presence', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ heartbeat: true }),
+    }).catch(() => {})
+    ping()
+    const iv = setInterval(ping, 60_000)
     return () => clearInterval(iv)
   }, [avail])
 
-  // visibilitychange — set offline when tab hides (mobile)
+  // visibilitychange — set offline when tab hides (mobile); re-ping when it
+  // returns to foreground so the listener doesn't linger as stale-offline.
   useEffect(() => {
     function handleVis() {
-      if (document.visibilityState === 'hidden' && avail) {
+      if (!avail) return
+      if (document.visibilityState === 'hidden') {
         navigator.sendBeacon('/api/presence', JSON.stringify({ available: false }))
+      } else if (document.visibilityState === 'visible') {
+        fetch('/api/presence', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ available: true }),
+        }).catch(() => {})
       }
     }
     document.addEventListener('visibilitychange', handleVis)
@@ -302,6 +313,23 @@ export default function DashboardPage() {
       .limit(100)
 
     if (recent) setSessions(recent)
+
+    // Authoritative earnings come from the listener_earnings ledger (net_amount),
+    // which already accounts for pro-rated partial sessions. Deriving "this month"
+    // from amount_held - platform_fee overstates partial-session earnings and
+    // disagrees with the wallet and the /dashboard/earnings page.
+    const { data: earnings } = await sb
+      .from('listener_earnings')
+      .select('net_amount, created_at, status')
+      .eq('listener_id', u.id)
+    if (earnings) {
+      const now = new Date()
+      const sum = earnings
+        .filter(e => e.status === 'settled')
+        .filter(e => { const d = new Date(e.created_at); return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear() })
+        .reduce((s, e) => s + (e.net_amount || 0), 0)
+      setMonthEarned(sum)
+    }
 
     if (channelRef.current) sb.removeChannel(channelRef.current)
     const channel = sb.channel(`dashboard-incoming-${u.id}`)
@@ -387,11 +415,14 @@ export default function DashboardPage() {
       if (upErr) throw upErr
       const { data: { publicUrl } } = sb.storage.from('avatars').getPublicUrl(path)
       const url = `${publicUrl}?t=${Date.now()}`
-      await fetch('/api/auth/profile', {
+      const res = await fetch('/api/auth/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ avatar_url: url }),
       })
+      // Only reflect the new avatar if the server actually saved it — otherwise
+      // the UI shows a photo that's gone on the next reload.
+      if (!res.ok) throw new Error('profile update failed')
       setEditAvatar(url)
     } catch (err) {
       console.error('Avatar upload error:', err)
@@ -466,9 +497,9 @@ export default function DashboardPage() {
     const now = new Date()
     return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
   })
-  // Only include sessions where platform_fee is populated (post-migration rows).
-  // Pre-migration rows have null platform_fee; using them would overstate earnings.
-  const thisMonthEarned = thisMonthSessions
+  // Prefer the authoritative listener_earnings ledger (accounts for pro-ration).
+  // Fall back to amount_held - platform_fee only if the ledger hasn't loaded.
+  const thisMonthEarned = monthEarned ?? thisMonthSessions
     .filter(s => s.platform_fee != null)
     .reduce((sum, s) => sum + (s.amount_held - s.platform_fee!), 0)
   const totalSessions   = profile?.total_sessions || 0

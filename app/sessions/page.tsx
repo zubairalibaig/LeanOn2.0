@@ -162,11 +162,11 @@ export default function SessionsPage() {
               <button
                 className="rejoin-btn"
                 onClick={() => {
-                  const elapsed = s.started_at
-                    ? Math.floor((Date.now() - new Date(s.started_at).getTime()) / 60_000)
-                    : 0
-                  const remaining = Math.max(1, s.duration_mins - elapsed)
-                  router.push(`/session/${s.id}?name=${encodeURIComponent(s.listener_name)}&duration=${remaining}&type=${s.session_type}`)
+                  // Pass the BOOKED duration — the session page recomputes the
+                  // remaining time from started_at. Passing a computed remainder
+                  // (e.g. 13) is rejected by the page's [5,15,30,45] guard and
+                  // silently resets the timer to 15 min.
+                  router.push(`/session/${s.id}?name=${encodeURIComponent(s.listener_name)}&duration=${s.duration_mins}&type=${s.session_type}`)
                 }}
               >
                 Rejoin →

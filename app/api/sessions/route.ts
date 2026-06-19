@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     // Verify listener is active and available (server-side — client-side check is not enough)
     const { data: lp } = await sb
       .from('listener_profiles')
-      .select('rate_per_min, is_active, is_available, is_approved, is_suspended')
+      .select('rate_per_min, is_active, is_available, is_approved, is_suspended, last_heartbeat_at')
       .eq('user_id', listenerId)
       .single()
 
@@ -83,6 +83,14 @@ export async function POST(req: NextRequest) {
     // A listener who has gone offline should not receive any sessions.
     if (!lp.is_available) {
       return NextResponse.json({ error: 'listener_offline', message: 'This listener is currently offline.' }, { status: 400 })
+    }
+    // Ghost-online guard: is_available can be stale if the listener's tab was
+    // force-killed before the offline beacon fired. Reject if the heartbeat has
+    // lapsed (>3 min) so seekers aren't billed for a listener who isn't there.
+    const STALE_MS = 3 * 60 * 1000
+    const hb = lp.last_heartbeat_at ? new Date(lp.last_heartbeat_at as string).getTime() : 0
+    if (!hb || Date.now() - hb > STALE_MS) {
+      return NextResponse.json({ error: 'listener_offline', message: 'This listener just went offline. Please pick another listener.' }, { status: 400 })
     }
 
     // Block paid sessions if listener already has an active paid session

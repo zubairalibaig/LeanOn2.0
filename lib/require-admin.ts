@@ -143,12 +143,10 @@ export async function requireAdmin(req: Request) {
     })
   }
 
+  // Do NOT log phone/email (admin or user) — CLAUDE.md: admin identity lives in
+  // env vars only and the owner's identity must never be exposed, including in logs.
   logger.info('requireAdmin: identity check', {
     userId: user.id,
-    userPhoneNorm: normalizePhone(user.phone) || '(none)',
-    userEmail: user.email ?? '(none)',
-    adminPhoneNorm: adminPhone ? normalizePhone(adminPhone).slice(0, 4) + '***' : '(not set)',
-    adminEmail: adminEmail ? adminEmail.split('@')[0].slice(0, 3) + '***' : '(not set)',
     isAdminByPhone,
     isAdminByEmail,
     isAdminByDB,

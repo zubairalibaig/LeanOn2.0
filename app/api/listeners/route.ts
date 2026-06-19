@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
 
     let q = sb
       .from('listener_profiles')
-      .select('user_id, bio, specialty_tags, languages_spoken, rate_per_min, rating, total_sessions, is_available, is_verified, users!inner(name, avatar_url)')
+      .select('user_id, bio, specialty_tags, languages_spoken, rate_per_min, rating, total_sessions, is_available, is_verified, last_heartbeat_at, users!inner(name, avatar_url)')
       .eq('is_approved', true)
       .eq('is_active', true)
       .eq('is_suspended', false)
@@ -36,7 +36,27 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch listeners. Please try again.' }, { status: 503 })
     }
 
-    return NextResponse.json({ listeners: data ?? [] }, {
+    // A listener is only TRULY online if their heartbeat is fresh. Demote
+    // stale-online (ghost) listeners — tab force-killed, network dropped — to
+    // offline so seekers don't try to book someone who isn't there. The dashboard
+    // sends a heartbeat every 60s while online; we allow a 3-minute grace.
+    const STALE_MS = 3 * 60 * 1000
+    const now = Date.now()
+    const listeners = (data ?? []).map((l) => {
+      const hb = (l as { last_heartbeat_at?: string | null }).last_heartbeat_at
+      const fresh = !!hb && (now - new Date(hb).getTime()) < STALE_MS
+      const { last_heartbeat_at: _omit, ...rest } = l as Record<string, unknown>
+      return { ...rest, is_available: Boolean((l as { is_available?: boolean }).is_available) && fresh }
+    })
+    // Re-sort: truly-online first, then by rating (mirrors the DB order intent).
+    listeners.sort((a, b) => {
+      const av = a.is_available ? 1 : 0
+      const bv = b.is_available ? 1 : 0
+      if (av !== bv) return bv - av
+      return ((b as { rating?: number }).rating || 0) - ((a as { rating?: number }).rating || 0)
+    })
+
+    return NextResponse.json({ listeners }, {
       headers: { 'Cache-Control': 's-maxage=10, stale-while-revalidate=30' },
     })
   } catch (err) {

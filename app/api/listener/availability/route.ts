@@ -30,8 +30,11 @@ export async function PATCH() {
     if (!lp.is_active) return NextResponse.json({ error: 'Your listener profile is deactivated' }, { status: 403 })
 
     const goingOnline = !lp.is_available
+    // Stamp last_heartbeat_at when going online so the listener appears "fresh"
+    // immediately — the browse query filters out stale-online (ghost) listeners
+    // whose heartbeat has lapsed (force-killed tab, dropped network).
     const { error: updateErr } = await sb.from('listener_profiles')
-      .update({ is_available: goingOnline })
+      .update({ is_available: goingOnline, ...(goingOnline ? { last_heartbeat_at: new Date().toISOString() } : {}) })
       .eq('user_id', user.id)
     if (updateErr) {
       return NextResponse.json({ error: 'Could not update availability. Please try again.' }, { status: 500 })

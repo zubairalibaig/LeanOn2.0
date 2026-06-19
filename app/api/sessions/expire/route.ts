@@ -27,8 +27,9 @@ export async function GET(req: NextRequest) {
     if (!checkRateLimit(`session-expire:${user.id}`, 1, 60_000)) {
       return NextResponse.json({ expired: 0 })
     }
-  } else if (!cronSecret && process.env.NODE_ENV === 'production') {
-    // Production without CRON_SECRET configured — require auth
+  } else if (!cronSecret) {
+    // No CRON_SECRET configured (any environment) — require a valid user session.
+    // Never let this admin-client wallet-mutation loop run anonymously.
     const userSb = createServerSupabaseClient()
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })

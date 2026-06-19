@@ -16,8 +16,9 @@ export async function POST(req: Request) {
   const cronSecret = process.env.CRON_SECRET
   const authHeader = req.headers.get('authorization')
 
-  if (!cronSecret && process.env.NODE_ENV === 'production') {
-    // Require at minimum a valid user session when CRON_SECRET is missing
+  if (!cronSecret) {
+    // No cron secret configured (any environment) — require at minimum a valid
+    // user session. Never let this admin-client wallet-mutation loop run anonymously.
     const { createServerSupabaseClient: makeClient } = await import('@/lib/supabase-server')
     const { data: { user } } = await makeClient().auth.getUser()
     if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })

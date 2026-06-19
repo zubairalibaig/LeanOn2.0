@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 
 // PATCH — deactivate listener profile only (keeps user account active)
@@ -9,9 +10,18 @@ export async function PATCH() {
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
+    // Destructive action — throttle to prevent abusive/accidental repeats.
+    if (!checkRateLimit(`account:${user.id}`, 5, 60_000)) {
+      return NextResponse.json({ error: 'Too many requests. Please wait a moment.' }, { status: 429 })
+    }
+
     const admin = createAdminClient()
+    // Deactivate = take offline + remove from discovery, but PRESERVE is_approved.
+    // Clearing is_approved would brick the listener: availability and payout both
+    // hard-block on !is_approved, so they could neither go back online nor withdraw
+    // their existing balance without an admin re-approving them.
     const { error } = await admin.from('listener_profiles')
-      .update({ is_active: false, is_available: false, is_approved: false })
+      .update({ is_active: false, is_available: false })
       .eq('user_id', user.id)
 
     if (error) throw error
@@ -28,6 +38,11 @@ export async function POST() {
     const userSb = createServerSupabaseClient()
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+
+    // Destructive, signs the user out globally — throttle hard.
+    if (!checkRateLimit(`account-delete:${user.id}`, 3, 60_000)) {
+      return NextResponse.json({ error: 'Too many requests. Please wait a moment.' }, { status: 429 })
+    }
 
     const admin = createAdminClient()
 

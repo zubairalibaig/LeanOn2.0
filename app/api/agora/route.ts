@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     const sb = createAdminClient()
     const { data: session, error: sErr } = await sb
       .from('sessions')
-      .select('agora_channel, seeker_id, listener_id, status')
+      .select('agora_channel, seeker_id, listener_id, status, started_at, duration_mins')
       .eq('id', sessionId)
       .single()
 
@@ -48,7 +48,15 @@ export async function GET(req: NextRequest) {
     const appId      = process.env.NEXT_PUBLIC_AGORA_APP_ID!
     const appCert    = process.env.AGORA_APP_CERTIFICATE!
     const channelName = session.agora_channel as string
-    const expireTime = Math.floor(Date.now() / 1000) + 3600 // 1 hour from now
+
+    // Scope token lifetime to the session, not a flat hour. An ejected/finished
+    // participant should NOT keep a valid token to rejoin the channel. Cap at the
+    // booked end (started_at + duration + 2-min grace), falling back to now+grace.
+    const nowSec = Math.floor(Date.now() / 1000)
+    const startSec = session.started_at ? Math.floor(new Date(session.started_at).getTime() / 1000) : nowSec
+    const bookedEnd = startSec + ((session.duration_mins as number) + 2) * 60
+    // Always allow at least 60s so a clock skew can't issue an already-expired token.
+    const expireTime = Math.max(nowSec + 60, Math.min(bookedEnd, nowSec + 3600))
 
     const token = RtcTokenBuilder.buildTokenWithUid(
       appId,
@@ -62,10 +70,8 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ token, channelName, appId })
   } catch (err: unknown) {
+    // Never leak internal error text to the client — log server-side only.
     logger.error('Agora token error:', { error: err instanceof Error ? err.message : String(err) })
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : 'Token generation failed' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Token generation failed' }, { status: 500 })
   }
 }

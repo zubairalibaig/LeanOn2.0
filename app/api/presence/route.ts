@@ -19,9 +19,26 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true })
     }
 
-    // Otherwise: set availability (existing behavior)
     const available = body.available === true
-    await sb.from('listener_profiles').update({ is_available: available }).eq('user_id', user.id)
+
+    // Going OFFLINE is always allowed (beacon on unload/visibility-hidden).
+    // Going ONLINE must pass the same gates as /api/listener/availability —
+    // otherwise a suspended/unapproved/deactivated listener could re-surface
+    // themselves on the browse page by calling this endpoint directly.
+    if (available) {
+      const { data: lp } = await sb
+        .from('listener_profiles')
+        .select('is_approved, is_active, is_suspended')
+        .eq('user_id', user.id)
+        .maybeSingle()
+      if (!lp || !lp.is_approved || !lp.is_active || lp.is_suspended) {
+        return NextResponse.json({ ok: true }) // silently no-op; beacon-friendly
+      }
+    }
+
+    await sb.from('listener_profiles')
+      .update({ is_available: available, ...(available ? { last_heartbeat_at: new Date().toISOString() } : {}) })
+      .eq('user_id', user.id)
     return NextResponse.json({ ok: true })
   } catch {
     return NextResponse.json({ ok: true }) // beacon fire-and-forget; always 200
