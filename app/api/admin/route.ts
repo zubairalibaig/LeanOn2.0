@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
+import Razorpay from 'razorpay'
 import { createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 import { requireAdmin, ADMIN_PASSWORD_USER_ID } from '@/lib/require-admin'
+
+function getRzp() {
+  return new Razorpay({
+    key_id:     process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+    key_secret: process.env.RAZORPAY_KEY_SECRET!,
+  })
+}
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -44,7 +52,7 @@ export async function GET(req: NextRequest) {
 
     admin
       .from('refund_requests')
-      .select(`id, amount, reason, status, created_at, users ( name, email )`)
+      .select(`id, amount, reason, status, created_at, razorpay_payment_id, users ( name, email )`)
       .eq('status', 'pending')
       .order('created_at', { ascending: false })
       .limit(50),
@@ -180,7 +188,7 @@ export async function POST(req: NextRequest) {
       .update({ status: 'completed' })
       .eq('id', id)
       .eq('status', 'pending')
-      .select('user_id, amount')
+      .select('user_id, amount, razorpay_payment_id')
       .single()
 
     if (claimErr || !rr) {
@@ -190,10 +198,6 @@ export async function POST(req: NextRequest) {
     // Since the June 2026 fix, the wallet balance is zeroed IMMEDIATELY when the
     // seeker submits a refund request (deduct_wallet fires in /api/refund/route.ts).
     // At processing time, the balance is already 0 — no deduction needed here.
-    // The admin's job is to:
-    //  1. Confirm this action (done — the claim above marks it 'completed')
-    //  2. Send the cash manually via Razorpay dashboard or UPI for the amount in rr.amount
-    //
     // Legacy requests submitted BEFORE the fix may still have a non-zero balance.
     // Detect and handle those: if balance > 0, deduct now (old behaviour).
     const { data: liveU } = await admin.from('users').select('wallet_balance').eq('id', rr.user_id).single()
@@ -216,8 +220,36 @@ export async function POST(req: NextRequest) {
       }).then(() => {}, (e) => logger.error('refund tx insert failed:', { error: String(e) }))
     }
 
+    // Auto-issue Razorpay refund if we have the original payment_id.
+    // Amount in Razorpay API is in paise (multiply by 100).
+    let rzpRefundId: string | null = null
+    if (rr.razorpay_payment_id) {
+      try {
+        const rzp = getRzp()
+        const refundAmountPaise = Math.round(Number(rr.amount) * 100)
+        const rzpRefund = await rzp.payments.refund(rr.razorpay_payment_id, {
+          amount: refundAmountPaise,
+          notes: { reason: 'LeanOn wallet refund', refund_request_id: id },
+        })
+        rzpRefundId = rzpRefund.id
+        logger.info('Razorpay refund issued automatically:', { id, rzpRefundId, amount: rr.amount, paymentId: rr.razorpay_payment_id })
+        // Store Razorpay refund ID in notes for audit trail
+        await admin.from('refund_requests').update({ admin_notes: `Razorpay refund: ${rzpRefundId}` }).eq('id', id)
+          .then(() => {}, (e) => logger.warn('refund admin_notes update failed:', { id, error: String(e) }))
+      } catch (rzpErr) {
+        // Log the failure but do NOT revert the claim — the wallet is already zeroed and the
+        // admin has confirmed intent. They must issue the Razorpay refund manually from the dashboard.
+        logger.error('complete_refund: Razorpay refund API failed — manual action required:', {
+          id, paymentId: rr.razorpay_payment_id, amount: rr.amount,
+          error: rzpErr instanceof Error ? rzpErr.message : String(rzpErr),
+        })
+      }
+    } else {
+      logger.warn('complete_refund: no razorpay_payment_id — admin must issue Razorpay refund manually:', { id, amount: rr.amount })
+    }
+
     await auditLog(admin, user!.id, 'complete_refund', id)
-    return NextResponse.json({ ok: true, amount: rr.amount })
+    return NextResponse.json({ ok: true, amount: rr.amount, rzpRefundId })
   }
 
   if (action === 'reactivate_user') {

@@ -60,12 +60,27 @@ export async function POST(req: NextRequest) {
 
     const amount = Number(u.wallet_balance)
 
+    // Find the most recent Razorpay payment_id for this user (from the last recharge).
+    // Stored in wallet_transactions.reference_id where type='credit'.
+    // Captured now so admin can auto-issue the Razorpay refund without hunting for it.
+    const { data: lastCharge } = await sb
+      .from('wallet_transactions')
+      .select('reference_id')
+      .eq('user_id', user.id)
+      .eq('type', 'credit')
+      .not('reference_id', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+    const razorpayPaymentId = lastCharge?.reference_id ?? null
+
     // Insert refund request FIRST (idempotency anchor)
     const { error: insertErr } = await sb.from('refund_requests').insert({
       user_id: user.id,
       amount,
       reason: reason || null,
       status: 'pending',
+      ...(razorpayPaymentId ? { razorpay_payment_id: razorpayPaymentId } : {}),
     })
     if (insertErr) {
       logger.error('Refund insert failed:', { error: insertErr.message })

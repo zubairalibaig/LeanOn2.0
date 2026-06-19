@@ -39,7 +39,7 @@ type VerificationRow = {
   submitted_at: string; admin_notes: string | null
 }
 type PayoutRow = { id: string; amount: number; upi_id?: string; status: string; created_at: string; users: { name?: string; email?: string; phone?: string } | null }
-type RefundRow  = { id: string; amount: number; reason?: string; status: string; created_at: string; users: { name?: string; email?: string } | null }
+type RefundRow  = { id: string; amount: number; reason?: string; status: string; created_at: string; razorpay_payment_id?: string | null; users: { name?: string; email?: string } | null }
 
 type Tab = 'overview' | 'users' | 'listeners' | 'sessions' | 'reports' | 'payouts' | 'verifications'
 
@@ -1347,6 +1347,16 @@ export default function AdminPage() {
                   </div>
                   {r.reason && (
                     <div style={{ fontSize: 13, color: 'var(--gray)', marginTop: 4 }}>Reason: {r.reason}</div>
+                  )}
+                  {r.razorpay_payment_id ? (
+                    <div style={{ fontSize: 11, color: 'var(--teal)', marginTop: 4, fontWeight: 700 }}>
+                      Razorpay Payment: <span style={{ fontFamily: 'monospace' }}>{r.razorpay_payment_id}</span>
+                      <span style={{ marginLeft: 6, color: 'var(--green)' }}>● Auto-refund will trigger on "Mark Processed"</span>
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: 11, color: 'var(--orange)', marginTop: 4, fontWeight: 700 }}>
+                      ⚠ No payment ID — issue refund manually in Razorpay dashboard
+                    </div>
                   )}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
