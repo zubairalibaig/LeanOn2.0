@@ -253,7 +253,8 @@ export default function WalletPage() {
 
         <div className="balance-card">
           <div className="balance-label">AVAILABLE BALANCE</div>
-          <div className="balance-amount">₹{balance ?? '—'}</div>
+          {/* When a refund is pending, show ₹0 regardless of DB value — funds are earmarked. */}
+          <div className="balance-amount">₹{refundPendingAmount !== null ? 0 : (balance ?? '—')}</div>
           <div className="balance-sub">{balance !== null ? `Available for sessions — rates vary by listener` : 'Loading...'}</div>
           {showRefundConfirm ? (
             <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.12)', borderRadius: 14, padding: '14px 16px', textAlign: 'left' }}>
@@ -271,7 +272,7 @@ export default function WalletPage() {
             </div>
           ) : (refundSubmitted || refundPendingAmount !== null) ? (
             <div style={{marginTop:16,fontSize:13,color:'rgba(255,255,255,0.85)',fontWeight:600,lineHeight:1.5,background:'rgba(255,255,255,0.12)',borderRadius:12,padding:'12px 14px'}}>
-              ✓ Refund of ₹{refundPendingAmount ?? balance} requested — your wallet has been cleared and the cash will arrive in 3–5 business days via your original payment method. Razorpay does not auto-refund; we process it manually.
+              ✓ Refund of ₹{refundPendingAmount ?? balance} requested — the cash will arrive in 3–5 business days to your original payment method. We process refunds manually via Razorpay.
             </div>
           ) : (
             <button className="refund-btn" onClick={() => setShowRefundConfirm(true)} disabled={refunding || !balance || balance <= 0}>
