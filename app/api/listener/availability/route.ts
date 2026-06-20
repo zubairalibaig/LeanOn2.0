@@ -1,21 +1,31 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { sendSms } from '@/lib/twilio'
 import { logger } from '@/lib/logger'
 
-// PATCH — toggle is_available for authenticated listener.
-// When a listener goes ONLINE, send SMS to their recent seekers (last 30 days,
-// up to 5 unique) so they know support is available now.
-export async function PATCH() {
+export const dynamic = 'force-dynamic'
+
+// PATCH — set is_available for the authenticated listener.
+// The client sends its explicit intent in the body ({ available: true|false }).
+// We use that directly rather than re-reading the DB and flipping, because a
+// flip-from-DB design silently does the WRONG thing whenever the dashboard's
+// view has drifted from the row (e.g. clicking "Go offline" would read a row
+// that's already false and flip it back ON). If no body is sent we fall back to
+// the legacy flip for backward compatibility.
+// When a listener goes ONLINE, SMS their recent seekers (last 30 days, up to 5).
+export async function PATCH(req: NextRequest) {
   try {
     const userSb = createServerSupabaseClient()
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
-    if (!checkRateLimit(`availability:${user.id}`, 20, 60_000)) {
+    if (!checkRateLimit(`availability:${user.id}`, 30, 60_000)) {
       return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
     }
+
+    const body = await req.json().catch(() => ({}))
+    const desired: boolean | null = typeof body?.available === 'boolean' ? body.available : null
 
     const sb = createAdminClient()
     const { data: lp } = await sb
@@ -29,28 +39,33 @@ export async function PATCH() {
     if (lp.is_suspended) return NextResponse.json({ error: 'Your listener account is suspended' }, { status: 403 })
     if (!lp.is_active) return NextResponse.json({ error: 'Your listener profile is deactivated' }, { status: 403 })
 
-    const goingOnline = !lp.is_available
-    // Single-column write — identical for online and offline so the toggle can
-    // never fail on an environment-specific schema mismatch. We intentionally do
-    // NOT touch last_heartbeat_at here: no read path consumes it anymore (the
-    // browse list and the booking guard both trust is_available directly), and
-    // writing a column that may not exist in this DB would 500 the whole toggle.
-    const { error: updateErr } = await sb.from('listener_profiles')
+    // Explicit intent from the client; fall back to a flip only if none was sent.
+    const goingOnline = desired !== null ? desired : !lp.is_available
+
+    // Single-column write — identical shape for online and offline so the toggle
+    // can never fail on an environment-specific schema mismatch. We intentionally
+    // do NOT touch last_heartbeat_at: no read path consumes it anymore (the browse
+    // list and the booking guard both trust is_available directly), and writing a
+    // column that may be absent in this DB would 500 the whole toggle.
+    const { data: updated, error: updateErr } = await sb.from('listener_profiles')
       .update({ is_available: goingOnline })
       .eq('user_id', user.id)
+      .select('is_available')
+      .single()
     if (updateErr) {
       logger.error('availability toggle failed:', { error: updateErr.message })
       return NextResponse.json({ error: 'Could not update availability. Please try again.' }, { status: 500 })
     }
 
-    // Fire-and-forget SMS to recent seekers when going online
-    if (goingOnline) {
+    // Only SMS when this call actually transitioned offline → online.
+    if (goingOnline && !lp.is_available) {
       notifyRecentSeekers(sb, user.id).catch(e =>
         logger.error('notifyRecentSeekers error (non-critical):', { error: String(e) })
       )
     }
 
-    return NextResponse.json({ is_available: goingOnline })
+    // Return the value we read back from the DB so the client reflects truth.
+    return NextResponse.json({ is_available: updated?.is_available ?? goingOnline })
   } catch {
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }

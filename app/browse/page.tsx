@@ -172,11 +172,18 @@ function BrowseContent() {
   useEffect(() => {
     const refresh = () => loadListeners()
     const onVis = () => { if (document.visibilityState === 'visible') refresh() }
+    // pageshow fires on back/forward navigation INCLUDING bfcache restores,
+    // where the page is resurrected frozen and mount/focus/visibility may not
+    // fire — this is the one path that otherwise shows a stale list after
+    // navigating dashboard → back → browse.
+    const onPageShow = () => refresh()
     window.addEventListener('focus', refresh)
+    window.addEventListener('pageshow', onPageShow)
     document.addEventListener('visibilitychange', onVis)
-    const iv = setInterval(refresh, 30_000)
+    const iv = setInterval(refresh, 12_000)
     return () => {
       window.removeEventListener('focus', refresh)
+      window.removeEventListener('pageshow', onPageShow)
       document.removeEventListener('visibilitychange', onVis)
       clearInterval(iv)
     }

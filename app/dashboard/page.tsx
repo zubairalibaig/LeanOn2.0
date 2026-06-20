@@ -378,15 +378,24 @@ export default function DashboardPage() {
   async function toggleAvailability() {
     if (!user) return
     const prev = avail
-    setAvail(!prev) // optimistic
-    const res = await fetch('/api/listener/availability', { method: 'PATCH' }).catch(() => null)
+    const next = !prev
+    setAvail(next) // optimistic
+    // Send explicit intent (not a flip) so the server sets exactly what the
+    // listener asked for, even if the dashboard view has drifted from the DB.
+    const res = await fetch('/api/listener/availability', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ available: next }),
+    }).catch(() => null)
     if (!res?.ok) {
       setAvail(prev) // revert on failure
       const body = await res?.json().catch(() => ({}))
       showToast(body?.error || 'Could not update availability. Please try again.', 'error')
     } else {
       const data = await res.json().catch(() => ({}))
+      // Reflect the value the server read back from the DB (source of truth).
       if (typeof data.is_available === 'boolean') setAvail(data.is_available)
+      showToast(next ? "You're online — seekers can find you now." : "You're offline.", next ? 'success' : 'info')
     }
   }
 
