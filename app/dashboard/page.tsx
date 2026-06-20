@@ -405,7 +405,16 @@ export default function DashboardPage() {
       // actual DB value, so we trust it directly — no second round-trip needed.
       const dbValue = typeof data.is_available === 'boolean' ? data.is_available : next
       setAvail(dbValue)
-      showToast(next ? "You're online — seekers can find you now." : "You're offline.", next ? 'success' : 'info')
+      showToast(dbValue ? "You're online — seekers can find you now." : "You're offline.", dbValue ? 'success' : 'info')
+      // Notify any browse tabs on the same origin so they reflect the new state
+      // immediately — without this they wait up to 5 s for their next poll.
+      if (user) {
+        try {
+          const bc = new BroadcastChannel('leanon-availability')
+          bc.postMessage({ user_id: user.id, is_available: dbValue })
+          bc.close()
+        } catch { /* BroadcastChannel unavailable in some environments */ }
+      }
     }
   }
 

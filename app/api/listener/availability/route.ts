@@ -37,7 +37,7 @@ export async function PATCH(req: NextRequest) {
     if (!lp) return NextResponse.json({ error: 'Listener profile not found' }, { status: 404 })
     if (!lp.is_approved) return NextResponse.json({ error: 'Your application is still under review' }, { status: 403 })
     if (lp.is_suspended) return NextResponse.json({ error: 'Your listener account is suspended' }, { status: 403 })
-    if (!lp.is_active) return NextResponse.json({ error: 'Your listener profile is deactivated' }, { status: 403 })
+    if (lp.is_active === false) return NextResponse.json({ error: 'Your listener profile is deactivated' }, { status: 403 })
 
     // Explicit intent from the client; fall back to a flip only if none was sent.
     const goingOnline = desired !== null ? desired : !lp.is_available

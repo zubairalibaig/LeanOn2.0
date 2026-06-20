@@ -158,7 +158,7 @@ function BrowseContent() {
     if (topic) setTag(topic)
   }, [])
 
-  useEffect(() => { loadListeners() }, [tag, lang])
+  useEffect(() => { loadListeners(false) }, [tag, lang])
 
   // The /api/listeners response is authoritative and always fresh (the route is
   // force-dynamic + no-store), so we re-pull it on every trigger that could mean
@@ -170,7 +170,9 @@ function BrowseContent() {
   // Together these make online/offline reflect within seconds without depending
   // on Supabase Realtime being configured.
   useEffect(() => {
-    const refresh = () => loadListeners()
+    // Silent refresh — no skeleton flash. Used for background polls and cross-tab
+    // events. Initial load (called from the tag/lang effect) shows the skeleton.
+    const refresh = () => loadListeners(true)
     const onVis = () => { if (document.visibilityState === 'visible') refresh() }
     // pageshow fires on back/forward navigation INCLUDING bfcache restores,
     // where the page is resurrected frozen and mount/focus/visibility may not
@@ -180,12 +182,38 @@ function BrowseContent() {
     window.addEventListener('focus', refresh)
     window.addEventListener('pageshow', onPageShow)
     document.addEventListener('visibilitychange', onVis)
-    const iv = setInterval(refresh, 12_000)
+    // 5 s poll — fast enough to catch offline/online changes without waiting 12 s.
+    const iv = setInterval(refresh, 5_000)
+
+    // BroadcastChannel — receives immediate notification when another tab on the
+    // same origin (e.g. /dashboard) toggles availability. Without this, the browse
+    // page waits up to 5 s even when the change is known instantly.
+    let bc: BroadcastChannel | null = null
+    try {
+      bc = new BroadcastChannel('leanon-availability')
+      bc.onmessage = (e: MessageEvent<{ user_id: string; is_available: boolean }>) => {
+        const { user_id, is_available } = e.data || {}
+        if (typeof user_id !== 'string' || typeof is_available !== 'boolean') return
+        setListeners(prev => {
+          const mapped = prev.map(l =>
+            l.user_id === user_id ? { ...l, is_available } : l
+          )
+          return [...mapped].sort((a, b) => {
+            if (a.is_available !== b.is_available) return a.is_available ? -1 : 1
+            return (b.rating || 0) - (a.rating || 0)
+          })
+        })
+      }
+    } catch {
+      // BroadcastChannel unavailable (e.g. private browsing on some browsers)
+    }
+
     return () => {
       window.removeEventListener('focus', refresh)
       window.removeEventListener('pageshow', onPageShow)
       document.removeEventListener('visibilitychange', onVis)
       clearInterval(iv)
+      try { bc?.close() } catch { /* ignore */ }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tag, lang])
@@ -247,8 +275,12 @@ function BrowseContent() {
     }
   }, [])
 
-  async function loadListeners() {
-    setLoading(true)
+  async function loadListeners(silent = false) {
+    // Only show skeleton on the initial load (no existing listeners in state).
+    // Background polls must be silent so the online→offline transition is visible
+    // immediately when the poll completes — a skeleton flash during a poll looks
+    // like the state "reset" and confuses listeners checking their own visibility.
+    if (!silent) setLoading(true)
     const params = new URLSearchParams()
     if (tag  !== 'all') params.set('tag',  tag)
     if (lang !== 'all') params.set('lang', lang)
@@ -264,9 +296,9 @@ function BrowseContent() {
         languages_spoken: (l.languages_spoken as string[]) || [],
       })))
     } catch {
-      setListeners([])
+      if (!silent) setListeners([])
     }
-    setLoading(false)
+    if (!silent) setLoading(false)
   }
 
   const filtered = query
