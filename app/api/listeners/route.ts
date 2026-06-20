@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
     })
 
     return NextResponse.json({ listeners }, {
-      headers: { 'Cache-Control': 's-maxage=10, stale-while-revalidate=30' },
+      headers: { 'Cache-Control': 'no-store' },
     })
   } catch (err) {
     logger.error('listeners route error:', { error: err instanceof Error ? err.message : String(err) })

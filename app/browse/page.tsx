@@ -160,6 +160,18 @@ function BrowseContent() {
 
   useEffect(() => { loadListeners() }, [tag, lang])
 
+  // Re-fetch when the tab becomes visible (e.g. user switches from /dashboard to /browse).
+  // Without this, a listener who just went online shows as offline because the
+  // initial fetch ran while the tab was hidden and Vercel may serve a stale CDN response.
+  useEffect(() => {
+    function handleVis() {
+      if (document.visibilityState === 'visible') loadListeners()
+    }
+    document.addEventListener('visibilitychange', handleVis)
+    return () => document.removeEventListener('visibilitychange', handleVis)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tag, lang])
+
   // Realtime: update listener availability without requiring a full page reload.
   // Re-sort after update so newly-online listeners rise to the top (same order
   // as the server: is_available DESC, rating DESC). Without re-sorting, a
