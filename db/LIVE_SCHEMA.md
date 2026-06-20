@@ -24,7 +24,13 @@ Supabase dashboard (columns, constraints, policies, triggers, auth settings).
 |---|---|---|
 | `041_listener_heartbeat.sql` | Adds `listener_profiles.last_heartbeat_at` timestamptz | **✅ Applied — confirmed in snapshot 2026-06-20** |
 | `043_session_request_flow.sql` | Adds `sessions.cancel_reason` + `sessions.responded_at`, partial index on pending requests, rewrites `create_session` to insert `pending`, adds `accept_session()` RPC | **✅ Applied — confirmed in snapshot 2026-06-20** |
-| `044_fix_users_rls_recursion.sql` | Drops ALL users RLS policies via pg_catalog loop, recreates 6 clean non-recursive policies — fixes error `42P17: infinite recursion detected in policy for relation "users"` | **✅ Applied 2026-06-20 — confirmed clean** |
+| `044_fix_users_rls_recursion.sql` | Drops ALL users RLS policies via pg_catalog loop, recreates 6 clean policies | **✅ Applied 2026-06-20 — necessary but NOT sufficient (see 045)** |
+
+## ⚠️ Pending migration (run before code relies on it)
+
+| Migration | What it does | Status |
+|---|---|---|
+| `045_fix_sessions_users_rls_cycle.sql` | Completes the `42P17` fix. The recursion is a **cross-table cycle**, not a self-reference: `users.users_select_session_participant` reads `sessions`, and `sessions.sessions_read_participants` reads `users` (admin `EXISTS`). 044 only cleaned the `users` side, so the cycle survived. 045 drops all `sessions` SELECT policies and recreates ONE clean participant-only policy (`sessions_select_participant`) that references no other table — admin reads go through the service-role client, so the admin clause is unnecessary. After 045 the policy dependency graph is a DAG; `42P17` cannot occur. | **MUST RUN in Supabase SQL Editor.** Until run: every anon/authenticated read touching `users` or `sessions` (dashboard sessions list, browse wallet read, session page, message history) throws `42P17`. The `/api/listeners` browse list survives only because it uses the service-role admin client. |
 
 ## Known live-vs-migrations drift (history)
 
@@ -413,9 +419,9 @@ Full dump via `db/dump-live-schema.sql`.
 | reports users_insert_reports | INSERT TO public WITH CHECK (reporter_id = auth.uid()) |
 | reports users_select_own_reports | SELECT TO public USING (reporter_id = auth.uid()) |
 | sessions sessions_insert | INSERT TO public WITH CHECK (auth.uid() = seeker_id) |
-| sessions sessions_own | SELECT TO public USING (auth.uid() = seeker_id OR auth.uid() = listener_id) |
-| sessions sessions_participant_select | SELECT TO public USING (seeker_id = auth.uid() OR listener_id = auth.uid()) |
-| sessions sessions_read_participants | SELECT TO public USING (seeker_id = auth.uid() OR listener_id = auth.uid() OR EXISTS (admin check)) |
+| sessions sessions_own | SELECT TO public USING (auth.uid() = seeker_id OR auth.uid() = listener_id) — **⚠️ 045 drops this** |
+| sessions sessions_participant_select | SELECT TO public USING (seeker_id = auth.uid() OR listener_id = auth.uid()) — **⚠️ 045 drops this** |
+| sessions sessions_read_participants | SELECT TO public USING (seeker_id = auth.uid() OR listener_id = auth.uid() OR EXISTS (SELECT 1 FROM users WHERE id=auth.uid() AND (role='admin' OR is_admin))) — **🔴 THIS is the 42P17 cycle (reads users); 045 replaces all three with `sessions_select_participant`** |
 | sessions sessions_seeker_rating_update | UPDATE TO public USING (auth.uid() = seeker_id AND status = 'completed') WITH CHECK (auth.uid() = seeker_id) |
 | specialty_tags specialty_tags_read_all | SELECT TO public USING (true) |
 | user_blocks users_delete_own_blocks | DELETE TO public USING (blocker_id = auth.uid()) |
@@ -437,7 +443,15 @@ Full dump via `db/dump-live-schema.sql`.
 > - `users`: 2 listener SELECT policies — `users_listener_public_read` (approved only) + `users_select_listener_public` (approved AND active). Net effect: approved-but-inactive listeners are publicly readable via the looser policy.
 > - `messages`: 2 INSERT policies (`messages_insert` enforces sender_id + active-session; `messages_participant_insert` does not — migration 036 should be run to drop the permissive one)
 >
-> ✅ **Migration 044 (2026-06-20):** ALL recursive users policies have been dropped and replaced with the 6 clean, non-recursive policies above. The `42P17: infinite recursion detected in policy for relation "users"` error is resolved.
+> ⚠️ **Migration 044 (2026-06-20):** cleaned the `users` policies but did NOT
+> resolve `42P17`. The recursion is a **cross-table cycle**:
+> `users.users_select_session_participant` → reads `sessions`;
+> `sessions.sessions_read_participants` → reads `users`. The cycle survives
+> as long as EITHER side references the other. **Migration 045** breaks it on
+> the `sessions` side (drops the three SELECT policies above, recreates one
+> clean `sessions_select_participant` that references no other table). Run 045,
+> then re-snapshot: the `sessions` rows above collapse to a single
+> `sessions_select_participant` and `42P17` is gone.
 
 ### 5_RLS_ENABLED (18 tables, all ENABLED)
 
