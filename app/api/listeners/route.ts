@@ -16,12 +16,19 @@ export async function GET(req: NextRequest) {
 
     const sb = createAdminClient()
 
+    // Exclude orphaned accounts: LeanOn is phone-only, so a listener whose users
+    // row has no phone can never be logged into and must not appear bookable.
+    // These ghosts come from auth-account recreation (see lib/ensure-user-row.ts)
+    // and were the cause of the duplicate-"Zubair" / "I'm online but shown
+    // offline" bug. We fetch phone ONLY to filter on it, then strip it from the
+    // response below so it never leaves the server.
     let q = sb
       .from('listener_profiles')
-      .select('user_id, bio, specialty_tags, languages_spoken, rate_per_min, rating, total_sessions, is_available, is_verified, users!inner(name, avatar_url)')
+      .select('user_id, bio, specialty_tags, languages_spoken, rate_per_min, rating, total_sessions, is_available, is_verified, users!inner(name, avatar_url, phone)')
       .eq('is_approved', true)
       .or('is_active.eq.true,is_active.is.null')
       .eq('is_suspended', false)
+      .not('users.phone', 'is', null)
       .order('is_available', { ascending: false })
       .order('rating',       { ascending: false })
       .limit(50)
@@ -43,10 +50,17 @@ export async function GET(req: NextRequest) {
     // detection (stale heartbeat) is intentionally removed here because the
     // heartbeat column may not exist in all environments, and a false staleness
     // verdict was causing listeners to appear offline immediately after going online.
-    const listeners = (data ?? []).map((l) => ({
-      ...l,
-      is_available: Boolean((l as { is_available?: boolean }).is_available),
-    }))
+    const listeners = (data ?? []).map((l) => {
+      // Strip phone from the embedded users object — it was selected only to
+      // filter out phone-less orphans and must never reach the client.
+      const rawUsers = (l as { users?: { name?: string; avatar_url?: string; phone?: string } }).users
+      const users = rawUsers ? { name: rawUsers.name, avatar_url: rawUsers.avatar_url } : rawUsers
+      return {
+        ...l,
+        users,
+        is_available: Boolean((l as { is_available?: boolean }).is_available),
+      }
+    })
     listeners.sort((a, b) => {
       const av = a.is_available ? 1 : 0
       const bv = b.is_available ? 1 : 0

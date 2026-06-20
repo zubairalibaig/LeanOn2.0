@@ -37,17 +37,24 @@ export async function ensureUserRow(
   const phoneConflict = error.code === '23505' && /users_phone_key/.test(error.message + (error.details ?? ''))
   if (phoneConflict && phone) {
     if (phoneVerified) {
-      // OTP proved current ownership — release the phone from the stale row.
-      // Try NULL first; the live DB may have a NOT NULL on phone (schema
-      // drift), in which case park a unique placeholder instead.
+      // OTP proved current ownership — release the phone from the stale row(s).
+      // Capture the stale ids FIRST so we can both clear their phone and retire
+      // any listener profile they own. Leaving a stale listener_profile active
+      // makes it a permanent ghost on /browse: the orphaned account can never be
+      // logged into (it has no phone), yet it still shows as a bookable listener
+      // and confuses the real owner ("I go online but I'm still offline"). This
+      // exact drift produced the duplicate "Zubair" listener bug.
+      const { data: staleRows } = await admin
+        .from('users').select('id').eq('phone', phone).neq('id', id)
+
+      // 1) Strip the phone. Try NULL first; the live DB may have a NOT NULL on
+      //    phone (schema drift), in which case park a unique placeholder.
       let { error: clearErr } = await admin
         .from('users')
         .update({ phone: null })
         .eq('phone', phone)
         .neq('id', id)
       if (clearErr && clearErr.code === '23502') {
-        const { data: staleRows } = await admin
-          .from('users').select('id').eq('phone', phone).neq('id', id)
         for (const stale of staleRows ?? []) {
           ;({ error: clearErr } = await admin
             .from('users')
@@ -60,7 +67,23 @@ export async function ensureUserRow(
         logger.error('ensureUserRow: failed to clear stale phone', { phone, error: clearErr.message })
         return { error: 'Could not save your profile. Please try again.', debug: fmt(clearErr) }
       }
-      logger.warn('ensureUserRow: released phone from stale users row', { phone, newOwner: id })
+
+      // 2) Retire the orphaned account's listener profile so it disappears from
+      //    /browse. Soft only (is_active/is_available) — never deletes data and
+      //    never touches guard-frozen columns (is_approved/rating/etc).
+      if (staleRows && staleRows.length > 0) {
+        const staleIds = staleRows.map(s => s.id)
+        await admin
+          .from('listener_profiles')
+          .update({ is_active: false, is_available: false })
+          .in('user_id', staleIds)
+          .then(
+            ({ error: deErr }) => { if (deErr) logger.warn('ensureUserRow: could not retire orphaned listener profile(s)', { staleIds, error: deErr.message }) },
+            (e) => logger.warn('ensureUserRow: orphaned listener profile retire threw', { error: String(e) }),
+          )
+      }
+
+      logger.warn('ensureUserRow: released phone from stale users row', { phone, newOwner: id, retiredOrphans: staleRows?.length ?? 0 })
       ;({ error } = await admin.from('users').upsert(row, { onConflict: 'id' }))
     } else {
       // Unverified phone — never evict another row; save without the phone.
