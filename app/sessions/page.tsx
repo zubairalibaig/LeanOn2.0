@@ -21,6 +21,8 @@ a{text-decoration:none;color:inherit;}
 .badge{display:inline-block;padding:4px 10px;border-radius:50px;font-size:11px;font-weight:700;}
 .badge-active{background:#DCFCE7;color:#166534;}
 .badge-completed{background:#F3F4F6;color:#6B7280;}
+.badge-pending{background:#FFF3E0;color:#B35C00;}
+.badge-cancelled{background:#FEE2E2;color:#991B1B;}
 .badge-other{background:var(--light);color:var(--gray);}
 .meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;}
 .meta-item{font-size:12px;color:var(--gray);font-weight:600;display:flex;align-items:center;gap:4px;}
@@ -114,7 +116,15 @@ export default function SessionsPage() {
   const badgeClass = (status: string) => {
     if (status === 'active') return 'badge badge-active'
     if (status === 'completed') return 'badge badge-completed'
+    if (status === 'pending') return 'badge badge-pending'
+    if (status === 'cancelled') return 'badge badge-cancelled'
     return 'badge badge-other'
+  }
+
+  const badgeLabel = (status: string) => {
+    if (status === 'pending') return 'Waiting…'
+    if (status === 'cancelled') return 'Cancelled'
+    return status.charAt(0).toUpperCase() + status.slice(1)
   }
 
   return (
@@ -140,7 +150,7 @@ export default function SessionsPage() {
             <div className="card-header">
               <div className="listener-name">{s.listener_name}</div>
               <span className={badgeClass(s.status)}>
-                {s.status.charAt(0).toUpperCase() + s.status.slice(1)}
+                {badgeLabel(s.status)}
               </span>
             </div>
             <div className="meta-row">
@@ -153,14 +163,17 @@ export default function SessionsPage() {
               <span className="meta-item">📅 {formatDate(s.created_at)}</span>
             </div>
             {s.amount_held > 0 && (
-              <div className="amount">₹{s.amount_held} charged</div>
+              <div className="amount">
+                {s.status === 'cancelled' ? `₹${s.amount_held} refunded` : `₹${s.amount_held} charged`}
+              </div>
             )}
             <div className="rating-row">
               ⭐ {renderStars(s.seeker_rating)}
             </div>
-            {s.status === 'active' && (
+            {(s.status === 'active' || s.status === 'pending') && (
               <button
                 className="rejoin-btn"
+                style={s.status === 'pending' ? { background: '#B35C00' } : undefined}
                 onClick={() => {
                   // Pass the BOOKED duration — the session page recomputes the
                   // remaining time from started_at. Passing a computed remainder
@@ -169,7 +182,7 @@ export default function SessionsPage() {
                   router.push(`/session/${s.id}?name=${encodeURIComponent(s.listener_name)}&duration=${s.duration_mins}&type=${s.session_type}`)
                 }}
               >
-                Rejoin →
+                {s.status === 'pending' ? 'View request →' : 'Rejoin →'}
               </button>
             )}
           </div>

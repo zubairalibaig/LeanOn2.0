@@ -954,6 +954,21 @@ function SessionContent() {
     )
   }
 
+  // Show a brief loading screen while the DB fetch resolves — prevents the
+  // chat/voice UI from flashing before the pending or cancelled screen renders.
+  if (sessionStatus === null) {
+    return (
+      <>
+        <style>{S}</style>
+        <div className="wrap" style={{ background: '#0F4867', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ textAlign: 'center', color: 'rgba(255,255,255,.65)', fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: 16 }}>
+            Loading session…
+          </div>
+        </div>
+      </>
+    )
+  }
+
   const voiceTimerClass = secs < 60 ? ' low' : secs < 120 ? ' warn' : ''
 
   // ── Voice call overlay

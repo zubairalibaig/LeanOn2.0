@@ -359,8 +359,12 @@ export default function DashboardPage() {
         if (s.status && s.status !== 'pending') return
         setIncomingSession(s)
         startCountdown(() => {
+          const expiredId = s.id
           setIncomingSession(null)
-          showToast('Session request expired — no response recorded.', 'warning')
+          // Auto-decline so the seeker gets an immediate refund instead of
+          // waiting up to 5 more minutes for their own timeout to fire.
+          fetch(`/api/sessions/${expiredId}/decline`, { method: 'POST' }).catch(() => {})
+          showToast('Session request expired — seeker has been refunded.', 'info')
         })
       })
       .subscribe()
