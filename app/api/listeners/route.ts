@@ -16,9 +16,9 @@ export async function GET(req: NextRequest) {
 
     let q = sb
       .from('listener_profiles')
-      .select('user_id, bio, specialty_tags, languages_spoken, rate_per_min, rating, total_sessions, is_available, is_verified, last_heartbeat_at, users!inner(name, avatar_url)')
+      .select('user_id, bio, specialty_tags, languages_spoken, rate_per_min, rating, total_sessions, is_available, is_verified, users!inner(name, avatar_url)')
       .eq('is_approved', true)
-      .eq('is_active', true)
+      .or('is_active.eq.true,is_active.is.null')
       .eq('is_suspended', false)
       .order('is_available', { ascending: false })
       .order('rating',       { ascending: false })
@@ -36,21 +36,15 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch listeners. Please try again.' }, { status: 503 })
     }
 
-    // A listener is only TRULY online if their heartbeat is fresh. Demote
-    // stale-online (ghost) listeners — tab force-killed, network dropped — to
-    // offline so seekers don't try to book someone who isn't there. The dashboard
-    // sends a heartbeat every 60s while online; we allow a 3-minute grace.
-    const STALE_MS = 3 * 60 * 1000
-    const now = Date.now()
-    const listeners = (data ?? []).map((l) => {
-      const hb = (l as { last_heartbeat_at?: string | null }).last_heartbeat_at
-      // NULL heartbeat = listener predates the heartbeat column (migration 041).
-      // Trust is_available as-is; only demote when a heartbeat exists but is stale.
-      const fresh = !hb || (now - new Date(hb).getTime()) < STALE_MS
-      const { last_heartbeat_at: _omit, ...rest } = l as Record<string, unknown>
-      return { ...rest, is_available: Boolean((l as { is_available?: boolean }).is_available) && fresh }
-    })
-    // Re-sort: truly-online first, then by rating (mirrors the DB order intent).
+    // Trust is_available directly from the DB. The dashboard availability toggle
+    // sets this column via the admin client (bypasses RLS/triggers). Ghost-online
+    // detection (stale heartbeat) is intentionally removed here because the
+    // heartbeat column may not exist in all environments, and a false staleness
+    // verdict was causing listeners to appear offline immediately after going online.
+    const listeners = (data ?? []).map((l) => ({
+      ...l,
+      is_available: Boolean((l as { is_available?: boolean }).is_available),
+    }))
     listeners.sort((a, b) => {
       const av = a.is_available ? 1 : 0
       const bv = b.is_available ? 1 : 0
