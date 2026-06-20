@@ -30,13 +30,16 @@ export async function PATCH() {
     if (!lp.is_active) return NextResponse.json({ error: 'Your listener profile is deactivated' }, { status: 403 })
 
     const goingOnline = !lp.is_available
-    // Stamp last_heartbeat_at when going online so the listener appears "fresh"
-    // immediately — the browse query filters out stale-online (ghost) listeners
-    // whose heartbeat has lapsed (force-killed tab, dropped network).
+    // Single-column write — identical for online and offline so the toggle can
+    // never fail on an environment-specific schema mismatch. We intentionally do
+    // NOT touch last_heartbeat_at here: no read path consumes it anymore (the
+    // browse list and the booking guard both trust is_available directly), and
+    // writing a column that may not exist in this DB would 500 the whole toggle.
     const { error: updateErr } = await sb.from('listener_profiles')
-      .update({ is_available: goingOnline, ...(goingOnline ? { last_heartbeat_at: new Date().toISOString() } : {}) })
+      .update({ is_available: goingOnline })
       .eq('user_id', user.id)
     if (updateErr) {
+      logger.error('availability toggle failed:', { error: updateErr.message })
       return NextResponse.json({ error: 'Could not update availability. Please try again.' }, { status: 500 })
     }
 

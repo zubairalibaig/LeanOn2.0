@@ -160,12 +160,26 @@ function BrowseContent() {
 
   useEffect(() => { loadListeners() }, [tag, lang])
 
-  // Poll every 30 s so online/offline changes made on /dashboard are always
-  // reflected within half a minute even when Realtime is not enabled for the
-  // listener_profiles table on this Supabase project.
+  // The /api/listeners response is authoritative and always fresh (the route is
+  // force-dynamic + no-store), so we re-pull it on every trigger that could mean
+  // a listener just toggled availability on /dashboard. Re-fetching can only
+  // correct the list, never stale it:
+  //   • window focus + tab becoming visible — covers switching back from the
+  //     dashboard tab (visibilitychange alone is unreliable on desktop tab swaps)
+  //   • a 30 s poll — backstop when Realtime isn't enabled for listener_profiles
+  // Together these make online/offline reflect within seconds without depending
+  // on Supabase Realtime being configured.
   useEffect(() => {
-    const iv = setInterval(loadListeners, 30_000)
-    return () => clearInterval(iv)
+    const refresh = () => loadListeners()
+    const onVis = () => { if (document.visibilityState === 'visible') refresh() }
+    window.addEventListener('focus', refresh)
+    document.addEventListener('visibilitychange', onVis)
+    const iv = setInterval(refresh, 30_000)
+    return () => {
+      window.removeEventListener('focus', refresh)
+      document.removeEventListener('visibilitychange', onVis)
+      clearInterval(iv)
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tag, lang])
 
