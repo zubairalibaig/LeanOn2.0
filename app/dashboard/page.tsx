@@ -390,39 +390,23 @@ export default function DashboardPage() {
     if (!res?.ok) {
       setAvail(prev) // revert on failure
       const body = await res?.json().catch(() => ({}))
-      showToast(body?.error || 'Could not update availability. Please try again.', 'error')
+      // write_reverted (W01) means a DB trigger is overriding the write — show
+      // the specific error so the owner can run the diagnostic query.
+      if (body?.error === 'write_reverted') {
+        showToast('DB trigger is blocking availability change (W01). Check the browser console for the diagnostic SQL to run.', 'error')
+        console.error('[LeanOn W01] Availability write reverted by live DB trigger.\nRun in Supabase SQL Editor:\nSELECT tgname, tgenabled, tgtype, pg_get_triggerdef(oid) FROM pg_trigger WHERE tgrelid = \'public.listener_profiles\'::regclass;')
+      } else {
+        showToast(body?.error || 'Could not update availability. Please try again.', 'error')
+      }
     } else {
       const data = await res.json().catch(() => ({}))
       // Reflect the value the server read back from the DB (source of truth).
+      // The route does its own write-then-read verification and returns the
+      // actual DB value, so we trust it directly — no second round-trip needed.
       const dbValue = typeof data.is_available === 'boolean' ? data.is_available : next
       setAvail(dbValue)
       showToast(next ? "You're online — seekers can find you now." : "You're offline.", next ? 'success' : 'info')
-      // Prove it actually reflects on /browse by querying the EXACT data source
-      // the browse page uses (/api/listeners, admin client, no cache). If the DB
-      // write didn't land or some filter excludes this listener, surface it
-      // immediately instead of leaving the listener wondering why they never
-      // appear. Purely diagnostic — never changes state.
-      verifyBrowseVisibility(dbValue)
     }
-  }
-
-  // Confirm this listener's online/offline state is what /browse will actually
-  // render. Re-fetches /api/listeners and checks for this user's own card.
-  async function verifyBrowseVisibility(expectedOnline: boolean) {
-    if (!user) return
-    try {
-      const res = await fetch(`/api/listeners?_t=${Date.now()}`, { cache: 'no-store' })
-      if (!res.ok) return
-      const { listeners } = await res.json()
-      const mine = (listeners || []).find((l: { user_id: string }) => l.user_id === user.id)
-      if (expectedOnline && !mine) {
-        // Online intent, but the public list doesn't include this listener at all.
-        showToast('Heads up: you toggled online but you are not appearing on /browse yet. If this persists, your profile may be unapproved/inactive — check your status.', 'warning')
-      } else if (mine && Boolean(mine.is_available) !== expectedOnline) {
-        // Listed, but the availability disagrees with what we just set.
-        showToast('Sync issue: /browse shows a different status than you just set. Pull to refresh /browse — if it sticks, contact support.', 'warning')
-      }
-    } catch { /* diagnostic only — never blocks the toggle */ }
   }
 
   async function requestPayout() {

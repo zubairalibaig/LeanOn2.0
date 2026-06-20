@@ -42,19 +42,57 @@ export async function PATCH(req: NextRequest) {
     // Explicit intent from the client; fall back to a flip only if none was sent.
     const goingOnline = desired !== null ? desired : !lp.is_available
 
-    // Single-column write — identical shape for online and offline so the toggle
-    // can never fail on an environment-specific schema mismatch. We intentionally
-    // do NOT touch last_heartbeat_at: no read path consumes it anymore (the browse
-    // list and the booking guard both trust is_available directly), and writing a
-    // column that may be absent in this DB would 500 the whole toggle.
+    // Write via admin client (bypasses RLS and the guard trigger's is_service_role
+    // check, which would otherwise freeze is_approved/rating/etc). is_available is
+    // NOT in the guard's freeze list, so it is safe from browser-side writes too.
     const { data: updated, error: updateErr } = await sb.from('listener_profiles')
       .update({ is_available: goingOnline })
       .eq('user_id', user.id)
       .select('is_available')
       .single()
+
     if (updateErr) {
-      logger.error('availability toggle failed:', { error: updateErr.message })
+      logger.error('availability toggle failed:', { error: updateErr.message, userId: user.id, intended: goingOnline })
       return NextResponse.json({ error: 'Could not update availability. Please try again.' }, { status: 500 })
+    }
+    if (!updated) {
+      logger.error('availability toggle: 0 rows updated (admin client, correct user_id)', { userId: user.id })
+      return NextResponse.json({ error: 'Listener profile not found for update.' }, { status: 500 })
+    }
+
+    // Explicit re-read — RETURNING captures the value BEFORE any AFTER-UPDATE
+    // trigger fires. If the live DB has an AFTER trigger that resets is_available
+    // (a trigger added via the Supabase dashboard that is not in any committed
+    // migration), RETURNING and a subsequent SELECT will disagree. We treat the
+    // re-read SELECT as ground truth and surface a specific error so the listener
+    // knows exactly what happened instead of seeing a silent wrong state.
+    const { data: reread } = await sb.from('listener_profiles')
+      .select('is_available')
+      .eq('user_id', user.id)
+      .single()
+
+    const actualValue: boolean = reread?.is_available ?? updated.is_available
+
+    if (actualValue !== goingOnline) {
+      logger.error('availability write-revert detected', {
+        userId: user.id,
+        intended: goingOnline,
+        returningValue: updated.is_available,
+        rereadValue: reread?.is_available,
+      })
+      // 409 so the dashboard reverts the optimistic UI and shows an error toast.
+      // Include the diagnostic query the owner needs to run.
+      return NextResponse.json({
+        error: 'write_reverted',
+        is_available: actualValue,
+        message:
+          'The database accepted the write but something immediately reversed it. ' +
+          'A trigger in the live DB is overriding this change. ' +
+          'Run this query in Supabase SQL Editor and share the output:\n\n' +
+          "SELECT tgname, tgenabled, tgtype, pg_get_triggerdef(oid) " +
+          "FROM pg_trigger WHERE tgrelid = 'public.listener_profiles'::regclass;\n\n" +
+          'Error code: W01',
+      }, { status: 409 })
     }
 
     // Only SMS when this call actually transitioned offline → online.
@@ -64,8 +102,7 @@ export async function PATCH(req: NextRequest) {
       )
     }
 
-    // Return the value we read back from the DB so the client reflects truth.
-    return NextResponse.json({ is_available: updated?.is_available ?? goingOnline })
+    return NextResponse.json({ is_available: actualValue })
   } catch {
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
@@ -78,7 +115,6 @@ async function notifyRecentSeekers(
   sb: ReturnType<typeof createAdminClient>,
   listenerId: string,
 ): Promise<void> {
-  // Get listener's display name
   const { data: listenerUser } = await sb
     .from('users')
     .select('name')
@@ -86,7 +122,6 @@ async function notifyRecentSeekers(
     .single()
   const listenerName = listenerUser?.name || 'Your listener'
 
-  // Recent unique seekers (last 30 days, up to 5)
   const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
   const { data: recentSessions } = await sb
     .from('sessions')
@@ -99,7 +134,6 @@ async function notifyRecentSeekers(
 
   if (!recentSessions || recentSessions.length === 0) return
 
-  // Deduplicate to unique seeker IDs, max 5
   const seen = new Set<string>()
   const seekerIds: string[] = []
   for (const s of recentSessions) {
@@ -108,7 +142,6 @@ async function notifyRecentSeekers(
     if (seekerIds.length >= 5) break
   }
 
-  // Fetch phone numbers
   const { data: seekers } = await sb
     .from('users')
     .select('id, phone')
