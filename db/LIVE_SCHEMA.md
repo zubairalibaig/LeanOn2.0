@@ -18,11 +18,13 @@
 **Refresh after:** running any migration, or making ANY change in the
 Supabase dashboard (columns, constraints, policies, triggers, auth settings).
 
-## ⚠️ Pending migration (run before code relies on it)
+## Migrations applied (post-launch)
 
 | Migration | What it does | Status |
 |---|---|---|
-| `043_session_request_flow.sql` | Adds `sessions.cancel_reason` + `sessions.responded_at`, a partial index on pending requests, rewrites `create_session` to insert **`pending`** (was `active`) and hold the wallet, and adds the `accept_session(p_session_id, p_listener_id)` RPC | **MUST RUN in Supabase SQL Editor.** Until run: bookings still go straight to `active` (old behavior, no breakage), but the accept/decline UI and `cancel_reason` writes won't work. Refresh this file after running. |
+| `041_listener_heartbeat.sql` | Adds `listener_profiles.last_heartbeat_at` timestamptz | **✅ Applied — confirmed in snapshot 2026-06-20** |
+| `043_session_request_flow.sql` | Adds `sessions.cancel_reason` + `sessions.responded_at`, partial index on pending requests, rewrites `create_session` to insert `pending`, adds `accept_session()` RPC | **✅ Applied — confirmed in snapshot 2026-06-20** |
+| `044_fix_users_rls_recursion.sql` | Drops ALL users RLS policies via pg_catalog loop, recreates 6 clean non-recursive policies — fixes error `42P17: infinite recursion detected in policy for relation "users"` | **✅ Applied 2026-06-20 — confirmed clean** |
 
 ## Known live-vs-migrations drift (history)
 
@@ -35,6 +37,9 @@ Supabase dashboard (columns, constraints, policies, triggers, auth settings).
 | 2026-06-11 | `users_select_listener_public` policy missing | Re-asserted via migration 035 — **confirmed in snapshot** |
 | 2026-06-11 | `wallet_txn_payment_id_unique` index missing | Added manually in SQL Editor — **confirmed in snapshot** |
 | 2026-06-11 | `admin_audit_logs.admin_id` was NOT NULL (migration 030 intended nullable) | NOT NULL dropped manually in SQL Editor — **confirmed in snapshot** |
+| 2026-06-20 | Unknown recursive admin policy added via Supabase dashboard caused `42P17` on any users-table read | Dropped by migration 044; all 6 clean users policies recreated — **confirmed 2026-06-20** |
+| 2026-06-20 | `listener_profiles.last_heartbeat_at` not in earlier snapshots | Column confirmed present (migration 041 applied) |
+| 2026-06-20 | `sessions.cancel_reason` + `sessions.responded_at` not in earlier snapshots | Columns confirmed present (migration 043 applied) |
 
 ## Code-vs-DB issues found in validation (2026-06-11)
 
@@ -51,11 +56,11 @@ Supabase dashboard (columns, constraints, policies, triggers, auth settings).
 
 <!-- SNAPSHOT -->
 
-## Snapshot — 2026-06-11 (second refresh, after idempotency-index + audit-log fixes)
+## Snapshot — 2026-06-20 (refresh after migrations 041, 043, 044)
 
 Full dump via `db/dump-live-schema.sql`.
 
-### 1_COLUMNS (168 total)
+### 1_COLUMNS (171 total — added last_heartbeat_at, cancel_reason, responded_at)
 
 | table.column | definition |
 | --- | --- |
@@ -126,6 +131,7 @@ Full dump via `db/dump-live-schema.sql`.
 | listener_profiles.is_active | boolean DEFAULT true |
 | listener_profiles.is_verified | boolean NOT NULL DEFAULT false |
 | listener_profiles.is_suspended | boolean NOT NULL DEFAULT false |
+| listener_profiles.last_heartbeat_at | timestamp with time zone |
 | listener_verifications.id | uuid NOT NULL DEFAULT gen_random_uuid() |
 | listener_verifications.listener_id | uuid NOT NULL |
 | listener_verifications.full_name | text NOT NULL |
@@ -197,6 +203,8 @@ Full dump via `db/dump-live-schema.sql`.
 | sessions.crisis_flagged_at | timestamp with time zone |
 | sessions.seeker_last_seen | timestamp with time zone |
 | sessions.listener_last_seen | timestamp with time zone |
+| sessions.cancel_reason | text |
+| sessions.responded_at | timestamp with time zone |
 | specialty_tags.id | text NOT NULL |
 | specialty_tags.label | text NOT NULL |
 | specialty_tags.icon | text |
@@ -373,7 +381,7 @@ Full dump via `db/dump-live-schema.sql`.
 > `credit_wallet_idempotent`'s `ON CONFLICT (reference_id) WHERE reference_id
 > IS NOT NULL` now works; recharge double-credits are prevented.
 
-### 4_RLS_POLICIES (45 total)
+### 4_RLS_POLICIES (45 total — users policies cleaned by migration 044)
 
 | table policy | definition |
 | --- | --- |
@@ -413,22 +421,23 @@ Full dump via `db/dump-live-schema.sql`.
 | user_blocks users_delete_own_blocks | DELETE TO public USING (blocker_id = auth.uid()) |
 | user_blocks users_insert_own_blocks | INSERT TO public WITH CHECK (blocker_id = auth.uid()) |
 | user_blocks users_select_own_blocks | SELECT TO public USING (blocker_id = auth.uid()) |
+| users users_select_own | SELECT TO public USING (auth.uid() = id) |
 | users users_insert_own | INSERT TO public WITH CHECK (auth.uid() = id) |
+| users users_update_own | UPDATE TO public USING (auth.uid() = id) |
 | users users_listener_public_read | SELECT TO public USING (id IN (SELECT user_id FROM listener_profiles WHERE is_approved = true)) |
 | users users_select_listener_public | SELECT TO public USING (id IN (SELECT user_id FROM listener_profiles WHERE is_approved = true AND is_active = true)) |
-| users users_select_own | SELECT TO public USING (auth.uid() = id) |
 | users users_select_session_participant | SELECT TO public USING (id IN (SELECT listener_id FROM sessions WHERE seeker_id = auth.uid() UNION SELECT seeker_id FROM sessions WHERE listener_id = auth.uid())) |
-| users users_update_own | UPDATE TO public USING (auth.uid() = id) |
 | wallet_transactions wallet_own | SELECT TO public USING (auth.uid() = user_id) |
 | wallet_transactions wallet_transactions_select_own | SELECT TO public USING (auth.uid() = user_id) |
 | wallet_transactions wallet_txns_own | SELECT TO public USING (auth.uid() = user_id) |
 
-> ⚠️ Duplicate policies noted:
+> ⚠️ Duplicate policies noted (cosmetic, harmless — OR semantics):
 > - `wallet_transactions`: 3 identical SELECT policies (`wallet_own`, `wallet_transactions_select_own`, `wallet_txns_own`)
 > - `sessions`: 3 overlapping SELECT policies (`sessions_own`, `sessions_participant_select`, `sessions_read_participants`)
-> - `users`: 2 identical listener SELECT policies (`users_select_listener_public`, `users_listener_public_read`)
-> - `messages`: 2 INSERT policies (`messages_insert`, `messages_participant_insert`)
-> These are harmless (OR semantics) but should be cleaned up.
+> - `users`: 2 listener SELECT policies — `users_listener_public_read` (approved only) + `users_select_listener_public` (approved AND active). Net effect: approved-but-inactive listeners are publicly readable via the looser policy.
+> - `messages`: 2 INSERT policies (`messages_insert` enforces sender_id + active-session; `messages_participant_insert` does not — migration 036 should be run to drop the permissive one)
+>
+> ✅ **Migration 044 (2026-06-20):** ALL recursive users policies have been dropped and replaced with the 6 clean, non-recursive policies above. The `42P17: infinite recursion detected in policy for relation "users"` error is resolved.
 
 ### 5_RLS_ENABLED (18 tables, all ENABLED)
 
@@ -506,4 +515,7 @@ All functions have `config: search_path=public, pg_temp` (search-path hardening 
 - `payout_requests` column is `user_id` (not `listener_id`) — code must use `user_id`
 - `sessions_duration_mins_check` includes 45 — confirmed fixed
 - `sessions` has `crisis_flagged` and `crisis_flagged_at` columns — confirmed present
+- `sessions.cancel_reason` (text, nullable) and `sessions.responded_at` (timestamptz, nullable) — confirmed present (migration 043 applied)
+- `listener_profiles.last_heartbeat_at` (timestamptz, nullable) — confirmed present (migration 041 applied). **Code no longer writes or checks this column for availability logic** — `is_available` is the sole source of truth.
+- **users RLS policies are clean and non-recursive (migration 044, 2026-06-20).** No admin policy exists on `public.users` — admin reads go through the service-role client which bypasses RLS entirely.
 - Both `reports` table AND `content_flags` table exist — they serve the same purpose; use `content_flags` (older, more RLS policies) for admin moderation queue
