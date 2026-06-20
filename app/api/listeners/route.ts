@@ -44,7 +44,9 @@ export async function GET(req: NextRequest) {
     const now = Date.now()
     const listeners = (data ?? []).map((l) => {
       const hb = (l as { last_heartbeat_at?: string | null }).last_heartbeat_at
-      const fresh = !!hb && (now - new Date(hb).getTime()) < STALE_MS
+      // NULL heartbeat = listener predates the heartbeat column (migration 041).
+      // Trust is_available as-is; only demote when a heartbeat exists but is stale.
+      const fresh = !hb || (now - new Date(hb).getTime()) < STALE_MS
       const { last_heartbeat_at: _omit, ...rest } = l as Record<string, unknown>
       return { ...rest, is_available: Boolean((l as { is_available?: boolean }).is_available) && fresh }
     })

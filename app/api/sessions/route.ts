@@ -88,8 +88,10 @@ export async function POST(req: NextRequest) {
     // force-killed before the offline beacon fired. Reject if the heartbeat has
     // lapsed (>3 min) so seekers aren't billed for a listener who isn't there.
     const STALE_MS = 3 * 60 * 1000
-    const hb = lp.last_heartbeat_at ? new Date(lp.last_heartbeat_at as string).getTime() : 0
-    if (!hb || Date.now() - hb > STALE_MS) {
+    // NULL heartbeat = listener predates migration 041; trust is_available as-is.
+    // Only block when a heartbeat exists and is stale (ghost-online / tab force-killed).
+    const hbTs = lp.last_heartbeat_at ? new Date(lp.last_heartbeat_at as string).getTime() : null
+    if (hbTs !== null && Date.now() - hbTs > STALE_MS) {
       return NextResponse.json({ error: 'listener_offline', message: 'This listener just went offline. Please pick another listener.' }, { status: 400 })
     }
 

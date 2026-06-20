@@ -216,5 +216,13 @@ If a user appears to be in crisis, surface these and do not attempt to handle th
 
 ---
 
+---
+
+## 13. Engineering Rule: No Regressions
+
+**Every fix must preserve existing working functionality.** Before shipping any change, mentally (or actually) trace the full user flows that touch the modified code — seeker browse, booking, session, listener dashboard, admin panel, wallet — and confirm none are broken. A fix that solves problem A while silently breaking feature B is not a fix; it's a new bug. When a column or behaviour did not previously exist in production (e.g. a column just added by migration), the code must degrade gracefully for rows that predate the migration rather than treating the absence of the new value as an error state.
+
+---
+
 *Source of truth for LeanOn 2.0. Update only on major, deliberate decisions.
 Volatile items — roadmap, build status, accounts, costs — belong in STATUS.md.*
