@@ -160,15 +160,12 @@ function BrowseContent() {
 
   useEffect(() => { loadListeners() }, [tag, lang])
 
-  // Re-fetch when the tab becomes visible (e.g. user switches from /dashboard to /browse).
-  // Without this, a listener who just went online shows as offline because the
-  // initial fetch ran while the tab was hidden and Vercel may serve a stale CDN response.
+  // Poll every 30 s so online/offline changes made on /dashboard are always
+  // reflected within half a minute even when Realtime is not enabled for the
+  // listener_profiles table on this Supabase project.
   useEffect(() => {
-    function handleVis() {
-      if (document.visibilityState === 'visible') loadListeners()
-    }
-    document.addEventListener('visibilitychange', handleVis)
-    return () => document.removeEventListener('visibilitychange', handleVis)
+    const iv = setInterval(loadListeners, 30_000)
+    return () => clearInterval(iv)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tag, lang])
 

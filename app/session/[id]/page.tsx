@@ -262,7 +262,10 @@ function SessionContent() {
       .select('status, started_at, created_at, duration_mins, session_type, listener_id, seeker_id, listener:users!listener_id(name), seeker:users!seeker_id(name)')
       .eq('id', sessionId)
       .single()
-      .then(({ data }) => {
+      .then(({ data, error }) => {
+        // If the query errors (e.g. RLS denied, session gone), set a safe
+        // fallback so the page doesn't stay on "Loading session…" forever.
+        if (error || !data) { setSessionStatus('cancelled'); return }
         if (data?.status) setSessionStatus(data.status)
         if (data?.created_at) setRequestCreatedAt(data.created_at as string)
         // Only sync the timer for sessions that have actually started. A pending
