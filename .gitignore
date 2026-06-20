@@ -20,3 +20,6 @@ tsconfig.tsbuildinfo
 # Playwright
 test-results/
 playwright-report/
+
+# Claude Code agent worktrees (temp clones, not project files)
+.claude/worktrees/
