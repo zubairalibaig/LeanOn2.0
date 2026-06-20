@@ -235,7 +235,8 @@ function BrowseContent() {
     if (tag  !== 'all') params.set('tag',  tag)
     if (lang !== 'all') params.set('lang', lang)
     try {
-      const res = await fetch(`/api/listeners?${params}`)
+      params.set('_t', Date.now().toString())
+      const res = await fetch(`/api/listeners?${params}`, { cache: 'no-store' })
       if (!res.ok) throw new Error('Failed to load')
       const { listeners: data } = await res.json()
       setListeners((data || []).map((l: Record<string, unknown>) => ({

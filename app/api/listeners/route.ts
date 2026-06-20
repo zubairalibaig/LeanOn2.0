@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
 
+export const dynamic = 'force-dynamic'
+
 // GET — public listener list for the browse page.
 // Uses admin client (bypasses RLS) to avoid the silent-empty issue with
 // PostgREST's embedded !inner join when anonymous users hit complex
