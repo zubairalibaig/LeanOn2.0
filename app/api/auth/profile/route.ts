@@ -12,11 +12,15 @@ export async function GET() {
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ name: null, role: null, wallet_balance: null })
     const admin = createAdminClient()
-    const { data } = await admin.from('users').select('name, role, wallet_balance').eq('id', user.id).maybeSingle()
+    const { data } = await admin.from('users').select('name, role, wallet_balance, avatar_url, phone, created_at').eq('id', user.id).maybeSingle()
     return NextResponse.json({
       name: data?.name ?? null,
       role: data?.role ?? null,
       wallet_balance: data?.wallet_balance ?? null,
+      avatar_url: data?.avatar_url ?? null,
+      // DB stores the +<cc><number> form; fall back to the auth phone (no +).
+      phone: data?.phone ?? (user.phone ? '+' + user.phone.replace(/^\+/, '') : null),
+      created_at: data?.created_at ?? null,
     })
   } catch {
     return NextResponse.json({ name: null, role: null, wallet_balance: null })

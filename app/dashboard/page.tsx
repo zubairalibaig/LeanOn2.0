@@ -206,19 +206,18 @@ export default function DashboardPage() {
     }
   }, [])
 
-  // Auto-offline when dashboard is closed/navigated away
-  useEffect(() => {
-    function handleUnload() {
-      if (!user) return
-      navigator.sendBeacon('/api/presence', JSON.stringify({ available: false }))
-    }
-    window.addEventListener('beforeunload', handleUnload)
-    return () => window.removeEventListener('beforeunload', handleUnload)
-  }, [user])
-
   // Presence heartbeat — immediately on going online, then every 60s. The
   // leading-edge ping closes the window after a page load / returning from a
   // session where the browse query would otherwise treat the listener as stale.
+  //
+  // IMPORTANT: we deliberately do NOT fire an "offline" beacon on tab-hide or
+  // navigation. Doing so knocked listeners offline the instant they switched
+  // tabs / backgrounded the app to check /browse — the #1 "I clicked Go Online
+  // but I'm not shown online" complaint. Both the browse list and the booking
+  // guard already treat a listener as offline once their heartbeat goes stale
+  // (>3 min), so an intentional toggle-off or a genuine disconnect is covered
+  // by that single mechanism. Staying online is sticky while the dashboard is
+  // open; leaving simply lets the heartbeat lapse.
   useEffect(() => {
     if (!avail) return
     const ping = () => fetch('/api/presence', {
@@ -231,18 +230,17 @@ export default function DashboardPage() {
     return () => clearInterval(iv)
   }, [avail])
 
-  // visibilitychange — set offline when tab hides (mobile); re-ping when it
-  // returns to foreground so the listener doesn't linger as stale-offline.
+  // When the tab returns to the foreground, send an immediate heartbeat so the
+  // listener is refreshed right away instead of waiting up to 60s (mobile
+  // browsers throttle timers while backgrounded).
   useEffect(() => {
+    if (!avail) return
     function handleVis() {
-      if (!avail) return
-      if (document.visibilityState === 'hidden') {
-        navigator.sendBeacon('/api/presence', JSON.stringify({ available: false }))
-      } else if (document.visibilityState === 'visible') {
+      if (document.visibilityState === 'visible') {
         fetch('/api/presence', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ available: true }),
+          body: JSON.stringify({ heartbeat: true }),
         }).catch(() => {})
       }
     }

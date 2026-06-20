@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { PLATFORM_FEE, FREE_SESSION_MINS, MAX_FREE_TRIALS, SESSION_DURATIONS } from '@/lib/constants'
+import { isUnlimitedTestPhone } from '@/lib/test-users'
 import { notifySessionComplete } from '@/lib/notify'
 import { logger } from '@/lib/logger'
 import { sendPushNotification } from '@/lib/firebase-admin'
@@ -47,8 +48,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Your account has been suspended. Please contact support.' }, { status: 403 })
     }
 
+    // Owner / QA accounts (configured via TEST_UNLIMITED_PHONES env var) skip
+    // the free-trial caps entirely so they can start unlimited free sessions
+    // with any listener for testing and outreach.
+    const unlimitedTester = isUnlimitedTestPhone(user.phone)
+
     // Up to MAX_FREE_TRIALS free trials per user, ONE per listener — lets seekers try multiple listeners
-    if (isFree) {
+    if (isFree && !unlimitedTester) {
       const [totalTrials, listenerTrial] = await Promise.all([
         sb.from('sessions').select('id', { count: 'exact', head: true })
           .eq('seeker_id', user.id).eq('is_free_trial', true),

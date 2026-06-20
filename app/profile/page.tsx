@@ -75,19 +75,22 @@ export default function ProfilePage() {
         if (!user) { router.push('/auth'); return }
         setUserId(user.id)
 
+        // Identity (name, photo, wallet, phone, joined) comes from the server
+        // API which reads via the admin client. A direct browser read of `users`
+        // is RLS-restricted and was returning blank name/photo for listeners.
         const [profileRes, sessionsRes, listenerRes] = await Promise.all([
-          supabase.from('users').select('id,name,wallet_balance,created_at,phone,avatar_url').eq('id', user.id).single(),
+          fetch('/api/auth/profile').then(r => r.ok ? r.json() : null).catch(() => null),
           supabase.from('sessions').select('id', { count: 'exact', head: true }).eq('seeker_id', user.id).eq('status', 'completed'),
           supabase.from('listener_profiles').select('id').eq('user_id', user.id).maybeSingle(),
         ])
 
-        if (profileRes.data) {
-          setName(profileRes.data.name || '')
-          setNameInput(profileRes.data.name || '')
-          setWalletBalance(profileRes.data.wallet_balance || 0)
-          setCreatedAt(profileRes.data.created_at || '')
-          setPhone(profileRes.data.phone || user.phone || '')
-          setAvatarUrl(profileRes.data.avatar_url || null)
+        if (profileRes) {
+          setName(profileRes.name || '')
+          setNameInput(profileRes.name || '')
+          setWalletBalance(profileRes.wallet_balance || 0)
+          setCreatedAt(profileRes.created_at || '')
+          setPhone(profileRes.phone || user.phone || '')
+          setAvatarUrl(profileRes.avatar_url || null)
         }
         setSessionCount(sessionsRes.count || 0)
         setIsListener(!!listenerRes.data)
