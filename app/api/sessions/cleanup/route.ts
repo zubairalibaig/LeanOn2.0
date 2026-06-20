@@ -166,7 +166,7 @@ export async function POST(req: Request) {
   for (const s of stalePending ?? []) {
     const { data: cancelled } = await sb
       .from('sessions')
-      .update({ status: 'cancelled', ended_at: new Date().toISOString() })
+      .update({ status: 'cancelled', ended_at: new Date().toISOString(), cancel_reason: 'timed_out' })
       .eq('id', s.id)
       .eq('status', 'pending')
       .select()
@@ -186,10 +186,18 @@ export async function POST(req: Request) {
         await sb.from('wallet_transactions').insert({
           user_id: s.seeker_id,
           amount: s.amount_held,
-          type: 'credit',
-          description: 'Refund — session not accepted',
+          type: 'refund',
+          description: 'Refund — listener did not respond',
           session_id: s.id,
         })
+        // Notify the seeker so they know the request lapsed and was refunded
+        await sb.from('notifications').insert({
+          user_id: s.seeker_id,
+          type: 'session_cancelled',
+          title: 'No response from listener',
+          body: 'Your request timed out and your wallet has been fully refunded. Try another listener anytime.',
+          action_url: '/browse',
+        }).then(() => {}, () => {})
         staleCancelled++
       }
     } else {

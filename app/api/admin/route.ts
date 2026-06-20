@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
 
   const ALLOWED_ACTIONS = [
     'approve_listener', 'reject_listener', 'deactivate_user', 'reactivate_user',
-    'complete_payout', 'complete_refund',
+    'complete_payout', 'reject_payout', 'complete_refund',
   ] as const
   if (!(ALLOWED_ACTIONS as readonly string[]).includes(action)) {
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
@@ -142,8 +142,6 @@ export async function POST(req: NextRequest) {
 
   if (action === 'complete_payout') {
     // Claim the row FIRST (atomic optimistic lock on status='pending').
-    // Two concurrent requests can't both claim it, so the wallet can never be
-    // deducted twice. If the deduction then fails, revert to 'pending' for retry.
     const { data: pr, error: claimErr } = await admin.from('payout_requests')
       .update({ status: 'completed' })
       .eq('id', id)
@@ -155,19 +153,65 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Payout request not found or already processed' }, { status: 404 })
     }
 
-    const { error: deductErr } = await admin.rpc('deduct_wallet', { p_user_id: pr.user_id, p_amount: pr.amount })
-    if (deductErr) {
-      logger.error('deduct_wallet failed for payout — reverting claim:', { id, deductErr: deductErr as unknown })
-      await admin.from('payout_requests').update({ status: 'pending' }).eq('id', id)
-      return NextResponse.json({ error: 'Wallet deduction failed. Please retry.' }, { status: 500 })
+    // Soft-hold model: the wallet was already deducted when the listener
+    // submitted the request, so completing it must NOT deduct again.
+    // Legacy requests (created before soft-hold) were never held — detect those
+    // by a still-sufficient balance and deduct once now.
+    const { data: liveU } = await admin.from('users').select('wallet_balance').eq('id', pr.user_id).single()
+    const liveBalance = Number(liveU?.wallet_balance ?? 0)
+    if (liveBalance >= Number(pr.amount)) {
+      const { error: deductErr } = await admin.rpc('deduct_wallet', { p_user_id: pr.user_id, p_amount: pr.amount })
+      if (deductErr) {
+        logger.error('deduct_wallet failed for payout — reverting claim:', { id, deductErr: deductErr as unknown })
+        await admin.from('payout_requests').update({ status: 'pending' }).eq('id', id)
+        return NextResponse.json({ error: 'Wallet deduction failed. Please retry.' }, { status: 500 })
+      }
+      const { error: txErr } = await admin.from('wallet_transactions').insert({
+        user_id: pr.user_id, amount: pr.amount, type: 'debit', description: 'Payout disbursed (legacy)',
+      })
+      if (txErr) logger.error('payout wallet_transactions insert failed (ledger gap):', { id, error: txErr.message })
     }
-
-    const { error: txErr } = await admin.from('wallet_transactions').insert({
-      user_id: pr.user_id, amount: pr.amount, type: 'debit', description: 'Payout disbursed',
-    })
-    if (txErr) logger.error('payout wallet_transactions insert failed (ledger gap):', { id, error: txErr.message })
+    // Otherwise the balance was already held at request time — nothing to deduct.
 
     await auditLog(admin, user!.id, 'complete_payout', id)
+    return NextResponse.json({ ok: true })
+  }
+
+  if (action === 'reject_payout') {
+    // Claim atomically, then return the held balance to the listener's wallet.
+    const { data: pr, error: claimErr } = await admin.from('payout_requests')
+      .update({ status: 'rejected', ...(notes ? { admin_notes: notes } : {}) })
+      .eq('id', id)
+      .eq('status', 'pending')
+      .select('user_id, amount')
+      .single()
+
+    if (claimErr || !pr) {
+      return NextResponse.json({ error: 'Payout request not found or already processed' }, { status: 404 })
+    }
+
+    const { error: creditErr } = await admin.rpc('credit_wallet', { p_user_id: pr.user_id, p_amount: pr.amount })
+    if (creditErr) {
+      // Don't revert the rejection — log for manual reconciliation so the admin
+      // still sees the request as handled. The balance must be returned by hand.
+      logger.error('reject_payout: credit_wallet failed — MANUAL refund needed:', { id, userId: pr.user_id, amount: pr.amount, error: creditErr.message })
+    } else {
+      await admin.from('wallet_transactions').insert({
+        user_id: pr.user_id, amount: pr.amount, type: 'credit', description: 'Payout rejected — balance returned',
+      }).then(() => {}, (e) => logger.error('reject_payout: wallet_transactions insert failed', { id, error: String(e) }))
+    }
+
+    await admin.from('notifications').insert({
+      user_id:    pr.user_id,
+      type:       'payout_update',
+      title:      'Payout request rejected',
+      body:       notes
+        ? `Your payout request was rejected: ${notes}. Your balance has been returned to your wallet.`
+        : 'Your payout request was rejected and your balance has been returned to your wallet.',
+      action_url: '/dashboard',
+    }).then(() => {}, () => {})
+
+    await auditLog(admin, user!.id, 'reject_payout', id)
     return NextResponse.json({ ok: true })
   }
 

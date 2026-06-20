@@ -177,6 +177,8 @@ export default function DashboardPage() {
   const [loadError, setLoadError] = useState<string | null>(null)
   const [payoutLoading, setPayoutLoading] = useState(false)
   const [incomingSession, setIncomingSession] = useState<IncomingSession | null>(null)
+  const [respondingIncoming, setRespondingIncoming] = useState(false)
+  const [missedSessions, setMissedSessions] = useState<Array<{ id: string; created_at: string; duration_mins: number; session_type: string }>>([])
   const [monthEarned, setMonthEarned] = useState<number | null>(null)
   const [countdown, setCountdown] = useState(60)
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -314,6 +316,19 @@ export default function DashboardPage() {
 
     if (recent) setSessions(recent)
 
+    // Missed requests — pending sessions that were cancelled (declined/timed out)
+    // and never started, in the last 24h. Shown so the listener knows they
+    // missed someone who wanted to talk.
+    const { data: missed } = await sb
+      .from('sessions')
+      .select('id, created_at, duration_mins, session_type, started_at')
+      .eq('listener_id', u.id)
+      .eq('status', 'cancelled')
+      .gte('created_at', new Date(Date.now() - 24 * 60 * 60_000).toISOString())
+      .order('created_at', { ascending: false })
+      .limit(10)
+    if (missed) setMissedSessions(missed.filter(s => !s.started_at))
+
     // Authoritative earnings come from the listener_earnings ledger (net_amount),
     // which already accounts for pro-rated partial sessions. Deriving "this month"
     // from amount_held - platform_fee overstates partial-session earnings and
@@ -339,8 +354,14 @@ export default function DashboardPage() {
         table: 'sessions',
         filter: `listener_id=eq.${u.id}`,
       }, (payload) => {
-        setIncomingSession(payload.new as IncomingSession)
-        startCountdown(() => setIncomingSession(null))
+        const s = payload.new as IncomingSession & { status?: string }
+        // Only surface genuine pending requests (ignore any non-pending inserts)
+        if (s.status && s.status !== 'pending') return
+        setIncomingSession(s)
+        startCountdown(() => {
+          setIncomingSession(null)
+          showToast('Session request expired — no response recorded.', 'warning')
+        })
       })
       .subscribe()
     channelRef.current = channel
@@ -579,16 +600,49 @@ export default function DashboardPage() {
                 <div className="modal-detail-value">₹{incomingSession.amount_held ?? '—'}</div>
               </div>
             </div>
-            <button
-              className="btn-join-session"
-              onClick={() => {
-                dismissIncoming()
-                router.push(`/session/${incomingSession.id}?name=You&duration=${incomingSession.duration_mins}&type=${incomingSession.session_type ?? 'text'}`)
-              }}
-            >
-              Join session → ({countdown}s)
-            </button>
-            <button className="btn-dismiss" onClick={dismissIncoming}>Dismiss</button>
+            <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
+              <button
+                className="btn-join-session"
+                style={{ flex: 2, marginBottom: 0 }}
+                disabled={respondingIncoming}
+                onClick={async () => {
+                  if (!incomingSession) return
+                  setRespondingIncoming(true)
+                  try {
+                    const res = await fetch(`/api/sessions/${incomingSession.id}/accept`, { method: 'POST' })
+                    if (res.ok) {
+                      const sess = incomingSession
+                      dismissIncoming()
+                      router.push(`/session/${sess.id}?name=You&duration=${sess.duration_mins}&type=${sess.session_type ?? 'text'}`)
+                    } else {
+                      const body = await res.json().catch(() => ({}))
+                      showToast(body.message || body.error || 'Could not accept — it may have expired.', 'error')
+                      dismissIncoming()
+                    }
+                  } catch {
+                    showToast('Network error — could not accept session.', 'error')
+                  } finally {
+                    setRespondingIncoming(false)
+                  }
+                }}
+              >
+                {respondingIncoming ? '…' : `✅ Accept (${countdown}s)`}
+              </button>
+              <button
+                className="btn-dismiss"
+                style={{ flex: 1, background: '#FFF5F5', color: '#E53935', border: '1.5px solid #FFCDD2' }}
+                disabled={respondingIncoming}
+                onClick={async () => {
+                  if (!incomingSession) return
+                  const sess = incomingSession
+                  dismissIncoming()
+                  try { await fetch(`/api/sessions/${sess.id}/decline`, { method: 'POST' }) } catch { /* ignore */ }
+                  showToast('Request declined — seeker refunded.', 'info')
+                }}
+              >
+                ✗ Decline
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -811,6 +865,27 @@ export default function DashboardPage() {
             </button>
           )}
         </div>
+
+        {/* Missed requests — pending sessions that lapsed without a response */}
+        {missedSessions.length > 0 && (
+          <>
+            <div className="section-title" style={{ color: '#E53935' }}>Missed requests · last 24h</div>
+            <div className="session-list" style={{ marginBottom: 24 }}>
+              {missedSessions.map(s => (
+                <div key={s.id} className="session-item" style={{ borderColor: '#FFCDD2', background: '#FFF5F5' }}>
+                  <div>
+                    <div className="session-user" style={{ color: '#B71C1C' }}>⏰ Missed request</div>
+                    <div className="session-meta">{s.duration_mins} min · {s.session_type} · {fmtDate(s.created_at)}</div>
+                  </div>
+                  <div style={{ fontSize: 12, color: '#B71C1C', fontWeight: 700 }}>No response</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--gray)', fontWeight: 600, marginTop: -14, marginBottom: 24 }}>
+              💡 Stay online and respond within 5 minutes so you don&apos;t miss seekers who want to talk.
+            </div>
+          </>
+        )}
 
         {/* My Chats shortcut */}
         <button

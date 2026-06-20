@@ -481,12 +481,12 @@ export default function AdminPage() {
     }
   }
 
-  async function adminAction(action: string, id: string, label: string) {
+  async function adminAction(action: string, id: string, label: string, notes?: string) {
     setBusy(`${action}:${id}`)
     const res = await fetch('/api/admin', {
       method: 'POST',
       headers: adminHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ action, id }),
+      body: JSON.stringify({ action, id, ...(notes ? { notes } : {}) }),
     })
     setBusy(null)
     if (res.ok) {
@@ -1321,6 +1321,17 @@ export default function AdminPage() {
                   <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--navy)' }}>₹{p.amount}</div>
                   <button className="btn btn-teal" disabled={busy !== null} onClick={() => adminAction('complete_payout', p.id, `Marked ₹${p.amount} payout complete`)}>
                     {busy === `complete_payout:${p.id}` ? 'Saving…' : 'Mark Paid'}
+                  </button>
+                  <button
+                    className="btn btn-red"
+                    disabled={busy !== null}
+                    onClick={() => {
+                      const reason = window.prompt('Rejection reason (shown to the listener). Their held balance will be returned:')
+                      if (reason === null) return
+                      adminAction('reject_payout', p.id, `Rejected ₹${p.amount} payout — balance returned`, reason || undefined)
+                    }}
+                  >
+                    {busy === `reject_payout:${p.id}` ? 'Saving…' : 'Reject'}
                   </button>
                 </div>
               </div>

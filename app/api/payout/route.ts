@@ -93,14 +93,31 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Soft-hold: deduct the wallet immediately so the balance can't be spent (or
+  // double-requested) while the payout is pending. Credited back if the admin
+  // rejects it. The admin "Mark Paid" step then does NOT deduct again.
+  const holdAmount = Math.round(amount)
+  const { error: holdErr } = await sb.rpc('deduct_wallet', { p_user_id: user.id, p_amount: holdAmount })
+  if (holdErr) {
+    logger.error('Payout hold (deduct_wallet) failed:', { error: holdErr.message })
+    return NextResponse.json({ error: 'Could not hold your balance for payout. Please try again.' }, { status: 500 })
+  }
+
   const { error: insertErr } = await sb
     .from('payout_requests')
     .insert({ user_id: user.id, amount, status: 'pending', ...(upiId ? { upi_id: upiId } : {}) })
 
   if (insertErr) {
+    // Roll the hold back so the listener isn't left short with no request on file.
+    await sb.rpc('credit_wallet', { p_user_id: user.id, p_amount: holdAmount }).then(() => {}, () => {})
     logger.error('Payout insert failed:', { error: insertErr instanceof Error ? insertErr.message : String(insertErr) })
     return NextResponse.json({ error: 'Failed to submit payout request' }, { status: 500 })
   }
+
+  // Record the hold in the ledger
+  await sb.from('wallet_transactions').insert({
+    user_id: user.id, amount: holdAmount, type: 'debit', description: 'Payout requested — balance held',
+  }).then(() => {}, (e) => logger.error('payout hold: wallet_transactions insert failed', { error: String(e) }))
 
   // Fire-and-forget notification
   ;(async () => {

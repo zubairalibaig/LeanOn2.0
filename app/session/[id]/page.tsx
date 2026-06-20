@@ -212,6 +212,11 @@ function SessionContent() {
   const [reconnecting, setReconnecting]   = useState(false)
   const [showReport, setShowReport]       = useState(false)
   const [listenerId, setListenerId]       = useState<string | null>(null)
+  // Request lifecycle: 'pending' (awaiting listener), 'active' (live), 'cancelled'
+  // (declined / timed out). null until the first DB read resolves.
+  const [sessionStatus, setSessionStatus]       = useState<string | null>(null)
+  const [cancellingRequest, setCancellingRequest] = useState(false)
+  const [requestCreatedAt, setRequestCreatedAt]   = useState<string | null>(null)
   const crisisFlaggedRef                  = useRef(false)
 
   const channelRef      = useRef<ReturnType<typeof supabase.channel> | null>(null)
@@ -254,11 +259,15 @@ function SessionContent() {
   useEffect(() => {
     if (!sessionId) return
     supabase.from('sessions')
-      .select('started_at, duration_mins, session_type, listener_id, seeker_id, listener:users!listener_id(name), seeker:users!seeker_id(name)')
+      .select('status, started_at, created_at, duration_mins, session_type, listener_id, seeker_id, listener:users!listener_id(name), seeker:users!seeker_id(name)')
       .eq('id', sessionId)
       .single()
       .then(({ data }) => {
-        if (data?.started_at) {
+        if (data?.status) setSessionStatus(data.status)
+        if (data?.created_at) setRequestCreatedAt(data.created_at as string)
+        // Only sync the timer for sessions that have actually started. A pending
+        // request has started_at = NULL and must not run the countdown.
+        if (data?.started_at && data?.status === 'active') {
           sessionStartRef.current = new Date(data.started_at)
           const elapsed    = Math.floor((Date.now() - new Date(data.started_at).getTime()) / 1000)
           const remaining  = Math.max(0, data.duration_mins * 60 - elapsed)
@@ -278,6 +287,53 @@ function SessionContent() {
       })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionId, userId])
+
+  // Poll session status every 4s while pending — fallback if the realtime
+  // UPDATE is missed. Flips into the live room the moment the listener accepts,
+  // or to the cancelled screen on decline / timeout.
+  useEffect(() => {
+    if (sessionStatus !== 'pending' || !sessionId) return
+    const poll = () => {
+      supabase.from('sessions').select('status, started_at, duration_mins')
+        .eq('id', sessionId).single()
+        .then(({ data }) => {
+          if (!data?.status) return
+          setSessionStatus(data.status)
+          if (data.status === 'active' && data.started_at) {
+            sessionStartRef.current = new Date(data.started_at)
+            const elapsed = Math.floor((Date.now() - new Date(data.started_at).getTime()) / 1000)
+            setSecs(Math.max(0, (data.duration_mins as number) * 60 - elapsed))
+          }
+        })
+    }
+    const iv = setInterval(poll, 4000)
+    return () => clearInterval(iv)
+  }, [sessionStatus, sessionId])
+
+  // Seeker-side enforcement of the 5-minute request window. The seeker is the
+  // party watching the waiting screen, so they trigger the cancel + instant
+  // refund the moment the window lapses (the daily cron is only a backstop).
+  // Re-evaluates each second so the displayed countdown stays in sync.
+  const [requestSecsLeft, setRequestSecsLeft] = useState<number | null>(null)
+  useEffect(() => {
+    if (sessionStatus !== 'pending' || !requestCreatedAt) { setRequestSecsLeft(null); return }
+    const isSeeker = userIdRef.current !== null && listenerId !== null && userIdRef.current !== listenerId
+    const deadline = new Date(requestCreatedAt).getTime() + 5 * 60_000
+    let fired = false
+    const tick = () => {
+      const left = Math.max(0, Math.round((deadline - Date.now()) / 1000))
+      setRequestSecsLeft(left)
+      if (left <= 0 && isSeeker && !fired) {
+        fired = true
+        fetch(`/api/sessions/${sessionId}/decline`, { method: 'POST' })
+          .catch(() => {})
+          .finally(() => setSessionStatus('cancelled'))
+      }
+    }
+    tick()
+    const iv = setInterval(tick, 1000)
+    return () => clearInterval(iv)
+  }, [sessionStatus, requestCreatedAt, listenerId, sessionId])
 
   // Back button guard — intercept popstate (Item 17)
   useEffect(() => {
@@ -363,6 +419,24 @@ function SessionContent() {
         peerEndedRef.current = true
         setEnded(true)
       })
+      // Session status transitions (pending → active on accept, → cancelled on decline)
+      .on(
+        'postgres_changes' as 'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'sessions', filter: `id=eq.${sessionId}` },
+        (payload: { new: Record<string, unknown> }) => {
+          const ns = payload.new.status as string | undefined
+          if (!ns) return
+          setSessionStatus(ns)
+          if (ns === 'active') {
+            const sa = payload.new.started_at as string | null
+            if (sa) {
+              sessionStartRef.current = new Date(sa)
+              const elapsed = Math.floor((Date.now() - new Date(sa).getTime()) / 1000)
+              setSecs(Math.max(0, durationMins * 60 - elapsed))
+            }
+          }
+        }
+      )
       .subscribe((status: string) => {
         setConnected(status === 'SUBSCRIBED')
         if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
@@ -375,15 +449,16 @@ function SessionContent() {
     return () => { supabase.removeChannel(channel) }
   }, [sessionId, reconnectTick])
 
-  // Countdown timer — auto-ends session when it hits 0
+  // Countdown timer — auto-ends session when it hits 0.
+  // Paused while a request is pending or after it's cancelled (no live timer).
   useEffect(() => {
-    if (ended) return
+    if (ended || sessionStatus === 'pending' || sessionStatus === 'cancelled') return
     const t = setInterval(() => setSecs(s => {
       if (s <= 1) { setEnded(true); return 0 }
       return s - 1
     }), 1000)
     return () => clearInterval(t)
-  }, [ended])
+  }, [ended, sessionStatus])
 
   // Auto-complete session in DB when ended (timer expiry or manual end)
   // Uses a ref so it fires exactly once even if component re-renders.
@@ -391,6 +466,9 @@ function SessionContent() {
   // they already called PATCH; we only need to show the end screen.
   useEffect(() => {
     if (!ended || completedRef.current || !sessionId) return
+    // Never PATCH-complete a request that never went live (pending/cancelled) —
+    // that path is settled by accept/decline, not the session-complete flow.
+    if (sessionStatus === 'pending' || sessionStatus === 'cancelled') return
     completedRef.current = true
     if (!peerEndedRef.current) {
       channelRef.current?.send({ type: 'broadcast', event: 'session_ended', payload: {} }).catch?.(() => {})
@@ -400,7 +478,7 @@ function SessionContent() {
         body: JSON.stringify({ sessionId }),
       }).catch(() => {})
     }
-  }, [ended, sessionId])
+  }, [ended, sessionId, sessionStatus])
 
   // Session heartbeat — keeps session alive and enables listener disconnect detection
   // Fires every 30s; uses sendBeacon on unmount so it doesn't block navigation
@@ -785,6 +863,93 @@ function SessionContent() {
             onClose={() => setShowReport(false)}
           />
         )}
+      </>
+    )
+  }
+
+  // ── Pending request screen (seeker waiting / listener opened the link directly)
+  if (sessionStatus === 'pending') {
+    const isSeeker = userId !== null && listenerId !== null && userId !== listenerId
+    return (
+      <>
+        <style>{S}</style>
+        <div className="wrap" style={{ background: 'white' }}>
+          <div className="hdr">
+            <div className="av">{ini(resolvedListenerName)}</div>
+            <div className="hdr-info">
+              <div className="hdr-name">{resolvedListenerName}</div>
+              <div className="hdr-sub">⏳ Waiting for response…</div>
+            </div>
+          </div>
+          <div className="end-screen">
+            <div className="end-icon">⏳</div>
+            <h2 className="end-h">
+              {isSeeker ? `Waiting for ${resolvedListenerName}…` : 'Someone wants to connect'}
+            </h2>
+            <p className="end-p" style={{ marginBottom: 20 }}>
+              {isSeeker
+                ? "Your listener has been notified and usually responds within a minute. Your wallet is held — you'll be refunded in full if they don't respond in time."
+                : 'A seeker is waiting for you. Open your dashboard to accept or decline this request.'}
+            </p>
+            {isSeeker && requestSecsLeft !== null && (
+              <div className="end-duration" style={{ marginBottom: 20 }}>
+                ⏳ Auto-cancels in {fmtTimer(requestSecsLeft)}
+              </div>
+            )}
+            {isSeeker ? (
+              <button
+                className="btn-done"
+                style={{ background: cancellingRequest ? '#ccc' : '#E53935' }}
+                disabled={cancellingRequest}
+                onClick={async () => {
+                  setCancellingRequest(true)
+                  try { await fetch(`/api/sessions/${sessionId}/decline`, { method: 'POST' }) } catch { /* ignore */ }
+                  router.push('/browse')
+                }}
+              >
+                {cancellingRequest ? 'Cancelling…' : 'Cancel request'}
+              </button>
+            ) : (
+              <a href="/dashboard" className="btn-done" style={{ textDecoration: 'none', display: 'inline-block' }}>
+                Go to dashboard →
+              </a>
+            )}
+          </div>
+          <div className="crisis-footer">
+            🆘 Crisis: <a href="tel:08046110007">NIMHANS 080-46110007</a> · <a href="tel:14416">Tele-MANAS 14416</a>
+          </div>
+        </div>
+      </>
+    )
+  }
+
+  // ── Cancelled / declined / timed-out screen
+  if (sessionStatus === 'cancelled') {
+    return (
+      <>
+        <style>{S}</style>
+        <div className="wrap" style={{ background: 'white' }}>
+          <div className="hdr">
+            <div className="av">{ini(resolvedListenerName)}</div>
+            <div className="hdr-info">
+              <div className="hdr-name">{resolvedListenerName}</div>
+              <div className="hdr-sub">Session not started</div>
+            </div>
+          </div>
+          <div className="end-screen">
+            <div className="end-icon">😔</div>
+            <h2 className="end-h">Request not accepted</h2>
+            <p className="end-p">
+              This request wasn&apos;t accepted in time. Your wallet has been fully refunded — no charge.
+            </p>
+            <a href="/browse" className="btn-done" style={{ textDecoration: 'none', display: 'inline-block' }}>
+              Browse other listeners →
+            </a>
+          </div>
+          <div className="crisis-footer">
+            🆘 Crisis: <a href="tel:08046110007">NIMHANS 080-46110007</a> · <a href="tel:14416">Tele-MANAS 14416</a>
+          </div>
+        </div>
       </>
     )
   }

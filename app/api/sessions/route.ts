@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
         .from('sessions')
         .select('id')
         .eq('listener_id', listenerId)
-        .eq('status', 'active')
+        .in('status', ['active', 'pending'])
         .eq('is_free_trial', false)
         .limit(1)
       if (activeSessions && activeSessions.length > 0) {
@@ -114,10 +114,10 @@ export async function POST(req: NextRequest) {
       .from('sessions')
       .select('id')
       .eq('seeker_id', user.id)
-      .eq('status', 'active')
+      .in('status', ['active', 'pending'])
       .limit(1)
     if (seekerActive && seekerActive.length > 0) {
-      return NextResponse.json({ error: 'already_in_session', message: 'You already have an active session. Please complete it before starting a new one.', sessionId: seekerActive[0].id }, { status: 409 })
+      return NextResponse.json({ error: 'already_in_session', message: 'You already have a session in progress. Please finish or cancel it before starting a new one.', sessionId: seekerActive[0].id }, { status: 409 })
     }
 
     const rate  = lp.rate_per_min ?? 10  // ?? not || — a legitimate rate of 0 must not be overridden

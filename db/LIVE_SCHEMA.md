@@ -18,6 +18,12 @@
 **Refresh after:** running any migration, or making ANY change in the
 Supabase dashboard (columns, constraints, policies, triggers, auth settings).
 
+## ⚠️ Pending migration (run before code relies on it)
+
+| Migration | What it does | Status |
+|---|---|---|
+| `043_session_request_flow.sql` | Adds `sessions.cancel_reason` + `sessions.responded_at`, a partial index on pending requests, rewrites `create_session` to insert **`pending`** (was `active`) and hold the wallet, and adds the `accept_session(p_session_id, p_listener_id)` RPC | **MUST RUN in Supabase SQL Editor.** Until run: bookings still go straight to `active` (old behavior, no breakage), but the accept/decline UI and `cancel_reason` writes won't work. Refresh this file after running. |
+
 ## Known live-vs-migrations drift (history)
 
 | Found | Drift | Resolution |
