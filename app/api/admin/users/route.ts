@@ -6,6 +6,30 @@ import { requireAdmin, dbUserIdOrNull } from '@/lib/require-admin'
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const PAGE_SIZE = 25
 
+// Enrich a page of rows with last_sign_in_at from auth.users (Supabase Auth
+// maintains it automatically on every OTP sign-in — no public column needed).
+// One getUserById per row; the page is capped at PAGE_SIZE (25), and all calls
+// run in parallel. Failures degrade to null rather than breaking the listing.
+async function withLastLogin<T extends Record<string, unknown>>(
+  sb: ReturnType<typeof createAdminClient>,
+  rows: T[],
+  idOf: (row: T) => string | undefined,
+): Promise<(T & { last_sign_in_at: string | null })[]> {
+  return Promise.all(rows.map(async (row) => {
+    const id = idOf(row)
+    let lastSignIn: string | null = null
+    if (id) {
+      try {
+        const { data } = await sb.auth.admin.getUserById(id)
+        lastSignIn = data?.user?.last_sign_in_at ?? null
+      } catch {
+        lastSignIn = null
+      }
+    }
+    return { ...row, last_sign_in_at: lastSignIn }
+  }))
+}
+
 
 // GET — list users or listeners with pagination + filter
 // Query params: ?type=user|listener&status=active|inactive|suspended|pending&page=0&search=
@@ -88,19 +112,27 @@ export async function GET(req: NextRequest) {
       let items: Record<string, unknown>[] = (data ?? []) as unknown as Record<string, unknown>[]
       if (items.length > 0) {
         const userIds = items.map(p => p.user_id as string)
-        const { data: appsWithNotes, error: appsErr } = await sb.from('listener_applications')
-          .select('user_id, status, admin_notes, upi_id, bank_account, ifsc_code')
-          .in('user_id', userIds)
-        const appsData: Record<string, unknown>[] = appsWithNotes
-          ? (appsWithNotes as Record<string, unknown>[])
-          : appsErr
-            ? ((await sb.from('listener_applications')
-                .select('user_id, status, upi_id, bank_account, ifsc_code')
-                .in('user_id', userIds)).data ?? []) as Record<string, unknown>[]
-            : []
+        // aadhaar (full) needs migration 047; aadhaar_last4 + admin_notes are
+        // long-standing. Select optimistically and fall back column-by-column so
+        // a pre-migration DB never errors the listener list.
+        const fullSelect = 'user_id, status, admin_notes, upi_id, bank_account, ifsc_code, aadhaar, aadhaar_last4'
+        const noAadhaarSelect = 'user_id, status, admin_notes, upi_id, bank_account, ifsc_code, aadhaar_last4'
+        const minimalSelect = 'user_id, status, upi_id, bank_account, ifsc_code'
+        let appsData: Record<string, unknown>[] = []
+        const fullRes = await sb.from('listener_applications').select(fullSelect).in('user_id', userIds)
+        if (!fullRes.error) {
+          appsData = (fullRes.data ?? []) as Record<string, unknown>[]
+        } else {
+          const midRes = await sb.from('listener_applications').select(noAadhaarSelect).in('user_id', userIds)
+          appsData = !midRes.error
+            ? (midRes.data ?? []) as Record<string, unknown>[]
+            : ((await sb.from('listener_applications').select(minimalSelect).in('user_id', userIds)).data ?? []) as Record<string, unknown>[]
+        }
         const appMap = new Map(appsData.map(a => [a.user_id as string, a]))
         items = items.map(p => ({ ...p, application: appMap.get(p.user_id as string) ?? null }))
       }
+
+      items = await withLastLogin(sb, items, p => (p.users as { id?: string } | undefined)?.id ?? (p.user_id as string))
 
       return NextResponse.json({ items, total: count ?? 0, page, type: 'listener' })
     }
@@ -122,7 +154,8 @@ export async function GET(req: NextRequest) {
 
     const { data, count, error: qErr } = await query
     if (qErr) throw qErr
-    return NextResponse.json({ items: data ?? [], total: count ?? 0, page, type: 'user' })
+    const items = await withLastLogin(sb, (data ?? []) as Record<string, unknown>[], u => u.id as string)
+    return NextResponse.json({ items, total: count ?? 0, page, type: 'user' })
   } catch (err) {
     logger.error('Admin users GET error:', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json({ error: 'Server error' }, { status: 500 })

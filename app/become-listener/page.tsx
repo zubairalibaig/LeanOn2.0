@@ -154,6 +154,10 @@ function validateUPI(v: string): string {
   if (parts.length !== 2 || parts[0].length < 3 || parts[1].length < 4) return 'Enter a valid UPI ID (e.g. yourname@okaxis)'
   return ''
 }
+function validateAadhaar(v: string): string {
+  if (!/^\d{12}$/.test(v.replace(/\D/g, ''))) return 'Enter your 12-digit Aadhaar number'
+  return ''
+}
 
 export default function BecomeListenerPage() {
   const router  = useRouter()
@@ -170,6 +174,7 @@ export default function BecomeListenerPage() {
   const [bank, setBank]   = useState('')
   const [ifsc, setIfsc]   = useState('')
   const [upi, setUpi]     = useState('')
+  const [aadhaar, setAadhaar] = useState('')
   const [loading, setLoading] = useState(false)
   const [done, setDone]   = useState(false)
   const [error, setError] = useState('')
@@ -294,6 +299,7 @@ export default function BecomeListenerPage() {
     const re = validateRate(rate); if (re) errs.push(re)
     const banke = validateBank(bank); if (banke) errs.push(banke)
     const ifsce = validateIFSC(ifsc); if (ifsce) errs.push(ifsce)
+    const aae = validateAadhaar(aadhaar); if (aae) errs.push(aae)
     if (upi.trim()) { const upie = validateUPI(upi); if (upie) errs.push(upie) }
     return errs
   }
@@ -346,6 +352,7 @@ export default function BecomeListenerPage() {
       const re = validateRate(rate); if (re) fe.rate = re
       const banke = validateBank(bank); if (banke) fe.bank = banke
       const ifsce = validateIFSC(ifsc); if (ifsce) fe.ifsc = ifsce
+      const aae = validateAadhaar(aadhaar); if (aae) fe.aadhaar = aae
       if (upi.trim()) { const upie = validateUPI(upi); if (upie) fe.upi = upie }
       setFieldErrors(fe)
       setShaking(true)
@@ -379,6 +386,7 @@ export default function BecomeListenerPage() {
           bank:       bank.trim(),
           ifsc:       ifsc.trim().toUpperCase(),
           upi:        upi.trim(),
+          aadhaar:    aadhaar.replace(/\D/g, ''),
           avatar_url: avatarUrl || undefined,
         }),
       })
@@ -713,6 +721,21 @@ export default function BecomeListenerPage() {
               onChange={e => { setUpi(e.target.value); if (fieldErrors.upi) setFieldErrors(f => ({...f, upi: ''})) }}
             />
             {fieldErrors.upi && <span className="field-err">{fieldErrors.upi}</span>}
+
+            <label className="lbl">Aadhaar number (12 digits)</label>
+            <input
+              className={`input${fieldErrors.aadhaar ? ' err' : ''}`}
+              type="text"
+              inputMode="numeric"
+              maxLength={12}
+              placeholder="12-digit Aadhaar"
+              value={aadhaar}
+              onChange={e => { setAadhaar(e.target.value.replace(/\D/g,'').slice(0,12)); if (fieldErrors.aadhaar) setFieldErrors(f => ({...f, aadhaar: ''})) }}
+            />
+            {fieldErrors.aadhaar && <span className="field-err">{fieldErrors.aadhaar}</span>}
+            <p style={{fontSize:12,color:'var(--gray)',margin:'-4px 0 4px',lineHeight:1.5}}>
+              🔒 Used only for one-time identity verification by our team. Never shown to seekers.
+            </p>
 
             <div className="disclaimer">
               <p>⚠️ <strong>Important:</strong> LeanOn is a peer support platform. By applying, you confirm you are sharing personal lived experience only — not providing clinical advice, therapy, or counseling of any kind.</p>

@@ -34,6 +34,9 @@ export async function POST(req: NextRequest) {
     const supabaseStorageBase = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '') + '/storage/'
     const avatarUrl = typeof body?.avatar_url === 'string' && body.avatar_url.startsWith(supabaseStorageBase) ? body.avatar_url : null
     const formPhone = typeof body?.phone === 'string' ? body.phone.trim() : ''
+    // Aadhaar: digits only. Optional at the API (legacy callers / tests omit it),
+    // but the become-listener form requires it. Validate strictly when present.
+    const aadhaar = typeof body?.aadhaar === 'string' ? body.aadhaar.replace(/\D/g, '') : ''
     const rate = Number(body?.rate)
     const tags  = Array.isArray(body?.tags)  ? body.tags.filter((t: unknown) => typeof t === 'string').slice(0, 10)  : []
     const langIds = new Set(LANGUAGES.map(l => l.id as string))
@@ -55,6 +58,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Please enter a valid IFSC code.' }, { status: 400 })
     if (upi && !/^[\w.\-]{2,}@[a-zA-Z]{2,}$/.test(upi))
       return NextResponse.json({ error: 'Please enter a valid UPI ID.' }, { status: 400 })
+    if (aadhaar && !/^\d{12}$/.test(aadhaar))
+      return NextResponse.json({ error: 'Please enter a valid 12-digit Aadhaar number.' }, { status: 400 })
 
     // Session phone is OTP-verified; the typed form phone is contact info only.
     const sessionPhone = user.phone ? '+' + user.phone.replace(/^\+/, '') : null
@@ -124,7 +129,21 @@ export async function POST(req: NextRequest) {
       upi_id:       upi || null,
       status,
     }
+    // Aadhaar (admin-only KYC). aadhaar_last4 predates this work; aadhaar (full)
+    // is added by migration 047. Only set them when the applicant supplied a
+    // number — never wipe an existing value on a resubmission that omits it.
+    if (aadhaar) {
+      appRow.aadhaar = aadhaar
+      appRow.aadhaar_last4 = aadhaar.slice(-4)
+    }
     let appErr = (await admin.from('listener_applications').upsert(appRow, { onConflict: 'user_id' })).error
+    if (appErr?.message?.includes("'aadhaar'")) {
+      // Full `aadhaar` column not yet in DB (pre-migration 047) — keep the masked
+      // last4 (long-standing column) and retry without the full number. PostgREST
+      // quotes the missing column as 'aadhaar', distinct from 'aadhaar_last4'.
+      delete appRow.aadhaar
+      appErr = (await admin.from('listener_applications').upsert(appRow, { onConflict: 'user_id' })).error
+    }
     if (appErr?.message?.includes('upi_id')) {
       // upi_id column not yet in DB (pre-migration 022) — retry without it
       delete appRow.upi_id

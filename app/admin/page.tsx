@@ -14,12 +14,13 @@ type KPIs = {
   moderation: { pendingReports: number }
 }
 
-type UserRow = { id: string; name?: string; phone?: string; email?: string; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number; updated_at?: string }
+type UserRow = { id: string; name?: string; phone?: string; email?: string; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number; updated_at?: string; last_sign_in_at?: string | null }
 type ListenerRow = {
   user_id: string; bio?: string; specialty_tags?: string[]; rate_per_min?: number; rating?: number; total_sessions?: number
   is_active: boolean; is_approved: boolean; is_available: boolean; is_verified?: boolean; is_suspended?: boolean; created_at: string
+  last_sign_in_at?: string | null
   users: { id: string; name?: string; email?: string; phone?: string; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number }
-  application?: { status: string; admin_notes: string | null; upi_id?: string | null; bank_account?: string | null; ifsc_code?: string | null } | null
+  application?: { status: string; admin_notes: string | null; upi_id?: string | null; bank_account?: string | null; ifsc_code?: string | null; aadhaar?: string | null; aadhaar_last4?: string | null } | null
 }
 type SessionRow = {
   id: string; seeker_id: string; listener_id: string; session_type: string; duration_mins: number
@@ -122,6 +123,12 @@ function fmtRs(paise: number) { return `₹${fmt(Math.round(paise))}` }
 function fmtDate(iso: string | null | undefined) {
   if (!iso) return '—'
   return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+}
+
+// Date + time, for "last login" where the time of day matters.
+function fmtDateTime(iso: string | null | undefined) {
+  if (!iso) return 'Never'
+  return new Date(iso).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -943,6 +950,7 @@ export default function AdminPage() {
                         <th>Name</th>
                         <th>Phone</th>
                         <th>Joined</th>
+                        <th>Last login</th>
                         <th>Wallet</th>
                         <th>Status</th>
                         <th>Actions</th>
@@ -954,6 +962,7 @@ export default function AdminPage() {
                           <td style={{ fontWeight: 700 }}>{u.name || '—'}</td>
                           <td style={{ color: 'var(--gray)', fontSize: 13 }}>{u.phone || '—'}</td>
                           <td style={{ color: 'var(--gray)' }}>{fmtDate(u.created_at)}</td>
+                          <td style={{ color: 'var(--gray)', fontSize: 12 }}>{fmtDateTime(u.last_sign_in_at)}</td>
                           <td>₹{u.wallet_balance ?? 0}</td>
                           <td>
                             {u.is_suspended
@@ -1041,6 +1050,9 @@ export default function AdminPage() {
                       <tr>
                         <th>Name</th>
                         <th>Phone</th>
+                        <th>Aadhaar</th>
+                        <th>Joined</th>
+                        <th>Last login</th>
                         <th>Rate</th>
                         <th>Rating</th>
                         <th>Sessions</th>
@@ -1069,6 +1081,12 @@ export default function AdminPage() {
                             <td style={{ color: 'var(--gray)', fontSize: 12 }}>
                               {u?.phone || '—'}
                             </td>
+                            <td style={{ fontSize: 12, fontFamily: 'monospace', letterSpacing: 0.5 }}>
+                              {l.application?.aadhaar
+                                || (l.application?.aadhaar_last4 ? `••••••••${l.application.aadhaar_last4}` : '—')}
+                            </td>
+                            <td style={{ color: 'var(--gray)', fontSize: 12 }}>{fmtDate(u?.created_at)}</td>
+                            <td style={{ color: 'var(--gray)', fontSize: 12 }}>{fmtDateTime(l.last_sign_in_at)}</td>
                             <td>₹{l.rate_per_min ?? '—'}/min</td>
                             <td>{l.rating ? `${l.rating.toFixed(1)} ★` : '—'}</td>
                             <td>{l.total_sessions ?? 0}</td>

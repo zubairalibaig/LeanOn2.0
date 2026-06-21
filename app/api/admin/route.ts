@@ -33,15 +33,22 @@ export async function GET(req: NextRequest) {
   const prPage = Math.min(MAX_PAGE, Math.max(0, parseInt(url.searchParams.get('prPage') || '0', 10) || 0))
   const admin  = createAdminClient()
 
-  const [{ data: pendingListeners, count: lpCount }, { data: pendingPayouts, count: prCount }, { data: refundRequests }] = await Promise.all([
-    admin
-      .from('listener_applications')
-      .select(`id, user_id, status, created_at, aadhaar_last4, bank_account, ifsc_code, phone,
+  // listener_applications.aadhaar (full number) is added by migration 047, which
+  // is applied MANUALLY by the owner. Until then the column is absent, so select
+  // it optimistically and fall back to the long-standing aadhaar_last4 if the
+  // full column isn't there yet — never crash the whole admin overview.
+  const lpSelect = (withAadhaar: boolean) => `id, user_id, status, created_at, ${withAadhaar ? 'aadhaar, ' : ''}aadhaar_last4, bank_account, ifsc_code, phone,
         listener_profiles ( bio, rate_per_min, specialty_tags ),
-        users ( name, email )`, { count: 'exact' })
-      .eq('status', 'pending')
-      .order('created_at', { ascending: false })
-      .range(lpPage * PAGE_SIZE, lpPage * PAGE_SIZE + PAGE_SIZE - 1),
+        users ( name, email )`
+  const lpQuery = (withAadhaar: boolean) => admin
+    .from('listener_applications')
+    .select(lpSelect(withAadhaar), { count: 'exact' })
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false })
+    .range(lpPage * PAGE_SIZE, lpPage * PAGE_SIZE + PAGE_SIZE - 1)
+
+  const [pendingListenersRes, { data: pendingPayouts, count: prCount }, { data: refundRequests }] = await Promise.all([
+    lpQuery(true).then(r => (r.error && r.error.message.includes("'aadhaar'") ? lpQuery(false) : r)),
 
     admin
       .from('payout_requests')
@@ -59,8 +66,8 @@ export async function GET(req: NextRequest) {
   ])
 
   return NextResponse.json({
-    pendingListeners: pendingListeners || [],
-    lpTotal: lpCount ?? 0,
+    pendingListeners: pendingListenersRes.data || [],
+    lpTotal: pendingListenersRes.count ?? 0,
     lpPage,
     pendingPayouts: pendingPayouts || [],
     prTotal: prCount ?? 0,
