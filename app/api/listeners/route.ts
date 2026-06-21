@@ -16,43 +16,48 @@ export async function GET(req: NextRequest) {
 
     const sb = createAdminClient()
 
-    // Self-heal stuck-online ghosts BEFORE reading the list.
+    // Self-heal stuck-online ghosts before reading the list.
     //
-    // A listener row can be left with is_available=true forever if the listener
-    // closed the app without clicking "Go offline" (e.g. Sagor: is_available=true,
-    // last_heartbeat_at=null). There is no frequent cron on this plan (only a daily
-    // job), so we piggy-back on browse traffic: set is_available=false for any
-    // listener whose heartbeat is null or older than 15 minutes.
+    // Listeners who close the app without clicking "Go offline" are left with
+    // is_available=true and a stale (or null) heartbeat. We correct them here
+    // using two separate updates — NOT a single .or() with a timestamp, because
+    // PostgREST's OR filter string parser chokes on ISO-8601 colons/dots and
+    // silently ignores the clause, leaving ghosts forever.
     //
-    // 15 minutes (not the dashboard's 60 s heartbeat) is deliberately generous:
-    // mobile browsers throttle/pause background timers, so a genuinely-online
-    // listener who backgrounds the dashboard tab to glance at /browse must not be
-    // knocked offline. A 5-minute display-time gate (the previous approach) did
-    // exactly that and was the real cause of "I went online but I'm shown offline".
-    // The toggle stamps last_heartbeat_at=now() on going online, so a freshly
-    // online listener is never caught here.
+    // 15-minute threshold: deliberately generous so mobile browsers that throttle
+    // background timers don't knock a genuinely-online listener offline. The
+    // availability toggle stamps last_heartbeat_at=now() on going online, so a
+    // freshly-toggled listener is always inside the window.
     //
-    // This is a WRITE, so the correction is consistent everywhere (poll, realtime,
-    // and the listener's own dashboard) rather than a per-request display fudge.
-    // Updating 0 rows (the common case) is cheap. Fire-and-forget: a sweep failure
-    // must never block the browse list.
+    // Both updates are fire-and-forget: a sweep failure logs a warning and never
+    // blocks the browse response.
     const staleCutoff = new Date(Date.now() - 15 * 60 * 1000).toISOString()
-    await sb
-      .from('listener_profiles')
+
+    // Pass 1 — null heartbeat (e.g. Sagor: went online, never sent a heartbeat)
+    sb.from('listener_profiles')
       .update({ is_available: false })
       .eq('is_available', true)
-      .or(`last_heartbeat_at.is.null,last_heartbeat_at.lt.${staleCutoff}`)
+      .is('last_heartbeat_at', null)
       .then(
-        ({ error: sweepErr }) => { if (sweepErr) logger.warn('listeners staleness sweep failed', { error: sweepErr.message }) },
-        (e) => logger.warn('listeners staleness sweep threw', { error: String(e) }),
+        ({ error: e }) => { if (e) logger.warn('sweep(null-hb) failed', { error: e.message }) },
+        (e: unknown) => logger.warn('sweep(null-hb) threw', { error: String(e) }),
+      )
+
+    // Pass 2 — stale heartbeat (older than 15 min)
+    sb.from('listener_profiles')
+      .update({ is_available: false })
+      .eq('is_available', true)
+      .lt('last_heartbeat_at', staleCutoff)
+      .then(
+        ({ error: e }) => { if (e) logger.warn('sweep(stale-hb) failed', { error: e.message }) },
+        (e: unknown) => logger.warn('sweep(stale-hb) threw', { error: String(e) }),
       )
 
     // Exclude orphaned accounts: LeanOn is phone-only, so a listener whose users
     // row has no phone can never be logged into and must not appear bookable.
-    // These ghosts come from auth-account recreation (see lib/ensure-user-row.ts)
-    // and were the cause of the duplicate-"Zubair" bug. We fetch phone ONLY to
-    // filter on it, then strip it from the response below so it never leaves the
-    // server.
+    // These ghosts come from auth-account recreation (see lib/ensure-user-row.ts).
+    // We fetch phone ONLY to filter on it, then strip it from the response below
+    // so it never leaves the server.
     let q = sb
       .from('listener_profiles')
       .select('user_id, bio, specialty_tags, languages_spoken, rate_per_min, rating, total_sessions, is_available, is_verified, users!inner(name, avatar_url, phone)')
@@ -70,17 +75,15 @@ export async function GET(req: NextRequest) {
     const { data, error } = await q
 
     if (error) {
-      // Don't leak the raw Postgres/network error string to clients — log it
-      // server-side and return a generic message.
       logger.error('listeners query failed:', { error: error.message })
       return NextResponse.json({ error: 'Failed to fetch listeners. Please try again.' }, { status: 503 })
     }
 
-    // Trust is_available directly: the staleness sweep above already corrected any
-    // stuck-online ghosts, and the toggle writes this column authoritatively. No
-    // per-request display gate — that previously caused false-offline flicker.
+    // Trust is_available directly from the DB. The staleness sweep above
+    // corrects stuck-online ghosts on every browse load; the toggle writes
+    // is_available authoritatively. No per-request display gate here — that
+    // previously caused false-offline flicker on mobile.
     const listeners = (data ?? []).map((l) => {
-      // Strip phone — selected only to filter orphans, must never reach client.
       const rawUsers = (l as { users?: { name?: string; avatar_url?: string; phone?: string } }).users
       const users = rawUsers ? { name: rawUsers.name, avatar_url: rawUsers.avatar_url } : rawUsers
       return {
@@ -96,8 +99,19 @@ export async function GET(req: NextRequest) {
       return ((b as { rating?: number }).rating || 0) - ((a as { rating?: number }).rating || 0)
     })
 
+    const onlineCount = listeners.filter(l => l.is_available).length
+
     return NextResponse.json({ listeners }, {
-      headers: { 'Cache-Control': 'no-store' },
+      headers: {
+        // Prevent every caching layer from serving stale data.
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Surrogate-Control': 'no-store',
+        // Diagnostic header — lets the owner verify which deploy is running and
+        // what the server sees, without exposing sensitive data.
+        'X-LeanOn-Ts': new Date().toISOString(),
+        'X-LeanOn-Online': String(onlineCount),
+      },
     })
   } catch (err) {
     logger.error('listeners route error:', { error: err instanceof Error ? err.message : String(err) })
