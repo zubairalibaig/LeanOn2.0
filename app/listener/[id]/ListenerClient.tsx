@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
-import { LANGUAGES, PLATFORM_FEE } from '@/lib/constants'
+import { LANGUAGES, PLATFORM_FEE, MAX_FREE_TRIALS } from '@/lib/constants'
 
 type ListenerProfile = {
   id: string
@@ -100,6 +100,7 @@ export default function ListenerClient({ id }: { id: string }) {
   const [isBooking, setIsBooking] = useState(false)
   const [showInsufficient, setShowInsufficient] = useState(false)
   const [bookError, setBookError] = useState<string | null>(null)
+  const [freeTrialUsed, setFreeTrialUsed] = useState(false)
 
   useEffect(() => {
     // Fetch via API route (admin client server-side) — avoids the
@@ -129,8 +130,15 @@ export default function ListenerClient({ id }: { id: string }) {
     client.auth.getUser().then(async ({data:{user}}) => {
       if (!user) return
       setUserId(user.id)
-      const {data} = await client.from('users').select('wallet_balance').eq('id', user.id).single()
-      if (data) setBalance(data.wallet_balance)
+      const [{data: userData}, totalTrials, listenerTrial] = await Promise.all([
+        client.from('users').select('wallet_balance').eq('id', user.id).single(),
+        client.from('sessions').select('id', { count: 'exact', head: true }).eq('seeker_id', user.id).eq('is_free_trial', true),
+        client.from('sessions').select('id', { count: 'exact', head: true }).eq('seeker_id', user.id).eq('listener_id', id).eq('is_free_trial', true),
+      ])
+      if (userData) setBalance(userData.wallet_balance)
+      const used = (totalTrials.count ?? 0) >= MAX_FREE_TRIALS || (listenerTrial.count ?? 0) > 0
+      setFreeTrialUsed(used)
+      if (used) setDuration(15)
     })
   }, [id])
 
@@ -274,19 +282,35 @@ export default function ListenerClient({ id }: { id: string }) {
           <div className="wallet-warn">{bookError}</div>
         )}
         <div className="book-opts">
-          {([5,15,30,45] as const).map(d => (
-            <div key={d} className={`book-opt${duration===d?' sel':''}`} onClick={()=>setDuration(d)} role="button" aria-pressed={duration===d} aria-label={`${d} minute session${d===5?' free':''}`}>
-              <div className="opt-label">{d} min</div>
-              <div className="opt-price">{d===5 ? '—' : `₹${listener.rate_per_min*d+PLATFORM_FEE}`}</div>
-              {d===5 && <div className="opt-free">FREE</div>}
-            </div>
-          ))}
+          {([5,15,30,45] as const).map(d => {
+            const isFreeTier = d === 5
+            const disabled = isFreeTier && freeTrialUsed
+            return (
+              <div key={d}
+                className={`book-opt${duration===d?' sel':''}${disabled?' disabled':''}`}
+                onClick={() => !disabled && setDuration(d)}
+                role="button"
+                aria-pressed={duration===d}
+                aria-disabled={disabled}
+                aria-label={`${d} minute session${isFreeTier && !freeTrialUsed ? ' free' : ''}`}
+                style={disabled ? {opacity:0.45,cursor:'not-allowed'} : undefined}
+              >
+                <div className="opt-label">{d} min</div>
+                <div className="opt-price">{isFreeTier ? '—' : `₹${listener.rate_per_min*d+PLATFORM_FEE}`}</div>
+                {isFreeTier && (
+                  freeTrialUsed
+                    ? <div className="opt-free" style={{background:'#8E8E93'}}>Used</div>
+                    : <div className="opt-free">FREE</div>
+                )}
+              </div>
+            )
+          })}
         </div>
         <div className="type-row">
           <button className={`type-btn${type==='text'?' sel':''}`} onClick={()=>setType('text')}>💬 Text chat</button>
           <button className={`type-btn${type==='voice'?' sel':''}`} onClick={()=>setType('voice')}>🎙️ Voice call</button>
         </div>
-        {duration === 5 && (
+        {duration === 5 && !freeTrialUsed && (
           <div style={{background:'rgba(52,199,89,.1)',border:'1px solid rgba(52,199,89,.3)',borderRadius:10,padding:'8px 12px',fontSize:12,fontWeight:700,color:'#166534',marginBottom:8,textAlign:'center'}}>
             ✅ No payment needed — completely free for 5 minutes
           </div>
