@@ -33,25 +33,27 @@ export async function GET(req: NextRequest) {
     // blocks the browse response.
     const staleCutoff = new Date(Date.now() - 15 * 60 * 1000).toISOString()
 
-    // Pass 1 — null heartbeat (e.g. Sagor: went online, never sent a heartbeat)
-    sb.from('listener_profiles')
-      .update({ is_available: false })
-      .eq('is_available', true)
-      .is('last_heartbeat_at', null)
-      .then(
-        ({ error: e }) => { if (e) logger.warn('sweep(null-hb) failed', { error: e.message }) },
-        (e: unknown) => logger.warn('sweep(null-hb) threw', { error: String(e) }),
-      )
+    // Awaited so the list read below already reflects the correction (no one-cycle
+    // lag). Each pass is isolated in try/catch so a sweep failure can never block
+    // or error the browse response.
+    try {
+      // Pass 1 — null heartbeat (e.g. a listener who went online but never sent
+      // a heartbeat, then closed the app).
+      const { error: e1 } = await sb.from('listener_profiles')
+        .update({ is_available: false })
+        .eq('is_available', true)
+        .is('last_heartbeat_at', null)
+      if (e1) logger.warn('sweep(null-hb) failed', { error: e1.message })
 
-    // Pass 2 — stale heartbeat (older than 15 min)
-    sb.from('listener_profiles')
-      .update({ is_available: false })
-      .eq('is_available', true)
-      .lt('last_heartbeat_at', staleCutoff)
-      .then(
-        ({ error: e }) => { if (e) logger.warn('sweep(stale-hb) failed', { error: e.message }) },
-        (e: unknown) => logger.warn('sweep(stale-hb) threw', { error: String(e) }),
-      )
+      // Pass 2 — heartbeat older than 15 minutes.
+      const { error: e2 } = await sb.from('listener_profiles')
+        .update({ is_available: false })
+        .eq('is_available', true)
+        .lt('last_heartbeat_at', staleCutoff)
+      if (e2) logger.warn('sweep(stale-hb) failed', { error: e2.message })
+    } catch (e) {
+      logger.warn('staleness sweep threw', { error: String(e) })
+    }
 
     // Exclude orphaned accounts: LeanOn is phone-only, so a listener whose users
     // row has no phone can never be logged into and must not appear bookable.

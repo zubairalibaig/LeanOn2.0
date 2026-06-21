@@ -4,6 +4,9 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 import { requireAdmin } from '@/lib/require-admin'
 
+// Never statically cache or revalidate — KPI counts (incl. online listeners)
+// must always reflect the live DB, not a cached snapshot.
+export const dynamic = 'force-dynamic'
 
 export async function GET(req: NextRequest) {
   const { error, code, status, user } = await requireAdmin(req)

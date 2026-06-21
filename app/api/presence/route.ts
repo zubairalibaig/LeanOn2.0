@@ -1,10 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 
-// Called via navigator.sendBeacon when dashboard page unloads
+export const dynamic = 'force-dynamic'
+
+// POST — listener presence signal. Two jobs only:
+//   • { heartbeat: true }      → refresh last_heartbeat_at (keeps the listener
+//                                inside the browse staleness window while online)
+//   • { available: false } or  → set is_available=false (explicit go-offline /
+//     anything else              unload beacon)
+//
+// IMPORTANT: this endpoint can NEVER set is_available=true. Going ONLINE is
+// exclusively the job of the authenticated toggle (/api/listener/availability).
+// Allowing presence to write `true` created a backdoor: a stale/old dashboard
+// tab (or legacy beacon code) left open on a device would re-online a listener
+// on a loop, which is why ghosts kept reappearing as "online" even after the
+// DB was corrected. Heartbeats keep an already-online listener fresh, but they
+// never flip is_available back on.
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json()
+    const body = await req.json().catch(() => ({}))
 
     // Authenticate from session cookie — never trust userId from request body
     const userSb = createServerSupabaseClient()
@@ -13,31 +27,17 @@ export async function POST(req: NextRequest) {
 
     const sb = createAdminClient()
 
-    // If body.heartbeat === true: just update last_heartbeat_at, don't touch is_available
+    // Heartbeat: only refresh the timestamp, never touch is_available.
     if (body.heartbeat === true) {
-      await sb.from('listener_profiles').update({ last_heartbeat_at: new Date().toISOString() }).eq('user_id', user.id)
+      await sb.from('listener_profiles')
+        .update({ last_heartbeat_at: new Date().toISOString() })
+        .eq('user_id', user.id)
       return NextResponse.json({ ok: true })
     }
 
-    const available = body.available === true
-
-    // Going OFFLINE is always allowed (beacon on unload/visibility-hidden).
-    // Going ONLINE must pass the same gates as /api/listener/availability —
-    // otherwise a suspended/unapproved/deactivated listener could re-surface
-    // themselves on the browse page by calling this endpoint directly.
-    if (available) {
-      const { data: lp } = await sb
-        .from('listener_profiles')
-        .select('is_approved, is_active, is_suspended')
-        .eq('user_id', user.id)
-        .maybeSingle()
-      if (!lp || !lp.is_approved || !lp.is_active || lp.is_suspended) {
-        return NextResponse.json({ ok: true }) // silently no-op; beacon-friendly
-      }
-    }
-
+    // Any other call can only ever set the listener OFFLINE (never online).
     await sb.from('listener_profiles')
-      .update({ is_available: available, ...(available ? { last_heartbeat_at: new Date().toISOString() } : {}) })
+      .update({ is_available: false })
       .eq('user_id', user.id)
     return NextResponse.json({ ok: true })
   } catch {
