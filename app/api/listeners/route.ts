@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     // response below so it never leaves the server.
     let q = sb
       .from('listener_profiles')
-      .select('user_id, bio, specialty_tags, languages_spoken, rate_per_min, rating, total_sessions, is_available, is_verified, users!inner(name, avatar_url, phone)')
+      .select('user_id, bio, specialty_tags, languages_spoken, rate_per_min, rating, total_sessions, is_available, is_verified, last_heartbeat_at, users!inner(name, avatar_url, phone)')
       .eq('is_approved', true)
       .or('is_active.eq.true,is_active.is.null')
       .eq('is_suspended', false)
@@ -45,21 +45,35 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch listeners. Please try again.' }, { status: 503 })
     }
 
-    // Trust is_available directly from the DB. The dashboard availability toggle
-    // sets this column via the admin client (bypasses RLS/triggers). Ghost-online
-    // detection (stale heartbeat) is intentionally removed here because the
-    // heartbeat column may not exist in all environments, and a false staleness
-    // verdict was causing listeners to appear offline immediately after going online.
+    // A listener is only truly online if their heartbeat is fresh (≤ 5 min).
+    // The dashboard sends a heartbeat on going-online AND every 60 s thereafter.
+    // If last_heartbeat_at is null or stale, the listener left without clicking
+    // "Go offline" — treat them as offline so they don't appear bookable.
+    // Going online via the toggle also stamps last_heartbeat_at = now(), so a
+    // freshly-toggled listener is never falsely caught by this gate.
+    const STALE_MS = 5 * 60 * 1000 // 5 minutes
+    const now = Date.now()
+
     const listeners = (data ?? []).map((l) => {
-      // Strip phone from the embedded users object — it was selected only to
-      // filter out phone-less orphans and must never reach the client.
-      const rawUsers = (l as { users?: { name?: string; avatar_url?: string; phone?: string } }).users
-      const users = rawUsers ? { name: rawUsers.name, avatar_url: rawUsers.avatar_url } : rawUsers
-      return {
-        ...l,
-        users,
-        is_available: Boolean((l as { is_available?: boolean }).is_available),
+      const raw = l as {
+        is_available?: boolean
+        last_heartbeat_at?: string | null
+        users?: { name?: string; avatar_url?: string; phone?: string }
       }
+      // Strip phone — selected only to filter orphans, must never reach client.
+      const rawUsers = raw.users
+      const users = rawUsers ? { name: rawUsers.name, avatar_url: rawUsers.avatar_url } : rawUsers
+
+      const dbOnline = Boolean(raw.is_available)
+      const heartbeatAge = raw.last_heartbeat_at
+        ? now - new Date(raw.last_heartbeat_at).getTime()
+        : Infinity
+      const is_available = dbOnline && heartbeatAge <= STALE_MS
+
+      // Strip last_heartbeat_at — internal freshness signal, not for clients.
+      const { last_heartbeat_at: _hb, ...rest } = l as typeof l & { last_heartbeat_at?: string | null }
+      void _hb
+      return { ...rest, users, is_available }
     })
     listeners.sort((a, b) => {
       const av = a.is_available ? 1 : 0

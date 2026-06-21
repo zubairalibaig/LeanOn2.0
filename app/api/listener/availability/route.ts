@@ -45,8 +45,15 @@ export async function PATCH(req: NextRequest) {
     // Write via admin client (bypasses RLS and the guard trigger's is_service_role
     // check, which would otherwise freeze is_approved/rating/etc). is_available is
     // NOT in the guard's freeze list, so it is safe from browser-side writes too.
+    // When going online, also stamp last_heartbeat_at so the browse staleness
+    // gate (5-min window) sees a fresh heartbeat immediately. Without this,
+    // a listener who just toggled online could still appear offline if no
+    // heartbeat has fired yet.
+    const updatePayload: Record<string, unknown> = { is_available: goingOnline }
+    if (goingOnline) updatePayload.last_heartbeat_at = new Date().toISOString()
+
     const { data: updated, error: updateErr } = await sb.from('listener_profiles')
-      .update({ is_available: goingOnline })
+      .update(updatePayload)
       .eq('user_id', user.id)
       .select('is_available')
       .single()
