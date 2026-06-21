@@ -182,8 +182,11 @@ function BrowseContent() {
     window.addEventListener('focus', refresh)
     window.addEventListener('pageshow', onPageShow)
     document.addEventListener('visibilitychange', onVis)
-    // 5 s poll — fast enough to catch offline/online changes without waiting 12 s.
-    const iv = setInterval(refresh, 5_000)
+    // 3 s poll — backstop for when Supabase Realtime is unavailable. With the
+    // realtime subscription on listener_profiles now active (migration 046),
+    // cross-device availability changes arrive push-style; this poll just guards
+    // against a dropped socket.
+    const iv = setInterval(refresh, 3_000)
 
     // BroadcastChannel — receives immediate notification when another tab on the
     // same origin (e.g. /dashboard) toggles availability. Without this, the browse
