@@ -621,7 +621,19 @@ function SessionContent() {
           const msg = micErr instanceof Error ? micErr.message : ''
           const name = micErr instanceof Error ? (micErr as { name?: string }).name ?? '' : ''
           if (name === 'NotAllowedError' || msg.includes('Permission') || msg.includes('NotAllowed') || msg.includes('denied')) {
-            throw new Error('Microphone access denied. Tap the 🔒 icon in your browser address bar, allow microphone, then refresh.')
+            // Distinguish a remembered "block" (no prompt shown) from a fresh deny.
+            // On desktop the mic permission lives behind the camera/mic icon at the
+            // right edge of the address bar — guide users to reset it there.
+            let blocked = false
+            try {
+              const perm = await navigator.permissions?.query({ name: 'microphone' as PermissionName })
+              blocked = perm?.state === 'denied'
+            } catch { /* permissions API unavailable — fall through to generic copy */ }
+            throw new Error(
+              blocked
+                ? 'Microphone is blocked for this site. Click the camera/mic icon (🎥) at the right edge of the address bar → "Always allow" → reload. On mobile: Site settings → Microphone → Allow.'
+                : 'Microphone access denied. When the browser asks, choose "Allow", then retry. If no prompt appears, open Site settings → Microphone → Allow, then reload.'
+            )
           }
           if (name === 'NotFoundError' || msg.includes('NotFound') || msg.includes('Requested device not found')) {
             throw new Error('No microphone found. Please connect a microphone and try again.')
