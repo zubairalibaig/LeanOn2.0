@@ -30,6 +30,11 @@ body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:an
 .preview-text{font-size:13px;color:var(--gray);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;}
 .badge-active{display:inline-block;padding:2px 8px;border-radius:50px;font-size:10px;font-weight:800;background:#DCFCE7;color:#166534;flex-shrink:0;}
 .badge-ended{display:inline-block;padding:2px 8px;border-radius:50px;font-size:10px;font-weight:800;background:var(--light);color:var(--gray);flex-shrink:0;}
+.badge-missed{display:inline-block;padding:2px 8px;border-radius:50px;font-size:10px;font-weight:800;background:#FFEBEE;color:#C62828;flex-shrink:0;}
+.role-missed{background:#FFEBEE;color:#C62828;}
+.filter-tabs{display:flex;gap:8px;padding:12px 16px;background:white;border-bottom:1px solid var(--border);}
+.filter-tab{flex:1;padding:8px 12px;border:1.5px solid var(--border);border-radius:50px;background:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:var(--gray);cursor:pointer;transition:all .15s;}
+.filter-tab.active{background:var(--navy);color:white;border-color:var(--navy);}
 .join-btn{background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;padding:6px 14px;border-radius:8px;border:none;cursor:pointer;flex-shrink:0;}
 .empty{text-align:center;padding:60px 24px;}
 .empty-icon{font-size:48px;margin-bottom:16px;}
@@ -96,6 +101,7 @@ export default function HistoryPage() {
   const sb = createClient()
   const [items, setItems] = useState<DisplayItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState<'all' | 'completed' | 'missed'>('all')
 
   useEffect(() => { load() }, [])
 
@@ -194,7 +200,13 @@ export default function HistoryPage() {
   function preview(r: ChatRow) {
     if (!r.lastMsg) {
       if (r.status === 'active') return 'Session in progress…'
-      if (r.status === 'cancelled') return 'Session cancelled'
+      if (r.status === 'cancelled') {
+        // No conversation ever happened — distinguish missed (listener) vs cancelled (seeker)
+        return r.iAmListener
+          ? '⏰ Missed — no response in time'
+          : 'Request cancelled — fully refunded'
+      }
+      if (r.status === 'pending') return 'Awaiting response…'
       return `${r.duration_mins}-min ${r.session_type} session`
     }
     const text = r.lastMsg.content.slice(0, 56) + (r.lastMsg.content.length > 56 ? '…' : '')
@@ -207,6 +219,15 @@ export default function HistoryPage() {
     return m.iAmListener ? text : `You: ${text}`
   }
 
+  // Apply the active filter. Messages and active/pending sessions only show under "All".
+  const visibleItems = items.filter(it => {
+    if (filter === 'all') return true
+    if (it.type === 'msg') return false
+    if (filter === 'completed') return it.row.status === 'completed'
+    if (filter === 'missed')    return it.row.status === 'cancelled'
+    return true
+  })
+
   return (
     <>
       <style>{S}</style>
@@ -214,6 +235,18 @@ export default function HistoryPage() {
         <div className="topbar">
           <h1>Chats</h1>
           <p>Your conversations and session history</p>
+        </div>
+
+        <div className="filter-tabs">
+          {(['all', 'completed', 'missed'] as const).map(f => (
+            <button
+              key={f}
+              className={`filter-tab${filter === f ? ' active' : ''}`}
+              onClick={() => setFilter(f)}
+            >
+              {f === 'all' ? 'All' : f === 'completed' ? 'Completed' : 'Missed'}
+            </button>
+          ))}
         </div>
 
         {loading ? (
@@ -235,8 +268,17 @@ export default function HistoryPage() {
             <p>When you talk to a listener — or a seeker talks to you — your chats will appear here. Your first 5 minutes are free.</p>
             <button onClick={() => router.push('/browse')}>Find a listener →</button>
           </div>
+        ) : visibleItems.length === 0 ? (
+          <div className="empty">
+            <div className="empty-icon">{filter === 'missed' ? '⏰' : '✅'}</div>
+            <h3>No {filter} sessions</h3>
+            <p>{filter === 'missed'
+              ? 'You haven’t missed any requests. Nice — keep it up!'
+              : 'No completed sessions yet. Your finished conversations will show here.'}</p>
+            <button onClick={() => setFilter('all')}>Show all →</button>
+          </div>
         ) : (
-          items.map(item => {
+          visibleItems.map(item => {
             if (item.type === 'session') {
               const r = item.row
               return (
@@ -247,15 +289,19 @@ export default function HistoryPage() {
                   <div className="chat-body">
                     <div className="chat-header">
                       <span className="chat-name">{r.other?.name || (r.iAmListener ? 'Seeker' : 'Listener')}</span>
-                      <span className={`role-tag ${r.iAmListener ? 'role-listener' : 'role-seeker'}`}>
-                        {r.iAmListener ? 'You listened' : 'You talked'}
-                      </span>
+                      {r.status === 'cancelled'
+                        ? <span className="role-tag role-missed">{r.iAmListener ? '⏰ Missed' : 'Cancelled'}</span>
+                        : <span className={`role-tag ${r.iAmListener ? 'role-listener' : 'role-seeker'}`}>
+                            {r.iAmListener ? 'You listened' : 'You talked'}
+                          </span>}
                     </div>
                     <div className="chat-preview">
                       <span className="preview-text">{preview(r)}</span>
                       {r.status === 'active'
                         ? <span className="badge-active">Active</span>
-                        : <span className="badge-ended">{fmtTime(r.lastMsg?.created_at || r.ended_at || r.created_at)}</span>}
+                        : r.status === 'cancelled'
+                          ? <span className="badge-missed">{fmtTime(r.ended_at || r.created_at)}</span>
+                          : <span className="badge-ended">{fmtTime(r.lastMsg?.created_at || r.ended_at || r.created_at)}</span>}
                     </div>
                   </div>
                   {r.status === 'active' && (
