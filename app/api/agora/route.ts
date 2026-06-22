@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
     }
 
     const appId      = process.env.NEXT_PUBLIC_AGORA_APP_ID!
-    const appCert    = process.env.AGORA_APP_CERTIFICATE!
+    const appCert    = process.env.AGORA_APP_CERTIFICATE
     const channelName = session.agora_channel as string
 
     // Scope token lifetime to the session, not a flat hour. An ejected/finished
@@ -58,15 +58,19 @@ export async function GET(req: NextRequest) {
     // Always allow at least 60s so a clock skew can't issue an already-expired token.
     const expireTime = Math.max(nowSec + 60, Math.min(bookedEnd, nowSec + 3600))
 
-    const token = RtcTokenBuilder.buildTokenWithUid(
-      appId,
-      appCert,
-      channelName,
-      0,               // uid=0 means Agora assigns one
-      RtcRole.PUBLISHER,
-      expireTime,
-      expireTime
-    )
+    // If no App Certificate is configured, Agora project is in Testing mode —
+    // pass null token. If certificate is present, sign a proper RTC token.
+    const token = appCert
+      ? RtcTokenBuilder.buildTokenWithUid(
+          appId,
+          appCert,
+          channelName,
+          0,               // uid=0 means Agora assigns one
+          RtcRole.PUBLISHER,
+          expireTime,
+          expireTime
+        )
+      : null
 
     return NextResponse.json({ token, channelName, appId })
   } catch (err: unknown) {

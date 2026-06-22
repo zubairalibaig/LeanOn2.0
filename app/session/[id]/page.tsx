@@ -820,6 +820,7 @@ function SessionContent() {
     const actualMins = Math.floor(actualSecs / 60)
     const actualSecRemainder = actualSecs % 60
     const durationDisplay = actualMins > 0 ? `${actualMins}m ${actualSecRemainder}s` : `${actualSecs}s`
+    const voiceFailed = isVoice && voiceError && voiceStatus === 'error'
     return (
       <>
         <style>{S}</style>
@@ -828,17 +829,22 @@ function SessionContent() {
             <div className="av">{ini(resolvedListenerName)}</div>
             <div className="hdr-info">
               <div className="hdr-name">{resolvedListenerName}</div>
-              <div className="hdr-sub">Session complete</div>
+              <div className="hdr-sub">{voiceFailed ? 'Voice connection failed' : 'Session complete'}</div>
             </div>
           </div>
           <div className="end-screen">
-            <div className="end-icon">🎉</div>
-            <h2 className="end-h">Session ended</h2>
+            <div className="end-icon">{voiceFailed ? '📵' : '🎉'}</div>
+            <h2 className="end-h">{voiceFailed ? 'Voice call failed' : 'Session ended'}</h2>
+            {voiceFailed && (
+              <div style={{ background: '#FFF0F0', border: '1.5px solid #FFCDD2', borderRadius: 12, padding: '12px 16px', marginBottom: 16, fontSize: 13, color: '#7A2020', fontWeight: 600, maxWidth: 320, textAlign: 'left' }}>
+                ⚠️ {voiceError}
+              </div>
+            )}
             <div className="end-duration">⏱ Duration: {durationDisplay}</div>
-            <p className="end-p">{userId === listenerId
+            <p className="end-p">{voiceFailed ? 'The voice connection could not be established. You have not been charged.' : userId === listenerId
               ? 'Thank you for supporting someone today. 💙'
               : 'How are you feeling? Rate your session to help others find the right listener.'}</p>
-            {userId !== listenerId && (
+            {userId !== listenerId && !voiceFailed && (
             <div className="stars">
               {[1,2,3,4,5].map(s => (
                 <button key={s} className={`star${rating >= s ? ' lit' : ''}`} onClick={() => setRating(s)}>★</button>
@@ -846,9 +852,11 @@ function SessionContent() {
             </div>
             )}
             <button className="btn-done" onClick={finishSession}>
-              {userId === listenerId
-                ? 'Back to dashboard →'
-                : rating > 0 ? 'Submit & finish →' : 'Skip & finish →'}
+              {voiceFailed
+                ? 'Back →'
+                : userId === listenerId
+                  ? 'Back to dashboard →'
+                  : rating > 0 ? 'Submit & finish →' : 'Skip & finish →'}
             </button>
             {userId !== listenerId && (
               <a href="/browse" style={{display:'block',marginTop:16,fontFamily:'Nunito,sans-serif',fontSize:14,fontWeight:700,color:'var(--teal)'}}>
