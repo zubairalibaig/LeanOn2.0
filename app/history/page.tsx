@@ -55,6 +55,19 @@ type ChatRow = {
   other: Party | null
   lastMsg: LastMsg
 }
+type OfflineMsgRow = {
+  id: string
+  kind: 'offline_msg'
+  other: { name: string; avatar_url?: string | null } | null
+  messages: string[]
+  is_read: boolean
+  iAmListener: boolean
+  created_at: string
+  updated_at: string
+}
+type DisplayItem =
+  | { type: 'session'; row: ChatRow;      sortKey: string }
+  | { type: 'msg';     row: OfflineMsgRow; sortKey: string }
 
 function ini(n?: string | null) {
   if (!n) return '?'
@@ -81,7 +94,7 @@ function one(v: unknown): Party | null {
 export default function HistoryPage() {
   const router = useRouter()
   const sb = createClient()
-  const [rows, setRows] = useState<ChatRow[]>([])
+  const [items, setItems] = useState<DisplayItem[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => { load() }, [])
@@ -91,17 +104,20 @@ export default function HistoryPage() {
       const { data: { user } } = await sb.auth.getUser()
       if (!user) { router.push('/auth?redirect=/history'); return }
 
-      // Unified: every session where I'm EITHER the seeker OR the listener, all statuses.
-      const { data } = await sb
-        .from('sessions')
-        .select(`id, status, session_type, duration_mins, amount_held, started_at, created_at, ended_at, seeker_id, listener_id,
-          listener:users!listener_id(id, name, avatar_url),
-          seeker:users!seeker_id(id, name, avatar_url)`)
-        .or(`seeker_id.eq.${user.id},listener_id.eq.${user.id}`)
-        .order('created_at', { ascending: false })
-        .limit(50)
+      // Fetch sessions and offline message requests in parallel
+      const [sessionsRes, offlineMsgsRes] = await Promise.all([
+        sb
+          .from('sessions')
+          .select(`id, status, session_type, duration_mins, amount_held, started_at, created_at, ended_at, seeker_id, listener_id,
+            listener:users!listener_id(id, name, avatar_url),
+            seeker:users!seeker_id(id, name, avatar_url)`)
+          .or(`seeker_id.eq.${user.id},listener_id.eq.${user.id}`)
+          .order('created_at', { ascending: false })
+          .limit(50),
+        fetch('/api/listener-messages').then(r => r.ok ? r.json() : { sent: [], received: [] }).catch(() => ({ sent: [], received: [] })),
+      ])
 
-      if (!data) { setLoading(false); return }
+      const data = sessionsRes.data ?? []
 
       const withMsgs: ChatRow[] = await Promise.all(
         data.map(async (s) => {
@@ -130,17 +146,37 @@ export default function HistoryPage() {
         })
       )
 
-      // Active sessions first, then most recent activity.
-      withMsgs.sort((a, b) => {
-        if (a.status === 'active' && b.status !== 'active') return -1
-        if (b.status === 'active' && a.status !== 'active') return 1
-        const aT = a.lastMsg?.created_at || a.ended_at || a.started_at || a.created_at
-        const bT = b.lastMsg?.created_at || b.ended_at || b.started_at || b.created_at
-        return new Date(bT).getTime() - new Date(aT).getTime()
+      // Build offline message rows from both sent and received
+      const sentMsgs: OfflineMsgRow[] = ((offlineMsgsRes.sent ?? []) as Array<{id:string;listener_id:string;messages:string[];is_read:boolean;updated_at:string;created_at:string;otherName:string;otherAvatar:string|null}>).map(m => ({
+        id: m.id, kind: 'offline_msg' as const,
+        other: { name: m.otherName, avatar_url: m.otherAvatar },
+        messages: m.messages, is_read: m.is_read, iAmListener: false,
+        created_at: m.created_at, updated_at: m.updated_at,
+      }))
+      const recvMsgs: OfflineMsgRow[] = ((offlineMsgsRes.received ?? []) as Array<{id:string;seeker_id:string;messages:string[];is_read:boolean;updated_at:string;created_at:string;otherName:string;otherAvatar:string|null}>).map(m => ({
+        id: m.id, kind: 'offline_msg' as const,
+        other: { name: m.otherName, avatar_url: m.otherAvatar },
+        messages: m.messages, is_read: m.is_read, iAmListener: true,
+        created_at: m.created_at, updated_at: m.updated_at,
+      }))
+
+      // Combine into unified display list, active sessions first then by recency
+      const sessionItems: DisplayItem[] = withMsgs.map(r => ({
+        type: 'session' as const, row: r,
+        sortKey: r.lastMsg?.created_at || r.ended_at || r.started_at || r.created_at,
+      }))
+      const msgItems: DisplayItem[] = [...sentMsgs, ...recvMsgs].map(r => ({
+        type: 'msg' as const, row: r,
+        sortKey: r.updated_at || r.created_at,
+      }))
+
+      const all: DisplayItem[] = [...sessionItems, ...msgItems].sort((a, b) => {
+        if (a.type === 'session' && a.row.status === 'active') return -1
+        if (b.type === 'session' && b.row.status === 'active') return 1
+        return new Date(b.sortKey).getTime() - new Date(a.sortKey).getTime()
       })
 
-      // Hold on to userId for preview "You:" prefix via closure
-      setRows(withMsgs)
+      setItems(all)
     } catch {
       // silent — show empty state
     }
@@ -162,9 +198,13 @@ export default function HistoryPage() {
       return `${r.duration_mins}-min ${r.session_type} session`
     }
     const text = r.lastMsg.content.slice(0, 56) + (r.lastMsg.content.length > 56 ? '…' : '')
-    // If the last message sender is the OTHER party, it's incoming; otherwise it's mine.
     const incoming = r.lastMsg.sender_id === r.other?.id
     return incoming ? text : `You: ${text}`
+  }
+
+  function msgPreview(m: OfflineMsgRow) {
+    const text = (m.messages[0] ?? '').slice(0, 56)
+    return m.iAmListener ? text : `You: ${text}`
   }
 
   return (
@@ -188,7 +228,7 @@ export default function HistoryPage() {
               </div>
             ))}
           </div>
-        ) : rows.length === 0 ? (
+        ) : items.length === 0 ? (
           <div className="empty">
             <div className="empty-icon">💬</div>
             <h3>No conversations yet</h3>
@@ -196,32 +236,62 @@ export default function HistoryPage() {
             <button onClick={() => router.push('/browse')}>Find a listener →</button>
           </div>
         ) : (
-          rows.map(r => (
-            <div key={r.id} className="chat-row" onClick={() => openRow(r)}>
-              <div className={`avatar${r.status === 'active' ? ' active-ring' : ''}`}>
-                {r.other?.avatar_url ? <img src={r.other.avatar_url} alt="" /> : ini(r.other?.name)}
-              </div>
-              <div className="chat-body">
-                <div className="chat-header">
-                  <span className="chat-name">{r.other?.name || (r.iAmListener ? 'Seeker' : 'Listener')}</span>
-                  <span className={`role-tag ${r.iAmListener ? 'role-listener' : 'role-seeker'}`}>
-                    {r.iAmListener ? 'You listened' : 'You talked'}
-                  </span>
+          items.map(item => {
+            if (item.type === 'session') {
+              const r = item.row
+              return (
+                <div key={`s-${r.id}`} className="chat-row" onClick={() => openRow(r)}>
+                  <div className={`avatar${r.status === 'active' ? ' active-ring' : ''}`}>
+                    {r.other?.avatar_url ? <img src={r.other.avatar_url} alt="" /> : ini(r.other?.name)}
+                  </div>
+                  <div className="chat-body">
+                    <div className="chat-header">
+                      <span className="chat-name">{r.other?.name || (r.iAmListener ? 'Seeker' : 'Listener')}</span>
+                      <span className={`role-tag ${r.iAmListener ? 'role-listener' : 'role-seeker'}`}>
+                        {r.iAmListener ? 'You listened' : 'You talked'}
+                      </span>
+                    </div>
+                    <div className="chat-preview">
+                      <span className="preview-text">{preview(r)}</span>
+                      {r.status === 'active'
+                        ? <span className="badge-active">Active</span>
+                        : <span className="badge-ended">{fmtTime(r.lastMsg?.created_at || r.ended_at || r.created_at)}</span>}
+                    </div>
+                  </div>
+                  {r.status === 'active' && (
+                    <button className="join-btn" onClick={e => { e.stopPropagation(); openRow(r) }}>
+                      {r.iAmListener ? 'Join' : 'Rejoin'}
+                    </button>
+                  )}
                 </div>
-                <div className="chat-preview">
-                  <span className="preview-text">{preview(r)}</span>
-                  {r.status === 'active'
-                    ? <span className="badge-active">Active</span>
-                    : <span className="badge-ended">{fmtTime(r.lastMsg?.created_at || r.ended_at || r.created_at)}</span>}
+              )
+            }
+
+            // Offline message request row
+            const m = item.row
+            return (
+              <div key={`m-${m.id}`} className="chat-row" onClick={() => router.push(`/messages/${m.id}`)}>
+                <div className="avatar">
+                  {m.other?.avatar_url ? <img src={m.other.avatar_url} alt="" /> : ini(m.other?.name)}
                 </div>
+                <div className="chat-body">
+                  <div className="chat-header">
+                    <span className="chat-name">{m.other?.name || (m.iAmListener ? 'Seeker' : 'Listener')}</span>
+                    <span className="role-tag" style={{background:'#F3E8FF',color:'#6B21A8'}}>
+                      {m.iAmListener ? (m.is_read ? '✉️ Message' : '✉️ New') : '✉️ Message sent'}
+                    </span>
+                  </div>
+                  <div className="chat-preview">
+                    <span className="preview-text">{msgPreview(m)}</span>
+                    <span className="badge-ended">{fmtTime(m.updated_at || m.created_at)}</span>
+                  </div>
+                </div>
+                {m.iAmListener && !m.is_read && (
+                  <div style={{width:10,height:10,borderRadius:'50%',background:'#7C3AED',flexShrink:0}} />
+                )}
               </div>
-              {r.status === 'active' && (
-                <button className="join-btn" onClick={e => { e.stopPropagation(); openRow(r) }}>
-                  {r.iAmListener ? 'Join' : 'Rejoin'}
-                </button>
-              )}
-            </div>
-          ))
+            )
+          })
         )}
       </div>
     </>

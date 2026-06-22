@@ -102,6 +102,13 @@ export default function ListenerClient({ id }: { id: string }) {
   const [bookError, setBookError] = useState<string | null>(null)
   const [freeTrialUsed, setFreeTrialUsed] = useState(false)
   const [isUnlimitedTester, setIsUnlimitedTester] = useState(false)
+  // Offline messaging state
+  const [msgCount, setMsgCount]         = useState(0)
+  const [showMsgCompose, setShowMsgCompose] = useState(false)
+  const [msgText, setMsgText]           = useState('')
+  const [sendingMsg, setSendingMsg]     = useState(false)
+  const [msgSent, setMsgSent]           = useState(false)
+  const [msgError, setMsgError]         = useState<string | null>(null)
 
   useEffect(() => {
     // Fetch via API route (admin client server-side) — avoids the
@@ -152,6 +159,15 @@ export default function ListenerClient({ id }: { id: string }) {
     })
   }, [id])
 
+  // Fetch existing offline message count for this listener once we know auth + availability
+  useEffect(() => {
+    if (!userId || !listener || listener.is_available) return
+    fetch(`/api/listener/${id}/message`)
+      .then(r => r.ok ? r.json() : { count: 0 })
+      .then(d => setMsgCount(d.count ?? 0))
+      .catch(() => {})
+  }, [userId, id, listener?.is_available])
+
   if (notFound) return (
     <>
       <style>{S}</style>
@@ -181,6 +197,33 @@ export default function ListenerClient({ id }: { id: string }) {
     already_in_session: 'You already have an active session.',
     insufficient_balance: 'Your wallet balance is too low. Top up to continue.',
     free_trial_used: "You've used your free trial. Recharge your wallet to continue.",
+  }
+
+  async function sendMsg() {
+    if (!userId) { router.push('/auth'); return }
+    if (msgText.trim().length < 10) return
+    setSendingMsg(true)
+    setMsgError(null)
+    try {
+      const res = await fetch(`/api/listener/${id}/message`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: msgText.trim() }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setMsgError(data.message || 'Failed to send. Please try again.')
+        return
+      }
+      setMsgCount(data.count ?? msgCount + 1)
+      setMsgSent(true)
+      setShowMsgCompose(false)
+      setMsgText('')
+    } catch {
+      setMsgError('Network error. Please try again.')
+    } finally {
+      setSendingMsg(false)
+    }
   }
 
   async function book() {
@@ -288,48 +331,102 @@ export default function ListenerClient({ id }: { id: string }) {
       )}
 
       <div className="book-bar">
-        {bookError && (
-          <div className="wallet-warn">{bookError}</div>
-        )}
-        <div className="book-opts">
-          {([5,15,30,45] as const).map(d => {
-            const isFreeTier = d === 5
-            const disabled = isFreeTier && freeTrialUsed
-            return (
-              <div key={d}
-                className={`book-opt${duration===d?' sel':''}${disabled?' disabled':''}`}
-                onClick={() => !disabled && setDuration(d)}
-                role="button"
-                aria-pressed={duration===d}
-                aria-disabled={disabled}
-                aria-label={`${d} minute session${isFreeTier && !freeTrialUsed ? ' free' : ''}`}
-                style={disabled ? {opacity:0.45,cursor:'not-allowed'} : undefined}
-              >
-                <div className="opt-label">{d} min</div>
-                <div className="opt-price">{isFreeTier ? '—' : `₹${listener.rate_per_min*d+PLATFORM_FEE}`}</div>
-                {isFreeTier && (
-                  freeTrialUsed
-                    ? <div className="opt-free" style={{background:'#8E8E93'}}>Used</div>
-                    : <div className="opt-free">FREE</div>
-                )}
+        {listener.is_available ? (
+          // ── Online: existing booking UI ──────────────────────────────────
+          <>
+            {bookError && <div className="wallet-warn">{bookError}</div>}
+            <div className="book-opts">
+              {([5,15,30,45] as const).map(d => {
+                const isFreeTier = d === 5
+                const disabled = isFreeTier && freeTrialUsed
+                return (
+                  <div key={d}
+                    className={`book-opt${duration===d?' sel':''}${disabled?' disabled':''}`}
+                    onClick={() => !disabled && setDuration(d)}
+                    role="button"
+                    aria-pressed={duration===d}
+                    aria-disabled={disabled}
+                    aria-label={`${d} minute session${isFreeTier && !freeTrialUsed ? ' free' : ''}`}
+                    style={disabled ? {opacity:0.45,cursor:'not-allowed'} : undefined}
+                  >
+                    <div className="opt-label">{d} min</div>
+                    <div className="opt-price">{isFreeTier ? '—' : `₹${listener.rate_per_min*d+PLATFORM_FEE}`}</div>
+                    {isFreeTier && (
+                      freeTrialUsed
+                        ? <div className="opt-free" style={{background:'#8E8E93'}}>Used</div>
+                        : <div className="opt-free">FREE</div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+            <div className="type-row">
+              <button className={`type-btn${type==='text'?' sel':''}`} onClick={()=>setType('text')}>💬 Text chat</button>
+              <button className={`type-btn${type==='voice'?' sel':''}`} onClick={()=>setType('voice')}>🎙️ Voice call</button>
+            </div>
+            {duration === 5 && !freeTrialUsed && (
+              <div style={{background:'rgba(52,199,89,.1)',border:'1px solid rgba(52,199,89,.3)',borderRadius:10,padding:'8px 12px',fontSize:12,fontWeight:700,color:'#166534',marginBottom:8,textAlign:'center'}}>
+                ✅ No payment needed — completely free for 5 minutes
               </div>
-            )
-          })}
-        </div>
-        <div className="type-row">
-          <button className={`type-btn${type==='text'?' sel':''}`} onClick={()=>setType('text')}>💬 Text chat</button>
-          <button className={`type-btn${type==='voice'?' sel':''}`} onClick={()=>setType('voice')}>🎙️ Voice call</button>
-        </div>
-        {duration === 5 && !freeTrialUsed && (
-          <div style={{background:'rgba(52,199,89,.1)',border:'1px solid rgba(52,199,89,.3)',borderRadius:10,padding:'8px 12px',fontSize:12,fontWeight:700,color:'#166534',marginBottom:8,textAlign:'center'}}>
-            ✅ No payment needed — completely free for 5 minutes
+            )}
+            <button className="btn-book" onClick={book} disabled={isBooking}>
+              {isBooking ? <span className="spin">⟳</span>
+                : duration===5 ? '🎁 Try Free — 5 min, no payment needed →'
+                : `Book ${duration}-min ${type} — ₹${cost} →`}
+            </button>
+          </>
+        ) : (
+          // ── Offline: message request UI ──────────────────────────────────
+          <div>
+            <div style={{textAlign:'center',fontSize:13,fontWeight:700,color:'#5A7A8A',marginBottom:12}}>
+              😴 {listener.name} is offline right now
+            </div>
+            {msgSent && (
+              <div style={{background:'rgba(52,199,89,.1)',border:'1px solid rgba(52,199,89,.3)',borderRadius:12,padding:'10px 14px',fontSize:13,fontWeight:700,color:'#166534',marginBottom:12,textAlign:'center'}}>
+                ✅ Message sent! They&apos;ll see it when they&apos;re back online.
+                {msgCount < 2 && <div style={{fontSize:12,fontWeight:500,marginTop:4}}>You can send one follow-up from this page.</div>}
+              </div>
+            )}
+            {msgError && (
+              <div className="wallet-warn" style={{marginBottom:10}}>{msgError}</div>
+            )}
+            {showMsgCompose ? (
+              <div>
+                <textarea
+                  placeholder={`What's on your mind? ${listener.name} will see this when they're back.`}
+                  value={msgText}
+                  onChange={e => setMsgText(e.target.value)}
+                  maxLength={300}
+                  rows={4}
+                  style={{width:'100%',padding:'12px 14px',fontSize:14,fontFamily:'Nunito,sans-serif',fontWeight:500,color:'#0F4867',border:'1.5px solid #D5EEF6',borderRadius:14,outline:'none',resize:'none',marginBottom:6,boxSizing:'border-box'}}
+                />
+                <div style={{fontSize:11,color:'#5A7A8A',fontWeight:600,textAlign:'right',marginBottom:10}}>
+                  {msgText.trim().length}/300
+                </div>
+                <button className="btn-book" onClick={sendMsg} disabled={sendingMsg || msgText.trim().length < 10}>
+                  {sendingMsg ? <span className="spin">⟳</span> : 'Send message →'}
+                </button>
+                <button
+                  onClick={() => { setShowMsgCompose(false); setMsgText(''); setMsgError(null) }}
+                  style={{width:'100%',marginTop:8,padding:10,background:'none',border:'none',fontFamily:'Nunito,sans-serif',fontWeight:700,fontSize:13,color:'#5A7A8A',cursor:'pointer'}}
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : msgCount >= 2 ? (
+              <div style={{textAlign:'center',fontSize:13,fontWeight:600,color:'#5A7A8A',padding:'8px 0'}}>
+                You&apos;ve sent {msgCount} messages. Come back when they&apos;re online to book a session.
+              </div>
+            ) : (
+              <button
+                className="btn-book"
+                onClick={() => userId ? setShowMsgCompose(true) : router.push('/auth')}
+              >
+                {msgCount === 0 ? '✉️ Leave a message →' : '➕ Send a follow-up →'}
+              </button>
+            )}
           </div>
         )}
-        <button className="btn-book" onClick={book} disabled={isBooking}>
-          {isBooking ? <span className="spin">⟳</span>
-            : duration===5 ? '🎁 Try Free — 5 min, no payment needed →'
-            : `Book ${duration}-min ${type} — ₹${cost} →`}
-        </button>
       </div>
     </>
   )

@@ -180,6 +180,7 @@ export default function DashboardPage() {
   const [respondingIncoming, setRespondingIncoming] = useState(false)
   const [missedSessions, setMissedSessions] = useState<Array<{ id: string; created_at: string; duration_mins: number; session_type: string }>>([])
   const [monthEarned, setMonthEarned] = useState<number | null>(null)
+  const [unreadMsgCount, setUnreadMsgCount] = useState(0)
   const [countdown, setCountdown] = useState(60)
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const channelRef   = useRef<ReturnType<typeof sb.channel> | null>(null)
@@ -343,6 +344,12 @@ export default function DashboardPage() {
         .reduce((s, e) => s + (e.net_amount || 0), 0)
       setMonthEarned(sum)
     }
+
+    // Unread offline message requests — gracefully skips if migration 048 not run yet
+    fetch('/api/listener-messages')
+      .then(r => r.ok ? r.json() : { unreadCount: 0 })
+      .then(d => setUnreadMsgCount(d.unreadCount ?? 0))
+      .catch(() => {})
 
     if (channelRef.current) sb.removeChannel(channelRef.current)
     const channel = sb.channel(`dashboard-incoming-${u.id}`)
@@ -915,6 +922,24 @@ export default function DashboardPage() {
               💡 Stay online and respond within 5 minutes so you don&apos;t miss seekers who want to talk.
             </div>
           </>
+        )}
+
+        {/* Unread offline message requests */}
+        {unreadMsgCount > 0 && (
+          <button
+            onClick={() => router.push('/history')}
+            style={{ width:'100%', background:'#F3E8FF', border:'1.5px solid #D8B4FE', borderRadius:18, padding:'16px 20px', marginBottom:16, display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer', textAlign:'left' }}
+          >
+            <div>
+              <div style={{ fontSize:15, fontWeight:800, color:'#6B21A8' }}>
+                ✉️ {unreadMsgCount} unread message{unreadMsgCount > 1 ? 's' : ''}
+              </div>
+              <div style={{ fontSize:13, color:'#7C3AED', fontWeight:600, marginTop:2 }}>
+                Seekers left you a message while you were offline
+              </div>
+            </div>
+            <span style={{ fontSize:18 }}>→</span>
+          </button>
         )}
 
         {/* My Chats shortcut */}
