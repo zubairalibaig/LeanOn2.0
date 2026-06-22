@@ -808,7 +808,7 @@ function SessionContent() {
         body: JSON.stringify({ sessionId, rating: rating || undefined }),
       }).catch(() => {})
     }
-    router.push('/browse')
+    router.push(userId === listenerId ? '/dashboard' : '/browse')
   }
 
   // ── End screen (shared for both text and voice)
@@ -832,18 +832,26 @@ function SessionContent() {
             <div className="end-icon">🎉</div>
             <h2 className="end-h">Session ended</h2>
             <div className="end-duration">⏱ Duration: {durationDisplay}</div>
-            <p className="end-p">How are you feeling? Rate your session to help others find the right listener.</p>
+            <p className="end-p">{userId === listenerId
+              ? 'Thank you for supporting someone today. 💙'
+              : 'How are you feeling? Rate your session to help others find the right listener.'}</p>
+            {userId !== listenerId && (
             <div className="stars">
               {[1,2,3,4,5].map(s => (
                 <button key={s} className={`star${rating >= s ? ' lit' : ''}`} onClick={() => setRating(s)}>★</button>
               ))}
             </div>
+            )}
             <button className="btn-done" onClick={finishSession}>
-              {rating > 0 ? 'Submit & finish →' : 'Skip & finish →'}
+              {userId === listenerId
+                ? 'Back to dashboard →'
+                : rating > 0 ? 'Submit & finish →' : 'Skip & finish →'}
             </button>
-            <a href="/browse" style={{display:'block',marginTop:16,fontFamily:'Nunito,sans-serif',fontSize:14,fontWeight:700,color:'var(--teal)'}}>
-              Book another session →
-            </a>
+            {userId !== listenerId && (
+              <a href="/browse" style={{display:'block',marginTop:16,fontFamily:'Nunito,sans-serif',fontSize:14,fontWeight:700,color:'var(--teal)'}}>
+                Book another session →
+              </a>
+            )}
             {listenerId && (
               <button
                 onClick={() => setShowReport(true)}
