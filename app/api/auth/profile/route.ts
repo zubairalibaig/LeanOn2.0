@@ -3,6 +3,7 @@ import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-se
 import { checkRateLimit } from '@/lib/rate-limit'
 import { ensureUserRow } from '@/lib/ensure-user-row'
 import { logger } from '@/lib/logger'
+import { isUnlimitedTestPhone } from '@/lib/test-users'
 
 // GET — return the caller's name, role, and wallet_balance (admin-client read, bypasses RLS).
 // Used by auth page (name check) and wallet page (initial balance load).
@@ -13,14 +14,15 @@ export async function GET() {
     if (!user) return NextResponse.json({ name: null, role: null, wallet_balance: null })
     const admin = createAdminClient()
     const { data } = await admin.from('users').select('name, role, wallet_balance, avatar_url, phone, created_at').eq('id', user.id).maybeSingle()
+    const phone = data?.phone ?? (user.phone ? '+' + user.phone.replace(/^\+/, '') : null)
     return NextResponse.json({
       name: data?.name ?? null,
       role: data?.role ?? null,
       wallet_balance: data?.wallet_balance ?? null,
       avatar_url: data?.avatar_url ?? null,
-      // DB stores the +<cc><number> form; fall back to the auth phone (no +).
-      phone: data?.phone ?? (user.phone ? '+' + user.phone.replace(/^\+/, '') : null),
+      phone,
       created_at: data?.created_at ?? null,
+      is_unlimited_tester: isUnlimitedTestPhone(phone),
     })
   } catch {
     return NextResponse.json({ name: null, role: null, wallet_balance: null })

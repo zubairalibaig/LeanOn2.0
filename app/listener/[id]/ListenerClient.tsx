@@ -101,6 +101,7 @@ export default function ListenerClient({ id }: { id: string }) {
   const [showInsufficient, setShowInsufficient] = useState(false)
   const [bookError, setBookError] = useState<string | null>(null)
   const [freeTrialUsed, setFreeTrialUsed] = useState(false)
+  const [isUnlimitedTester, setIsUnlimitedTester] = useState(false)
 
   useEffect(() => {
     // Fetch via API route (admin client server-side) — avoids the
@@ -130,15 +131,24 @@ export default function ListenerClient({ id }: { id: string }) {
     client.auth.getUser().then(async ({data:{user}}) => {
       if (!user) return
       setUserId(user.id)
+
+      // Check profile first — unlimited testers skip all trial / balance gates
+      const profileRes = await fetch('/api/auth/profile')
+      const profileData = profileRes.ok ? await profileRes.json() : {}
+      const unlimited = profileData.is_unlimited_tester === true
+      setIsUnlimitedTester(unlimited)
+
       const [{data: userData}, totalTrials, listenerTrial] = await Promise.all([
         client.from('users').select('wallet_balance').eq('id', user.id).single(),
-        client.from('sessions').select('id', { count: 'exact', head: true }).eq('seeker_id', user.id).eq('is_free_trial', true),
-        client.from('sessions').select('id', { count: 'exact', head: true }).eq('seeker_id', user.id).eq('listener_id', id).eq('is_free_trial', true),
+        unlimited ? Promise.resolve({ count: 0 }) : client.from('sessions').select('id', { count: 'exact', head: true }).eq('seeker_id', user.id).eq('is_free_trial', true),
+        unlimited ? Promise.resolve({ count: 0 }) : client.from('sessions').select('id', { count: 'exact', head: true }).eq('seeker_id', user.id).eq('listener_id', id).eq('is_free_trial', true),
       ])
       if (userData) setBalance(userData.wallet_balance)
-      const used = (totalTrials.count ?? 0) >= MAX_FREE_TRIALS || (listenerTrial.count ?? 0) > 0
-      setFreeTrialUsed(used)
-      if (used) setDuration(15)
+      if (!unlimited) {
+        const used = (totalTrials.count ?? 0) >= MAX_FREE_TRIALS || (listenerTrial.count ?? 0) > 0
+        setFreeTrialUsed(used)
+        if (used) setDuration(15)
+      }
     })
   }, [id])
 
@@ -177,8 +187,8 @@ export default function ListenerClient({ id }: { id: string }) {
     if (!userId) { router.push('/auth'); return }
     // Double-click guard
     if (isBooking) return
-    // Client-side balance check
-    if (duration !== 5 && balance < cost) { setShowInsufficient(true); return }
+    // Client-side balance check (skipped for unlimited testers — server makes it free)
+    if (!isUnlimitedTester && duration !== 5 && balance < cost) { setShowInsufficient(true); return }
     setIsBooking(true)
     setBookError(null)
     try {

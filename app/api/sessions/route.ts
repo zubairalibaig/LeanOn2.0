@@ -50,8 +50,10 @@ export async function POST(req: NextRequest) {
 
     // Owner / QA accounts (configured via TEST_UNLIMITED_PHONES env var) skip
     // the free-trial caps entirely so they can start unlimited free sessions
-    // with any listener for testing and outreach.
+    // with any listener for testing and outreach, including longer durations at no cost.
     const unlimitedTester = isUnlimitedTestPhone(user.phone)
+    // effectivelyFree = true means zero cost and free-trial flag — applies to all durations for unlimited testers
+    const effectivelyFree = isFree || unlimitedTester
 
     // Up to MAX_FREE_TRIALS free trials per user, ONE per listener — lets seekers try multiple listeners
     if (isFree && !unlimitedTester) {
@@ -92,7 +94,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Block paid sessions if listener already has an active paid session
-    if (!isFree) {
+    if (!effectivelyFree) {
       const { data: activeSessions } = await sb
         .from('sessions')
         .select('id')
@@ -117,8 +119,8 @@ export async function POST(req: NextRequest) {
     }
 
     const rate  = lp.rate_per_min ?? 10  // ?? not || — a legitimate rate of 0 must not be overridden
-    const base  = isFree ? 0 : rate * durationMins
-    const total = isFree ? 0 : base + PLATFORM_FEE
+    const base  = effectivelyFree ? 0 : rate * durationMins
+    const total = effectivelyFree ? 0 : base + PLATFORM_FEE
 
     // Note: balance check, seeker-active-session check, and listener-busy check are
     // all handled atomically inside the create_session RPC (migration 002).
@@ -133,8 +135,8 @@ export async function POST(req: NextRequest) {
       p_session_type:  sessionType,
       p_duration_mins: durationMins,
       p_amount_held:   total,
-      p_platform_fee:  isFree ? 0 : PLATFORM_FEE,
-      p_is_free_trial: isFree,
+      p_platform_fee:  effectivelyFree ? 0 : PLATFORM_FEE,
+      p_is_free_trial: effectivelyFree,
       p_agora_channel: agoraChannel,
     })
 
@@ -152,7 +154,7 @@ export async function POST(req: NextRequest) {
       throw rpcErr
     }
 
-    if (!isFree) {
+    if (!effectivelyFree) {
       const { error: txErr } = await sb.from('wallet_transactions').insert({
         user_id:     user.id,
         amount:      total,
