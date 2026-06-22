@@ -545,8 +545,11 @@ function SessionContent() {
 
   // Agora voice call — only for voice sessions
   // Includes: token refresh, network-disconnect reconnect, Safari/Bluetooth handling
+  // IMPORTANT: guard on sessionStatus === 'active' — the token API rejects pending
+  // sessions with 403, which previously caused the catch block to call setEnded(true)
+  // and show the end screen before the listener had even accepted.
   useEffect(() => {
-    if (!isVoice || !sessionId) return
+    if (!isVoice || !sessionId || sessionStatus !== 'active') return
 
     let cancelled = false
     let reconnectTimer: ReturnType<typeof setTimeout> | null = null
@@ -696,7 +699,7 @@ function SessionContent() {
         agoraRef.current = null
       }
     }
-  }, [isVoice, sessionId])
+  }, [isVoice, sessionId, sessionStatus])
 
   // Leave Agora channel when session ends (unpublish → close → leave)
   useEffect(() => {
