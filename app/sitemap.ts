@@ -6,18 +6,19 @@ export const dynamic = 'force-static'
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = 'https://www.leanon.app'
   const d = (s: string) => new Date(s)
+  const TODAY = '2026-06-24'
   return [
-    { url: base,                                       lastModified: d('2026-05-01'), changeFrequency: 'daily',   priority: 1.0 },
-    { url: `${base}/browse`,                           lastModified: d('2026-05-01'), changeFrequency: 'hourly',  priority: 0.95 },
+    { url: base,                                       lastModified: d(TODAY),        changeFrequency: 'daily',   priority: 1.0 },
+    { url: `${base}/browse`,                           lastModified: d(TODAY),        changeFrequency: 'hourly',  priority: 0.95 },
     { url: `${base}/about`,                            lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${base}/become-listener`,                  lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/become-listener`,                  lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/contact`,                          lastModified: d('2026-01-01'), changeFrequency: 'yearly',  priority: 0.5 },
-    { url: `${base}/faq`,                              lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/faq`,                              lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/glossary`,                         lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${base}/privacy`,                          lastModified: d('2026-01-01'), changeFrequency: 'yearly',  priority: 0.3 },
     { url: `${base}/terms`,                            lastModified: d('2026-01-01'), changeFrequency: 'yearly',  priority: 0.3 },
-    { url: `${base}/trust`,                            lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${base}/press`,                            lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${base}/trust`,                            lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/press`,                            lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.6 },
     // Support hub + topic pages
     { url: `${base}/support`,                          lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/support/loneliness`,               lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.85 },

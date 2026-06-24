@@ -13,15 +13,23 @@ const AI_CRAWLERS = [
   'Claude-Web',         // Claude live browsing
   'anthropic-ai',       // Anthropic (legacy)
   'Google-Extended',    // Gemini training
+  'Googlebot',          // Google core (redundant with * but explicit)
+  'Bingbot',            // Bing / Microsoft Copilot indexing
+  'msnbot',             // Bing legacy
+  'BingPreview',        // Bing link preview
   'PerplexityBot',      // Perplexity indexing
   'Perplexity-User',    // Perplexity live browsing
   'Applebot-Extended',  // Apple Intelligence
+  'Applebot',           // Apple web crawler
   'Amazonbot',          // Alexa / Rufus
   'meta-externalagent', // Meta AI
   'DuckAssistBot',      // DuckDuckGo AI
-  'cohere-ai',
-  'YouBot',
+  'cohere-ai',          // Cohere AI
+  'YouBot',             // You.com AI
   'CCBot',              // Common Crawl — feeds many open models
+  'Bytespider',         // ByteDance / TikTok AI
+  'Diffbot',            // Structured data extraction, feeds AI datasets
+  'ia_archiver',        // Wayback Machine — improves AI training data quality
 ]
 
 export default function robots(): MetadataRoute.Robots {

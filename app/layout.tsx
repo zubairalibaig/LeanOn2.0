@@ -35,14 +35,12 @@ export const metadata: Metadata = {
     siteName: 'LeanOn',
     title: 'LeanOn — Peer Emotional Support, India',
     description: "Talk to a trained peer listener, anonymously. Free first session.",
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'LeanOn — Peer Support India' }],
   },
   twitter: {
     card: 'summary_large_image',
     site: '@leanonapp',
     title: 'LeanOn — Peer Emotional Support, India',
     description: "Talk to a trained peer listener, anonymously. Free first session.",
-    images: ['/og-image.png'],
   },
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? undefined,
@@ -139,6 +137,59 @@ const webAppJsonLd = {
   "offers": { "@type": "Offer", "priceCurrency": "INR", "price": "0", "description": "First 5 minutes free" }
 }
 
+const serviceJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "@id": "https://www.leanon.app/#service",
+  "name": "Peer Emotional Support Session",
+  "serviceType": "Peer Emotional Support",
+  "alternateName": ["Peer Support Session", "Online Listener Session", "Emotional Support Chat"],
+  "provider": {
+    "@type": "Organization",
+    "@id": "https://www.leanon.app/#organization",
+    "name": "LeanOn"
+  },
+  "description": "One-on-one text or voice session with a verified peer listener in India. Listeners have lived experience of loneliness, anxiety, burnout, grief, breakups, career stress, and family pressure. Not therapy — human peer support available 24/7.",
+  "category": "Mental Health Support",
+  "areaServed": { "@type": "Country", "name": "India", "sameAs": "https://www.wikidata.org/wiki/Q668" },
+  "availableLanguage": [
+    "English", "Hindi", "Tamil", "Telugu", "Kannada", "Malayalam",
+    "Marathi", "Bengali", "Gujarati", "Punjabi", "Odia", "Urdu"
+  ],
+  "hoursAvailable": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+    "opens": "00:00",
+    "closes": "23:59"
+  },
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Free Trial Session",
+      "price": "0",
+      "priceCurrency": "INR",
+      "description": "First 5-minute session is completely free — up to 5 free sessions per user, one per listener. No credit card required.",
+      "availability": "https://schema.org/InStock",
+      "eligibleRegion": { "@type": "Country", "name": "India" }
+    },
+    {
+      "@type": "Offer",
+      "name": "Paid Peer Support Session",
+      "description": "15, 30, or 45-minute sessions at listener-set rates of ₹8–25 per minute, plus a flat ₹10 platform fee. Unused time fully refunded.",
+      "priceCurrency": "INR",
+      "priceRange": "₹8–25 per minute",
+      "availability": "https://schema.org/InStock",
+      "eligibleRegion": { "@type": "Country", "name": "India" }
+    }
+  ],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "reviewCount": "120",
+    "bestRating": "5"
+  }
+}
+
 const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -152,6 +203,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
         />
         <meta name="theme-color" content="#1A8FA0" />
         {/* India geo-targeting signals */}

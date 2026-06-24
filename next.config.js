@@ -27,6 +27,28 @@ const nextConfig = {
           ] : []),
         ],
       },
+      // Long-lived cache for static public assets — logo, manifest, llms.txt, OG images
+      // CDN caches these at the edge; stale-while-revalidate keeps latency low on revalidation
+      {
+        source: '/logo.png',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, stale-while-revalidate=86400' }],
+      },
+      {
+        source: '/manifest.json',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=3600' }],
+      },
+      {
+        source: '/llms.txt',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=3600' }],
+      },
+      {
+        source: '/robots.txt',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=3600, stale-while-revalidate=600' }],
+      },
+      {
+        source: '/sitemap.xml',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=3600, stale-while-revalidate=600' }],
+      },
     ]
   },
 
