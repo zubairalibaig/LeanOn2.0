@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     default: 'LeanOn — Peer Emotional Support, India',
     template: '%s | LeanOn — Peer Support India',
   },
-  description: "Talk to a trained peer listener, anonymously. Free first session. India's peer support platform — available 24/7.",
+  description: "Talk to a verified peer listener in India, anonymously and without judgment. First session is free. Available 24/7 in 12 Indian languages — for loneliness, anxiety, burnout, grief, and more.",
   manifest: '/manifest.json',
   icons: { icon: '/logo.png', apple: '/logo.png' },
   keywords: [
@@ -112,12 +112,6 @@ const jsonLd = {
         description: 'First 5-minute session is completely free',
         availability: 'https://schema.org/InStock',
       },
-      aggregateRating: {
-        '@type': 'AggregateRating',
-        ratingValue: '4.9',
-        reviewCount: '120',
-        bestRating: '5',
-      },
       description: 'LeanOn — someone to lean on anytime. Peer emotional support platform for India. Talk to verified listeners who have lived through what you are facing.',
     },
   ],
@@ -181,13 +175,7 @@ const serviceJsonLd = {
       "availability": "https://schema.org/InStock",
       "eligibleRegion": { "@type": "Country", "name": "India" }
     }
-  ],
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.9",
-    "reviewCount": "120",
-    "bestRating": "5"
-  }
+  ]
 }
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
