@@ -184,6 +184,9 @@ export default function DashboardPage() {
   const [countdown, setCountdown] = useState(60)
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const channelRef   = useRef<ReturnType<typeof sb.channel> | null>(null)
+  // Tracks the id of the request currently shown in the modal, so the live
+  // realtime event and the catch-up query never clobber or duplicate each other.
+  const incomingIdRef = useRef<string | null>(null)
 
   // Edit profile state
   const [showEdit, setShowEdit]       = useState(false)
@@ -243,14 +246,32 @@ export default function DashboardPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ heartbeat: true }),
         }).catch(() => {})
+        // Mobile browsers suspend the realtime websocket while backgrounded, so
+        // a request that arrived meanwhile never fired an INSERT event. Re-query
+        // pending requests on foreground to recover it.
+        if (user?.id) checkPendingRequest(user.id)
       }
     }
     document.addEventListener('visibilitychange', handleVis)
     return () => document.removeEventListener('visibilitychange', handleVis)
-  }, [avail])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [avail, user?.id])
 
-  function startCountdown(onExpire: () => void) {
-    setCountdown(60)
+  // Safety-net poll: receiving a paid request is revenue-critical, so we don't
+  // rely on the realtime INSERT event alone (websockets drop, subscriptions
+  // race the insert). Every 20s while online and idle, re-check for a pending
+  // request. Guaranteed to surface it well within the 5-minute accept window.
+  useEffect(() => {
+    if (!avail || !user?.id) return
+    const iv = setInterval(() => {
+      if (!incomingIdRef.current) checkPendingRequest(user.id)
+    }, 20_000)
+    return () => clearInterval(iv)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [avail, user?.id])
+
+  function startCountdown(onExpire: () => void, initialSecs = 60) {
+    setCountdown(initialSecs)
     if (countdownRef.current) clearInterval(countdownRef.current)
     countdownRef.current = setInterval(() => {
       setCountdown(prev => {
@@ -264,7 +285,49 @@ export default function DashboardPage() {
     }, 1000)
   }
 
+  // Surface a pending request in the accept/decline modal and wire its countdown.
+  // Shared by the live realtime INSERT path and the catch-up query below, so both
+  // behave identically. `secsLeft` is how long the listener has to respond.
+  function surfaceIncoming(s: IncomingSession & { status?: string }, secsLeft = 60) {
+    // Don't clobber a request already on screen (e.g. realtime + catch-up race)
+    if (incomingIdRef.current && incomingIdRef.current !== s.id) return
+    incomingIdRef.current = s.id
+    setIncomingSession(s)
+    startCountdown(() => {
+      const expiredId = s.id
+      incomingIdRef.current = null
+      setIncomingSession(null)
+      // Auto-decline so the seeker gets an immediate refund instead of waiting
+      // for their own 5-minute timeout to fire.
+      fetch(`/api/sessions/${expiredId}/decline`, { method: 'POST' }).catch(() => {})
+      showToast('Session request expired — seeker has been refunded.', 'info')
+    }, secsLeft)
+  }
+
+  // Catch-up: fetch any pending request that arrived while the realtime channel
+  // wasn't subscribed (page just loaded, tab was backgrounded, socket blipped).
+  // Without this, a request is only ever delivered by the live INSERT event —
+  // so any subscription-timing race drops it silently and the listener never
+  // sees it. The 5-minute validity window matches the seeker's auto-cancel.
+  async function checkPendingRequest(listenerId: string) {
+    if (incomingIdRef.current) return // already showing one
+    const { data } = await sb
+      .from('sessions')
+      .select('id, duration_mins, session_type, amount_held, seeker_id, created_at, status')
+      .eq('listener_id', listenerId)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false })
+      .limit(1)
+    const row = data?.[0]
+    if (!row) return
+    const ageSecs = Math.floor((Date.now() - new Date(row.created_at as string).getTime()) / 1000)
+    const remaining = 5 * 60 - ageSecs // seeker cancels at 5 min
+    if (remaining <= 5) return // about to expire — don't bother surfacing
+    surfaceIncoming(row as IncomingSession & { status?: string }, Math.min(60, remaining))
+  }
+
   function dismissIncoming() {
+    incomingIdRef.current = null
     setIncomingSession(null)
     if (countdownRef.current) clearInterval(countdownRef.current)
   }
@@ -362,18 +425,16 @@ export default function DashboardPage() {
         const s = payload.new as IncomingSession & { status?: string }
         // Only surface genuine pending requests (ignore any non-pending inserts)
         if (s.status && s.status !== 'pending') return
-        setIncomingSession(s)
-        startCountdown(() => {
-          const expiredId = s.id
-          setIncomingSession(null)
-          // Auto-decline so the seeker gets an immediate refund instead of
-          // waiting up to 5 more minutes for their own timeout to fire.
-          fetch(`/api/sessions/${expiredId}/decline`, { method: 'POST' }).catch(() => {})
-          showToast('Session request expired — seeker has been refunded.', 'info')
-        })
+        surfaceIncoming(s)
       })
       .subscribe()
     channelRef.current = channel
+
+    // Catch-up for any request that arrived before the channel finished
+    // subscribing (the INSERT event only fires for rows created AFTER the
+    // subscription is live — this closes that race so paid + free requests
+    // both reach the listener reliably).
+    checkPendingRequest(u.id)
    } catch (err) {
      console.error('Dashboard load error:', err)
      setLoadError('Something went wrong loading your dashboard. Please retry.')
