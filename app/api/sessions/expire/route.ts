@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient, createServerSupabaseClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
+import { settleSession } from '@/lib/session-billing'
 
 // GET — expire abandoned sessions
 // Sessions where status='active' AND started_at < now() - (duration_mins + 10 minutes)
@@ -56,8 +57,6 @@ export async function GET(req: NextRequest) {
       const allowedMs = (session.duration_mins + 10) * 60_000
       if (now - startedAt < allowedMs) continue
 
-      // Calculate actual duration used
-      const actualMins = Math.floor((now - startedAt) / 60_000)
       const endedAt = new Date().toISOString()
 
       // Optimistic lock
@@ -72,15 +71,17 @@ export async function GET(req: NextRequest) {
       if (!completed) continue
       expiredCount++
 
-      // Pro-rate listener earnings based on actual time used vs booked time
+      // Shared settlement math (lib/session-billing.ts). This path only fires
+      // when a session overran by 10+ minutes, so it settles as a full session.
       const bookedMins = session.duration_mins as number
-      const usedMins = Math.min(actualMins, bookedMins)
-      const listenerRate = session.amount_held > 0 && bookedMins > 0
-        ? (session.amount_held - (session.platform_fee ?? 0)) / bookedMins
-        : 0
-
-      const listenerEarning = usedMins < 1 ? 0 : Math.floor(listenerRate * usedMins)
-      const refundAmount = session.is_free_trial ? 0 : Math.max(0, session.amount_held - listenerEarning - (session.platform_fee ?? 0))
+      const { billedMins, listenerEarning, refundAmount } = settleSession({
+        startedAt:   (session.started_at as string | null) ?? null,
+        endedAt,
+        bookedMins,
+        amountHeld:  session.amount_held as number,
+        platformFee: (session.platform_fee as number) ?? 0,
+        isFreeTrial: session.is_free_trial as boolean,
+      })
 
       if (listenerEarning > 0 && !session.is_free_trial) {
         await sb.rpc('credit_wallet', { p_user_id: session.listener_id, p_amount: listenerEarning })
@@ -122,7 +123,7 @@ export async function GET(req: NextRequest) {
         total_sessions: ((lp?.total_sessions as number) || 0) + 1,
       }).eq('user_id', session.listener_id).then(() => {}, () => {})
 
-      logger.info('Auto-expired session', { sessionId: session.id, actualMins, listenerEarning, refundAmount })
+      logger.info('Auto-expired session', { sessionId: session.id, billedMins, listenerEarning, refundAmount })
     }
 
     return NextResponse.json({ expired: expiredCount })

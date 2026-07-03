@@ -3,6 +3,7 @@ import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-se
 import { checkRateLimit } from '@/lib/rate-limit'
 import { PLATFORM_FEE, FREE_SESSION_MINS, MAX_FREE_TRIALS, SESSION_DURATIONS } from '@/lib/constants'
 import { isUnlimitedTestPhone } from '@/lib/test-users'
+import { settleSession } from '@/lib/session-billing'
 import { notifySessionComplete } from '@/lib/notify'
 import { logger } from '@/lib/logger'
 import { sendPushNotification } from '@/lib/firebase-admin'
@@ -249,32 +250,20 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ success: true })
     }
 
-    // Calculate actual duration and pro-rate (Item 27: harassment eject / early session refund)
+    // Settlement math lives in lib/session-billing.ts (shared with the cleanup
+    // and expire crons). Bills whole minutes rounding UP capped at booked — a
+    // full-length session that clocks 14m58s settles as 15/15 with no refund;
+    // an early exit still pro-rates; < 60s is a full refund (accidental start).
     const endedAt = completed.ended_at ?? new Date().toISOString()
-    const startedAt = session.started_at ?? endedAt
-    const actualMins = Math.max(0, Math.floor(
-      (new Date(endedAt).getTime() - new Date(startedAt).getTime()) / 60_000
-    ))
     const bookedMins = session.duration_mins as number
-    const baseListenerEarning = session.amount_held - (session.platform_fee ?? 0)
-
-    // If session ended in < 1 minute: full refund to seeker, no listener earnings
-    // If partial: pro-rate based on actual vs booked minutes
-    let listenerEarning: number
-    let refundAmount = 0
-    if (session.is_free_trial) {
-      listenerEarning = 0
-    } else if (actualMins < 1) {
-      listenerEarning = 0
-      refundAmount = session.amount_held
-    } else if (actualMins < bookedMins) {
-      // Pro-rate
-      listenerEarning = Math.floor(baseListenerEarning * actualMins / bookedMins)
-      refundAmount = session.amount_held - listenerEarning - (session.platform_fee ?? 0)
-      refundAmount = Math.max(0, refundAmount)
-    } else {
-      listenerEarning = baseListenerEarning
-    }
+    const { billedMins, listenerEarning, refundAmount } = settleSession({
+      startedAt:   session.started_at ?? null,
+      endedAt,
+      bookedMins,
+      amountHeld:  session.amount_held,
+      platformFee: session.platform_fee ?? 0,
+      isFreeTrial: session.is_free_trial,
+    })
 
     // Issue refund to seeker if applicable
     if (refundAmount > 0 && !session.is_free_trial) {
@@ -288,7 +277,7 @@ export async function PATCH(req: NextRequest) {
           user_id: session.seeker_id,
           amount: refundAmount,
           type: 'refund',
-          description: actualMins < 1 ? 'Session refund (ended < 1 min)' : `Session refund (${actualMins}/${bookedMins} min used)`,
+          description: billedMins < 1 ? 'Session refund (ended < 1 min)' : `Session refund (${billedMins}/${bookedMins} min used)`,
           session_id: sessionId,
         }).then(() => {}, (e) => logger.error('refund wallet_transactions insert failed', { sessionId, error: e }))
       }

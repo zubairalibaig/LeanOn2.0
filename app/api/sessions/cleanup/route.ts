@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
+import { settleSession } from '@/lib/session-billing'
 
 // POST — clean up sessions that have been "active" past their scheduled end time.
 // Called by Vercel cron job (daily at 02:00 UTC) and by session page on mount (self-heal).
@@ -83,19 +84,18 @@ export async function POST(req: Request) {
 
     if (!completed) continue // already handled by another process
 
-    // Pro-rate listener earnings based on actual time used vs booked time
+    // Shared settlement math (lib/session-billing.ts) — whole minutes rounded
+    // UP capped at booked, so a full-length session never gets shaved by floor.
     const endedAt = completed.ended_at ?? new Date().toISOString()
-    const startedAt = session.started_at ?? endedAt
-    const actualMins = Math.max(0, Math.floor(
-      (new Date(endedAt).getTime() - new Date(startedAt).getTime()) / 60_000
-    ))
     const bookedMins = session.duration_mins as number
-    const baseEarning = (session.amount_held as number) - ((session.platform_fee as number) ?? 0)
-    const earning = actualMins < 1 ? 0
-      : actualMins >= bookedMins ? baseEarning
-      : Math.floor(baseEarning * actualMins / bookedMins)
-    const refundAmount = session.is_free_trial ? 0
-      : Math.max(0, (session.amount_held as number) - earning - ((session.platform_fee as number) ?? 0))
+    const { billedMins, listenerEarning: earning, refundAmount } = settleSession({
+      startedAt:   (session.started_at as string | null) ?? null,
+      endedAt,
+      bookedMins,
+      amountHeld:  session.amount_held as number,
+      platformFee: (session.platform_fee as number) ?? 0,
+      isFreeTrial: session.is_free_trial as boolean,
+    })
 
     // Refund seeker for unused portion
     if (refundAmount > 0 && !session.is_free_trial) {
@@ -107,7 +107,7 @@ export async function POST(req: Request) {
           user_id: session.seeker_id,
           amount: refundAmount,
           type: 'refund',
-          description: `Session refund (auto-closed, ${actualMins}/${bookedMins} min used)`,
+          description: `Session refund (auto-closed, ${billedMins}/${bookedMins} min used)`,
           session_id: session.id,
         }).then(() => {}, (e) => logger.error('cleanup: seeker refund tx insert failed:', { sessionId: session.id, error: String(e) }))
       }
@@ -127,7 +127,7 @@ export async function POST(req: Request) {
           user_id: session.listener_id,
           amount: earning,
           type: 'credit',
-          description: `Session earnings (auto-closed, ${actualMins}/${bookedMins} min)`,
+          description: `Session earnings (auto-closed, ${billedMins}/${bookedMins} min)`,
           session_id: session.id,
         })
         // Insert earnings record so it appears in the earnings dashboard
