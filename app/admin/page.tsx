@@ -278,6 +278,7 @@ export default function AdminPage() {
   // Payouts + Refunds
   const [payouts, setPayouts] = useState<PayoutRow[]>([])
   const [refunds, setRefunds] = useState<RefundRow[]>([])
+  const [rzpxEnabled, setRzpxEnabled] = useState(false)
   const [payoutsLoading, setPayoutsLoading] = useState(false)
   // Inline confirm state for destructive ban action (window.confirm blocked in mobile)
   const [confirmBanId, setConfirmBanId] = useState<string | null>(null)
@@ -407,6 +408,7 @@ export default function AdminPage() {
       const json = await res.json()
       setPayouts(json.pendingPayouts ?? [])
       setRefunds(json.refundRequests ?? [])
+      setRzpxEnabled(json.razorpayxEnabled === true)
     } else {
       showToast('Failed to load payouts — switch tabs to retry')
     }
@@ -1299,9 +1301,15 @@ export default function AdminPage() {
               Pending Payout Requests
               {payouts.length > 0 && <span className="count-badge">{payouts.length}</span>}
             </div>
-            <div style={{ background: '#FFF8E7', border: '1.5px solid #FFD580', borderRadius: 12, padding: '12px 16px', marginBottom: 16, fontSize: 13, fontWeight: 600, color: '#7A5000', lineHeight: 1.6 }}>
-              <strong>Manual payout process:</strong> Payouts are NOT processed automatically. When a listener requests a payout, you must manually transfer funds via UPI/NEFT using the bank details stored in their listener application. Once transferred, click <strong>Mark Paid</strong> to update the internal ledger.
-            </div>
+            {rzpxEnabled ? (
+              <div style={{ background: '#EDFAF3', border: '1.5px solid #A7E3C4', borderRadius: 12, padding: '12px 16px', marginBottom: 16, fontSize: 13, fontWeight: 600, color: '#14532D', lineHeight: 1.6 }}>
+                <strong>⚡ RazorpayX automated payouts active:</strong> clicking <strong>Pay via UPI</strong> transfers the money to the listener&apos;s UPI id directly from your RazorpayX balance and marks the request paid. Keep the RazorpayX balance topped up — low-balance payouts queue until the next top-up.
+              </div>
+            ) : (
+              <div style={{ background: '#FFF8E7', border: '1.5px solid #FFD580', borderRadius: 12, padding: '12px 16px', marginBottom: 16, fontSize: 13, fontWeight: 600, color: '#7A5000', lineHeight: 1.6 }}>
+                <strong>Manual payout process:</strong> Payouts are NOT processed automatically. Transfer funds via UPI/NEFT to the UPI id shown on each request, then click <strong>Mark Paid</strong> to update the internal ledger. (To automate: activate RazorpayX and set <code>RAZORPAYX_ACCOUNT_NUMBER</code> in Vercel.)
+              </div>
+            )}
             {kpis && payouts.length > 0 && (
               <div style={{ background: 'white', border: '1.5px solid var(--border)', borderRadius: 12, padding: '12px 18px', marginBottom: 16, display: 'flex', gap: 32 }}>
                 <div>
@@ -1337,8 +1345,8 @@ export default function AdminPage() {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                   <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--navy)' }}>₹{p.amount}</div>
-                  <button className="btn btn-teal" disabled={busy !== null} onClick={() => adminAction('complete_payout', p.id, `Marked ₹${p.amount} payout complete`)}>
-                    {busy === `complete_payout:${p.id}` ? 'Saving…' : 'Mark Paid'}
+                  <button className="btn btn-teal" disabled={busy !== null} onClick={() => adminAction('complete_payout', p.id, rzpxEnabled && p.upi_id ? `₹${p.amount} sent via RazorpayX` : `Marked ₹${p.amount} payout complete`)}>
+                    {busy === `complete_payout:${p.id}` ? 'Sending…' : rzpxEnabled && p.upi_id ? '⚡ Pay via UPI' : 'Mark Paid'}
                   </button>
                   <button
                     className="btn btn-red"

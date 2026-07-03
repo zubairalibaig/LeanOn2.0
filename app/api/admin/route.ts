@@ -4,6 +4,7 @@ import { createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 import { requireAdmin, ADMIN_PASSWORD_USER_ID } from '@/lib/require-admin'
+import { razorpayxEnabled, createUpiPayout } from '@/lib/razorpayx'
 
 function getRzp() {
   return new Razorpay({
@@ -73,6 +74,8 @@ export async function GET(req: NextRequest) {
     prTotal: prCount ?? 0,
     prPage,
     refundRequests: refundRequests || [],
+    // Drives the admin UI banner: automated RazorpayX transfer vs manual UPI.
+    razorpayxEnabled: razorpayxEnabled(),
   })
 }
 
@@ -150,14 +153,42 @@ export async function POST(req: NextRequest) {
   if (action === 'complete_payout') {
     // Claim the row FIRST (atomic optimistic lock on status='pending').
     const { data: pr, error: claimErr } = await admin.from('payout_requests')
-      .update({ status: 'completed' })
+      .update({ status: 'completed', processed_at: new Date().toISOString() })
       .eq('id', id)
       .eq('status', 'pending')
-      .select('user_id, amount')
+      .select('user_id, amount, upi_id')
       .single()
 
     if (claimErr || !pr) {
       return NextResponse.json({ error: 'Payout request not found or already processed' }, { status: 404 })
+    }
+
+    // Automated transfer via RazorpayX when configured and the request has a
+    // UPI id. The idempotency header (keyed on the request id) makes retries
+    // safe — re-sending the same request cannot pay twice. If the transfer is
+    // NOT accepted, revert the claim so the admin can retry or pay manually;
+    // no wallet mutation has happened yet at this point.
+    let rzpxPayoutId: string | null = null
+    if (razorpayxEnabled() && pr.upi_id) {
+      const { data: userRow } = await admin.from('users').select('name').eq('id', pr.user_id).single()
+      const result = await createUpiPayout({
+        name:        (userRow?.name as string) ?? 'LeanOn Listener',
+        upiId:       pr.upi_id as string,
+        amountInr:   Number(pr.amount),
+        referenceId: id,
+        userId:      pr.user_id as string,
+      })
+      if (!result.ok) {
+        await admin.from('payout_requests').update({ status: 'pending', processed_at: null }).eq('id', id)
+        return NextResponse.json({
+          error: `RazorpayX transfer failed: ${result.error}. The request is back in pending — retry, or transfer manually and use Mark Paid after temporarily unsetting RAZORPAYX_ACCOUNT_NUMBER.`,
+        }, { status: 502 })
+      }
+      rzpxPayoutId = result.payoutId
+      await admin.from('payout_requests')
+        .update({ admin_notes: `RazorpayX payout: ${rzpxPayoutId} (${result.status})` })
+        .eq('id', id)
+        .then(() => {}, (e) => logger.warn('payout admin_notes update failed:', { id, error: String(e) }))
     }
 
     // Soft-hold model: the wallet was already deducted when the listener
@@ -180,8 +211,18 @@ export async function POST(req: NextRequest) {
     }
     // Otherwise the balance was already held at request time — nothing to deduct.
 
+    await admin.from('notifications').insert({
+      user_id:    pr.user_id,
+      type:       'payout_update',
+      title:      rzpxPayoutId ? 'Payout sent! 🎉' : 'Payout completed',
+      body:       rzpxPayoutId
+        ? `₹${pr.amount} is on its way to your UPI (${pr.upi_id}). It usually arrives within minutes.`
+        : `Your payout of ₹${pr.amount} has been processed.`,
+      action_url: '/dashboard',
+    }).then(() => {}, () => {})
+
     await auditLog(admin, user!.id, 'complete_payout', id)
-    return NextResponse.json({ ok: true })
+    return NextResponse.json({ ok: true, rzpxPayoutId })
   }
 
   if (action === 'reject_payout') {
