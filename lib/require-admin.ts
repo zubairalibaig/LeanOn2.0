@@ -42,6 +42,30 @@ export function dbUserIdOrNull(userId: string): string | null {
 
 const normalizePhone = (p: string | null | undefined) => (p ?? '').replace(/\D/g, '')
 
+// ── Multi-admin accounts ──────────────────────────────────────────────
+// Each admin logs in with their own phone + their own PIN (same two-step
+// flow). Configured via env vars ONLY (CLAUDE.md rule — no identities in
+// code or DB):
+//   ADMIN_PHONE + ADMIN_PIN           — the original/primary admin (legacy pair)
+//   ADMIN_ACCOUNTS="phone:pin,phone:pin,…" — additional admins
+// Example: ADMIN_ACCOUNTS="+917483334235:482913"
+type AdminAccount = { phone: string; pin: string }
+
+function adminAccounts(): AdminAccount[] {
+  const list: AdminAccount[] = []
+  if (process.env.ADMIN_PHONE && process.env.ADMIN_PIN) {
+    list.push({ phone: normalizePhone(process.env.ADMIN_PHONE), pin: process.env.ADMIN_PIN })
+  }
+  for (const entry of (process.env.ADMIN_ACCOUNTS || '').split(',')) {
+    const sep = entry.lastIndexOf(':')
+    if (sep <= 0) continue
+    const phone = normalizePhone(entry.slice(0, sep))
+    const pin   = entry.slice(sep + 1).trim()
+    if (phone && pin) list.push({ phone, pin })
+  }
+  return list
+}
+
 export async function requireAdmin(req: Request) {
   // ── Step 0: ADMIN_PASSWORD / ADMIN_SECRET header — password-based admin auth ─
   // Support both names: ADMIN_SECRET (documented in .env.example) and
@@ -70,24 +94,25 @@ export async function requireAdmin(req: Request) {
   }
 
   // ── Step 0b: Phone + PIN header auth (two-step login from admin UI) ─────────
+  // Matches against ALL configured admin accounts (ADMIN_PHONE/ADMIN_PIN pair
+  // plus every entry in ADMIN_ACCOUNTS) — each admin has their own PIN.
   const phonePinHeader = req.headers.get('x-admin-phone') ?? ''
   if (phonePinHeader) {
     const clientIp = (req.headers.get('x-forwarded-for') ?? 'unknown').split(',')[0].trim()
     if (!checkRateLimit(`admin-phone:${clientIp}`, 10, 60_000)) {
       return { error: 'Too many attempts. Please wait.', code: 'PIN_RATE_LIMITED', status: 429 as const, user: null }
     }
-    const adminPhone = process.env.ADMIN_PHONE
-    if (!adminPhone || normalizePhone(phonePinHeader) !== normalizePhone(adminPhone)) {
+    const account = adminAccounts().find(a => a.phone === normalizePhone(phonePinHeader))
+    if (!account) {
       await new Promise(r => setTimeout(r, 1000))
       return { error: 'Invalid phone number', code: 'NOT_ADMIN', status: 403 as const, user: null }
     }
-    // Phone matched — now check PIN
-    const adminPin = process.env.ADMIN_PIN
+    // Phone matched — now check THIS account's PIN
     const providedPin = req.headers.get('x-admin-pin') ?? ''
     if (!providedPin) {
       return { error: 'PIN required', code: 'PHONE_VERIFIED', status: 403 as const, user: null }
     }
-    if (!adminPin || !timingSafeEqual(providedPin, adminPin)) {
+    if (!timingSafeEqual(providedPin, account.pin)) {
       await new Promise(r => setTimeout(r, 500))
       return { error: 'Incorrect PIN', code: 'PIN_REQUIRED', status: 403 as const, user: null }
     }
@@ -109,15 +134,13 @@ export async function requireAdmin(req: Request) {
   }
 
   const adminEmail = process.env.ADMIN_EMAIL
-  const adminPhone = process.env.ADMIN_PHONE
-  const adminPin   = process.env.ADMIN_PIN
 
   // ── Step 2: identity check (env vars first — no DB dependency) ──────────────
-  const isAdminByPhone = !!(
-    adminPhone &&
-    user.phone &&
-    normalizePhone(user.phone) === normalizePhone(adminPhone)
-  )
+  // Any configured admin account's phone qualifies (primary + ADMIN_ACCOUNTS).
+  const matchedAccount = user.phone
+    ? adminAccounts().find(a => a.phone === normalizePhone(user.phone)) ?? null
+    : null
+  const isAdminByPhone = matchedAccount !== null
   const isAdminByEmail = !!(adminEmail && user.email && user.email === adminEmail)
 
   let isAdminByDB = false
@@ -157,13 +180,16 @@ export async function requireAdmin(req: Request) {
   }
 
   // ── Step 3: PIN check (only for confirmed Supabase-session admins) ───────────
-  if (adminPin) {
+  // Phone-matched admins verify against their OWN account PIN; email/DB admins
+  // fall back to the primary ADMIN_PIN as before.
+  const requiredPin = matchedAccount?.pin ?? process.env.ADMIN_PIN
+  if (requiredPin) {
     if (!checkRateLimit(`admin-pin:${user.id}`, 5, 60_000)) {
       return { error: 'Too many attempts. Please wait.', code: 'PIN_RATE_LIMITED', status: 429 as const, user: null }
     }
     const authHeader = req.headers.get('x-admin-pin') ?? req.headers.get('authorization')
     const providedPin = (authHeader?.replace(/^Bearer\s+/i, '') ?? '')
-    if (!timingSafeEqual(providedPin, adminPin)) {
+    if (!timingSafeEqual(providedPin, requiredPin)) {
       return { error: 'PIN required', code: 'PIN_REQUIRED', status: 403 as const, user: null }
     }
   }
