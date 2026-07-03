@@ -1338,8 +1338,19 @@ export default function AdminPage() {
                     {p.created_at ? <span>Requested {fmtDate(p.created_at)}</span> : null}
                   </div>
                   {p.upi_id && (
-                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--teal)', marginTop: 4 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--teal)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                       UPI: <span style={{ userSelect: 'all', background: '#F0F8FC', padding: '2px 8px', borderRadius: 6 }}>{p.upi_id}</span>
+                      {!rzpxEnabled && (
+                        // upi:// deep link opens GPay/PhonePe/Paytm with payee + amount
+                        // pre-filled. Only works on a phone with a UPI app — from the
+                        // desktop admin, copy the VPA instead. After paying, Mark Paid.
+                        <a
+                          href={`upi://pay?pa=${encodeURIComponent(p.upi_id)}&pn=${encodeURIComponent(p.users?.name || 'LeanOn Listener')}&am=${encodeURIComponent(String(p.amount))}&cu=INR&tn=${encodeURIComponent('LeanOn listener payout')}`}
+                          style={{ background: 'var(--teal)', color: 'white', padding: '3px 12px', borderRadius: 20, fontSize: 12, fontWeight: 800, textDecoration: 'none' }}
+                        >
+                          📲 Pay in UPI app
+                        </a>
+                      )}
                     </div>
                   )}
                 </div>
