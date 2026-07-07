@@ -207,7 +207,9 @@ export default function DashboardPage() {
     return () => {
       if (channelRef.current) sb.removeChannel(channelRef.current)
       if (countdownRef.current) clearInterval(countdownRef.current)
+      if (ringTimerRef.current) clearInterval(ringTimerRef.current)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Presence heartbeat — immediately on going online, then every 60s. The
@@ -270,6 +272,83 @@ export default function DashboardPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [avail, user?.id])
 
+  // ── Incoming-request alerting: sound + vibration + browser notification ──
+  // Listeners go online, then switch to another tab or app — a silent modal
+  // is missed and the request expires. Every surfaced request now rings a
+  // Web-Audio chime (no audio asset needed) every 3s until answered, vibrates
+  // on mobile, flashes the tab title, and fires a browser Notification when
+  // the tab is not visible.
+  //
+  // Browser autoplay policy: an AudioContext only produces sound after a user
+  // gesture. The "Go online" toggle is that gesture — we unlock the context
+  // there (and on any later click) so the chime is ready before any request.
+  const audioCtxRef  = useRef<AudioContext | null>(null)
+  const ringTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const savedTitleRef = useRef<string | null>(null)
+
+  function ensureAudioUnlocked() {
+    try {
+      type WKWindow = Window & { webkitAudioContext?: typeof AudioContext }
+      const Ctx = window.AudioContext ?? (window as WKWindow).webkitAudioContext
+      if (!Ctx) return
+      if (!audioCtxRef.current) audioCtxRef.current = new Ctx()
+      if (audioCtxRef.current.state === 'suspended') audioCtxRef.current.resume().catch(() => {})
+    } catch { /* no audio support — alerting degrades to visual only */ }
+  }
+
+  function ringOnce() {
+    const ctx = audioCtxRef.current
+    if (ctx) {
+      if (ctx.state === 'suspended') ctx.resume().catch(() => {})
+      try {
+        // Three-note ascending chime — distinct from OS sounds, friendly not alarming
+        const now = ctx.currentTime
+        const notes: Array<[number, number]> = [[660, 0], [880, 0.18], [1100, 0.36]]
+        for (const [freq, at] of notes) {
+          const osc = ctx.createOscillator()
+          const gain = ctx.createGain()
+          osc.type = 'sine'
+          osc.frequency.value = freq
+          gain.gain.setValueAtTime(0.0001, now + at)
+          gain.gain.exponentialRampToValueAtTime(0.35, now + at + 0.02)
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + at + 0.18)
+          osc.connect(gain)
+          gain.connect(ctx.destination)
+          osc.start(now + at)
+          osc.stop(now + at + 0.22)
+        }
+      } catch { /* ignore — visual alerts still active */ }
+    }
+    try { navigator.vibrate?.([200, 100, 200]) } catch { /* not supported */ }
+  }
+
+  function startRequestAlert(s: IncomingSession) {
+    ensureAudioUnlocked()
+    ringOnce()
+    if (ringTimerRef.current) clearInterval(ringTimerRef.current)
+    ringTimerRef.current = setInterval(ringOnce, 3000)
+    if (savedTitleRef.current === null) savedTitleRef.current = document.title
+    document.title = '🔔 New session request — LeanOn'
+    // Browser notification reaches a backgrounded tab / minimized browser.
+    // Permission is requested on the "Go online" toggle; if denied or
+    // unsupported this silently no-ops and the chime still rings.
+    try {
+      if ('Notification' in window && Notification.permission === 'granted' && document.visibilityState !== 'visible') {
+        const n = new Notification('New session request 🔔', {
+          body: `${s.duration_mins}-min ${s.session_type} session — respond within 60 seconds`,
+          tag: 'leanon-incoming-request', // replaces rather than stacks
+          icon: '/logo.png',
+        })
+        n.onclick = () => { window.focus(); n.close() }
+      }
+    } catch { /* Notification constructor throws on some Android WebViews */ }
+  }
+
+  function stopRequestAlert() {
+    if (ringTimerRef.current) { clearInterval(ringTimerRef.current); ringTimerRef.current = null }
+    if (savedTitleRef.current !== null) { document.title = savedTitleRef.current; savedTitleRef.current = null }
+  }
+
   function startCountdown(onExpire: () => void, initialSecs = 60) {
     setCountdown(initialSecs)
     if (countdownRef.current) clearInterval(countdownRef.current)
@@ -293,10 +372,12 @@ export default function DashboardPage() {
     if (incomingIdRef.current && incomingIdRef.current !== s.id) return
     incomingIdRef.current = s.id
     setIncomingSession(s)
+    startRequestAlert(s)
     startCountdown(() => {
       const expiredId = s.id
       incomingIdRef.current = null
       setIncomingSession(null)
+      stopRequestAlert()
       // Auto-decline so the seeker gets an immediate refund instead of waiting
       // for their own 5-minute timeout to fire.
       fetch(`/api/sessions/${expiredId}/decline`, { method: 'POST' }).catch(() => {})
@@ -329,6 +410,7 @@ export default function DashboardPage() {
   function dismissIncoming() {
     incomingIdRef.current = null
     setIncomingSession(null)
+    stopRequestAlert()
     if (countdownRef.current) clearInterval(countdownRef.current)
   }
 
@@ -447,6 +529,17 @@ export default function DashboardPage() {
     if (!user) return
     const prev = avail
     const next = !prev
+    if (next) {
+      // Going online is the user gesture that arms the alerting stack:
+      // unlock the Web-Audio chime (autoplay policy) and ask for browser
+      // notification permission (prompt only fires the first time).
+      ensureAudioUnlocked()
+      try {
+        if ('Notification' in window && Notification.permission === 'default') {
+          Notification.requestPermission().catch(() => {})
+        }
+      } catch { /* older Safari uses callback form — chime still covers alerts */ }
+    }
     setAvail(next) // optimistic
     // Send explicit intent (not a flip) so the server sets exactly what the
     // listener asked for, even if the dashboard view has drifted from the DB.
