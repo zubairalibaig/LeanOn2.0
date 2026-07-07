@@ -39,7 +39,12 @@ type VerificationRow = {
   selfie_url: string | null; id_doc_url: string | null; status: string
   submitted_at: string; admin_notes: string | null
 }
-type PayoutRow = { id: string; amount: number; upi_id?: string; status: string; created_at: string; users: { name?: string; email?: string; phone?: string } | null }
+type PayoutRow = {
+  id: string; amount: number; upi_id?: string | null; status: string; created_at: string
+  users: { name?: string | null; email?: string | null; phone?: string | null } | null
+  // Bank/UPI details captured at listener application time (for manual transfer)
+  bank?: { upi_id?: string | null; bank_account?: string | null; ifsc_code?: string | null } | null
+}
 type RefundRow  = { id: string; amount: number; reason?: string; status: string; created_at: string; razorpay_payment_id?: string | null; users: { name?: string; email?: string } | null }
 
 type Tab = 'overview' | 'users' | 'listeners' | 'sessions' | 'reports' | 'payouts' | 'verifications'
@@ -1337,22 +1342,49 @@ export default function AdminPage() {
                     {p.users?.email ? <span style={{ marginRight: 8 }}>{p.users.email}</span> : null}
                     {p.created_at ? <span>Requested {fmtDate(p.created_at)}</span> : null}
                   </div>
-                  {p.upi_id && (
-                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--teal)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                      UPI: <span style={{ userSelect: 'all', background: '#F0F8FC', padding: '2px 8px', borderRadius: 6 }}>{p.upi_id}</span>
-                      {!rzpxEnabled && (
-                        // upi:// deep link opens GPay/PhonePe/Paytm with payee + amount
-                        // pre-filled. Only works on a phone with a UPI app — from the
-                        // desktop admin, copy the VPA instead. After paying, Mark Paid.
-                        <a
-                          href={`upi://pay?pa=${encodeURIComponent(p.upi_id)}&pn=${encodeURIComponent(p.users?.name || 'LeanOn Listener')}&am=${encodeURIComponent(String(p.amount))}&cu=INR&tn=${encodeURIComponent('LeanOn listener payout')}`}
-                          style={{ background: 'var(--teal)', color: 'white', padding: '3px 12px', borderRadius: 20, fontSize: 12, fontWeight: 800, textDecoration: 'none' }}
-                        >
-                          📲 Pay in UPI app
-                        </a>
-                      )}
-                    </div>
-                  )}
+                  {(() => {
+                    // Payment destination: a real VPA gets the UPI deep link; a
+                    // "bank:IFSC/ACCT" marker (listener without UPI) renders as a
+                    // labeled bank row. Application bank details show as a
+                    // fallback/secondary row so the admin never has to hunt.
+                    const isVpa = !!p.upi_id && p.upi_id.includes('@')
+                    const bankMarker = p.upi_id?.startsWith('bank:')
+                      ? p.upi_id.slice(5) // "IFSC/ACCOUNT"
+                      : null
+                    const [markerIfsc, markerAcct] = bankMarker ? bankMarker.split('/') : [null, null]
+                    const acct = markerAcct ?? p.bank?.bank_account ?? null
+                    const ifsc = markerIfsc ?? p.bank?.ifsc_code ?? null
+                    const pill: React.CSSProperties = { userSelect: 'all', background: '#F0F8FC', padding: '2px 8px', borderRadius: 6 }
+                    return (
+                      <>
+                        {isVpa && (
+                          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--teal)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                            UPI: <span style={pill}>{p.upi_id}</span>
+                            {!rzpxEnabled && (
+                              <a
+                                href={`upi://pay?pa=${encodeURIComponent(p.upi_id!)}&pn=${encodeURIComponent(p.users?.name || 'LeanOn Listener')}&am=${encodeURIComponent(String(p.amount))}&cu=INR&tn=${encodeURIComponent('LeanOn listener payout')}`}
+                                style={{ background: 'var(--teal)', color: 'white', padding: '3px 12px', borderRadius: 20, fontSize: 12, fontWeight: 800, textDecoration: 'none' }}
+                              >
+                                📲 Pay in UPI app
+                              </a>
+                            )}
+                          </div>
+                        )}
+                        {acct && ifsc && (
+                          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--navy)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                            🏦 A/C: <span style={pill}>{acct}</span>
+                            IFSC: <span style={pill}>{ifsc}</span>
+                            <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--gray)' }}>transfer via your bank app (IMPS/NEFT), then Mark Paid</span>
+                          </div>
+                        )}
+                        {!isVpa && !(acct && ifsc) && (
+                          <div style={{ fontSize: 13, fontWeight: 700, color: '#C0392B', marginTop: 4 }}>
+                            ⚠️ No payout method on file — check their listener application or contact them for UPI/bank details.
+                          </div>
+                        )}
+                      </>
+                    )
+                  })()}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                   <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--navy)' }}>₹{p.amount}</div>

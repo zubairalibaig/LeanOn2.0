@@ -51,9 +51,13 @@ export async function GET(req: NextRequest) {
   const [pendingListenersRes, { data: pendingPayouts, count: prCount }, { data: refundRequests }] = await Promise.all([
     lpQuery(true).then(r => (r.error && r.error.message.includes("'aadhaar'") ? lpQuery(false) : r)),
 
+    // NO users embed here: payout_requests has TWO FKs to users (user_id and
+    // processed_by), so an unqualified `users(...)` embed is ambiguous and
+    // PostgREST errors out the whole query — the admin saw an empty payout list
+    // while the KPI counter said 1. Names are batch-fetched separately below.
     admin
       .from('payout_requests')
-      .select(`id, amount, upi_id, status, created_at, users ( name, email, phone )`, { count: 'exact' })
+      .select(`id, user_id, amount, upi_id, status, created_at`, { count: 'exact' })
       .eq('status', 'pending')
       .order('created_at', { ascending: false })
       .range(prPage * PAGE_SIZE, prPage * PAGE_SIZE + PAGE_SIZE - 1),
@@ -66,11 +70,41 @@ export async function GET(req: NextRequest) {
       .limit(50),
   ])
 
+  // Enrich payout rows with the listener's name/contact AND the bank details
+  // captured at application time, so the admin can pay via UPI or bank
+  // transfer without hunting through the Listeners tab.
+  type PayoutRowOut = {
+    id: string; user_id: string; amount: number; upi_id: string | null
+    status: string; created_at: string
+    users: { name: string | null; email: string | null; phone: string | null } | null
+    bank: { upi_id: string | null; bank_account: string | null; ifsc_code: string | null } | null
+  }
+  let payoutsOut: PayoutRowOut[] = []
+  {
+    const rows = (pendingPayouts ?? []) as Array<Omit<PayoutRowOut, 'users' | 'bank'>>
+    const ids = Array.from(new Set(rows.map(r => r.user_id)))
+    const userMap: Record<string, PayoutRowOut['users']> = {}
+    const appMap:  Record<string, PayoutRowOut['bank']>  = {}
+    if (ids.length > 0) {
+      const [uRes, aRes] = await Promise.all([
+        admin.from('users').select('id, name, email, phone').in('id', ids),
+        admin.from('listener_applications').select('user_id, upi_id, bank_account, ifsc_code').in('user_id', ids),
+      ])
+      for (const u of uRes.data ?? []) {
+        userMap[u.id as string] = { name: u.name ?? null, email: u.email ?? null, phone: u.phone ?? null }
+      }
+      for (const a of aRes.data ?? []) {
+        appMap[a.user_id as string] = { upi_id: a.upi_id ?? null, bank_account: a.bank_account ?? null, ifsc_code: a.ifsc_code ?? null }
+      }
+    }
+    payoutsOut = rows.map(r => ({ ...r, users: userMap[r.user_id] ?? null, bank: appMap[r.user_id] ?? null }))
+  }
+
   return NextResponse.json({
     pendingListeners: pendingListenersRes.data || [],
     lpTotal: pendingListenersRes.count ?? 0,
     lpPage,
-    pendingPayouts: pendingPayouts || [],
+    pendingPayouts: payoutsOut,
     prTotal: prCount ?? 0,
     prPage,
     refundRequests: refundRequests || [],
@@ -169,7 +203,9 @@ export async function POST(req: NextRequest) {
     // NOT accepted, revert the claim so the admin can retry or pay manually;
     // no wallet mutation has happened yet at this point.
     let rzpxPayoutId: string | null = null
-    if (razorpayxEnabled() && pr.upi_id) {
+    // Only real VPAs qualify for automated UPI transfer — a "bank:IFSC/ACCT"
+    // marker (listener without UPI) always takes the manual path.
+    if (razorpayxEnabled() && pr.upi_id && (pr.upi_id as string).includes('@')) {
       const { data: userRow } = await admin.from('users').select('name').eq('id', pr.user_id).single()
       const result = await createUpiPayout({
         name:        (userRow?.name as string) ?? 'LeanOn Listener',
@@ -217,7 +253,7 @@ export async function POST(req: NextRequest) {
       title:      rzpxPayoutId ? 'Payout sent! 🎉' : 'Payout completed',
       body:       rzpxPayoutId
         ? `₹${pr.amount} is on its way to your UPI (${pr.upi_id}). It usually arrives within minutes.`
-        : `Your payout of ₹${pr.amount} has been processed.`,
+        : `Your payout of ₹${pr.amount} has been transferred${(pr.upi_id as string | null)?.startsWith('bank:') ? ' to your bank account' : ''}. It may take a few hours to reflect.`,
       action_url: '/dashboard',
     }).then(() => {}, () => {})
 
