@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { ensureUserRow } from '@/lib/ensure-user-row'
-import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, LANGUAGES } from '@/lib/constants'
+import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, LANGUAGES, MIN_LISTENER_AGE, MAX_LISTENER_AGE, ageFromBirth } from '@/lib/constants'
 import { logger } from '@/lib/logger'
 
 // POST — submit a listener application (users row + profile + application).
@@ -38,6 +38,15 @@ export async function POST(req: NextRequest) {
     // but the become-listener form requires it. Validate strictly when present.
     const aadhaar = typeof body?.aadhaar === 'string' ? body.aadhaar.replace(/\D/g, '') : ''
     const rate = Number(body?.rate)
+    // Age: month + year only (never the day) for the browse age-range filter.
+    // Optional at the API (legacy callers / tests may omit) but the
+    // become-listener form requires both. Validated strictly when present.
+    const posIntOrNull = (v: unknown): number | null => {
+      const n = typeof v === 'number' ? v : (typeof v === 'string' && v.trim() !== '' ? Number(v) : NaN)
+      return Number.isInteger(n) && n > 0 ? n : null
+    }
+    const birthYear  = posIntOrNull(body?.birthYear)
+    const birthMonth = posIntOrNull(body?.birthMonth)
     const tags  = Array.isArray(body?.tags)  ? body.tags.filter((t: unknown) => typeof t === 'string').slice(0, 10)  : []
     const langIds = new Set(LANGUAGES.map(l => l.id as string))
     const langs = Array.isArray(body?.langs)
@@ -60,6 +69,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Please enter a valid UPI ID.' }, { status: 400 })
     if (aadhaar && !/^\d{12}$/.test(aadhaar))
       return NextResponse.json({ error: 'Please enter a valid 12-digit Aadhaar number.' }, { status: 400 })
+    // Age validation — only when supplied. Both fields must come together, month
+    // must be 1–12, and the resulting age must be within the platform's bounds.
+    if (birthYear !== null || birthMonth !== null) {
+      if (birthYear === null || birthMonth === null)
+        return NextResponse.json({ error: 'Please select both your birth month and year.' }, { status: 400 })
+      if (birthMonth < 1 || birthMonth > 12)
+        return NextResponse.json({ error: 'Please select a valid birth month.' }, { status: 400 })
+      const age = ageFromBirth(birthYear, birthMonth)
+      if (age === null || age < MIN_LISTENER_AGE || age > MAX_LISTENER_AGE)
+        return NextResponse.json({ error: `Listeners must be between ${MIN_LISTENER_AGE} and ${MAX_LISTENER_AGE} years old.` }, { status: 400 })
+    }
 
     // Session phone is OTP-verified; the typed form phone is contact info only.
     const sessionPhone = user.phone ? '+' + user.phone.replace(/^\+/, '') : null
@@ -85,14 +105,28 @@ export async function POST(req: NextRequest) {
 
     // 2. listener profile — is_approved intentionally omitted: DB default
     //    false on insert; existing approval preserved on resubmission.
-    const { error: profileErr } = await admin.from('listener_profiles').upsert({
+    const profileRow: Record<string, unknown> = {
       user_id:          user.id,
       bio,
       specialty_tags:   tags,
       languages_spoken: langs.length > 0 ? langs : ['english'],
       rate_per_min:     Math.round(rate),
       is_available:     false,
-    }, { onConflict: 'user_id' })
+    }
+    // birth_year / birth_month added by migration 049. Only set when supplied,
+    // and never wipe an existing value on a resubmission that omits it.
+    if (birthYear !== null && birthMonth !== null) {
+      profileRow.birth_year  = birthYear
+      profileRow.birth_month = birthMonth
+    }
+    let profileErr = (await admin.from('listener_profiles').upsert(profileRow, { onConflict: 'user_id' })).error
+    if (profileErr && (profileErr.message?.includes('birth_year') || profileErr.message?.includes('birth_month'))) {
+      // Migration 049 not applied yet — save the rest of the profile so
+      // applications keep working; age is captured once the column exists.
+      delete profileRow.birth_year
+      delete profileRow.birth_month
+      profileErr = (await admin.from('listener_profiles').upsert(profileRow, { onConflict: 'user_id' })).error
+    }
     if (profileErr) {
       logger.error('listener apply: profile upsert failed', { userId: user.id, error: profileErr.message, code: profileErr.code })
       // A CHECK violation (23514) here is almost always the rate_per_min range

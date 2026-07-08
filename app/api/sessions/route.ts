@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid listener' }, { status: 400 })
     }
     if (listenerId === user.id) {
-      return NextResponse.json({ error: 'Cannot book a session with yourself' }, { status: 400 })
+      return NextResponse.json({ error: 'cannot_book_self', message: 'You cannot start a session with your own listener profile.' }, { status: 400 })
     }
     if (!(SESSION_DURATIONS as readonly number[]).includes(durationMins)) {
       return NextResponse.json({ error: 'Invalid session duration' }, { status: 400 })

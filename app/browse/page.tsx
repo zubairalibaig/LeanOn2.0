@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
-import { LANGUAGES, PLATFORM_FEE } from '@/lib/constants'
+import { LANGUAGES, PLATFORM_FEE, AGE_RANGES, ageRangeId } from '@/lib/constants'
 import { showToast } from '@/lib/toast'
 
 // Post-login welcome banner (Item 5)
@@ -51,6 +51,8 @@ type Listener = {
   specialty_tags: string[]
   languages_spoken: string[]
   avatar_url?: string
+  birth_year?: number | null
+  birth_month?: number | null
 }
 
 const TAGS = [
@@ -142,6 +144,8 @@ function BrowseContent() {
 
   const [tag, setTag]         = useState('all')
   const [lang, setLang]       = useState('all')
+  const [ageRange, setAgeRange] = useState('all')
+  const [myUserId, setMyUserId] = useState<string | null>(null)
   const [query, setQuery]     = useState('')
   const [listeners, setListeners] = useState<Listener[]>([])
   const [loading, setLoading] = useState(true)
@@ -251,6 +255,8 @@ function BrowseContent() {
   useEffect(() => {
     client.auth.getUser().then(async ({data:{user}}) => {
       if (!user) return
+      // Remember who I am so I never see (or can book) my own listener card.
+      setMyUserId(user.id)
       const {data} = await client.from('users').select('wallet_balance').eq('id',user.id).single()
       if (data) setBalance(data.wallet_balance)
 
@@ -304,9 +310,15 @@ function BrowseContent() {
     if (!silent) setLoading(false)
   }
 
-  const filtered = query
-    ? listeners.filter(l => l.name.toLowerCase().includes(query.toLowerCase()) || l.bio?.toLowerCase().includes(query.toLowerCase()))
-    : listeners
+  const filtered = listeners
+    // Item 1: a listener must never see their own card as bookable.
+    .filter(l => !myUserId || l.user_id !== myUserId)
+    // Item 2: age-range filter. A listener with no age set is only excluded
+    // when a specific range is chosen (they still appear under "All ages").
+    .filter(l => ageRange === 'all' || ageRangeId(l.birth_year, l.birth_month) === ageRange)
+    .filter(l => !query
+      || l.name.toLowerCase().includes(query.toLowerCase())
+      || l.bio?.toLowerCase().includes(query.toLowerCase()))
 
   const ini = (n:string) => n.split(' ').map((x:string)=>x[0]||'').join('').slice(0,2).toUpperCase()||'?'
   const tagInfo = (id:string) => TAGS.find(t=>t.id===id)
@@ -376,6 +388,16 @@ function BrowseContent() {
               </button>
             ))}
           </div>
+          <div className="tag-scroll" style={{marginTop:8}}>
+            <button className={`tag-pill${ageRange==='all'?' active':''}`} onClick={()=>setAgeRange('all')}>
+              🎂 All ages
+            </button>
+            {AGE_RANGES.map(r=>(
+              <button key={r.id} className={`tag-pill${ageRange===r.id?' active':''}`} onClick={()=>setAgeRange(r.id)}>
+                {r.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -391,7 +413,7 @@ function BrowseContent() {
             </p>
             <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
               <button
-                onClick={()=>{ setTag('all'); setLang('all'); setQuery('') }}
+                onClick={()=>{ setTag('all'); setLang('all'); setAgeRange('all'); setQuery('') }}
                 style={{background:'var(--navy)',color:'white',border:'none',borderRadius:50,padding:'12px 24px',fontFamily:'Nunito,sans-serif',fontWeight:800,fontSize:14,cursor:'pointer'}}
               >
                 Browse All Listeners

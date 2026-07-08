@@ -60,21 +60,33 @@ export async function GET(req: NextRequest) {
     // These ghosts come from auth-account recreation (see lib/ensure-user-row.ts).
     // We fetch phone ONLY to filter on it, then strip it from the response below
     // so it never leaves the server.
-    let q = sb
-      .from('listener_profiles')
-      .select('user_id, bio, specialty_tags, languages_spoken, rate_per_min, rating, total_sessions, is_available, is_verified, users!inner(name, avatar_url, phone)')
-      .eq('is_approved', true)
-      .or('is_active.eq.true,is_active.is.null')
-      .eq('is_suspended', false)
-      .not('users.phone', 'is', null)
-      .order('is_available', { ascending: false })
-      .order('rating',       { ascending: false })
-      .limit(50)
+    // Build the list query. Factored so we can retry with a smaller select if
+    // the birth_* columns aren't present yet (migration 049 not applied) — this
+    // keeps browse alive during the deploy-before-migration window.
+    const buildQuery = (selectStr: string) => {
+      let q = sb
+        .from('listener_profiles')
+        .select(selectStr)
+        .eq('is_approved', true)
+        .or('is_active.eq.true,is_active.is.null')
+        .eq('is_suspended', false)
+        .not('users.phone', 'is', null)
+        .order('is_available', { ascending: false })
+        .order('rating',       { ascending: false })
+        .limit(50)
+      if (tag  !== 'all') q = q.contains('specialty_tags',    [tag])
+      if (lang !== 'all') q = q.contains('languages_spoken', [lang])
+      return q
+    }
 
-    if (tag  !== 'all') q = q.contains('specialty_tags',    [tag])
-    if (lang !== 'all') q = q.contains('languages_spoken', [lang])
+    const SELECT_BASE = 'user_id, bio, specialty_tags, languages_spoken, rate_per_min, rating, total_sessions, is_available, is_verified, users!inner(name, avatar_url, phone)'
+    // birth_year/birth_month drive the browse age-range filter (migration 049).
+    const SELECT_WITH_AGE = SELECT_BASE.replace(', users!inner', ', birth_year, birth_month, users!inner')
 
-    const { data, error } = await q
+    let { data, error } = await buildQuery(SELECT_WITH_AGE)
+    if (error && (error.message?.includes('birth_year') || error.message?.includes('birth_month'))) {
+      ;({ data, error } = await buildQuery(SELECT_BASE))
+    }
 
     if (error) {
       logger.error('listeners query failed:', { error: error.message })
@@ -85,7 +97,7 @@ export async function GET(req: NextRequest) {
     // corrects stuck-online ghosts on every browse load; the toggle writes
     // is_available authoritatively. No per-request display gate here — that
     // previously caused false-offline flicker on mobile.
-    const listeners = (data ?? []).map((l) => {
+    const listeners = ((data ?? []) as unknown as Record<string, unknown>[]).map((l) => {
       const rawUsers = (l as { users?: { name?: string; avatar_url?: string; phone?: string } }).users
       const users = rawUsers ? { name: rawUsers.name, avatar_url: rawUsers.avatar_url } : rawUsers
       return {

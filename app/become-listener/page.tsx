@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, PLATFORM_FEE, LANGUAGES } from '@/lib/constants'
+import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, PLATFORM_FEE, LANGUAGES, MONTHS, MIN_LISTENER_AGE, MAX_LISTENER_AGE, ageFromBirth } from '@/lib/constants'
 import { createClient } from '@/lib/supabase'
 
 const TAGS = [
@@ -158,6 +158,21 @@ function validateAadhaar(v: string): string {
   if (!/^\d{12}$/.test(v.replace(/\D/g, ''))) return 'Enter your 12-digit Aadhaar number'
   return ''
 }
+function validateBirth(monthStr: string, yearStr: string): string {
+  const month = parseInt(monthStr, 10)
+  const year  = parseInt(yearStr, 10)
+  if (!month || !year) return 'Please select your birth month and year'
+  const age = ageFromBirth(year, month)
+  if (age === null || age < MIN_LISTENER_AGE || age > MAX_LISTENER_AGE)
+    return `Listeners must be between ${MIN_LISTENER_AGE} and ${MAX_LISTENER_AGE} years old`
+  return ''
+}
+// Year dropdown options: oldest allowed birth year → newest (18 years ago).
+const CURRENT_YEAR = new Date().getFullYear()
+const BIRTH_YEARS = Array.from(
+  { length: MAX_LISTENER_AGE - MIN_LISTENER_AGE + 1 },
+  (_, i) => CURRENT_YEAR - MIN_LISTENER_AGE - i,
+)
 
 export default function BecomeListenerPage() {
   const router  = useRouter()
@@ -175,6 +190,8 @@ export default function BecomeListenerPage() {
   const [ifsc, setIfsc]   = useState('')
   const [upi, setUpi]     = useState('')
   const [aadhaar, setAadhaar] = useState('')
+  const [birthMonth, setBirthMonth] = useState('')
+  const [birthYear, setBirthYear]   = useState('')
   const [loading, setLoading] = useState(false)
   const [done, setDone]   = useState(false)
   const [error, setError] = useState('')
@@ -296,6 +313,7 @@ export default function BecomeListenerPage() {
 
   function validateStep2(): string[] {
     const errs: string[] = []
+    const bde = validateBirth(birthMonth, birthYear); if (bde) errs.push(bde)
     const re = validateRate(rate); if (re) errs.push(re)
     const banke = validateBank(bank); if (banke) errs.push(banke)
     const ifsce = validateIFSC(ifsc); if (ifsce) errs.push(ifsce)
@@ -349,6 +367,7 @@ export default function BecomeListenerPage() {
     const errs = validateStep2()
     if (errs.length > 0) {
       const fe: Record<string,string> = {}
+      const bde = validateBirth(birthMonth, birthYear); if (bde) fe.birth = bde
       const re = validateRate(rate); if (re) fe.rate = re
       const banke = validateBank(bank); if (banke) fe.bank = banke
       const ifsce = validateIFSC(ifsc); if (ifsce) fe.ifsc = ifsce
@@ -383,6 +402,8 @@ export default function BecomeListenerPage() {
           tags,
           langs,
           rate:       rateNum,
+          birthMonth: parseInt(birthMonth, 10),
+          birthYear:  parseInt(birthYear, 10),
           bank:       bank.trim(),
           ifsc:       ifsc.trim().toUpperCase(),
           upi:        upi.trim(),
@@ -661,6 +682,34 @@ export default function BecomeListenerPage() {
                 <ul>{step2Errors.map((e,i) => <li key={i}>{e}</li>)}</ul>
               </div>
             )}
+
+            <label className="lbl">Your age <span style={{fontWeight:500,color:'var(--gray)'}}>(month &amp; year only — shown to seekers as an age range, never your exact date)</span></label>
+            <div style={{display:'flex',gap:10,marginBottom:4}}>
+              <select
+                className={`input${fieldErrors.birth ? ' err' : ''}`}
+                style={{flex:1,marginBottom:0,appearance:'auto'}}
+                value={birthMonth}
+                aria-label="Birth month"
+                onChange={e => { setBirthMonth(e.target.value); if (fieldErrors.birth) setFieldErrors(f => ({...f, birth: ''})) }}
+              >
+                <option value="">Birth month</option>
+                {MONTHS.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+              </select>
+              <select
+                className={`input${fieldErrors.birth ? ' err' : ''}`}
+                style={{flex:1,marginBottom:0,appearance:'auto'}}
+                value={birthYear}
+                aria-label="Birth year"
+                onChange={e => { setBirthYear(e.target.value); if (fieldErrors.birth) setFieldErrors(f => ({...f, birth: ''})) }}
+              >
+                <option value="">Birth year</option>
+                {BIRTH_YEARS.map(y => <option key={y} value={y}>{y}</option>)}
+              </select>
+            </div>
+            {fieldErrors.birth && <span className="field-err">{fieldErrors.birth}</span>}
+            <p style={{fontSize:12,color:'var(--gray)',margin:'-4px 0 12px',lineHeight:1.5}}>
+              🔒 Seekers only see a range (e.g. 30–39), never your exact birth date. Helps them find a listener at a similar life stage.
+            </p>
 
             <label className="lbl">Your rate per minute — <span style={{fontWeight:500,color:'var(--gray)'}}>suggestion: ₹10–₹50/min</span></label>
             <div className={`rate-wrap${fieldErrors.rate ? ' err' : ''}`}>

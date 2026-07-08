@@ -32,3 +32,45 @@ export const LANGUAGES = [
 ] as const
 
 export type LanguageId = typeof LANGUAGES[number]['id']
+
+// ── Listener age (month + year only — never the day, for privacy) ───────────
+// Minimum age to be a listener; LeanOn is an adults-only platform.
+export const MIN_LISTENER_AGE = 18
+// Oldest birth year we offer in the dropdown (keeps the list finite/sane).
+export const MAX_LISTENER_AGE = 90
+
+// Browse age-range filter buckets. `max: 200` on the last bucket means "and up".
+export const AGE_RANGES = [
+  { id: '18-29', label: '18–29', min: 18, max: 29 },
+  { id: '30-39', label: '30–39', min: 30, max: 39 },
+  { id: '40-49', label: '40–49', min: 40, max: 49 },
+  { id: '50-59', label: '50–59', min: 50, max: 59 },
+  { id: '60+',   label: '60+',   min: 60, max: 200 },
+] as const
+
+export type AgeRangeId = typeof AGE_RANGES[number]['id']
+
+export const MONTHS = [
+  { id: 1, label: 'January' },   { id: 2,  label: 'February' }, { id: 3,  label: 'March' },
+  { id: 4, label: 'April' },     { id: 5,  label: 'May' },      { id: 6,  label: 'June' },
+  { id: 7, label: 'July' },      { id: 8,  label: 'August' },   { id: 9,  label: 'September' },
+  { id: 10, label: 'October' },  { id: 11, label: 'November' }, { id: 12, label: 'December' },
+] as const
+
+// Compute age (whole years) from month+year precision only. Returns null if the
+// inputs are missing/invalid. Uses month-level precision — the birthday is
+// treated as the 1st of the birth month.
+export function ageFromBirth(year?: number | null, month?: number | null): number | null {
+  if (!year || !month || month < 1 || month > 12) return null
+  const now = new Date()
+  let age = now.getFullYear() - year
+  if ((now.getMonth() + 1) < month) age -= 1
+  return age >= 0 && age <= 130 ? age : null
+}
+
+// Map a birth month+year to its AGE_RANGES bucket id, or null if unknown.
+export function ageRangeId(year?: number | null, month?: number | null): AgeRangeId | null {
+  const age = ageFromBirth(year, month)
+  if (age === null) return null
+  return AGE_RANGES.find(r => age >= r.min && age <= r.max)?.id ?? null
+}

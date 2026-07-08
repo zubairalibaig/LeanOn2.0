@@ -197,6 +197,7 @@ export default function ListenerClient({ id }: { id: string }) {
     already_in_session: 'You already have an active session.',
     insufficient_balance: 'Your wallet balance is too low. Top up to continue.',
     free_trial_used: "You've used your free trial. Recharge your wallet to continue.",
+    cannot_book_self: 'You cannot start a session with your own listener profile.',
   }
 
   async function sendMsg() {
@@ -331,7 +332,15 @@ export default function ListenerClient({ id }: { id: string }) {
       )}
 
       <div className="book-bar">
-        {listener.is_available ? (
+        {userId === id ? (
+          // ── Own profile: you cannot book or message yourself ─────────────
+          <div style={{textAlign:'center'}}>
+            <div style={{fontSize:13,fontWeight:700,color:'#5A7A8A',marginBottom:12,lineHeight:1.5}}>
+              👀 This is your public listener profile — exactly how seekers see you.
+            </div>
+            <a href="/dashboard"><button className="btn-book">Go to your dashboard →</button></a>
+          </div>
+        ) : listener.is_available ? (
           // ── Online: existing booking UI ──────────────────────────────────
           <>
             {bookError && <div className="wallet-warn">{bookError}</div>}
