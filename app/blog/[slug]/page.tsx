@@ -14,6 +14,9 @@ import { post as founderBurnoutPost } from '../posts/startup-founder-burnout'
 import { post as affordableTherapyPost } from '../posts/affordable-alternatives-therapy-india'
 import { post as mensMentalHealthPost } from '../posts/mens-mental-health-india'
 import { post as womenLonelinessPost } from '../posts/women-loneliness-india'
+import { post as empathyPost } from '../posts/empathy-in-peer-support'
+import { post as whatIsPeerSupportPost } from '../posts/what-is-peer-support-india'
+import { post as onlineEmotionalSupportGuidePost } from '../posts/online-emotional-support-india-guide'
 
 export const dynamic = 'force-static'
 
@@ -21,6 +24,7 @@ const allPosts = [
   lonelinessPost, burnoutPost, peerSupportPost, leanOnMeanPost, lonelinessAtNightPost,
   emotionalBurnoutPost, anonymousSupportPost, peerVsTherapyPost, jointFamilyPost,
   lonelinessJointFamilyPost, founderBurnoutPost, affordableTherapyPost, mensMentalHealthPost, womenLonelinessPost,
+  empathyPost, whatIsPeerSupportPost, onlineEmotionalSupportGuidePost,
 ]
 
 function getPost(slug: string) {

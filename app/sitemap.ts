@@ -6,7 +6,7 @@ export const dynamic = 'force-static'
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = 'https://www.leanon.app'
   const d = (s: string) => new Date(s)
-  const TODAY = '2026-06-24'
+  const TODAY = '2026-07-08'
   return [
     { url: base,                                       lastModified: d(TODAY),        changeFrequency: 'daily',   priority: 1.0 },
     { url: `${base}/browse`,                           lastModified: d(TODAY),        changeFrequency: 'hourly',  priority: 0.95 },
@@ -32,6 +32,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/support/emotional-support`,        lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/support/someone-to-talk-to`,       lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/support/anonymous-support`,        lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/support/social-anxiety`,            lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/support/imposter-syndrome`,         lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/support/work-from-home-loneliness`, lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.85 },
     // Blog
     { url: `${base}/blog`,                             lastModified: d('2026-05-01'), changeFrequency: 'weekly',  priority: 0.75 },
     { url: `${base}/blog/loneliness-in-india`,         lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.75 },
@@ -48,6 +51,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/blog/affordable-alternatives-to-therapy-in-india`, lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/blog/mens-mental-health-talking-is-strength`,      lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/blog/women-loneliness-india-peer-support`,         lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/blog/empathy-in-peer-support`,                     lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/blog/what-is-peer-support-india`,                  lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/blog/online-emotional-support-india-guide`,        lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.85 },
     // Brand + authority pages
     { url: `${base}/leanon`,                           lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/emotional-support`,                lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.9 },
@@ -64,6 +70,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/chennai`,                          lastModified: d('2026-06-11'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/pune`,                             lastModified: d('2026-06-11'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/kolkata`,                          lastModified: d('2026-06-11'), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/jaipur`,                           lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/ahmedabad`,                        lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.8 },
     // New SEO pages (Items 18-21)
     { url: `${base}/why-leanon`,                       lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/how-leanon-works`,                 lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },

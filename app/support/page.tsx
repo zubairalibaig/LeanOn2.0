@@ -3,12 +3,13 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Peer Support for Every Challenge | LeanOn India',
-  description: 'Find peer support for loneliness, anxiety, grief, breakups, student stress, career confusion, and founder burnout. Real humans who have been there — available now across India.',
+  title: 'Empathetic Peer Support for Every Challenge | LeanOn India',
+  description: 'Find empathetic peer support and peer counselling for loneliness, anxiety, grief, breakups, student stress, imposter syndrome, and founder burnout. Real humans who have been there — available now across India.',
+  keywords: 'empathy, empathetic listener India, peer counselling India, peer support topics India, emotional support India',
   alternates: { canonical: 'https://www.leanon.app/support' },
   openGraph: {
-    title: 'Peer Support for Every Challenge — LeanOn India',
-    description: 'Whatever you are going through, there is someone on LeanOn who has been there. Browse peer support topics and connect with a listener who truly understands.',
+    title: 'Empathetic Peer Support for Every Challenge — LeanOn India',
+    description: 'Whatever you are going through, there is someone on LeanOn who has been there. Browse peer support topics and connect with a listener who brings real empathy.',
     url: 'https://www.leanon.app/support',
     siteName: 'LeanOn',
     type: 'website',
@@ -73,6 +74,27 @@ const topics = [
     description: 'Startup pressure, investor stress, co-founder conflicts — for founders and entrepreneurs who are running on empty.',
     href: '/support/founder-burnout',
     color: '#FFF5F0',
+  },
+  {
+    emoji: '😳',
+    title: 'Social Anxiety',
+    description: 'Racing thoughts before meetings, overanalysing conversations, avoiding gatherings — talk to a listener who has walked out the other side of social anxiety.',
+    href: '/support/social-anxiety',
+    color: '#F5F0FF',
+  },
+  {
+    emoji: '🎭',
+    title: 'Imposter Syndrome',
+    description: 'Feeling like a fraud despite your achievements — for high-performers who secretly fear being "found out."',
+    href: '/support/imposter-syndrome',
+    color: '#F0FFFA',
+  },
+  {
+    emoji: '🏠',
+    title: 'WFH Loneliness',
+    description: 'Muted mics, empty apartments, missed office chatter — for remote workers who feel invisible even on video calls.',
+    href: '/support/work-from-home-loneliness',
+    color: '#FFF8F0',
   },
 ]
 

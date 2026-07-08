@@ -12,6 +12,8 @@ export const metadata: Metadata = {
     'anxiety help India', 'loneliness app India', 'burnout support', 'grief support India',
     'someone to talk to', 'mental health chat', 'online emotional support',
     'online listener India', 'peer support India',
+    'empathy', 'empathetic listener', 'empathy app India', 'peer counselling India',
+    'compassionate listener India', 'active listening India',
   ],
 }
 
@@ -61,7 +63,8 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
-    { '@type': 'Question', name: 'What is LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is a peer support platform — someone to lean on anytime you need it. You talk to real people in India who have lived through what you\'re facing: loneliness, burnout, anxiety, grief, relationships, and more. It is not therapy, but genuine human connection available 24/7.' } },
+    { '@type': 'Question', name: 'What is LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is a peer support platform built on empathy — someone to lean on anytime you need it. You talk to real people in India who have lived through what you\'re facing: loneliness, burnout, anxiety, grief, relationships, and more. Every listener brings genuine empathy from lived experience, not a script. It is not therapy, but real human connection available 24/7.' } },
+    { '@type': 'Question', name: 'What makes LeanOn listeners empathetic?', acceptedAnswer: { '@type': 'Answer', text: 'Every LeanOn listener has personally lived through what they support others with — loneliness, anxiety, burnout, grief, or relationship pain. That lived experience is what makes their empathy real rather than rehearsed. They are trained in active listening and empathetic communication, so you are heard without being judged, fixed, or rushed.' } },
     { '@type': 'Question', name: 'What does "lean on" mean in LeanOn?', acceptedAnswer: { '@type': 'Answer', text: '"Lean on" means having someone you can rely on emotionally — someone who supports you without judgment when you\'re going through something hard. LeanOn (the platform) gives everyone access to that kind of support through verified peer listeners who have lived experience.' } },
     { '@type': 'Question', name: 'Is LeanOn free?', acceptedAnswer: { '@type': 'Answer', text: 'Each new user gets up to 5 free 5-minute sessions (one per listener) — no credit card needed, no wallet required. After that, sessions cost ₹8–25 per minute depending on the listener, billed in 15-minute slots.' } },
     { '@type': 'Question', name: 'How is LeanOn different from therapy?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are real people with lived experience, not licensed therapists. They offer empathy and peer support, not clinical diagnosis or treatment. LeanOn is ideal when you need someone to lean on — not a diagnosis.' } },
@@ -454,9 +457,10 @@ export default function Home() {
         <div className="faq-section">
           <h2>Frequently asked questions</h2>
           {[
-            { q: 'What is LeanOn?', a: 'LeanOn is a peer support platform where you talk to real people who have lived through what you\'re facing — loneliness, burnout, anxiety, grief, relationships, and more. It\'s not therapy, but real human connection available 24/7 across India.' },
+            { q: 'What is LeanOn?', a: 'LeanOn is a peer support platform built on empathy — you talk to real people who have lived through what you\'re facing: loneliness, burnout, anxiety, grief, relationships, and more. It\'s not therapy, but real human connection available 24/7 across India.' },
+            { q: 'What makes LeanOn listeners empathetic?', a: 'Every listener has personally lived through what they support others with. That lived experience is what makes their empathy real, not rehearsed — you\'re heard without being judged, fixed, or rushed.' },
             { q: 'Is LeanOn free?', a: 'Each new user gets up to 5 free 5-minute sessions (one per listener) — no credit card needed, no wallet required. After that, sessions cost ₹8–25 per minute depending on the listener, billed in 15-minute slots.' },
-            { q: 'How is this different from therapy or counselling?', a: 'Listeners on LeanOn are real people with lived experience, not licensed therapists. They offer empathy and peer support, not clinical diagnosis. LeanOn is ideal when you need someone who truly gets it — not a diagnosis.' },
+            { q: 'How is this different from therapy or counselling?', a: 'Listeners on LeanOn are real people with lived experience, not licensed therapists. They offer empathy and peer counselling, not clinical diagnosis. LeanOn is ideal when you need someone who truly gets it — not a diagnosis.' },
             { q: 'Is my conversation private?', a: 'Yes. All sessions are private and end-to-end. LeanOn never shares your personal details or conversation content.' },
             { q: 'Can I become a listener?', a: 'Yes! If you\'ve been through something difficult and want to help others, apply at leanon.app/become-listener. Earn ₹8–25 per minute on your own schedule.' },
             { q: 'Is LeanOn related to the song "Lean On"?', a: 'No. LeanOn (one word, at leanon.app) is an Indian peer emotional support platform — no connection to the Major Lazer song. The name comes from the phrase "someone to lean on": having a person you can rely on emotionally, anytime you need it.' },
@@ -502,13 +506,23 @@ export default function Home() {
             <a href="/support/someone-to-talk-to">Someone to talk to</a>
             <a href="/support/anonymous-support">Anonymous support India</a>
             <a href="/support/relationship-stress">Relationship stress</a>
+            <a href="/support/social-anxiety">Social anxiety support</a>
+            <a href="/support/imposter-syndrome">Imposter syndrome help</a>
+            <a href="/support/work-from-home-loneliness">WFH loneliness support</a>
           </div>
           <div className="fli" style={{marginTop:4,fontSize:12,opacity:0.75}}>
             <a href="/blog/what-does-lean-on-mean">What does lean on mean</a>
             <a href="/blog/peer-support-vs-therapy-india">Peer support vs therapy</a>
             <a href="/blog/loneliness-at-night">Loneliness at night</a>
             <a href="/blog/joint-family-emotional-support">Joint family support</a>
+            <a href="/blog/empathy-in-peer-support">What is empathy?</a>
+            <a href="/blog/what-is-peer-support-india">What is peer support?</a>
+            <a href="/blog/online-emotional-support-india-guide">Online emotional support guide</a>
             <a href="/glossary">Peer support glossary</a>
+          </div>
+          <div className="fli" style={{marginTop:4,fontSize:12,opacity:0.75}}>
+            <a href="/jaipur">Peer support Jaipur</a>
+            <a href="/ahmedabad">Peer support Ahmedabad</a>
           </div>
           <div className="flis">
             <div><p>Have lived experience to share?</p><span>Listeners keep 100% of their rate. You set your own price.</span></div>

@@ -1,7 +1,24 @@
 # LeanOn Discoverability & SEO Master Plan
 
-**Last updated:** 2026-06-24  
-**Goal:** Be the first result for "lean on", "leanon", and all mental health / peer support / emotional support searches in India. Be cited in ChatGPT, Gemini, Perplexity, and Claude answers.
+**Last updated:** 2026-07-08  
+**Goal:** Be the first result for "lean on", "leanon", "empathy", and all mental health / peer support / peer counselling / emotional support searches in India. Be cited in ChatGPT, Gemini, Perplexity, and Claude answers.
+
+**Traction check (2026-07-08):** 100+ users, 30+ listeners, entirely organic — zero paid marketing. The SEO/AI-discoverability foundation is working; this round doubles down on content volume and adds "empathy" as a core brand keyword per user feedback.
+
+---
+
+## Round 2 additions (2026-07-08)
+
+Triggered by real organic traction + user feedback that "empathy" should be used more as a keyword.
+
+- **"Empathy" woven throughout**: `app/layout.tsx` keywords + `knowsAbout`, homepage keywords + 2 FAQ entries (schema + rendered), `public/llms.txt` intro/topics/citation-guidance, `app/support/page.tsx` metadata — all naturally, not stuffed
+- **3 new blog posts**: `/blog/empathy-in-peer-support` (centerpiece — targets "empathy", "empathetic listener India"), `/blog/what-is-peer-support-india`, `/blog/online-emotional-support-india-guide`
+- **3 new support topic pages**: `/support/social-anxiety`, `/support/imposter-syndrome`, `/support/work-from-home-loneliness` — added to the support hub grid
+- **2 new city pages**: `/jaipur`, `/ahmedabad`
+- All 8 new pages added to `app/sitemap.ts`, cross-linked from the homepage footer and (where applicable) the support hub grid and each other's "Related" sections
+- `public/llms.txt` updated with real traction numbers (100+ users, 30+ listeners, organic growth) so AI models citing LeanOn have accurate, current facts
+
+**Still true from Round 1 (June 2026):** the technical foundation below (robots.ts, sitemap.ts, schemas, llms.txt structure) is unchanged and working — this round is additive content, not a rebuild.
 
 ---
 
@@ -38,9 +55,9 @@
 | No Bing Webmaster key set | HIGH | Owner: set `NEXT_PUBLIC_BING_VERIFICATION` in Vercel env vars |
 | No Google Search Console verified | HIGH | Owner: verify via Google Search Console |
 | Review count stuck at 120 | MEDIUM | Update FAQs + schema when count grows |
-| No press/media coverage backlinks | HIGH | Outreach (see Content Plan below) |
+| No press/media coverage backlinks | HIGH | Outreach (see Content Plan below) — now more credible with 100+ organic users to cite |
 | No `.well-known/` files | LOW | Add apple-app-site-association if native app launches |
-| Blog only 14 posts | MEDIUM | Add 2–3 new posts per week (see Content Plan) |
+| Blog: 17 posts (was 14) | MEDIUM | Still add 2–3 new posts per week (see Content Plan) |
 
 ---
 
@@ -72,6 +89,9 @@ Check current ranking for these priority keywords:
 - [ ] "anxiety support India" — target: Top 10
 - [ ] "alternatives to therapy India" — target: Top 5
 - [ ] "get paid to chat India" — target: Top 3
+- [ ] "empathy" — target: Top 20 (highly competitive generic term, long game)
+- [ ] "empathetic listener India" — target: Top 5 (low competition, new cluster)
+- [ ] "peer counselling India" — target: Top 5
 
 ### 4. AI Citation Check (weekly spot check)
 Ask ChatGPT, Gemini, Perplexity, and Claude these questions. Note whether LeanOn is cited:
@@ -95,6 +115,8 @@ New content is the single biggest lever. Prioritise these:
 
 ### Blog posts to write (priority order)
 
+**Done (July 2026):** ~~empathy-in-peer-support~~, ~~what-is-peer-support-india~~, ~~online-emotional-support-india-guide~~ — shipped this round.
+
 1. **"LeanOn vs iCall vs Vandrevala Foundation — which is right for you?"**
    - Keyword: "iCall alternatives India", "vandrevala foundation alternative"
    - Slug: `/blog/leanon-vs-icall-vs-vandrevala`
@@ -107,38 +129,34 @@ New content is the single biggest lever. Prioritise these:
    - Keyword: "therapy cost India", "how much does therapy cost India"
    - Slug: `/blog/therapy-cost-india-2025`
 
-4. **"Online emotional support in India: complete guide"**
-   - Keyword: "online emotional support India", "emotional support chat India"
-   - Slug: `/blog/online-emotional-support-india-guide`
-
-5. **"Late-night loneliness: why 2am feels the worst and what to do"**
+4. **"Late-night loneliness: why 2am feels the worst and what to do"**
    - Keyword: "someone to talk to at night", "loneliness at night India"
    - Slug: `/blog/late-night-loneliness-india`
 
-6. **"What is peer support? Complete guide for Indians"**
-   - Keyword: "what is peer support India", "peer support definition"
-   - Slug: `/blog/what-is-peer-support-india`
-
-7. **"How LeanOn helps IIT/IIM students with exam stress"**
+5. **"How LeanOn helps IIT/IIM students with exam stress"**
    - Keyword: "IIT student mental health", "exam stress India"
    - Slug: `/blog/iit-iim-student-mental-health-peer-support`
 
-8. **"Anonymous therapy alternatives in India (2025)"**
+6. **"Anonymous therapy alternatives in India (2025)"**
    - Keyword: "anonymous therapy India", "therapy without name India"
    - Slug: `/blog/anonymous-therapy-alternatives-india`
 
+7. **"What Is Empathy vs Sympathy? A Practical Guide"**
+   - Keyword: "empathy vs sympathy", "empathy meaning" — companion piece to the empathy-in-peer-support anchor post
+   - Slug: `/blog/empathy-vs-sympathy`
+
 ### New support topic pages to create
 
-- `/support/social-anxiety` — high search volume
-- `/support/imposter-syndrome` — tech/corporate audience
-- `/support/work-from-home-loneliness` — post-pandemic search
+**Done (July 2026):** ~~social-anxiety~~, ~~imposter-syndrome~~, ~~work-from-home-loneliness~~ — shipped this round.
+
 - `/support/new-city-loneliness` — relocators, migrants
 - `/support/online-friend-need` — "I need an online friend India"
+- `/support/marriage-loneliness` — loneliness within marriage, high search intent, underserved topic
 
 ### New city pages to create
 
-- `/jaipur` — large city, young population
-- `/ahmedabad` — business community, Gujarati listeners
+**Done (July 2026):** ~~jaipur~~, ~~ahmedabad~~ — shipped this round.
+
 - `/lucknow` — Hindi-belt coverage
 - `/kochi` — Kerala / Malayalam speakers
 - `/chandigarh` — Punjab coverage
@@ -224,6 +242,12 @@ Backlinks from authoritative sites are the #1 ranking signal. Target these:
 
 ### Brand cluster (own these)
 - lean on, leanon, lean on app, leanon app, lean on India, leanon India
+
+### Empathy cluster (new — priority as of July 2026)
+- empathy, empathetic listener India, empathetic support India, compassionate listener India
+- peer counselling India, peer counsellor India, active listening India
+- what is empathy, empathy meaning, empathy vs sympathy
+- Anchor content: `/blog/empathy-in-peer-support` — link to this from any new page discussing what makes LeanOn listeners different
 
 ### Intent cluster: "I need support now"
 - someone to talk to, need someone to lean on, talk to someone India
