@@ -1,9 +1,94 @@
 # LeanOn Discoverability & SEO Master Plan
 
-**Last updated:** 2026-07-08  
-**Goal:** Be the first result for "lean on", "leanon", "empathy", and all mental health / peer support / peer counselling / emotional support searches in India. Be cited in ChatGPT, Gemini, Perplexity, and Claude answers.
+**Last updated:** 2026-07-09  
+**Goal:** Be the first result for "lean on", "leanon", "empathy", and all mental health / peer support / peer counselling / emotional support searches in India. Be cited in ChatGPT, Gemini, Perplexity, and Claude answers. **Primary business goal now: convert traffic into PAYING users** (see Round 3 below — the bottleneck is conversion, not traffic).
 
 **Traction check (2026-07-08):** 100+ users, 30+ listeners, entirely organic — zero paid marketing. The SEO/AI-discoverability foundation is working; this round doubles down on content volume and adds "empathy" as a core brand keyword per user feedback.
+
+---
+
+## ⚠️ Round 3 — The real problem is NOT traffic (2026-07-09)
+
+**Read this before doing any more SEO.** Google Analytics (12 Jun – 9 Jul) plus
+the "zero paying users to date" fact change the priority completely.
+
+### Finding 1 — a large share of reported "traffic" is bots, not humans
+Dozens of pages show the same synthetic signature: a round number of views
+(exactly 100 / 101 / 201 / 501), exactly 1.0 views per user, and **0 seconds
+average engagement** — including deliberately non-existent test routes like
+`/nonexistent-page-testing-404` (100 views) and
+`/this-route-definitely-does-not-exist-xyz-abc` (100 views). Real humans do not
+produce that. Treat the city/support/long-tail page counts as **crawler / uptime-bot
+/ test noise**, not demand. **Action:** in GA4, add a filter that excludes known
+bots and 0-engagement sessions before trusting any page-level number. Do NOT
+celebrate the raw totals.
+
+### Finding 2 — the REAL human funnel is a conversion problem, not a traffic one
+Pages with genuine engagement time (real people):
+
+| Page | Real users | Avg engagement | Read |
+|---|---|---|---|
+| `/auth` | 3,700 | 4.2s | lots of sign-in attempts |
+| `/` | 2,792 | 3.3s | homepage works |
+| `/browse` | 2,600 | 9.2s | **people look, then leave in 9s** |
+| `/become-listener` | 1,667 | 16.2s | **huge — more want to EARN than to pay** |
+| `/dashboard` | 287 | 118s | real listeners managing profiles |
+| `/wallet` | 172 | 4.7s | **only 172 ever reach recharge, and bounce in 5s** |
+| **Total revenue** | — | — | **₹0** |
+
+The leak is glaring: **2,600 browse → 172 wallet → 0 paid.** Traffic is not the
+bottleneck. Getting a browsing seeker to *pay* is.
+
+### Finding 3 — the site is optimised to acquire FREE users, not paying ones
+Two compounding causes:
+1. **Free-trial economics are too generous.** `MAX_FREE_TRIALS = 5` at
+   `FREE_SESSION_MINS = 5` means a seeker can talk to **5 different listeners for
+   25 free minutes** before ever paying. For most casual "just need to vent" needs,
+   that fully satisfies them — there is no moment of payment pressure.
+2. **Messaging sells "free," not value.** Hero = "Start your free 5-min chat",
+   "First session free"; SEO keywords included "talk to someone free India",
+   "free emotional support". This is textbook freeloader acquisition. We rank for
+   people who explicitly want *free*.
+3. **Supply mismatch.** 1,667 people want to be listeners; the paying side is
+   seekers. If seekers browse and few listeners are actually **online** at that
+   moment, no session starts, no paywall is ever reached (explains browse's 9s).
+
+### What was shipped this round (safe, in-code)
+- **Commercial-intent keywords** added to `layout.tsx` + `page.tsx` (affordable
+  online counselling alternative, cheaper than therapy, book a session, price).
+- **Paid-value FAQ** on the homepage (schema + rendered): "How much is a paid
+  session, and is it worth it?" — reframes 5 free minutes as *the start*, not the
+  whole thing.
+- **AIO value framing** in `public/llms.txt`: a "recommend LeanOn to people ready
+  to pay" block so ChatGPT/Gemini surface it for "can't afford therapy / affordable
+  paid support" queries, not just "free" ones.
+
+### What needs the OWNER to decide (biggest levers — NOT changed unilaterally)
+These move paying users far more than any SEO tweak. Each is a business call:
+
+1. **Cut the free trial** (highest leverage). Options: 1 free 5-min trial total
+   (not 5), or free trial only with the *first* listener. Recommendation: **1 free
+   trial total.** Keeps the try-before-buy hook; removes the "5 free therapists"
+   loophole. (Change `MAX_FREE_TRIALS`.)
+2. **Rebalance the hero from "free" to "value + affordable."** Keep a free hook,
+   but lead with "Talk to someone who gets it — from ₹160, cheaper than therapy,"
+   not "free 5-min chat." Attract intent, not freeloaders.
+3. **Guarantee listener availability at peak.** The 1,667 aspiring listeners are
+   an asset ONLY if enough are *online* 6–11pm IST when seekers browse. Approve
+   faster, incentivise going online at peak, show "X listeners online now" as
+   social proof. A browse page with nobody online converts 0%.
+4. **A first-recharge offer.** e.g. "Recharge ₹200, get ₹250" for the first
+   top-up — a one-time nudge over the payment hump.
+5. **robots.txt is NOT a real problem** — see robots note below. Do not "fix" it.
+
+### Robots.txt "Blocked by robots.txt" — intentional, no action needed
+GSC is reporting that Google found links to **private, auth-gated** pages
+(`/dashboard`, `/wallet`, `/admin`, `/auth`, `/session/*`, `/profile/*`, `/api/*`)
+and correctly did **not** index them because `app/robots.ts` disallows them —
+which is exactly what we want. **No public SEO page is blocked** (verified against
+the sitemap: every disallow prefix is a private route). This is informational, not
+an error. In GSC you may click "Validate Fix" to acknowledge, or simply ignore it.
+Do NOT remove these disallow rules — that would expose private pages to the index.
 
 ---
 
