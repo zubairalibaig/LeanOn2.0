@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
+import TurnstileWidget, { turnstileEnabled } from '@/app/components/TurnstileWidget'
 
 const S = `
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
@@ -64,6 +65,10 @@ export default function AuthPage() {
   const [checking, setChecking] = useState(true)  // true while verifying existing session
   const [error, setError]       = useState('')
   const [countdown, setCountdown] = useState(0)
+  // CAPTCHA — blocks bots from burning paid SMS credits. Token is single-use,
+  // so it is cleared and the widget reset after every send attempt.
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
+  const [captchaReset, setCaptchaReset] = useState(0)
   const otpRefs = useRef<(HTMLInputElement|null)[]>([])
   const handledRef = useRef(false)
 
@@ -122,9 +127,21 @@ export default function AuthPage() {
   async function sendOtp() {
     setError('')
     if (digits().length < 10) { setError('Enter a valid 10-digit mobile number'); return }
+    // When CAPTCHA is configured, never spend an SMS without a verified token.
+    if (turnstileEnabled && !captchaToken) {
+      setError('Please complete the security check just above.')
+      return
+    }
     setLoading(true)
-    const { error: err } = await sb.auth.signInWithOtp({ phone: formatted() })
+    const { error: err } = await sb.auth.signInWithOtp({
+      phone: formatted(),
+      ...(captchaToken ? { options: { captchaToken } } : {}),
+    })
     setLoading(false)
+    // A Turnstile token is single-use — always burn it and request a fresh one,
+    // whether the send succeeded or failed (otherwise "Resend" would reuse it).
+    setCaptchaToken(null)
+    setCaptchaReset(n => n + 1)
     if (err) { setError(err.message); return }
     setStep('otp')
     setCountdown(30)
@@ -310,9 +327,20 @@ export default function AuthPage() {
                   onKeyDown={e => e.key === 'Enter' && sendOtp()} />
               </div>
               {error && <p className="error">{error}</p>}
+              {/* Mounted only once a full number is entered — keeps the CAPTCHA
+                  script off the page for crawlers and casual visitors. */}
+              {digits().length === 10 && (
+                <TurnstileWidget
+                  action="signin-otp"
+                  resetSignal={captchaReset}
+                  onVerify={setCaptchaToken}
+                />
+              )}
               <p className="tos">By continuing you agree to our <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</p>
-              <button className="btn" onClick={sendOtp} disabled={loading || digits().length < 10}>
-                {loading ? <span className="spin">⟳</span> : 'Send OTP →'}
+              <button className="btn" onClick={sendOtp} disabled={loading || digits().length < 10 || (turnstileEnabled && !captchaToken)}>
+                {loading ? <span className="spin">⟳</span>
+                  : turnstileEnabled && digits().length === 10 && !captchaToken ? 'Verifying you’re human…'
+                  : 'Send OTP →'}
               </button>
             </>
           )}
@@ -335,10 +363,20 @@ export default function AuthPage() {
               <button id="verify-btn" className="btn" onClick={verifyOtp} disabled={loading || otp.join('').length < 6}>
                 {loading ? <span className="spin">⟳</span> : 'Verify & continue →'}
               </button>
+              {/* Resend also spends an SMS, so it needs its own fresh token. */}
+              {countdown <= 0 && (
+                <TurnstileWidget
+                  action="resend-otp"
+                  resetSignal={captchaReset}
+                  onVerify={setCaptchaToken}
+                />
+              )}
               <div className="resend-row">
                 {countdown > 0
                   ? <span className="resend-count">Resend in {countdown}s</span>
-                  : <button className="resend-btn" onClick={sendOtp}>Resend OTP</button>
+                  : <button className="resend-btn" onClick={sendOtp} disabled={turnstileEnabled && !captchaToken}>
+                      {turnstileEnabled && !captchaToken ? 'Verifying you’re human…' : 'Resend OTP'}
+                    </button>
                 }
               </div>
             </>

@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, PLATFORM_FEE, LANGUAGES, MONTHS, MIN_LISTENER_AGE, MAX_LISTENER_AGE, ageFromBirth } from '@/lib/constants'
 import { createClient } from '@/lib/supabase'
+import TurnstileWidget, { turnstileEnabled } from '@/app/components/TurnstileWidget'
 
 const TAGS = [
   {id:'loneliness', label:'Loneliness 🌙'},
@@ -211,6 +212,9 @@ export default function BecomeListenerPage() {
   const [otp, setOtp] = useState(['','','','','',''])
   const [otpLoading, setOtpLoading] = useState(false)
   const [otpError, setOtpError] = useState('')
+  // CAPTCHA — stops bots burning paid SMS credits. Token is single-use.
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
+  const [captchaReset, setCaptchaReset] = useState(0)
   const [countdown, setCountdown] = useState(0)
   const otpRefs = useRef<(HTMLInputElement|null)[]>([])
 
@@ -261,10 +265,21 @@ export default function BecomeListenerPage() {
   async function sendOtp() {
     const phoneErr = validatePhone(phone)
     if (phoneErr) { setFieldErrors(e => ({...e, phone: phoneErr})); return }
+    // When CAPTCHA is configured, never spend an SMS without a verified token.
+    if (turnstileEnabled && !captchaToken) {
+      setOtpError('Please complete the security check just above.')
+      return
+    }
     setOtpLoading(true)
     setOtpError('')
-    const { error: err } = await sb.auth.signInWithOtp({ phone: '+91' + digits() })
+    const { error: err } = await sb.auth.signInWithOtp({
+      phone: '+91' + digits(),
+      ...(captchaToken ? { options: { captchaToken } } : {}),
+    })
     setOtpLoading(false)
+    // Single-use token — burn it and request a fresh one for any resend.
+    setCaptchaToken(null)
+    setCaptchaReset(n => n + 1)
     if (err) { setOtpError(err.message); return }
     setOtpSent(true)
     setCountdown(30)
@@ -541,13 +556,26 @@ export default function BecomeListenerPage() {
             {!otpVerified && (
               <div style={{marginBottom:16}}>
                 {!otpSent ? (
-                  <button
-                    style={{width:'100%',padding:'12px',fontFamily:'Nunito,sans-serif',fontSize:14,fontWeight:700,color:'var(--teal)',background:'rgba(26,143,160,0.08)',border:'1.5px solid rgba(26,143,160,0.3)',borderRadius:12,cursor:'pointer',marginBottom:4}}
-                    onClick={sendOtp}
-                    disabled={otpLoading}
-                  >
-                    {otpLoading ? <span className="spin">⟳</span> : '📱 Send OTP to verify phone →'}
-                  </button>
+                  <>
+                    {/* Mounted only once a full number is typed — the CAPTCHA
+                        script never loads during a normal (SEO) page view. */}
+                    {digits().length === 10 && (
+                      <TurnstileWidget
+                        action="listener-otp"
+                        resetSignal={captchaReset}
+                        onVerify={setCaptchaToken}
+                      />
+                    )}
+                    <button
+                      style={{width:'100%',padding:'12px',fontFamily:'Nunito,sans-serif',fontSize:14,fontWeight:700,color:'var(--teal)',background:'rgba(26,143,160,0.08)',border:'1.5px solid rgba(26,143,160,0.3)',borderRadius:12,cursor:'pointer',marginBottom:4}}
+                      onClick={sendOtp}
+                      disabled={otpLoading || (turnstileEnabled && digits().length === 10 && !captchaToken)}
+                    >
+                      {otpLoading ? <span className="spin">⟳</span>
+                        : turnstileEnabled && digits().length === 10 && !captchaToken ? 'Verifying you’re human…'
+                        : '📱 Send OTP to verify phone →'}
+                    </button>
+                  </>
                 ) : (
                   <div style={{background:'white',border:'1.5px solid var(--border)',borderRadius:14,padding:16,marginBottom:4}}>
                     <p style={{fontSize:13,fontWeight:700,color:'var(--navy)',marginBottom:12}}>Enter the 6-digit OTP sent to +91 {digits()}</p>
@@ -568,12 +596,26 @@ export default function BecomeListenerPage() {
                       ))}
                     </div>
                     {otpError && <p style={{fontSize:12,color:'#E53935',fontWeight:700,marginTop:6,textAlign:'center'}}>{otpError}</p>}
+                    {/* Resend spends another SMS — needs its own fresh token. */}
+                    {!otpLoading && countdown <= 0 && (
+                      <TurnstileWidget
+                        action="listener-resend-otp"
+                        resetSignal={captchaReset}
+                        onVerify={setCaptchaToken}
+                      />
+                    )}
                     <div style={{textAlign:'center',marginTop:10}}>
                       {otpLoading
                         ? <span style={{fontSize:13,color:'var(--gray)'}}>Verifying...</span>
                         : countdown > 0
                           ? <span className="resend-count">Resend in {countdown}s</span>
-                          : <button className="resend-btn" onClick={() => { setOtp(['','','','','','']); sendOtp() }}>Resend OTP</button>
+                          : <button
+                              className="resend-btn"
+                              onClick={() => { setOtp(['','','','','','']); sendOtp() }}
+                              disabled={turnstileEnabled && !captchaToken}
+                            >
+                              {turnstileEnabled && !captchaToken ? 'Verifying you’re human…' : 'Resend OTP'}
+                            </button>
                       }
                     </div>
                   </div>

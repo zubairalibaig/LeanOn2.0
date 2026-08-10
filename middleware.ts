@@ -86,6 +86,54 @@ function isTrustedOrigin(origin: string, reqHostname: string): boolean {
   return false
 }
 
+// @supabase/ssr v0.3.0 cookie API is get/set/remove (NOT getAll/setAll — those
+// silently no-op on this version and break all auth). Shared by both the
+// session-refresh path and the auth-gate path below.
+function makeClient(req: NextRequest, res: NextResponse) {
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get: (name: string) => req.cookies.get(name)?.value,
+        set: (name: string, value: string, options: CookieOptions) => {
+          req.cookies.set(name, value)
+          res.cookies.set({ name, value, ...options })
+        },
+        remove: (name: string, options: CookieOptions) => {
+          req.cookies.set(name, '')
+          res.cookies.set({ name, value: '', ...options })
+        },
+      },
+    }
+  )
+}
+
+const hasAuthCookie = (req: NextRequest) =>
+  req.cookies.getAll().some(c => c.name.includes('-auth-token'))
+
+// Keep a logged-in user's session alive on pages that don't require auth.
+//
+// WHY: Supabase access tokens expire (~1h). If the cookie is never refreshed
+// server-side, a returning user who lands on a public page (/, /browse) can be
+// silently signed out and forced through phone OTP again — which costs real
+// money on every SMS. Touching getUser() rotates the token and writes the fresh
+// cookie back.
+//
+// SEO/PERF: this runs ONLY when an auth cookie is present. Anonymous visitors
+// and search crawlers short-circuit immediately with zero added latency, so
+// public page speed and Core Web Vitals are completely unchanged.
+async function refreshSessionIfLoggedIn(req: NextRequest): Promise<NextResponse> {
+  const res = NextResponse.next()
+  if (!hasAuthCookie(req)) return res
+  try {
+    await makeClient(req, res).auth.getUser()
+  } catch {
+    // Transient Supabase/network error — never block the page over a refresh.
+  }
+  return res
+}
+
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl
 
@@ -126,39 +174,20 @@ export async function middleware(req: NextRequest) {
   // 3. Determine if route needs auth
   const needsAuth = AUTH_REQUIRED_PREFIXES.some(p => pathname.startsWith(p))
 
-  // 4. If public and not auth-required, pass through immediately
+  // 4. Public / non-gated pages: pass through, but keep an existing session
+  //    fresh so returning users are never forced back through paid SMS OTP.
+  //    (No auth cookie → returns instantly; SEO pages stay just as fast.)
   if (isPublicPage && !needsAuth) {
-    return NextResponse.next()
+    return await refreshSessionIfLoggedIn(req)
   }
 
-  // 5. Only check session for auth-required routes
+  // 5. Only gate auth-required routes; everything else still gets a refresh.
   if (!needsAuth) {
-    return NextResponse.next()
+    return await refreshSessionIfLoggedIn(req)
   }
 
   const res = NextResponse.next()
-  // CRITICAL: @supabase/ssr v0.3.0 cookie API is get/set/remove.
-  // getAll/setAll only exist in v0.4+ — passing them here type-checks
-  // (all methods are optional) but the client silently reads NO cookies,
-  // so getUser() is always null and every auth-required route bounces
-  // to /auth even for logged-in users.
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get: (name: string) => req.cookies.get(name)?.value,
-        set: (name: string, value: string, options: CookieOptions) => {
-          req.cookies.set(name, value)
-          res.cookies.set({ name, value, ...options })
-        },
-        remove: (name: string, options: CookieOptions) => {
-          req.cookies.set(name, '')
-          res.cookies.set({ name, value: '', ...options })
-        },
-      },
-    }
-  )
+  const supabase = makeClient(req, res)
 
   // getUser() validates the JWT server-side — more secure than getSession()
   const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -167,9 +196,8 @@ export async function middleware(req: NextRequest) {
     // Transient Supabase outage/network error while a session cookie exists:
     // let the request through rather than bouncing a logged-in user to /auth.
     // Page-level code and API routes still enforce their own auth.
-    const hasAuthCookie = req.cookies.getAll().some(c => c.name.includes('-auth-token'))
     const transient = !!authError && authError.status !== 400 && authError.status !== 401 && authError.status !== 403
-    if (hasAuthCookie && transient) {
+    if (hasAuthCookie(req) && transient) {
       return res
     }
 
