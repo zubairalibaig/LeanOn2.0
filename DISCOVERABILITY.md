@@ -7,6 +7,50 @@
 
 ---
 
+## Round 5 — Price visibility + free-trial tightening (2026-08-11)
+
+### Two real schema BUGS were suppressing paid-intent visibility
+Found while researching commercial-intent SEO (industry data: complete offer
+markup wins the price rich snippet on ~60–75% of commercial queries vs ~10–20%
+without; rich snippets lift CTR ~20–30%).
+
+1. **`priceRange` on an `Offer` in `layout.tsx` was invalid schema.**
+   `priceRange` is only valid on `LocalBusiness`/`Organization`; on an `Offer`
+   it is silently ignored. Google could therefore parse only the free trial's
+   `price: "0"` — **LeanOn's paid pricing was invisible to search engines, so the
+   platform read as free-only.** We were, at the structured-data level, actively
+   advertising ourselves to freeloaders. Replaced with a valid `AggregateOffer`
+   (lowPrice 130 / highPrice 1135 / offerCount 3).
+2. **The homepage `Product` schema had no `offers` block at all**, making it
+   ineligible for the price rich snippet. Added the same `AggregateOffer`.
+
+Price range is derived honestly from real pricing: 15 min at the ₹8/min floor
++ ₹10 platform fee = ₹130; 45 min at the ₹25/min ceiling + ₹10 = ₹1135.
+
+### Free trials reduced 5 → 3
+`MAX_FREE_TRIALS` was verified as correctly wired before changing — enforced
+server-side in `app/api/sessions/route.ts` AND mirrored in the client gate in
+`ListenerClient.tsx`, with the exhausted-trials message interpolating the
+constant. Only the number needed to change.
+
+Also updated the 13 places where the count was **hardcoded in copy** and would
+otherwise have gone stale: homepage FAQ (schema + rendered), `/faq`, the
+Kolkata/Pune/Chennai city FAQs (schema + rendered), the `layout.tsx` Service
+schema, and `public/llms.txt` (twice). A stale number here is worse than
+useless — it is a public promise the product no longer honours.
+
+**Existing users are not migrated and do not need to be:** the check is
+`>= MAX_FREE_TRIALS`, so anyone who already used 3+ trials is simply out of
+free sessions, which is the intent.
+
+### Still NOT done (owner decisions, highest remaining leverage)
+- Hero still leads with "Start your free 5-min chat" — still sells *free*, not value
+- No first-recharge incentive at the moment trials run out (the single
+  highest-intent moment in the entire funnel — currently just says "recharge")
+- Listener availability at peak hours remains the hard supply constraint
+
+---
+
 ## Round 4 — Seeker acquisition only (2026-08-11)
 
 **Trigger:** the owner reports supply is now outpacing demand — listener signups

@@ -41,11 +41,11 @@ const faqs = [
     items: [
       {
         q: 'How do I start using LeanOn?',
-        a: 'Sign up with your mobile number (OTP verified — 30 seconds). Browse peer listeners for free — read bios, topics, and ratings. When you\'re ready, pick a session length and start immediately. New users get up to 5 free 5-minute sessions to try different listeners.',
+        a: 'Sign up with your mobile number (OTP verified — 30 seconds). Browse peer listeners for free — read bios, topics, and ratings. When you\'re ready, pick a session length and start immediately. New users get up to 3 free 5-minute sessions to try different listeners.',
       },
       {
         q: 'Is it really free to start?',
-        a: 'Yes. New users get up to 5 free 5-minute sessions — one per listener — no credit card or wallet top-up needed. You just need to sign up with your phone number.',
+        a: 'Yes. New users get up to 3 free 5-minute sessions — one per listener — no credit card or wallet top-up needed. You just need to sign up with your phone number.',
       },
       {
         q: 'Do I need to book in advance?',

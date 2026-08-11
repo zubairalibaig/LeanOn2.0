@@ -7,7 +7,15 @@ export const grossRechargeAmount = (amount: number) => Math.ceil(amount * (1 + G
 export const MIN_LISTENER_RATE  = 1    // ₹/min (suggestion floor; no hard mandate)
 export const MAX_LISTENER_RATE  = 500  // ₹/min — requires migration 039 (011 was a no-op; live cap stays ≤200 until 039 runs)
 export const FREE_SESSION_MINS  = 5
-export const MAX_FREE_TRIALS    = 5    // each user gets 5 free 5-min trials (try multiple listeners)
+// Each user gets N free 5-min trials, ONE per listener (so they can try a few
+// listeners before paying). Reduced 5 → 3 on 2026-08-11: at 5 trials a seeker
+// could get 25 free minutes across 5 listeners, which fully satisfied most
+// casual "just need to vent" needs and meant the paywall was never reached
+// (62 free trials vs 1 paid session). 3 keeps a genuine try-before-you-buy
+// window while restoring a reason to recharge.
+// NOTE: any user-facing copy stating the number must be updated alongside this
+// (homepage FAQ, /faq, city page FAQs, layout Service schema, public/llms.txt).
+export const MAX_FREE_TRIALS    = 3
 export const SESSION_DURATIONS  = [5, 15, 30, 45] as const
 export const RECHARGE_AMOUNTS   = [200, 500, 1000, 2000] as const
 export const UUID_RE            = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i

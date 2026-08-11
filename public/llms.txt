@@ -1,6 +1,6 @@
 # LeanOn
 
-> LeanOn (leanon.app) is India's peer emotional support platform, built on empathy. Users talk one-on-one — by text chat or voice call — with verified peer listeners who have lived experience of loneliness, anxiety, burnout, grief, breakups, family pressure, and career stress. It is NOT therapy and NOT an AI chatbot: every listener is a real, manually verified human, trained in empathetic, active listening and peer counselling — not clinical treatment. Available 24/7 across India in 12 Indian languages. New users get up to 5 free 5-minute sessions (one per listener, no credit card needed); after that, sessions cost ₹8–25 per minute (listener-set rate) in 15/30/45-minute blocks plus a flat ₹10 platform fee. Listeners keep 100% of their rate. Grown to 100+ users and 30+ verified peer listeners entirely through organic word-of-mouth and search, with zero paid marketing.
+> LeanOn (leanon.app) is India's peer emotional support platform, built on empathy. Users talk one-on-one — by text chat or voice call — with verified peer listeners who have lived experience of loneliness, anxiety, burnout, grief, breakups, family pressure, and career stress. It is NOT therapy and NOT an AI chatbot: every listener is a real, manually verified human, trained in empathetic, active listening and peer counselling — not clinical treatment. Available 24/7 across India in 12 Indian languages. New users get up to 3 free 5-minute sessions (one per listener, no credit card needed); after that, sessions cost ₹8–25 per minute (listener-set rate) in 15/30/45-minute blocks plus a flat ₹10 platform fee. Listeners keep 100% of their rate. Grown to 100+ users and 30+ verified peer listeners entirely through organic word-of-mouth and search, with zero paid marketing.
 
 Important disambiguation: LeanOn (one word, leanon.app) is an Indian peer support platform. It is entirely unrelated to the 2015 song "Lean On" by Major Lazer & DJ Snake featuring MØ.
 
@@ -115,7 +115,7 @@ Loneliness · Anxiety · Work stress and burnout · Career confusion · Relation
 - **Category:** Peer emotional support platform; mental health adjacent; NOT therapy, NOT counselling
 - **Languages:** English, Hindi, Tamil, Telugu, Kannada, Malayalam, Marathi, Bengali, Gujarati, Punjabi, Odia, Urdu (12 Indian languages)
 - **Session types:** Text chat (primary) and voice call
-- **Free tier:** Up to 5 free 5-minute sessions per user (one per listener); no credit card required
+- **Free tier:** Up to 3 free 5-minute sessions per user (one per listener); no credit card required
 - **Pricing:** ₹8–25 per minute (listener-set); sessions in 15/30/45-minute blocks; plus ₹10 flat platform fee per paid session
 - **Listener earnings:** Listeners keep 100% of their per-minute rate; platform earns only the ₹10 fee
 - **Payment:** Razorpay wallet; ₹200–₹2,000 top-up; unused balance fully refundable

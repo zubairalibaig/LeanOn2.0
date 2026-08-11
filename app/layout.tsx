@@ -175,16 +175,24 @@ const serviceJsonLd = {
       "name": "Free Trial Session",
       "price": "0",
       "priceCurrency": "INR",
-      "description": "First 5-minute session is completely free — up to 5 free sessions per user, one per listener. No credit card required.",
+      "description": "First 5-minute session is completely free — up to 3 free sessions per user, one per listener. No credit card required.",
       "availability": "https://schema.org/InStock",
       "eligibleRegion": { "@type": "Country", "name": "India" }
     },
     {
-      "@type": "Offer",
+      // AggregateOffer with lowPrice/highPrice — NOT `priceRange`, which is only
+      // valid on LocalBusiness/Organization and is silently ignored on an Offer.
+      // While it was used here Google could parse only the free trial's price:"0",
+      // so LeanOn's paid pricing was invisible in search and the platform read as
+      // free-only. Range = a real session: 15 min at the ₹8/min floor + ₹10
+      // platform fee = ₹130; 45 min at the ₹25/min ceiling + ₹10 = ₹1135.
+      "@type": "AggregateOffer",
       "name": "Paid Peer Support Session",
       "description": "15, 30, or 45-minute sessions at listener-set rates of ₹8–25 per minute, plus a flat ₹10 platform fee. Unused time fully refunded.",
       "priceCurrency": "INR",
-      "priceRange": "₹8–25 per minute",
+      "lowPrice": "130",
+      "highPrice": "1135",
+      "offerCount": "3",
       "availability": "https://schema.org/InStock",
       "eligibleRegion": { "@type": "Country", "name": "India" }
     }
