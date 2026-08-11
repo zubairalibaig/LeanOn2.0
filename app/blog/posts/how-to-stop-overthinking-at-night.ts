@@ -78,19 +78,19 @@ export const post = {
 
 <p>Here is the thing about a thought loop: it feeds on being unspoken.</p>
 
-<p>Inside your head, a worry has no fixed shape. It is enormous, vague and endlessly elastic, expanding to fill whatever room you give it. The moment you say it out loud to another person it has to become sentences. It acquires edges. It becomes a specific claim, and specific claims can be examined. Very often you hear yourself say it and think: <em>oh. Said out loud, that is smaller than it felt.</em></p>
+<p>Inside your head, a worry has no fixed shape. It is vague and endlessly elastic, expanding to fill whatever room you give it. Said out loud to another person, it has to become sentences. It acquires edges. It becomes a specific claim, and specific claims can be examined. Very often you hear yourself say it and think: <em>oh. Said like that, it is smaller than it felt.</em></p>
 
-<p>The second thing is more important. When someone responds with genuine empathy — not advice, not solutions, just &quot;I have felt exactly that, and it is horrible&quot; — a particular kind of loneliness breaks. Rumination at night is not only about the problem. It is about facing it alone in the dark, convinced that nobody else's mind does this. Being met by someone who has been in the same 3am loosens the thought's grip in a way no technique on a list can match.</p>
+<p>The second thing is more important. When someone responds with genuine empathy — not advice, not solutions, just &quot;I have felt exactly that, and it is horrible&quot; — a particular kind of loneliness breaks. Rumination at night is not only about the problem; it is about facing it alone in the dark, convinced that nobody else's mind does this. Being met by someone who has been in the same 3am loosens the thought's grip in a way no technique on a list can match.</p>
 
 <p>This is why having <strong>someone to talk to at night</strong> is not a soft, optional comfort. It is one of the most reliable interrupts there is.</p>
 
 <h2>Where LeanOn Fits</h2>
 
-<p>The obvious problem is that 2am is exactly when nobody is available. Friends are asleep, and you do not want to be the person who wakes them for something you cannot even explain properly. Therapists have office hours. So you stay in the loop by default, not by choice.</p>
+<p>The obvious problem is that 2am is exactly when nobody is available. Friends are asleep, and you do not want to wake them for something you cannot even explain properly. Therapists have office hours. So you stay in the loop by default, not by choice.</p>
 
 <p>LeanOn exists for that gap. It is a <strong>peer support India</strong> platform where you can talk to verified peer listeners — people with lived experience of the same things, trained to listen without judgment — at the hours when overthinking actually peaks. Not clinicians in role, not friends with opinions and history with your family, but people who have been through their own version of this and can offer real, empathetic understanding of it.</p>
 
-<p>It is anonymous, which matters in a culture where the fear of being discussed is often the thing keeping you awake in the first place. You can say the thought you would never say to anyone who knows your parents. And the first five minutes are free, so you can find out what it feels like before deciding anything.</p>
+<p>It is anonymous, which matters in a culture where the fear of being discussed is often the thing keeping you awake. You can say the thought you would never say to anyone who knows your parents. And the first five minutes are free, so you can find out what it feels like before deciding anything.</p>
 
 <p>You can <a href="/browse">browse peer listeners</a> and pick someone whose experience resonates with yours, read more about <a href="/support/overthinking">overthinking support</a> or <a href="/support/anxiety">anxiety support</a>, or check the <a href="/faq">FAQ</a> first. You do not need a crisis to deserve a conversation — &quot;I cannot switch my head off and it is 2am&quot; is a completely valid reason to reach out.</p>
 
