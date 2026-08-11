@@ -14,12 +14,12 @@ type KPIs = {
   moderation: { pendingReports: number }
 }
 
-type UserRow = { id: string; name?: string; phone?: string; email?: string; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number; updated_at?: string; last_sign_in_at?: string | null }
+type UserRow = { id: string; name?: string; phone?: string; email?: string; avatar_url?: string | null; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number; updated_at?: string; last_sign_in_at?: string | null }
 type ListenerRow = {
   user_id: string; bio?: string; specialty_tags?: string[]; rate_per_min?: number; rating?: number; total_sessions?: number
   is_active: boolean; is_approved: boolean; is_available: boolean; is_verified?: boolean; is_suspended?: boolean; created_at: string
   last_sign_in_at?: string | null
-  users: { id: string; name?: string; email?: string; phone?: string; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number }
+  users: { id: string; name?: string; email?: string; phone?: string; avatar_url?: string | null; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number }
   application?: { status: string; admin_notes: string | null; upi_id?: string | null; bank_account?: string | null; ifsc_code?: string | null; aadhaar?: string | null; aadhaar_last4?: string | null } | null
 }
 type SessionRow = {
@@ -269,6 +269,33 @@ export default function AdminPage() {
   const [pendingApprovals, setPendingApprovals] = useState<ListenerRow[]>([])
   const [rejectNotes, setRejectNotes] = useState<Record<string, string>>({})
 
+  // ── Table sorting ──────────────────────────────────────────────────────────
+  // "Joined" (created_at) sorts SERVER-side so it orders across every page.
+  // "Last login" is enriched per-row from auth.users after pagination, so it
+  // can only be ordered client-side — i.e. within the page currently shown.
+  type SortDir = 'asc' | 'desc'
+  const [usersJoinedDir,     setUsersJoinedDir]     = useState<SortDir>('desc')
+  const [listenersJoinedDir, setListenersJoinedDir] = useState<SortDir>('desc')
+  const [usersLoginDir,      setUsersLoginDir]      = useState<SortDir | null>(null)
+  const [listenersLoginDir,  setListenersLoginDir]  = useState<SortDir | null>(null)
+
+  // Sort the visible page by last_sign_in_at. Rows that have never signed in
+  // (null) always sink to the bottom, in both directions.
+  function sortByLastLogin<T extends { last_sign_in_at?: string | null }>(rows: T[], dir: SortDir | null): T[] {
+    if (!dir) return rows
+    return [...rows].sort((a, b) => {
+      const av = a.last_sign_in_at ? new Date(a.last_sign_in_at).getTime() : null
+      const bv = b.last_sign_in_at ? new Date(b.last_sign_in_at).getTime() : null
+      if (av === null && bv === null) return 0
+      if (av === null) return 1
+      if (bv === null) return -1
+      return dir === 'asc' ? av - bv : bv - av
+    })
+  }
+
+  const arrow = (dir: SortDir | null) => dir === 'asc' ? ' ▲' : dir === 'desc' ? ' ▼' : ' ⇅'
+  const sortableTh: React.CSSProperties = { cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap' }
+
   // Sessions
   const [sessions, setSessions] = useState<SessionRow[]>([])
   const [sessionsStatus, setSessionsStatus] = useState('all')
@@ -352,9 +379,9 @@ export default function AdminPage() {
     setKpisLoading(false)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const loadUsers = useCallback(async (pg = usersPage, st = usersStatus, q = usersSearch) => {
+  const loadUsers = useCallback(async (pg = usersPage, st = usersStatus, q = usersSearch, dir = usersJoinedDir) => {
     setUsersLoading(true)
-    const params = new URLSearchParams({ type: 'user', page: String(pg), status: st, search: q })
+    const params = new URLSearchParams({ type: 'user', page: String(pg), status: st, search: q, dir })
     const res = await fetch(`/api/admin/users?${params}`, { headers: adminHeaders() }).catch(() => null)
     if (res?.ok) {
       const json = await res.json()
@@ -364,11 +391,11 @@ export default function AdminPage() {
       showToast('Failed to load users — tap a filter to retry')
     }
     setUsersLoading(false)
-  }, [usersPage, usersStatus, usersSearch]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [usersPage, usersStatus, usersSearch, usersJoinedDir]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const loadListeners = useCallback(async (pg = listenersPage, st = listenersStatus) => {
+  const loadListeners = useCallback(async (pg = listenersPage, st = listenersStatus, dir = listenersJoinedDir) => {
     setListenersLoading(true)
-    const params = new URLSearchParams({ type: 'listener', page: String(pg), status: st })
+    const params = new URLSearchParams({ type: 'listener', page: String(pg), status: st, dir })
     const res = await fetch(`/api/admin/users?${params}`, { headers: adminHeaders() }).catch(() => null)
     if (res?.ok) {
       const json = await res.json()
@@ -378,7 +405,7 @@ export default function AdminPage() {
       showToast('Failed to load listeners — tap a filter to retry')
     }
     setListenersLoading(false)
-  }, [listenersPage, listenersStatus]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [listenersPage, listenersStatus, listenersJoinedDir]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadPendingApprovals = useCallback(async () => {
     const params = new URLSearchParams({ type: 'listener', page: '0', status: 'pending' })
@@ -749,15 +776,44 @@ export default function AdminPage() {
                       {pendingApprovals.map(l => {
                         const u = l.users
                         return (
-                          <div key={l.user_id} className="kpi-card" style={{ border: '2px solid var(--orange)', display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'space-between' }}>
+                          <div key={l.user_id} className="kpi-card" style={{ border: '2px solid var(--orange)', display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                            {/* Photo — click to open full size for verification */}
+                            <a
+                              href={u?.avatar_url || undefined}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title={u?.avatar_url ? 'Open full-size photo' : 'No photo uploaded'}
+                              style={{
+                                width: 72, height: 72, borderRadius: 12, flexShrink: 0,
+                                background: 'var(--light)', border: '1.5px solid var(--border)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                overflow: 'hidden', fontSize: 11, color: 'var(--gray)', fontWeight: 700,
+                                cursor: u?.avatar_url ? 'zoom-in' : 'default', textDecoration: 'none',
+                              }}
+                            >
+                              {u?.avatar_url
+                                // eslint-disable-next-line @next/next/no-img-element
+                                ? <img src={u.avatar_url} alt={`${u?.name || 'Listener'} profile photo`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                : 'No photo'}
+                            </a>
                             <div style={{ minWidth: 180, flex: 1 }}>
                               <div style={{ fontWeight: 800 }}>{u?.name || '—'}</div>
                               <div style={{ fontSize: 12, color: 'var(--gray)' }}>
                                 {u?.phone || u?.email || '—'} · ₹{l.rate_per_min ?? '—'}/min
                               </div>
+                              {/* Aadhaar — full number when migration 047 is applied, else masked tail */}
+                              <div style={{ fontSize: 12, marginTop: 4, fontFamily: 'monospace', letterSpacing: 0.5, color: 'var(--navy)', fontWeight: 700 }}>
+                                Aadhaar: {l.application?.aadhaar
+                                  || (l.application?.aadhaar_last4 ? `••••••••${l.application.aadhaar_last4}` : '— not provided')}
+                              </div>
+                              {(l.specialty_tags?.length ?? 0) > 0 && (
+                                <div style={{ fontSize: 11, color: 'var(--teal)', fontWeight: 700, marginTop: 4 }}>
+                                  {l.specialty_tags!.join(' · ')}
+                                </div>
+                              )}
                               {l.bio && (
-                                <div style={{ fontSize: 12, color: 'var(--gray)', maxWidth: 460, marginTop: 4 }}>
-                                  {String(l.bio).slice(0, 140)}{String(l.bio).length > 140 ? '…' : ''}
+                                <div style={{ fontSize: 12, color: 'var(--gray)', maxWidth: 520, marginTop: 4, lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
+                                  {l.bio}
                                 </div>
                               )}
                             </div>
@@ -956,15 +1012,27 @@ export default function AdminPage() {
                       <tr>
                         <th>Name</th>
                         <th>Phone</th>
-                        <th>Joined</th>
-                        <th>Last login</th>
+                        <th
+                          style={sortableTh}
+                          title="Sort by joined date (across all pages)"
+                          onClick={() => {
+                            const next: SortDir = usersJoinedDir === 'desc' ? 'asc' : 'desc'
+                            setUsersJoinedDir(next); setUsersLoginDir(null)
+                            setUsersPage(0); loadUsers(0, usersStatus, usersSearch, next)
+                          }}
+                        >Joined{arrow(usersJoinedDir)}</th>
+                        <th
+                          style={sortableTh}
+                          title="Sort by last login (this page only)"
+                          onClick={() => setUsersLoginDir(d => d === 'desc' ? 'asc' : 'desc')}
+                        >Last login{arrow(usersLoginDir)}</th>
                         <th>Wallet</th>
                         <th>Status</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {users.map(u => (
+                      {sortByLastLogin(users, usersLoginDir).map(u => (
                         <tr key={u.id}>
                           <td style={{ fontWeight: 700 }}>{u.name || '—'}</td>
                           <td style={{ color: 'var(--gray)', fontSize: 13 }}>{u.phone || '—'}</td>
@@ -1055,11 +1123,24 @@ export default function AdminPage() {
                   <table>
                     <thead>
                       <tr>
+                        <th>Photo</th>
                         <th>Name</th>
                         <th>Phone</th>
                         <th>Aadhaar</th>
-                        <th>Joined</th>
-                        <th>Last login</th>
+                        <th
+                          style={sortableTh}
+                          title="Sort by joined date (across all pages)"
+                          onClick={() => {
+                            const next: SortDir = listenersJoinedDir === 'desc' ? 'asc' : 'desc'
+                            setListenersJoinedDir(next); setListenersLoginDir(null)
+                            setListenersPage(0); loadListeners(0, listenersStatus, next)
+                          }}
+                        >Joined{arrow(listenersJoinedDir)}</th>
+                        <th
+                          style={sortableTh}
+                          title="Sort by last login (this page only)"
+                          onClick={() => setListenersLoginDir(d => d === 'desc' ? 'asc' : 'desc')}
+                        >Last login{arrow(listenersLoginDir)}</th>
                         <th>Rate</th>
                         <th>Rating</th>
                         <th>Sessions</th>
@@ -1068,7 +1149,7 @@ export default function AdminPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {listeners.map(l => {
+                      {sortByLastLogin(listeners, listenersLoginDir).map(l => {
                         const u = l.users
                         const appStatus = l.application?.status ?? null
                         const isPending = !l.is_approved && (appStatus === 'pending' || appStatus === null)
@@ -1080,10 +1161,44 @@ export default function AdminPage() {
                         ))
                         return (
                           <tr key={l.user_id} className={isPending ? 'pending-row' : isRejected ? 'rejected-row' : ''}>
-                            <td style={{ fontWeight: 700 }}>
+                            {/* Photo — click to open full size for verification */}
+                            <td>
+                              <a
+                                href={u?.avatar_url || undefined}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title={u?.avatar_url ? 'Open full-size photo' : 'No photo uploaded'}
+                                style={{
+                                  width: 44, height: 44, borderRadius: 8, display: 'flex',
+                                  alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
+                                  background: 'var(--light)', border: '1.5px solid var(--border)',
+                                  fontSize: 9, color: 'var(--gray)', fontWeight: 700, textAlign: 'center',
+                                  cursor: u?.avatar_url ? 'zoom-in' : 'default', textDecoration: 'none',
+                                }}
+                              >
+                                {u?.avatar_url
+                                  // eslint-disable-next-line @next/next/no-img-element
+                                  ? <img src={u.avatar_url} alt={`${u?.name || 'Listener'} profile photo`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                  : 'None'}
+                              </a>
+                            </td>
+                            <td style={{ fontWeight: 700, maxWidth: 260 }}>
                               {u?.name || '—'}
                               {isSelf && <span className="badge badge-orange" style={{ marginLeft: 6, fontSize: 10 }}>YOU</span>}
                               {l.is_verified && <span className="badge badge-teal" style={{ marginLeft: 6, fontSize: 10 }}>Verified</span>}
+                              {(l.specialty_tags?.length ?? 0) > 0 && (
+                                <div style={{ fontSize: 10, color: 'var(--teal)', fontWeight: 700, marginTop: 2 }}>
+                                  {l.specialty_tags!.join(' · ')}
+                                </div>
+                              )}
+                              {l.bio && (
+                                <div
+                                  title={l.bio}
+                                  style={{ fontSize: 11, color: 'var(--gray)', fontWeight: 500, marginTop: 3, lineHeight: 1.5, whiteSpace: 'normal' }}
+                                >
+                                  {l.bio.length > 160 ? `${l.bio.slice(0, 160)}…` : l.bio}
+                                </div>
+                              )}
                             </td>
                             <td style={{ color: 'var(--gray)', fontSize: 12 }}>
                               {u?.phone || '—'}

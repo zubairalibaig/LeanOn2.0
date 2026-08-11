@@ -47,6 +47,11 @@ export async function GET(req: NextRequest) {
   const userStatus = url.searchParams.get('status') || 'all'
   const page = Math.max(0, parseInt(url.searchParams.get('page') || '0'))
   const search = url.searchParams.get('search') || ''
+  // Sort direction for the "Joined" column. Applied server-side so it orders
+  // across ALL pages, not just the visible one. (Last-login sorting stays
+  // client-side — that value is enriched per-row from auth.users after
+  // pagination, so it cannot be ordered in the query.)
+  const sortAsc = url.searchParams.get('dir') === 'asc'
 
   try {
     if (type === 'listener') {
@@ -65,21 +70,24 @@ export async function GET(req: NextRequest) {
 
       // Try with is_verified first (added by migration 008/014).
       // Fall back without it if the column doesn't exist yet.
+      // avatar_url is included so the admin can visually verify the applicant's
+      // profile photo before approving (alongside the Aadhaar number joined in
+      // from listener_applications below).
       const selectWithVerified = `
         user_id, bio, specialty_tags, rate_per_min, rating, total_sessions,
         is_active, is_approved, is_available, is_verified, is_suspended, created_at,
-        users!inner(id, name, email, phone, created_at, is_active, is_suspended, wallet_balance)
+        users!inner(id, name, email, phone, avatar_url, created_at, is_active, is_suspended, wallet_balance)
       `
       const selectWithoutVerified = `
         user_id, bio, specialty_tags, rate_per_min, rating, total_sessions,
         is_active, is_approved, is_available, is_suspended, created_at,
-        users!inner(id, name, email, phone, created_at, is_active, is_suspended, wallet_balance)
+        users!inner(id, name, email, phone, avatar_url, created_at, is_active, is_suspended, wallet_balance)
       `
 
       const buildQuery = (selectStr: string) => {
         let q = sb.from('listener_profiles')
           .select(selectStr, { count: 'exact' })
-          .order('created_at', { ascending: false })
+          .order('created_at', { ascending: sortAsc })
           .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)
 
         if (userIdFilter !== null) {
@@ -139,8 +147,8 @@ export async function GET(req: NextRequest) {
 
     // Regular users
     let query = sb.from('users')
-      .select('id, name, phone, email, created_at, is_active, is_suspended, wallet_balance, updated_at', { count: 'exact' })
-      .order('created_at', { ascending: false })
+      .select('id, name, phone, email, avatar_url, created_at, is_active, is_suspended, wallet_balance, updated_at', { count: 'exact' })
+      .order('created_at', { ascending: sortAsc })
       .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)
 
     if (userStatus === 'active') query = query.eq('is_active', true).eq('is_suspended', false)
