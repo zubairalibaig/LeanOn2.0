@@ -72,6 +72,12 @@ export async function GET(req: NextRequest) {
         .eq('is_suspended', false)
         .not('users.phone', 'is', null)
         .order('is_available', { ascending: false })
+        // Recency of being online decides WHICH rows survive the limit(50) among
+        // offline listeners, so a dormant-but-high-rated profile can no longer
+        // push out someone who was active an hour ago. Online listeners are
+        // unaffected — is_available still leads, and the JS sort below restores
+        // rating order within the online group.
+        .order('last_heartbeat_at', { ascending: false, nullsFirst: false })
         .order('rating',       { ascending: false })
         .limit(50)
       if (tag  !== 'all') q = q.contains('specialty_tags',    [tag])
@@ -79,7 +85,10 @@ export async function GET(req: NextRequest) {
       return q
     }
 
-    const SELECT_BASE = 'user_id, bio, specialty_tags, languages_spoken, rate_per_min, rating, total_sessions, is_available, is_verified, users!inner(name, avatar_url, phone)'
+    // last_heartbeat_at powers the "last online" label + offline ordering on
+    // browse. The column is guaranteed present (migration 041; the staleness
+    // sweep above already queries it), so no fallback select is needed.
+    const SELECT_BASE = 'user_id, bio, specialty_tags, languages_spoken, rate_per_min, rating, total_sessions, is_available, is_verified, last_heartbeat_at, users!inner(name, avatar_url, phone)'
     // birth_year/birth_month drive the browse age-range filter (migration 049).
     const SELECT_WITH_AGE = SELECT_BASE.replace(', users!inner', ', birth_year, birth_month, users!inner')
 
@@ -106,10 +115,24 @@ export async function GET(req: NextRequest) {
         is_available: Boolean((l as { is_available?: boolean }).is_available),
       }
     })
+    // Sort order (UNCHANGED at the top): online listeners always come first.
+    // Within the online group we keep rating DESC — all of them are available
+    // right now, so heartbeat recency there is meaningless noise (every value is
+    // within ~60s). Within the OFFLINE group we now order by how recently they
+    // were online, since that is the best predictor of who will come back soon.
+    const heartbeatMs = (x: Record<string, unknown>) => {
+      const raw = x.last_heartbeat_at as string | null | undefined
+      const t = raw ? new Date(raw).getTime() : NaN
+      return Number.isFinite(t) ? t : -1 // never-online sinks to the bottom
+    }
     listeners.sort((a, b) => {
       const av = a.is_available ? 1 : 0
       const bv = b.is_available ? 1 : 0
       if (av !== bv) return bv - av
+      if (!a.is_available) {
+        const diff = heartbeatMs(b) - heartbeatMs(a)
+        if (diff !== 0) return diff
+      }
       return ((b as { rating?: number }).rating || 0) - ((a as { rating?: number }).rating || 0)
     })
 

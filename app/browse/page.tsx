@@ -53,6 +53,42 @@ type Listener = {
   avatar_url?: string
   birth_year?: number | null
   birth_month?: number | null
+  last_heartbeat_at?: string | null
+}
+
+// Ranking used everywhere on this page. The online/offline precedence is
+// deliberately identical to the server's and must not change — online listeners
+// always sort first. The only tiebreaker that differs is WITHIN the offline
+// group, which is now ordered by how recently the listener was last online.
+function heartbeatMs(l: Listener): number {
+  const t = l.last_heartbeat_at ? new Date(l.last_heartbeat_at).getTime() : NaN
+  return Number.isFinite(t) ? t : -1 // never-online sinks to the bottom
+}
+function compareListeners(a: Listener, b: Listener): number {
+  if (a.is_available !== b.is_available) return a.is_available ? -1 : 1
+  if (!a.is_available) {
+    const diff = heartbeatMs(b) - heartbeatMs(a)
+    if (diff !== 0) return diff
+  }
+  return (b.rating || 0) - (a.rating || 0)
+}
+
+// "Last online" label for OFFLINE listeners. Returns null when the listener has
+// never been online, or was last online long enough ago that surfacing it only
+// signals dormancy — in that case the tile just shows the existing Offline dot.
+function lastOnlineLabel(l: Listener): string | null {
+  if (!l.last_heartbeat_at) return null
+  const then = new Date(l.last_heartbeat_at).getTime()
+  if (!Number.isFinite(then)) return null
+  const mins = Math.floor((Date.now() - then) / 60_000)
+  if (mins < 5)  return 'Active just now'
+  if (mins < 60) return `Active ${mins}m ago`
+  const hrs = Math.floor(mins / 60)
+  if (hrs < 24)  return `Active ${hrs}h ago`
+  const days = Math.floor(hrs / 24)
+  if (days === 1) return 'Active yesterday'
+  if (days <= 7)  return `Active ${days}d ago`
+  return null
 }
 
 const TAGS = [
@@ -205,10 +241,7 @@ function BrowseContent() {
           const mapped = prev.map(l =>
             l.user_id === user_id ? { ...l, is_available } : l
           )
-          return [...mapped].sort((a, b) => {
-            if (a.is_available !== b.is_available) return a.is_available ? -1 : 1
-            return (b.rating || 0) - (a.rating || 0)
-          })
+          return [...mapped].sort(compareListeners)
         })
       }
     } catch {
@@ -237,15 +270,19 @@ function BrowseContent() {
         schema: 'public',
         table: 'listener_profiles',
       }, (payload) => {
-        const updated = payload.new as { user_id: string; is_available: boolean }
+        const updated = payload.new as { user_id: string; is_available: boolean; last_heartbeat_at?: string | null }
         setListeners(prev => {
           const mapped = prev.map(l =>
-            l.user_id === updated.user_id ? { ...l, is_available: updated.is_available } : l
+            l.user_id === updated.user_id
+              // is_available handling is unchanged. last_heartbeat_at is carried
+              // through when present (migration 046 sets REPLICA IDENTITY FULL,
+              // so UPDATE payloads include it) to keep the "last online" label
+              // and the offline ordering fresh without a refetch.
+              ? { ...l, is_available: updated.is_available,
+                  last_heartbeat_at: updated.last_heartbeat_at ?? l.last_heartbeat_at }
+              : l
           )
-          return [...mapped].sort((a, b) => {
-            if (a.is_available !== b.is_available) return a.is_available ? -1 : 1
-            return (b.rating || 0) - (a.rating || 0)
-          })
+          return [...mapped].sort(compareListeners)
         })
       })
       .subscribe()
@@ -449,6 +486,15 @@ function BrowseContent() {
               <div style={{textAlign:'right',flexShrink:0}}>
                 <div className="rate">₹{l.rate_per_min}<span>/min</span></div>
                 <div className={`avail-label ${l.is_available?'on':'off'}`}>{l.is_available?'● Online':'● Offline'}</div>
+                {/* Last-online hint — only for offline listeners; an online tile
+                    already says "● Online". Hidden entirely once a listener has
+                    been away long enough that the label would only signal
+                    dormancy (see lastOnlineLabel). */}
+                {!l.is_available && lastOnlineLabel(l) && (
+                  <div style={{fontSize:11,fontWeight:600,color:'var(--gray)',marginTop:2,whiteSpace:'nowrap'}}>
+                    {lastOnlineLabel(l)}
+                  </div>
+                )}
               </div>
             </div>
             <p className="bio">{l.bio}</p>
