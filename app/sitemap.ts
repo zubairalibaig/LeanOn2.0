@@ -6,7 +6,7 @@ export const dynamic = 'force-static'
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = 'https://www.leanon.app'
   const d = (s: string) => new Date(s)
-  const TODAY = '2026-07-08'
+  const TODAY = '2026-08-11'
   return [
     { url: base,                                       lastModified: d(TODAY),        changeFrequency: 'daily',   priority: 1.0 },
     { url: `${base}/browse`,                           lastModified: d(TODAY),        changeFrequency: 'hourly',  priority: 0.95 },
@@ -35,6 +35,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/support/social-anxiety`,            lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/support/imposter-syndrome`,         lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/support/work-from-home-loneliness`, lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.85 },
+    // Seeker-intent support pages (Round 4 — acquiring paying users, not listeners)
+    { url: `${base}/support/overthinking`,             lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/support/marriage-loneliness`,      lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/support/job-loss`,                 lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
     // Blog
     { url: `${base}/blog`,                             lastModified: d('2026-05-01'), changeFrequency: 'weekly',  priority: 0.75 },
     { url: `${base}/blog/loneliness-in-india`,         lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.75 },
@@ -54,6 +58,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/blog/empathy-in-peer-support`,                     lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/blog/what-is-peer-support-india`,                  lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/blog/online-emotional-support-india-guide`,        lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/blog/how-to-stop-overthinking-at-night`,           lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/blog/no-one-to-talk-to`,                           lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/blog/therapy-cost-india`,                          lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
     // Brand + authority pages
     { url: `${base}/leanon`,                           lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/emotional-support`,                lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.9 },
@@ -62,6 +69,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/anonymous-peer-support`,           lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/need-someone-to-talk-to-india`,    lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/get-paid-to-chat-india`,           lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.8 },
+    // High-commercial-intent seeker pages (Round 4). Priority 0.95 — these are
+    // the pages that reach people ready to PAY, which is the current bottleneck.
+    { url: `${base}/online-counselling-india-cost`,    lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/talk-to-someone-right-now`,        lastModified: d(TODAY),        changeFrequency: 'weekly',  priority: 0.95 },
     // City pages
     { url: `${base}/bengaluru`,                        lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/mumbai`,                           lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.85 },

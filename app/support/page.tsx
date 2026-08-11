@@ -96,6 +96,27 @@ const topics = [
     href: '/support/work-from-home-loneliness',
     color: '#FFF8F0',
   },
+  {
+    emoji: '🌀',
+    title: 'Overthinking',
+    description: 'The 2 AM thought spiral, replaying conversations, a mind that will not switch off — for when you cannot get out of your own head.',
+    href: '/support/overthinking',
+    color: '#F0F4FF',
+  },
+  {
+    emoji: '💍',
+    title: 'Loneliness in Marriage',
+    description: 'Married and still profoundly alone. A private space to be honest, entirely outside your family and social circle.',
+    href: '/support/marriage-loneliness',
+    color: '#FFF0F8',
+  },
+  {
+    emoji: '📉',
+    title: 'Job Loss & Layoffs',
+    description: 'The identity hit, the secret months, the shame nobody talks about — talk to someone who has been laid off and come through it.',
+    href: '/support/job-loss',
+    color: '#F5FFF0',
+  },
 ]
 
 const S = `

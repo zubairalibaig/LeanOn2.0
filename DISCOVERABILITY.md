@@ -1,9 +1,74 @@
 # LeanOn Discoverability & SEO Master Plan
 
-**Last updated:** 2026-07-09  
+**Last updated:** 2026-08-11  
 **Goal:** Be the first result for "lean on", "leanon", "empathy", and all mental health / peer support / peer counselling / emotional support searches in India. Be cited in ChatGPT, Gemini, Perplexity, and Claude answers. **Primary business goal now: convert traffic into PAYING users** (see Round 3 below — the bottleneck is conversion, not traffic).
 
 **Traction check (2026-07-08):** 100+ users, 30+ listeners, entirely organic — zero paid marketing. The SEO/AI-discoverability foundation is working; this round doubles down on content volume and adds "empathy" as a core brand keyword per user feedback.
+
+---
+
+## Round 4 — Seeker acquisition only (2026-08-11)
+
+**Trigger:** the owner reports supply is now outpacing demand — listener signups
+(120 total, 44 pending) far exceed paying seekers (1 paid session ever). Round 3
+diagnosed the conversion leak; Round 4 attacks the *audience mix*.
+
+### The diagnosis: our own content was recruiting listeners, not seekers
+Auditing the existing library made the imbalance obvious:
+- `/get-paid-to-chat-india`, `/become-listener` → explicitly recruit SUPPLY, and
+  `/become-listener` had the highest engagement time on the whole site (16.2s).
+- Most other content is **informational** ("what is peer support", "how peer
+  support works", "what does lean on mean"). Informational queries attract
+  researchers, students, and prospective listeners — not people in pain who will
+  pay to talk tonight.
+- Almost nothing targeted **acute, pain-first, ready-to-pay seeker intent**.
+
+### The fix: pain-first and price-first pages
+Everything shipped this round targets someone who needs support *now* or is
+actively comparing what to spend. Nothing new recruits listeners.
+
+**Acute-need support pages** (high emotional urgency → high conversion)
+- `/support/overthinking` — "how to stop overthinking" is one of the highest
+  volume mental-health searches in India; reader is awake at 2am
+- `/support/marriage-loneliness` — badly underserved, low competition, and the
+  audience is 28-45 with disposable income who *cannot* confide in family
+- `/support/job-loss` — layoffs, identity loss, acute and time-bound
+
+**High-commercial-intent landing pages** (priority 0.95 in the sitemap)
+- `/online-counselling-india-cost` — reaches people who have already decided to
+  spend and are choosing where. The most commercially valuable page on the site.
+- `/talk-to-someone-right-now` — maximum urgency intent; crisis helplines are
+  surfaced early and prominently since this reader may be at genuine risk
+
+**Seeker-intent blog posts**
+- `/blog/how-to-stop-overthinking-at-night`
+- `/blog/no-one-to-talk-to`
+- `/blog/therapy-cost-india`
+
+**Technical**
+- Seeker keywords added to `layout.tsx` + `page.tsx` (talk to someone right now,
+  no one to talk to, therapy cost India, lonely in marriage, job loss…)
+- `llms.txt`: new pages listed, plus explicit routing rules so ChatGPT/Gemini/
+  Perplexity send *distress and price* queries to the right page — with a hard
+  instruction to give NIMHANS/Tele-MANAS FIRST on any self-harm signal
+- Sitemap: new pages at priority 0.9–0.95, above the listener-recruitment pages
+- Support hub grid + homepage footer updated for internal linking
+
+### Honesty guardrails applied to every page this round
+Non-negotiable, because this is mental-health content:
+- Never disparage therapy — peer support is framed as the right tool for
+  NON-clinical needs, never as "better than therapy"
+- Clinical symptoms → explicitly directed to a licensed professional
+- Crisis → NIMHANS (080-46110007) and Tele-MANAS (14416) only, always free
+- No invented statistics, studies, testimonials, or competitor prices
+- Only the site's established price figures were used
+
+### What this round does NOT fix
+Content brings the right *audience*; it does not fix the *conversion* leak.
+The Round 3 owner-decisions below are still the highest-leverage moves and
+remain undone: cut `MAX_FREE_TRIALS` from 5 → 1, rebalance the hero from "free"
+to value, guarantee listener availability at peak hours, first-recharge offer.
+Traffic from Round 4 will convert far better once those land.
 
 ---
 

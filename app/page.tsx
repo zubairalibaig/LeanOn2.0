@@ -16,6 +16,8 @@ export const metadata: Metadata = {
     'compassionate listener India', 'active listening India',
     'affordable online counselling India', 'cheaper than therapy India',
     'book a listening session India', 'online emotional support session India',
+    'talk to someone right now', 'no one to talk to', 'someone to listen to me',
+    'how to stop overthinking at night', 'online counselling cost India',
   ],
 }
 
@@ -513,6 +515,16 @@ export default function Home() {
             <a href="/support/social-anxiety">Social anxiety support</a>
             <a href="/support/imposter-syndrome">Imposter syndrome help</a>
             <a href="/support/work-from-home-loneliness">WFH loneliness support</a>
+            <a href="/support/overthinking">Overthinking help</a>
+            <a href="/support/marriage-loneliness">Lonely in marriage</a>
+            <a href="/support/job-loss">Job loss support</a>
+          </div>
+          <div className="fli" style={{marginTop:4,fontSize:12,opacity:0.75}}>
+            <a href="/talk-to-someone-right-now">Talk to someone right now</a>
+            <a href="/online-counselling-india-cost">Online counselling cost India</a>
+            <a href="/blog/therapy-cost-india">What therapy costs in India</a>
+            <a href="/blog/no-one-to-talk-to">No one to talk to?</a>
+            <a href="/blog/how-to-stop-overthinking-at-night">Stop overthinking at night</a>
           </div>
           <div className="fli" style={{marginTop:4,fontSize:12,opacity:0.75}}>
             <a href="/blog/what-does-lean-on-mean">What does lean on mean</a>

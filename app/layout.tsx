@@ -28,6 +28,13 @@ export const metadata: Metadata = {
     'affordable online counselling India', 'online counselling alternative India',
     'cheaper than therapy India', 'talk to someone online paid India',
     'book emotional support session India', 'online listener India price',
+    // Seeker-intent (Round 4) — acute need + price-comparison searches. These
+    // reach people looking for support to USE, not people looking to earn.
+    'talk to someone right now', 'need someone to talk to now India',
+    'no one to talk to', 'how to stop overthinking at night',
+    'online counselling cost India', 'therapy cost India',
+    'lonely in marriage India', 'job loss depression India',
+    'urgent emotional support India', 'someone to listen to me India',
   ],
   authors: [{ name: 'LeanOn' }],
   creator: 'LeanOn',
