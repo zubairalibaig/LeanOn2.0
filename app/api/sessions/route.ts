@@ -225,7 +225,18 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
-    // Optimistic lock — prevents double-payout if two requests race
+    // Optimistic lock — prevents double-payout if two requests race.
+    //
+    // SECURITY (`ended_at IS NULL`): a session is only ever settled once, and
+    // settlement is the moment ended_at is stamped. Requiring it to still be
+    // NULL makes re-settlement impossible even if a row is somehow flipped back
+    // to 'active' after completing. That mattered because the live RLS policy
+    // `sessions_seeker_rating_update` granted seekers row-level UPDATE on their
+    // own COMPLETED sessions — and RLS cannot scope columns — so a seeker could
+    // reset status/amount_held from the browser and replay this payout to mint
+    // wallet balance. Migration 050 removes that policy; this guard is the
+    // server-side backstop that holds regardless, since migrations here are
+    // applied manually.
     const { data: completed } = await sb
       .from('sessions')
       .update({
@@ -236,6 +247,7 @@ export async function PATCH(req: NextRequest) {
       })
       .eq('id', sessionId)
       .eq('status', 'active')
+      .is('ended_at', null)
       .select()
       .single()
 

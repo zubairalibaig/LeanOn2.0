@@ -69,7 +69,9 @@ const normalizePhone = (p: string | null | undefined) => (p ?? '').replace(/\D/g
 // code or DB):
 //   ADMIN_PHONE + ADMIN_PIN           — the original/primary admin (legacy pair)
 //   ADMIN_ACCOUNTS="phone:pin,phone:pin,…" — additional admins
-// Example: ADMIN_ACCOUNTS="+917483334235:482913"
+// Format only — NEVER put a real number or PIN here. Per CLAUDE.md, admin
+// identities live in env vars exclusively; this repo is public.
+//   ADMIN_ACCOUNTS="<E.164 phone>:<pin>,<E.164 phone>:<pin>"
 type AdminAccount = { phone: string; pin: string }
 
 function adminAccounts(): AdminAccount[] {

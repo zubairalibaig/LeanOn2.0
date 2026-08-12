@@ -229,25 +229,20 @@ export async function POST(req: NextRequest) {
         .then(() => {}, (e) => logger.warn('payout admin_notes update failed:', { id, error: String(e) }))
     }
 
-    // Soft-hold model: the wallet was already deducted when the listener
-    // submitted the request, so completing it must NOT deduct again.
-    // Legacy requests (created before soft-hold) were never held — detect those
-    // by a still-sufficient balance and deduct once now.
-    const { data: liveU } = await admin.from('users').select('wallet_balance').eq('id', pr.user_id).single()
-    const liveBalance = Number(liveU?.wallet_balance ?? 0)
-    if (liveBalance >= Number(pr.amount)) {
-      const { error: deductErr } = await admin.rpc('deduct_wallet', { p_user_id: pr.user_id, p_amount: pr.amount })
-      if (deductErr) {
-        logger.error('deduct_wallet failed for payout — reverting claim:', { id, deductErr: deductErr as unknown })
-        await admin.from('payout_requests').update({ status: 'pending' }).eq('id', id)
-        return NextResponse.json({ error: 'Wallet deduction failed. Please retry.' }, { status: 500 })
-      }
-      const { error: txErr } = await admin.from('wallet_transactions').insert({
-        user_id: pr.user_id, amount: pr.amount, type: 'debit', description: 'Payout disbursed (legacy)',
-      })
-      if (txErr) logger.error('payout wallet_transactions insert failed (ledger gap):', { id, error: txErr.message })
-    }
-    // Otherwise the balance was already held at request time — nothing to deduct.
+    // Soft-hold model: /api/payout ALWAYS deducts the balance at request time,
+    // so completing a payout must never deduct again.
+    //
+    // 🔴 FIXED — this previously carried a "legacy request" heuristic that
+    // re-deducted whenever `wallet_balance >= pr.amount`, on the theory that a
+    // still-sufficient balance meant the hold had never happened. That is
+    // provably wrong: payouts are processed manually over days, and a listener
+    // who completes ANY session in that window is credited again, pushing their
+    // balance back above the requested amount. The admin clicking "Mark Paid"
+    // then charged them a SECOND time — paid ₹500 in cash, ₹1000 off the wallet.
+    // There is no column on payout_requests distinguishing held from not-held
+    // (verified against LIVE_SCHEMA), so the heuristic could never be made
+    // reliable. The hold is unconditional upstream, so the correct behaviour
+    // here is simply to disburse and record — never to deduct.
 
     await admin.from('notifications').insert({
       user_id:    pr.user_id,
@@ -336,30 +331,20 @@ export async function POST(req: NextRequest) {
       .single()
     const razorpayPaymentId: string | null = (rzpRow as { razorpay_payment_id?: string | null } | null)?.razorpay_payment_id ?? null
 
-    // Since the June 2026 fix, the wallet balance is zeroed IMMEDIATELY when the
-    // seeker submits a refund request (deduct_wallet fires in /api/refund/route.ts).
-    // At processing time, the balance is already 0 — no deduction needed here.
-    // Legacy requests submitted BEFORE the fix may still have a non-zero balance.
-    // Detect and handle those: if balance > 0, deduct now (old behaviour).
-    const { data: liveU } = await admin.from('users').select('wallet_balance').eq('id', rr.user_id).single()
-    const liveBalance = Number(liveU?.wallet_balance ?? 0)
-
-    if (liveBalance > 0) {
-      // Legacy request — balance wasn't zeroed at request time; do it now.
-      const deductAmt = Math.min(Number(rr.amount), liveBalance)
-      const { error: deductErr } = await admin.rpc('deduct_wallet', { p_user_id: rr.user_id, p_amount: deductAmt })
-      if (deductErr) {
-        logger.error('complete_refund: legacy deduct_wallet failed — reverting:', { id, error: deductErr.message })
-        await admin.from('refund_requests').update({ status: 'pending' }).eq('id', id)
-        return NextResponse.json({ error: 'Wallet deduction failed. Please retry.' }, { status: 500 })
-      }
-      if (deductAmt !== Number(rr.amount)) {
-        await admin.from('refund_requests').update({ amount: deductAmt }).eq('id', id)
-      }
-      await admin.from('wallet_transactions').insert({
-        user_id: rr.user_id, amount: deductAmt, type: 'debit', description: 'Wallet refund processed (legacy)',
-      }).then(() => {}, (e) => logger.error('refund tx insert failed:', { error: String(e) }))
-    }
+    // /api/refund zeroes the wallet the moment the seeker submits the request,
+    // so there is nothing to deduct here.
+    //
+    // 🔴 FIXED — this previously re-deducted whenever `wallet_balance > 0`,
+    // treating any positive balance as proof the hold had never happened. But a
+    // seeker can freely RECHARGE while a refund sits pending (refunds take 3-5
+    // business days and nothing blocks top-ups). Their new balance was then
+    // wiped on approval: refund ₹800 requested, ₹500 recharged the next day,
+    // admin approves → the ₹500 is deducted and the request is silently
+    // rewritten to ₹500, so the seeker got ₹500 cash for ₹1300 paid in. The
+    // partial-deduct also diverged from the Razorpay refund below, which always
+    // used the ORIGINAL rr.amount — paying out more cash than was retired from
+    // the wallet. Neither could be made safe by heuristic, so the deduction is
+    // removed entirely; the hold upstream is unconditional.
 
     // Auto-issue Razorpay refund if we have the original payment_id.
     // Amount in Razorpay API is in paise (multiply by 100).
