@@ -54,6 +54,8 @@ export default function ListenerPresence() {
   const audioCtxRef  = useRef<AudioContext | null>(null)
   const ringTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const incomingIdRef = useRef<string | null>(null)
+  const pathRef = useRef(pathname)
+  useEffect(() => { pathRef.current = pathname }, [pathname])
 
   const skip = SKIP_PREFIXES.some(p => pathname === p || pathname.startsWith(p + '/'))
 
@@ -168,6 +170,64 @@ export default function ListenerPresence() {
       if (ringTimerRef.current) clearInterval(ringTimerRef.current)
     }
   }, [skip, userId, isListener, available, surface]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Global heartbeat — keeps presence alive from ANY page, not just /dashboard.
+  //
+  // GAP THIS CLOSES: only app/dashboard/page.tsx ever sent the "I'm still here"
+  // ping (POST /api/presence, heartbeat:true, every 60s). A listener who went
+  // online and then navigated to /history, /wallet, /profile — or simply
+  // reopened the app onto any page other than the dashboard — sent NO
+  // heartbeat at all. They were genuinely present, but invisible to the
+  // system: the next staleness sweep (any /browse load, once 15 minutes had
+  // passed since their LAST real heartbeat) would silently mark them offline
+  // with no warning, even though they never actually left.
+  //
+  // DOES NOT TOUCH THE LOCKED DASHBOARD LOGIC. This is a fully independent
+  // effect living in this separate, unlocked component. Both this and the
+  // dashboard's own heartbeat simply write "now" to the same timestamp column
+  // — if the listener happens to be on /dashboard, both fire and that is
+  // harmless (idempotent; last write wins, same value either way).
+  //
+  // Skips /session/* only, because that page already refreshes
+  // last_heartbeat_at through a separate call (app/api/sessions/heartbeat) —
+  // sending it again here would be pure duplication with no benefit. The skip
+  // check reads a ref (not the `pathname` closure) so navigating around does
+  // NOT tear down and restart this effect — it just keeps ticking, and each
+  // tick decides fresh whether the CURRENT page is a session page.
+  //
+  // SECURITY-RELEVANT — unchanged: this can only ever REFRESH an existing
+  // "online". If the database already says offline (available === false,
+  // e.g. the listener was away long enough to be swept), this effect does
+  // nothing. Going back online after a real timeout still requires the
+  // explicit "Go online" tap — a heartbeat can never resurrect a stale
+  // listener on its own.
+  useEffect(() => {
+    if (!isListener || available !== true) return
+
+    const isSessionPage = () => pathRef.current === '/session' || pathRef.current.startsWith('/session/')
+
+    const ping = () => {
+      if (isSessionPage()) return
+      fetch('/api/presence', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ heartbeat: true }),
+      }).catch(() => {})
+    }
+
+    ping() // immediate — covers "just reopened the app" without waiting up to 60s
+    const iv = setInterval(ping, 60_000)
+
+    // Mobile browsers throttle timers while backgrounded — an immediate ping
+    // on foregrounding avoids waiting for the next 60s tick to notice.
+    function onVisible() { if (document.visibilityState === 'visible') ping() }
+    document.addEventListener('visibilitychange', onVisible)
+
+    return () => {
+      clearInterval(iv)
+      document.removeEventListener('visibilitychange', onVisible)
+    }
+  }, [isListener, available])
 
   // Silently keep the push token fresh for a listener who is ALREADY online
   // and permission was already granted in an earlier session (e.g. they
