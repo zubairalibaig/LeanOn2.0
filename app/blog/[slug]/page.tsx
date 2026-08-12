@@ -20,6 +20,7 @@ import { post as onlineEmotionalSupportGuidePost } from '../posts/online-emotion
 import { post as overthinkingNightPost } from '../posts/how-to-stop-overthinking-at-night'
 import { post as noOneToTalkToPost } from '../posts/no-one-to-talk-to'
 import { post as therapyCostPost } from '../posts/therapy-cost-india'
+import { post as astrologerTalkPost } from '../posts/why-people-call-astrologers-to-talk'
 
 export const dynamic = 'force-static'
 
@@ -27,7 +28,7 @@ const allPosts = [
   lonelinessPost, burnoutPost, peerSupportPost, leanOnMeanPost, lonelinessAtNightPost,
   emotionalBurnoutPost, anonymousSupportPost, peerVsTherapyPost, jointFamilyPost,
   lonelinessJointFamilyPost, founderBurnoutPost, affordableTherapyPost, mensMentalHealthPost, womenLonelinessPost,
-  empathyPost, whatIsPeerSupportPost, onlineEmotionalSupportGuidePost,
+  empathyPost, whatIsPeerSupportPost, onlineEmotionalSupportGuidePost, astrologerTalkPost,
   overthinkingNightPost, noOneToTalkToPost, therapyCostPost,
 ]
 

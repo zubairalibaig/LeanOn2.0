@@ -70,6 +70,6 @@ export const post = {
 
 <p>Do not make the burnout mean something about who you are. You burned out because you cared — about something enough to give more than you had. That is information about the conditions you were in, not your character.</p>
 
-<p>And if you need to talk to someone who has been through it: that is what LeanOn is for.</p>
+<p>And if you need to talk to someone who has been through it: <a href="/browse">that is what LeanOn is for</a>.</p>
   `.trim(),
 }

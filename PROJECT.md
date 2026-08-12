@@ -30,6 +30,8 @@ AstroTalk's founder discovered that a large share of night-session bookings were
 
 LeanOn removes the astrology wrapper and monetises the real thing: **human connection and lived-experience guidance.**
 
+**This is not just an internal theory — it is documented.** Reporting on India's astrology-app boom (The Revealer, "Why Young People in India Are Turning to Astrology Apps for Answers") quotes an astrologer describing exactly this pattern on the record: *"When I am doing night sessions, most people just wanna talk. I am just a stranger they can tell their stories to."* Post-midnight, these chat apps reportedly shift from divination into confessionals. This is the exact searcher LeanOn's discoverability strategy (see `DISCOVERABILITY.md`) now deliberately targets — see `/talk-to-someone-not-astrologer` and `/blog/why-people-call-astrologers-to-talk`. When building anything that references this comparison: never disparage astrology or its users, never name a specific competitor by brand, and only cite facts actually sourced — do not invent statistics beyond what is documented here.
+
 - India has millions of emotionally isolated people.
 - Almost no affordable emotional support exists.
 - Therapy stigma is real and deep.

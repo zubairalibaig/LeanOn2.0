@@ -72,7 +72,7 @@ export const post = {
 
 <p>That decision is worth making. You do not have to be in crisis. You do not have to be certain that what you are feeling is "bad enough" to warrant support. If you are struggling and you do not have a safe place to be honest about it, that is reason enough.</p>
 
-<p>LeanOn&apos;s listeners are there without judgment, without any stake in your social world, and without requiring you to be anything other than honest. Browse the available listeners, pick someone who feels right, and say whatever is actually true. That is all it takes to begin.</p>
+<p>LeanOn&apos;s listeners are there without judgment, without any stake in your social world, and without requiring you to be anything other than honest. <a href="/browse">Browse the available listeners</a>, pick someone who feels right, and say whatever is actually true. That is all it takes to begin.</p>
 
 <p>Millions of people in India are looking for exactly what you might be looking for. The silence around that search is part of the problem. You do not have to be part of the silence.</p>
   `.trim(),

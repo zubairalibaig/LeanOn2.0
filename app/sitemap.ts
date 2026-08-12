@@ -6,7 +6,7 @@ export const dynamic = 'force-static'
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = 'https://www.leanon.app'
   const d = (s: string) => new Date(s)
-  const TODAY = '2026-08-11'
+  const TODAY = '2026-08-12'
   return [
     { url: base,                                       lastModified: d(TODAY),        changeFrequency: 'daily',   priority: 1.0 },
     { url: `${base}/browse`,                           lastModified: d(TODAY),        changeFrequency: 'hourly',  priority: 0.95 },
@@ -39,6 +39,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/support/overthinking`,             lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/support/marriage-loneliness`,      lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/support/job-loss`,                 lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/support/sunday-night-loneliness`,  lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/support/long-distance-relationship`, lastModified: d(TODAY),      changeFrequency: 'monthly', priority: 0.85 },
     // Blog
     { url: `${base}/blog`,                             lastModified: d('2026-05-01'), changeFrequency: 'weekly',  priority: 0.75 },
     { url: `${base}/blog/loneliness-in-india`,         lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.75 },
@@ -61,6 +63,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/blog/how-to-stop-overthinking-at-night`,           lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/blog/no-one-to-talk-to`,                           lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/blog/therapy-cost-india`,                          lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/blog/why-people-call-astrologers-to-talk`,         lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
     // Brand + authority pages
     { url: `${base}/leanon`,                           lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/emotional-support`,                lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.9 },
@@ -73,6 +76,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // the pages that reach people ready to PAY, which is the current bottleneck.
     { url: `${base}/online-counselling-india-cost`,    lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/talk-to-someone-right-now`,        lastModified: d(TODAY),        changeFrequency: 'weekly',  priority: 0.95 },
+    // Astrology-chat bridge — intercepts searchers already turning to
+    // astrology apps for a conversation, not a prediction (see PROJECT.md §2).
+    { url: `${base}/talk-to-someone-not-astrologer`,   lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
     // City pages
     { url: `${base}/bengaluru`,                        lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/mumbai`,                           lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.85 },

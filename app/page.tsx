@@ -531,13 +531,17 @@ export default function Home() {
             <a href="/support/overthinking">Overthinking help</a>
             <a href="/support/marriage-loneliness">Lonely in marriage</a>
             <a href="/support/job-loss">Job loss support</a>
+            <a href="/support/sunday-night-loneliness">Sunday night loneliness</a>
+            <a href="/support/long-distance-relationship">Long-distance relationship</a>
           </div>
           <div className="fli" style={{marginTop:4,fontSize:12,opacity:0.75}}>
             <a href="/talk-to-someone-right-now">Talk to someone right now</a>
+            <a href="/talk-to-someone-not-astrologer">Not a prediction — just someone to talk to</a>
             <a href="/online-counselling-india-cost">Online counselling cost India</a>
             <a href="/blog/therapy-cost-india">What therapy costs in India</a>
             <a href="/blog/no-one-to-talk-to">No one to talk to?</a>
             <a href="/blog/how-to-stop-overthinking-at-night">Stop overthinking at night</a>
+            <a href="/blog/why-people-call-astrologers-to-talk">Why people call astrologers just to talk</a>
           </div>
           <div className="fli" style={{marginTop:4,fontSize:12,opacity:0.75}}>
             <a href="/blog/what-does-lean-on-mean">What does lean on mean</a>

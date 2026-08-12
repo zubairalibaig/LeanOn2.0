@@ -66,6 +66,6 @@ export const post = {
 
 <p>It is not the right primary option for people in acute mental health crises, people with untreated clinical mental health conditions that require diagnosis and treatment, or people who need a structured, evidence-based therapeutic intervention.</p>
 
-<p>If you are not sure, the first 5 minutes on LeanOn are free. You can try it, see how it feels, and decide from there. That seems like a reasonable place to start.</p>
+<p>If you are not sure, <a href="/browse">the first 5 minutes on LeanOn are free</a>. You can try it, see how it feels, and decide from there. That seems like a reasonable place to start.</p>
   `.trim(),
 }

@@ -64,7 +64,7 @@ export const post = {
 
 <p>Sometimes the loneliness at night is not a problem to be managed — it is a signal that you genuinely need another human being. Not tomorrow, not after a good night&apos;s sleep. Right now.</p>
 
-<p>This is one of the reasons <strong>LeanOn</strong> was built with around-the-clock availability. The small hours are precisely when the weight of things becomes heaviest, and when the usual support structures — friends, family, colleagues — are unavailable. LeanOn&apos;s peer listeners are there when the loneliness hits at 2 AM, offering a real conversation with a real person who has been through their own difficult nights and knows what it is to need someone to talk to.</p>
+<p>This is one of the reasons <a href="/browse"><strong>LeanOn</strong></a> was built with around-the-clock availability. The small hours are precisely when the weight of things becomes heaviest, and when the usual support structures — friends, family, colleagues — are unavailable. LeanOn&apos;s peer listeners are there when the loneliness hits at 2 AM, offering a real conversation with a real person who has been through their own difficult nights and knows what it is to need someone to talk to.</p>
 
 <p>You do not have to wait until morning. You do not have to be in crisis to reach out. If you are awake and the quiet is too loud and you need someone to hear you — that is enough reason. Loneliness at night is real, it is hard, and you do not have to sit with it alone.</p>
   `.trim(),

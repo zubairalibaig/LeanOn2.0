@@ -117,6 +117,20 @@ const topics = [
     href: '/support/job-loss',
     color: '#F5FFF0',
   },
+  {
+    emoji: '😔',
+    title: 'Sunday Night Loneliness',
+    description: 'The week ahead looms, the weekend goes quiet — for the specific dread that hits every Sunday evening.',
+    href: '/support/sunday-night-loneliness',
+    color: '#F0FFFC',
+  },
+  {
+    emoji: '✈️',
+    title: 'Long-Distance Relationship',
+    description: 'Loving someone far away, across time zones or countries — for the loneliness that exists even inside a committed relationship.',
+    href: '/support/long-distance-relationship',
+    color: '#FFF0F0',
+  },
 ]
 
 const S = `

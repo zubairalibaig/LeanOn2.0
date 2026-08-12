@@ -44,7 +44,7 @@ export const post = {
 
 <p><strong>Find one genuine connection.</strong> Research consistently shows that it is not the number of social connections that matters for wellbeing — it is the quality of at least one genuine connection. One person who knows you, and you them, makes an enormous difference.</p>
 
-<p><strong>Talk to someone who has been through it.</strong> There is a specific kind of relief in talking to someone who has personally navigated deep loneliness and found their way through. Not a therapist (though that can help too), but a peer — someone who knows what it actually feels like from the inside. This is the insight behind platforms like LeanOn: lived experience is a form of expertise that no degree can grant.</p>
+<p><strong>Talk to someone who has been through it.</strong> There is a specific kind of relief in talking to someone who has personally navigated deep loneliness and found their way through. Not a therapist (though that can help too), but a peer — someone who knows what it actually feels like from the inside. This is the insight behind platforms like <a href="/browse">LeanOn</a>: lived experience is a form of expertise that no degree can grant.</p>
 
 <p><strong>Lower the bar for connection.</strong> Many lonely people are waiting for a deep, meaningful friendship before they count something as &quot;real&quot; connection. But research shows that even brief, pleasant interactions with strangers — the cashier at the grocery store, the person next to you on the metro — contribute measurably to wellbeing. Start where you are.</p>
 
@@ -58,6 +58,6 @@ export const post = {
 
 <p>Loneliness is not a character flaw. It is a signal — the same way hunger is a signal. It is telling you something about what you need. And the fact that you feel it means you are someone who cares about connection, which is not nothing. It is, in fact, a lot.</p>
 
-<p>The path forward starts with being honest about the experience — with yourself, and when you are ready, with someone else. If you do not have that person in your life right now, LeanOn exists precisely for that reason.</p>
+<p>The path forward starts with being honest about the experience — with yourself, and when you are ready, with someone else. If you do not have that person in your life right now, <a href="/browse">LeanOn exists precisely for that reason</a>.</p>
   `.trim(),
 }

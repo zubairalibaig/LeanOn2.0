@@ -70,6 +70,6 @@ export const post = {
 
 <p>Leaning on someone begins before the crisis. It begins in the ordinary conversations where you say something true instead of something comfortable. It begins in the moment you decide that being known matters more than being impressive.</p>
 
-<p>And if you need somewhere to start right now, LeanOn is there. Browse real people who are trained to listen. Not therapists — peers. People who understand what it is to struggle and who have chosen to offer that understanding to others. Sometimes the most important step is simply deciding that you do not have to carry this alone. And then actually reaching out to someone who can help you carry it.</p>
+<p>And if you need somewhere to start right now, LeanOn is there. <a href="/browse">Browse real people who are trained to listen</a>. Not therapists — peers. People who understand what it is to struggle and who have chosen to offer that understanding to others. Sometimes the most important step is simply deciding that you do not have to carry this alone. And then actually reaching out to someone who can help you carry it.</p>
   `.trim(),
 }

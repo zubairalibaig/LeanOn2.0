@@ -1,9 +1,88 @@
 # LeanOn Discoverability & SEO Master Plan
 
-**Last updated:** 2026-08-11  
+**Last updated:** 2026-08-12  
 **Goal:** Be the first result for "lean on", "leanon", "empathy", and all mental health / peer support / peer counselling / emotional support searches in India. Be cited in ChatGPT, Gemini, Perplexity, and Claude answers. **Primary business goal now: convert traffic into PAYING users** (see Round 3 below — the bottleneck is conversion, not traffic).
 
 **Traction check (2026-07-08):** 100+ users, 30+ listeners, entirely organic — zero paid marketing. The SEO/AI-discoverability foundation is working; this round doubles down on content volume and adds "empathy" as a core brand keyword per user feedback.
+
+---
+
+## Round 6 — Learning from AstroTalk: the astrology-chat bridge (2026-08-12)
+
+**Trigger:** the owner asked explicitly: study AstroTalk's SEO/growth playbook and
+bring their users to LeanOn. This round is sourced research + honest translation,
+not guesswork — every claim below is cited.
+
+### What was actually researched (with sources)
+- AstroTalk drives **77% of its traffic through organic search** — SEO-led, not
+  paid-led. [Nico Digital case study]
+- **Decoupled intent-capture from conversion**: informational pages (horoscope,
+  Kundli matching) rank broadly for search intent, then every blog post embeds
+  **contextual in-body links** to the conversion surface ("chat with astrologer").
+  Money pages receive systematic internal link equity from content pages — not
+  just an end-of-post CTA card. [Nico Digital]
+- Highest-value keyword cluster: **relationship/love astrology** — their single
+  biggest vertical. [CanvasBusinessModel, GrowthX]
+- **The loneliness pattern is documented, not assumed.** The Revealer (investigative
+  journalism on India's astrology-app boom) quotes an astrologer on the record:
+  *"When I am doing night sessions, most people just wanna talk. I am just a
+  stranger they can tell their stories to."* Post-midnight, these apps reportedly
+  shift from divination into confessionals. Young professionals in Mumbai, Delhi,
+  Bangalore, Hyderabad use them on lunch breaks and late at night specifically
+  for connection, not prediction. [The Revealer]
+- Frictionless first touch: first chat free, no wallet recharge required, "under
+  a minute to start." Trust stated explicitly and numerically (response time,
+  verification steps, scale). Free trial framed as **low-pressure exploration**
+  ("try different astrologers... without pressure"), not a hard sell. [astrotalk.com,
+  mPanchang, mid-search excerpts]
+- Retention loop: daily horoscope content drives recurring return visits — the
+  single biggest lever LeanOn structurally lacks (flagged below, not built this
+  round — it is a product feature, not a content page).
+
+### What was built — every asset validated against the research above
+1. **`/talk-to-someone-not-astrologer`** (NEW top-level landing page, sitemap
+   priority 0.95) — the direct interception page for the bridge audience. Cites
+   the documented insight honestly, never claims astrology "doesn't work," never
+   names a competitor by brand.
+2. **`/blog/why-people-call-astrologers-to-talk`** — the citable long-form piece
+   making the same case in full, sourced as reported journalism, with the
+   project's crisis-helpline safety line included (matches the standard every
+   other emotionally-vulnerable blog post on the site carries).
+3. **`/support/sunday-night-loneliness`** and **`/support/long-distance-relationship`**
+   — occasion- and vertical-targeting, borrowed directly from AstroTalk's
+   "lunch break / late night" occasion framing and their #1 relationship
+   vertical. Both are real, searched, previously-uncovered angles — not padding.
+4. **Fixed the internal-linking gap directly, site-wide**: audited all 20 existing
+   blog posts and found **7 had ZERO in-body link to `/browse`** — relying on the
+   end-CTA card alone, exactly the anti-pattern AstroTalk's own playbook avoids.
+   Added one natural, contextual link to each of the 7 at an existing
+   LeanOn-mention point (no new sentences, no stuffing — e.g. "LeanOn exists
+   precisely for that reason" → the phrase itself became the link).
+5. `llms.txt`, `PROJECT.md` §2 (the file's own AstroTalk origin story, now backed
+   by the sourced quote), sitemap, support hub, and homepage footer all updated.
+
+### Honesty guardrails enforced on every new asset (scanned, not just written)
+- Zero competitor brand names anywhere (`AstroTalk`, `Astroyogi`, etc.) — grepped
+  clean across all 4 new files.
+- Zero disparagement of astrology or its users — grepped for "fake/scam/
+  nonsense/superstition/doesn't work"; the one hit was the blog post's own
+  deliberate disclaimer *against* saying that.
+- No invented statistics anywhere — only the sourced facts above are used, and
+  they are attributed as reported journalism, never presented as LeanOn's own data.
+- Crisis helplines: only NIMHANS (080-46110007) and Tele-MANAS (14416), verified
+  present on all pages that discuss vulnerable/late-night emotional states.
+
+### What was deliberately NOT built (flagged for a future, larger decision)
+- **A daily-return content hook** (AstroTalk's #1 retention lever). Building an
+  equivalent — e.g. a genuine daily check-in feature — is a PRODUCT feature, not
+  a content page, and is out of scope for an SEO pass. Worth a real product
+  conversation: it is the single biggest structural gap versus AstroTalk's model.
+- **Multilingual content** (AstroTalk publishes in 13 languages; LeanOn has zero
+  non-English SEO content, only listener-side language tags). This is the
+  largest remaining lever in absolute terms, but low-quality machine-translated
+  pages actively hurt SEO and trust — doing this properly means real
+  localisation, not a quick pass. Flagged as the top strategic item for a future,
+  dedicated round.
 
 ---
 
