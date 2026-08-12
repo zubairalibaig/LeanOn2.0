@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { showToast } from '@/lib/toast'
+import { registerPushNotifications } from '@/lib/firebase-client'
 
 // ── Global listener presence layer ───────────────────────────────────────────
 //
@@ -168,16 +169,31 @@ export default function ListenerPresence() {
     }
   }, [skip, userId, isListener, available, surface]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Silently keep the push token fresh for a listener who is ALREADY online
+  // and permission was already granted in an earlier session (e.g. they
+  // reloaded, or opened LeanOn on a new device). No prompt is shown —
+  // Notification.permission is only 'granted' if the browser already decided
+  // that. registerPushNotifications() itself is idempotent and skips the
+  // network call when the token is unchanged.
+  useEffect(() => {
+    if (skip || !isListener || available !== true) return
+    if (typeof window === 'undefined' || !('Notification' in window)) return
+    if (Notification.permission !== 'granted') return
+    registerPushNotifications().catch(() => {})
+  }, [skip, isListener, available])
+
   async function goOnline() {
     setBusy(true)
     // Unlock audio on this user gesture so the incoming-request chime can play
-    // later (browsers block sound until the page has been interacted with).
+    // later (browsers block sound until the page has been interacted with),
+    // and register for push so a request still reaches this listener with no
+    // LeanOn tab open at all — the in-tab chime alone cannot do that.
     try {
       type WK = Window & { webkitAudioContext?: typeof AudioContext }
       const Ctx = window.AudioContext ?? (window as WK).webkitAudioContext
       if (Ctx) { audioCtxRef.current ??= new Ctx(); audioCtxRef.current.resume().catch(() => {}) }
-      if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(() => {})
     } catch { /* non-fatal */ }
+    registerPushNotifications().catch(() => {})
     try {
       const res = await fetch('/api/listener/availability', {
         method: 'PATCH',

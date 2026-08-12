@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE, PLATFORM_FEE } from '@/lib/constants'
 import { showToast } from '@/lib/toast'
+import { registerPushNotifications } from '@/lib/firebase-client'
 
 let _sb: ReturnType<typeof createBrowserClient> | null = null
 function initSb() {
@@ -531,14 +532,12 @@ export default function DashboardPage() {
     const next = !prev
     if (next) {
       // Going online is the user gesture that arms the alerting stack:
-      // unlock the Web-Audio chime (autoplay policy) and ask for browser
-      // notification permission (prompt only fires the first time).
+      // unlock the Web-Audio chime (autoplay policy) and register for push
+      // notifications (requests browser permission the first time; silently
+      // reconfirms the token if already granted). Push reaches the listener
+      // even with no LeanOn tab open — the in-tab chime alone cannot.
       ensureAudioUnlocked()
-      try {
-        if ('Notification' in window && Notification.permission === 'default') {
-          Notification.requestPermission().catch(() => {})
-        }
-      } catch { /* older Safari uses callback form — chime still covers alerts */ }
+      registerPushNotifications().catch(() => {})
     }
     setAvail(next) // optimistic
     // Send explicit intent (not a flip) so the server sets exactly what the
