@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
-import { requireAdmin } from '@/lib/require-admin'
+import { requireAdmin , ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS } from '@/lib/require-admin'
 
 // Never statically cache or revalidate — KPI counts (incl. online listeners)
 // must always reflect the live DB, not a cached snapshot.
@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic'
 export async function GET(req: NextRequest) {
   const { error, code, status, user } = await requireAdmin(req)
   if (error) return NextResponse.json({ error, code }, { status })
-  if (!checkRateLimit(`admin:${user!.id}`, 30, 60_000)) {
+  if (!checkRateLimit(`admin:${user!.id}`, ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 

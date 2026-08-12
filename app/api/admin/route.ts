@@ -3,7 +3,7 @@ import Razorpay from 'razorpay'
 import { createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
-import { requireAdmin, ADMIN_PASSWORD_USER_ID } from '@/lib/require-admin'
+import { requireAdmin, ADMIN_PASSWORD_USER_ID, ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS } from '@/lib/require-admin'
 import { razorpayxEnabled, createUpiPayout } from '@/lib/razorpayx'
 
 function getRzp() {
@@ -16,7 +16,9 @@ function getRzp() {
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 // Admin routes: 30 requests per minute per admin user to prevent brute-force scraping
-const ADMIN_RATE = { limit: 30, windowMs: 60_000 }
+// Shared with every other admin route — see lib/require-admin.ts for why this
+// is 150/min rather than 30 (shared synthetic admin id + 2-3 calls per click).
+const ADMIN_RATE = { limit: ADMIN_ACTION_LIMIT, windowMs: ADMIN_ACTION_WINDOW_MS }
 
 const PAGE_SIZE = 20
 

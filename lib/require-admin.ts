@@ -1,6 +1,27 @@
 import crypto from 'crypto'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
-import { checkRateLimit } from '@/lib/rate-limit'
+import { isRateLimited, recordAttempt } from '@/lib/rate-limit'
+
+// Brute-force guard for admin credentials.
+//
+// IMPORTANT: this budget is consumed by FAILED attempts only. The admin UI is
+// stateless — it re-sends the phone+PIN headers on EVERY request — so counting
+// successful auths locked the admin out of their own panel after ~10 actions,
+// making bulk work (e.g. approving 20+ pending listeners) impossible.
+// Limiting successful authentications also buys no security: an attacker does
+// not possess valid credentials by definition.
+const FAILED_AUTH_LIMIT = 10
+const FAILED_AUTH_WINDOW_MS = 60_000
+
+// Throughput cap for authenticated admin ACTIONS (distinct from the brute-force
+// guard above). Raised 30 → 150/min: every phone+PIN admin shares the same
+// synthetic user id, so the budget is shared across admins, and one click in the
+// UI costs 2-3 calls (the action itself, the list reload, sometimes a KPI
+// refresh). At 30 that meant a lockout after ~10 approvals, which made bulk work
+// like clearing 20+ pending listeners impossible. 150 still stops a runaway
+// loop or scraper while leaving real admin work unimpeded.
+export const ADMIN_ACTION_LIMIT = 150
+export const ADMIN_ACTION_WINDOW_MS = 60_000
 import { logger } from '@/lib/logger'
 
 // Constant-time string comparison — avoids timing side-channels on the PIN/password.
@@ -74,9 +95,10 @@ export async function requireAdmin(req: Request) {
   if (adminPassword) {
     const providedPw = req.headers.get('x-admin-password') ?? ''
     if (providedPw) {
-      // Rate-limit password attempts per IP to block brute force.
+      // Brute-force guard counts FAILED attempts only (see note below).
       const clientIp = (req.headers.get('x-forwarded-for') ?? 'unknown').split(',')[0].trim()
-      if (!checkRateLimit(`admin-pw:${clientIp}`, 10, 60_000)) {
+      const key = `admin-pw:${clientIp}`
+      if (isRateLimited(key, FAILED_AUTH_LIMIT, FAILED_AUTH_WINDOW_MS)) {
         return { error: 'Too many attempts. Please wait.', code: 'PIN_RATE_LIMITED', status: 429 as const, user: null }
       }
       if (timingSafeEqual(providedPw, adminPassword)) {
@@ -88,6 +110,7 @@ export async function requireAdmin(req: Request) {
       // Wrong password — add artificial delay to slow brute-force across serverless containers.
       // The in-memory rate limiter is per-container and cannot be relied on in serverless,
       // so a timing delay is the primary defense until Redis rate limiting is configured.
+      recordAttempt(key, FAILED_AUTH_WINDOW_MS)
       await new Promise(r => setTimeout(r, 1000))
       return { error: 'Forbidden', code: 'NOT_ADMIN', status: 403 as const, user: null }
     }
@@ -99,20 +122,24 @@ export async function requireAdmin(req: Request) {
   const phonePinHeader = req.headers.get('x-admin-phone') ?? ''
   if (phonePinHeader) {
     const clientIp = (req.headers.get('x-forwarded-for') ?? 'unknown').split(',')[0].trim()
-    if (!checkRateLimit(`admin-phone:${clientIp}`, 10, 60_000)) {
+    const key = `admin-phone:${clientIp}`
+    if (isRateLimited(key, FAILED_AUTH_LIMIT, FAILED_AUTH_WINDOW_MS)) {
       return { error: 'Too many attempts. Please wait.', code: 'PIN_RATE_LIMITED', status: 429 as const, user: null }
     }
     const account = adminAccounts().find(a => a.phone === normalizePhone(phonePinHeader))
     if (!account) {
+      recordAttempt(key, FAILED_AUTH_WINDOW_MS)
       await new Promise(r => setTimeout(r, 1000))
       return { error: 'Invalid phone number', code: 'NOT_ADMIN', status: 403 as const, user: null }
     }
     // Phone matched — now check THIS account's PIN
     const providedPin = req.headers.get('x-admin-pin') ?? ''
     if (!providedPin) {
+      // Not a failed guess — the two-step UI asks for the PIN next. Don't penalise.
       return { error: 'PIN required', code: 'PHONE_VERIFIED', status: 403 as const, user: null }
     }
     if (!timingSafeEqual(providedPin, account.pin)) {
+      recordAttempt(key, FAILED_AUTH_WINDOW_MS)
       await new Promise(r => setTimeout(r, 500))
       return { error: 'Incorrect PIN', code: 'PIN_REQUIRED', status: 403 as const, user: null }
     }
@@ -184,12 +211,14 @@ export async function requireAdmin(req: Request) {
   // fall back to the primary ADMIN_PIN as before.
   const requiredPin = matchedAccount?.pin ?? process.env.ADMIN_PIN
   if (requiredPin) {
-    if (!checkRateLimit(`admin-pin:${user.id}`, 5, 60_000)) {
+    const key = `admin-pin:${user.id}`
+    if (isRateLimited(key, FAILED_AUTH_LIMIT, FAILED_AUTH_WINDOW_MS)) {
       return { error: 'Too many attempts. Please wait.', code: 'PIN_RATE_LIMITED', status: 429 as const, user: null }
     }
     const authHeader = req.headers.get('x-admin-pin') ?? req.headers.get('authorization')
     const providedPin = (authHeader?.replace(/^Bearer\s+/i, '') ?? '')
     if (!timingSafeEqual(providedPin, requiredPin)) {
+      recordAttempt(key, FAILED_AUTH_WINDOW_MS)
       return { error: 'PIN required', code: 'PIN_REQUIRED', status: 403 as const, user: null }
     }
   }

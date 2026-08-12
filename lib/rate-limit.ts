@@ -61,6 +61,29 @@ export function checkRateLimit(key: string, limit: number, windowMs: number): bo
 }
 
 /**
+ * Read-only check — is this key ALREADY over its limit?
+ *
+ * Unlike checkRateLimit, this records nothing. Pair it with recordAttempt() to
+ * build a failure-only limiter: check before verifying credentials, then record
+ * ONLY when verification fails. That way brute-force guessing is still capped,
+ * but a caller presenting valid credentials is never locked out of their own
+ * account — which is what happens if you count successful auths too.
+ */
+export function isRateLimited(key: string, limit: number, windowMs: number): boolean {
+  const now = Date.now()
+  const hits = (store.get(key) ?? []).filter(t => t > now - windowMs)
+  return hits.length >= limit
+}
+
+/** Record one attempt against a key (used for FAILED attempts only). */
+export function recordAttempt(key: string, windowMs: number): void {
+  const now = Date.now()
+  const hits = (store.get(key) ?? []).filter(t => t > now - windowMs)
+  hits.push(now)
+  store.set(key, hits)
+}
+
+/**
  * Async rate limiter — uses Upstash Redis when configured, falls back to in-memory.
  * Prefer this in API routes for production correctness across serverless instances.
  *

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
-import { requireAdmin, dbUserIdOrNull } from '@/lib/require-admin'
+import { requireAdmin, dbUserIdOrNull , ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS } from '@/lib/require-admin'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const PAGE_SIZE = 25
@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
   const { error, code, status, user: adminUser } = await requireAdmin(req)
   if (error) return NextResponse.json({ error, code }, { status })
   const { checkRateLimit } = await import('@/lib/rate-limit')
-  if (!checkRateLimit(`admin:${adminUser!.id}`, 30, 60_000)) {
+  if (!checkRateLimit(`admin:${adminUser!.id}`, ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 
@@ -177,7 +177,7 @@ export async function PATCH(req: NextRequest) {
   if (error) return NextResponse.json({ error, code }, { status })
 
   const { checkRateLimit } = await import('@/lib/rate-limit')
-  if (!checkRateLimit(`admin:${user!.id}`, 30, 60_000)) {
+  if (!checkRateLimit(`admin:${user!.id}`, ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 
