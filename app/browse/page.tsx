@@ -109,6 +109,36 @@ const TAGS = [
   {id:'general',   icon:'☕', label:'Just talk'},
 ]
 
+// Maps support/SEO page slugs onto real listener specialty tags. Keep in sync
+// when a new /support/* page adds a `/browse?topic=<slug>` CTA — an unmapped
+// slug now falls back to "All" instead of showing an empty directory.
+const TOPIC_ALIASES: Record<string, string> = {
+  'overthinking':               'anxiety',
+  'social-anxiety':             'anxiety',
+  'imposter-syndrome':          'selfesteem',
+  'work-from-home-loneliness':  'loneliness',
+  'marriage-loneliness':        'relationships',
+  'relationship-stress':        'relationships',
+  'job-loss':                   'career',
+  'career-confusion':           'career',
+  'founder-burnout':            'startup',
+  'student-stress':             'students',
+  'emotional-support':          'general',
+  'someone-to-talk-to':         'general',
+  'anonymous-support':          'general',
+}
+
+// User-selectable ordering. Online listeners ALWAYS rank first in every mode —
+// sorting a bookable-now listener below an offline one would defeat the point
+// of the directory — so the chosen key only orders within the online and
+// offline groups.
+const SORTS = [
+  { id: 'best',      label: '⚡ Best match' },
+  { id: 'price-low', label: '₹ Price: low first' },
+  { id: 'rating',    label: '⭐ Top rated' },
+] as const
+type SortId = typeof SORTS[number]['id']
+
 const S = `
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -181,6 +211,7 @@ function BrowseContent() {
   const [tag, setTag]         = useState('all')
   const [lang, setLang]       = useState('all')
   const [ageRange, setAgeRange] = useState('all')
+  const [sortBy, setSortBy]     = useState<SortId>('best')
   const [myUserId, setMyUserId] = useState<string | null>(null)
   const [query, setQuery]     = useState('')
   const [listeners, setListeners] = useState<Listener[]>([])
@@ -191,11 +222,21 @@ function BrowseContent() {
   } | null>(null)
   const channelRef = useRef<ReturnType<typeof client.channel> | null>(null)
 
-  // Read ?topic= from URL after hydration to avoid SSR mismatch
+  // Read ?topic= from URL after hydration to avoid SSR mismatch.
+  //
+  // Support/SEO pages link here with their OWN slug (e.g. /support/overthinking
+  // → ?topic=overthinking), but those slugs are not listener specialty tags.
+  // Previously an unrecognised value was set as the filter verbatim, so the API
+  // searched for a tag no listener has and the page rendered "No listeners
+  // match" — every one of those landing-page CTAs dead-ended on an empty list.
+  // Map known slugs to the closest real tag, and ignore anything unrecognised
+  // (falling back to "All") rather than filtering the directory to nothing.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    const topic = params.get('topic')
-    if (topic) setTag(topic)
+    const raw = params.get('topic')
+    if (!raw) return
+    const mapped = TOPIC_ALIASES[raw] ?? raw
+    if (TAGS.some(t => t.id === mapped)) setTag(mapped)
   }, [])
 
   useEffect(() => { loadListeners(false) }, [tag, lang])
@@ -357,6 +398,18 @@ function BrowseContent() {
       || l.name.toLowerCase().includes(query.toLowerCase())
       || l.bio?.toLowerCase().includes(query.toLowerCase()))
 
+  // Apply the user's chosen ordering at RENDER time only. The underlying
+  // `listeners` array stays in the canonical compareListeners() order that the
+  // realtime/BroadcastChannel handlers maintain, so availability behaviour is
+  // completely untouched. 'best' renders that canonical order as-is.
+  const visible = sortBy === 'best' ? filtered : [...filtered].sort((a, b) => {
+    // Online first in EVERY mode — never bury a listener you can talk to now.
+    if (a.is_available !== b.is_available) return a.is_available ? -1 : 1
+    if (sortBy === 'price-low') return (a.rate_per_min || 0) - (b.rate_per_min || 0)
+    if (sortBy === 'rating')    return (b.rating || 0) - (a.rating || 0)
+    return 0
+  })
+
   const ini = (n:string) => n.split(' ').map((x:string)=>x[0]||'').join('').slice(0,2).toUpperCase()||'?'
   const tagInfo = (id:string) => TAGS.find(t=>t.id===id)
 
@@ -435,13 +488,26 @@ function BrowseContent() {
               </button>
             ))}
           </div>
+          {/* Sort — online listeners stay first in every mode. */}
+          <div className="tag-scroll" style={{marginTop:8}}>
+            {SORTS.map(s=>(
+              <button
+                key={s.id}
+                className={`tag-pill${sortBy===s.id?' active':''}`}
+                onClick={()=>setSortBy(s.id)}
+                title="Listeners who are online always appear first"
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       <div className="list">
         {loading ? (
           [1,2,3].map(i=><div key={i} className="skeleton"/>)
-        ) : filtered.length === 0 ? (
+        ) : visible.length === 0 ? (
           <div style={{textAlign:'center',padding:'60px 20px',background:'white',borderRadius:24,border:'1.5px solid var(--border)',gridColumn:'1 / -1'}}>
             <div style={{fontSize:48,marginBottom:16}}>🔍</div>
             <h3 style={{fontSize:20,fontWeight:800,color:'var(--navy)',marginBottom:8}}>No listeners match right now</h3>
@@ -450,7 +516,7 @@ function BrowseContent() {
             </p>
             <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
               <button
-                onClick={()=>{ setTag('all'); setLang('all'); setAgeRange('all'); setQuery('') }}
+                onClick={()=>{ setTag('all'); setLang('all'); setAgeRange('all'); setSortBy('best'); setQuery('') }}
                 style={{background:'var(--navy)',color:'white',border:'none',borderRadius:50,padding:'12px 24px',fontFamily:'Nunito,sans-serif',fontWeight:800,fontSize:14,cursor:'pointer'}}
               >
                 Browse All Listeners
@@ -465,7 +531,7 @@ function BrowseContent() {
               💙 Need immediate support? <a href="/faq" style={{color:'var(--teal)'}}>See crisis resources →</a>
             </p>
           </div>
-        ) : filtered.map(l => (
+        ) : visible.map(l => (
           <div key={l.id} className="card" onClick={()=>router.push(`/listener/${l.user_id}`)}>
             <div className="card-top">
               <div className="av">
