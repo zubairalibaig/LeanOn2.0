@@ -4,6 +4,7 @@ import BottomNav from './components/BottomNav'
 import ToastProvider from './components/ToastProvider'
 import ErrorBoundary from './components/ErrorBoundary'
 import FloatingCTA from './components/FloatingCTA'
+import ListenerPresence from './components/ListenerPresence'
 import { Analytics } from '@vercel/analytics/next'
 
 export const metadata: Metadata = {
@@ -252,6 +253,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </ErrorBoundary>
         <BottomNav />
         <FloatingCTA />
+        {/* Listener-only: offline nudge + incoming-request alert on every page.
+            No-ops instantly for anonymous visitors and non-listeners, and skips
+            /dashboard, /browse, /session, /auth and /admin (which handle their
+            own, or must not be interrupted). */}
+        <ListenerPresence />
         <ToastProvider />
         <Analytics />
       </body>

@@ -147,7 +147,9 @@ Build status for each lives in STATUS.md, not here.
 1. **Onboarding & vetting:** sign up → profile details → identity verification (placeholder for manual/Surepass) → payout bank details (account no. + IFSC).
 2. **Profile status lifecycle:** `unverified` → `pending_review` (on submission) → `verified` (on admin approval).
 3. **Availability:** persistent Online/Offline toggle.
-   - *Heartbeat guard:* going online sets `is_online = true` and updates `last_seen_at`. A background check removes a listener from public discovery after **3 minutes** of inactivity (handles dropped tabs/connections).
+   - *Heartbeat guard:* going online sets `is_available = true` and stamps `last_heartbeat_at`. The client re-stamps it every **60 seconds** while the listener is online, and a background sweep removes a listener from public discovery once that timestamp is older than **15 minutes**.
+   - **Why 15 minutes, not the 3 originally specified:** mobile browsers aggressively throttle (and often suspend) background timers. At a 3-minute threshold, a genuinely-online listener who simply switched apps or locked their phone for a few minutes was repeatedly swept offline — the single most-reported listener bug, and one that took weeks to stabilise. 15 minutes is wide enough to absorb that throttling while still clearing genuinely dead sessions. **Treat this number as load-bearing: do not lower it without first proving heartbeats survive mobile backgrounding.**
+   - `is_available` is written ONLY by the authenticated availability toggle. Heartbeats refresh the timestamp and may never set availability back to `true` — a stale tab doing so was a real source of "ghost online" listeners.
 4. **Incoming session:** banner with **60-second countdown**. Accept or decline. If ignored, slot times out and the seeker's reservation reverts.
 5. **Earnings ledger:** on completion, `payout = rate × duration` (the listener's full stated rate — the flat ₹10 platform fee is paid by the seeker on top, never deducted) is appended to the listener's internal balance ledger.
 
