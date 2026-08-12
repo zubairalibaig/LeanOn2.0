@@ -41,6 +41,20 @@ export const LANGUAGES = [
 
 export type LanguageId = typeof LANGUAGES[number]['id']
 
+// ── Message reactions ───────────────────────────────────────────────────────
+// Deliberately a SHORT, SUPPORTIVE-ONLY set.
+//
+// A thumbs-down (or any negative reaction) is intentionally excluded: LeanOn is
+// an emotional-support product, and letting someone react negatively to another
+// person's vulnerable message is a wellbeing risk, not a feature. Ambiguous
+// reactions (e.g. a crying face, which can read as pity) are excluded for the
+// same reason. What remains maps to the things a listener or seeker actually
+// wants to express without interrupting the conversation:
+//   ❤️ I care / that matters   🙏 thank you   🫂 sending a hug   😊 warmth
+// This list is mirrored by a CHECK constraint in migration 051 so it cannot drift.
+export const MESSAGE_REACTIONS = ['❤️', '🙏', '🫂', '😊'] as const
+export type MessageReaction = typeof MESSAGE_REACTIONS[number]
+
 // ── Listener age (month + year only — never the day, for privacy) ───────────
 // Minimum age to be a listener; LeanOn is an adults-only platform.
 export const MIN_LISTENER_AGE = 18

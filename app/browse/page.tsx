@@ -212,6 +212,7 @@ function BrowseContent() {
   const [lang, setLang]       = useState('all')
   const [ageRange, setAgeRange] = useState('all')
   const [sortBy, setSortBy]     = useState<SortId>('best')
+  const [joiningToast, setJoiningToast] = useState(false)
   const [myUserId, setMyUserId] = useState<string | null>(null)
   const [query, setQuery]     = useState('')
   const [listeners, setListeners] = useState<Listener[]>([])
@@ -430,14 +431,46 @@ function BrowseContent() {
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <button
               className="btn-toast-join"
-              onClick={() => {
-                setIncomingSession(null)
-                router.push(`/session/${incomingSession.id}?name=You&duration=${incomingSession.duration_mins}&type=${incomingSession.session_type ?? 'text'}`)
+              disabled={joiningToast}
+              onClick={async () => {
+                // Must ACCEPT before navigating. Previously this only pushed the
+                // route, leaving the session 'pending' — so the listener landed on
+                // the waiting screen telling them to "open your dashboard to
+                // accept", and if they didn't, the request expired and the seeker
+                // was refunded. Mirrors the dashboard's accept flow.
+                if (joiningToast) return
+                const sess = incomingSession
+                setJoiningToast(true)
+                try {
+                  const res = await fetch(`/api/sessions/${sess.id}/accept`, { method: 'POST' })
+                  if (!res.ok) {
+                    const body = await res.json().catch(() => ({}))
+                    showToast(body.message || body.error || 'Could not accept — it may have expired.', 'error')
+                    setIncomingSession(null)
+                    return
+                  }
+                  setIncomingSession(null)
+                  router.push(`/session/${sess.id}?name=You&duration=${sess.duration_mins}&type=${sess.session_type ?? 'text'}`)
+                } catch {
+                  showToast('Network error — could not accept session.', 'error')
+                } finally {
+                  setJoiningToast(false)
+                }
               }}
             >
-              Join →
+              {joiningToast ? 'Joining…' : 'Join →'}
             </button>
-            <button className="btn-toast-dismiss" onClick={() => setIncomingSession(null)}>✕</button>
+            {/* Declining explicitly refunds the seeker immediately rather than
+                leaving them waiting out the full 5-minute request window. */}
+            <button
+              className="btn-toast-dismiss"
+              title="Decline"
+              onClick={async () => {
+                const sess = incomingSession
+                setIncomingSession(null)
+                try { await fetch(`/api/sessions/${sess.id}/decline`, { method: 'POST' }) } catch { /* ignore */ }
+              }}
+            >✕</button>
           </div>
         </div>
       )}

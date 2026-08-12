@@ -4,7 +4,7 @@ import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { showToast } from '@/lib/toast'
 import ReportModal from '@/app/components/ReportModal'
-import { SESSION_DURATIONS } from '@/lib/constants'
+import { SESSION_DURATIONS, MESSAGE_REACTIONS } from '@/lib/constants'
 
 // ── CRITICAL FIX 1: Create client ONCE outside component
 // Previously inside component = new WebSocket on every render
@@ -48,6 +48,14 @@ body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:an
 .bubble.them .bubble-time{color:#4A6B7E;}
 .ticks{font-size:13px;line-height:1;color:rgba(255,255,255,0.85);}
 .typing-indicator{align-self:flex-start;background:white;border-radius:18px;padding:10px 16px;font-size:13px;color:var(--gray);font-style:italic;font-weight:600;margin:4px 0;animation:pulse 1.5s ease-in-out infinite;}
+.bubble{cursor:pointer;}
+.rx-row{display:flex;gap:4px;margin-top:-2px;flex-wrap:wrap;}
+.rx-chip{background:white;border:1px solid var(--border);border-radius:50px;padding:2px 8px;font-size:12px;font-weight:700;color:var(--navy);cursor:pointer;line-height:1.5;box-shadow:0 1px 2px rgba(0,0,0,.08);}
+.rx-chip.mine{background:#E8F4FD;border-color:var(--teal);}
+.rx-picker{display:flex;gap:6px;background:white;border:1px solid var(--border);border-radius:50px;padding:5px 8px;margin-top:4px;box-shadow:0 2px 10px rgba(0,0,0,.14);}
+.rx-opt{background:none;border:none;font-size:19px;cursor:pointer;line-height:1;padding:2px;border-radius:50%;}
+.rx-opt:hover{transform:scale(1.18);}
+.rx-opt.mine{background:#E8F4FD;}
 .input-bar{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;padding:8px 10px;padding-bottom:calc(8px + env(safe-area-inset-bottom));background:#D6EAF8;border-top:1px solid #C5DFF0;display:flex;align-items:flex-end;gap:8px;z-index:100;}
 .msg-input{flex:1;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:15px;color:#0F2233;border:none;border-radius:24px;outline:none;resize:none;max-height:100px;background:white;line-height:1.4;box-shadow:0 1px 2px rgba(0,0,0,0.1);}
 .send{width:44px;height:44px;border-radius:50%;background:#0F4867;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.2);}
@@ -225,11 +233,79 @@ function SessionContent() {
   const completedRef    = useRef(false)
   const peerEndedRef    = useRef(false) // true when session_ended arrived from the other side
   const [crisisAlert, setCrisisAlert] = useState(false)
+  // Reactions: { [messageId]: { [userId]: emoji } }. Keyed by user so we can
+  // show the caller's own choice as selected and render per-emoji counts.
+  const [reactions, setReactions] = useState<Record<string, Record<string, string>>>({})
+  const [pickerFor, setPickerFor]  = useState<string | null>(null)
   const [reconnectTick, setReconnectTick] = useState(0)
   // Agora SDK is a dynamic import; typed with eslint-disable to avoid any
   // The SDK types conflict with our interface due to UID return type from join()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const agoraRef    = useRef<{ client: any; micTrack: any } | null>(null)
+
+  // Toggle a reaction. Optimistic so it feels instant; the server is the
+  // authority and a failure reverts. Realtime keeps the other person in sync.
+  async function react(messageId: string, emoji: string) {
+    if (!userId) return
+    setPickerFor(null)
+    const prev = reactions
+    setReactions(r => {
+      const forMsg = { ...(r[messageId] ?? {}) }
+      if (forMsg[userId] === emoji) delete forMsg[userId]
+      else forMsg[userId] = emoji
+      return { ...r, [messageId]: forMsg }
+    })
+    try {
+      const res = await fetch('/api/messages/react', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messageId, emoji }),
+      })
+      if (!res.ok) setReactions(prev) // revert on rejection
+    } catch {
+      setReactions(prev) // revert on network failure
+    }
+  }
+
+  // Load existing reactions once the message list is known, and subscribe to
+  // changes so the other person's taps appear live. Degrades silently if
+  // migration 051 has not been applied yet.
+  useEffect(() => {
+    if (!sessionId || msgs.length === 0) return
+    let cancelled = false
+    const ids = msgs.filter(m => !m.temp).map(m => m.id)
+    if (ids.length === 0) return
+    supabase.from('message_reactions')
+      .select('message_id, user_id, emoji')
+      .in('message_id', ids)
+      .then(({ data, error }) => {
+        if (cancelled || error || !data) return
+        const next: Record<string, Record<string, string>> = {}
+        for (const row of data as { message_id: string; user_id: string; emoji: string }[]) {
+          ;(next[row.message_id] ??= {})[row.user_id] = row.emoji
+        }
+        setReactions(next)
+      })
+    return () => { cancelled = true }
+    // Re-runs as messages arrive; ids grow, so newly loaded history is covered.
+  }, [sessionId, msgs.length])
+
+  useEffect(() => {
+    if (!sessionId) return
+    const ch = supabase.channel(`reactions-${sessionId}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'message_reactions' }, (payload) => {
+        const row = (payload.new ?? payload.old) as { message_id?: string; user_id?: string; emoji?: string } | null
+        if (!row?.message_id || !row.user_id) return
+        setReactions(r => {
+          const forMsg = { ...(r[row.message_id!] ?? {}) }
+          if (payload.eventType === 'DELETE') delete forMsg[row.user_id!]
+          else if (row.emoji) forMsg[row.user_id!] = row.emoji
+          return { ...r, [row.message_id!]: forMsg }
+        })
+      })
+      .subscribe()
+    return () => { supabase.removeChannel(ch) }
+  }, [sessionId])
 
   function playBeep() {
     try {
@@ -1152,15 +1228,55 @@ function SessionContent() {
 
           {msgs.map(m => {
             const isMe = m.sender_id === userId
+            const rx = reactions[m.id] ?? {}
+            const counts = Object.values(rx).reduce<Record<string, number>>((acc, e) => {
+              acc[e] = (acc[e] || 0) + 1; return acc
+            }, {})
+            const mine = userId ? rx[userId] : undefined
             return (
               <div key={m.id} className={`msg-wrap ${isMe ? 'me' : 'them'}`}>
-                <div className={`bubble ${isMe ? 'me' : 'them'}${m.temp ? ' temp' : ''}`}>
+                <div
+                  className={`bubble ${isMe ? 'me' : 'them'}${m.temp ? ' temp' : ''}`}
+                  // Temp (unsent) messages have no server id yet, so they cannot
+                  // carry a reaction. Tap toggles the picker for this bubble.
+                  onClick={() => { if (!m.temp) setPickerFor(p => (p === m.id ? null : m.id)) }}
+                >
                   <div className="bubble-text">{m.content}</div>
                   <div className="bubble-footer">
                     <span className="bubble-time">{fmtTime(m.created_at)}</span>
                     {isMe && <span className="ticks">{m.temp ? '✓' : '✓✓'}</span>}
                   </div>
                 </div>
+
+                {Object.keys(counts).length > 0 && (
+                  <div className="rx-row">
+                    {Object.entries(counts).map(([e, n]) => (
+                      <button
+                        key={e}
+                        className={`rx-chip${mine === e ? ' mine' : ''}`}
+                        onClick={() => react(m.id, e)}
+                        aria-label={`${e} reaction`}
+                      >
+                        {e}{n > 1 ? ` ${n}` : ''}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {pickerFor === m.id && (
+                  <div className="rx-picker">
+                    {MESSAGE_REACTIONS.map(e => (
+                      <button
+                        key={e}
+                        className={`rx-opt${mine === e ? ' mine' : ''}`}
+                        onClick={() => react(m.id, e)}
+                        aria-label={`React ${e}`}
+                      >
+                        {e}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             )
           })}

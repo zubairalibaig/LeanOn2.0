@@ -74,15 +74,28 @@ export async function POST(req: NextRequest) {
       .maybeSingle()
     const razorpayPaymentId = lastCharge?.reference_id ?? null
 
-    // Insert refund request FIRST (idempotency anchor)
-    const { error: insertErr } = await sb.from('refund_requests').insert({
+    // Insert refund request FIRST (idempotency anchor).
+    //
+    // The read-then-insert guard above is NOT atomic — two concurrent requests
+    // (double-click, or two tabs) both see zero pending rows and both insert,
+    // producing two pending rows for the same balance. The admin then approves
+    // both and Razorpay refunds the amount TWICE against the same payment.
+    // Migration 051 adds a partial unique index on (user_id) WHERE
+    // status='pending' so the database rejects the second insert; 23505 is
+    // translated back into the same friendly "already pending" response.
+    const { data: inserted, error: insertErr } = await sb.from('refund_requests').insert({
       user_id: user.id,
       amount,
       reason: reason || null,
       status: 'pending',
       ...(razorpayPaymentId ? { razorpay_payment_id: razorpayPaymentId } : {}),
-    })
+    }).select('id').single()
     if (insertErr) {
+      if ((insertErr as { code?: string }).code === '23505') {
+        return NextResponse.json({
+          error: 'You already have a pending refund request. We will process it within 3–5 business days.',
+        }, { status: 400 })
+      }
       logger.error('Refund insert failed:', { error: insertErr.message })
       return NextResponse.json({ error: 'Failed to submit refund request. Please try again.' }, { status: 500 })
     }
@@ -93,9 +106,28 @@ export async function POST(req: NextRequest) {
     // The admin processes the cash refund (Razorpay/UPI) based on refund_requests.amount.
     const { error: deductErr } = await sb.rpc('deduct_wallet', { p_user_id: user.id, p_amount: amount })
     if (deductErr) {
-      // Deduction failed — revert the refund request so the user can retry.
+      // Deduction failed — revert the request we just created so the user can retry.
+      //
+      // Two bugs fixed here:
+      //  1. It wrote status='cancelled', which the live CHECK constraint rejects
+      //     (only 'pending','completed','rejected' are allowed). The UPDATE
+      //     therefore ALWAYS failed and its result was never inspected, so the
+      //     rollback silently did nothing and left a phantom pending request for
+      //     money that was never deducted — which the admin would later refund.
+      //  2. The WHERE clause matched EVERY pending row for the user rather than
+      //     the row just inserted, so it could have cancelled a different,
+      //     legitimate request.
+      // Now: a valid status, scoped to this row's id, with the result checked.
       logger.error('Refund deduct_wallet failed — reverting request:', { userId: user.id, amount, error: deductErr.message })
-      await sb.from('refund_requests').update({ status: 'cancelled' }).eq('user_id', user.id).eq('status', 'pending')
+      const { error: revertErr } = await sb.from('refund_requests')
+        .update({ status: 'rejected', admin_notes: 'Auto-reverted: wallet hold failed' })
+        .eq('id', inserted.id)
+      if (revertErr) {
+        // Leaves a pending row for money never deducted — must be reconciled by hand.
+        logger.error('Refund revert FAILED — manual reconciliation needed:', {
+          refundRequestId: inserted.id, userId: user.id, amount, error: revertErr.message,
+        })
+      }
       return NextResponse.json({ error: 'Could not process your refund request. Please try again.' }, { status: 500 })
     }
 

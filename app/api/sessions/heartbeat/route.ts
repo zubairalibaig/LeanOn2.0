@@ -44,6 +44,27 @@ export async function POST(req: NextRequest) {
         : { listener_last_seen: now }
     ).eq('id', sessionId)
 
+    // GHOST-OFFLINE FIX: also keep the listener's presence timestamp fresh.
+    //
+    // The 60s presence ping lives on /dashboard, which UNMOUNTS the moment the
+    // listener accepts a session and navigates to /session/[id]. Nothing then
+    // refreshed listener_profiles.last_heartbeat_at, so on any session longer
+    // than the browse staleness window the sweep in /api/listeners flipped them
+    // to is_available=false MID-SESSION. They returned to the dashboard after a
+    // 30- or 45-min session silently offline, receiving no further requests
+    // until they happened to notice the toggle.
+    //
+    // This only refreshes a timestamp — it never sets is_available, which by
+    // design remains exclusively the job of the authenticated availability
+    // toggle (see the note in /api/presence). So the availability logic is
+    // untouched; a listener who genuinely went offline stays offline.
+    if (!isSeeker) {
+      await sb.from('listener_profiles')
+        .update({ last_heartbeat_at: now })
+        .eq('user_id', user.id)
+        .then(() => {}, () => {}) // fire-and-forget; never break the session heartbeat
+    }
+
     return NextResponse.json({ ok: true })
   } catch {
     return NextResponse.json({ ok: true }) // fire-and-forget
