@@ -80,6 +80,15 @@ export default function TurnstileWidget({
     if (!SITE_KEY) return
     let cancelled = false
 
+    // Hard timeout. Ad blockers and privacy extensions (very common in India)
+    // often BLACKHOLE challenges.cloudflare.com rather than failing the request,
+    // so neither onload nor onerror ever fires. Without this the promise never
+    // settles, `failed` stays false, and the user is left staring at a disabled
+    // button with no explanation — a silent lockout on the sign-in path.
+    const timeoutId = setTimeout(() => {
+      if (!cancelled && !widgetIdRef.current) setFailed(true)
+    }, 8000)
+
     loadTurnstileScript()
       .then(() => {
         if (cancelled || !containerRef.current || !window.turnstile) return
@@ -87,17 +96,19 @@ export default function TurnstileWidget({
         widgetIdRef.current = window.turnstile.render(containerRef.current, {
           sitekey: SITE_KEY,
           action,
-          callback: (token: string) => onVerifyRef.current(token),
+          callback: (token: string) => { setFailed(false); onVerifyRef.current(token) },
           'expired-callback': () => onVerifyRef.current(null),
           'error-callback': () => { onVerifyRef.current(null); setFailed(true) },
           theme: 'light',
           size: 'flexible',
         })
+        clearTimeout(timeoutId)
       })
       .catch(() => { if (!cancelled) setFailed(true) })
 
     return () => {
       cancelled = true
+      clearTimeout(timeoutId)
       if (widgetIdRef.current && window.turnstile) {
         try { window.turnstile.remove(widgetIdRef.current) } catch { /* already gone */ }
         widgetIdRef.current = null
@@ -123,8 +134,12 @@ export default function TurnstileWidget({
     <div style={{ margin: '12px 0' }}>
       <div ref={containerRef} />
       {failed && (
-        <p style={{ fontSize: 12, color: '#E53935', fontWeight: 700, marginTop: 6 }}>
-          Couldn&apos;t load the security check. Please refresh the page and try again.
+        // Name the likely cause. "Refresh the page" alone is useless advice when
+        // the real reason is a blocker, which is the most common case.
+        <p style={{ fontSize: 12, color: '#E53935', fontWeight: 700, marginTop: 6, lineHeight: 1.6 }}>
+          Couldn&apos;t load the security check. This is usually an ad blocker or
+          privacy extension blocking <span style={{ whiteSpace: 'nowrap' }}>challenges.cloudflare.com</span>.
+          Please pause it for this site (or try a different browser) and reload.
         </p>
       )}
     </div>
