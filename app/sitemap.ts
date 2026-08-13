@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { RESOURCES } from '@/lib/resources-data'
+import { FEELINGS } from '@/lib/feelings-data'
 
 export const dynamic = 'force-static'
 
@@ -64,6 +65,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/blog/no-one-to-talk-to`,                           lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/blog/therapy-cost-india`,                          lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/blog/why-people-call-astrologers-to-talk`,         lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/blog/what-it-means-to-have-someone-to-lean-on`,    lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
     // Brand + authority pages
     { url: `${base}/leanon`,                           lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/emotional-support`,                lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.9 },
@@ -79,6 +81,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Astrology-chat bridge — intercepts searchers already turning to
     // astrology apps for a conversation, not a prediction (see PROJECT.md §2).
     { url: `${base}/talk-to-someone-not-astrologer`,   lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    // "lean on" (with a space) cluster — the head term is owned by the 2015
+    // Major Lazer song, so this targets the emotional-intent long tail instead.
+    { url: `${base}/someone-to-lean-on`,               lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    // Daily check-in hub + mood pages — the recurring-entry-point engine.
+    { url: `${base}/daily-check-in`,                   lastModified: d(TODAY),        changeFrequency: 'daily',   priority: 0.9 },
+    ...FEELINGS.map(f => ({
+      url: `${base}/feeling/${f.slug}`,
+      lastModified: d(TODAY),
+      changeFrequency: 'weekly' as const,
+      priority: 0.85,
+    })),
     // City pages
     { url: `${base}/bengaluru`,                        lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/mumbai`,                           lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.85 },

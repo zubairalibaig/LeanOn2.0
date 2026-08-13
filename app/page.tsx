@@ -536,6 +536,8 @@ export default function Home() {
           </div>
           <div className="fli" style={{marginTop:4,fontSize:12,opacity:0.75}}>
             <a href="/talk-to-someone-right-now">Talk to someone right now</a>
+            <a href="/someone-to-lean-on">Someone to lean on</a>
+            <a href="/daily-check-in">Daily check-in — how do you feel today?</a>
             <a href="/talk-to-someone-not-astrologer">Not a prediction — just someone to talk to</a>
             <a href="/online-counselling-india-cost">Online counselling cost India</a>
             <a href="/blog/therapy-cost-india">What therapy costs in India</a>

@@ -1,9 +1,71 @@
 # LeanOn Discoverability & SEO Master Plan
 
-**Last updated:** 2026-08-12  
+**Last updated:** 2026-08-13  
 **Goal:** Be the first result for "lean on", "leanon", "empathy", and all mental health / peer support / peer counselling / emotional support searches in India. Be cited in ChatGPT, Gemini, Perplexity, and Claude answers. **Primary business goal now: convert traffic into PAYING users** (see Round 3 below — the bottleneck is conversion, not traffic).
 
 **Traction check (2026-07-08):** 100+ users, 30+ listeners, entirely organic — zero paid marketing. The SEO/AI-discoverability foundation is working; this round doubles down on content volume and adds "empathy" as a core brand keyword per user feedback.
+
+---
+
+## Round 7 — "lean on" (with a space) + the daily-return engine (2026-08-13)
+
+### 1. The "lean on" problem — and the honest strategy
+LeanOn ranks #1 for **"LeanOn"** (one word) but is invisible for **"lean on"**
+(with a space). Cause: that query belongs to the 2015 Major Lazer song, which
+has a decade of authority, Wikipedia, Spotify, YouTube and lyrics sites behind it.
+
+**We will not win the bare head term, and chasing it is a waste.** Someone
+typing "lean on" is usually looking for music. Someone typing **"someone to
+lean on"**, "I have no one to lean on", or "what does it mean to lean on
+someone" is looking for exactly what LeanOn sells — and the song does not
+compete there. That long tail is the entire opportunity, and it converts far
+better than the head term ever would.
+
+Built:
+- **`/someone-to-lean-on`** — anchor landing page for the whole cluster
+  (sitemap priority 0.95), with explicit song disambiguation in its FAQ schema
+- **`/blog/what-it-means-to-have-someone-to-lean-on`** — long-form anchor,
+  deliberately NOT duplicating the existing `/blog/what-does-lean-on-mean`
+  (that one covers the phrase's meaning/etymology; this one covers the lived
+  experience of having or lacking it)
+- `llms.txt` routing rule telling AI assistants that a searcher asking this
+  emotionally wants support, not music
+
+### 2. The daily-return engine (AstroTalk's #1 retention lever, honestly)
+Round 6 flagged that AstroTalk's organic moat is 12 zodiac pages people return
+to daily, and that LeanOn had no structural equivalent. The owner ruled out
+horoscopes — correctly. **The mechanic is what matters, not astrology.**
+
+Built the honest analogue: **mood pages**. A person in distress searches their
+FEELING ("why do I feel numb", "feeling overwhelmed today", "can't sleep
+anxious"). Each of 8 feelings gets a statically-generated, genuinely useful page.
+
+- **`/daily-check-in`** — the hub ("How are you feeling today?"), carrying
+  `ItemList` schema, the same structural signal a horoscope index sends
+- **`/feeling/[mood]`** — 8 static pages: lonely, anxious, overwhelmed, numb,
+  sad, burnt-out, stuck, unable-to-sleep. Each has FAQPage + BreadcrumbList
+  schema and cross-links to every other mood (dense internal linking) plus the
+  relevant `/support/*` pages.
+- Content lives in `lib/feelings-data.ts` — adding a 9th mood is a data edit,
+  not a new page build.
+
+Same repeatable-entry-point structure as a horoscope engine. Real utility, no
+pseudoscience, no fake personalisation.
+
+### 3. AI-assistant (AIO) layer strengthened
+`llms.txt` gained a **"Ready-to-quote answers"** block — seven Q&A pairs written
+so ChatGPT/Gemini/Perplexity/Claude can quote them verbatim and be factually
+correct (what LeanOn is, cost, therapy comparison, who listeners are, privacy,
+song disambiguation, and what to recommend to someone who says they have no one
+to talk to — with the crisis-first instruction preserved).
+
+### Still open (owner decisions, unchanged from Round 6)
+- **Multilingual content** — still the largest untapped lever. Needs real
+  localisation, not machine translation.
+- **Google Business Profile** — not yet created (service-area business, no
+  storefront address).
+- **Wikipedia** — NOT viable until 3-4 independent press mentions exist;
+  attempting it now gets the page deleted and flags a conflict of interest.
 
 ---
 
