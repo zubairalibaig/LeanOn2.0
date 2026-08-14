@@ -18,17 +18,22 @@ export async function GET(req: NextRequest) {
     const url = new URL(req.url)
     const statusFilter = url.searchParams.get('status') || ''
     const page = Math.max(0, parseInt(url.searchParams.get('page') || '0'))
+    // 'asc' | 'desc' — which end shows first. Sorts by created_at (always
+    // populated, unlike started_at which is null for pending/cancelled
+    // sessions) so every session — including ones that never went live —
+    // orders consistently by when the request actually happened.
+    const sortAscending = url.searchParams.get('sort') === 'asc'
     const PAGE_SIZE = 50
 
     let query = sb.from('sessions')
       .select(`
         id, seeker_id, listener_id, session_type, duration_mins,
         amount_held, status, is_free_trial, started_at, ended_at, platform_fee,
-        crisis_flagged, crisis_flagged_at,
+        crisis_flagged, crisis_flagged_at, created_at,
         seeker:users!seeker_id(name),
         listener:users!listener_id(name)
       `, { count: 'exact' })
-      .order('started_at', { ascending: false })
+      .order('created_at', { ascending: sortAscending })
       .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)
 
     if (statusFilter && statusFilter !== 'all') {

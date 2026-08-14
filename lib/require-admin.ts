@@ -89,6 +89,17 @@ function adminAccounts(): AdminAccount[] {
   return list
 }
 
+// "Primary admin" = whoever authenticated with the phone in ADMIN_PHONE
+// specifically (the "original/primary admin" pair, per the comment above) —
+// not any of the additional ADMIN_ACCOUNTS entries, and not the shared
+// ADMIN_SECRET/password path, which can't be tied to one person. Used to
+// gate features that should be visible to the owner only (e.g. reading raw
+// session transcripts) and hidden from every other admin.
+function isPrimaryPhone(phone: string): boolean {
+  const primary = process.env.ADMIN_PHONE
+  return !!primary && normalizePhone(phone) === normalizePhone(primary)
+}
+
 export async function requireAdmin(req: Request) {
   // ── Step 0: ADMIN_PASSWORD / ADMIN_SECRET header — password-based admin auth ─
   // Support both names: ADMIN_SECRET (documented in .env.example) and
@@ -107,6 +118,9 @@ export async function requireAdmin(req: Request) {
         return {
           error: null, code: null, status: 200 as const,
           user: { id: ADMIN_PASSWORD_USER_ID, email: process.env.ADMIN_EMAIL } as { id: string; email?: string; phone?: string },
+          // The shared password can't be tied to one person, so it never
+          // counts as the primary (owner-only) admin.
+          isPrimaryAdmin: false,
         }
       }
       // Wrong password — add artificial delay to slow brute-force across serverless containers.
@@ -148,6 +162,7 @@ export async function requireAdmin(req: Request) {
     return {
       error: null, code: null, status: 200 as const,
       user: { id: ADMIN_PASSWORD_USER_ID, email: process.env.ADMIN_EMAIL } as { id: string; email?: string; phone?: string },
+      isPrimaryAdmin: isPrimaryPhone(account.phone),
     }
   }
 
@@ -225,5 +240,8 @@ export async function requireAdmin(req: Request) {
     }
   }
 
-  return { error: null, code: null, status: 200 as const, user }
+  return {
+    error: null, code: null, status: 200 as const, user,
+    isPrimaryAdmin: matchedAccount ? isPrimaryPhone(matchedAccount.phone) : false,
+  }
 }

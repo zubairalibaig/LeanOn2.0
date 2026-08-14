@@ -25,9 +25,10 @@ type ListenerRow = {
 type SessionRow = {
   id: string; seeker_id: string; listener_id: string; session_type: string; duration_mins: number
   amount_held: number; status: string; is_free_trial: boolean; started_at: string | null; ended_at?: string | null
-  crisis_flagged?: boolean; crisis_flagged_at?: string | null
+  crisis_flagged?: boolean; crisis_flagged_at?: string | null; created_at?: string
   seeker?: { name?: string }; listener?: { name?: string }
 }
+type TranscriptMsg = { id: string; sender_id: string; content: string; created_at: string; is_flagged?: boolean }
 type ReportRow = {
   id: string; type: string; description: string; status: string; created_at: string
   session_id: string | null; reported_user_id: string | null
@@ -114,6 +115,14 @@ const S = `
   .skeleton{background:linear-gradient(90deg,#e8e8e4 25%,#f2f2ee 50%,#e8e8e4 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:14px;}
   @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
   .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--navy);color:white;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;padding:12px 28px;border-radius:50px;box-shadow:0 4px 24px rgba(15,72,103,.3);z-index:9999;animation:toastIn .25s ease;white-space:nowrap;}
+  .modal-overlay{position:fixed;inset:0;background:rgba(15,34,51,0.55);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .modal-card{background:white;border-radius:16px;padding:20px 22px;max-width:560px;width:100%;max-height:80vh;overflow-y:auto;}
+  .transcript-card{max-width:640px;}
+  .transcript-list{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+  .transcript-msg{border-radius:12px;padding:10px 14px;background:var(--light);border:1.5px solid var(--border);}
+  .transcript-msg.listener{background:#F3F0FF;border-color:#E2D9FF;}
+  .transcript-msg-meta{font-size:11px;font-weight:700;color:var(--gray);margin-bottom:4px;}
+  .transcript-msg-text{font-size:14px;color:var(--navy);font-weight:500;line-height:1.5;white-space:pre-wrap;word-break:break-word;}
   @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(14px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
   .error-page{text-align:center;padding:80px 20px;}
   .error-page h2{font-size:22px;font-weight:900;color:var(--navy);margin-bottom:10px;}
@@ -146,6 +155,10 @@ export default function AdminPage() {
   const [pinInput, setPinInput] = useState('')
   const [pinError, setPinError] = useState('')
   const [pinVerified, setPinVerified] = useState(false)
+  // True only for the ADMIN_PHONE/ADMIN_PIN primary admin (see lib/require-admin.ts).
+  // Gates owner-only UI, e.g. raw session transcripts — never derived from
+  // anything the client already knows, always read back from the server.
+  const [isPrimaryAdmin, setIsPrimaryAdmin] = useState(false)
   const [denied, setDenied] = useState(false)
 
   // Phone + PIN login state
@@ -193,8 +206,10 @@ export default function AdminPage() {
     if (res.status === 429) { setLoginError('Too many attempts. Please wait a minute.'); return }
     if (res.status === 403) { setLoginError('Incorrect PIN.'); setLoginPin(''); return }
     if (!res.ok) { setLoginError('Server error. Please try again.'); return }
+    const body = await res.json().catch(() => ({}))
     adminPinRef.current = pin
     try { sessionStorage.setItem('adminPhone', adminPhoneRef.current); sessionStorage.setItem('adminPin', pin) } catch {}
+    setIsPrimaryAdmin(!!body.isPrimaryAdmin)
     setAuthUser({ id: 'password-admin', email: undefined })
     setDenied(false)
     setAuthChecking(false)
@@ -210,6 +225,8 @@ export default function AdminPage() {
         adminPinRef.current = storedPin
         const res = await fetch('/api/admin/ping', { headers: { 'x-admin-phone': storedPhone, 'x-admin-pin': storedPin } }).catch(() => null)
         if (res?.ok) {
+          const body = await res.json().catch(() => ({}))
+          setIsPrimaryAdmin(!!body.isPrimaryAdmin)
           setAuthUser({ id: 'password-admin', email: undefined })
           setAuthChecking(false)
           return
@@ -228,6 +245,8 @@ export default function AdminPage() {
         if (!user) { setAuthChecking(false); setDenied(true); return }
         const pingRes = await fetch('/api/admin/ping').catch(() => null)
         if (pingRes?.ok) {
+          const body = await pingRes.json().catch(() => ({}))
+          setIsPrimaryAdmin(!!body.isPrimaryAdmin)
           setAuthUser(user as { id: string; email?: string; phone?: string })
           setAuthChecking(false)
         } else {
@@ -300,6 +319,11 @@ export default function AdminPage() {
   const [sessions, setSessions] = useState<SessionRow[]>([])
   const [sessionsStatus, setSessionsStatus] = useState('all')
   const [sessionsLoading, setSessionsLoading] = useState(false)
+  const [sessionsSort, setSessionsSort] = useState<SortDir>('desc')
+  // Full transcript viewer — primary admin only (see isPrimaryAdmin above).
+  const [transcriptSession, setTranscriptSession] = useState<SessionRow | null>(null)
+  const [transcriptMsgs, setTranscriptMsgs] = useState<TranscriptMsg[]>([])
+  const [transcriptLoading, setTranscriptLoading] = useState(false)
 
   // Reports
   const [reports, setReports] = useState<ReportRow[]>([])
@@ -343,6 +367,7 @@ export default function AdminPage() {
       setPinRequired(false)
       const json = await res.json()
       setKpis(json)
+      setIsPrimaryAdmin(!!json.isPrimaryAdmin)
       setKpisLoading(false)
     } else if (res.status === 403) {
       setPinError('Incorrect PIN. Try again.')
@@ -375,7 +400,11 @@ export default function AdminPage() {
       setKpisLoading(false)
       return
     }
-    if (res.ok) setKpis(await res.json())
+    if (res.ok) {
+      const json = await res.json()
+      setKpis(json)
+      setIsPrimaryAdmin(!!json.isPrimaryAdmin)
+    }
     setKpisLoading(false)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -416,14 +445,24 @@ export default function AdminPage() {
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const loadSessions = useCallback(async (st = sessionsStatus) => {
+  const loadSessions = useCallback(async (st = sessionsStatus, sort = sessionsSort) => {
     setSessionsLoading(true)
-    const params = new URLSearchParams({ status: st !== 'all' ? st : '' })
+    const params = new URLSearchParams({ status: st !== 'all' ? st : '', sort })
     const res = await fetch(`/api/admin/sessions?${params}`, { headers: adminHeaders() }).catch(() => null)
     if (res?.ok) setSessions((await res.json()).sessions ?? [])
     else showToast('Failed to load sessions — tap Refresh to retry')
     setSessionsLoading(false)
-  }, [sessionsStatus]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sessionsStatus, sessionsSort]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const loadTranscript = useCallback(async (session: SessionRow) => {
+    setTranscriptSession(session)
+    setTranscriptLoading(true)
+    setTranscriptMsgs([])
+    const res = await fetch(`/api/admin/session-messages?sessionId=${session.id}`, { headers: adminHeaders() }).catch(() => null)
+    if (res?.ok) setTranscriptMsgs((await res.json()).messages ?? [])
+    else showToast('Failed to load transcript')
+    setTranscriptLoading(false)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadReports = useCallback(async (st = reportsStatus) => {
     setReportsLoading(true)
@@ -1319,19 +1358,25 @@ export default function AdminPage() {
                 <table>
                   <thead>
                     <tr>
-                      <th>Started</th>
+                      <th
+                        style={sortableTh}
+                        onClick={() => { const next = sessionsSort === 'desc' ? 'asc' : 'desc'; setSessionsSort(next); loadSessions(sessionsStatus, next) }}
+                      >
+                        When{arrow(sessionsSort)}
+                      </th>
                       <th>Seeker</th>
                       <th>Listener</th>
                       <th>Type</th>
                       <th>Duration</th>
                       <th>Amount</th>
                       <th>Status</th>
+                      {isPrimaryAdmin && <th>Chat</th>}
                     </tr>
                   </thead>
                   <tbody>
                     {sessions.map((s: SessionRow) => (
                       <tr key={s.id} style={s.crisis_flagged ? { background: '#FFF0F0' } : undefined}>
-                        <td style={{ color: 'var(--gray)', fontSize: 12 }}>{fmtDate(s.started_at)}</td>
+                        <td style={{ color: 'var(--gray)', fontSize: 12 }}>{fmtDate(s.created_at)}</td>
                         <td>{s.seeker?.name || s.seeker_id.slice(0, 8) + '…'}</td>
                         <td>{s.listener?.name || s.listener_id.slice(0, 8) + '…'}</td>
                         <td><span className="badge badge-teal">{s.session_type}</span></td>
@@ -1345,6 +1390,13 @@ export default function AdminPage() {
                               ? <span className="badge badge-green">Completed</span>
                               : <span className="badge badge-gray">{s.status}</span>}
                         </td>
+                        {isPrimaryAdmin && (
+                          <td>
+                            <button className="btn btn-gray" style={{ padding: '4px 12px', fontSize: 12 }} onClick={() => loadTranscript(s)}>
+                              View
+                            </button>
+                          </td>
+                        )}
                       </tr>
                     ))}
                   </tbody>
@@ -1352,6 +1404,49 @@ export default function AdminPage() {
               </div>
             )}
           </>
+        )}
+
+        {/* ─── TRANSCRIPT VIEWER — primary admin only ─────────────────────────
+            Reads every message of the selected session verbatim. See
+            /api/admin/session-messages for why this is gated so narrowly. */}
+        {transcriptSession && (
+          <div className="modal-overlay" onClick={() => setTranscriptSession(null)}>
+            <div className="modal-card transcript-card" onClick={e => e.stopPropagation()}>
+              <div className="card-header">
+                <div>
+                  <div className="name-text">
+                    {transcriptSession.seeker?.name || 'Seeker'} ↔ {transcriptSession.listener?.name || 'Listener'}
+                  </div>
+                  <div className="meta-text">
+                    {fmtDateTime(transcriptSession.created_at)} · {transcriptSession.duration_mins} min {transcriptSession.session_type}
+                    {transcriptSession.is_free_trial ? ' · Free trial' : ` · ₹${transcriptSession.amount_held}`}
+                  </div>
+                </div>
+                <button className="btn btn-gray" style={{ padding: '4px 12px', fontSize: 12 }} onClick={() => setTranscriptSession(null)}>Close</button>
+              </div>
+              {transcriptLoading ? (
+                <div className="skeleton" style={{ height: 120 }} />
+              ) : transcriptMsgs.length === 0 ? (
+                <div className="empty">No messages in this session.</div>
+              ) : (
+                <div className="transcript-list">
+                  {transcriptMsgs.map(m => {
+                    const isSeeker = m.sender_id === transcriptSession.seeker_id
+                    return (
+                      <div key={m.id} className={`transcript-msg${isSeeker ? ' seeker' : ' listener'}`}>
+                        <div className="transcript-msg-meta">
+                          {isSeeker ? (transcriptSession.seeker?.name || 'Seeker') : (transcriptSession.listener?.name || 'Listener')}
+                          {' · '}{fmtDateTime(m.created_at)}
+                          {m.is_flagged && <span className="badge badge-red" style={{ marginLeft: 6 }}>flagged</span>}
+                        </div>
+                        <div className="transcript-msg-text">{m.content}</div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
         )}
 
         {/* ─── REPORTS ──────────────────────────────────────────────────────── */}

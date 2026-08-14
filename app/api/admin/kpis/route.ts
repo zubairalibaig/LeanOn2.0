@@ -9,7 +9,7 @@ import { requireAdmin , ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS } from '@/lib
 export const dynamic = 'force-dynamic'
 
 export async function GET(req: NextRequest) {
-  const { error, code, status, user } = await requireAdmin(req)
+  const { error, code, status, user, isPrimaryAdmin } = await requireAdmin(req)
   if (error) return NextResponse.json({ error, code }, { status })
   if (!checkRateLimit(`admin:${user!.id}`, ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
@@ -154,6 +154,7 @@ export async function GET(req: NextRequest) {
         thisMonth: sum(gatewayFeesMonth.data),
         today:     sum(gatewayFeesToday.data),
       },
+      isPrimaryAdmin: isPrimaryAdmin ?? false,
     })
   } catch (err) {
     logger.error('KPI error:', { error: err instanceof Error ? err.message : String(err) })
