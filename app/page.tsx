@@ -88,7 +88,7 @@ const faqSchema = {
     { '@type': 'Question', name: 'How is LeanOn different from therapy?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are real people with lived experience, not licensed therapists. They offer empathy and peer support, not clinical diagnosis or treatment. LeanOn is ideal when you need someone to lean on — not a diagnosis.' } },
     { '@type': 'Question', name: 'Is LeanOn related to the song "Lean On" by Major Lazer?', acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn (one word, at leanon.app) is an Indian peer emotional support platform where you talk to verified human listeners. It has no connection to the 2015 song "Lean On" by Major Lazer and DJ Snake. The name comes from the phrase "someone to lean on" — having a person you can rely on emotionally.' } },
     { '@type': 'Question', name: 'Is LeanOn confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. All sessions are private and confidential. LeanOn never shares your personal information or conversation content with anyone.' } },
-    { '@type': 'Question', name: 'How do I become a listener on LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'Apply at leanon.app/become-listener. Share your lived experience, complete a brief verification, and start earning ₹8–25 per minute helping others who need someone to lean on.' } },
+    { '@type': 'Question', name: 'How do I become a listener on LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'Apply at leanon.app/become-listener. Share your lived experience and complete a brief verification. Listeners are approved before they can take sessions.' } },
     { '@type': 'Question', name: 'Which cities does LeanOn serve?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is available across all of India — Bengaluru, Mumbai, Delhi, Chennai, Hyderabad, Pune, Kolkata, Jaipur, Ahmedabad, and everywhere else. It is fully online — accessible from anywhere.' } },
     { '@type': 'Question', name: 'What topics can I talk about on LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'Listeners on LeanOn specialise in loneliness, work stress, career confusion, relationships, grief and loss, student pressure, startup journey, breakups, anxiety, and more. If you just need someone to lean on with no specific topic, that\'s fine too.' } },
   ],
@@ -168,9 +168,6 @@ export default function Home() {
         }
         .nav-logo{height:90px;width:auto;}
         .nav-right{display:flex;align-items:center;gap:12px;}
-        .btn-ghost{background:transparent;color:var(--teal);font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;padding:7px 12px;border-radius:50px;border:2px solid var(--teal);cursor:pointer;transition:all 0.2s;display:block;white-space:nowrap;}
-        .btn-ghost:hover{background:var(--teal);color:white;}
-        @media(min-width:520px){.btn-ghost{font-size:14px;padding:9px 18px;}}
         .btn-nav{background:var(--teal);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;padding:11px 24px;border-radius:50px;border:none;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 12px rgba(26,143,160,0.35);}
         .btn-nav:hover{background:#167a8a;transform:translateY(-1px);}
         .btn-listener{background:transparent;color:var(--navy);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;padding:9px 16px;border-radius:50px;border:1.5px solid var(--border);cursor:pointer;transition:all 0.2s;display:none;white-space:nowrap;}
@@ -291,20 +288,19 @@ export default function Home() {
         .fli{display:flex;flex-wrap:wrap;gap:8px 20px;margin-bottom:18px;}
         .fli a{font-size:13px;color:var(--gray);font-weight:600;}
         .fli a:hover{color:var(--navy);}
-        .flis{background:var(--light);border:1.5px solid var(--border);border-radius:16px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px;}
-        .flis p{font-size:13px;font-weight:700;color:var(--navy);}
-        .flis span{font-size:12px;color:var(--gray);font-weight:500;display:block;margin-top:2px;}
-        .btn-lis{background:white;color:var(--teal);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;padding:9px 18px;border-radius:50px;border:2px solid var(--teal);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all 0.2s;}
-        .btn-lis:hover{background:var(--teal);color:white;}
-        .fcp{font-size:12px;color:var(--muted);font-weight:600;}
+        .fcp{font-size:12px;color:var(--muted);font-weight:600;margin-top:20px;}
       `}</style>
 
       {/* NAV — transparent, sits on gradient */}
       <nav className="nav">
         <a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a>
         <div className="nav-right">
+          {/* Recruitment ("Become a listener") deliberately does NOT live here.
+              Above-the-fold it competed with the seeker CTA and converted
+              help-seekers into applicants; it now sits in the footer only.
+              "Listener login" stays — that's access for people who already
+              signed up, not a pitch. */}
           <a href="/auth" className="btn-nav">Sign in</a>
-          <a href="/become-listener" className="btn-ghost">Become a listener</a>
           <a href="/auth?mode=listener" className="btn-listener">Listener login</a>
         </div>
       </nav>
@@ -411,12 +407,19 @@ export default function Home() {
       {/* PRICING — FIXED: listener keeps 100%, flat ₹10 added on top */}
       <div className="inner">
         <h2 className="sh">Simple, honest pricing</h2>
-        <p className="ss">Listeners keep 100% of their rate. LeanOn adds a flat ₹10 platform fee.</p>
+        <p className="ss">No subscriptions. Pay only for the time you use — refundable anytime.</p>
+        {/* Card copy is deliberately seeker-side ("what you get"), not
+            "listener earns ₹X · you pay ₹Y". The old split framing showed a
+            visitor the earnings arithmetic at the exact moment they were
+            deciding whether to pay, which read as an earning opportunity.
+            Full fee transparency is preserved in the explainer below —
+            PROJECT.md §10.4 requires the ₹10 fee be honest, and also says
+            not to over-advertise it in marketing copy. */}
         <div className="pc">
           {[
-            {l:'Free trial',d:'5 minutes · Text only · No wallet needed · Up to 5 trials',p:'₹0',b:'Free to start',feat:false},
-            {l:'Quick chat',d:'15 minutes · Listener earns ₹150 · You pay ₹160',p:'₹160',b:'',feat:false},
-            {l:'Deep dive',d:'30 minutes · Listener earns ₹300 · You pay ₹310',p:'₹310',b:'Most popular',feat:true},
+            {l:'Free trial',d:'5 minutes · Text only · No wallet needed · Up to 3 trials',p:'₹0',b:'Free to start',feat:false},
+            {l:'Quick chat',d:'15 minutes · One-on-one · Text or voice',p:'₹160',b:'',feat:false},
+            {l:'Deep dive',d:'30 minutes · One-on-one · Text or voice',p:'₹310',b:'Most popular',feat:true},
           ].map((item,i)=>(
             <div key={i} className={`pcard${item.feat?' feat':''}`}>
               <div><div className="pl">{item.l}</div><div className="pd">{item.d}</div>{item.b&&<div className="pb">{item.b}</div>}</div>
@@ -426,7 +429,7 @@ export default function Home() {
         </div>
         <div className="fee-note">
           <span>💡</span>
-          <span><strong>How pricing works:</strong> Listeners set their own rate (₹8–25/min). LeanOn adds a flat ₹10 platform fee on top — that&apos;s how we keep the lights on. Listeners receive 100% of what they charge. Unused wallet balance is fully refundable, anytime.</span>
+          <span><strong>Where your money goes:</strong> Every rupee of your listener&apos;s rate goes to your listener. LeanOn adds a flat ₹10 per session on top — that&apos;s how we keep the lights on, and it&apos;s the only cut we take. Unused wallet balance is fully refundable, anytime.</span>
         </div>
       </div>
 
@@ -481,7 +484,7 @@ export default function Home() {
             { q: 'How much is a paid session, and is it worth it?', a: 'A 15-minute paid session starts at ₹160 — a fraction of the ₹1,500–4,000 a therapy session costs in India. Five free minutes is only enough to start; real relief comes from a proper conversation with someone who has lived what you are facing. Continuing with the same listener who already understands you is worth far more than starting over.' },
             { q: 'How is this different from therapy or counselling?', a: 'Listeners on LeanOn are real people with lived experience, not licensed therapists. They offer empathy and peer counselling, not clinical diagnosis. LeanOn is ideal when you need someone who truly gets it — not a diagnosis.' },
             { q: 'Is my conversation private?', a: 'Yes. All sessions are private and end-to-end. LeanOn never shares your personal details or conversation content.' },
-            { q: 'Can I become a listener?', a: 'Yes! If you\'ve been through something difficult and want to help others, apply at leanon.app/become-listener. Earn ₹8–25 per minute on your own schedule.' },
+            { q: 'Can I become a listener?', a: 'Yes. If you\'ve been through something difficult and want to support others going through the same thing, you can apply at leanon.app/become-listener. Listeners are verified before they can take sessions.' },
             { q: 'Is LeanOn related to the song "Lean On"?', a: 'No. LeanOn (one word, at leanon.app) is an Indian peer emotional support platform — no connection to the Major Lazer song. The name comes from the phrase "someone to lean on": having a person you can rely on emotionally, anytime you need it.' },
           ].map((f,i) => (
             <div key={i} className="faq-item">
@@ -559,9 +562,11 @@ export default function Home() {
             <a href="/jaipur">Peer support Jaipur</a>
             <a href="/ahmedabad">Peer support Ahmedabad</a>
           </div>
-          <div className="flis">
-            <div><p>Have lived experience to share?</p><span>Listeners keep 100% of their rate. You set your own price.</span></div>
-            <a href="/become-listener" className="btn-lis">Join as listener →</a>
+          {/* Listener recruitment lives here and nowhere else on this page:
+              discoverable for anyone genuinely looking, with no earnings hook
+              competing against the seeker funnel above. */}
+          <div className="fli" style={{marginTop:4,fontSize:12,opacity:0.75}}>
+            <a href="/become-listener">Become a listener</a>
           </div>
           <p className="fcp">© 2026 LeanOn (Lean On) · leanon.app · Peer support platform · Made in India 🇮🇳</p>
         </div>

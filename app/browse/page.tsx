@@ -160,7 +160,9 @@ a{text-decoration:none;color:inherit;}
 .tag-scroll::-webkit-scrollbar{display:none;}
 .tag-pill{flex-shrink:0;display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:50px;font-size:12px;font-weight:700;border:1.5px solid var(--border);background:white;color:var(--gray);cursor:pointer;transition:all .15s;white-space:nowrap;}
 .tag-pill.active{background:var(--navy);color:white;border-color:var(--navy);}
-.list{padding:16px 20px;display:grid;grid-template-columns:1fr;gap:14px;max-width:1200px;margin:0 auto;}
+/* Bottom padding clears the fixed BottomNav — previously supplied by the
+   listener-recruitment CTA that used to sit below this list. */
+.list{padding:16px 20px 96px;display:grid;grid-template-columns:1fr;gap:14px;max-width:1200px;margin:0 auto;}
 @media(min-width:640px){.list{grid-template-columns:1fr 1fr;}}
 @media(min-width:960px){.list{grid-template-columns:1fr 1fr 1fr;}}
 .card{background:white;border:1.5px solid var(--border);border-radius:20px;padding:18px;cursor:pointer;transition:all .2s;box-shadow:0 1px 4px rgba(15,72,103,.04);}
@@ -192,10 +194,6 @@ a{text-decoration:none;color:inherit;}
 .skeleton{background:linear-gradient(90deg,#e8e8e4 25%,#f2f2ee 50%,#e8e8e4 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:12px;height:160px;}
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 .empty{text-align:center;padding:60px 20px;}
-.join-cta{margin:0 20px 80px;background:var(--light);border:1.5px dashed var(--border);border-radius:20px;padding:24px;text-align:center;}
-.join-cta h3{font-size:15px;font-weight:800;color:var(--navy);margin-bottom:6px;}
-.join-cta p{font-size:13px;color:var(--gray);font-weight:500;margin-bottom:16px;}
-.btn-join{background:white;color:var(--teal);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;padding:10px 20px;border-radius:50px;border:2px solid var(--teal);cursor:pointer;}
 .session-toast{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--orange);color:white;font-family:'Nunito',sans-serif;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 4px 20px rgba(255,153,51,.35);animation:toastDrop .25s ease;}
 @keyframes toastDrop{from{opacity:0;transform:translateY(-100%)}to{opacity:1;transform:translateY(0)}}
 .session-toast-text{font-size:14px;font-weight:800;}
@@ -624,11 +622,6 @@ function BrowseContent() {
         ))}
       </div>
 
-      <div className="join-cta">
-        <h3>Have lived experience to share?</h3>
-        <p>Set your own rate and keep 100% of it.</p>
-        <a href="/become-listener"><button className="btn-join">Join as a listener →</button></a>
-      </div>
     </>
   )
 }

@@ -62,7 +62,7 @@ const faqs = [
     items: [
       {
         q: 'How much does LeanOn cost?',
-        a: 'After your free trial, sessions cost ₹8–25 per minute depending on the listener. Sessions are billed in 15-minute slots. A 15-minute session costs ₹160 (listener earns ₹150, LeanOn adds a flat ₹10 platform fee). A 30-minute session costs ₹310.',
+        a: 'After your free trial, sessions cost ₹8–25 per minute depending on the listener. Sessions are billed in 15-minute slots. A 15-minute session costs ₹160 — ₹150 goes to your listener and ₹10 is the flat LeanOn platform fee. A 30-minute session costs ₹310.',
       },
       {
         q: 'How does the wallet work?',
