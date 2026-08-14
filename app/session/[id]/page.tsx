@@ -62,6 +62,11 @@ body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:an
 .send svg{width:22px;height:22px;}
 .send:disabled{opacity:.5;cursor:not-allowed;}
 .note{padding:8px 16px;text-align:center;font-size:12px;color:#4A6B7E;font-weight:600;background:rgba(255,255,255,0.6);flex-shrink:0;}
+.listener-banner{padding:10px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;background:#E8F4FD;border-bottom:1px solid var(--border);}
+.listener-banner.free{background:#FFF8E8;border-color:#FFE3A3;}
+.listener-banner-icon{font-size:17px;flex-shrink:0;line-height:1;}
+.listener-banner-text{flex:1;font-size:12.5px;font-weight:700;color:var(--navy);line-height:1.4;}
+.listener-banner-close{background:none;border:none;cursor:pointer;color:var(--gray);font-size:15px;font-weight:900;padding:2px 4px;flex-shrink:0;line-height:1;}
 .crisis-bar{background:#FFF0F0;border-bottom:2px solid #FFCDD2;padding:10px 16px;font-size:12px;color:#7A2020;font-weight:700;line-height:1.5;flex-shrink:0;}
 .crisis-bar a{color:#C0392B;text-decoration:underline;}
 .crisis-footer{background:#FFF8F8;border-top:1px solid #FFCDD2;padding:6px 16px;font-size:11px;color:#7A2020;font-weight:700;text-align:center;flex-shrink:0;}
@@ -226,6 +231,13 @@ function SessionContent() {
   const [cancellingRequest, setCancellingRequest] = useState(false)
   const [requestCreatedAt, setRequestCreatedAt]   = useState<string | null>(null)
   const crisisFlaggedRef                  = useRef(false)
+  // Paid/free + earnings context for the listener — surfaced once at the top
+  // of the live chat window (not on the accept/decline banner, which is a
+  // 60-second, decision-under-pressure moment and already busy enough).
+  const [sessionIsFreeTrial, setSessionIsFreeTrial] = useState(false)
+  const [sessionAmountHeld, setSessionAmountHeld]   = useState<number | null>(null)
+  const [sessionPlatformFee, setSessionPlatformFee] = useState(0)
+  const [showListenerBanner, setShowListenerBanner] = useState(true)
 
   const channelRef      = useRef<ReturnType<typeof supabase.channel> | null>(null)
   const bottomRef       = useRef<HTMLDivElement>(null)
@@ -335,7 +347,7 @@ function SessionContent() {
   useEffect(() => {
     if (!sessionId) return
     supabase.from('sessions')
-      .select('status, started_at, created_at, duration_mins, session_type, listener_id, seeker_id, listener:users!listener_id(name), seeker:users!seeker_id(name)')
+      .select('status, started_at, created_at, duration_mins, session_type, listener_id, seeker_id, is_free_trial, amount_held, platform_fee, listener:users!listener_id(name), seeker:users!seeker_id(name)')
       .eq('id', sessionId)
       .single()
       .then(({ data, error }) => {
@@ -344,6 +356,9 @@ function SessionContent() {
         if (error || !data) { setSessionStatus('cancelled'); return }
         if (data?.status) setSessionStatus(data.status)
         if (data?.created_at) setRequestCreatedAt(data.created_at as string)
+        if (typeof data?.is_free_trial === 'boolean') setSessionIsFreeTrial(data.is_free_trial)
+        if (data?.amount_held != null) setSessionAmountHeld(Number(data.amount_held))
+        if (data?.platform_fee != null) setSessionPlatformFee(Number(data.platform_fee))
         // Only sync the timer for sessions that have actually started. A pending
         // request has started_at = NULL and must not run the countdown.
         if (data?.started_at && data?.status === 'active') {
@@ -1155,6 +1170,8 @@ function SessionContent() {
   )
 
   const timerClass = secs < 60 ? ' low' : secs < 120 ? ' warn' : ''
+  const isListenerView = userId !== null && listenerId !== null && userId === listenerId
+  const listenerEarning = sessionAmountHeld != null ? Math.max(0, sessionAmountHeld - sessionPlatformFee) : null
 
   async function handleLeaveSession() {
     // Mark completed so the ended useEffect doesn't fire again after navigation
@@ -1201,6 +1218,26 @@ function SessionContent() {
           <div className={`timer${timerClass}`}>{fmtTimer(secs)}</div>
           <button className="end-btn" onClick={() => setEnded(true)}>End</button>
         </div>
+
+        {/* One-time paid/free + earnings context for the listener — shown once
+            at the top of the live chat, not on the accept/decline banner. */}
+        {isListenerView && showListenerBanner && (
+          <div className={`listener-banner${sessionIsFreeTrial ? ' free' : ''}`}>
+            <span className="listener-banner-icon">{sessionIsFreeTrial ? '🎁' : '💰'}</span>
+            <span className="listener-banner-text">
+              {sessionIsFreeTrial
+                ? `Free trial session · ${durationMins} min · no earnings on trial sessions`
+                : `Paid session · ${durationMins} min${listenerEarning != null ? ` · you'll earn ₹${listenerEarning}` : ''}`}
+            </span>
+            <button
+              className="listener-banner-close"
+              onClick={() => setShowListenerBanner(false)}
+              aria-label="Dismiss"
+            >
+              ✕
+            </button>
+          </div>
+        )}
 
         {crisisAlert && (
           <div className="crisis-bar">
