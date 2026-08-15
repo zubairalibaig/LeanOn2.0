@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Matches app/layout.tsx `viewport.themeColor` exactly. -->
+    <color name="colorPrimary">#0F4867</color>
+    <!-- Top of the site's hero gradient — the splash dissolves into the page. -->
+    <color name="backgroundColor">#EAF6FB</color>
+    <color name="navigationColor">#FFFFFF</color>
+    <color name="iconBackground">#C2E4F2</color>
+</resources>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Long-press the launcher icon. Mirrors manifest.json "shortcuts". -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="browse"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_browse_short"
+        android:shortcutLongLabel="@string/shortcut_browse_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="app.leanon"
+            android:targetClass="app.leanon.LeanOnLauncherActivity"
+            android:data="https://www.leanon.app/browse?source=shortcut" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="wallet"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_wallet_short"
+        android:shortcutLongLabel="@string/shortcut_wallet_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="app.leanon"
+            android:targetClass="app.leanon.LeanOnLauncherActivity"
+            android:data="https://www.leanon.app/wallet?source=shortcut" />
+    </shortcut>
+</shortcuts>

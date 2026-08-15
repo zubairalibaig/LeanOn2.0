@@ -14,6 +14,8 @@ const PUBLIC_PREFIXES = [
   '/logo',
   '/og-image',
   '/firebase-messaging-sw',
+  '/.well-known/', // Digital Asset Links (Android TWA verification) — never gated
+  '/apple-touch-icon',
 ]
 
 const PUBLIC_PAGES = [
@@ -53,6 +55,8 @@ const PUBLIC_PAGES = [
   '/contact',
   '/privacy',
   '/terms',
+  '/delete-account', // Play requires this reachable without login
+
   '/glossary',
   '/admin', // handled client-side with Supabase auth + PIN gate
 ]

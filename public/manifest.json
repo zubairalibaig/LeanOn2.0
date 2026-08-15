@@ -1,18 +1,50 @@
 {
+  "id": "/?source=pwa",
   "name": "LeanOn — Peer Support",
   "short_name": "LeanOn",
-  "description": "Talk to a peer listener anonymously. Free first session. Venting app, emotional support, active listening.",
-  "start_url": "/",
+  "description": "Talk to a verified peer listener in India, anonymously and without judgment. First session is free.",
+  "start_url": "/browse?source=pwa",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#0F4867",
-  "theme_color": "#1A8FA0",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#EAF6FB",
+  "theme_color": "#0F4867",
   "orientation": "portrait",
+  "lang": "en-IN",
+  "dir": "ltr",
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any" }
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Browse listeners",
+      "short_name": "Browse",
+      "url": "/browse?source=shortcut",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "My wallet",
+      "short_name": "Wallet",
+      "url": "/wallet?source=shortcut",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Session history",
+      "short_name": "History",
+      "url": "/history?source=shortcut",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
   ],
   "categories": ["health", "lifestyle", "social"],
   "screenshots": [],
-  "lang": "en-IN"
+  "prefer_related_applications": false,
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "app.leanon",
+      "url": "https://play.google.com/store/apps/details?id=app.leanon"
+    }
+  ]
 }

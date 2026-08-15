@@ -5,6 +5,7 @@ import ToastProvider from './components/ToastProvider'
 import ErrorBoundary from './components/ErrorBoundary'
 import FloatingCTA from './components/FloatingCTA'
 import ListenerPresence from './components/ListenerPresence'
+import NativePushBridge from './components/NativePushBridge'
 import { Analytics } from '@vercel/analytics/next'
 
 export const metadata: Metadata = {
@@ -15,7 +16,13 @@ export const metadata: Metadata = {
   },
   description: "Talk to a verified peer listener in India, anonymously and without judgment. First session is free. Available 24/7 in 12 Indian languages — for loneliness, anxiety, burnout, grief, and more.",
   manifest: '/manifest.json',
-  icons: { icon: '/logo.png', apple: '/logo.png' },
+  icons: {
+    icon: [
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
   keywords: [
     'leanon', 'lean on', 'peer support India', 'emotional support India', 'talk to someone India',
     'mental health India', 'anonymous support', 'online listener India', 'mental health chat India',
@@ -218,12 +225,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
         />
-        <meta name="theme-color" content="#1A8FA0" />
+        {/* theme-color comes from the `viewport` export above (#0F4867). A second,
+            conflicting one used to be hardcoded here; the Android status bar is
+            pinned to the same value in android/app/src/main/res/values/colors.xml,
+            so keep the two in step. */}
         {/* India geo-targeting signals */}
         <meta name="geo.region" content="IN" />
         <meta name="geo.placename" content="India" />
         <meta name="distribution" content="IN" />
-        <link rel="apple-touch-icon" href="/icon-192.png" />
+        {/* apple-touch-icon is emitted by `metadata.icons.apple` above. */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="LeanOn" />
@@ -258,6 +268,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             /dashboard, /browse, /session, /auth and /admin (which handle their
             own, or must not be interrupted). */}
         <ListenerPresence />
+        {/* Android shell only: completes the native FCM token handoff.
+            No-ops for every browser visitor. */}
+        <NativePushBridge />
         <ToastProvider />
         <Analytics />
       </body>

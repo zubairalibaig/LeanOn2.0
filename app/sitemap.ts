@@ -18,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/glossary`,                         lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${base}/privacy`,                          lastModified: d('2026-01-01'), changeFrequency: 'yearly',  priority: 0.3 },
     { url: `${base}/terms`,                            lastModified: d('2026-01-01'), changeFrequency: 'yearly',  priority: 0.3 },
+    { url: `${base}/delete-account`,                   lastModified: d(TODAY),        changeFrequency: 'yearly',  priority: 0.3 },
     { url: `${base}/trust`,                            lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/press`,                            lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.6 },
     // Support hub + topic pages

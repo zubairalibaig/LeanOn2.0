@@ -1,0 +1,8 @@
+// Root build file. The Android app here is a Trusted Web Activity shell around
+// https://www.leanon.app — there is no second copy of the product code, only
+// the native scaffolding Play requires (see ANDROID.md).
+plugins {
+    id 'com.android.application' version '8.7.3' apply false
+    id 'org.jetbrains.kotlin.android' version '1.9.24' apply false
+    id 'com.google.gms.google-services' version '4.4.2' apply false
+}

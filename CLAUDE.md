@@ -60,3 +60,8 @@
 - Also push to `claude/setup-leanon-access-eEw0A`.
 - Migrations are MANUAL: owner runs them in Supabase SQL Editor, then
   refreshes `db/LIVE_SCHEMA.md`.
+- **Android/Play Store: see `ANDROID.md`.** `android/` is a Trusted Web
+  Activity shell around leanon.app — it holds no product code. Web changes
+  reach app users through the normal Vercel deploy; only changes inside
+  `android/` need a new store build (tag `android-v*`). Do not add a second
+  copy of any screen or API call there.

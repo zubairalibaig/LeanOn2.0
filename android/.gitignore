@@ -1,0 +1,17 @@
+*.iml
+.gradle/
+local.properties
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+.idea/
+
+# Firebase client config — written by CI from the GOOGLE_SERVICES_JSON secret,
+# or pulled from the Firebase console locally. See ANDROID.md.
+app/google-services.json
+
+# Signing material must never be committed.
+*.jks
+*.keystore
+keystore.properties

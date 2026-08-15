@@ -1,0 +1,111 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+// google-services.json carries the Firebase project's client config. It is not
+// committed (see .gitignore) — CI writes it from a secret and developers pull
+// it from the Firebase console. Applying the plugin conditionally keeps the
+// project compiling without it, so a checkout can always be built and
+// inspected; `assembleRelease` below refuses to produce a shippable artifact
+// with push silently dead.
+def googleServicesFile = file('google-services.json')
+if (googleServicesFile.exists()) {
+    apply plugin: 'com.google.gms.google-services'
+}
+
+// Release signing is driven entirely by the environment so no keystore or
+// password ever lands in the repo. Absent env vars => unsigned build, which is
+// still useful locally and in CI smoke tests.
+def keystorePath = System.getenv('ANDROID_KEYSTORE_PATH')
+def hasSigning = keystorePath != null && !keystorePath.isEmpty() && file(keystorePath).exists()
+
+android {
+    namespace 'app.leanon'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'app.leanon'
+        minSdk 23
+        targetSdk 35
+
+        // Overridden by CI: -PversionCode=12 -PversionName=1.0.12
+        versionCode  = (project.findProperty('versionCode') ?: '1') as Integer
+        versionName  = project.findProperty('versionName') ?: '1.0.0'
+
+        // The screen the app opens on. /browse is the marketplace and is a
+        // public route in middleware.ts, so it renders for signed-out users
+        // too instead of bouncing them to /auth before they have seen anything.
+        resValue "string", "launch_url", "https://www.leanon.app/browse?source=android"
+
+        // Proves the app and the site share a publisher. The matching half
+        // lives at https://www.leanon.app/.well-known/assetlinks.json.
+        resValue "string", "asset_statements",
+                '[{ \\"relation\\": [\\"delegate_permission/common.handle_all_urls\\"], ' +
+                '\\"target\\": {\\"namespace\\": \\"web\\", \\"site\\": \\"https://www.leanon.app\\"}}]'
+    }
+
+    if (hasSigning) {
+        signingConfigs {
+            release {
+                storeFile     file(keystorePath)
+                storePassword System.getenv('ANDROID_KEYSTORE_PASSWORD')
+                keyAlias      System.getenv('ANDROID_KEY_ALIAS')
+                keyPassword   System.getenv('ANDROID_KEY_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (hasSigning) {
+                signingConfig signingConfigs.release
+            }
+        }
+        debug {
+            // Deliberately NO applicationIdSuffix: asset-link verification is
+            // keyed on the package name, so a suffixed debug build could never
+            // verify and would always show a browser URL bar — hiding exactly
+            // the thing you install a debug build to check. Add the debug
+            // keystore's SHA-256 to ANDROID_ASSETLINKS_SHA256 to verify locally.
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+}
+
+dependencies {
+    // The entire TWA implementation — hosts the site in a Chrome-backed
+    // activity with no browser chrome once asset links verify.
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.6.0'
+
+    implementation 'androidx.core:core-ktx:1.13.1'
+
+    implementation platform('com.google.firebase:firebase-bom:33.7.0')
+    implementation 'com.google.firebase:firebase-messaging'
+}
+
+// A release built without Firebase config would install fine and never deliver
+// a single session request — the exact failure this app exists to prevent.
+// Fail loudly at build time instead.
+tasks.configureEach { task ->
+    if (task.name ==~ /(?i)(assemble|bundle)Release/) {
+        task.doFirst {
+            if (!googleServicesFile.exists()) {
+                throw new GradleException(
+                    "android/app/google-services.json is missing — push notifications " +
+                    "would be dead in this build. See ANDROID.md ('Firebase')."
+                )
+            }
+        }
+    }
+}

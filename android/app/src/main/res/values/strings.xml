@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LeanOn</string>
+
+    <!-- launch_url and asset_statements are generated in app/build.gradle so
+         the domain is declared in exactly one place. -->
+
+    <string name="manage_space_url" translatable="false">https://www.leanon.app/profile</string>
+
+    <string name="notification_channel_id" translatable="false">leanon_sessions</string>
+    <string name="notification_channel_name">Session requests</string>
+    <string name="notification_channel_description">Incoming session requests and messages. Keep this on so you never miss a seeker.</string>
+
+    <string name="shortcut_browse_short">Browse</string>
+    <string name="shortcut_browse_long">Browse listeners</string>
+    <string name="shortcut_wallet_short">Wallet</string>
+    <string name="shortcut_wallet_long">My wallet</string>
+</resources>

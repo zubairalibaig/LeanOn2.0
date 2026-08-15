@@ -8,6 +8,14 @@ const nextConfig = {
     domains: ['lh3.googleusercontent.com', 'avatars.githubusercontent.com'],
   },
 
+  async rewrites() {
+    return [
+      // Digital Asset Links must be served from this exact well-known path for
+      // Android to verify the TWA. The handler is env-driven — see the route.
+      { source: '/.well-known/assetlinks.json', destination: '/api/assetlinks' },
+    ]
+  },
+
   async headers() {
     return [
       {
@@ -36,6 +44,11 @@ const nextConfig = {
       {
         source: '/manifest.json',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=3600' }],
+      },
+      // PWA / Android launcher icons — immutable, content-addressed by name
+      {
+        source: '/:icon(icon-192.png|icon-512.png|icon-maskable-512.png|apple-touch-icon.png)',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, stale-while-revalidate=86400' }],
       },
       {
         source: '/llms.txt',

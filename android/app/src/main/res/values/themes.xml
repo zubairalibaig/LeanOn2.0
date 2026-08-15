@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Platform Material themes rather than AppCompat: androidbrowserhelper's
+         activities extend android.app.Activity, so pulling in AppCompat would
+         add a dependency for nothing. minSdk 23 covers Theme.Material. -->
+    <style name="AppTheme" parent="@android:style/Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.LauncherActivity" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/backgroundColor</item>
+        <item name="android:statusBarColor">@color/colorPrimary</item>
+        <item name="android:navigationBarColor">@color/navigationColor</item>
+    </style>
+</resources>
