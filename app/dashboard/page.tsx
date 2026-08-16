@@ -6,6 +6,7 @@ import { createBrowserClient } from '@supabase/ssr'
 import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE, PLATFORM_FEE } from '@/lib/constants'
 import { showToast } from '@/lib/toast'
 import { registerPushNotifications } from '@/lib/firebase-client'
+import { compressImage, extForType, AVATAR_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
 
 let _sb: ReturnType<typeof createBrowserClient> | null = null
 function initSb() {
@@ -616,13 +617,18 @@ export default function DashboardPage() {
     const file = e.target.files?.[0]
     if (!file || !user) return
     if (!file.type.startsWith('image/')) { alert('Please choose an image file'); return }
-    if (file.size > 2 * 1024 * 1024) { alert('Photo must be under 2 MB'); return }
+    // Raised from 2 MB: we downscale before upload, so a raw phone photo is
+    // fine as INPUT. The guard now only stops absurd files (see MAX_INPUT_BYTES).
+    if (file.size > MAX_INPUT_BYTES) { alert('Photo must be under 20 MB'); return }
     setUploadingAv(true)
     try {
+      // Downscale to 256px before upload — a 48px avatar does not need 5 MB.
+      // Returns the original file untouched if compression is not possible.
+      const upload = await compressImage(file, AVATAR_OPTS)
       // Derive extension from MIME type, not the user-controlled filename
-      const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg'
+      const ext = extForType(upload.type)
       const path = `${user.id}.${ext}`
-      const { error: upErr } = await sb.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type })
+      const { error: upErr } = await sb.storage.from('avatars').upload(path, upload, { upsert: true, contentType: upload.type })
       if (upErr) throw upErr
       const { data: { publicUrl } } = sb.storage.from('avatars').getPublicUrl(path)
       const url = `${publicUrl}?t=${Date.now()}`

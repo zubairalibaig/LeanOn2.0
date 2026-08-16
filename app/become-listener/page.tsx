@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, PLATFORM_FEE, LANGUAGES, MONTHS, MIN_LISTENER_AGE, MAX_LISTENER_AGE, ageFromBirth } from '@/lib/constants'
 import { createClient } from '@/lib/supabase'
 import TurnstileWidget, { turnstileEnabled } from '@/app/components/TurnstileWidget'
+import { compressImage, extForType, AVATAR_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
 
 const TAGS = [
   {id:'loneliness', label:'Loneliness 🌙'},
@@ -359,13 +360,16 @@ export default function BecomeListenerPage() {
       try {
         const { data: { user } } = await sb.auth.getUser()
         if (!user) { setError('Session expired. Please refresh and try again.'); setAvatarUploading(false); return }
+        // avatarFile was already downscaled at selection time.
         // Derive extension from MIME type — never trust the user-controlled filename
-        const ext = avatarFile.type === 'image/png' ? 'png' : avatarFile.type === 'image/webp' ? 'webp' : 'jpg'
+        const ext = extForType(avatarFile.type)
         const path = `${user.id}.${ext}`
         const { error: upErr } = await sb.storage.from('avatars').upload(path, avatarFile, { upsert: true, contentType: avatarFile.type })
         if (upErr) { setFieldErrors(f => ({...f, avatar: 'Photo upload failed. Please try again.'})); setAvatarUploading(false); return }
         const { data: { publicUrl } } = sb.storage.from('avatars').getPublicUrl(path)
-        setAvatarUrl(publicUrl)
+        // Version the URL so a re-upload to the same path is not served stale
+        // from the CDN — matches what /profile and /dashboard already do.
+        setAvatarUrl(`${publicUrl}?t=${Date.now()}`)
       } catch {
         setFieldErrors(f => ({...f, avatar: 'Photo upload failed. Please try again.'}))
         setAvatarUploading(false)
@@ -647,15 +651,21 @@ export default function BecomeListenerPage() {
               type="file"
               accept="image/jpeg,image/png,image/webp"
               style={{display:'none'}}
-              onChange={e => {
+              onChange={async e => {
                 const file = e.target.files?.[0]
                 if (!file) return
-                if (file.size > 5 * 1024 * 1024) { setFieldErrors(f => ({...f, avatar:'Photo must be under 5 MB'})); return }
-                setAvatarFile(file)
+                // Raised from 5 MB: the photo is downscaled below, so a raw
+                // phone camera file is a fine INPUT. Only absurd files are blocked.
+                if (file.size > MAX_INPUT_BYTES) { setFieldErrors(f => ({...f, avatar:'Photo must be under 20 MB'})); return }
+                // Compress at SELECTION time, not upload time, so the preview
+                // shows exactly the image that will be stored, and the later
+                // upload step is instant.
+                const shrunk = await compressImage(file, AVATAR_OPTS)
+                setAvatarFile(shrunk)
                 setAvatarUrl('')
                 const reader = new FileReader()
                 reader.onload = ev => setAvatarPreview(ev.target?.result as string)
-                reader.readAsDataURL(file)
+                reader.readAsDataURL(shrunk)
                 if (fieldErrors.avatar) setFieldErrors(f => ({...f, avatar:''}))
               }}
             />

@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
+import { compressImage, extForType, AVATAR_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
 
 const S = `
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
@@ -105,13 +106,18 @@ export default function ProfilePage() {
     const file = e.target.files?.[0]
     if (!file || !userId) return
     if (!file.type.startsWith('image/')) { alert('Please choose an image file'); return }
-    if (file.size > 2 * 1024 * 1024) { alert('Photo must be under 2 MB'); return }
+    // Raised from 2 MB: we downscale before upload, so a raw phone photo is
+    // fine as INPUT. The guard now only stops absurd files (see MAX_INPUT_BYTES).
+    if (file.size > MAX_INPUT_BYTES) { alert('Photo must be under 20 MB'); return }
     setUploadingAvatar(true)
     try {
+      // Downscale to 256px before upload — a 48px avatar does not need 5 MB.
+      // Returns the original file untouched if compression is not possible.
+      const upload = await compressImage(file, AVATAR_OPTS)
       // Derive extension from MIME type, not the user-controlled filename
-      const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg'
+      const ext = extForType(upload.type)
       const path = `${userId}.${ext}`
-      const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type })
+      const { error: upErr } = await supabase.storage.from('avatars').upload(path, upload, { upsert: true, contentType: upload.type })
       if (upErr) throw upErr
       const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path)
       const url = `${publicUrl}?t=${Date.now()}` // cache bust

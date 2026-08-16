@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
+import { compressImage, extForType, DOCUMENT_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
 
 const sb = createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -56,9 +57,13 @@ async function hashString(str: string): Promise<string> {
 }
 
 async function uploadFile(userId: string, folder: string, file: File): Promise<string | null> {
-  const ext  = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg'
+  // Downscale before upload. DOCUMENT_OPTS caps the long edge at 1600px, which
+  // is far more than an admin needs to read a 12-digit Aadhaar number, while
+  // turning a 5 MB camera file into a few hundred KB.
+  const upload = await compressImage(file, DOCUMENT_OPTS)
+  const ext  = extForType(upload.type)
   const path = `${folder}/${userId}.${ext}`
-  const { error } = await sb.storage.from('verifications').upload(path, file, { upsert: true })
+  const { error } = await sb.storage.from('verifications').upload(path, upload, { upsert: true, contentType: upload.type })
   if (error) return null
   const { data } = sb.storage.from('verifications').getPublicUrl(path)
   return data.publicUrl
@@ -207,7 +212,7 @@ export default function VerifyPage() {
                     onChange={e => {
                       const file = e.target.files?.[0]
                       if (!file) return
-                      if (file.size > 5 * 1024 * 1024) { setError('Selfie must be under 5 MB'); return }
+                      if (file.size > MAX_INPUT_BYTES) { setError('Selfie must be under 20 MB'); return }
                       setError('')
                       setSelfie(file)
                     }}
@@ -240,7 +245,7 @@ export default function VerifyPage() {
                     onChange={e => {
                       const file = e.target.files?.[0]
                       if (!file) return
-                      if (file.size > 5 * 1024 * 1024) { setError('ID document must be under 5 MB'); return }
+                      if (file.size > MAX_INPUT_BYTES) { setError('ID document must be under 20 MB'); return }
                       setError('')
                       setIdDoc(file)
                     }}
