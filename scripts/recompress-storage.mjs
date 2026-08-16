@@ -1,0 +1,155 @@
+#!/usr/bin/env node
+/**
+ * ONE-TIME BACKFILL — shrink images already sitting in Supabase Storage.
+ *
+ * WHY: lib/compress-image.ts only shrinks NEW uploads. Every avatar uploaded
+ * before that shipped is still full-size and still burning CDN egress on every
+ * /browse page load. This re-encodes them in place.
+ *
+ * DESIGN — deliberately conservative:
+ *   • Overwrites each object AT THE SAME PATH, IN THE SAME FORMAT.
+ *     Nothing in the database changes. No avatar_url is rewritten, no row is
+ *     touched, no URL breaks, no orphaned files are left behind. The bytes
+ *     behind an unchanged URL simply get smaller.
+ *   • Idempotent — safe to run repeatedly. Already-small objects are skipped.
+ *   • --dry-run by default. It will not write anything until you pass --apply.
+ *
+ * NOTE ON CDN: Supabase Storage sends cache-control max-age=3600. Because the
+ * URL does not change, edge caches keep serving the OLD large object for up to
+ * one hour after this runs. Egress drops after that TTL expires. This is
+ * expected — do not re-run the script thinking it failed.
+ *
+ * USAGE
+ *   npm install --no-save sharp
+ *   export NEXT_PUBLIC_SUPABASE_URL="https://<project>.supabase.co"
+ *   export SUPABASE_SERVICE_ROLE_KEY="<service role key>"
+ *
+ *   node scripts/recompress-storage.mjs            # dry run — reports only
+ *   node scripts/recompress-storage.mjs --apply    # actually rewrite
+ *
+ * The service-role key bypasses RLS. Run this from your own machine, never
+ * from the browser, and never commit the key.
+ */
+
+import { createClient } from '@supabase/supabase-js'
+
+const URL_ = process.env.NEXT_PUBLIC_SUPABASE_URL
+const KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+if (!URL_ || !KEY) {
+  console.error('\n  Missing env vars.\n')
+  console.error('  export NEXT_PUBLIC_SUPABASE_URL="https://<project>.supabase.co"')
+  console.error('  export SUPABASE_SERVICE_ROLE_KEY="<service role key>"\n')
+  process.exit(1)
+}
+
+let sharp
+try {
+  sharp = (await import('sharp')).default
+} catch {
+  console.error('\n  sharp is not installed. Run:\n\n    npm install --no-save sharp\n')
+  process.exit(1)
+}
+
+const APPLY = process.argv.includes('--apply')
+
+// Mirrors lib/compress-image.ts so backfilled files match new uploads.
+const BUCKETS = [
+  { name: 'avatars',       maxDim: 256,  quality: 82, skipUnder: 40 * 1024,  prefixes: [''] },
+  { name: 'verifications', maxDim: 1600, quality: 85, skipUnder: 250 * 1024, prefixes: ['selfies', 'ids'] },
+]
+
+const sb = createClient(URL_, KEY, { auth: { persistSession: false } })
+const kb = n => (n / 1024).toFixed(1) + ' KB'
+
+/** List every object under a prefix, paging past the 100-item default. */
+async function listAll(bucket, prefix) {
+  const out = []
+  const limit = 100
+  for (let offset = 0; ; offset += limit) {
+    const { data, error } = await sb.storage.from(bucket).list(prefix, { limit, offset })
+    if (error) throw new Error(`list ${bucket}/${prefix}: ${error.message}`)
+    if (!data || data.length === 0) break
+    // Entries with no id are sub-folders, not objects.
+    out.push(...data.filter(o => o.id).map(o => ({ ...o, path: prefix ? `${prefix}/${o.name}` : o.name })))
+    if (data.length < limit) break
+  }
+  return out
+}
+
+/** Re-encode to the SAME format so the object path never has to change. */
+async function shrink(buf, ext, maxDim, quality) {
+  const img = sharp(buf, { failOn: 'none' }).rotate() // .rotate() applies EXIF orientation
+  const meta = await img.metadata()
+  if (!meta.width || !meta.height) return null
+  if (meta.width <= maxDim && meta.height <= maxDim) return null // already small enough
+
+  const resized = img.resize(maxDim, maxDim, { fit: 'inside', withoutEnlargement: true })
+  if (ext === 'png')  return { buf: await resized.png({ compressionLevel: 9 }).toBuffer(), contentType: 'image/png' }
+  if (ext === 'webp') return { buf: await resized.webp({ quality }).toBuffer(),            contentType: 'image/webp' }
+  return { buf: await resized.jpeg({ quality, mozjpeg: true }).toBuffer(),                 contentType: 'image/jpeg' }
+}
+
+console.log(`\n=== Supabase Storage re-compress — ${APPLY ? 'APPLY (writing)' : 'DRY RUN (no writes)'} ===\n`)
+
+let totalBefore = 0, totalAfter = 0, changed = 0, skipped = 0, failed = 0
+
+for (const bucket of BUCKETS) {
+  let objects = []
+  try {
+    for (const prefix of bucket.prefixes) objects.push(...await listAll(bucket.name, prefix))
+  } catch (err) {
+    console.log(`  ${bucket.name}: SKIPPED — ${err.message}\n`)
+    continue
+  }
+
+  console.log(`  ${bucket.name}: ${objects.length} object(s)`)
+
+  for (const obj of objects) {
+    const ext = (obj.name.split('.').pop() || '').toLowerCase()
+    if (!['jpg', 'jpeg', 'png', 'webp'].includes(ext)) { skipped++; continue }
+
+    const size = obj.metadata?.size ?? 0
+    if (size && size < bucket.skipUnder) { skipped++; continue }
+
+    try {
+      const { data, error } = await sb.storage.from(bucket.name).download(obj.path)
+      if (error) throw new Error(error.message)
+      const before = Buffer.from(await data.arrayBuffer())
+
+      const result = await shrink(before, ext, bucket.maxDim, bucket.quality)
+      if (!result || result.buf.length >= before.length) { skipped++; continue }
+
+      totalBefore += before.length
+      totalAfter  += result.buf.length
+      changed++
+
+      console.log(`    ${obj.path.padEnd(48)} ${kb(before.length).padStart(10)} -> ${kb(result.buf.length).padStart(9)}  (${(before.length / result.buf.length).toFixed(0)}x)`)
+
+      if (APPLY) {
+        const { error: upErr } = await sb.storage.from(bucket.name).upload(obj.path, result.buf, {
+          upsert: true,
+          contentType: result.contentType,
+          cacheControl: '3600',
+        })
+        if (upErr) throw new Error(upErr.message)
+      }
+    } catch (err) {
+      failed++
+      console.log(`    ${obj.path.padEnd(48)} FAILED — ${err.message}`)
+    }
+  }
+  console.log('')
+}
+
+console.log('  ─────────────────────────────────────────────')
+console.log(`  rewritten : ${changed}`)
+console.log(`  skipped   : ${skipped} (already small, or not an image)`)
+console.log(`  failed    : ${failed}`)
+if (changed) {
+  console.log(`  bytes     : ${kb(totalBefore)} -> ${kb(totalAfter)}  (${(totalBefore / totalAfter).toFixed(0)}x smaller)`)
+  const perLoad = (totalBefore - totalAfter) / 1024 / 1024
+  console.log(`  saves     : ~${perLoad.toFixed(1)} MB per full browse-page load`)
+}
+if (!APPLY && changed) console.log('\n  This was a DRY RUN. Re-run with --apply to write the changes.')
+console.log('')
