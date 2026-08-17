@@ -1,0 +1,81 @@
+# Run the Storage image backfill from the GitHub UI — no local machine needed.
+#
+# The owner has no local dev environment, so scripts/recompress-storage.mjs
+# needs somewhere to run that can hold the service-role key securely. GitHub
+# Actions gives us both: a Node runtime and encrypted secrets that are never
+# printed in logs.
+#
+# ONE-TIME SETUP
+#   Repo -> Settings -> Secrets and variables -> Actions -> New repository secret
+#     NEXT_PUBLIC_SUPABASE_URL   https://<project>.supabase.co
+#     SUPABASE_SERVICE_ROLE_KEY  <service role key from Supabase -> Settings -> API>
+#
+# TO RUN
+#   Actions tab -> "Re-compress Storage images" -> Run workflow
+#   Leave apply = false for a dry run first. Then run again with apply = true.
+
+name: Re-compress Storage images
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: 'Actually rewrite the files? Leave false for a dry run first.'
+        type: boolean
+        default: false
+
+# Never run two rewrites of the same bucket at once.
+concurrency:
+  group: recompress-storage
+  cancel-in-progress: false
+
+jobs:
+  recompress:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        # Only the two packages the script needs — a full install would pull
+        # the whole Next.js toolchain for nothing.
+        run: npm install --no-save sharp @supabase/supabase-js
+
+      - name: Fail early if the secrets are missing
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_KEY" ]; then
+            echo "::error::Missing secrets. Add NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY under Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+
+      - name: Run the backfill
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ "${{ inputs.apply }}" = "true" ]; then
+            echo "Running in APPLY mode — files will be rewritten."
+            node scripts/recompress-storage.mjs --apply | tee result.txt
+          else
+            echo "Running in DRY RUN mode — nothing will be written."
+            node scripts/recompress-storage.mjs | tee result.txt
+          fi
+
+      - name: Put the report in the run summary
+        if: always()
+        run: |
+          echo '## Storage re-compress' >> $GITHUB_STEP_SUMMARY
+          echo '' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat result.txt >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo '(no output)' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY

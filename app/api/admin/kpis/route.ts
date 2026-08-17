@@ -69,6 +69,13 @@ export async function GET(req: NextRequest) {
       sb.from('wallet_transactions').select('amount').eq('type', 'gateway_fee'),
       sb.from('wallet_transactions').select('amount').eq('type', 'gateway_fee').gte('created_at', thisMonth),
       sb.from('wallet_transactions').select('amount').eq('type', 'gateway_fee').gte('created_at', today),
+
+      // Wallet liability — money seekers have recharged but NOT yet spent.
+      // This is customer money held on their behalf, not revenue. It must stay
+      // parked and untouched until they spend it or it is refunded.
+      // Appended LAST on purpose: extract() below is positional, so adding
+      // anywhere else would silently reindex every KPI after it.
+      sb.from('users').select('wallet_balance'),
     ])
 
     // Extract values safely — failed queries return zero/null defaults
@@ -104,6 +111,7 @@ export async function GET(req: NextRequest) {
     const gatewayFeesAllTime  = extract<{ amount: number }>(22)
     const gatewayFeesMonth    = extract<{ amount: number }>(23)
     const gatewayFeesToday    = extract<{ amount: number }>(24)
+    const walletBalances      = extract<{ wallet_balance: number }>(25)
 
     const sum = (rows: { amount?: number; net_amount?: number }[] | null, field: 'amount' | 'net_amount' = 'amount') =>
       (rows ?? []).reduce((s, r) => s + (r[field] ?? 0), 0)
@@ -140,6 +148,12 @@ export async function GET(req: NextRequest) {
         thisMonthPaise: sum(revenueThisMonth.data),
         todayPaise: sum(revenueToday.data),
         listenerEarningsPaise: sum(totalEarnings.data, 'net_amount'),
+      },
+      // Unspent customer money. NOT revenue — this is a liability that must be
+      // held in reserve until the seeker spends it or asks for it back.
+      walletLiability: {
+        totalPaise: (walletBalances.data ?? []).reduce((s, r) => s + Number(r.wallet_balance ?? 0), 0),
+        usersWithBalance: (walletBalances.data ?? []).filter(r => Number(r.wallet_balance ?? 0) > 0).length,
       },
       payouts: {
         pendingAmountPaise: sum(pendingPayouts.data),

@@ -13,8 +13,38 @@ export async function GET() {
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ name: null, role: null, wallet_balance: null })
     const admin = createAdminClient()
-    const { data } = await admin.from('users').select('name, role, wallet_balance, avatar_url, phone, created_at').eq('id', user.id).maybeSingle()
+    let { data } = await admin.from('users').select('name, role, wallet_balance, avatar_url, phone, created_at').eq('id', user.id).maybeSingle()
     const phone = data?.phone ?? (user.phone ? '+' + user.phone.replace(/^\+/, '') : null)
+
+    // BACKSTOP: an OTP-verified user with no public.users row.
+    //
+    // The row was only ever created by POST, which fires after the user types
+    // their name. Anyone who verified their OTP and then abandoned before that
+    // was left authenticated but profile-less — we had already spent the SMS,
+    // and they were invisible to every admin view and every query joining on
+    // public.users. On 2026-08-16 that was 35 of 124 accounts (28%).
+    //
+    // This route is called immediately after verifyOtp, so it is the exact
+    // moment identity becomes known. Creating the row here closes the gap.
+    // Only runs when the row is genuinely missing, so it costs one write per
+    // affected user, not one per request. Identity comes from the verified
+    // session cookie, and the phone is OTP-proven — never client input.
+    if (!data && phone) {
+      const { error: ensureErr } = await ensureUserRow(admin, {
+        id: user.id,
+        phone,
+        phoneVerified: true,
+      })
+      if (ensureErr) {
+        logger.warn('profile GET: could not backfill missing users row', { userId: user.id })
+      } else {
+        const re = await admin.from('users')
+          .select('name, role, wallet_balance, avatar_url, phone, created_at')
+          .eq('id', user.id).maybeSingle()
+        data = re.data
+      }
+    }
+
     return NextResponse.json({
       name: data?.name ?? null,
       role: data?.role ?? null,

@@ -52,6 +52,10 @@ export async function GET(req: NextRequest) {
   // client-side — that value is enriched per-row from auth.users after
   // pagination, so it cannot be ordered in the query.)
   const sortAsc = url.searchParams.get('dir') === 'asc'
+  // Which column to sort by. 'joined' (default) and 'wallet' order in the
+  // query so they span every page. 'earnings' is handled separately for
+  // listeners, because that total lives in another table.
+  const sortBy = url.searchParams.get('sort') || 'joined'
 
   try {
     if (type === 'listener') {
@@ -84,11 +88,18 @@ export async function GET(req: NextRequest) {
         users!inner(id, name, email, phone, avatar_url, created_at, is_active, is_suspended, wallet_balance)
       `
 
+      // Earnings live in listener_earnings, so the database cannot ORDER BY
+      // them here. When sorting by earnings we fetch the whole filtered set,
+      // attach totals, sort, and slice the page in memory. That is only sane
+      // because the listener count is small (dozens); every other sort still
+      // paginates in the query.
+      const sortByEarnings = sortBy === 'earnings'
+
       const buildQuery = (selectStr: string) => {
         let q = sb.from('listener_profiles')
           .select(selectStr, { count: 'exact' })
-          .order('created_at', { ascending: sortAsc })
-          .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)
+          .order('created_at', { ascending: sortByEarnings ? false : sortAsc })
+        if (!sortByEarnings) q = q.range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)
 
         if (userIdFilter !== null) {
           q = q.in('user_id', userIdFilter)
@@ -138,32 +149,89 @@ export async function GET(req: NextRequest) {
         }
         const appMap = new Map(appsData.map(a => [a.user_id as string, a]))
         items = items.map(p => ({ ...p, application: appMap.get(p.user_id as string) ?? null }))
+
+        // Total earned per listener, from the earnings ledger. `total` is
+        // everything the ledger credits them; `settled` is the subset that has
+        // actually cleared and is therefore payable. Degrades to 0 rather than
+        // breaking the listing if the table is missing or unreadable.
+        const earnMap = new Map<string, { total: number; settled: number }>()
+        const earnRes = await sb.from('listener_earnings')
+          .select('listener_id, net_amount, status')
+          .in('listener_id', userIds)
+        if (!earnRes.error) {
+          for (const row of (earnRes.data ?? []) as { listener_id: string; net_amount: number; status: string }[]) {
+            const cur = earnMap.get(row.listener_id) ?? { total: 0, settled: 0 }
+            const amt = Number(row.net_amount ?? 0)
+            cur.total += amt
+            if (row.status === 'settled') cur.settled += amt
+            earnMap.set(row.listener_id, cur)
+          }
+        }
+        items = items.map(p => {
+          const e = earnMap.get(p.user_id as string) ?? { total: 0, settled: 0 }
+          return { ...p, earned_total: e.total, earned_settled: e.settled }
+        })
+      }
+
+      // Earnings sort + in-memory pagination (see note on buildQuery above).
+      let listenerTotal = count ?? 0
+      if (sortByEarnings) {
+        listenerTotal = items.length
+        items.sort((a, b) => {
+          const d = Number(a.earned_total ?? 0) - Number(b.earned_total ?? 0)
+          return sortAsc ? d : -d
+        })
+        items = items.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE)
       }
 
       items = await withLastLogin(sb, items, p => (p.users as { id?: string } | undefined)?.id ?? (p.user_id as string))
 
-      return NextResponse.json({ items, total: count ?? 0, page, type: 'listener' })
+      return NextResponse.json({ items, total: listenerTotal, page, type: 'listener' })
     }
 
-    // Regular users
+    // Regular users.
+    // Status/search filters are applied identically to the page query and the
+    // wallet-total query, so the headline total always describes exactly the
+    // set the admin is looking at.
+    const safeSearch = search ? search.replace(/[,()*:\\%_]/g, '').slice(0, 100) : ''
+    const searchFilter = safeSearch ? `name.ilike.%${safeSearch}%,phone.ilike.%${safeSearch}%` : ''
+
     let query = sb.from('users')
       .select('id, name, phone, email, avatar_url, created_at, is_active, is_suspended, wallet_balance, updated_at', { count: 'exact' })
-      .order('created_at', { ascending: sortAsc })
+      .order(sortBy === 'wallet' ? 'wallet_balance' : 'created_at', { ascending: sortAsc })
       .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)
 
-    if (userStatus === 'active') query = query.eq('is_active', true).eq('is_suspended', false)
-    else if (userStatus === 'inactive') query = query.eq('is_active', false)
-    else if (userStatus === 'suspended') query = query.eq('is_suspended', true)
+    // Unspent customer money across the WHOLE filtered set, not just this page.
+    // Degrades to null (UI hides the figure) rather than failing the listing.
+    let walletQ = sb.from('users').select('wallet_balance')
 
-    if (search) {
-      const safe = search.replace(/[,()*:\\%_]/g, '').slice(0, 100)
-      if (safe) query = query.or(`name.ilike.%${safe}%,phone.ilike.%${safe}%`)
+    // NOTE: these two filter blocks MUST stay identical, or the headline total
+    // would describe a different set of users than the rows on screen.
+    if (userStatus === 'active') {
+      query = query.eq('is_active', true).eq('is_suspended', false)
+      walletQ = walletQ.eq('is_active', true).eq('is_suspended', false)
+    } else if (userStatus === 'inactive') {
+      query = query.eq('is_active', false)
+      walletQ = walletQ.eq('is_active', false)
+    } else if (userStatus === 'suspended') {
+      query = query.eq('is_suspended', true)
+      walletQ = walletQ.eq('is_suspended', true)
+    }
+    if (searchFilter) {
+      query = query.or(searchFilter)
+      walletQ = walletQ.or(searchFilter)
     }
 
-    const { data, count, error: qErr } = await query
+    const [{ data, count, error: qErr }, walletRes] = await Promise.all([query, walletQ])
     if (qErr) throw qErr
+
+    const walletRows = walletRes.error ? null : (walletRes.data as { wallet_balance: number }[] | null)
+    const walletTotal = walletRows
+      ? walletRows.reduce((s, r) => s + Number(r.wallet_balance ?? 0), 0)
+      : null
+
     const items = await withLastLogin(sb, (data ?? []) as Record<string, unknown>[], u => u.id as string)
-    return NextResponse.json({ items, total: count ?? 0, page, type: 'user' })
+    return NextResponse.json({ items, total: count ?? 0, page, type: 'user', walletTotal })
   } catch (err) {
     logger.error('Admin users GET error:', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json({ error: 'Server error' }, { status: 500 })

@@ -9,6 +9,8 @@ type KPIs = {
   listeners: { total: number; active: number; pending: number; online: number }
   sessions: { total: number; today: number; thisMonth: number; active: number; freeTrial: number; paid: number; avgDurationMins: number }
   revenue: { totalRechargedPaise: number; thisMonthPaise: number; todayPaise: number; listenerEarningsPaise: number }
+  // Optional: absent if an older API build is still deployed, so the UI must guard.
+  walletLiability?: { totalPaise: number; usersWithBalance: number }
   gatewayFees: { allTime: number; thisMonth: number; today: number }
   payouts: { pendingAmountPaise: number; pendingCount: number; totalPaidPaise: number }
   moderation: { pendingReports: number }
@@ -19,6 +21,9 @@ type ListenerRow = {
   user_id: string; bio?: string; specialty_tags?: string[]; rate_per_min?: number; rating?: number; total_sessions?: number
   is_active: boolean; is_approved: boolean; is_available: boolean; is_verified?: boolean; is_suspended?: boolean; created_at: string
   last_sign_in_at?: string | null
+  // Summed from listener_earnings by /api/admin/users. earned_total is
+  // everything the ledger credits them; earned_settled is the payable subset.
+  earned_total?: number; earned_settled?: number
   users: { id: string; name?: string; email?: string; phone?: string; avatar_url?: string | null; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number }
   application?: { status: string; admin_notes: string | null; upi_id?: string | null; bank_account?: string | null; ifsc_code?: string | null; aadhaar?: string | null; aadhaar_last4?: string | null } | null
 }
@@ -108,6 +113,13 @@ const S = `
   .pagination{display:flex;justify-content:space-between;align-items:center;margin-top:12px;}
   .pagination span{font-size:13px;color:var(--gray);font-weight:600;}
   .empty{text-align:center;padding:32px 20px;color:var(--gray);font-size:14px;font-weight:600;}
+  /* Unspent-balance banner. Amber, not red: this is money to safeguard, not an error. */
+  .liability-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    background:#FFF6E8;border:1.5px solid #FFD79A;border-left:5px solid var(--orange);
+    border-radius:12px;padding:14px 18px;margin-bottom:16px;}
+  .liability-label{font-size:13px;font-weight:800;color:#8A5A00;text-transform:uppercase;letter-spacing:.04em;}
+  .liability-sub{font-size:12px;font-weight:600;color:var(--gray);margin-top:3px;}
+  .liability-amount{font-size:24px;font-weight:900;color:#8A5A00;white-space:nowrap;}
   .card{background:white;border:1.5px solid var(--border);border-radius:16px;padding:18px 20px;margin-bottom:12px;}
   .card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
   .name-text{font-size:15px;font-weight:800;color:var(--navy);}
@@ -297,6 +309,12 @@ export default function AdminPage() {
   const [listenersJoinedDir, setListenersJoinedDir] = useState<SortDir>('desc')
   const [usersLoginDir,      setUsersLoginDir]      = useState<SortDir | null>(null)
   const [listenersLoginDir,  setListenersLoginDir]  = useState<SortDir | null>(null)
+  // Which server-side column each table is ordered by. 'wallet' and 'earnings'
+  // both sort across ALL pages (see /api/admin/users), not just the page shown.
+  const [usersSortBy,     setUsersSortBy]     = useState<'joined' | 'wallet'>('joined')
+  const [listenersSortBy, setListenersSortBy] = useState<'joined' | 'earnings'>('joined')
+  // Unspent seeker money across the whole filtered set. null = unavailable.
+  const [usersWalletTotal, setUsersWalletTotal] = useState<number | null>(null)
 
   // Sort the visible page by last_sign_in_at. Rows that have never signed in
   // (null) always sink to the bottom, in both directions.
@@ -408,23 +426,24 @@ export default function AdminPage() {
     setKpisLoading(false)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const loadUsers = useCallback(async (pg = usersPage, st = usersStatus, q = usersSearch, dir = usersJoinedDir) => {
+  const loadUsers = useCallback(async (pg = usersPage, st = usersStatus, q = usersSearch, dir = usersJoinedDir, sort = usersSortBy) => {
     setUsersLoading(true)
-    const params = new URLSearchParams({ type: 'user', page: String(pg), status: st, search: q, dir })
+    const params = new URLSearchParams({ type: 'user', page: String(pg), status: st, search: q, dir, sort })
     const res = await fetch(`/api/admin/users?${params}`, { headers: adminHeaders() }).catch(() => null)
     if (res?.ok) {
       const json = await res.json()
       setUsers(json.items)
       setUsersTotal(json.total)
+      setUsersWalletTotal(typeof json.walletTotal === 'number' ? json.walletTotal : null)
     } else {
       showToast('Failed to load users — tap a filter to retry')
     }
     setUsersLoading(false)
-  }, [usersPage, usersStatus, usersSearch, usersJoinedDir]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [usersPage, usersStatus, usersSearch, usersJoinedDir, usersSortBy]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const loadListeners = useCallback(async (pg = listenersPage, st = listenersStatus, dir = listenersJoinedDir) => {
+  const loadListeners = useCallback(async (pg = listenersPage, st = listenersStatus, dir = listenersJoinedDir, sort = listenersSortBy) => {
     setListenersLoading(true)
-    const params = new URLSearchParams({ type: 'listener', page: String(pg), status: st, dir })
+    const params = new URLSearchParams({ type: 'listener', page: String(pg), status: st, dir, sort })
     const res = await fetch(`/api/admin/users?${params}`, { headers: adminHeaders() }).catch(() => null)
     if (res?.ok) {
       const json = await res.json()
@@ -434,7 +453,7 @@ export default function AdminPage() {
       showToast('Failed to load listeners — tap a filter to retry')
     }
     setListenersLoading(false)
-  }, [listenersPage, listenersStatus, listenersJoinedDir]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [listenersPage, listenersStatus, listenersJoinedDir, listenersSortBy]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadPendingApprovals = useCallback(async () => {
     const params = new URLSearchParams({ type: 'listener', page: '0', status: 'pending' })
@@ -958,6 +977,21 @@ export default function AdminPage() {
                   </div>
                 </div>
 
+                {/* Unspent seeker money, surfaced above Revenue on purpose: it is
+                    the one figure on this page that is NOT yours to spend. */}
+                {kpis.walletLiability && (
+                  <div className="liability-bar">
+                    <div>
+                      <div className="liability-label">Unspent user balances — do not touch</div>
+                      <div className="liability-sub">
+                        Held on behalf of {kpis.walletLiability.usersWithBalance} user{kpis.walletLiability.usersWithBalance === 1 ? '' : 's'}.
+                        Park this and leave it until they spend it or ask for it back.
+                      </div>
+                    </div>
+                    <div className="liability-amount">{fmtRs(kpis.walletLiability.totalPaise)}</div>
+                  </div>
+                )}
+
                 <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Revenue &amp; Payouts</div>
                 <div className="kpi-grid" style={{ marginBottom: 20 }}>
                   <div className="kpi-card">
@@ -1037,6 +1071,22 @@ export default function AdminPage() {
               />
               <button className="btn btn-teal" onClick={() => { setUsersPage(0); loadUsers(0, usersStatus, usersSearch) }}>Search</button>
             </div>
+
+            {/* Money seekers have paid in but not yet spent. This is a LIABILITY,
+                not revenue — it must stay parked until they spend it or ask for
+                it back. Reflects the current filter/search, not just this page. */}
+            {usersWalletTotal !== null && (
+              <div className="liability-bar">
+                <div>
+                  <div className="liability-label">Unspent user balances — do not touch</div>
+                  <div className="liability-sub">
+                    Money users have recharged but not yet spent. Hold this in reserve.
+                    {usersStatus !== 'all' || usersSearch ? ' (current filter only)' : ''}
+                  </div>
+                </div>
+                <div className="liability-amount">₹{usersWalletTotal.toLocaleString('en-IN')}</div>
+              </div>
+            )}
             {usersLoading ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {[1, 2, 3].map(i => <div key={i} className="skeleton" style={{ height: 52 }} />)}
@@ -1056,16 +1106,26 @@ export default function AdminPage() {
                           title="Sort by joined date (across all pages)"
                           onClick={() => {
                             const next: SortDir = usersJoinedDir === 'desc' ? 'asc' : 'desc'
-                            setUsersJoinedDir(next); setUsersLoginDir(null)
-                            setUsersPage(0); loadUsers(0, usersStatus, usersSearch, next)
+                            setUsersJoinedDir(next); setUsersLoginDir(null); setUsersSortBy('joined')
+                            setUsersPage(0); loadUsers(0, usersStatus, usersSearch, next, 'joined')
                           }}
-                        >Joined{arrow(usersJoinedDir)}</th>
+                        >Joined{arrow(usersSortBy === 'joined' ? usersJoinedDir : null)}</th>
                         <th
                           style={sortableTh}
                           title="Sort by last login (this page only)"
                           onClick={() => setUsersLoginDir(d => d === 'desc' ? 'asc' : 'desc')}
                         >Last login{arrow(usersLoginDir)}</th>
-                        <th>Wallet</th>
+                        <th
+                          style={sortableTh}
+                          title="Sort by wallet balance (across all pages)"
+                          onClick={() => {
+                            // Default to biggest balances first — that is the money
+                            // most worth knowing about.
+                            const next: SortDir = usersSortBy === 'wallet' && usersJoinedDir === 'desc' ? 'asc' : 'desc'
+                            setUsersJoinedDir(next); setUsersLoginDir(null); setUsersSortBy('wallet')
+                            setUsersPage(0); loadUsers(0, usersStatus, usersSearch, next, 'wallet')
+                          }}
+                        >Wallet{arrow(usersSortBy === 'wallet' ? usersJoinedDir : null)}</th>
                         <th>Status</th>
                         <th>Actions</th>
                       </tr>
@@ -1171,10 +1231,10 @@ export default function AdminPage() {
                           title="Sort by joined date (across all pages)"
                           onClick={() => {
                             const next: SortDir = listenersJoinedDir === 'desc' ? 'asc' : 'desc'
-                            setListenersJoinedDir(next); setListenersLoginDir(null)
-                            setListenersPage(0); loadListeners(0, listenersStatus, next)
+                            setListenersJoinedDir(next); setListenersLoginDir(null); setListenersSortBy('joined')
+                            setListenersPage(0); loadListeners(0, listenersStatus, next, 'joined')
                           }}
-                        >Joined{arrow(listenersJoinedDir)}</th>
+                        >Joined{arrow(listenersSortBy === 'joined' ? listenersJoinedDir : null)}</th>
                         <th
                           style={sortableTh}
                           title="Sort by last login (this page only)"
@@ -1183,6 +1243,16 @@ export default function AdminPage() {
                         <th>Rate</th>
                         <th>Rating</th>
                         <th>Sessions</th>
+                        <th
+                          style={sortableTh}
+                          title="Total earned from completed sessions (sorts across all pages)"
+                          onClick={() => {
+                            // Highest earners first by default.
+                            const next: SortDir = listenersSortBy === 'earnings' && listenersJoinedDir === 'desc' ? 'asc' : 'desc'
+                            setListenersJoinedDir(next); setListenersLoginDir(null); setListenersSortBy('earnings')
+                            setListenersPage(0); loadListeners(0, listenersStatus, next, 'earnings')
+                          }}
+                        >Earned{arrow(listenersSortBy === 'earnings' ? listenersJoinedDir : null)}</th>
                         <th>Status</th>
                         <th>Actions</th>
                       </tr>
@@ -1251,6 +1321,16 @@ export default function AdminPage() {
                             <td>₹{l.rate_per_min ?? '—'}/min</td>
                             <td>{l.rating ? `${l.rating.toFixed(1)} ★` : '—'}</td>
                             <td>{l.total_sessions ?? 0}</td>
+                            <td style={{ fontWeight: 800, whiteSpace: 'nowrap' }}>
+                              ₹{(l.earned_total ?? 0).toLocaleString('en-IN')}
+                              {/* Settled = cleared and payable. Only worth calling out
+                                  when it differs from the total. */}
+                              {(l.earned_settled ?? 0) !== (l.earned_total ?? 0) && (
+                                <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--gray)' }}>
+                                  ₹{(l.earned_settled ?? 0).toLocaleString('en-IN')} settled
+                                </div>
+                              )}
+                            </td>
                             <td>
                               {isPending
                                 ? <span className="badge badge-orange">Pending Approval</span>
