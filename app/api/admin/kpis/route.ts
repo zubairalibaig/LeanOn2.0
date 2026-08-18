@@ -76,6 +76,18 @@ export async function GET(req: NextRequest) {
       // Appended LAST on purpose: extract() below is positional, so adding
       // anywhere else would silently reindex every KPI after it.
       sb.from('users').select('wallet_balance'),
+
+      // PLATFORM EARNINGS — LeanOn's actual income: the flat fee per paid
+      // session. Not derivable from wallet_transactions, because the fee is
+      // never moved as its own ledger row; it is simply the part of the hold
+      // that is not returned. So we recompute it from the sessions themselves,
+      // mirroring settleSession(): a session that ended inside the first
+      // minute is refunded IN FULL, fee included, and must not be counted.
+      // Bucketed by ended_at in JS below, so one query yields all three periods.
+      sb.from('sessions')
+        .select('platform_fee, started_at, ended_at')
+        .eq('is_free_trial', false)
+        .eq('status', 'completed'),
     ])
 
     // Extract values safely — failed queries return zero/null defaults
@@ -112,6 +124,22 @@ export async function GET(req: NextRequest) {
     const gatewayFeesMonth    = extract<{ amount: number }>(23)
     const gatewayFeesToday    = extract<{ amount: number }>(24)
     const walletBalances      = extract<{ wallet_balance: number }>(25)
+    const feeSessions         = extract<{ platform_fee: number; started_at: string | null; ended_at: string | null }>(26)
+
+    // Platform fee actually KEPT, bucketed by when the session ended.
+    // Mirrors lib/session-billing.ts: under 60 seconds is a full refund
+    // (fee included), so those sessions contribute nothing.
+    const platformFee = { allTime: 0, thisMonth: 0, today: 0, sessions: 0 }
+    for (const s of feeSessions.data ?? []) {
+      const fee = Number(s.platform_fee ?? 0)
+      if (fee <= 0 || !s.started_at || !s.ended_at) continue
+      const secs = (new Date(s.ended_at).getTime() - new Date(s.started_at).getTime()) / 1000
+      if (!Number.isFinite(secs) || secs < 60) continue
+      platformFee.allTime += fee
+      platformFee.sessions += 1
+      if (s.ended_at >= thisMonth) platformFee.thisMonth += fee
+      if (s.ended_at >= today) platformFee.today += fee
+    }
 
     const sum = (rows: { amount?: number; net_amount?: number }[] | null, field: 'amount' | 'net_amount' = 'amount') =>
       (rows ?? []).reduce((s, r) => s + (r[field] ?? 0), 0)
@@ -144,21 +172,31 @@ export async function GET(req: NextRequest) {
         avgDurationMins: avgDuration,
       },
       revenue: {
-        totalRechargedPaise: sum(totalRevenue.data),
-        thisMonthPaise: sum(revenueThisMonth.data),
-        todayPaise: sum(revenueToday.data),
-        listenerEarningsPaise: sum(totalEarnings.data, 'net_amount'),
+        totalRechargedRupees: sum(totalRevenue.data),
+        thisMonthRupees: sum(revenueThisMonth.data),
+        todayRupees: sum(revenueToday.data),
+        listenerEarningsRupees: sum(totalEarnings.data, 'net_amount'),
+      },
+      // LeanOn's own income — the flat fee kept per paid session. This is the
+      // only figure on this page that is genuinely yours: recharges are
+      // customer money, listener earnings are a cost, gateway fees are a
+      // pass-through that offsets what Razorpay charges.
+      platformEarnings: {
+        allTimeRupees:   platformFee.allTime,
+        thisMonthRupees: platformFee.thisMonth,
+        todayRupees:     platformFee.today,
+        paidSessions:    platformFee.sessions,
       },
       // Unspent customer money. NOT revenue — this is a liability that must be
       // held in reserve until the seeker spends it or asks for it back.
       walletLiability: {
-        totalPaise: (walletBalances.data ?? []).reduce((s, r) => s + Number(r.wallet_balance ?? 0), 0),
+        totalRupees: (walletBalances.data ?? []).reduce((s, r) => s + Number(r.wallet_balance ?? 0), 0),
         usersWithBalance: (walletBalances.data ?? []).filter(r => Number(r.wallet_balance ?? 0) > 0).length,
       },
       payouts: {
-        pendingAmountPaise: sum(pendingPayouts.data),
+        pendingAmountRupees: sum(pendingPayouts.data),
         pendingCount: pendingPayouts.data?.length ?? 0,
-        totalPaidPaise: sum(totalPayouts.data),
+        totalPaidRupees: sum(totalPayouts.data),
       },
       moderation: {
         pendingReports: pendingReports.count ?? 0,

@@ -8,11 +8,12 @@ type KPIs = {
   users: { total: number; active: number; inactive: number; newToday: number; newThisMonth: number }
   listeners: { total: number; active: number; pending: number; online: number }
   sessions: { total: number; today: number; thisMonth: number; active: number; freeTrial: number; paid: number; avgDurationMins: number }
-  revenue: { totalRechargedPaise: number; thisMonthPaise: number; todayPaise: number; listenerEarningsPaise: number }
+  revenue: { totalRechargedRupees: number; thisMonthRupees: number; todayRupees: number; listenerEarningsRupees: number }
   // Optional: absent if an older API build is still deployed, so the UI must guard.
-  walletLiability?: { totalPaise: number; usersWithBalance: number }
+  walletLiability?: { totalRupees: number; usersWithBalance: number }
+  platformEarnings?: { allTimeRupees: number; thisMonthRupees: number; todayRupees: number; paidSessions: number }
   gatewayFees: { allTime: number; thisMonth: number; today: number }
-  payouts: { pendingAmountPaise: number; pendingCount: number; totalPaidPaise: number }
+  payouts: { pendingAmountRupees: number; pendingCount: number; totalPaidRupees: number }
   moderation: { pendingReports: number }
 }
 
@@ -145,7 +146,11 @@ const S = `
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function fmt(n: number) { return n.toLocaleString('en-IN') }
-function fmtRs(paise: number) { return `₹${fmt(Math.round(paise))}` }
+// Takes RUPEES, not paise. The API returns rupee amounts (users.wallet_balance,
+// wallet_transactions.amount and sessions.platform_fee are all rupee columns);
+// only the Razorpay boundary deals in paise. KPI fields are named *Rupees to
+// keep that unambiguous.
+function fmtRs(rupees: number) { return `₹${fmt(Math.round(rupees))}` }
 function fmtDate(iso: string | null | undefined) {
   if (!iso) return '—'
   return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -977,6 +982,30 @@ export default function AdminPage() {
                   </div>
                 </div>
 
+                {/* YOUR money — the flat fee kept per paid session. Everything
+                    else under Revenue is either customer money, a cost, or a
+                    pass-through, so this gets its own prominent row. */}
+                {kpis.platformEarnings && (
+                  <>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Your Earnings (platform fee)</div>
+                    <div className="kpi-grid" style={{ marginBottom: 20 }}>
+                      <div className="kpi-card" style={{ borderLeft: '5px solid var(--green)' }}>
+                        <div className="kpi-label">Earned All Time</div>
+                        <div className="kpi-value" style={{ fontSize: 22, color: 'var(--green)' }}>{fmtRs(kpis.platformEarnings.allTimeRupees)}</div>
+                        <div className="kpi-sub">{kpis.platformEarnings.paidSessions} paid session{kpis.platformEarnings.paidSessions === 1 ? '' : 's'}</div>
+                      </div>
+                      <div className="kpi-card">
+                        <div className="kpi-label">Earned This Month</div>
+                        <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.platformEarnings.thisMonthRupees)}</div>
+                      </div>
+                      <div className="kpi-card">
+                        <div className="kpi-label">Earned Today</div>
+                        <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.platformEarnings.todayRupees)}</div>
+                      </div>
+                    </div>
+                  </>
+                )}
+
                 {/* Unspent seeker money, surfaced above Revenue on purpose: it is
                     the one figure on this page that is NOT yours to spend. */}
                 {kpis.walletLiability && (
@@ -988,7 +1017,7 @@ export default function AdminPage() {
                         Park this and leave it until they spend it or ask for it back.
                       </div>
                     </div>
-                    <div className="liability-amount">{fmtRs(kpis.walletLiability.totalPaise)}</div>
+                    <div className="liability-amount">{fmtRs(kpis.walletLiability.totalRupees)}</div>
                   </div>
                 )}
 
@@ -996,24 +1025,24 @@ export default function AdminPage() {
                 <div className="kpi-grid" style={{ marginBottom: 20 }}>
                   <div className="kpi-card">
                     <div className="kpi-label">Total Recharged</div>
-                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.revenue.totalRechargedPaise)}</div>
+                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.revenue.totalRechargedRupees)}</div>
                   </div>
                   <div className="kpi-card">
                     <div className="kpi-label">This Month</div>
-                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.revenue.thisMonthPaise)}</div>
+                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.revenue.thisMonthRupees)}</div>
                   </div>
                   <div className="kpi-card">
                     <div className="kpi-label">Today</div>
-                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.revenue.todayPaise)}</div>
+                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.revenue.todayRupees)}</div>
                   </div>
                   <div className="kpi-card">
                     <div className="kpi-label">Listener Earnings</div>
-                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.revenue.listenerEarningsPaise)}</div>
+                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.revenue.listenerEarningsRupees)}</div>
                     <div className="kpi-sub">settled</div>
                   </div>
                   <div className="kpi-card" style={{ border: kpis.payouts.pendingCount > 0 ? '2px solid var(--orange)' : undefined }}>
                     <div className="kpi-label">Pending Payouts</div>
-                    <div className="kpi-value" style={{ fontSize: 20, color: kpis.payouts.pendingCount > 0 ? 'var(--orange)' : undefined }}>{fmtRs(kpis.payouts.pendingAmountPaise)}</div>
+                    <div className="kpi-value" style={{ fontSize: 20, color: kpis.payouts.pendingCount > 0 ? 'var(--orange)' : undefined }}>{fmtRs(kpis.payouts.pendingAmountRupees)}</div>
                     <div className="kpi-sub">{kpis.payouts.pendingCount} requests</div>
                   </div>
                   <div className="kpi-card" style={{ border: kpis.moderation.pendingReports > 0 ? '2px solid var(--red)' : undefined }}>
@@ -1609,11 +1638,11 @@ export default function AdminPage() {
               <div style={{ background: 'white', border: '1.5px solid var(--border)', borderRadius: 12, padding: '12px 18px', marginBottom: 16, display: 'flex', gap: 32 }}>
                 <div>
                   <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '.06em' }}>Total Pending</div>
-                  <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--orange)' }}>{fmtRs(kpis.payouts.pendingAmountPaise)}</div>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--orange)' }}>{fmtRs(kpis.payouts.pendingAmountRupees)}</div>
                 </div>
                 <div>
                   <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '.06em' }}>Total Paid Out</div>
-                  <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--navy)' }}>{fmtRs(kpis.payouts.totalPaidPaise)}</div>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--navy)' }}>{fmtRs(kpis.payouts.totalPaidRupees)}</div>
                 </div>
               </div>
             )}
