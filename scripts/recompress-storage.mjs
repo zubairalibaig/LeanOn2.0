@@ -33,13 +33,32 @@
 
 import { createClient } from '@supabase/supabase-js'
 
+// Every diagnostic goes to STDOUT, not stderr.
+//
+// The first CI run finished green with a completely empty report: the runner
+// piped stdout through `tee` (masking the exit code) while the failure message
+// went to stderr and vanished. Anything worth reading must therefore be on
+// stdout, and any unexpected throw must announce itself rather than exiting
+// silently. The workflow now also sets pipefail and redirects 2>&1, but this
+// script should be legible however it is invoked.
+const say = (...a) => console.log(...a)
+
+process.on('unhandledRejection', (err) => {
+  say('\n  FATAL (unhandled rejection):', err instanceof Error ? err.stack : String(err))
+  process.exit(1)
+})
+process.on('uncaughtException', (err) => {
+  say('\n  FATAL (uncaught exception):', err instanceof Error ? err.stack : String(err))
+  process.exit(1)
+})
+
 const URL_ = process.env.NEXT_PUBLIC_SUPABASE_URL
 const KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 if (!URL_ || !KEY) {
-  console.error('\n  Missing env vars.\n')
-  console.error('  export NEXT_PUBLIC_SUPABASE_URL="https://<project>.supabase.co"')
-  console.error('  export SUPABASE_SERVICE_ROLE_KEY="<service role key>"\n')
+  say('\n  Missing env vars.\n')
+  say('  export NEXT_PUBLIC_SUPABASE_URL="https://<project>.supabase.co"')
+  say('  export SUPABASE_SERVICE_ROLE_KEY="<service role key>"\n')
   process.exit(1)
 }
 
@@ -47,7 +66,10 @@ let sharp
 try {
   sharp = (await import('sharp')).default
 } catch {
-  console.error('\n  sharp is not installed. Run:\n\n    npm install --no-save sharp\n')
+  say('\n  sharp is not installed or failed to load. Run:\n')
+  say('    npm install --no-save --include=optional sharp\n')
+  say('  (--include=optional matters: sharp ships libvips as an optional')
+  say('   platform dependency that npm can silently skip.)\n')
   process.exit(1)
 }
 

@@ -46,7 +46,20 @@ jobs:
       - name: Install dependencies
         # Only the two packages the script needs — a full install would pull
         # the whole Next.js toolchain for nothing.
-        run: npm install --no-save sharp @supabase/supabase-js
+        #
+        # --include=optional is load-bearing: sharp ships its libvips binary as
+        # an OPTIONAL platform-specific dependency, and npm is known to skip
+        # those when a lockfile from another platform is present. The module
+        # then installs "successfully" but throws on import. That is the most
+        # likely reason the first run finished green with an empty report — the
+        # script's sharp check writes to stderr, which was not being captured.
+        run: npm install --no-save --include=optional sharp @supabase/supabase-js
+
+      - name: Verify sharp actually loads
+        # Fail HERE with a clear message rather than inside the backfill, where
+        # an import error is easy to mistake for "nothing needed compressing".
+        run: |
+          node -e "import('sharp').then(m => console.log('sharp OK, libvips ' + m.default.versions.vips)).catch(e => { console.error('sharp failed to load: ' + e.message); process.exit(1) })"
 
       - name: Fail early if the secrets are missing
         env:
@@ -62,20 +75,59 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        # `bash` (not the default `bash -e`) so we get pipefail. Without it the
+        # exit status of `script | tee` is TEE's, so a crashing script still
+        # reported Success — which is exactly what happened on the first run:
+        # green tick, empty summary, nothing actually rewritten.
+        shell: bash
         run: |
+          set -o pipefail
+          # 2>&1 so stderr lands in the report too. The script's own failure
+          # paths (missing env, missing sharp) and any uncaught exception write
+          # to stderr, so without this the log came back blank.
           if [ "${{ inputs.apply }}" = "true" ]; then
             echo "Running in APPLY mode — files will be rewritten."
-            node scripts/recompress-storage.mjs --apply | tee result.txt
+            node scripts/recompress-storage.mjs --apply 2>&1 | tee result.txt
           else
             echo "Running in DRY RUN mode — nothing will be written."
-            node scripts/recompress-storage.mjs | tee result.txt
+            node scripts/recompress-storage.mjs 2>&1 | tee result.txt
           fi
 
       - name: Put the report in the run summary
         if: always()
+        shell: bash
         run: |
-          echo '## Storage re-compress' >> $GITHUB_STEP_SUMMARY
-          echo '' >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          cat result.txt >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo '(no output)' >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          {
+            echo '## Storage re-compress'
+            echo ''
+            echo '```'
+            # -s catches the empty-file case too; the previous `||` fallback
+            # only fired when the file was MISSING, so an empty file printed
+            # an empty code block and told us nothing.
+            if [ -s result.txt ]; then
+              cat result.txt
+            else
+              echo '(script produced no output — it likely crashed before printing.'
+              echo ' Check the "Run the backfill" step log above for the error.)'
+            fi
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Environment probe. The first run came back green with an empty report,
+      # so capture enough to tell WHY without another round trip.
+      - name: Diagnostics
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo '### Diagnostics'
+            echo '```'
+            echo "node            : $(node --version)"
+            echo "npm             : $(npm --version)"
+            echo -n "sharp loads     : "
+            node -e "import('sharp').then(m=>console.log('yes, libvips '+m.default.versions.vips)).catch(e=>console.log('NO — '+e.message))"
+            echo -n "supabase-js     : "
+            node -e "import('@supabase/supabase-js').then(()=>console.log('yes')).catch(e=>console.log('NO — '+e.message))"
+            echo "result.txt bytes: $(wc -c < result.txt 2>/dev/null || echo 'file missing')"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

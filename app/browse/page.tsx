@@ -263,11 +263,26 @@ function BrowseContent() {
     window.addEventListener('focus', refresh)
     window.addEventListener('pageshow', onPageShow)
     document.addEventListener('visibilitychange', onVis)
-    // 3 s poll — backstop for when Supabase Realtime is unavailable. With the
-    // realtime subscription on listener_profiles now active (migration 046),
-    // cross-device availability changes arrive push-style; this poll just guards
-    // against a dropped socket.
-    const iv = setInterval(refresh, 3_000)
+    // Slow backstop poll for a dropped Realtime socket.
+    //
+    // WAS 3 SECONDS, which meant 20 requests/minute per open tab, forever,
+    // even in a background tab nobody was looking at. Each one is a Vercel
+    // function invocation plus a Supabase query, and /browse is the most-opened
+    // page on the site — this was the single largest consumer of Vercel Fluid
+    // Active CPU (the free-tier allowance hit 75% in Aug 2026).
+    //
+    // It is also redundant four times over: the listener-availability Realtime
+    // subscription below pushes changes, BroadcastChannel catches same-origin
+    // tab changes instantly, and focus/visibilitychange/pageshow all refresh on
+    // return. This only has to catch a silently dropped socket, which 60 s does
+    // just as well as 3 s.
+    //
+    // Skipping hidden tabs matters as much as the interval: visibilitychange
+    // already refreshes the moment the user comes back, so polling in the
+    // background bought nothing at all.
+    const iv = setInterval(() => {
+      if (document.visibilityState === 'visible') refresh()
+    }, 60_000)
 
     // BroadcastChannel — receives immediate notification when another tab on the
     // same origin (e.g. /dashboard) toggles availability. Without this, the browse
