@@ -41,7 +41,12 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          # 22, not 20: @supabase/supabase-js always constructs a RealtimeClient
+          # on createClient(), and that client requires a native WebSocket —
+          # available from Node 22 on, not Node 20. This script never touches
+          # Realtime (Storage is plain REST), but the constructor runs anyway,
+          # so it throws on import even though nothing here needs it.
+          node-version: '22'
 
       - name: Install dependencies
         # Only the two packages the script needs — a full install would pull
@@ -53,7 +58,11 @@ jobs:
         # then installs "successfully" but throws on import. That is the most
         # likely reason the first run finished green with an empty report — the
         # script's sharp check writes to stderr, which was not being captured.
-        run: npm install --no-save --include=optional sharp @supabase/supabase-js
+        # ws: supabase-js's RealtimeClient needs a WebSocket implementation at
+        # construction time even though this script never opens one — see the
+        # comment on createClient() in the script for why transport:undefined
+        # does not work and this does.
+        run: npm install --no-save --include=optional sharp @supabase/supabase-js ws
 
       - name: Verify sharp actually loads
         # Fail HERE with a clear message rather than inside the backfill, where
@@ -128,6 +137,8 @@ jobs:
             node -e "import('sharp').then(m=>console.log('yes, libvips '+m.default.versions.vips)).catch(e=>console.log('NO — '+e.message))"
             echo -n "supabase-js     : "
             node -e "import('@supabase/supabase-js').then(()=>console.log('yes')).catch(e=>console.log('NO — '+e.message))"
+            echo -n "ws              : "
+            node -e "import('ws').then(()=>console.log('yes')).catch(e=>console.log('NO — '+e.message))"
             echo "result.txt bytes: $(wc -c < result.txt 2>/dev/null || echo 'file missing')"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"

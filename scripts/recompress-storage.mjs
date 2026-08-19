@@ -20,7 +20,7 @@
  * expected — do not re-run the script thinking it failed.
  *
  * USAGE
- *   npm install --no-save sharp
+ *   npm install --no-save sharp ws
  *   export NEXT_PUBLIC_SUPABASE_URL="https://<project>.supabase.co"
  *   export SUPABASE_SERVICE_ROLE_KEY="<service role key>"
  *
@@ -32,6 +32,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js'
+import ws from 'ws'
 
 // Every diagnostic goes to STDOUT, not stderr.
 //
@@ -81,7 +82,25 @@ const BUCKETS = [
   { name: 'verifications', maxDim: 1600, quality: 85, skipUnder: 250 * 1024, prefixes: ['selfies', 'ids'] },
 ]
 
-const sb = createClient(URL_, KEY, { auth: { persistSession: false } })
+// This script only ever calls Storage (plain REST) — never Realtime. But
+// createClient() unconditionally constructs a RealtimeClient, which requires
+// a WebSocket implementation. Node has one natively only from v22 on; under
+// Node 20/21 the CONSTRUCTOR THROWS before a single Storage call is made,
+// even though nothing here ever opens a socket.
+//
+// Passing `transport: undefined` does NOT fix this — verified directly: it
+// still throws on Node 20, because the client checks for a transport before
+// falling back to the native check, not instead of it. The only fix that
+// actually works (confirmed on Node 20.20.2, the version that produced this
+// exact error, and safe on 22) is supplying a real transport via the `ws`
+// package, exactly as the error message itself suggests. This makes the
+// script correct on any Node version — CI, a laptop, whatever — rather than
+// relying on the workflow's Node 22 pin as the only thing standing between it
+// and this exception.
+const sb = createClient(URL_, KEY, {
+  auth: { persistSession: false },
+  realtime: { transport: ws },
+})
 const kb = n => (n / 1024).toFixed(1) + ' KB'
 
 /** List every object under a prefix, paging past the 100-item default. */
