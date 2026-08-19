@@ -5,6 +5,8 @@ import ToastProvider from './components/ToastProvider'
 import ErrorBoundary from './components/ErrorBoundary'
 import FloatingCTA from './components/FloatingCTA'
 import ListenerPresence from './components/ListenerPresence'
+// TEMPORARY — see app/components/MaintenanceBanner.tsx for how to remove.
+import MaintenanceBanner from './components/MaintenanceBanner'
 import { Analytics } from '@vercel/analytics/next'
 
 export const metadata: Metadata = {
@@ -248,6 +250,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         )}
       </head>
       <body style={{ margin: 0, padding: 0 }}>
+        {/* TEMPORARY — renders first so it sits above every page's own
+            content/nav without needing any per-page changes. Remove per the
+            instructions at the top of MaintenanceBanner.tsx. */}
+        <MaintenanceBanner />
         <ErrorBoundary>
           {children}
         </ErrorBoundary>
