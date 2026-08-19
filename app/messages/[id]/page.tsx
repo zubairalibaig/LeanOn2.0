@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Avatar from '@/app/components/Avatar'
 
 const S = `
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
@@ -99,7 +100,7 @@ export default function MessageThreadPage({ params }: { params: { id: string } }
           <button className="back" onClick={() => router.push('/history')}>←</button>
           <div className="av">
             {thread.otherAvatar
-              ? <img src={thread.otherAvatar} alt="" />
+              ? <Avatar src={thread.otherAvatar} size={96} />
               : ini(thread.otherName)}
           </div>
           <div className="topbar-info">

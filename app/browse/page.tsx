@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { LANGUAGES, PLATFORM_FEE, AGE_RANGES, ageRangeId } from '@/lib/constants'
 import { showToast } from '@/lib/toast'
+import Avatar from '@/app/components/Avatar'
 
 // Post-login welcome banner (Item 5)
 function WelcomeBanner() {
@@ -567,7 +568,7 @@ function BrowseContent() {
             <div className="card-top">
               <div className="av">
                 {l.avatar_url
-                  ? <img src={l.avatar_url} alt={l.name} />
+                  ? <Avatar src={l.avatar_url} alt={l.name} size={96} />
                   : ini(l.name)}
                 <div className={`dot ${l.is_available?'on':'off'}`}/>
               </div>

@@ -7,6 +7,7 @@ import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE, PLATFORM_FEE } from '@
 import { showToast } from '@/lib/toast'
 import { registerPushNotifications } from '@/lib/firebase-client'
 import { compressImage, extForType, AVATAR_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
+import Avatar from '@/app/components/Avatar'
 
 let _sb: ReturnType<typeof createBrowserClient> | null = null
 function initSb() {
@@ -853,7 +854,7 @@ export default function DashboardPage() {
             <div className="avatar-edit">
               <div className="avatar-edit-img">
                 {editAvatar
-                  ? <img src={editAvatar} alt="avatar" />
+                  ? <Avatar src={editAvatar} alt="avatar" size={192} />
                   : ini(profile?.name)}
               </div>
               <label style={{cursor:'pointer'}}>
@@ -1026,7 +1027,7 @@ export default function DashboardPage() {
           <div className="profile-row">
             <div className="profile-avatar">
               {profile?.avatar_url
-                ? <img src={profile.avatar_url ?? ''} alt={profile.name ?? ''} />
+                ? <Avatar src={profile.avatar_url ?? ''} alt={profile.name ?? ''} size={192} />
                 : ini(profile?.name)}
             </div>
             <div>

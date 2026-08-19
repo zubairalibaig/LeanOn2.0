@@ -5,7 +5,25 @@ const nextConfig = {
   reactStrictMode: false,
 
   images: {
-    domains: ['lh3.googleusercontent.com', 'avatars.githubusercontent.com'],
+    // Avatars are served through Vercel's optimizer rather than fetched
+    // straight from Supabase Storage. Supabase bills CACHE HITS as egress, so
+    // every direct <img> view was billable; routing through Vercel means
+    // Supabase is hit roughly once per image, ever. See app/components/Avatar.tsx.
+    remotePatterns: [
+      // Any Supabase project host — avoids hardcoding the project ref and
+      // keeps working if NEXT_PUBLIC_SUPABASE_URL is a placeholder at build time.
+      { protocol: 'https', hostname: '*.supabase.co', pathname: '/storage/v1/object/public/**' },
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
+      { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
+    ],
+    // Cache each optimized avatar at Vercel's edge for a year. Safe because
+    // avatar URLs carry a ?t=<upload-time> version — a re-upload yields a new
+    // URL and therefore a new cache entry, so this can never serve a stale photo.
+    minimumCacheTTL: 31536000,
+    // Avatars are small fixed squares; without this Next generates a full
+    // ladder of device widths and burns transformation quota for nothing.
+    imageSizes: [32, 48, 64, 96, 128, 256],
+    deviceSizes: [640, 750, 828, 1080],
   },
 
   async headers() {

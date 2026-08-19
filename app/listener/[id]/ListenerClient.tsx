@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { LANGUAGES, PLATFORM_FEE, MAX_FREE_TRIALS } from '@/lib/constants'
+import Avatar from '@/app/components/Avatar'
 
 type ListenerProfile = {
   id: string
@@ -273,7 +274,7 @@ export default function ListenerClient({ id }: { id: string }) {
           <div className="av-row">
             <div className="av">
               {listener.avatar_url
-                ? <img src={listener.avatar_url} alt={listener.name} />
+                ? <Avatar src={listener.avatar_url} alt={listener.name} size={192} />
                 : ini(listener.name)}
               <div className={`av-dot ${listener.is_available?'on':'off'}`}/>
             </div>

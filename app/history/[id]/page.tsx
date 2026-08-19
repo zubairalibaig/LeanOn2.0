@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
+import Avatar from '@/app/components/Avatar'
 
 const S = `
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
@@ -155,7 +156,7 @@ export default function ChatHistoryPage() {
         <div className="hdr">
           <button className="back-btn" onClick={() => router.push('/history')}>←</button>
           <div className="av">
-            {session.other?.avatar_url ? <img src={session.other.avatar_url} alt="" /> : ini(otherName)}
+            {session.other?.avatar_url ? <Avatar src={session.other.avatar_url} size={96} /> : ini(otherName)}
           </div>
           <div className="hdr-info">
             <div className="hdr-name">{otherName}</div>

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { compressImage, extForType, AVATAR_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
+import Avatar from '@/app/components/Avatar'
 
 const S = `
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
@@ -190,7 +191,7 @@ export default function ProfilePage() {
           <div className="avatar-section">
             <div className="avatar">
               {avatarUrl
-                ? <img src={avatarUrl} alt={name} />
+                ? <Avatar src={avatarUrl} alt={name} size={192} />
                 : ini(name)}
             </div>
             <label style={{cursor:'pointer'}}>

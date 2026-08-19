@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
+import Avatar from '@/app/components/Avatar'
 
 const S = `
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
@@ -284,7 +285,7 @@ export default function HistoryPage() {
               return (
                 <div key={`s-${r.id}`} className="chat-row" onClick={() => openRow(r)}>
                   <div className={`avatar${r.status === 'active' ? ' active-ring' : ''}`}>
-                    {r.other?.avatar_url ? <img src={r.other.avatar_url} alt="" /> : ini(r.other?.name)}
+                    {r.other?.avatar_url ? <Avatar src={r.other.avatar_url} size={96} /> : ini(r.other?.name)}
                   </div>
                   <div className="chat-body">
                     <div className="chat-header">
@@ -318,7 +319,7 @@ export default function HistoryPage() {
             return (
               <div key={`m-${m.id}`} className="chat-row" onClick={() => router.push(`/messages/${m.id}`)}>
                 <div className="avatar">
-                  {m.other?.avatar_url ? <img src={m.other.avatar_url} alt="" /> : ini(m.other?.name)}
+                  {m.other?.avatar_url ? <Avatar src={m.other.avatar_url} size={96} /> : ini(m.other?.name)}
                 </div>
                 <div className="chat-body">
                   <div className="chat-header">
