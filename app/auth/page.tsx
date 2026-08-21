@@ -144,7 +144,10 @@ export default function AuthPage() {
     setCaptchaReset(n => n + 1)
     if (err) { setError(err.message); return }
     setStep('otp')
-    setCountdown(30)
+    // 60s, not 30s: every resend is a paid SMS, and the Aug 2026 audit showed
+    // ~2.5 SMS per successful signup. 60s is the standard OTP resend window and
+    // gives a genuinely-slow SMS time to land before the user re-sends.
+    setCountdown(60)
   }
 
   async function verifyOtp() {

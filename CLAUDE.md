@@ -30,6 +30,20 @@
   see `lib/require-admin.ts`. The synthetic admin user id must never be
   written to FK columns — use `dbUserIdOrNull()`.
 
+- **SMS OTP is delivered by MSG91, not Twilio** (switched Aug 2026 — Twilio
+  cost ~₹4.75/SMS via a US long code that Indian carriers filter under DLT;
+  MSG91 is ~₹0.20 and DLT-compliant). Supabase Auth has no native MSG91
+  provider, so delivery goes through the **Send SMS auth hook** →
+  `app/api/webhooks/supabase-sms`. **Supabase still generates, verifies and
+  rate-limits the OTP and mints the session** — the hook only swaps the
+  delivery truck, which is why `app/auth/page.tsx` needed zero changes. Never
+  replace this with a client-side OTP widget: that would require minting
+  Supabase sessions by hand, which is the exact fragile path this file warns
+  about. To roll back, disable the hook in the dashboard — no deploy needed.
+- The hook lives under `/api/webhooks/` deliberately: `middleware.ts` exempts
+  that prefix from the CSRF origin check, and Supabase calls it
+  server-to-server with no `Origin` header.
+
 ## Business invariants
 
 - Platform fee: **flat ₹10 per paid session** (`PLATFORM_FEE`), listener
