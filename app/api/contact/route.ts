@@ -43,8 +43,13 @@ export async function POST(req: NextRequest) {
     })
     if (dbErr) throw dbErr
 
-    // Notify admin — non-blocking, failure doesn't affect the user response
-    const adminTo = process.env.ADMIN_EMAIL
+    // Notify support — non-blocking, failure doesn't affect the user response.
+    // CONTACT_EMAIL is deliberately separate from ADMIN_EMAIL: ADMIN_EMAIL also
+    // grants admin access (lib/require-admin.ts) and receives crisis/self-harm
+    // alerts (app/api/report), so the public "reach us" inbox must not be tied
+    // to it. Falls back to ADMIN_EMAIL when CONTACT_EMAIL is unset, so existing
+    // deployments keep working unchanged.
+    const adminTo = process.env.CONTACT_EMAIL || process.env.ADMIN_EMAIL
     const fromAddr = process.env.RESEND_FROM || 'LeanOn <onboarding@resend.dev>'
     if (process.env.RESEND_API_KEY && adminTo) {
       const resend = getResend()
@@ -71,7 +76,7 @@ export async function POST(req: NextRequest) {
         logger.error('Resend network failure:', { error: err instanceof Error ? err.message : String(err) })
       }
     } else if (!adminTo) {
-      logger.warn('ADMIN_EMAIL not set — contact form saved to DB only')
+      logger.warn('CONTACT_EMAIL / ADMIN_EMAIL not set — contact form saved to DB only')
     }
 
     return NextResponse.json({ success: true })

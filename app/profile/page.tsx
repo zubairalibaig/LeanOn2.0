@@ -38,6 +38,11 @@ a{text-decoration:none;color:inherit;}
 .listener-banner{background:var(--light);border:1.5px solid var(--border);border-radius:16px;padding:18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;}
 .listener-banner p{font-size:14px;font-weight:700;color:var(--navy);}
 .go-btn{background:var(--navy);color:white;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;padding:9px 16px;border-radius:10px;border:none;cursor:pointer;white-space:nowrap;}
+.help-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:white;border:1.5px solid var(--border);border-radius:14px;padding:15px 18px;margin-bottom:12px;cursor:pointer;text-align:left;font-family:'Nunito',sans-serif;transition:all .2s;}
+.help-row:hover{border-color:var(--teal);box-shadow:0 4px 16px rgba(15,72,103,.06);}
+.help-row-label{font-size:15px;font-weight:800;color:var(--navy);}
+.help-row-sub{font-size:12px;font-weight:600;color:var(--gray);margin-top:2px;}
+.help-row-arrow{font-size:18px;color:var(--gray);}
 .logout-btn{width:100%;background:white;color:#E53E3E;font-family:'Nunito',sans-serif;font-weight:700;font-size:15px;padding:14px;border-radius:14px;border:1.5px solid #FED7D7;cursor:pointer;transition:all .2s;}
 .logout-btn:hover{background:#FFF5F5;}
 .delete-btn{width:100%;background:transparent;color:#aaa;font-family:'Nunito',sans-serif;font-weight:600;font-size:13px;padding:10px;border-radius:14px;border:none;cursor:pointer;margin-top:8px;transition:color .2s;}
@@ -248,6 +253,14 @@ export default function ProfilePage() {
               </button>
             </div>
           )}
+
+          <button className="help-row" onClick={() => router.push('/contact')}>
+            <div>
+              <div className="help-row-label">💬 Help &amp; Support</div>
+              <div className="help-row-sub">Questions, feedback, or something not working? Reach us.</div>
+            </div>
+            <span className="help-row-arrow">→</span>
+          </button>
 
           <button className="logout-btn" onClick={handleLogout}>
             Sign out

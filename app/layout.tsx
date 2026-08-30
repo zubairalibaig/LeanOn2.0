@@ -7,6 +7,7 @@ import FloatingCTA from './components/FloatingCTA'
 import ListenerPresence from './components/ListenerPresence'
 // TEMPORARY — see app/components/MaintenanceBanner.tsx for how to remove.
 import MaintenanceBanner from './components/MaintenanceBanner'
+import SiteFooter from './components/SiteFooter'
 import { Analytics } from '@vercel/analytics/next'
 
 export const metadata: Metadata = {
@@ -257,6 +258,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ErrorBoundary>
           {children}
         </ErrorBoundary>
+        {/* Site-wide "reach us" + legal footer. Flows after page content;
+            hides itself on the homepage (own footer) and on immersive routes
+            (/auth, /session, /admin, chat detail). See SiteFooter.tsx. */}
+        <SiteFooter />
         <BottomNav />
         <FloatingCTA />
         {/* Listener-only: offline nudge + incoming-request alert on every page.
