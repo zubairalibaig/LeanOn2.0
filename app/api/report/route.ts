@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { Resend } from 'resend'
+import { serializeResendError } from '@/lib/resend-error'
 import { logger } from '@/lib/logger'
 
 const VALID_REPORT_TYPES = [
@@ -93,7 +94,11 @@ export async function POST(req: NextRequest) {
         const escHtml = (s: string) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
         const safeDescription = escHtml(description.trim().slice(0, 2000))
         const resend = new Resend(process.env.RESEND_API_KEY)
-        await resend.emails.send({
+        // Resend does NOT throw on API errors — it returns { data, error }. The
+        // previous code ignored that error entirely, so a REJECTED crisis alert
+        // (e.g. unverified sending domain) failed completely silently. Capture
+        // and log it loudly — this is the self-harm escalation path.
+        const { error: mailErr } = await resend.emails.send({
           from: process.env.RESEND_FROM || 'LeanOn <onboarding@resend.dev>',
           to: process.env.ADMIN_EMAIL,
           subject: '🚨 URGENT: Self-harm risk report on LeanOn',
@@ -106,6 +111,9 @@ export async function POST(req: NextRequest) {
             <p>Please review immediately in the admin panel.</p>
           `,
         })
+        if (mailErr) {
+          logger.error('CRISIS ALERT EMAIL REJECTED by Resend — self-harm report NOT emailed:', { error: serializeResendError(mailErr) })
+        }
       } catch (emailErr) {
         logger.error('Failed to send self-harm escalation email:', { error: emailErr instanceof Error ? emailErr.message : String(emailErr) })
       }

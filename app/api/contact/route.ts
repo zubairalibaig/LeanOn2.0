@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
+import { serializeResendError } from '@/lib/resend-error'
 import { logger } from '@/lib/logger'
 
 function getResend() {
@@ -70,7 +71,10 @@ export async function POST(req: NextRequest) {
             <p>${esc(cleanMessage).replace(/\n/g, '<br/>')}</p>
           `,
         })
-        if (error) logger.error('Resend API rejected the email:', { error: error instanceof Error ? error.message : String(error) })
+        // Resend's error is a PLAIN object { statusCode, name, message }, not an
+        // Error — so `String(error)` yields "[object Object]" and hides the real
+        // reason (e.g. "The leanon.app domain is not verified"). Serialize it.
+        if (error) logger.error('Resend API rejected the email:', { error: serializeResendError(error) })
         else logger.info('Resend accepted contact email:', { id: data?.id })
       } catch (err) {
         logger.error('Resend network failure:', { error: err instanceof Error ? err.message : String(err) })
