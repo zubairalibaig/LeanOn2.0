@@ -1,13 +1,24 @@
 import type { Metadata } from 'next'
-import { createAdminClient } from '@/lib/supabase-server'
+import { createCacheableAdminClient } from '@/lib/supabase-server'
 import ListenerClient from './ListenerClient'
+
+// ISR: cache the server-rendered SEO shell (name/bio/rating/JSON-LD) and serve
+// it from cache for 60s instead of re-rendering — and re-querying the DB twice
+// (generateMetadata + the page) — on every crawler and repeat visitor hit.
+// This is a public, crawlable page, so those hits were pure Fluid Active CPU.
+// SAFE because everything live — availability, the booking bar, "not found"
+// after a ban — lives in the client <ListenerClient/>, which always fetches
+// fresh. Only the slowly-changing profile text is cached, at most 60s stale.
+export const revalidate = 60
 
 type Props = { params: { id: string } }
 
 // SEO enrichment must never 500 the profile page — degrade to defaults on any failure
 async function fetchProfile(id: string) {
   try {
-    const sb = createAdminClient()
+    // Cacheable read (matches the route's revalidate) — this is public SEO data,
+    // not freshness-critical state, so it must not force per-request rendering.
+    const sb = createCacheableAdminClient(60)
     const { data } = await sb
       .from('listener_profiles')
       .select('bio, rating, total_sessions, specialty_tags, is_verified, users!inner(name)')

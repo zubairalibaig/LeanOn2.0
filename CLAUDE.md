@@ -57,6 +57,26 @@
 - The owner's full name must never appear anywhere on the platform.
 - Admin email/phone live in env vars only — never in code or UI.
 
+## Cost control (Vercel free tier — Fluid Active CPU is the binding limit)
+
+The constraint is **Fluid Active CPU** (billed on compute, NOT DB-wait time), not
+invocation count — so the levers are SSR/CPU-heavy work, not request volume.
+Done so far: e2e suite gated to manual/PR (was hammering prod every push +
+daily cron); `/contact,/wallet,/history,/profile,/sessions` made static (were
+`force-dynamic` client shells); `/listener/[id]` put on 60s ISR.
+
+**Deferred levers — pick these up only if CPU climbs toward the cap again:**
+- **`/browse` fallback poll 60s → 120s** (`app/browse/page.tsx`). It re-fetches
+  all listeners per open tab; the realtime `listener-availability` channel is
+  the primary and this is only the dropped-socket fallback. Trade-off: up to an
+  extra 60s of stale availability on a missed realtime message. NOT changed yet
+  because this poll is the freshness safety-net behind the old "online but shows
+  offline" ghost bug — treat with the same care as the presence heartbeat.
+- **Short-cache `/api/listeners`** (currently `force-dynamic` + `no-store`).
+  Same freshness caveat, more acute — leave `no-store` unless CPU forces it.
+- **Presence incoming-check 20s → 30s** (`ListenerPresence.tsx`) — small, and
+  also freshness-sensitive.
+
 ## Testing
 
 - `tests/e2e-leanon.spec.ts` — anonymous flows + API security (1900 lines).

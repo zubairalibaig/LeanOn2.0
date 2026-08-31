@@ -41,3 +41,20 @@ export function createAdminClient() {
     },
   })
 }
+
+// Admin client whose reads are CACHEABLE, so a Server Component that uses it can
+// be ISR-cached (`export const revalidate = N`). The default createAdminClient()
+// forces `cache: 'no-store'` on every query — correct for freshness-critical
+// reads (presence/availability), but it also opts any route that calls it into
+// per-request dynamic rendering, silently defeating ISR. Use THIS only for
+// public, slowly-changing, non-personalised reads (e.g. the /listener/[id] SEO
+// shell), never for availability/wallet/session state.
+export function createCacheableAdminClient(revalidateSeconds: number) {
+  return createSupabaseClient(URL, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: {
+      fetch: (input: RequestInfo | URL, init?: RequestInit) =>
+        fetch(input, { ...init, next: { revalidate: revalidateSeconds } }),
+    },
+  })
+}
