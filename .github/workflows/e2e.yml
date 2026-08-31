@@ -12,14 +12,17 @@ name: E2E Tests
 #   911111111111 = 111111   (seeker)
 #   912222222222 = 222222   (listener)
 
+# COST NOTE: this suite runs against PRODUCTION (leanon.app), so every run
+# spends real Vercel Function CPU on the /api/* routes the API-security tests
+# exercise. It used to fire on every push to main + every PR + a daily cron,
+# which — with frequent direct pushes to main — became the single largest
+# chunk of Fluid Active CPU on the free tier. It is now MANUAL by default
+# (Actions tab → E2E Tests → Run workflow), plus PRs. Re-add the `push`/
+# `schedule` triggers if the plan later has CPU headroom to spare.
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
-  schedule:
-    - cron: '30 2 * * *' # daily smoke run at 08:00 IST
 
 concurrency:
   group: e2e-production
