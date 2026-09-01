@@ -30,6 +30,25 @@ async function fetchProfile(id: string) {
   }
 }
 
+// Real count of ratings this listener has received (sessions the seeker rated).
+// NOT total_sessions — most sessions carry no rating, and Google's rating
+// rich-result policy requires the count to be genuine and to match the reviews
+// actually shown on the page (ListenerClient renders these same rows).
+async function fetchRatingCount(id: string): Promise<number> {
+  try {
+    const sb = createCacheableAdminClient(60)
+    const { count } = await sb
+      .from('sessions')
+      .select('id', { count: 'exact', head: true })
+      .eq('listener_id', id)
+      .eq('status', 'completed')
+      .not('seeker_rating', 'is', null)
+    return count ?? 0
+  } catch {
+    return 0
+  }
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const data = await fetchProfile(params.id)
 
@@ -75,6 +94,13 @@ export default async function ListenerPage({ params }: Props) {
   const name = (Array.isArray(usersData) ? usersData[0]?.name : usersData?.name) || 'Listener'
   const tags = ((data?.specialty_tags as string[]) || [])
 
+  // Star-rating rich result — the highest-value schema gap on these pages.
+  // Emitted ONLY when the rating is real (avg > 0) AND there is at least one
+  // genuine rating behind it, both of which are shown on the page. A listener
+  // with no ratings gets no rating markup (never a fabricated 0-count star).
+  const ratingValue = data ? Number(data.rating) : 0
+  const ratingCount = data && ratingValue > 0 ? await fetchRatingCount(params.id) : 0
+
   const personSchema = data ? {
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -84,6 +110,15 @@ export default async function ListenerPage({ params }: Props) {
     knowsAbout: tags,
     url: `https://www.leanon.app/listener/${params.id}`,
     description: data.bio || `Verified peer listener on LeanOn. Specialises in: ${tags.join(', ')}.`,
+    ...(ratingValue > 0 && ratingCount > 0 ? {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: ratingValue.toFixed(1),
+        ratingCount,
+        bestRating: '5',
+        worstRating: '1',
+      },
+    } : {}),
   } : null
 
   const breadcrumbSchema = {

@@ -7,7 +7,10 @@ export const dynamic = 'force-static'
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = 'https://www.leanon.app'
   const d = (s: string) => new Date(s)
-  const TODAY = '2026-08-12'
+  // The sitemap is force-static, so this evaluates at BUILD time — i.e. the
+  // deploy date. Using the build date instead of a hardcoded string means the
+  // "fresh" pages' lastModified never silently goes stale between deploys.
+  const TODAY = new Date().toISOString().slice(0, 10)
   return [
     { url: base,                                       lastModified: d(TODAY),        changeFrequency: 'daily',   priority: 1.0 },
     { url: `${base}/browse`,                           lastModified: d(TODAY),        changeFrequency: 'hourly',  priority: 0.95 },
@@ -113,8 +116,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/feeling-lonely-in-india`,          lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/our-story`,                        lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.8 },
     // Resources hub + all resource pages
+    // NOTE: `loneliness-statistics-india` is intentionally NOT hardcoded here —
+    // it lives in RESOURCES (resources-data.ts), so the .map below already emits
+    // it. Listing it above too put it in the sitemap twice.
     { url: `${base}/resources`,                        lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${base}/resources/loneliness-statistics-india`, lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
     ...RESOURCES.map(r => ({
       url: `${base}/resources/${r.slug}`,
       lastModified: d('2026-05-01'),
