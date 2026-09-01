@@ -30,19 +30,29 @@
   see `lib/require-admin.ts`. The synthetic admin user id must never be
   written to FK columns — use `dbUserIdOrNull()`.
 
-- **SMS OTP is delivered by MSG91, not Twilio** (switched Aug 2026 — Twilio
-  cost ~₹4.75/SMS via a US long code that Indian carriers filter under DLT;
-  MSG91 is ~₹0.20 and DLT-compliant). Supabase Auth has no native MSG91
-  provider, so delivery goes through the **Send SMS auth hook** →
-  `app/api/webhooks/supabase-sms`. **Supabase still generates, verifies and
-  rate-limits the OTP and mints the session** — the hook only swaps the
-  delivery truck, which is why `app/auth/page.tsx` needed zero changes. Never
-  replace this with a client-side OTP widget: that would require minting
-  Supabase sessions by hand, which is the exact fragile path this file warns
-  about. To roll back, disable the hook in the dashboard — no deploy needed.
-- The hook lives under `/api/webhooks/` deliberately: `middleware.ts` exempts
-  that prefix from the CSRF origin check, and Supabase calls it
-  server-to-server with no `Origin` header.
+- **Phone sign-in uses the MSG91 OTP WIDGET, and mints the Supabase session
+  server-side** (Aug 2026). The clean "Supabase generates the OTP, MSG91 just
+  delivers it" path — the old `app/api/webhooks/supabase-sms` Send-SMS hook —
+  is dead: it needs a DLT-approved template, DLT needs an active GST, and
+  LeanOn's GST is closed. MSG91's only no-DLT product is the **OTP Widget**,
+  where **MSG91 generates AND verifies the OTP** and returns a token. So:
+  - `app/auth/page.tsx` loads MSG91's `otp-provider.js` (`exposeMethods:true`,
+    our own UI), calls `window.sendOtp`/`verifyOtp`, and posts the widget token
+    to `app/api/auth/phone-widget`.
+  - That route verifies the token with MSG91's `verifyAccessToken`
+    (server-side, `MSG91_WIDGET_AUTHKEY`), **reads the verified phone from
+    MSG91's response — NEVER from the request body**, then mints a real
+    Supabase session: find-or-create the auth user by phone, set a throwaway
+    random password, `signInWithPassword({ phone, password })`. Real Supabase
+    tokens with rotation — NOT a hand-signed JWT. This is the one sanctioned
+    place that bridges an external verification into a Supabase session; keep
+    all of it server-side.
+  - The verify auth key is called from Vercel's rotating IPs, so it MUST have
+    **IP Security OFF** in the MSG91 dashboard, or every verify fails.
+  - The old Send-SMS hook (`app/api/webhooks/supabase-sms`) is kept as dormant
+    code for the day a DLT template + GST exist again — it lives under
+    `/api/webhooks/` because `middleware.ts` exempts that prefix from the CSRF
+    origin check. Do not delete it; do not wire it back without a DLT template.
 
 ## Business invariants
 

@@ -1,8 +1,36 @@
 'use client'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
-import TurnstileWidget, { turnstileEnabled } from '@/app/components/TurnstileWidget'
+
+// Phone sign-in via the MSG91 OTP Widget.
+//
+// India's DLT regime blocks the "Supabase generates the OTP, a carrier delivers
+// it" path (needs a DLT template → needs an active GST LeanOn no longer has —
+// see CLAUDE.md). MSG91's only no-DLT product is the OTP Widget, where MSG91
+// generates AND verifies the OTP and hands the browser a short-lived token.
+//
+// This page drives the widget with exposeMethods:true so the UI stays ours
+// (window.sendOtp / verifyOtp), then posts the token to /api/auth/phone-widget,
+// which verifies it server-side with MSG91 and mints a real Supabase session.
+// Supabase never sees this OTP, so the session is minted server-side — see the
+// route for the full trust model.
+
+const WIDGET_ID  = process.env.NEXT_PUBLIC_MSG91_WIDGET_ID || ''
+const TOKEN_AUTH = process.env.NEXT_PUBLIC_MSG91_TOKEN_AUTH || ''
+// The widget's OTP length is set in the MSG91 dashboard; keep this in sync.
+const OTP_LEN = Math.max(4, Math.min(8, Number(process.env.NEXT_PUBLIC_MSG91_OTP_LENGTH) || 6))
+const widgetConfigured = Boolean(WIDGET_ID && TOKEN_AUTH)
+
+// MSG91 exposes these on window once initSendOTP() runs with exposeMethods:true.
+declare global {
+  interface Window {
+    initSendOTP?: (config: unknown) => void
+    sendOtp?: (identifier: string, success?: (d: unknown) => void, failure?: (e: unknown) => void) => void
+    verifyOtp?: (otp: string, success?: (d: unknown) => void, failure?: (e: unknown) => void) => void
+    retryOtp?: (channel: string | null, success?: (d: unknown) => void, failure?: (e: unknown) => void, identifier?: string) => void
+  }
+}
 
 const S = `
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
@@ -45,6 +73,7 @@ const S = `
   .spin{display:inline-block;animation:spin 0.8s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
   .loading-screen{display:flex;align-items:center;justify-content:center;height:100vh;font-family:'Nunito',sans-serif;color:#0F4867;font-size:16px;font-weight:600;}
+  #msg91-captcha{margin-bottom:12px;}
 `
 
 // Prevent open redirect — only allow relative paths we control
@@ -54,68 +83,44 @@ function safeRedirect(raw: string | null, fallback: string): string {
   return fallback
 }
 
+/** MSG91 hands the verified token back in slightly different shapes; accept all. */
+function extractToken(data: unknown): string | null {
+  if (!data) return null
+  if (typeof data === 'string') return data
+  if (typeof data === 'object') {
+    const d = data as Record<string, unknown>
+    for (const k of ['message', 'access-token', 'accessToken', 'token', 'jwt']) {
+      if (typeof d[k] === 'string' && d[k]) return d[k] as string
+    }
+  }
+  return null
+}
+
+const errText = (e: unknown): string | null =>
+  typeof e === 'string' ? e
+  : (e && typeof e === 'object' && typeof (e as { message?: unknown }).message === 'string')
+      ? (e as { message: string }).message
+  : null
+
 export default function AuthPage() {
   const router = useRouter()
   const sb = createClient()
   const [step, setStep]         = useState<'phone'|'otp'|'name'>('phone')
   const [phone, setPhone]       = useState('')
-  const [otp, setOtp]           = useState(['','','','','',''])
+  const [otp, setOtp]           = useState<string[]>(Array(OTP_LEN).fill(''))
   const [name, setName]         = useState('')
   const [loading, setLoading]   = useState(false)
-  const [checking, setChecking] = useState(true)  // true while verifying existing session
+  const [checking, setChecking] = useState(true)
   const [error, setError]       = useState('')
   const [countdown, setCountdown] = useState(0)
-  // CAPTCHA — blocks bots from burning paid SMS credits. Token is single-use,
-  // so it is cleared and the widget reset after every send attempt.
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
-  const [captchaReset, setCaptchaReset] = useState(0)
+  const [widgetReady, setWidgetReady] = useState(false)
   const otpRefs = useRef<(HTMLInputElement|null)[]>([])
-  const handledRef = useRef(false)
+  const handledRef = useRef(false)      // guards the final navigation
+  const tokenHandledRef = useRef(false) // guards double token delivery (verifyOtp cb + config.success)
 
-  // Read mode from URL safely (SSR-safe)
   const [isListenerMode, setIsListenerMode] = useState(false)
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const params = new URLSearchParams(window.location.search)
-    const redirect = params.get('redirect')
-    const mode = params.get('mode')
-
-    // Persist redirect destination and mode to sessionStorage for post-OTP use
-    if (redirect) sessionStorage.setItem('auth_redirect', redirect)
-    if (mode) sessionStorage.setItem('auth_mode', mode)
-
-    if (mode === 'listener') setIsListenerMode(true)
-
-    // Validate session server-side to avoid stale-token redirect loops.
-    // getUser() hits the Supabase server; getSession() only reads localStorage
-    // and can return an expired session that the middleware will reject.
-    sb.auth.getUser().then(({ data: { user } }) => {
-      if (user && !handledRef.current) {
-        handledRef.current = true
-        const dest = safeRedirect(
-          sessionStorage.getItem('auth_redirect'),
-          mode === 'listener' ? '/dashboard' : '/browse'
-        )
-        sessionStorage.removeItem('auth_redirect')
-        router.replace(dest)
-        // Don't setChecking(false) here — we're navigating away
-        return
-      }
-      setChecking(false)
-    }).catch(() => { setChecking(false) })
-
-    return () => {}
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (countdown <= 0) return
-    const t = setTimeout(() => setCountdown(c => c-1), 1000)
-    return () => clearTimeout(t)
-  }, [countdown])
-
   const digits = () => phone.replace(/\D/g,'').slice(-10)
-  const formatted = () => '+91' + digits()
 
   function getDestination(): string {
     const stored = sessionStorage.getItem('auth_redirect')
@@ -124,91 +129,149 @@ export default function AuthPage() {
     return safeRedirect(stored, fallback)
   }
 
-  async function sendOtp() {
+  // Exchange the widget token for a Supabase session, then route the user.
+  const handleToken = useCallback(async (raw: unknown) => {
+    const token = extractToken(raw)
+    if (!token || tokenHandledRef.current) return
+    tokenHandledRef.current = true
     setError('')
-    if (digits().length < 10) { setError('Enter a valid 10-digit mobile number'); return }
-    // When CAPTCHA is configured, never spend an SMS without a verified token.
-    if (turnstileEnabled && !captchaToken) {
-      setError('Please complete the security check just above.')
-      return
-    }
     setLoading(true)
-    const { error: err } = await sb.auth.signInWithOtp({
-      phone: formatted(),
-      ...(captchaToken ? { options: { captchaToken } } : {}),
-    })
-    setLoading(false)
-    // A Turnstile token is single-use — always burn it and request a fresh one,
-    // whether the send succeeded or failed (otherwise "Resend" would reuse it).
-    setCaptchaToken(null)
-    setCaptchaReset(n => n + 1)
-    if (err) { setError(err.message); return }
-    setStep('otp')
-    // 60s, not 30s: every resend is a paid SMS, and the Aug 2026 audit showed
-    // ~2.5 SMS per successful signup. 60s is the standard OTP resend window and
-    // gives a genuinely-slow SMS time to land before the user re-sends.
-    setCountdown(60)
-  }
-
-  async function verifyOtp() {
-    setError('')
-    const code = otp.join('')
-    if (code.length < 6) { setError('Enter the full 6-digit code'); return }
-    setLoading(true)
-    const { data, error: err } = await sb.auth.verifyOtp({
-      phone: formatted(),
-      token: code,
-      type: 'sms',
-    })
-    if (err) {
-      setLoading(false)
-      const msg = err.message?.toLowerCase() ?? ''
-      if (msg.includes('expired') || msg.includes('not found')) {
-        setError('OTP expired. Please request a new one.')
-      } else if (msg.includes('invalid') || msg.includes('incorrect')) {
-        setError('Incorrect OTP. Double-check and try again.')
-      } else {
-        setError('Verification failed. Please try again.')
-      }
-      return
-    }
-
-    // Decide new-vs-returning by asking the server (admin-client read, bypasses RLS).
-    // Browser-client reads of users.name can silently return null when RLS policies
-    // are mismatched across migrations, causing returning users to hit the name step
-    // every time they sign in.
-    let existingName: string | null = null
     try {
-      const profileRes = await fetch('/api/auth/profile')
-      if (profileRes.ok) {
-        const profileData = await profileRes.json()
-        existingName = profileData?.name ?? null
+      const res = await fetch('/api/auth/phone-widget', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setError(data?.error || 'Could not sign you in. Please try again.')
+        tokenHandledRef.current = false
+        setLoading(false)
+        return
       }
-    } catch { /* network failure — treat as new user */ }
-    setLoading(false)
+      // Session cookies are now set by the server route. Decide new-vs-returning
+      // by asking the server for a profile name (admin read, bypasses RLS).
+      let existingName: string | null = null
+      try {
+        const p = await fetch('/api/auth/profile')
+        if (p.ok) existingName = (await p.json())?.name ?? null
+      } catch { /* treat as new */ }
 
-    if (!existingName) {
-      setStep('name')
-    } else {
-      // Returning user — check if new (no sessions) for welcome toast
-      const { count: sessionCount } = await sb
-        .from('sessions')
-        .select('id', { count: 'exact', head: true })
-        .eq('seeker_id', data.user!.id)
+      if (!existingName) { setStep('name'); setLoading(false); return }
 
       const dest = getDestination()
       sessionStorage.removeItem('auth_redirect')
       sessionStorage.removeItem('auth_mode')
-
-      if ((sessionCount ?? 0) === 0) {
-        sessionStorage.setItem('leanon_welcome_new', '1')
-      }
-
       handledRef.current = true
-      // Hard navigation — the new session cookie reaches the middleware on
-      // first paint, and we skip the slow client-side refresh-then-replace
-      // (which could take tens of seconds on a cold deployment).
       window.location.assign(dest)
+    } catch {
+      setError('Network error. Please check your connection and try again.')
+      tokenHandledRef.current = false
+      setLoading(false)
+    }
+  }, [])
+
+  // Keep the widget's config callback pointing at the latest handleToken.
+  const handleTokenRef = useRef(handleToken)
+  useEffect(() => { handleTokenRef.current = handleToken }, [handleToken])
+
+  // Read redirect/mode + resume any existing session.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    const redirect = params.get('redirect')
+    const mode = params.get('mode')
+    if (redirect) sessionStorage.setItem('auth_redirect', redirect)
+    if (mode) sessionStorage.setItem('auth_mode', mode)
+    if (mode === 'listener') setIsListenerMode(true)
+
+    sb.auth.getUser().then(({ data: { user } }) => {
+      if (user && !handledRef.current) {
+        handledRef.current = true
+        const dest = safeRedirect(sessionStorage.getItem('auth_redirect'), mode === 'listener' ? '/dashboard' : '/browse')
+        sessionStorage.removeItem('auth_redirect')
+        router.replace(dest)
+        return
+      }
+      setChecking(false)
+    }).catch(() => setChecking(false))
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Load MSG91's widget script once and initialise it.
+  useEffect(() => {
+    if (!widgetConfigured || typeof window === 'undefined') return
+    if (window.initSendOTP) { setWidgetReady(true); return }
+
+    const configuration = {
+      widgetId: WIDGET_ID,
+      tokenAuth: TOKEN_AUTH,
+      exposeMethods: true, // drive the UI ourselves; also hides MSG91's popup
+      captchaRenderId: 'msg91-captcha',
+      success: (d: unknown) => { handleTokenRef.current(d) }, // token can arrive here…
+      failure: (e: unknown) => { setError(errText(e) || 'Verification failed. Please try again.') },
+    }
+
+    const urls = ['https://verify.msg91.com/otp-provider.js', 'https://verify.phone91.com/otp-provider.js']
+    let i = 0
+    let cancelled = false
+    const attempt = () => {
+      if (cancelled) return
+      const s = document.createElement('script')
+      s.src = urls[i]
+      s.async = true
+      s.onload = () => {
+        if (typeof window.initSendOTP === 'function') {
+          window.initSendOTP(configuration)
+          setWidgetReady(true)
+        }
+      }
+      s.onerror = () => { i++; if (i < urls.length) attempt() }
+      document.head.appendChild(s)
+    }
+    attempt()
+    return () => { cancelled = true }
+  }, [])
+
+  useEffect(() => {
+    if (countdown <= 0) return
+    const t = setTimeout(() => setCountdown(c => c-1), 1000)
+    return () => clearTimeout(t)
+  }, [countdown])
+
+  function requestOtp() {
+    setError('')
+    if (digits().length !== 10) { setError('Enter a valid 10-digit mobile number'); return }
+    if (!widgetReady || typeof window.sendOtp !== 'function') {
+      setError('Verification is still loading — give it a second and try again.')
+      return
+    }
+    tokenHandledRef.current = false
+    setLoading(true)
+    window.sendOtp(
+      '91' + digits(),
+      () => { setLoading(false); setOtp(Array(OTP_LEN).fill('')); setStep('otp'); setCountdown(30) },
+      (err) => { setLoading(false); setError(errText(err) || 'Could not send the code. Please try again.') },
+    )
+  }
+
+  function verify() {
+    setError('')
+    const code = otp.join('')
+    if (code.length < OTP_LEN) { setError(`Enter the full ${OTP_LEN}-digit code`); return }
+    if (typeof window.verifyOtp !== 'function') { setError('Verification not ready. Please try again.'); return }
+    setLoading(true)
+    window.verifyOtp(
+      code,
+      (d: unknown) => { handleToken(d) }, // …or here. handleToken de-dupes.
+      (err: unknown) => { setLoading(false); setError(errText(err) || 'Incorrect code. Please check and try again.') },
+    )
+  }
+
+  function resend() {
+    setError('')
+    // Re-send via sendOtp (robust) rather than guessing retryOtp's channel code.
+    if (typeof window.sendOtp === 'function') {
+      window.sendOtp('91' + digits(), () => setCountdown(30), (err) => setError(errText(err) || 'Could not resend. Please try again.'))
     }
   }
 
@@ -219,10 +282,6 @@ export default function AuthPage() {
     const { data: { user } } = await sb.auth.getUser()
     if (!user) { setError('Session expired. Please try again.'); setLoading(false); return }
 
-    // Create the public.users row server-side with the service-role client.
-    // The browser (RLS-restricted) INSERT path is fragile — any drift in the
-    // users INSERT policy / grants / guard trigger breaks every signup. The
-    // server route bypasses RLS and always succeeds when the session is valid.
     let saveErrMsg: string | null = null
     try {
       const res = await fetch('/api/auth/profile', {
@@ -230,24 +289,11 @@ export default function AuthPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: name.trim() }),
       })
-      if (!res.ok) {
-        const json = await res.json().catch(() => ({}))
-        saveErrMsg = json.error || 'Could not save your profile. Please try again.'
-      }
-    } catch {
-      saveErrMsg = 'Network error. Please check your connection and try again.'
-    }
+      if (!res.ok) saveErrMsg = (await res.json().catch(() => ({}))).error || 'Could not save your profile. Please try again.'
+    } catch { saveErrMsg = 'Network error. Please check your connection and try again.' }
     setLoading(false)
-    if (saveErrMsg) {
-      // Without a users row, every downstream flow (wallet, sessions, listener
-      // application) breaks — block here instead of failing mysteriously later.
-      setError(saveErrMsg)
-      return
-    }
+    if (saveErrMsg) { setError(saveErrMsg); return }
 
-    // For listener mode, check if they already have an application.
-    // A returning listener who hit the name step (e.g. RLS gap resolved) should
-    // go to the dashboard, not the application form.
     const storedRedirect = sessionStorage.getItem('auth_redirect')
     const mode = sessionStorage.getItem('auth_mode')
     let listenerDest = '/become-listener'
@@ -255,44 +301,54 @@ export default function AuthPage() {
       try {
         const { data: { user: u } } = await sb.auth.getUser()
         if (u) {
-          const appRes = await sb.from('listener_applications')
-            .select('id', { count: 'exact', head: true })
-            .eq('user_id', u.id)
+          const appRes = await sb.from('listener_applications').select('id', { count: 'exact', head: true }).eq('user_id', u.id)
           if ((appRes.count ?? 0) > 0) listenerDest = '/dashboard'
         }
-      } catch { /* default to /become-listener if check fails */ }
+      } catch { /* default to /become-listener */ }
     }
-    const dest = storedRedirect
-      ? getDestination()
-      : mode === 'listener' ? listenerDest : getDestination()
+    const dest = storedRedirect ? getDestination() : mode === 'listener' ? listenerDest : getDestination()
     sessionStorage.removeItem('auth_redirect')
     sessionStorage.removeItem('auth_mode')
     sessionStorage.setItem('leanon_welcome_new', '1')
-
     handledRef.current = true
-    // Hard navigation (not router.replace) — guarantees the new session
-    // cookie reaches the middleware on first paint and avoids the slow
-    // refresh-then-navigate dance after signup.
     window.location.assign(dest)
   }
 
   function handleOtpChange(i: number, val: string) {
     if (!/^\d*$/.test(val)) return
     const next = [...otp]; next[i] = val.slice(-1); setOtp(next)
-    if (val && i < 5) otpRefs.current[i+1]?.focus()
-    // Only auto-click if not already loading — prevents double-submit
-    if (next.every(d => d)) setTimeout(() => { if (!loading) document.getElementById('verify-btn')?.click() }, 100)
+    if (val && i < OTP_LEN - 1) otpRefs.current[i+1]?.focus()
+    if (next.every(d => d) && next.length === OTP_LEN) {
+      setTimeout(() => { if (!loading) document.getElementById('verify-btn')?.click() }, 100)
+    }
   }
-
   function handleOtpKey(i: number, e: React.KeyboardEvent) {
     if (e.key === 'Backspace' && !otp[i] && i > 0) otpRefs.current[i-1]?.focus()
   }
+  function handleOtpPaste(e: React.ClipboardEvent) {
+    const ds = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, OTP_LEN)
+    if (ds.length < OTP_LEN) return
+    e.preventDefault()
+    setOtp(ds.split(''))
+    setTimeout(() => { if (!loading) document.getElementById('verify-btn')?.click() }, 100)
+  }
 
   if (checking) {
+    return (<><style>{S}</style><div className="loading-screen">Checking your session…</div></>)
+  }
+
+  if (!widgetConfigured) {
     return (
       <>
         <style>{S}</style>
-        <div className="loading-screen">Checking your session…</div>
+        <div className="page">
+          <div className="topbar"><a href="/" className="back">←</a><span className="logo">Lean<span>On</span></span><div className="spacer" /></div>
+          <div className="content">
+            <div className="step-icon">🔧</div>
+            <h1>Sign-in is being set up</h1>
+            <p className="subtitle">Phone verification isn&apos;t configured yet. Please check back shortly.</p>
+          </div>
+        </div>
       </>
     )
   }
@@ -302,10 +358,11 @@ export default function AuthPage() {
       <style>{S}</style>
       <div className="page">
         <div className="topbar">
-          {step !== 'phone'
-            ? <button className="back" onClick={() => { if (step === 'otp') setOtp(['','','','','','']); setStep(step === 'otp' ? 'phone' : 'otp'); setError('') }}>←</button>
-            : <a href="/" className="back">←</a>
-          }
+          {step === 'otp'
+            ? <button className="back" onClick={() => { setOtp(Array(OTP_LEN).fill('')); setStep('phone'); setError('') }}>←</button>
+            : step === 'phone'
+              ? <a href="/" className="back">←</a>
+              : <div className="spacer" />}
           <span className="logo">Lean<span>On</span></span>
           <div className="spacer" />
         </div>
@@ -314,7 +371,7 @@ export default function AuthPage() {
           {step === 'phone' && (
             <>
               <div className="step-icon">{isListenerMode ? '🎧' : '📱'}</div>
-              <h1>{isListenerMode ? 'Listener sign in' : 'What\'s your mobile number?'}</h1>
+              <h1>{isListenerMode ? 'Listener sign in' : "What's your mobile number?"}</h1>
               <p className="subtitle">
                 {isListenerMode
                   ? 'Sign in to your listener dashboard. Same number you registered with.'
@@ -324,26 +381,16 @@ export default function AuthPage() {
               <div className="phone-wrap">
                 <div className="phone-prefix">🇮🇳 +91</div>
                 <input className="phone-input" type="tel" inputMode="numeric" maxLength={10}
-                  placeholder="98765 43210" autoFocus
-                  aria-label="Mobile number"
+                  placeholder="98765 43210" autoFocus aria-label="Mobile number"
                   value={digits()} onChange={e => setPhone(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && sendOtp()} />
+                  onKeyDown={e => e.key === 'Enter' && requestOtp()} />
               </div>
+              {/* MSG91's invisible-captcha renders here when required. */}
+              <div id="msg91-captcha" />
               {error && <p className="error">{error}</p>}
-              {/* Mounted only once a full number is entered — keeps the CAPTCHA
-                  script off the page for crawlers and casual visitors. */}
-              {digits().length === 10 && (
-                <TurnstileWidget
-                  action="signin-otp"
-                  resetSignal={captchaReset}
-                  onVerify={setCaptchaToken}
-                />
-              )}
               <p className="tos">By continuing you agree to our <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</p>
-              <button className="btn" onClick={sendOtp} disabled={loading || digits().length < 10 || (turnstileEnabled && !captchaToken)}>
-                {loading ? <span className="spin">⟳</span>
-                  : turnstileEnabled && digits().length === 10 && !captchaToken ? 'Verifying you’re human…'
-                  : 'Send OTP →'}
+              <button className="btn" onClick={requestOtp} disabled={loading || digits().length < 10}>
+                {loading ? <span className="spin">⟳</span> : !widgetReady ? 'Loading…' : 'Send OTP →'}
               </button>
             </>
           )}
@@ -353,34 +400,24 @@ export default function AuthPage() {
               <div className="step-icon">🔐</div>
               <h1>Enter the code</h1>
               <p className="subtitle">Sent to +91 {digits()}</p>
-              <div className="otp-row">
+              <div className="otp-row" onPaste={handleOtpPaste}>
                 {otp.map((d,i) => (
                   <input key={i} ref={el => { otpRefs.current[i] = el }} className="otp-box"
                     type="text" inputMode="numeric" maxLength={1} value={d} autoFocus={i===0}
-                    aria-label={`OTP digit ${i + 1}`}
+                    autoComplete={i === 0 ? 'one-time-code' : 'off'}
+                    aria-label={`Code digit ${i + 1}`}
                     onChange={e => handleOtpChange(i, e.target.value)}
                     onKeyDown={e => handleOtpKey(i, e)} />
                 ))}
               </div>
               {error && <p className="error" style={{textAlign:'center'}}>{error}</p>}
-              <button id="verify-btn" className="btn" onClick={verifyOtp} disabled={loading || otp.join('').length < 6}>
+              <button id="verify-btn" className="btn" onClick={verify} disabled={loading || otp.join('').length < OTP_LEN}>
                 {loading ? <span className="spin">⟳</span> : 'Verify & continue →'}
               </button>
-              {/* Resend also spends an SMS, so it needs its own fresh token. */}
-              {countdown <= 0 && (
-                <TurnstileWidget
-                  action="resend-otp"
-                  resetSignal={captchaReset}
-                  onVerify={setCaptchaToken}
-                />
-              )}
               <div className="resend-row">
                 {countdown > 0
                   ? <span className="resend-count">Resend in {countdown}s</span>
-                  : <button className="resend-btn" onClick={sendOtp} disabled={turnstileEnabled && !captchaToken}>
-                      {turnstileEnabled && !captchaToken ? 'Verifying you’re human…' : 'Resend OTP'}
-                    </button>
-                }
+                  : <button className="resend-btn" onClick={resend}>Resend OTP</button>}
               </div>
             </>
           )}
