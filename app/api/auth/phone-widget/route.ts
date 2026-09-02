@@ -83,23 +83,38 @@ async function findAuthUserIdByPhone(
   admin: ReturnType<typeof createAdminClient>,
   e164: string
 ): Promise<string | null> {
-  const bare = e164.replace(/^\+/, '')
+  const bare = e164.replace(/^\+/, '')   // e.g. "918055411383"
 
-  // Fast path: public.users carries the phone and is indexed. Covers the vast
-  // majority (including the ~500 phone-era accounts we most want to reconnect).
+  // Legacy bare Indian number: users created before the widget stored just
+  // the 10-digit number (no country code) in both auth.users and public.users.
+  const tenDigit = (bare.startsWith('91') && bare.length === 12) ? bare.slice(2) : null
+
+  // Fast path: public.users carries the phone and is indexed. Try the E.164
+  // form first, then the bare 10-digit form for legacy rows.
   const { data: pubRow } = await admin
     .from('users').select('id').eq('phone', e164).maybeSingle()
   if (pubRow?.id) return pubRow.id as string
 
+  if (tenDigit) {
+    const { data: pubRow10 } = await admin
+      .from('users').select('id').eq('phone', tenDigit).maybeSingle()
+    if (pubRow10?.id) return pubRow10.id as string
+  }
+
   // Fallback: scan auth.users. GoTrue's admin SDK has no getUserByPhone, so we
   // page through listUsers. Fine at LeanOn's scale (~500 users = one page);
   // guarded so it can never loop unbounded.
+  // Compare both the full E.164 bare form AND the legacy 10-digit bare form so
+  // returning users whose phone was stored without the country code are found.
   const perPage = 1000
   for (let page = 1; page <= 20; page++) {
     const { data, error } = await admin.auth.admin.listUsers({ page, perPage })
     if (error) { logger.error('phone-widget: listUsers failed', { error: error.message }); return null }
     const users = data?.users ?? []
-    const hit = users.find(u => (u.phone ?? '').replace(/^\+/, '') === bare)
+    const hit = users.find(u => {
+      const stored = (u.phone ?? '').replace(/^\+/, '')
+      return stored === bare || (tenDigit !== null && stored === tenDigit)
+    })
     if (hit) return hit.id
     if (users.length < perPage) return null
     if (page === 20) logger.warn('phone-widget: listUsers hit the 20-page guard', { bare: bare.slice(-4) })
@@ -171,18 +186,49 @@ export async function POST(req: NextRequest) {
       phone_confirm: true, // we just proved ownership via MSG91
     })
     if (createErr || !created?.user) {
-      logger.error('phone-widget: createUser failed', { error: createErr?.message })
-      return NextResponse.json({ error: 'Could not create your account. Please try again.' }, { status: 500 })
+      // "User already registered" means our phone lookup missed the existing user
+      // (e.g. stored in a different format). Do a broader search by listing all
+      // users to find the match, rather than hard-failing with a confusing error.
+      const alreadyExists = createErr && /already registered|already exists/i.test(createErr.message)
+      if (alreadyExists) {
+        logger.warn('phone-widget: createUser said already exists — scanning for existing user', { e164: e164.slice(-4) })
+        const { data: listData } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 })
+        const digits = e164.replace(/\D/g, '')
+        const match = (listData?.users ?? []).find(u => {
+          const stored = (u.phone ?? '').replace(/\D/g, '')
+          return stored === digits || (digits.length === 12 && stored === digits.slice(2))
+        })
+        if (match) {
+          userId = match.id
+        } else {
+          logger.error('phone-widget: createUser failed and no match found', { error: createErr?.message })
+          return NextResponse.json({ error: 'Could not create your account. Please try again.' }, { status: 500 })
+        }
+      } else {
+        logger.error('phone-widget: createUser failed', { error: createErr?.message })
+        return NextResponse.json({ error: 'Could not create your account. Please try again.' }, { status: 500 })
+      }
+    } else {
+      userId = created.user.id
+      isNewUser = true
     }
-    userId = created.user.id
-    isNewUser = true
   }
 
   // ── 4. Mint a real Supabase session: set a throwaway password, sign in ─────
   // The password is random, used once, and never stored or returned. Each
   // sign-in mints a new one, so it is never a standing credential.
+  //
+  // We ALSO update the phone to the normalised E.164 form here. Legacy users
+  // (created via the old Supabase OTP flow before the widget) may have their
+  // phone stored as a bare 10-digit number (e.g. "8055411383") instead of
+  // "+918055411383". Updating it here heals the mismatch on first widget sign-in,
+  // so the signInWithPassword lookup always finds them correctly.
   const password = crypto.randomBytes(32).toString('base64url')
-  const { error: pwErr } = await admin.auth.admin.updateUserById(userId, { password })
+  const { error: pwErr } = await admin.auth.admin.updateUserById(userId, {
+    password,
+    phone: e164,
+    phone_confirm: true,
+  })
   if (pwErr) {
     logger.error('phone-widget: could not set session password', { error: pwErr.message })
     return NextResponse.json({ error: 'Could not sign you in. Please try again.' }, { status: 500 })
@@ -192,11 +238,18 @@ export async function POST(req: NextRequest) {
   // response cookies (SSR + middleware read it from there). createServerSupabaseClient()
   // can write cookies inside a route handler; its try/catch only no-ops in RSC.
   const sb = createServerSupabaseClient()
-  const { error: signInErr } = await sb.auth.signInWithPassword({ phone: e164, password })
+  let { error: signInErr } = await sb.auth.signInWithPassword({ phone: e164, password })
   if (signInErr) {
     // Most likely cause: phone+password auth is disabled on the Supabase project.
-    logger.error('phone-widget: signInWithPassword failed', { error: signInErr.message })
-    return NextResponse.json({ error: 'Could not sign you in. Please try again.' }, { status: 500 })
+    // Second try: Supabase may have stored the phone without the leading '+'.
+    logger.warn('phone-widget: signInWithPassword (E.164) failed, retrying with bare number', { error: signInErr.message })
+    const bare = e164.replace(/^\+/, '')
+    const retry = await sb.auth.signInWithPassword({ phone: bare, password })
+    signInErr = retry.error
+    if (signInErr) {
+      logger.error('phone-widget: signInWithPassword failed (both formats)', { error: signInErr.message })
+      return NextResponse.json({ error: 'Could not sign you in. Please try again.' }, { status: 500 })
+    }
   }
 
   // ── 5. Backfill public.users (wallet/sessions/browse all read the public row)

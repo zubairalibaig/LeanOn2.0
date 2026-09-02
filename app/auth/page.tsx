@@ -83,13 +83,17 @@ function safeRedirect(raw: string | null, fallback: string): string {
   return fallback
 }
 
-/** MSG91 hands the verified token back in slightly different shapes; accept all. */
+/** MSG91 hands the verified token back in slightly different shapes; accept all.
+ *  Priority order matters: 'access-token' / 'accessToken' / 'token' / 'jwt'
+ *  are the real JWT fields. 'message' is a human-readable status string that
+ *  MSG91 also sets (e.g. "OTP verified") — always try it LAST so we never
+ *  mistake a status message for the actual token. */
 function extractToken(data: unknown): string | null {
   if (!data) return null
   if (typeof data === 'string') return data
   if (typeof data === 'object') {
     const d = data as Record<string, unknown>
-    for (const k of ['message', 'access-token', 'accessToken', 'token', 'jwt']) {
+    for (const k of ['access-token', 'accessToken', 'token', 'jwt', 'message']) {
       if (typeof d[k] === 'string' && d[k]) return d[k] as string
     }
   }
