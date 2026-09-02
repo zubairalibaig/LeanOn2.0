@@ -249,17 +249,17 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 
-  let body: { userId?: string; action?: string; notes?: string }
+  let body: { userId?: string; action?: string; notes?: string; name?: string }
   try {
     body = await req.json()
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  const { userId, action, notes } = body
+  const { userId, action, notes, name } = body
   if (!userId || !UUID_RE.test(userId)) return NextResponse.json({ error: 'Invalid userId' }, { status: 400 })
 
-  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'approve_listener', 'reject_listener']
+  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'approve_listener', 'reject_listener', 'rename']
   if (!action || !validActions.includes(action)) return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
 
   const sb = createAdminClient()
@@ -374,6 +374,22 @@ export async function PATCH(req: NextRequest) {
           logger.error('activate: users update failed', { userId, error: uErr.message })
           return NextResponse.json({ error: `Failed to activate user: ${uErr.message}` }, { status: 500 })
         }
+        break
+      }
+
+      case 'rename': {
+        const newName = typeof name === 'string' ? name.trim() : ''
+        if (newName.length < 2 || newName.length > 80) {
+          return NextResponse.json({ error: 'Name must be 2–80 characters.' }, { status: 400 })
+        }
+        const { error: uErr } = await sb.from('users').update({ name: newName }).eq('id', userId)
+        if (uErr) {
+          logger.error('rename: users update failed', { userId, error: uErr.message })
+          return NextResponse.json({ error: `Failed to rename user: ${uErr.message}` }, { status: 500 })
+        }
+        // Keep listener_profiles display name in sync if applicable.
+        await sb.from('listener_profiles').update({ display_name: newName }).eq('user_id', userId)
+          .then(() => {}, () => {})
         break
       }
     }

@@ -362,6 +362,9 @@ export default function AdminPage() {
   const [payoutsLoading, setPayoutsLoading] = useState(false)
   // Inline confirm state for destructive ban action (window.confirm blocked in mobile)
   const [confirmBanId, setConfirmBanId] = useState<string | null>(null)
+  // Inline name-edit state (shared for both users and listeners tables)
+  const [editingNameId, setEditingNameId] = useState<string | null>(null)
+  const [editingNameValue, setEditingNameValue] = useState('')
 
   // Verifications
   const [verifs, setVerifs] = useState<VerificationRow[]>([])
@@ -565,13 +568,13 @@ export default function AdminPage() {
 
   // ── Actions ─────────────────────────────────────────────────────────────────
 
-  async function userAction(userId: string, action: string, notes?: string) {
+  async function userAction(userId: string, action: string, notes?: string, name?: string) {
     const key = `${action}:${userId}`
     setBusy(key)
     const res = await fetch('/api/admin/users', {
       method: 'PATCH',
       headers: adminHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ userId, action, notes }),
+      body: JSON.stringify({ userId, action, notes, ...(name !== undefined ? { name } : {}) }),
     })
     setBusy(null)
     if (res.ok) {
@@ -1163,7 +1166,34 @@ export default function AdminPage() {
                     <tbody>
                       {sortByLastLogin(users, usersLoginDir).map(u => (
                         <tr key={u.id}>
-                          <td style={{ fontWeight: 700 }}>{u.name || '—'}</td>
+                          <td style={{ fontWeight: 700 }}>
+                            {editingNameId === u.id ? (
+                              <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
+                                <input
+                                  className="search-input"
+                                  style={{ minWidth: 120, width: 140, padding: '4px 10px', fontSize: 13 }}
+                                  value={editingNameValue}
+                                  onChange={e => setEditingNameValue(e.target.value)}
+                                  onKeyDown={e => {
+                                    if (e.key === 'Enter') { setEditingNameId(null); userAction(u.id, 'rename', undefined, editingNameValue.trim()) }
+                                    if (e.key === 'Escape') setEditingNameId(null)
+                                  }}
+                                  autoFocus
+                                />
+                                <button className="btn btn-teal" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => { setEditingNameId(null); userAction(u.id, 'rename', undefined, editingNameValue.trim()) }}>Save</button>
+                                <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setEditingNameId(null)}>Cancel</button>
+                              </span>
+                            ) : (
+                              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                                {u.name || '—'}
+                                <button
+                                  title="Edit username"
+                                  onClick={() => { setEditingNameId(u.id); setEditingNameValue(u.name || '') }}
+                                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--teal)', padding: '0 2px', lineHeight: 1 }}
+                                >✎</button>
+                              </span>
+                            )}
+                          </td>
                           <td style={{ color: 'var(--gray)', fontSize: 13 }}>{u.phone || '—'}</td>
                           <td style={{ color: 'var(--gray)' }}>{fmtDate(u.created_at)}</td>
                           <td style={{ color: 'var(--gray)', fontSize: 12 }}>{fmtDateTime(u.last_sign_in_at)}</td>
@@ -1341,7 +1371,32 @@ export default function AdminPage() {
                               </a>
                             </td>
                             <td style={{ fontWeight: 700, maxWidth: 260 }}>
-                              {u?.name || '—'}
+                              {editingNameId === l.user_id ? (
+                                <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center', flexWrap: 'wrap' }}>
+                                  <input
+                                    className="search-input"
+                                    style={{ minWidth: 120, width: 140, padding: '4px 10px', fontSize: 13 }}
+                                    value={editingNameValue}
+                                    onChange={e => setEditingNameValue(e.target.value)}
+                                    onKeyDown={e => {
+                                      if (e.key === 'Enter') { setEditingNameId(null); userAction(l.user_id, 'rename', undefined, editingNameValue.trim()) }
+                                      if (e.key === 'Escape') setEditingNameId(null)
+                                    }}
+                                    autoFocus
+                                  />
+                                  <button className="btn btn-teal" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => { setEditingNameId(null); userAction(l.user_id, 'rename', undefined, editingNameValue.trim()) }}>Save</button>
+                                  <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setEditingNameId(null)}>Cancel</button>
+                                </span>
+                              ) : (
+                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                                  {u?.name || '—'}
+                                  <button
+                                    title="Edit username"
+                                    onClick={() => { setEditingNameId(l.user_id); setEditingNameValue(u?.name || '') }}
+                                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--teal)', padding: '0 2px', lineHeight: 1 }}
+                                  >✎</button>
+                                </span>
+                              )}
                               {isSelf && <span className="badge badge-orange" style={{ marginLeft: 6, fontSize: 10 }}>YOU</span>}
                               {l.is_verified && <span className="badge badge-teal" style={{ marginLeft: 6, fontSize: 10 }}>Verified</span>}
                               {(l.specialty_tags?.length ?? 0) > 0 && (
