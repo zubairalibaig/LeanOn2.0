@@ -299,6 +299,7 @@ export default function AdminPage() {
   const [listenersTotal, setListenersTotal] = useState(0)
   const [listenersPage, setListenersPage] = useState(0)
   const [listenersStatus, setListenersStatus] = useState('all')
+  const [listenersSearch, setListenersSearch] = useState('')
   const [listenersLoading, setListenersLoading] = useState(false)
   // Pending approvals surfaced on Overview — the KPI alone gave admins no
   // path to act, which made approvals look impossible to do.
@@ -446,9 +447,9 @@ export default function AdminPage() {
     setUsersLoading(false)
   }, [usersPage, usersStatus, usersSearch, usersJoinedDir, usersSortBy]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const loadListeners = useCallback(async (pg = listenersPage, st = listenersStatus, dir = listenersJoinedDir, sort = listenersSortBy) => {
+  const loadListeners = useCallback(async (pg = listenersPage, st = listenersStatus, dir = listenersJoinedDir, sort = listenersSortBy, q = listenersSearch) => {
     setListenersLoading(true)
-    const params = new URLSearchParams({ type: 'listener', page: String(pg), status: st, dir, sort })
+    const params = new URLSearchParams({ type: 'listener', page: String(pg), status: st, dir, sort, search: q })
     const res = await fetch(`/api/admin/users?${params}`, { headers: adminHeaders() }).catch(() => null)
     if (res?.ok) {
       const json = await res.json()
@@ -458,7 +459,7 @@ export default function AdminPage() {
       showToast('Failed to load listeners — tap a filter to retry')
     }
     setListenersLoading(false)
-  }, [listenersPage, listenersStatus, listenersJoinedDir, listenersSortBy]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [listenersPage, listenersStatus, listenersJoinedDir, listenersSortBy, listenersSearch]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadPendingApprovals = useCallback(async () => {
     const params = new URLSearchParams({ type: 'listener', page: '0', status: 'pending' })
@@ -543,7 +544,7 @@ export default function AdminPage() {
   }, [tab]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (tab === 'listeners') loadListeners(0, listenersStatus)
+    if (tab === 'listeners') loadListeners(0, listenersStatus, listenersJoinedDir, listenersSortBy, listenersSearch)
   }, [tab]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -1233,11 +1234,30 @@ export default function AdminPage() {
                 <button
                   key={s}
                   className={`filter-btn${listenersStatus === s ? ' active' : ''}`}
-                  onClick={() => { setListenersStatus(s); setListenersPage(0); loadListeners(0, s) }}
+                  onClick={() => { setListenersStatus(s); setListenersPage(0); loadListeners(0, s, listenersJoinedDir, listenersSortBy, listenersSearch) }}
                 >
                   {s === 'pending' ? 'Pending Approval' : s.charAt(0).toUpperCase() + s.slice(1)}
                 </button>
               ))}
+              <input
+                className="search-input"
+                placeholder="Search by name…"
+                value={listenersSearch}
+                onChange={e => setListenersSearch(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') { setListenersPage(0); loadListeners(0, listenersStatus, listenersJoinedDir, listenersSortBy, listenersSearch) }
+                }}
+              />
+              <button
+                className="filter-btn"
+                onClick={() => { setListenersPage(0); loadListeners(0, listenersStatus, listenersJoinedDir, listenersSortBy, listenersSearch) }}
+              >Search</button>
+              {listenersSearch && (
+                <button
+                  className="filter-btn"
+                  onClick={() => { setListenersSearch(''); setListenersPage(0); loadListeners(0, listenersStatus, listenersJoinedDir, listenersSortBy, '') }}
+                >✕ Clear</button>
+              )}
             </div>
             {listenersLoading ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
