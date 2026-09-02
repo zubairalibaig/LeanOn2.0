@@ -231,7 +231,18 @@ export default function BecomeListenerPage() {
   // would make resubmission a dead end.
   useEffect(() => {
     sb.auth.getUser().then(async ({ data: { user } }) => {
-      if (!user) { setGuardChecked(true); return }
+      // Phone verification now happens ONCE, at sign-in, via the MSG91 widget on
+      // /auth. This page no longer runs its own OTP (the old signInWithOtp path
+      // is dead — DLT blocked the SMS hook). So: require a session first, then
+      // treat the phone as already verified.
+      if (!user) {
+        router.replace('/auth?mode=listener&redirect=/become-listener')
+        return
+      }
+      // Pre-fill the phone they logged in with and skip the in-form OTP step.
+      if (user.phone) setPhone(user.phone.replace(/\D/g, '').slice(-10))
+      setOtpVerified(true)
+
       const [{ data: existing }, { data: app }] = await Promise.all([
         sb.from('listener_profiles').select('id, is_approved').eq('user_id', user.id).maybeSingle(),
         sb.from('listener_applications').select('status').eq('user_id', user.id).maybeSingle(),
@@ -450,9 +461,23 @@ export default function BecomeListenerPage() {
     }
   }
 
-  // guardChecked: show "already registered" only after the check resolves.
-  // Don't blank the page — form renders immediately (fast perceived load,
-  // tests can find the phone input without waiting for the session check).
+  // Wait for the session check before rendering: unsigned visitors are being
+  // redirected to /auth (widget sign-in), and signed-in ones need the phone
+  // pre-filled + OTP step skipped. Rendering the form early would flash the
+  // now-dead in-form OTP UI.
+  if (!guardChecked) return (
+    <>
+      <style>{S}</style>
+      <div className="page">
+        <div className="topbar"><a href="/" className="back">←</a></div>
+        <div style={{ textAlign: 'center', padding: '64px 20px', fontFamily: "'Nunito',sans-serif", fontWeight: 600, color: '#5A7A8A' }}>
+          Loading…
+        </div>
+      </div>
+    </>
+  )
+
+  // guardChecked resolved: show "already registered" if applicable.
   if (guardChecked && alreadyRegistered) return (
     <>
       <style>{S}</style>
