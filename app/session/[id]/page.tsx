@@ -456,14 +456,37 @@ function SessionContent() {
     return () => window.visualViewport?.removeEventListener('resize', onViewportResize)
   }, [])
 
-  // Load existing messages from DB on mount
+  // Load existing messages from DB on mount — via the server (admin client),
+  // NOT a browser RLS read. See /api/messages GET for why. Crucially, this
+  // MERGES into whatever is already on screen instead of overwriting it: on a
+  // fresh session the history is empty, and if that empty result landed after
+  // the user had already fired off their first message, the old
+  // `setMsgs(data)` wiped it — that was the "messages disappear" bug.
   useEffect(() => {
     if (!sessionId) return
-    supabase.from('messages')
-      .select('*')
-      .eq('session_id', sessionId)
-      .order('created_at', { ascending: true })
-      .then(({ data }) => { if (data) setMsgs(data as Msg[]) })
+    let cancelled = false
+    fetch(`/api/messages?sessionId=${sessionId}`)
+      .then(r => (r.ok ? r.json() : []))
+      .then((data: Msg[]) => {
+        if (cancelled || !Array.isArray(data)) return
+        setMsgs(prev => {
+          const byId = new Map<string, Msg>()
+          for (const m of data) byId.set(m.id, m)
+          for (const m of prev) {
+            if (byId.has(m.id)) continue
+            // Drop an optimistic temp only if the server already has the same
+            // message (same sender + text); otherwise keep it — never remove a
+            // message that is already visible.
+            if (m.temp && data.some(s => s.sender_id === m.sender_id && s.content === m.content)) continue
+            byId.set(m.id, m)
+          }
+          return Array.from(byId.values()).sort(
+            (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+          )
+        })
+      })
+      .catch(() => { /* keep whatever is on screen */ })
+    return () => { cancelled = true }
   }, [sessionId])
 
   useEffect(() => {
