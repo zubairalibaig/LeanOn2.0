@@ -3,7 +3,6 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, PLATFORM_FEE, LANGUAGES, MONTHS, MIN_LISTENER_AGE, MAX_LISTENER_AGE, ageFromBirth } from '@/lib/constants'
 import { createClient } from '@/lib/supabase'
-import TurnstileWidget, { turnstileEnabled } from '@/app/components/TurnstileWidget'
 import { compressImage, extForType, AVATAR_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
 
 const TAGS = [
@@ -207,23 +206,12 @@ export default function BecomeListenerPage() {
   const [avatarUploading, setAvatarUploading] = useState(false)
   const photoInputRef = useRef<HTMLInputElement | null>(null)
 
-  // OTP state
-  const [otpSent, setOtpSent] = useState(false)
-  const [otpVerified, setOtpVerified] = useState(false)
-  const [otp, setOtp] = useState(['','','','','',''])
-  const [otpLoading, setOtpLoading] = useState(false)
-  const [otpError, setOtpError] = useState('')
-  // CAPTCHA — stops bots burning paid SMS credits. Token is single-use.
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
-  const [captchaReset, setCaptchaReset] = useState(0)
-  const [countdown, setCountdown] = useState(0)
-  const otpRefs = useRef<(HTMLInputElement|null)[]>([])
-
-  useEffect(() => {
-    if (countdown <= 0) return
-    const t = setTimeout(() => setCountdown(c => c - 1), 1000)
-    return () => clearTimeout(t)
-  }, [countdown])
+  // Phone verification now happens ONCE at sign-in via the MSG91 widget on /auth.
+  // The in-form OTP flow (signInWithOtp / verifyOtp) is permanently dead —
+  // India's DLT regime blocks the SMS hook — and is removed. `otpVerified` is
+  // kept only so the phone field stays disabled and the green badge shows;
+  // it is always true by the time the form is visible.
+  const [otpVerified] = useState(true)
 
   // Guard: check if already registered. Rejected / needs_resubmission
   // applicants must NOT be blocked — the status page sends them here to
@@ -231,17 +219,14 @@ export default function BecomeListenerPage() {
   // would make resubmission a dead end.
   useEffect(() => {
     sb.auth.getUser().then(async ({ data: { user } }) => {
-      // Phone verification now happens ONCE, at sign-in, via the MSG91 widget on
-      // /auth. This page no longer runs its own OTP (the old signInWithOtp path
-      // is dead — DLT blocked the SMS hook). So: require a session first, then
-      // treat the phone as already verified.
       if (!user) {
+        // Not signed in — gate behind /auth. The phone widget there is the only
+        // working verification path.
         router.replace('/auth?mode=listener&redirect=/become-listener')
         return
       }
-      // Pre-fill the phone they logged in with and skip the in-form OTP step.
+      // Pre-fill the phone they logged in with. No in-form OTP needed.
       if (user.phone) setPhone(user.phone.replace(/\D/g, '').slice(-10))
-      setOtpVerified(true)
 
       const [{ data: existing }, { data: app }] = await Promise.all([
         sb.from('listener_profiles').select('id, is_approved').eq('user_id', user.id).maybeSingle(),
@@ -252,7 +237,12 @@ export default function BecomeListenerPage() {
         setAlreadyRegistered(true)
       }
       setGuardChecked(true)
-    }).catch(() => setGuardChecked(true)) // never hang on the Loading screen
+    }).catch(() => {
+      // Auth error / network issue — send to /auth rather than showing the form
+      // with no session. (A broken session shown as a form produced the dead
+      // in-form OTP button that users saw after the DLT migration.)
+      router.replace('/auth?mode=listener&redirect=/become-listener')
+    })
   }, [])
 
   // Use raw input for the live preview — validation blocks invalid values on submit.
@@ -274,67 +264,11 @@ export default function BecomeListenerPage() {
 
   const digits = () => phone.replace(/\D/g,'').slice(-10)
 
-  async function sendOtp() {
-    const phoneErr = validatePhone(phone)
-    if (phoneErr) { setFieldErrors(e => ({...e, phone: phoneErr})); return }
-    // When CAPTCHA is configured, never spend an SMS without a verified token.
-    if (turnstileEnabled && !captchaToken) {
-      setOtpError('Please complete the security check just above.')
-      return
-    }
-    setOtpLoading(true)
-    setOtpError('')
-    const { error: err } = await sb.auth.signInWithOtp({
-      phone: '+91' + digits(),
-      ...(captchaToken ? { options: { captchaToken } } : {}),
-    })
-    setOtpLoading(false)
-    // Single-use token — burn it and request a fresh one for any resend.
-    setCaptchaToken(null)
-    setCaptchaReset(n => n + 1)
-    if (err) { setOtpError(err.message); return }
-    setOtpSent(true)
-    // 60s, not 30s: every resend is a paid SMS, and the Aug 2026 audit showed
-    // ~2.5 SMS per successful signup. 60s is the standard OTP resend window and
-    // gives a genuinely-slow SMS time to land before the user re-sends.
-    setCountdown(60)
-  }
-
-  async function verifyOtp(codeOverride?: string) {
-    if (otpLoading) return                                    // prevent double-submit
-    const code = codeOverride ?? otp.join('')
-    if (code.length < 6) { setOtpError('Enter the full 6-digit code'); return }
-    setOtpLoading(true)
-    setOtpError('')
-    const { error: err } = await sb.auth.verifyOtp({
-      phone: '+91' + digits(),
-      token: code,
-      type: 'sms',
-    })
-    setOtpLoading(false)
-    if (err) { setOtpError('Invalid OTP. Please try again.'); return }
-    setOtpVerified(true)
-  }
-
-  function handleOtpChange(i: number, val: string) {
-    if (!/^\d*$/.test(val)) return
-    const next = [...otp]; next[i] = val.slice(-1); setOtp(next)
-    if (val && i < 5) otpRefs.current[i+1]?.focus()
-    // Pass the completed code directly — avoids stale closure reading old otp state
-    if (next.every(d => d)) {
-      const code = next.join('')
-      setTimeout(() => verifyOtp(code), 100)
-    }
-  }
-  function handleOtpKey(i: number, e: React.KeyboardEvent) {
-    if (e.key === 'Backspace' && !otp[i] && i > 0) otpRefs.current[i-1]?.focus()
-  }
-
   function validateStep1(): string[] {
     const errs: string[] = []
     const ne = validateName(name); if (ne) errs.push(ne)
     const pe = validatePhone(phone); if (pe) errs.push(pe)
-    if (!otpVerified) errs.push('Please verify your phone number with OTP')
+    // Phone is verified at sign-in time — no in-form OTP check needed.
     const be = validateBio(bio); if (be) errs.push(be)
     if (tags.length === 0) errs.push('Please select at least one topic')
     if (!avatarFile && !avatarUrl) errs.push('Please upload a profile photo')
@@ -359,7 +293,6 @@ export default function BecomeListenerPage() {
       const fe: Record<string,string> = {}
       const ne = validateName(name); if (ne) fe.name = ne
       const pe = validatePhone(phone); if (pe) fe.phone = pe
-      if (!otpVerified) fe.otp = 'Please verify your phone number with OTP'
       const be = validateBio(bio); if (be) fe.bio = be
       if (tags.length === 0) fe.tags = 'Please select at least one topic'
       if (!avatarFile && !avatarUrl) fe.avatar = 'Please upload a profile photo'
@@ -584,80 +517,10 @@ export default function BecomeListenerPage() {
             />
             {fieldErrors.phone && <span className="field-err">{fieldErrors.phone}</span>}
 
-            {/* OTP Flow */}
-            {!otpVerified && (
-              <div style={{marginBottom:16}}>
-                {!otpSent ? (
-                  <>
-                    {/* Mounted only once a full number is typed — the CAPTCHA
-                        script never loads during a normal (SEO) page view. */}
-                    {digits().length === 10 && (
-                      <TurnstileWidget
-                        action="listener-otp"
-                        resetSignal={captchaReset}
-                        onVerify={setCaptchaToken}
-                      />
-                    )}
-                    <button
-                      style={{width:'100%',padding:'12px',fontFamily:'Nunito,sans-serif',fontSize:14,fontWeight:700,color:'var(--teal)',background:'rgba(26,143,160,0.08)',border:'1.5px solid rgba(26,143,160,0.3)',borderRadius:12,cursor:'pointer',marginBottom:4}}
-                      onClick={sendOtp}
-                      disabled={otpLoading || (turnstileEnabled && digits().length === 10 && !captchaToken)}
-                    >
-                      {otpLoading ? <span className="spin">⟳</span>
-                        : turnstileEnabled && digits().length === 10 && !captchaToken ? 'Verifying you’re human…'
-                        : '📱 Send OTP to verify phone →'}
-                    </button>
-                  </>
-                ) : (
-                  <div style={{background:'white',border:'1.5px solid var(--border)',borderRadius:14,padding:16,marginBottom:4}}>
-                    <p style={{fontSize:13,fontWeight:700,color:'var(--navy)',marginBottom:12}}>Enter the 6-digit OTP sent to +91 {digits()}</p>
-                    <div className="otp-row">
-                      {otp.map((d,i) => (
-                        <input
-                          key={i}
-                          ref={el => { otpRefs.current[i] = el }}
-                          className={`otp-box${otpError ? ' err' : ''}`}
-                          type="text"
-                          inputMode="numeric"
-                          maxLength={1}
-                          value={d}
-                          autoFocus={i===0}
-                          onChange={e => handleOtpChange(i, e.target.value)}
-                          onKeyDown={e => handleOtpKey(i, e)}
-                        />
-                      ))}
-                    </div>
-                    {otpError && <p style={{fontSize:12,color:'#E53935',fontWeight:700,marginTop:6,textAlign:'center'}}>{otpError}</p>}
-                    {/* Resend spends another SMS — needs its own fresh token. */}
-                    {!otpLoading && countdown <= 0 && (
-                      <TurnstileWidget
-                        action="listener-resend-otp"
-                        resetSignal={captchaReset}
-                        onVerify={setCaptchaToken}
-                      />
-                    )}
-                    <div style={{textAlign:'center',marginTop:10}}>
-                      {otpLoading
-                        ? <span style={{fontSize:13,color:'var(--gray)'}}>Verifying...</span>
-                        : countdown > 0
-                          ? <span className="resend-count">Resend in {countdown}s</span>
-                          : <button
-                              className="resend-btn"
-                              onClick={() => { setOtp(['','','','','','']); sendOtp() }}
-                              disabled={turnstileEnabled && !captchaToken}
-                            >
-                              {turnstileEnabled && !captchaToken ? 'Verifying you’re human…' : 'Resend OTP'}
-                            </button>
-                      }
-                    </div>
-                  </div>
-                )}
-                {fieldErrors.otp && <span className="field-err">{fieldErrors.otp}</span>}
-              </div>
-            )}
-            {otpVerified && (
+            {/* Phone is verified at sign-in via the MSG91 widget — show badge only. */}
+            {digits().length === 10 && (
               <div style={{background:'#F0FFF4',border:'1.5px solid #34C759',borderRadius:12,padding:'10px 14px',marginBottom:16,fontSize:13,fontWeight:700,color:'#276749'}}>
-                ✓ Phone verified: +91 {digits()}
+                {'✓'} Phone verified: +91 {digits()}
               </div>
             )}
 
