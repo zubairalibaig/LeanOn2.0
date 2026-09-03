@@ -89,54 +89,45 @@ body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:an
 .back-stay{background:var(--navy);color:white;border:none;}
 .back-leave{background:white;color:#E53935;border:1.5px solid #FFCDD2;}
 
-/* ── Voice call overlay ── */
-.voice-overlay{
-  position:fixed;inset:0;z-index:100;
+/* ── Voice strip (sits above the message list, text always accessible) ── */
+.voice-strip{
   background:var(--navy);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:20px;max-width:480px;margin:0 auto;padding:20px;padding-bottom:calc(20px + env(safe-area-inset-bottom));
+  display:flex;flex-direction:column;align-items:center;
+  gap:6px;padding:12px 16px 10px;flex-shrink:0;
 }
-.voice-av{
-  width:100px;height:100px;border-radius:50%;
-  background:var(--teal);
-  display:flex;align-items:center;justify-content:center;
-  font-weight:900;font-size:34px;color:white;
-  box-shadow:0 0 0 12px rgba(26,143,160,0.2);
-}
-.voice-name{font-size:24px;font-weight:900;color:white;text-align:center;}
-.voice-status{font-size:14px;color:rgba(255,255,255,0.65);font-weight:500;}
-.voice-timer{font-size:36px;font-weight:900;color:white;font-variant-numeric:tabular-nums;}
+.voice-strip-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;}
+.voice-status{font-size:13px;color:rgba(255,255,255,0.75);font-weight:600;}
+.voice-timer{font-size:22px;font-weight:900;color:white;font-variant-numeric:tabular-nums;letter-spacing:.02em;}
 .voice-timer.warn{color:#FFD580;}
 .voice-timer.low{color:#FCA5A5;}
-.voice-actions{display:flex;gap:20px;margin-top:8px;align-items:center;justify-content:center;}
+.voice-actions{display:flex;gap:10px;align-items:center;justify-content:center;}
 .voice-btn{
-  min-width:56px;min-height:56px;border-radius:50%;border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:24px;
+  min-width:44px;min-height:44px;border-radius:50%;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:20px;
   font-family:'Nunito',sans-serif;font-weight:700;
 }
-.voice-btn.mute{background:rgba(255,255,255,0.15);color:white;width:56px;height:56px;}
+.voice-btn.mute{background:rgba(255,255,255,0.15);color:white;width:44px;height:44px;}
 .voice-btn.mute.muted{background:rgba(220,38,38,0.35);color:#FCA5A5;}
-.voice-btn.end{background:rgba(220,38,38,0.85);color:white;width:64px;height:64px;font-size:28px;}
+.voice-btn.end{background:rgba(220,38,38,0.85);color:white;width:50px;height:50px;font-size:22px;}
+.voice-hint{font-size:11px;color:rgba(255,255,255,0.45);font-weight:600;text-align:center;}
 .voice-err{
-  font-size:13px;color:#FCA5A5;font-weight:600;
+  font-size:12px;color:#FCA5A5;font-weight:600;
   background:rgba(220,38,38,0.15);
   border:1px solid rgba(220,38,38,0.3);
-  border-radius:10px;padding:10px 16px;text-align:center;max-width:280px;
+  border-radius:8px;padding:8px 12px;text-align:center;width:100%;
 }
 .net-quality{
-  display:flex;align-items:center;gap:6px;
-  font-size:12px;font-weight:700;color:rgba(255,255,255,0.75);
+  display:flex;align-items:center;gap:4px;
+  font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);
 }
-.net-bars{display:flex;align-items:flex-end;gap:2px;height:14px;}
-.net-bar{width:4px;border-radius:2px;background:rgba(255,255,255,0.2);}
+.net-bars{display:flex;align-items:flex-end;gap:2px;height:12px;}
+.net-bar{width:3px;border-radius:2px;background:rgba(255,255,255,0.2);}
 .net-bar.on.good{background:#4ADE80;}
 .net-bar.on.fair{background:#FCD34D;}
 .net-bar.on.poor{background:#F87171;}
-.mic-select{background:rgba(255,255,255,0.12);color:white;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:6px 10px;cursor:pointer;max-width:200px;}
+.mic-select{background:rgba(255,255,255,0.12);color:white;font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:4px 8px;cursor:pointer;max-width:160px;}
 .mic-select option{background:#0F4867;color:white;}
-.reconnecting-badge{background:rgba(255,153,51,0.2);border:1px solid rgba(255,153,51,0.4);color:#FFD580;font-size:12px;font-weight:700;padding:6px 14px;border-radius:50px;animation:pulse 1.5s ease-in-out infinite;}
-.voice-crisis{font-size:11px;color:rgba(255,255,255,0.5);font-weight:700;text-align:center;margin-top:4px;}
-.voice-crisis a{color:rgba(255,200,100,0.8);}
+.reconnecting-badge{background:rgba(255,153,51,0.2);border:1px solid rgba(255,153,51,0.4);color:#FFD580;font-size:11px;font-weight:700;padding:4px 10px;border-radius:50px;animation:pulse 1.5s ease-in-out infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
 `
 
@@ -1147,96 +1138,7 @@ function SessionContent() {
     )
   }
 
-  const voiceTimerClass = secs < 60 ? ' low' : secs < 120 ? ' warn' : ''
-
-  // ── Voice call overlay
-  if (isVoice) return (
-    <>
-      <style>{S}</style>
-      <div className="voice-overlay">
-        <div className="voice-av">{ini(resolvedListenerName)}</div>
-        <div className="voice-name">{resolvedListenerName}</div>
-
-        {voiceStatus === 'connecting' && (
-          <div className="voice-status">⏳ Connecting… Average wait: under 2 minutes.</div>
-        )}
-        {voiceStatus === 'connected' && (
-          <div className="voice-status">Voice call · {fmtTimer(secs)} remaining</div>
-        )}
-        {voiceStatus === 'error' && (
-          <div className="voice-status">Voice connection failed</div>
-        )}
-
-        <div className={`voice-timer${voiceTimerClass}`}>
-          {voiceStatus === 'connected' ? fmtTimer(callSecs) : '--:--'}
-        </div>
-
-        {voiceStatus === 'connected' && (
-          <NetQualityIndicator q={netQuality} />
-        )}
-
-        {reconnecting && (
-          <div className="reconnecting-badge">🔄 Reconnecting…</div>
-        )}
-        {mics.length > 1 && voiceStatus === 'connected' && (
-          <select
-            className="mic-select"
-            value={selectedMic}
-            onChange={e => switchMic(e.target.value)}
-            aria-label="Select microphone"
-          >
-            {mics.map(m => (
-              <option key={m.deviceId} value={m.deviceId}>
-                🎙 {m.label || `Microphone ${mics.indexOf(m) + 1}`}
-              </option>
-            ))}
-          </select>
-        )}
-
-        {voiceError && voiceStatus === 'error' && (
-          <div className="voice-err">
-            <div style={{ marginBottom: 10 }}>⚠️ {voiceError}</div>
-            <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
-              <button
-                onClick={retryVoice}
-                style={{ background: 'rgba(255,255,255,0.2)', color: 'white', border: '1.5px solid rgba(255,255,255,0.4)', borderRadius: 10, padding: '8px 16px', fontFamily: 'Nunito,sans-serif', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
-              >🔄 Retry voice</button>
-              <button
-                onClick={switchToText}
-                style={{ background: 'rgba(26,143,160,0.8)', color: 'white', border: 'none', borderRadius: 10, padding: '8px 16px', fontFamily: 'Nunito,sans-serif', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
-              >💬 Switch to text chat</button>
-            </div>
-          </div>
-        )}
-        {voiceError && voiceStatus !== 'error' && (
-          <div className="voice-err">{voiceError}</div>
-        )}
-
-        <div className="voice-actions">
-          <button
-            className={`voice-btn mute${muted ? ' muted' : ''}`}
-            onClick={toggleMute}
-            title={muted ? 'Unmute' : 'Mute'}
-            disabled={voiceStatus !== 'connected'}
-          >
-            {muted ? '🔇' : '🎙️'}
-          </button>
-          <button
-            className="voice-btn end"
-            onClick={endVoiceCall}
-            title="End call"
-          >
-            📵
-          </button>
-        </div>
-        {/* Crisis resources — always visible (Item 24) */}
-        <div className="voice-crisis">
-          🆘 Crisis: <a href="tel:08046110007">NIMHANS 080-46110007</a> · <a href="tel:14416">Tele-MANAS 14416</a>
-        </div>
-      </div>
-    </>
-  )
-
+  const voiceTimerClass = callSecs > 0 && secs < 60 ? ' low' : secs < 120 ? ' warn' : ''
   const timerClass = secs < 60 ? ' low' : secs < 120 ? ' warn' : ''
   const isListenerView = userId !== null && listenerId !== null && userId === listenerId
   const listenerEarning = sessionAmountHeld != null ? Math.max(0, sessionAmountHeld - sessionPlatformFee) : null
@@ -1280,12 +1182,66 @@ function SessionContent() {
           <div className="hdr-info">
             <div className="hdr-name">{resolvedListenerName}</div>
             <div className="hdr-sub">
-              {connected ? '🟢 connected' : '⏳ connecting...'}
+              {isVoice
+                ? (voiceStatus === 'connected' ? '🟢 voice connected' : voiceStatus === 'error' ? '🔴 voice failed' : '⏳ voice connecting…')
+                : (connected ? '🟢 connected' : '⏳ connecting...')}
             </div>
           </div>
           <div className={`timer${timerClass}`}>{fmtTimer(secs)}</div>
           <button className="end-btn" onClick={() => setEnded(true)}>End</button>
         </div>
+
+        {/* ── Voice strip: shown when voice mode is active, text always accessible below ── */}
+        {isVoice && (
+          <div className="voice-strip">
+            <div className="voice-strip-row">
+              {/* Call duration counter */}
+              <div className={`voice-timer${voiceTimerClass}`}>
+                {voiceStatus === 'connected' ? fmtTimer(callSecs) : voiceStatus === 'connecting' ? '--:--' : '✕'}
+              </div>
+              {voiceStatus === 'connecting' && (
+                <div className="voice-status">⏳ Connecting audio…</div>
+              )}
+              {voiceStatus === 'connected' && <NetQualityIndicator q={netQuality} />}
+              {reconnecting && <div className="reconnecting-badge">🔄 Reconnecting…</div>}
+              {/* Mic selector */}
+              {mics.length > 1 && voiceStatus === 'connected' && (
+                <select className="mic-select" value={selectedMic} onChange={e => switchMic(e.target.value)} aria-label="Select microphone">
+                  {mics.map(m => (
+                    <option key={m.deviceId} value={m.deviceId}>🎙 {m.label || `Mic ${mics.indexOf(m) + 1}`}</option>
+                  ))}
+                </select>
+              )}
+              {/* Mute + End buttons */}
+              <div className="voice-actions">
+                <button
+                  className={`voice-btn mute${muted ? ' muted' : ''}`}
+                  onClick={toggleMute}
+                  title={muted ? 'Unmute' : 'Mute'}
+                  disabled={voiceStatus !== 'connected'}
+                >{muted ? '🔇' : '🎙️'}</button>
+                <button className="voice-btn end" onClick={endVoiceCall} title="End call">📵</button>
+              </div>
+            </div>
+
+            {/* Error row with retry / switch-to-text */}
+            {voiceError && voiceStatus === 'error' && (
+              <div className="voice-err">
+                <div style={{ marginBottom: 8 }}>⚠️ {voiceError}</div>
+                <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
+                  <button onClick={retryVoice} style={{ background: 'rgba(255,255,255,0.18)', color: 'white', border: '1.5px solid rgba(255,255,255,0.35)', borderRadius: 8, padding: '6px 14px', fontFamily: 'Nunito,sans-serif', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>🔄 Retry voice</button>
+                  <button onClick={switchToText} style={{ background: 'rgba(26,143,160,0.85)', color: 'white', border: 'none', borderRadius: 8, padding: '6px 14px', fontFamily: 'Nunito,sans-serif', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>💬 Text only</button>
+                </div>
+              </div>
+            )}
+            {voiceError && voiceStatus !== 'error' && (
+              <div className="voice-err">{voiceError}</div>
+            )}
+
+            {/* Hint: text chat is available below */}
+            <div className="voice-hint">💬 Text chat is open below — type while on call</div>
+          </div>
+        )}
 
         {/* One-time paid/free + earnings context for the listener — shown once
             at the top of the live chat, not on the accept/decline banner. */}
