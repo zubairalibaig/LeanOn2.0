@@ -223,6 +223,8 @@ function SessionContent() {
   const [mics, setMics]                   = useState<MediaDeviceInfo[]>([])
   const [selectedMic, setSelectedMic]     = useState<string>('')
   const [reconnecting, setReconnecting]   = useState(false)
+  // Increment to force the voice useEffect to retry joining the Agora channel
+  const [voiceRetryKey, setVoiceRetryKey] = useState(0)
   const [showReport, setShowReport]       = useState(false)
   const [listenerId, setListenerId]       = useState<string | null>(null)
   // Request lifecycle: 'pending' (awaiting listener), 'active' (live), 'cancelled'
@@ -792,8 +794,8 @@ function SessionContent() {
           console.error('Agora join error:', err)
           setVoiceStatus('error')
           setVoiceError((err instanceof Error ? err.message : null) || 'Failed to connect voice call. Please check your microphone and try again.')
-          // End the session immediately so the timer doesn't run and charge the seeker
-          setEnded(true)
+          // DO NOT call setEnded(true) here — keep the session alive so the user
+          // can retry the voice call or switch to text chat without losing the session.
         }
       }
     }
@@ -825,7 +827,7 @@ function SessionContent() {
         agoraRef.current = null
       }
     }
-  }, [isVoice, sessionId, sessionStatus])
+  }, [isVoice, sessionId, sessionStatus, voiceRetryKey])
 
   // Leave Agora channel when session ends (unpublish → close → leave)
   useEffect(() => {
@@ -867,6 +869,34 @@ function SessionContent() {
 
   async function endVoiceCall() {
     setEnded(true)
+  }
+
+  // Tear down the Agora connection without ending the session
+  function cleanupAgora() {
+    if (agoraRef.current) {
+      const { client, micTrack } = agoraRef.current
+      client.unpublish([micTrack]).catch(() => {})
+      micTrack.close()
+      client.leave().catch(() => {})
+      agoraRef.current = null
+    }
+  }
+
+  // Let the user retry the voice connection (e.g. after granting mic permission)
+  function retryVoice() {
+    cleanupAgora()
+    setVoiceStatus('connecting')
+    setVoiceError(null)
+    setReconnecting(false)
+    setVoiceRetryKey(k => k + 1)
+  }
+
+  // Fall back to text chat — keeps the same live session, just switches UI mode
+  function switchToText() {
+    cleanupAgora()
+    setIsVoice(false)
+    setVoiceError(null)
+    setVoiceStatus('connecting')
   }
 
   function handleInputChange(val: string) {
@@ -1134,7 +1164,7 @@ function SessionContent() {
           <div className="voice-status">Voice call · {fmtTimer(secs)} remaining</div>
         )}
         {voiceStatus === 'error' && (
-          <div className="voice-status">Connection error — session ended, unused time refunded</div>
+          <div className="voice-status">Voice connection failed</div>
         )}
 
         <div className={`voice-timer${voiceTimerClass}`}>
@@ -1163,7 +1193,22 @@ function SessionContent() {
           </select>
         )}
 
-        {voiceError && (
+        {voiceError && voiceStatus === 'error' && (
+          <div className="voice-err">
+            <div style={{ marginBottom: 10 }}>⚠️ {voiceError}</div>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button
+                onClick={retryVoice}
+                style={{ background: 'rgba(255,255,255,0.2)', color: 'white', border: '1.5px solid rgba(255,255,255,0.4)', borderRadius: 10, padding: '8px 16px', fontFamily: 'Nunito,sans-serif', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
+              >🔄 Retry voice</button>
+              <button
+                onClick={switchToText}
+                style={{ background: 'rgba(26,143,160,0.8)', color: 'white', border: 'none', borderRadius: 10, padding: '8px 16px', fontFamily: 'Nunito,sans-serif', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
+              >💬 Switch to text chat</button>
+            </div>
+          </div>
+        )}
+        {voiceError && voiceStatus !== 'error' && (
           <div className="voice-err">{voiceError}</div>
         )}
 
