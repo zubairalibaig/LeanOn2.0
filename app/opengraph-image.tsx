@@ -41,7 +41,7 @@ export default function OgImage() {
             borderRadius: 50,
           }}
         >
-          First 5 minutes free
+          Available 24/7
         </div>
       </div>
     ),

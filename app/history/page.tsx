@@ -265,7 +265,7 @@ export default function HistoryPage() {
           <div className="empty">
             <div className="empty-icon">💬</div>
             <h3>No conversations yet</h3>
-            <p>When you talk to a listener — or a seeker talks to you — your chats will appear here. Your first 5 minutes are free.</p>
+            <p>When you talk to a listener — or a seeker talks to you — your chats will appear here.</p>
             <button onClick={() => router.push('/browse')}>Find a listener →</button>
           </div>
         ) : visibleItems.length === 0 ? (

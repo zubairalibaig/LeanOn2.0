@@ -4,11 +4,11 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Grief & Loss Peer Support India | LeanOn',
-  description: 'Navigate grief and loss with compassionate peer support. Talk anonymously to a trained listener. Free first session on LeanOn.',
+  description: 'Navigate grief and loss with compassionate peer support. Talk anonymously to a trained listener. Available 24/7.',
   alternates: { canonical: 'https://www.leanon.app/support/grief', languages: { 'en-IN': 'https://www.leanon.app/support/grief' } },
   openGraph: {
     title: 'Grief & Loss Peer Support India | LeanOn',
-    description: 'Navigate grief and loss with compassionate peer support. Talk anonymously to a trained listener. Free first session on LeanOn.',
+    description: 'Navigate grief and loss with compassionate peer support. Talk anonymously to a trained listener. Available 24/7.',
     url: 'https://www.leanon.app/support/grief',
     siteName: 'LeanOn',
     type: 'article',
@@ -220,10 +220,10 @@ export default function GriefSupportPage() {
 
         <div className="cta-card">
           <h2>Your Grief Deserves to Be Witnessed</h2>
-          <p>Talk to someone who knows loss from the inside. No pressure, no timeline, no judgment. First 5 minutes free.</p>
+          <p>Talk to someone who knows loss from the inside. No pressure, no timeline, no judgment. Available 24/7.</p>
           <div className="cta-btns">
             <a href="/browse?topic=grief"><button className="btn-primary">Find a Grief Listener</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 

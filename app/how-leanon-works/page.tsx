@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'How LeanOn Works | Peer Support in 4 Steps',
-  description: 'Learn how LeanOn works in 4 simple steps. Sign up in 30 seconds, browse peer listeners, start a free session, and get the support you need.',
+  description: 'Learn how LeanOn works in 4 simple steps. Sign up in 30 seconds, browse peer listeners, start a session, and get the support you need.',
   keywords: ['how leanon works', 'how peer support works', 'leanon steps', 'start peer support india'],
   alternates: { canonical: 'https://www.leanon.app/how-leanon-works' },
 }
@@ -16,7 +16,7 @@ const howToJsonLd = {
   step: [
     { '@type': 'HowToStep', name: 'Sign up', text: 'Enter your mobile number and verify with OTP. No full name required. Takes 30 seconds.', position: 1 },
     { '@type': 'HowToStep', name: 'Browse listeners', text: 'Browse verified peer listeners by topic, language, and availability. Read their stories.', position: 2 },
-    { '@type': 'HowToStep', name: 'Start a free session', text: 'Your first 5-minute session is completely free. No wallet top-up needed.', position: 3 },
+    { '@type': 'HowToStep', name: 'Start a session', text: 'A short 5-minute trial session is available for new users. No wallet top-up needed.', position: 3 },
     { '@type': 'HowToStep', name: 'Continue if it helps', text: 'If your session feels right, book a 15, 30, or 45-minute follow-up at ₹160–₹460.', position: 4 },
   ],
 }
@@ -50,7 +50,7 @@ export default function HowItWorksPage() {
       <style>{S}</style>
       <nav>
         <a href="/"><img src="/logo.png" alt="LeanOn" style={{height:48}} /></a>
-        <a href="/auth"><button className="btn" style={{fontSize:13,padding:'8px 20px'}}>Try free</button></a>
+        <a href="/auth"><button className="btn" style={{fontSize:13,padding:'8px 20px'}}>Try now</button></a>
       </nav>
       <div className="page">
         <a href="/" style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:14,fontWeight:700,color:'var(--gray)',marginBottom:28}}>← Back</a>
@@ -65,7 +65,7 @@ export default function HowItWorksPage() {
           {[
             { n: '1', title: 'Sign up in 30 seconds', body: 'Enter your Indian mobile number and verify with a one-time SMS code. No full name needed. No email. No credit card. You\'re anonymous by default.' },
             { n: '2', title: 'Browse peer listeners', body: 'Browse real humans verified by LeanOn — not bots, not scripts. Filter by topic (loneliness, anxiety, grief, burnout), language, and availability. Read their personal stories to find someone who resonates.' },
-            { n: '3', title: 'Start with a free 5-min session', body: 'Your first session is completely free. No wallet top-up required. Connect via text or voice chat and see if this listener is right for you.' },
+            { n: '3', title: 'Start with a 5-min session', body: 'A short trial session is available for new users. No wallet top-up required. Connect via text or voice chat and see if this listener is right for you.' },
             { n: '4', title: 'Continue if it helps', body: 'If the session feels meaningful, book a 15, 30, or 45-minute follow-up. Pricing starts at ₹160 for 15 minutes — less than a cup of coffee at most cafés.' },
           ].map((s, i) => (
             <div key={i} className="step">
@@ -79,8 +79,8 @@ export default function HowItWorksPage() {
         </div>
 
         <div className="cta">
-          <h2>Start your free session</h2>
-          <p>No card, no commitment. Your first 5 minutes are free.</p>
+          <h2>Start your session</h2>
+          <p>No card, no commitment. Available 24/7.</p>
           <a href="/browse"><button className="btn">Browse listeners →</button></a>
         </div>
       </div>

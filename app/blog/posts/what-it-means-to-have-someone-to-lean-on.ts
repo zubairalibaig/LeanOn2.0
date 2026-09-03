@@ -72,7 +72,7 @@ export const post = {
 
 <p>Our listeners are verified peers. Not therapists, and not AI. They are real people who have been through their own difficult stretches — loneliness, burnout, family pressure, heartbreak, starting over somewhere they knew nobody — and who have trained to listen with empathy rather than racing toward a solution. You can <a href="/browse">browse peer listeners</a> and choose someone whose experience resembles your own. That matching is the point of <strong>peer support in India</strong>: not an expert explaining your life back to you, but a person who has stood where you are standing.</p>
 
-<p>It is anonymous, and first names only. Nobody in your life ever finds out. Nothing you say reaches your family, your workplace or your friend circle, because your listener is connected to none of them. Sessions run 24/7, since this feeling rarely keeps office hours. And your first 5 minutes are free — enough to find out whether being heard feels the way you hoped.</p>
+<p>It is anonymous, and first names only. Nobody in your life ever finds out. Nothing you say reaches your family, your workplace or your friend circle, because your listener is connected to none of them. Sessions run 24/7, since this feeling rarely keeps office hours. A short trial session is available for new users — enough to find out whether being heard feels the way you hoped.</p>
 
 <p>If you would like to read a little more first, there is a page on finding <a href="/someone-to-lean-on">someone to lean on</a>, one on <a href="/support/loneliness">loneliness support</a>, and the <a href="/faq">FAQ</a> covers the practical questions about privacy, cost and how a session actually works.</p>
 

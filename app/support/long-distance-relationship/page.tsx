@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Long-Distance Relationship Loneliness — Talk It Through | LeanOn',
-  description: 'Missing your partner across cities or time zones? Talk to a peer listener anonymously. First 5 minutes free. Empathetic support for LDR loneliness, 24/7.',
+  description: 'Missing your partner across cities or time zones? Talk to a peer listener anonymously. Available 24/7. Empathetic support for LDR loneliness, 24/7.',
   alternates: { canonical: 'https://www.leanon.app/support/long-distance-relationship', languages: { 'en-IN': 'https://www.leanon.app/support/long-distance-relationship' } },
   keywords: 'long distance relationship loneliness India, LDR loneliness, missing partner abroad, long distance relationship stress, talk to someone long distance relationship',
   openGraph: {
     title: 'Long-Distance Relationship Loneliness — Talk It Through | LeanOn',
-    description: 'Missing your partner across cities or time zones? Talk to a peer listener anonymously. First 5 minutes free. Empathetic support for LDR loneliness, 24/7.',
+    description: 'Missing your partner across cities or time zones? Talk to a peer listener anonymously. Available 24/7. Empathetic support for LDR loneliness, 24/7.',
     url: 'https://www.leanon.app/support/long-distance-relationship',
     siteName: 'LeanOn',
     type: 'article',
@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'How much does LeanOn peer support cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn starts at ₹160 for a 15-minute session, with the first 5 minutes free so you can find the right listener before committing. It is significantly more affordable than therapy and available any time — including odd hours when you are waiting on a call from a partner in a different time zone.',
+        text: 'LeanOn starts at ₹160 for a 15-minute session, with a trial session available for new users. It is significantly more affordable than therapy and available any time — including odd hours when you are waiting on a call from a partner in a different time zone.',
       },
     },
   ],
@@ -226,10 +226,10 @@ export default function LongDistanceRelationshipSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>You Don&apos;t Have to Carry the Distance Alone</h2>
-          <p>Talk to a peer listener who has been through their own long-distance relationship and offers empathetic, judgment-free support. First 5 minutes free — no appointments, no waitlists.</p>
+          <p>Talk to a peer listener who has been through their own long-distance relationship and offers empathetic, judgment-free support. Available 24/7, no appointments, no waitlists.</p>
           <div className="cta-btns">
             <a href="/browse?topic=relationships"><button className="btn-primary">Browse Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 
@@ -254,7 +254,7 @@ export default function LongDistanceRelationshipSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does LeanOn peer support cost?</div>
-            <div className="faq-a">LeanOn starts at ₹160 for a 15-minute session, with the first 5 minutes free so you can find the right listener before committing. It is significantly more affordable than therapy and available any time — including odd hours when you are waiting on a call from a partner in a different time zone.</div>
+            <div className="faq-a">LeanOn starts at ₹160 for a 15-minute session, with a trial session available for new users. It is significantly more affordable than therapy and available any time — including odd hours when you are waiting on a call from a partner in a different time zone.</div>
           </div>
         </div>
 

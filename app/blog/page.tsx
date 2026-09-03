@@ -117,10 +117,10 @@ export default function BlogIndexPage() {
 
         <div className="cta-card">
           <h2>Ready to Talk to Someone?</h2>
-          <p>Reading helps — but sometimes you need to actually talk. Browse peer listeners who understand what you are going through. First 5 minutes free.</p>
+          <p>Reading helps — but sometimes you need to actually talk. Browse peer listeners who understand what you are going through. Available 24/7.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse All Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
       </div>

@@ -34,7 +34,7 @@ export default function FeelingLonelyInIndiaPage() {
       <style>{S}</style>
       <nav>
         <a href="/"><img src="/logo.png" alt="LeanOn" style={{height:48}} /></a>
-        <a href="/auth"><button className="btn" style={{fontSize:13,padding:'8px 20px'}}>Try free</button></a>
+        <a href="/auth"><button className="btn" style={{fontSize:13,padding:'8px 20px'}}>Try now</button></a>
       </nav>
       <div className="page">
         <a href="/" style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:14,fontWeight:700,color:'var(--gray)',marginBottom:28}}>← Back</a>
@@ -64,13 +64,13 @@ export default function FeelingLonelyInIndiaPage() {
 
         <div className="card">
           <h2>Taking the first step</h2>
-          <p>The hardest part of loneliness is that it makes reaching out feel impossible. The voice in your head says &ldquo;nobody wants to hear this&rdquo; or &ldquo;I&apos;ll just be a burden.&rdquo; LeanOn was designed for this exact psychological barrier — which is why we made the first session free, instant, and anonymous.</p>
+          <p>The hardest part of loneliness is that it makes reaching out feel impossible. The voice in your head says &ldquo;nobody wants to hear this&rdquo; or &ldquo;I&apos;ll just be a burden.&rdquo; LeanOn was designed for this exact psychological barrier — which is why we made the first session instant and anonymous.</p>
           <p>You don&apos;t have to explain yourself. You don&apos;t have to have a reason. You can simply start a session and say &ldquo;I&apos;ve been feeling really lonely lately.&rdquo; That&apos;s enough.</p>
         </div>
 
         <div className="cta">
           <h2>Someone is here for you</h2>
-          <p>Your first 5 minutes are free. No name, no judgement.</p>
+          <p>Available 24/7, no appointment needed. No name, no judgement.</p>
           <a href="/browse"><button className="btn">Talk to someone now →</button></a>
         </div>
       </div>

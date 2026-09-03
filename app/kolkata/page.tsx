@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support in Kolkata — Peer Listeners | LeanOn',
-  description: 'Connect with peer listeners in Kolkata, India. Free first session. Talk anonymously in Bengali, Hindi, or English about loneliness, family pressure, and more on LeanOn.',
+  description: 'Connect with peer listeners in Kolkata, India. Available 24/7. Talk anonymously in Bengali, Hindi, or English about loneliness, family pressure, and more on LeanOn.',
   alternates: { canonical: 'https://www.leanon.app/kolkata', languages: { 'en-IN': 'https://www.leanon.app/kolkata' } },
   keywords: 'peer support Kolkata, emotional support Kolkata, loneliness Kolkata, talk to someone Kolkata, Bengali emotional support, family pressure Kolkata, leanon Kolkata',
   openGraph: {
     title: 'Emotional Support in Kolkata — Peer Listeners | LeanOn',
-    description: 'Connect with peer listeners in Kolkata, India. Free first session. Talk anonymously in Bengali, Hindi, or English on LeanOn.',
+    description: 'Connect with peer listeners in Kolkata, India. Available 24/7. Talk anonymously in Bengali, Hindi, or English on LeanOn.',
     url: 'https://www.leanon.app/kolkata',
     siteName: 'LeanOn',
     type: 'article',
@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'How much does a session cost in Kolkata?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'The same as everywhere in India: new users get up to 3 free 5-minute sessions, and paid sessions cost ₹8–25 per minute (set by each listener) plus a flat ₹10 platform fee — a fraction of what therapy costs.',
+        text: 'The same as everywhere in India: new users get 3 introductory 5-minute sessions, and paid sessions cost ₹8–25 per minute (set by each listener) plus a flat ₹10 platform fee — a fraction of what therapy costs.',
       },
     },
   ],
@@ -175,10 +175,10 @@ export default function KolkataPage() {
 
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Gets Kolkata?</h2>
-          <p>Browse peer listeners who understand the stay-or-leave dilemma, family expectations, and the loneliness no adda quite reaches. Sessions in Bengali, Hindi, or English. First 5 minutes free.</p>
+          <p>Browse peer listeners who understand the stay-or-leave dilemma, family expectations, and the loneliness no adda quite reaches. Sessions in Bengali, Hindi, or English. Available 24/7.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 
@@ -198,7 +198,7 @@ export default function KolkataPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does a session cost in Kolkata?</div>
-            <div className="faq-a">Same as everywhere in India: up to 3 free 5-minute sessions for new users, then ₹8–25 per minute (set by each listener) plus a flat ₹10 platform fee — a fraction of what therapy costs.</div>
+            <div className="faq-a">Same as everywhere in India: 3 introductory 5-minute sessions for new users, then ₹8–25 per minute (set by each listener) plus a flat ₹10 platform fee — a fraction of what therapy costs.</div>
           </div>
         </div>
 

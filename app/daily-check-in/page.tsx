@@ -10,7 +10,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Daily Check-In — How Are You Feeling Today? | LeanOn',
-  description: 'Name how you feel today and read something honest about it — lonely, anxious, overwhelmed, numb, burnt out. Then talk to someone who has felt it too. First 5 minutes free.',
+  description: 'Name how you feel today and read something honest about it — lonely, anxious, overwhelmed, numb, burnt out. Then talk to someone who has felt it too. Available 24/7.',
   keywords: 'daily check in mental health, how am I feeling today, mood check in India, emotional check in, name your feeling',
   alternates: {
     canonical: 'https://www.leanon.app/daily-check-in',
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Daily Check-In — How Are You Feeling Today? | LeanOn',
-    description: 'Name how you feel today, understand it, and talk to someone who has felt the same. First 5 minutes free.',
+    description: 'Name how you feel today, understand it, and talk to someone who has felt the same. Available 24/7.',
     url: 'https://www.leanon.app/daily-check-in',
     siteName: 'LeanOn',
     type: 'website',
@@ -129,7 +129,7 @@ export default function DailyCheckInPage() {
 
         <div className="cta-card">
           <h2>Rather just talk to someone?</h2>
-          <p>Skip the reading. Browse peer listeners who have lived what you are feeling. First 5 minutes free.</p>
+          <p>Skip the reading. Browse peer listeners who have lived what you are feeling. Available 24/7.</p>
           <a href="/browse"><button className="btn-primary">Browse listeners →</button></a>
         </div>
       </div>

@@ -144,7 +144,7 @@ export default function FeelingPage({ params }: { params: { mood: string } }) {
 
         <div className="cta-card">
           <h2>You don&apos;t have to sit with this alone</h2>
-          <p>Talk to a verified peer listener who has felt this too. First 5 minutes free — no card needed.</p>
+          <p>Talk to a verified peer listener who has felt this too. Available 24/7, no appointment needed.</p>
           <a href="/browse"><button className="btn-primary">Find someone who gets it →</button></a>
         </div>
 

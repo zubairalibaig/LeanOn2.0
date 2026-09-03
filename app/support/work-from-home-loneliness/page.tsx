@@ -4,11 +4,11 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Peer Support for Work-From-Home Loneliness in India | LeanOn',
-  description: 'Feeling isolated working from home? Talk to a peer listener who understands WFH loneliness. Free first session, empathetic support, 24/7 in India.',
+  description: 'Feeling isolated working from home? Talk to a peer listener who understands WFH loneliness. Empathetic support, 24/7 in India.',
   alternates: { canonical: 'https://www.leanon.app/support/work-from-home-loneliness', languages: { 'en-IN': 'https://www.leanon.app/support/work-from-home-loneliness' } },
   openGraph: {
     title: 'Peer Support for Work-From-Home Loneliness in India | LeanOn',
-    description: 'Feeling isolated working from home? Talk to a peer listener who understands WFH loneliness. Free first session, empathetic support, 24/7 in India.',
+    description: 'Feeling isolated working from home? Talk to a peer listener who understands WFH loneliness. Empathetic support, 24/7 in India.',
     url: 'https://www.leanon.app/support/work-from-home-loneliness',
     siteName: 'LeanOn',
     type: 'article',
@@ -56,7 +56,7 @@ const faqSchema = {
       name: 'How much does LeanOn peer support cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn starts at ₹160 for a 15-minute session, with the first 5 minutes free so you can find the right listener before committing. It is significantly more affordable than therapy and available any time — including right after a long, silent day of back-to-back video calls.',
+        text: 'LeanOn starts at ₹160 for a 15-minute session, with a trial session available for new users. It is significantly more affordable than therapy and available any time — including right after a long, silent day of back-to-back video calls.',
       },
     },
   ],
@@ -222,10 +222,10 @@ export default function WorkFromHomeLonelinessSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Feel Connected Again?</h2>
-          <p>Talk to a peer listener who truly understands work-from-home isolation. First 5 minutes free — no appointments, no waitlists.</p>
+          <p>Talk to a peer listener who truly understands work-from-home isolation. Available 24/7, no appointments, no waitlists.</p>
           <div className="cta-btns">
             <a href="/browse?topic=work-from-home-loneliness"><button className="btn-primary">Browse WFH Loneliness Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 
@@ -250,7 +250,7 @@ export default function WorkFromHomeLonelinessSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does LeanOn peer support cost?</div>
-            <div className="faq-a">LeanOn starts at ₹160 for a 15-minute session, with the first 5 minutes free. It is significantly more affordable than therapy and available any time — including right after a long, silent day of back-to-back video calls.</div>
+            <div className="faq-a">LeanOn starts at ₹160 for a 15-minute session, with a short trial session available for new users. It is significantly more affordable than therapy and available any time — including right after a long, silent day of back-to-back video calls.</div>
           </div>
         </div>
 

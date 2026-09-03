@@ -64,8 +64,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? `${name} — Verified Peer Listener on LeanOn India`
     : `${name} — Peer Listener on LeanOn India`
   const description = data.bio
-    ? `Talk to ${name} on LeanOn — ${data.bio.slice(0, 130)}… First 5 minutes free.`
-    : `Talk to ${name}, a verified peer listener on LeanOn India. ${tags ? `Specialises in: ${tags}.` : ''} Affordable peer support. First 5 minutes free.`
+    ? `Talk to ${name} on LeanOn — ${data.bio.slice(0, 130)}… Available 24/7.`
+    : `Talk to ${name}, a verified peer listener on LeanOn India. ${tags ? `Specialises in: ${tags}.` : ''} Affordable peer support. Available 24/7.`
 
   return {
     title,

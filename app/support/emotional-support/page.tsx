@@ -32,7 +32,7 @@ const faqSchema = {
       name: 'How does online emotional support work on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'You browse peer listeners, pick someone whose lived experience resonates with yours, and start a session via text or voice. The listener is a real person who has been through similar challenges and is trained to offer empathetic, non-judgmental support. Sessions start instantly with no booking required, and the first 5 minutes are free.',
+        text: 'You browse peer listeners, pick someone whose lived experience resonates with yours, and start a session via text or voice. The listener is a real person who has been through similar challenges and is trained to offer empathetic, non-judgmental support. Sessions start instantly with no booking required, and a short trial session is available for new users.',
       },
     },
     {
@@ -214,13 +214,13 @@ export default function EmotionalSupportPage() {
         {/* How to Start */}
         <div className="section">
           <h2>How to Start — It Takes Less Than a Minute</h2>
-          <p>Sign up with your mobile number. Browse peer listeners by topic, experience, and availability. Pick someone whose story and background resonates with what you are going through. Start your first session — the first 5 minutes are free, no payment required upfront.</p>
+          <p>Sign up with your mobile number. Browse peer listeners by topic, experience, and availability. Pick someone whose story and background resonates with what you are going through. Start your first session — no payment required upfront for new users.</p>
 
           <h3>Choose Your Format</h3>
           <p>Prefer to type? Use text chat. Want to hear a voice? Switch to audio. You are in complete control of how you communicate and how much you share. There is no pressure to go deeper than you want to, and no one will push you toward anything.</p>
 
           <h3>No Commitment Required</h3>
-          <p>If the first listener does not feel right, you can try another. LeanOn&apos;s first 5 minutes free policy exists specifically so you can find the right match before you commit to a session. Peer support is only useful when it feels right — and finding the right listener is part of the process.</p>
+          <p>If the first listener does not feel right, you can try another. A short trial session for new users exists specifically so you can find the right match before you commit to a longer session. Peer support is only useful when it feels right — and finding the right listener is part of the process.</p>
         </div>
 
         {/* Listener cards */}
@@ -257,8 +257,8 @@ export default function EmotionalSupportPage() {
 
         {/* CTA */}
         <div className="cta-card">
-          <h2>Start Your Free Session Now</h2>
-          <p>Find someone who understands. First 5 minutes free — no credit card, no commitment.</p>
+          <h2>Start a Session Now</h2>
+          <p>Find someone who understands. Available 24/7, no appointment needed.</p>
           <div className="cta-btns">
             <a href="/auth"><button className="btn-primary">Get Emotional Support</button></a>
             <a href="/browse"><button className="btn-secondary">Browse Listeners First</button></a>
@@ -274,7 +274,7 @@ export default function EmotionalSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How does online emotional support work on LeanOn?</div>
-            <div className="faq-a">You browse peer listeners, pick someone whose lived experience resonates with yours, and start a session via text or voice. The listener is a real person trained in empathetic support. Sessions start instantly with no booking required, and the first 5 minutes are free.</div>
+            <div className="faq-a">You browse peer listeners, pick someone whose lived experience resonates with yours, and start a session via text or voice. The listener is a real person trained in empathetic support. Sessions start instantly with no booking required, and a short trial session is available for new users.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is online emotional support as effective as in-person support?</div>

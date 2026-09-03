@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support in Delhi — Peer Listeners | LeanOn',
-  description: 'Connect with peer listeners in Delhi, India. Free first session. Talk anonymously about anxiety, loneliness, stress, and more on LeanOn.',
+  description: 'Connect with peer listeners in Delhi, India. Available 24/7. Talk anonymously about anxiety, loneliness, stress, and more on LeanOn.',
   alternates: { canonical: 'https://www.leanon.app/delhi', languages: { 'en-IN': 'https://www.leanon.app/delhi' } },
   keywords: 'peer support Delhi, emotional support Delhi, loneliness Delhi, career expectations Delhi, family pressure Delhi, talk to someone Delhi, leanon Delhi',
   openGraph: {
     title: 'Emotional Support in Delhi — Peer Listeners | LeanOn',
-    description: 'Connect with peer listeners in Delhi, India. Free first session. Talk anonymously about anxiety, loneliness, stress, and more on LeanOn.',
+    description: 'Connect with peer listeners in Delhi, India. Available 24/7. Talk anonymously about anxiety, loneliness, stress, and more on LeanOn.',
     url: 'https://www.leanon.app/delhi',
     siteName: 'LeanOn',
     type: 'article',
@@ -248,10 +248,10 @@ export default function DelhiPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Gets Delhi?</h2>
-          <p>Browse peer listeners who understand the capital's pressures — career expectations, family obligations, relationship dynamics. First 5 minutes free, completely private.</p>
+          <p>Browse peer listeners who understand the capital's pressures — career expectations, family obligations, relationship dynamics. Available 24/7, completely private.</p>
           <div className="cta-btns">
             <a href="/browse?city=delhi"><button className="btn-primary">Browse Delhi Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 

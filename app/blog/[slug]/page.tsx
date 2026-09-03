@@ -211,10 +211,10 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
 
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Gets It?</h2>
-          <p>Reading is a start — but sometimes you need to actually talk. Browse affordable peer listeners across India who understand what you are going through. First 5 minutes free.</p>
+          <p>Reading is a start — but sometimes you need to actually talk. Browse affordable peer listeners across India who understand what you are going through. Available 24/7.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Peer Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
       </div>

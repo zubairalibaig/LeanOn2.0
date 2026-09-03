@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Career Confusion Support India | Job Change Layoff Burnout Help | LeanOn',
-  description: 'Facing a layoff, career switch, or mid-career crisis in India? Talk to peer listeners who have navigated career confusion and found clarity. First 5 minutes free.',
+  description: 'Facing a layoff, career switch, or mid-career crisis in India? Talk to peer listeners who have navigated career confusion and found clarity. Available 24/7.',
   alternates: { canonical: 'https://www.leanon.app/support/career-confusion' },
   openGraph: {
     title: 'Career Confusion Support — LeanOn',
@@ -229,10 +229,10 @@ export default function CareerConfusionSupportPage() {
 
         <div className="cta-card">
           <h2>You Are Allowed to Want Something Different</h2>
-          <p>Talk to someone who has been through career confusion and found their way. First 5 minutes free — no judgment, no scripts.</p>
+          <p>Talk to someone who has been through career confusion and found their way. Available 24/7, no judgment, no scripts.</p>
           <div className="cta-btns">
             <a href="/browse?topic=career-confusion"><button className="btn-primary">Find a Career Listener</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 

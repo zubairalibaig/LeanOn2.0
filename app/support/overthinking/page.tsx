@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'How to Stop Overthinking — Talk to Someone Who Gets It | LeanOn',
-  description: 'Overthinking at night? Racing thoughts that will not switch off? Talk anonymously to a peer listener in India. First 5 minutes free, available 24/7.',
+  description: 'Overthinking at night? Racing thoughts that will not switch off? Talk anonymously to a peer listener in India. Available 24/7.',
   keywords: 'how to stop overthinking, overthinking at night, racing thoughts India, anxiety overthinking, talk to someone about overthinking, rumination help, overthinking help India, peer support overthinking',
   alternates: { canonical: 'https://www.leanon.app/support/overthinking', languages: { 'en-IN': 'https://www.leanon.app/support/overthinking' } },
   openGraph: {
     title: 'How to Stop Overthinking — Talk to Someone Who Gets It | LeanOn',
-    description: 'Overthinking at night? Racing thoughts that will not switch off? Talk anonymously to a peer listener in India. First 5 minutes free, available 24/7.',
+    description: 'Overthinking at night? Racing thoughts that will not switch off? Talk anonymously to a peer listener in India. Available 24/7.',
     url: 'https://www.leanon.app/support/overthinking',
     siteName: 'LeanOn',
     type: 'article',
@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'How much does LeanOn peer support cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn starts at ₹160 for a 15-minute session, with the first 5 minutes free so you can find the right listener before committing. It is significantly more affordable than therapy and available any time — including the late nights when overthinking tends to peak.',
+        text: 'LeanOn starts at ₹160 for a 15-minute session, with a trial session available for new users. It is significantly more affordable than therapy and available any time — including the late nights when overthinking tends to peak.',
       },
     },
   ],
@@ -226,10 +226,10 @@ export default function OverthinkingSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Get Out of Your Own Head?</h2>
-          <p>Talk to a peer listener who knows the loop from the inside. First 5 minutes free — no appointments, no waitlists, any hour of the night.</p>
+          <p>Talk to a peer listener who knows the loop from the inside. Available 24/7, no appointments, no waitlists.</p>
           <div className="cta-btns">
             <a href="/browse?topic=overthinking"><button className="btn-primary">Browse Overthinking Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 
@@ -254,7 +254,7 @@ export default function OverthinkingSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does LeanOn peer support cost?</div>
-            <div className="faq-a">LeanOn starts at ₹160 for a 15-minute session, with the first 5 minutes free so you can find the right listener before committing. It is significantly more affordable than therapy and available any time — including the late nights when overthinking tends to peak.</div>
+            <div className="faq-a">LeanOn starts at ₹160 for a 15-minute session, with a trial session available for new users. It is significantly more affordable than therapy and available any time — including the late nights when overthinking tends to peak.</div>
           </div>
         </div>
 

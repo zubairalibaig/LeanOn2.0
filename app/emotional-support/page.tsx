@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support Online India — Complete Guide | LeanOn',
-  description: 'The complete guide to emotional support in India. Understand your options, find the right support for loneliness, anxiety, burnout, grief, relationships and more. LeanOn peer support — first 5 minutes free.',
+  description: 'The complete guide to emotional support in India. Understand your options, find the right support for loneliness, anxiety, burnout, grief, relationships and more. LeanOn peer support — available 24/7.',
   alternates: { canonical: 'https://www.leanon.app/emotional-support' },
   keywords: [
     'emotional support India', 'online emotional support India', 'emotional support online',
@@ -63,7 +63,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'How do I get emotional support online in India?',
-      acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is India\'s leading peer emotional support platform. Sign up with your phone number (OTP, 30 seconds), browse verified peer listeners, and start a session instantly. Your first 5 minutes are free. Sessions from ₹160 for 15 minutes.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is India\'s leading peer emotional support platform. Sign up with your phone number (OTP, 30 seconds), browse verified peer listeners, and start a session instantly. Available 24/7. Sessions from ₹160 for 15 minutes.' },
     },
     {
       '@type': 'Question',
@@ -143,7 +143,7 @@ export default function EmotionalSupportHubPage() {
 
       <nav className="nav">
         <a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a>
-        <a href="/auth"><button className="btn-nav">Get started free</button></a>
+        <a href="/auth"><button className="btn-nav">Get started</button></a>
       </nav>
 
       <div className="page">
@@ -234,10 +234,10 @@ export default function EmotionalSupportHubPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Find Your Emotional Support?</h2>
-          <p>Browse peer listeners across India. Someone who has been through what you&apos;re facing is available right now. First 5 minutes free.</p>
+          <p>Browse peer listeners across India. Someone who has been through what you&apos;re facing is available right now. Available 24/7.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Find a peer listener now</button></a>
-            <a href="/auth"><button className="btn-secondary">Start free — no card needed</button></a>
+            <a href="/auth"><button className="btn-secondary">Start now</button></a>
           </div>
         </div>
 
@@ -246,7 +246,7 @@ export default function EmotionalSupportHubPage() {
           <h2>Frequently Asked Questions</h2>
           {[
             { q:'What is emotional support?', a:'Emotional support means having someone listen, understand, and validate your feelings without judgment. Research shows it is one of the strongest predictors of mental wellbeing and recovery.' },
-            { q:'How do I get emotional support online in India?', a:'Sign up on LeanOn with your phone number (OTP, 30 seconds), browse verified peer listeners, and start a session instantly. First 5 minutes free. Sessions from ₹160 for 15 minutes.' },
+            { q:'How do I get emotional support online in India?', a:'Sign up on LeanOn with your phone number (OTP, 30 seconds), browse verified peer listeners, and start a session instantly. Available 24/7. Sessions from ₹160 for 15 minutes.' },
             { q:'Is peer emotional support different from therapy?', a:'Yes. Therapy is clinical — licensed professionals for diagnosis and treatment. Peer support is human — people who have lived through the same challenges. Both valuable, but for different needs.' },
             { q:'What topics does LeanOn cover?', a:'Loneliness, anxiety, burnout, grief, breakups, relationship stress, career confusion, student stress, startup challenges, and general emotional support.' },
             { q:'Is online emotional support anonymous?', a:'On LeanOn, you sign up with your phone and first name only. Full name never shared. Sessions private and confidential — ideal for joint families and privacy-sensitive situations.' },

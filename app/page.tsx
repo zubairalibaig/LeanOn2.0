@@ -1,14 +1,14 @@
 import type { Metadata } from 'next'
 export const metadata: Metadata = {
-  title: 'LeanOn — Free Peer Emotional Support India | Talk to Someone Now',
-  description: 'Talk to a trained peer listener in India, anonymously. First session is free. Available 24/7. Connect with empathetic listeners for anxiety, loneliness, grief, and more.',
+  title: 'LeanOn — Peer Emotional Support India | Talk to Someone Now',
+  description: 'Talk to a trained peer listener in India, anonymously. Available 24/7. Connect with empathetic listeners for anxiety, loneliness, grief, and more.',
   alternates: { canonical: 'https://www.leanon.app', languages: { 'en-IN': 'https://www.leanon.app' } },
   keywords: [
     'leanon', 'lean on', 'LeanOn', 'lean on app', 'leanon app India',
     'someone to lean on', 'peer support India', 'mental health India',
     'talk to someone India', 'emotional support India',
     'anonymous emotional support India', 'peer listener app India',
-    'talk to someone free India', 'emotional support chat India',
+'emotional support chat India',
     'anxiety help India', 'loneliness app India', 'burnout support', 'grief support India',
     'someone to talk to', 'mental health chat', 'online emotional support',
     'online listener India', 'peer support India',
@@ -83,8 +83,8 @@ const faqSchema = {
     { '@type': 'Question', name: 'What is LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is a peer support platform built on empathy — someone to lean on anytime you need it. You talk to real people in India who have lived through what you\'re facing: loneliness, burnout, anxiety, grief, relationships, and more. Every listener brings genuine empathy from lived experience, not a script. It is not therapy, but real human connection available 24/7.' } },
     { '@type': 'Question', name: 'What makes LeanOn listeners empathetic?', acceptedAnswer: { '@type': 'Answer', text: 'Every LeanOn listener has personally lived through what they support others with — loneliness, anxiety, burnout, grief, or relationship pain. That lived experience is what makes their empathy real rather than rehearsed. They are trained in active listening and empathetic communication, so you are heard without being judged, fixed, or rushed.' } },
     { '@type': 'Question', name: 'What does "lean on" mean in LeanOn?', acceptedAnswer: { '@type': 'Answer', text: '"Lean on" means having someone you can rely on emotionally — someone who supports you without judgment when you\'re going through something hard. LeanOn (the platform) gives everyone access to that kind of support through verified peer listeners who have lived experience.' } },
-    { '@type': 'Question', name: 'Is LeanOn free?', acceptedAnswer: { '@type': 'Answer', text: 'Each new user gets up to 3 free 5-minute sessions (one per listener) — no credit card needed, no wallet required. After that, sessions cost ₹8–25 per minute depending on the listener, billed in 15-minute slots.' } },
-    { '@type': 'Question', name: 'How much does a paid LeanOn session cost, and is it worth paying for?', acceptedAnswer: { '@type': 'Answer', text: 'A 15-minute paid session starts at ₹160 — a fraction of the ₹1,500–4,000 a single therapy session costs in India. For that you get uninterrupted time with a listener who has actually lived through what you are facing, available instantly at any hour with no appointment. Most people pay after their free trial because 5 minutes is only enough to start — real relief comes from a proper conversation, and continuing with the same listener who already understands your situation is worth far more than starting over.' } },
+    { '@type': 'Question', name: 'How does pricing work?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn charges a flat fee per session. 15-minute sessions start at ₹160. A short 5-minute trial session is available for new users.' } },
+    { '@type': 'Question', name: 'How much does a paid LeanOn session cost, and is it worth paying for?', acceptedAnswer: { '@type': 'Answer', text: 'A 15-minute paid session starts at ₹160 — a fraction of the ₹1,500–4,000 a single therapy session costs in India. For that you get uninterrupted time with a listener who has actually lived through what you are facing, available instantly at any hour with no appointment. Most people continue after their trial because 5 minutes is only enough to start — real relief comes from a proper conversation, and continuing with the same listener who already understands your situation is worth far more than starting over.' } },
     { '@type': 'Question', name: 'How is LeanOn different from therapy?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are real people with lived experience, not licensed therapists. They offer empathy and peer support, not clinical diagnosis or treatment. LeanOn is ideal when you need someone to lean on — not a diagnosis.' } },
     { '@type': 'Question', name: 'Is LeanOn related to the song "Lean On" by Major Lazer?', acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn (one word, at leanon.app) is an Indian peer emotional support platform where you talk to verified human listeners. It has no connection to the 2015 song "Lean On" by Major Lazer and DJ Snake. The name comes from the phrase "someone to lean on" — having a person you can rely on emotionally.' } },
     { '@type': 'Question', name: 'Is LeanOn confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. All sessions are private and confidential. LeanOn never shares your personal information or conversation content with anyone.' } },
@@ -103,7 +103,7 @@ const orgSchema = {
       alternateName: ['Lean On', 'leanon'],
       url: 'https://www.leanon.app',
       logo: { '@type': 'ImageObject', url: 'https://www.leanon.app/logo.png', width: 512, height: 512 },
-      description: "India's peer support platform. Talk to trained peer listeners anonymously. Free first session. Available 24/7.",
+      description: "India's peer support platform. Talk to trained peer listeners anonymously. Available 24/7, no appointment needed.",
       areaServed: { '@type': 'Country', name: 'India' },
     },
     {
@@ -311,10 +311,10 @@ export default function Home() {
         <h1>Someone to<br /><span className="o">lean on,</span><br />anytime.</h1>
         <p>Talk to a real peer listener in India who has been through what you&apos;re going through — loneliness, burnout, anxiety, grief, relationships. No appointments. No stigma. Available even at 2 AM.</p>
         <div className="hero-btns">
-          <a href="/auth" className="btn-primary">Start your free 5-min chat</a>
+          <a href="/auth" className="btn-primary">Start your 5-min chat</a>
           <a href="/browse" className="btn-outline">Browse peer listeners</a>
         </div>
-        <p className="hero-note">First session free · No credit card needed · Affordable from ₹160</p>
+        <p className="hero-note">No appointment needed · Anonymous · Affordable from ₹160</p>
       </section>
 
       {/* TOPICS */}
@@ -347,7 +347,7 @@ export default function Home() {
           <p className="ss">Built around what actually helps people feel better.</p>
           <div className="fl">
             {[
-              {i:'🔍',t:'Open listener directory',d:'Browse peer listeners by topic for free. Read their stories and ratings before you pay anything.'},
+              {i:'🔍',t:'Open listener directory',d:'Browse peer listeners by topic. Read their stories and ratings before you pay anything.'},
               {i:'⚡',t:'Instant, no-appointment access',d:'No booking. No waiting. Someone is available right now. Start a session in under 60 seconds.'},
               {i:'💳',t:'Pay-per-session flexibility',d:'No subscriptions. Recharge your wallet and use it whenever. Unused balance refunded anytime.'},
               {i:'💬',t:'Text or voice — your choice',d:'Type for privacy in a joint home. Talk for the warmth of a real voice. Always your call.'},
@@ -392,8 +392,8 @@ export default function Home() {
           <div className="sl">
             {[
               {t:'Sign up to LeanOn',d:'Just your phone number. OTP verified. 30 seconds.'},
-              {t:'Browse peer listeners',d:'Filter by topic. Read bios and ratings. Completely free.'},
-              {t:'Pick your session length',d:'Free 5-min trial, or choose 15 or 30 minutes.'},
+              {t:'Browse peer listeners',d:'Filter by topic. Read bios and ratings. Browse anonymously.'},
+              {t:'Pick your session length',d:'5-min trial, or choose 15 or 30 minutes.'},
               {t:'Recharge your wallet',d:'Top up ₹200, ₹500 or ₹1000. Refundable anytime.'},
               {t:'Start instantly',d:'Text chat or voice call — your session begins immediately.'},
               {t:'Get the support you need',d:'Rate your listener. Book again anytime. You are not alone.'},
@@ -417,7 +417,7 @@ export default function Home() {
             not to over-advertise it in marketing copy. */}
         <div className="pc">
           {[
-            {l:'Free trial',d:'5 minutes · Text only · No wallet needed · Up to 3 trials',p:'₹0',b:'Free to start',feat:false},
+            {l:'Trial session',d:'5 minutes · Text only · No wallet needed · Up to 3 trials',p:'₹0',b:'Trial',feat:false},
             {l:'Quick chat',d:'15 minutes · One-on-one · Text or voice',p:'₹160',b:'',feat:false},
             {l:'Deep dive',d:'30 minutes · One-on-one · Text or voice',p:'₹310',b:'Most popular',feat:true},
           ].map((item,i)=>(
@@ -480,8 +480,8 @@ export default function Home() {
           {[
             { q: 'What is LeanOn?', a: 'LeanOn is a peer support platform built on empathy — you talk to real people who have lived through what you\'re facing: loneliness, burnout, anxiety, grief, relationships, and more. It\'s not therapy, but real human connection available 24/7 across India.' },
             { q: 'What makes LeanOn listeners empathetic?', a: 'Every listener has personally lived through what they support others with. That lived experience is what makes their empathy real, not rehearsed — you\'re heard without being judged, fixed, or rushed.' },
-            { q: 'Is LeanOn free?', a: 'Each new user gets up to 3 free 5-minute sessions (one per listener) — no credit card needed, no wallet required. After that, sessions cost ₹8–25 per minute depending on the listener, billed in 15-minute slots.' },
-            { q: 'How much is a paid session, and is it worth it?', a: 'A 15-minute paid session starts at ₹160 — a fraction of the ₹1,500–4,000 a therapy session costs in India. Five free minutes is only enough to start; real relief comes from a proper conversation with someone who has lived what you are facing. Continuing with the same listener who already understands you is worth far more than starting over.' },
+            { q: 'How does pricing work?', a: 'LeanOn charges a flat fee per session. 15-minute sessions start at ₹160. A short 5-minute trial session is available for new users. After that, sessions cost ₹8–25 per minute depending on the listener, billed in 15-minute slots.' },
+            { q: 'How much is a paid session, and is it worth it?', a: 'A 15-minute paid session starts at ₹160 — a fraction of the ₹1,500–4,000 a therapy session costs in India. Five minutes is only enough to start; real relief comes from a proper conversation with someone who has lived what you are facing. Continuing with the same listener who already understands you is worth far more than starting over.' },
             { q: 'How is this different from therapy or counselling?', a: 'Listeners on LeanOn are real people with lived experience, not licensed therapists. They offer empathy and peer counselling, not clinical diagnosis. LeanOn is ideal when you need someone who truly gets it — not a diagnosis.' },
             { q: 'Is my conversation private?', a: 'Yes. All sessions are private and end-to-end. LeanOn never shares your personal details or conversation content.' },
             { q: 'Can I become a listener?', a: 'Yes. If you\'ve been through something difficult and want to support others going through the same thing, you can apply at leanon.app/become-listener. Listeners are verified before they can take sessions.' },
@@ -499,8 +499,8 @@ export default function Home() {
       <div className="inner">
         <div className="cta-c">
           <h2>You don&apos;t have to go through this alone.</h2>
-          <p>Someone is available right now. Start free — no card needed.</p>
-          <a href="/auth" className="btn-cta">Start free now →</a>
+          <p>Someone is available right now. No appointment needed.</p>
+          <a href="/auth" className="btn-cta">Start now →</a>
         </div>
       </div>
 

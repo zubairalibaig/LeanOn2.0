@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Breakup & Heartbreak Support in India | Talk to Someone Who Gets It | LeanOn',
-  description: 'Going through a breakup, divorce, or heartbreak? Connect with peer listeners who have been through the pain and rebuilt. First 5 minutes free.',
+  description: 'Going through a breakup, divorce, or heartbreak? Connect with peer listeners who have been through the pain and rebuilt. Available 24/7.',
   alternates: { canonical: 'https://www.leanon.app/support/breakup' },
   openGraph: {
     title: 'Breakup Support — LeanOn',
@@ -218,10 +218,10 @@ export default function BreakupSupportPage() {
 
         <div className="cta-card">
           <h2>You Don&apos;t Have to Get Through This Alone</h2>
-          <p>Connect with a peer listener who has been through heartbreak and found their way back. First 5 minutes free.</p>
+          <p>Connect with a peer listener who has been through heartbreak and found their way back. Available 24/7.</p>
           <div className="cta-btns">
             <a href="/browse?topic=breakup"><button className="btn-primary">Find a Breakup Listener</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 

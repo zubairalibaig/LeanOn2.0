@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'Just Want to Talk, Not a Prediction? Here\'s a Direct Option | LeanOn',
   description: 'If you find yourself calling an astrologer at night just to talk to someone, you\'re not alone. LeanOn connects you with a real person for real conversation.',
   alternates: { canonical: 'https://www.leanon.app/talk-to-someone-not-astrologer', languages: { 'en-IN': 'https://www.leanon.app/talk-to-someone-not-astrologer' } },
-  keywords: 'talk to someone instead of astrologer, astrology chat for loneliness, why do I call an astrologer just to talk, someone to talk to at night India, free astrology chat alternative',
+  keywords: 'talk to someone instead of astrologer, astrology chat for loneliness, why do I call an astrologer just to talk, someone to talk to at night India',
   openGraph: {
     title: 'Just Want to Talk, Not a Prediction? Here\'s a Direct Option | LeanOn',
     description: 'If you find yourself calling an astrologer at night just to talk to someone, you\'re not alone. LeanOn connects you with a real person for real conversation.',
@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'How much does it cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Your first 5 minutes with a listener are free. After that, sessions cost between ₹8 and ₹25 per minute depending on the listener, plus a flat ₹10 platform fee per paid session. A typical 15-minute session starts around ₹160.',
+        text: 'Sessions cost between ₹8 and ₹25 per minute depending on the listener, plus a flat ₹10 platform fee per paid session. A typical 15-minute session starts around ₹160. A short trial session is available for new users.',
       },
     },
   ],
@@ -189,10 +189,10 @@ export default function TalkToSomeoneNotAstrologerPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Talk to a Real Person?</h2>
-          <p>No birth chart needed. Just a first name and whatever's actually on your mind. First 5 minutes free, completely private.</p>
+          <p>No birth chart needed. Just a first name and whatever's actually on your mind. Available 24/7, completely private.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 
@@ -217,7 +217,7 @@ export default function TalkToSomeoneNotAstrologerPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does it cost?</div>
-            <div className="faq-a">Your first 5 minutes with a listener are free. After that, sessions cost between ₹8 and ₹25 per minute depending on the listener, plus a flat ₹10 platform fee per paid session. A typical 15-minute session starts around ₹160.</div>
+            <div className="faq-a">Sessions cost between ₹8 and ₹25 per minute depending on the listener, plus a flat ₹10 platform fee per paid session. A typical 15-minute session starts around ₹160. A short trial session is available for new users.</div>
           </div>
         </div>
 

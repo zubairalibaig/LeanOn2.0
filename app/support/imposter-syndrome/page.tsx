@@ -4,11 +4,11 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Peer Support for Imposter Syndrome in India | LeanOn',
-  description: 'Feel like a fraud despite your success? Talk to a peer listener who understands imposter syndrome. Free first session on LeanOn, available 24/7 across India.',
+  description: 'Feel like a fraud despite your success? Talk to a peer listener who understands imposter syndrome. Available 24/7 across India.',
   alternates: { canonical: 'https://www.leanon.app/support/imposter-syndrome', languages: { 'en-IN': 'https://www.leanon.app/support/imposter-syndrome' } },
   openGraph: {
     title: 'Peer Support for Imposter Syndrome in India | LeanOn',
-    description: 'Feel like a fraud despite your success? Talk to a peer listener who understands imposter syndrome. Free first session on LeanOn, available 24/7 across India.',
+    description: 'Feel like a fraud despite your success? Talk to a peer listener who understands imposter syndrome. Available 24/7 across India.',
     url: 'https://www.leanon.app/support/imposter-syndrome',
     siteName: 'LeanOn',
     type: 'article',
@@ -56,7 +56,7 @@ const faqSchema = {
       name: 'How much does LeanOn peer support cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn starts at ₹160 for a 15-minute session, with the first 5 minutes free so you can find the right listener before committing. It is significantly more affordable than therapy and available any time — including the night before a big presentation or interview when self-doubt tends to peak.',
+        text: 'LeanOn starts at ₹160 for a 15-minute session, with a trial session available for new users. It is significantly more affordable than therapy and available any time — including the night before a big presentation or interview when self-doubt tends to peak.',
       },
     },
   ],
@@ -225,10 +225,10 @@ export default function ImposterSyndromeSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Quiet the Inner Critic?</h2>
-          <p>Talk to a peer listener who truly understands imposter syndrome. First 5 minutes free — no appointments, no waitlists.</p>
+          <p>Talk to a peer listener who truly understands imposter syndrome. Available 24/7, no appointments, no waitlists.</p>
           <div className="cta-btns">
             <a href="/browse?topic=imposter-syndrome"><button className="btn-primary">Browse Imposter Syndrome Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 
@@ -253,7 +253,7 @@ export default function ImposterSyndromeSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does LeanOn peer support cost?</div>
-            <div className="faq-a">LeanOn starts at ₹160 for a 15-minute session, with the first 5 minutes free. It is significantly more affordable than therapy and available any time — including the night before a big presentation or interview.</div>
+            <div className="faq-a">LeanOn starts at ₹160 for a 15-minute session, with a short trial session available for new users. It is significantly more affordable than therapy and available any time — including the night before a big presentation or interview.</div>
           </div>
         </div>
 

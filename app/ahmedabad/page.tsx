@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support in Ahmedabad — Peer Listeners | LeanOn',
-  description: 'Connect with peer listeners in Ahmedabad, India. Free first session. Talk anonymously about anxiety, loneliness, stress, and more on LeanOn.',
+  description: 'Connect with peer listeners in Ahmedabad, India. Available 24/7. Talk anonymously about anxiety, loneliness, stress, and more on LeanOn.',
   alternates: { canonical: 'https://www.leanon.app/ahmedabad', languages: { 'en-IN': 'https://www.leanon.app/ahmedabad' } },
   keywords: 'peer support Ahmedabad, emotional support Ahmedabad, loneliness Ahmedabad, business family pressure Ahmedabad, talk to someone Ahmedabad, leanon Ahmedabad',
   openGraph: {
     title: 'Emotional Support in Ahmedabad — Peer Listeners | LeanOn',
-    description: 'Connect with peer listeners in Ahmedabad, India. Free first session. Talk anonymously about anxiety, loneliness, stress, and more on LeanOn.',
+    description: 'Connect with peer listeners in Ahmedabad, India. Available 24/7. Talk anonymously about anxiety, loneliness, stress, and more on LeanOn.',
     url: 'https://www.leanon.app/ahmedabad',
     siteName: 'LeanOn',
     type: 'article',
@@ -248,10 +248,10 @@ export default function AhmedabadPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Gets Ahmedabad?</h2>
-          <p>Browse peer listeners who understand the city's business pressures — family legacy, financial expectations, community visibility. First 5 minutes free, completely private.</p>
+          <p>Browse peer listeners who understand the city's business pressures — family legacy, financial expectations, community visibility. Available 24/7, completely private.</p>
           <div className="cta-btns">
             <a href="/browse?city=ahmedabad"><button className="btn-primary">Browse Ahmedabad Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 

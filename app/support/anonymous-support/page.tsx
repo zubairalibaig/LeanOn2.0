@@ -4,11 +4,11 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Anonymous Emotional Support India | LeanOn Peer Listeners',
-  description: 'Get anonymous emotional support from trained peer listeners. No registration required for your first free session on LeanOn.',
+  description: 'Get anonymous emotional support from trained peer listeners. Available 24/7, no appointment needed.',
   alternates: { canonical: 'https://www.leanon.app/support/anonymous-support', languages: { 'en-IN': 'https://www.leanon.app/support/anonymous-support' } },
   openGraph: {
     title: 'Anonymous Emotional Support India | LeanOn Peer Listeners',
-    description: 'Get anonymous emotional support from trained peer listeners. No registration required for your first free session on LeanOn.',
+    description: 'Get anonymous emotional support from trained peer listeners. Available 24/7, no appointment needed.',
     url: 'https://www.leanon.app/support/anonymous-support',
     siteName: 'LeanOn',
     type: 'article',
@@ -267,7 +267,7 @@ export default function AnonymousSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Talk Anonymously — Your Identity Stays Yours</h2>
-          <p>First name only. No judgment. No lasting record. First 5 minutes completely free.</p>
+          <p>First name only. No judgment. No lasting record. Available 24/7.</p>
           <div className="cta-btns">
             <a href="/auth"><button className="btn-primary">Start Anonymously</button></a>
             <a href="/browse"><button className="btn-secondary">Browse Listeners First</button></a>

@@ -36,7 +36,7 @@ export default function SomeoneTalkToAtNightPage() {
       <style>{S}</style>
       <nav>
         <a href="/"><img src="/logo.png" alt="LeanOn" style={{height:48}} /></a>
-        <a href="/auth"><button className="btn" style={{fontSize:13,padding:'8px 20px'}}>Try free</button></a>
+        <a href="/auth"><button className="btn" style={{fontSize:13,padding:'8px 20px'}}>Try now</button></a>
       </nav>
       <div className="page">
         <a href="/" style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:14,fontWeight:700,color:'var(--gray)',marginBottom:28}}>← Back</a>
@@ -56,7 +56,7 @@ export default function SomeoneTalkToAtNightPage() {
         <div className="card">
           <h2>Real people available right now</h2>
           <p>LeanOn has peer listeners available across all time zones and working through the night shift. Our listeners are real people — many of them are night owls themselves, or have been through dark nights of their own. They understand what it feels like to be alone with heavy thoughts.</p>
-          <p>You can text (so no one hears) or use voice if you need to hear a calm voice. Start a free 5-minute session now — no top-up, no scheduling, no waiting room.</p>
+          <p>You can text (so no one hears) or use voice if you need to hear a calm voice. Start a 5-minute session now — no top-up, no scheduling, no waiting room.</p>
         </div>
 
         <div className="card">
@@ -72,7 +72,7 @@ export default function SomeoneTalkToAtNightPage() {
 
         <div className="cta">
           <h2>Someone is here right now</h2>
-          <p>Free first session. No appointment, no judgement.</p>
+          <p>Available 24/7, no appointment needed.</p>
           <a href="/browse"><button className="btn">Find a listener →</button></a>
         </div>
       </div>

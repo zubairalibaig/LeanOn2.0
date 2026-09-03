@@ -38,7 +38,7 @@ export default function AlternativesToTherapyPage() {
       <style>{S}</style>
       <nav>
         <a href="/"><img src="/logo.png" alt="LeanOn" style={{height:48}} /></a>
-        <a href="/auth"><button className="btn" style={{fontSize:13,padding:'8px 20px'}}>Try free</button></a>
+        <a href="/auth"><button className="btn" style={{fontSize:13,padding:'8px 20px'}}>Try now</button></a>
       </nav>
       <div className="page">
         <a href="/" style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:14,fontWeight:700,color:'var(--gray)',marginBottom:28}}>← Back</a>
@@ -55,7 +55,7 @@ export default function AlternativesToTherapyPage() {
             <div>
               <div className="alt-title">LeanOn peer support ★ Best for emotional connection</div>
               <div className="alt-desc">Real humans with lived experience. Instant access, 24/7, anonymous. Best for loneliness, stress, grief, burnout, anxiety, and processing difficult feelings. The most human-to-human connection outside of professional therapy.</div>
-              <div className="alt-price">Free first session · ₹160 for 15 min thereafter</div>
+              <div className="alt-price">From ₹160 for 15 minutes</div>
             </div>
           </div>
           <div className="alt-item">
@@ -93,9 +93,9 @@ export default function AlternativesToTherapyPage() {
         </div>
 
         <div className="cta">
-          <h2>Start with peer support — free</h2>
+          <h2>Start with peer support</h2>
           <p>LeanOn is the most human, most affordable option for day-to-day emotional support.</p>
-          <a href="/browse"><button className="btn">Try free →</button></a>
+          <a href="/browse"><button className="btn">Try now →</button></a>
         </div>
       </div>
     </>

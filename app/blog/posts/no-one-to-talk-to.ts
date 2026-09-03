@@ -68,7 +68,7 @@ export const post = {
 
 <p>Our listeners are verified peers, not therapists and not AI. They are real people who have lived through their own difficult stretches — loneliness, burnout, family pressure, heartbreak, moving to a city where they knew nobody — and who have trained to listen with empathy rather than advice. You can <a href="/browse">browse peer listeners</a> and pick someone whose experience actually resembles yours.</p>
 
-<p>It is anonymous, and first names only. Nobody in your life ever knows. Nothing you say enters your family network, your workplace, or your friend group, because your listener is connected to none of them. Sessions run 24/7, because this feeling rarely respects office hours. Your first 5 minutes are free — enough to find out whether being heard feels the way you hoped.</p>
+<p>It is anonymous, and first names only. Nobody in your life ever knows. Nothing you say enters your family network, your workplace, or your friend group, because your listener is connected to none of them. Sessions run 24/7, because this feeling rarely respects office hours. A short trial session is available for new users — enough to find out whether being heard feels the way you hoped.</p>
 
 <p>If you would like to read more first, there is <a href="/support/loneliness">loneliness support</a> and a page on finding <a href="/support/someone-to-talk-to">someone to talk to</a>, and the <a href="/faq">FAQ</a> answers the practical questions about privacy and how sessions work.</p>
 

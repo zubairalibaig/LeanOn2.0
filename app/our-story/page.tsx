@@ -56,7 +56,7 @@ export default function OurStoryPage() {
       <style>{S}</style>
       <nav>
         <a href="/"><img src="/logo.png" alt="LeanOn" style={{height:48}} /></a>
-        <a href="/auth"><button className="btn" style={{fontSize:13,padding:'8px 20px'}}>Try free</button></a>
+        <a href="/auth"><button className="btn" style={{fontSize:13,padding:'8px 20px'}}>Try now</button></a>
       </nav>
       <div className="page">
         <a href="/" style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:14,fontWeight:700,color:'var(--gray)',marginBottom:28}}>← Back</a>
@@ -91,7 +91,7 @@ export default function OurStoryPage() {
         <div className="cta">
           <h2>Be part of the LeanOn story</h2>
           <p>As a seeker looking for support, or a listener wanting to give back — you belong here.</p>
-          <a href="/browse"><button className="btn">Start free →</button></a>
+          <a href="/browse"><button className="btn">Start now →</button></a>
         </div>
       </div>
     </>

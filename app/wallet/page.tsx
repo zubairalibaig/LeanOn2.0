@@ -285,7 +285,7 @@ export default function WalletPage() {
             <div style={{fontSize:48,marginBottom:12}}>💰</div>
             <h3 style={{fontSize:20,fontWeight:800,color:'var(--navy)',marginBottom:8}}>Your wallet is empty</h3>
             <p style={{fontSize:15,color:'var(--gray)',marginBottom:24}}>
-              Top up your wallet to start a session. Your first 5 minutes are always free — no top-up needed for that!
+              Top up your wallet to start a session. Choose any session length and pay per minute.
             </p>
             <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:12,maxWidth:320,margin:'0 auto 20px'}}>
               {[200,500,1000,2000].map(amt => (

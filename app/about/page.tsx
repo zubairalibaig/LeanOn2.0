@@ -188,8 +188,8 @@ export default function AboutPage() {
 
         <div className="cta-section">
           <h2>Ready to lean on someone?</h2>
-          <p>Your first 5 minutes are completely free. No card, no commitment.</p>
-          <a href="/auth"><button className="btn-primary">Start free now →</button></a>
+          <p>Available 24/7, no appointment needed.</p>
+          <a href="/auth"><button className="btn-primary">Start now →</button></a>
         </div>
       </div>
     </>

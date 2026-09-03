@@ -33,7 +33,7 @@ export default function AnonymousSupportPage() {
       <style>{S}</style>
       <nav>
         <a href="/"><img src="/logo.png" alt="LeanOn" style={{height:48}} /></a>
-        <a href="/auth"><button className="btn" style={{fontSize:13,padding:'8px 20px'}}>Try free</button></a>
+        <a href="/auth"><button className="btn" style={{fontSize:13,padding:'8px 20px'}}>Try now</button></a>
       </nav>
       <div className="page">
         <a href="/" style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:14,fontWeight:700,color:'var(--gray)',marginBottom:28}}>← Back</a>
@@ -63,8 +63,8 @@ export default function AnonymousSupportPage() {
         </div>
 
         <div className="cta">
-          <h2>Talk anonymously — free today</h2>
-          <p>Your first 5 minutes are completely free. No name, no judgement.</p>
+          <h2>Talk anonymously — available now</h2>
+          <p>Available 24/7, no appointment needed. No name, no judgement.</p>
           <a href="/browse"><button className="btn">Start anonymously →</button></a>
         </div>
       </div>

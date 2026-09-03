@@ -35,10 +35,10 @@ export default function FloatingCTA() {
         whiteSpace: 'nowrap',
         animation: 'floatIn 0.3s ease',
       }}
-      aria-label="Start free peer support session"
+      aria-label="Start peer support session"
     >
       <style>{`@keyframes floatIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}`}</style>
-      <span>💬</span> Start free
+      <span>💬</span> Start now
     </a>
   )
 }

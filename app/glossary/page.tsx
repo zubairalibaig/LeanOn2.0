@@ -148,7 +148,7 @@ export default function GlossaryPage() {
       <style>{S}</style>
       <nav className="nav">
         <a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a>
-        <a href="/auth" style={{background:'#FF9933',color:'#fff',fontFamily:'Nunito,sans-serif',fontWeight:800,fontSize:14,padding:'10px 22px',borderRadius:50,border:'none',cursor:'pointer'}}>Get started free</a>
+        <a href="/auth" style={{background:'#FF9933',color:'#fff',fontFamily:'Nunito,sans-serif',fontWeight:800,fontSize:14,padding:'10px 22px',borderRadius:50,border:'none',cursor:'pointer'}}>Get started</a>
       </nav>
 
       <div className="wrap">
@@ -179,7 +179,7 @@ export default function GlossaryPage() {
 
         <div className="cta-box">
           <h2>Experience Peer Support for Yourself</h2>
-          <p>Browse real peer listeners in India. First 5 minutes free — no credit card needed.</p>
+          <p>Browse real peer listeners in India. Available 24/7, no appointment needed.</p>
           <a href="/browse"><button className="btn-cta">Browse peer listeners →</button></a>
         </div>
       </div>

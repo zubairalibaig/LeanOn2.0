@@ -54,7 +54,7 @@ export default function IsLeanOnSafePage() {
       <style>{S}</style>
       <nav>
         <a href="/"><img src="/logo.png" alt="LeanOn" style={{height:48}} /></a>
-        <a href="/auth"><button className="btn" style={{fontSize:13,padding:'8px 20px'}}>Try free</button></a>
+        <a href="/auth"><button className="btn" style={{fontSize:13,padding:'8px 20px'}}>Try now</button></a>
       </nav>
       <div className="page">
         <a href="/" style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:14,fontWeight:700,color:'var(--gray)',marginBottom:28}}>← Back</a>
@@ -97,7 +97,7 @@ export default function IsLeanOnSafePage() {
 
         <div className="cta">
           <h2>You are safe here</h2>
-          <p>Browse listeners anonymously. Your first 5 minutes are free.</p>
+          <p>Browse listeners anonymously. Available 24/7, no appointment needed.</p>
           <a href="/browse"><button className="btn">Browse listeners →</button></a>
         </div>
       </div>

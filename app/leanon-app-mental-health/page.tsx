@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'LeanOn App for Mental Health India | Peer Support Platform',
-  description: 'LeanOn is India\'s peer support app for mental health. Talk to real humans who get it — anxiety, loneliness, burnout, grief. Anonymous. Affordable. Available 24/7. First 5 min free.',
+  description: 'LeanOn is India\'s peer support app for mental health. Talk to real humans who get it — anxiety, loneliness, burnout, grief. Anonymous. Affordable. Available 24/7.',
   alternates: { canonical: 'https://www.leanon.app/leanon-app-mental-health' },
   keywords: ['leanon app mental health', 'leanon mental health India', 'peer support mental health India', 'mental health app India'],
 }
@@ -77,7 +77,7 @@ export default function LeanOnAppMentalHealth() {
         </div>
 
         <div className="cta-box">
-          <h2>Try LeanOn — your first 5 minutes are free</h2>
+          <h2>Try LeanOn — someone is available right now</h2>
           <p>No credit card. No appointment. Someone is available right now.</p>
           <a href="/browse"><button className="btn">Browse peer listeners →</button></a>
         </div>

@@ -4,11 +4,11 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Peer Support for Anxiety in India | Talk Anonymously | LeanOn',
-  description: 'Manage anxiety with peer support. Talk to a trained listener anonymously on LeanOn. Free first session. Available across India.',
+  description: 'Manage anxiety with peer support. Talk to a trained listener anonymously on LeanOn. Available 24/7. Available across India.',
   alternates: { canonical: 'https://www.leanon.app/support/anxiety', languages: { 'en-IN': 'https://www.leanon.app/support/anxiety' } },
   openGraph: {
     title: 'Peer Support for Anxiety in India | Talk Anonymously | LeanOn',
-    description: 'Manage anxiety with peer support. Talk to a trained listener anonymously on LeanOn. Free first session. Available across India.',
+    description: 'Manage anxiety with peer support. Talk to a trained listener anonymously on LeanOn. Available 24/7. Available across India.',
     url: 'https://www.leanon.app/support/anxiety',
     siteName: 'LeanOn',
     type: 'article',
@@ -220,10 +220,10 @@ export default function AnxietySupportPage() {
 
         <div className="cta-card">
           <h2>Your Anxiety Doesn&apos;t Have to Be This Loud</h2>
-          <p>Connect with a peer listener who truly understands. First 5 minutes free — no appointment needed.</p>
+          <p>Connect with a peer listener who truly understands. Available 24/7, no appointment needed.</p>
           <div className="cta-btns">
             <a href="/browse?topic=anxiety"><button className="btn-primary">Find an Anxiety Listener</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 

@@ -4,11 +4,11 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Someone to Talk To in India | LeanOn Peer Listeners',
-  description: 'Need someone to talk to? LeanOn connects you with trained peer listeners in India. Anonymous, free first session, available 24/7.',
+  description: 'Need someone to talk to? LeanOn connects you with trained peer listeners in India. Anonymous, available 24/7.',
   alternates: { canonical: 'https://www.leanon.app/support/someone-to-talk-to', languages: { 'en-IN': 'https://www.leanon.app/support/someone-to-talk-to' } },
   openGraph: {
     title: 'Someone to Talk To in India | LeanOn Peer Listeners',
-    description: 'Need someone to talk to? LeanOn connects you with trained peer listeners in India. Anonymous, free first session, available 24/7.',
+    description: 'Need someone to talk to? LeanOn connects you with trained peer listeners in India. Anonymous, available 24/7.',
     url: 'https://www.leanon.app/support/someone-to-talk-to',
     siteName: 'LeanOn',
     type: 'article',
@@ -56,7 +56,7 @@ const faqSchema = {
       name: 'How quickly can I talk to someone on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'You can start a session within minutes. Sign up with your phone number, browse available listeners, and start your first 5-minute free session immediately — no booking, no waiting list, no appointment required. Listeners are available 24/7 across India.',
+        text: 'You can start a session within minutes. Sign up with your phone number, browse available listeners, and start a session immediately — no booking, no waiting list, no appointment required. Listeners are available 24/7 across India.',
       },
     },
   ],
@@ -148,7 +148,7 @@ export default function SomeoneToTalkToPage() {
         <div className="hero">
           <p className="tag">Peer Support · Someone to Talk To India</p>
           <h1>Need Someone to Talk To? <em>Real Listeners</em>, Available Now in India</h1>
-          <p className="lead">Sometimes you just need to say it out loud to another human being. LeanOn connects you with peer listeners across India who are available now — anonymous, non-judgmental, and genuinely present. No appointments. No waitlists. First 5 minutes free.</p>
+          <p className="lead">Sometimes you just need to say it out loud to another human being. LeanOn connects you with peer listeners across India who are available now — anonymous, non-judgmental, and genuinely present. No appointments. No waitlists. Available 24/7.</p>
         </div>
 
         {/* Why It's Hard to Find Someone to Talk To */}
@@ -210,7 +210,7 @@ export default function SomeoneToTalkToPage() {
           <p>A therapist is a licensed professional who works within a clinical framework — diagnosing conditions, applying evidence-based interventions, and tracking therapeutic progress over time. That structure is exactly right for people who need clinical care. But many people do not need treatment. They need to be heard by someone who has been through something similar and come out the other side.</p>
 
           <h3>Accessibility and Affordability</h3>
-          <p>Therapy in Indian metro cities typically costs ₹1,500–₹3,000 per session, with waiting lists at good practices stretching weeks. LeanOn peer support starts at ₹160 for 15 minutes, with the first 5 minutes free. It is available right now — at midnight, on a Sunday, during a lunch break — whenever you need it most.</p>
+          <p>Therapy in Indian metro cities typically costs ₹1,500–₹3,000 per session, with waiting lists at good practices stretching weeks. LeanOn peer support starts at ₹160 for 15 minutes, with a short trial session available for new users. It is available right now — at midnight, on a Sunday, during a lunch break — whenever you need it most.</p>
 
           <h3>Complementary, Not Competing</h3>
           <p>Many people use peer support alongside therapy — as a way to process between clinical sessions, access support when a therapist is not available, or take a meaningful first step before they are ready for formal treatment. LeanOn listeners are trained to recognise when someone might benefit from professional care and will gently say so when that appears to be the case.</p>
@@ -224,8 +224,8 @@ export default function SomeoneToTalkToPage() {
           <h3>Browse Listeners</h3>
           <p>Go to <a href="/browse" style={{color:'var(--teal)',fontWeight:700}}>Browse Listeners</a> and read through peer profiles. Each listener shares their personal experience, the topics they support, and their availability. Taking a few minutes to find someone whose experience resonates with yours makes a real difference to the quality of the conversation.</p>
 
-          <h3>Start Free</h3>
-          <p>The first 5 minutes of your first session are free. No credit card, no commitment. This gives you a genuine chance to feel whether the connection is right before you decide to continue.</p>
+          <h3>Start Instantly</h3>
+          <p>Sessions start immediately. A short trial session is available for new users, giving you a genuine chance to feel whether the connection is right before you commit to a longer session.</p>
 
           <h3>Say What You Need to Say</h3>
           <p>Once you are in a session, just start wherever feels right. You do not need to explain everything or give context. Your listener will follow you and ask gentle questions to help you feel heard. There is no agenda, no homework, and no follow-up required unless you want it.</p>
@@ -266,7 +266,7 @@ export default function SomeoneToTalkToPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Someone Is Ready to Listen Right Now</h2>
-          <p>Anonymous, non-judgmental peer support available 24/7 across India. First 5 minutes free.</p>
+          <p>Anonymous, non-judgmental peer support available 24/7 across India. Available 24/7.</p>
           <div className="cta-btns">
             <a href="/auth"><button className="btn-primary">Talk to Someone Now</button></a>
             <a href="/browse"><button className="btn-secondary">Browse Listeners First</button></a>
@@ -294,7 +294,7 @@ export default function SomeoneToTalkToPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How quickly can I talk to someone on LeanOn?</div>
-            <div className="faq-a">You can start a session within minutes. Sign up with your phone number, browse available listeners, and start your first 5-minute free session immediately — no booking, no waiting list, no appointment required. Listeners are available 24/7 across India.</div>
+            <div className="faq-a">You can start a session within minutes. Sign up with your phone number, browse available listeners, and start a session immediately — no booking, no waiting list, no appointment required. Listeners are available 24/7 across India.</div>
           </div>
         </div>
 

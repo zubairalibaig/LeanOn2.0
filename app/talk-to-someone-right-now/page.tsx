@@ -3,13 +3,13 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Talk to Someone Right Now — Free, Anonymous, 24/7 | LeanOn India',
-  description: 'Need to talk to someone now? See which peer listeners are online right now. Anonymous, first 5 minutes free, available 24/7 across India.',
+  title: 'Talk to Someone Right Now — Anonymous, 24/7 | LeanOn India',
+  description: 'Need to talk to someone now? See which peer listeners are online right now. Anonymous, available 24/7 across India.',
   alternates: { canonical: 'https://www.leanon.app/talk-to-someone-right-now', languages: { 'en-IN': 'https://www.leanon.app/talk-to-someone-right-now' } },
-  keywords: 'talk to someone right now, need to talk to someone now India, someone to talk to immediately, urgent emotional support India, talk to someone online now, anonymous listener India, free emotional support now',
+  keywords: 'talk to someone right now, need to talk to someone now India, someone to talk to immediately, urgent emotional support India, talk to someone online now, anonymous listener India',
   openGraph: {
-    title: 'Talk to Someone Right Now — Free, Anonymous, 24/7 | LeanOn India',
-    description: 'Need to talk to someone now? See which peer listeners are online right now. Anonymous, first 5 minutes free, available 24/7 across India.',
+    title: 'Talk to Someone Right Now — Anonymous, 24/7 | LeanOn India',
+    description: 'Need to talk to someone now? See which peer listeners are online right now. Anonymous, available 24/7 across India.',
     url: 'https://www.leanon.app/talk-to-someone-right-now',
     siteName: 'LeanOn',
     type: 'article',
@@ -38,10 +38,10 @@ const faqSchema = {
     },
     {
       '@type': 'Question',
-      name: 'Is it free?',
+      name: 'How does pricing work?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'The first 5 minutes with a listener are free, with no card and no payment details needed. That is enough time to see whether the person feels right for you. After that, sessions start at ₹160 for 15 minutes, and you only pay if you choose to continue.',
+        text: 'Sessions start at ₹160 for 15 minutes, and a short trial session is available for new users.',
       },
     },
     {
@@ -147,7 +147,7 @@ export default function TalkToSomeoneRightNowPage() {
         <div className="hero">
           <p className="tag">Available Now · Anonymous · 24/7</p>
           <h1>Someone Is Ready to <em>Listen</em> — Right Now</h1>
-          <p className="lead">You do not need an appointment, a referral, or a reason good enough. Open the listener directory, see who is online, and start talking — the first 5 minutes are free.</p>
+          <p className="lead">You do not need an appointment, a referral, or a reason good enough. Open the listener directory, see who is online, and start talking instantly.</p>
         </div>
 
         {/* How it works */}
@@ -160,7 +160,7 @@ export default function TalkToSomeoneRightNowPage() {
           <h3>2. Pick someone whose experience matches yours</h3>
           <p>Every listener has a short profile describing what they have lived through — anxiety, a breakup, burnout, loneliness, family pressure. Choose whoever feels closest to where you are tonight.</p>
 
-          <h3>3. Start talking — first 5 minutes free</h3>
+          <h3>3. Start talking — instantly, no appointment</h3>
           <p>No card, no payment details, nothing to set up in advance. You talk. If it helps, you continue. If it does not, you stop and try someone else.</p>
 
           <h3>4. Text or voice, entirely your choice</h3>
@@ -234,11 +234,11 @@ export default function TalkToSomeoneRightNowPage() {
 
         {/* CTA */}
         <div className="cta-card">
-          <h2>Start Talking Now — First 5 Minutes Free</h2>
-          <p>See who is online right now. Anonymous, no card needed, text or voice. If nobody is free this second, leave a message and a listener will reply.</p>
+          <h2>Start Talking Now — Available 24/7</h2>
+          <p>See who is online right now. Anonymous, available instantly, text or voice. If nobody is online this second, leave a message and a listener will reply.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">See Who Is Online Now</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 
@@ -254,8 +254,8 @@ export default function TalkToSomeoneRightNowPage() {
             <div className="faq-a">Yes. You use a first name only — no full name, no photo, no social profile. Listeners never see your phone number, and nothing you say is shared with anyone in your life. You can talk about anything without it following you.</div>
           </div>
           <div className="faq-item">
-            <div className="faq-q">Is it free?</div>
-            <div className="faq-a">The first 5 minutes with a listener are free, with no card and no payment details needed. That is enough time to see whether the person feels right for you. After that, sessions start at ₹160 for 15 minutes, and you only pay if you choose to continue.</div>
+            <div className="faq-q">How does pricing work?</div>
+            <div className="faq-a">Sessions start at ₹160 for 15 minutes, and a short trial session is available for new users.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">What if I don&apos;t know what to say?</div>

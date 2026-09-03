@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Get Paid to Chat India — Become a Listener on LeanOn',
-  description: 'Earn ₹8–25 per minute chatting with people who need support. Become a LeanOn peer listener in India — flexible hours, your own rate, no degree required. Apply free.',
+  description: 'Earn ₹8–25 per minute chatting with people who need support. Become a LeanOn peer listener in India — flexible hours, your own rate, no degree required. Apply now.',
   alternates: { canonical: 'https://www.leanon.app/get-paid-to-chat-india' },
   keywords: ['get paid to chat India', 'earn money chatting India', 'become a listener India', 'work from home India chat'],
 }
@@ -112,7 +112,7 @@ export default function GetPaidToChatIndia() {
         </div>
 
         <div className="cta-box">
-          <h2>Apply to become a listener — it&apos;s free</h2>
+          <h2>Apply to become a listener</h2>
           <p>Start earning within 48 hours of applying.</p>
           <a href="/become-listener"><button className="btn">Apply now →</button></a>
         </div>

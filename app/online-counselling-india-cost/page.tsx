@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'What exactly does a LeanOn session cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Your first 5 minutes with a listener are free — no card, no commitment. After that, sessions are 15, 30 or 45 minutes and are billed per minute at the listener\'s own rate of ₹8 to ₹25 per minute, plus a flat ₹10 platform fee per paid session. A 15-minute session starts at around ₹160. You add money to a wallet before a session, and any unused wallet balance is fully refundable. Listeners keep 100 percent of their rate.',
+        text: 'Sessions are 15, 30 or 45 minutes and are billed per minute at the listener\'s own rate of ₹8 to ₹25 per minute, plus a flat ₹10 platform fee per paid session. A 15-minute session starts at around ₹160. A short trial session is available for new users. You add money to a wallet before a session, and any unused wallet balance is fully refundable. Listeners keep 100 percent of their rate.',
       },
     },
   ],
@@ -167,11 +167,11 @@ export default function OnlineCounsellingCostPage() {
           <h3>Government Helplines — Free</h3>
           <p>NIMHANS (<a href="tel:08046110007" style={{color:'var(--teal)',fontWeight:700}}>080-46110007</a>) and Tele-MANAS (<a href="tel:14416" style={{color:'var(--teal)',fontWeight:700}}>14416</a>) cost nothing, run around the clock, and are staffed by trained professionals. These are crisis services, and for crisis they are genuinely excellent — this is not a lesser option, it is the correct option when distress is acute or you are having thoughts of self-harm. Call them without hesitation and without cost. They are built for urgent moments rather than for a standing weekly conversation.</p>
 
-          <h3>AI Wellness Chatbots — free to low cost</h3>
+          <h3>AI Wellness Chatbots — low cost</h3>
           <p>AI chat apps are cheap or free, always awake, and never judgemental. They can be a reasonable place to journal or to structure a thought at 3 a.m. But it is worth being plain about the limit: an AI is not a human being. It has never lost a parent, failed an exam, ended a relationship, or moved to a city where it knew nobody. Simulated empathy is not the same as a person who has actually been where you are and says so.</p>
 
-          <h3>LeanOn Peer Support — first 5 minutes free, then ₹8 to ₹25 per minute</h3>
-          <p>On LeanOn, your first 5 minutes with a listener are free. After that, paid sessions are billed per minute at a rate of ₹8 to ₹25 per minute set by the individual listener, plus a flat ₹10 platform fee per paid session. A 15-minute session starts at around ₹160. You top up a wallet before a session, and any unused balance is fully refundable. LeanOn listeners are trained peers with lived experience, not licensed clinicians — which is exactly why the price is different, and also why it is not a replacement for clinical care.</p>
+          <h3>LeanOn Peer Support — ₹8 to ₹25 per minute</h3>
+          <p>On LeanOn, paid sessions are billed per minute at a rate of ₹8 to ₹25 per minute set by the individual listener, plus a flat ₹10 platform fee per paid session. A 15-minute session starts at around ₹160. A short trial session is available for new users. You top up a wallet before a session, and any unused balance is fully refundable. LeanOn listeners are trained peers with lived experience, not licensed clinicians — which is exactly why the price is different, and also why it is not a replacement for clinical care.</p>
         </div>
 
         {/* Decision framework */}
@@ -214,18 +214,18 @@ export default function OnlineCounsellingCostPage() {
             <li>Availability 24 hours a day — no appointment, no waitlist, no two-week gap before someone can see you.</li>
             <li>Complete anonymity. You choose what you share, and nobody in your life finds out.</li>
             <li>A refundable wallet — any balance you do not use comes back to you in full.</li>
-            <li>Your first 5 minutes free before any of this, so you can find out whether it helps before you spend anything at all.</li>
+            <li>A short trial session available for new users, so you can find out whether it helps before you commit to a longer session.</li>
           </ul>
           <p>If it turns out that what you need is clinical care, a listener will say so and point you toward it. The goal is that you end up in the right place, not that you spend money here.</p>
         </div>
 
         {/* CTA */}
         <div className="cta-card">
-          <h2>Try It Free, Then Decide</h2>
-          <p>Your first 5 minutes with a peer listener cost nothing. Browse real people, see their rates upfront, and find out whether being heard helps — before you spend a rupee.</p>
+          <h2>Try It, Then Decide</h2>
+          <p>Browse real people, see their rates upfront, and find out whether being heard helps — no appointment, no waitlist.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Listeners &amp; Rates</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 
@@ -242,7 +242,7 @@ export default function OnlineCounsellingCostPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is there anything cheaper that still involves a real human?</div>
-            <div className="faq-a">Yes. Trained peer support sits between free helplines and clinical therapy. On LeanOn your first 5 minutes are free, and paid sessions are charged by the minute at ₹8 to ₹25 per minute set by each listener, plus a flat ₹10 platform fee. A 15-minute conversation starts at around ₹160, with a real verified human who has lived something similar. Peer listeners are not licensed therapists and do not provide clinical treatment.</div>
+            <div className="faq-a">Yes. Trained peer support sits between free helplines and clinical therapy. On LeanOn, paid sessions are charged by the minute at ₹8 to ₹25 per minute set by each listener, plus a flat ₹10 platform fee. A 15-minute conversation starts at around ₹160, with a real verified human who has lived something similar. A short trial session is available for new users. Peer listeners are not licensed therapists and do not provide clinical treatment.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is free support good enough?</div>
@@ -250,7 +250,7 @@ export default function OnlineCounsellingCostPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">What exactly does a LeanOn session cost?</div>
-            <div className="faq-a">Your first 5 minutes with a listener are free — no card, no commitment. After that, sessions are 15, 30 or 45 minutes, billed per minute at the listener's own rate of ₹8 to ₹25 per minute, plus a flat ₹10 platform fee per paid session. A 15-minute session starts at around ₹160. You add money to a wallet beforehand, and any unused balance is fully refundable. Listeners keep 100 percent of their rate.</div>
+            <div className="faq-a">Sessions are 15, 30 or 45 minutes, billed per minute at the listener's own rate of ₹8 to ₹25 per minute, plus a flat ₹10 platform fee per paid session. A 15-minute session starts at around ₹160. A short trial session is available for new users. You add money to a wallet beforehand, and any unused balance is fully refundable. Listeners keep 100 percent of their rate.</div>
           </div>
         </div>
 

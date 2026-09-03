@@ -56,7 +56,7 @@ export const post = {
 
 <p>LeanOn connects people going through difficult experiences with verified peer listeners who have personal experience with those same challenges. Listeners apply to join the platform, share their experience, and go through a review process. Users can browse listener profiles, read their stories, and connect with the listener who feels right for their specific situation.</p>
 
-<p>Sessions happen via text chat, giving people privacy within shared living situations (especially important in Indian joint family contexts where audio conversations are not always private). The first 5 minutes of every session are free, so users can make sure they feel comfortable with a listener before committing to a paid session.</p>
+<p>Sessions happen via text chat, giving people privacy within shared living situations (especially important in Indian joint family contexts where audio conversations are not always private). A short trial session is available for new users, so they can make sure they feel comfortable with a listener before committing to a paid session.</p>
 
 <p>LeanOn is honest about what it is and is not. It is not therapy, and it does not claim to treat mental health conditions. What it offers is something real and valuable: the experience of being genuinely understood by someone who has been where you are. In a country of 1.4 billion people where that experience is harder to find than it should be, that is not a small thing.</p>
 
@@ -66,6 +66,6 @@ export const post = {
 
 <p>It is not the right primary option for people in acute mental health crises, people with untreated clinical mental health conditions that require diagnosis and treatment, or people who need a structured, evidence-based therapeutic intervention.</p>
 
-<p>If you are not sure, <a href="/browse">the first 5 minutes on LeanOn are free</a>. You can try it, see how it feels, and decide from there. That seems like a reasonable place to start.</p>
+<p>If you are not sure, <a href="/browse">browse peer listeners on LeanOn</a>. You can try it, see how it feels, and decide from there. That seems like a reasonable place to start.</p>
   `.trim(),
 }

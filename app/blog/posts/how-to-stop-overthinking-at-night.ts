@@ -90,7 +90,7 @@ export const post = {
 
 <p>LeanOn exists for that gap. It is a <strong>peer support India</strong> platform where you can talk to verified peer listeners — people with lived experience of the same things, trained to listen without judgment — at the hours when overthinking actually peaks. Not clinicians in role, not friends with opinions and history with your family, but people who have been through their own version of this and can offer real, empathetic understanding of it.</p>
 
-<p>It is anonymous, which matters in a culture where the fear of being discussed is often the thing keeping you awake. You can say the thought you would never say to anyone who knows your parents. And the first five minutes are free, so you can find out what it feels like before deciding anything.</p>
+<p>It is anonymous, which matters in a culture where the fear of being discussed is often the thing keeping you awake. You can say the thought you would never say to anyone who knows your parents. And you can find out what it feels like with a short trial session before deciding anything.</p>
 
 <p>You can <a href="/browse">browse peer listeners</a> and pick someone whose experience resonates with yours, read more about <a href="/support/overthinking">overthinking support</a> or <a href="/support/anxiety">anxiety support</a>, or check the <a href="/faq">FAQ</a> first. You do not need a crisis to deserve a conversation — &quot;I cannot switch my head off and it is 2am&quot; is a completely valid reason to reach out.</p>
 
@@ -115,6 +115,6 @@ export const post = {
 
 <p>The mind at 2am is not a reliable narrator. It is a tired one with its defences down and nobody to argue back. It will look different at 9am — not because the problem changed, but because you will have your judgment back.</p>
 
-<p>And if 9am feels far away right now, you do not have to wait alone for it. Someone is awake. <a href="/browse">Browse peer listeners</a> and start with five free minutes.</p>
+<p>And if 9am feels far away right now, you do not have to wait alone for it. Someone is awake. <a href="/browse">Browse peer listeners</a> and start talking now.</p>
   `.trim(),
 }

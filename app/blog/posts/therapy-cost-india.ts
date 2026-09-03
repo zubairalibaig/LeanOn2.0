@@ -19,7 +19,7 @@ export const post = {
   <li><strong>Clinical psychologist or therapist:</strong> roughly ₹1,500 to ₹4,000 per session. Senior practitioners in metros sit at the upper end of that range, and sometimes above it.</li>
   <li><strong>Online therapy platforms:</strong> broadly similar to in-person rates — commonly ₹1,000 to ₹3,000 per session. Online delivery removes travel, not the cost of the clinician&apos;s time.</li>
   <li><strong>Government helplines:</strong> completely free, 24/7. NIMHANS runs a national helpline at <strong>080-46110007</strong>, and Tele-MANAS is reachable at <strong>14416</strong>. These are staffed, real, and cost nothing.</li>
-  <li><strong>LeanOn peer support:</strong> your first 5 minutes are free. After that, listeners set their own rate between ₹8 and ₹25 per minute, plus a flat ₹10 platform fee per session. A 15-minute session starts at around ₹160. Any unused wallet balance is fully refundable.</li>
+  <li><strong>LeanOn peer support:</strong> listeners set their own rate between ₹8 and ₹25 per minute, plus a flat ₹10 platform fee per session. A 15-minute session starts at around ₹160. A short trial session is available for new users. Any unused wallet balance is fully refundable.</li>
 </ul>
 
 <p>Those are the headline figures. But the headline figures are not the whole picture, and the gap between them and what people actually end up spending is where most budgets break.</p>
@@ -78,7 +78,7 @@ export const post = {
 
 <p>The second reason is our fee structure. Listeners keep 100% of their rate. LeanOn takes a flat ₹10 per session — not a percentage, not a subscription, not a cut that grows with the listener&apos;s price. That is the entire platform fee.</p>
 
-<p>The third is that you pay by the minute for what you actually use, rather than buying a fixed fifty-minute hour whether you need it or not. Some evenings you need twenty minutes. Some evenings you need five. Your first 5 minutes are free, so you can find out whether a particular listener feels right before any money moves. And if you top up your wallet and do not use it, the unused balance is fully refundable. We would rather refund you than hold your money hostage.</p>
+<p>The third is that you pay by the minute for what you actually use, rather than buying a fixed fifty-minute hour whether you need it or not. Some evenings you need twenty minutes. Some evenings you need five. A short trial session is available for new users, so you can find out whether a particular listener feels right before committing to a longer session. And if you top up your wallet and do not use it, the unused balance is fully refundable. We would rather refund you than hold your money hostage.</p>
 
 <h2>What ₹160 Actually Buys</h2>
 

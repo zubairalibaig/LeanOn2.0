@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Anonymous Peer Support India — LeanOn | Talk Anonymously',
-  description: 'Anonymous peer support in India. Talk to someone who understands — without sharing your name, identity, or details. Private, safe, available 24/7. First 5 min free.',
+  description: 'Anonymous peer support in India. Talk to someone who understands — without sharing your name, identity, or details. Private, safe, available 24/7.',
   alternates: { canonical: 'https://www.leanon.app/anonymous-peer-support' },
   keywords: ['anonymous peer support India', 'anonymous emotional support India', 'talk anonymously India', 'anonymous listener India'],
 }
@@ -92,7 +92,7 @@ export default function AnonymousPeerSupport() {
         </div>
 
         <div className="cta-box">
-          <h2>Start anonymously — first 5 minutes free</h2>
+          <h2>Start anonymously — available 24/7</h2>
           <p>No name required. No judgment. Someone is online right now.</p>
           <a href="/auth"><button className="btn">Start anonymously →</button></a>
         </div>

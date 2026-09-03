@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Someone to Lean On — Talk to a Real Person Tonight | LeanOn India',
-  description: 'Need someone to lean on? Talk anonymously to a verified peer listener in India tonight. First 5 minutes free. Real humans with lived experience, not AI.',
+  description: 'Need someone to lean on? Talk anonymously to a verified peer listener in India tonight. Available 24/7. Real humans with lived experience, not AI.',
   keywords: 'someone to lean on, need someone to lean on, having someone to lean on, no one to lean on, what does lean on mean, lean on someone meaning, someone to lean on India',
   alternates: { canonical: 'https://www.leanon.app/someone-to-lean-on', languages: { 'en-IN': 'https://www.leanon.app/someone-to-lean-on' } },
   openGraph: {
     title: 'Someone to Lean On — Talk to a Real Person Tonight | LeanOn India',
-    description: 'Need someone to lean on? Talk anonymously to a verified peer listener in India tonight. First 5 minutes free. Real humans with lived experience, not AI.',
+    description: 'Need someone to lean on? Talk anonymously to a verified peer listener in India tonight. Available 24/7. Real humans with lived experience, not AI.',
     url: 'https://www.leanon.app/someone-to-lean-on',
     siteName: 'LeanOn',
     type: 'article',
@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'How much does it cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'The first 5 minutes with a listener are free, so you can find the right person before paying anything. After that, listeners set their own rate between ₹8 and ₹25 per minute and keep all of it, while LeanOn adds a flat ₹10 platform fee per paid session. A 15-minute session works out to about ₹160 — far less than a therapy appointment in India, and available at any hour.',
+        text: 'Listeners set their own rate between ₹8 and ₹25 per minute and keep all of it, while LeanOn adds a flat ₹10 platform fee per paid session. A 15-minute session works out to about ₹160 — far less than a therapy appointment in India, and available at any hour. A short trial session is available for new users.',
       },
     },
   ],
@@ -147,7 +147,7 @@ export default function SomeoneToLeanOnPage() {
         <div className="hero">
           <p className="tag">Peer Support · India</p>
           <h1>Everyone Needs <em>Someone to Lean On</em></h1>
-          <p className="lead">Not advice. Not a diagnosis. Not a lecture about what you should have done. Just someone to lean on — a real, empathetic person on the other end who listens properly while you say the thing you have been carrying alone. LeanOn connects you with verified peer listeners across India, anonymously, at any hour. The first 5 minutes are free.</p>
+          <p className="lead">Not advice. Not a diagnosis. Not a lecture about what you should have done. Just someone to lean on — a real, empathetic person on the other end who listens properly while you say the thing you have been carrying alone. LeanOn connects you with verified peer listeners across India, anonymously, at any hour.</p>
         </div>
 
         {/* What it means */}
@@ -198,7 +198,7 @@ export default function SomeoneToLeanOnPage() {
           <p>Every listener on LeanOn is a verified human being who has personally lived through something like what you are carrying: a breakup, a job loss, years in a marriage they could not talk about, the long quiet of a city where nobody knows them. They are peers, not licensed therapists, and we are direct about that distinction. And there is no AI anywhere in the conversation — no generated replies, no simulated empathy. The person typing has actually been there.</p>
 
           <h3>Anonymous, First Names Only, Open at 3 AM</h3>
-          <p>You choose a listener and talk. First names only, no photographs of you, nothing shared with anyone in your life, and nothing that shows up anywhere later. Listeners are available around the clock, including the hours when this feeling is worst, so having someone to lean on does not depend on office timings. The first 5 minutes with any listener are free — enough to find out whether this particular person actually gets it before you spend anything.</p>
+          <p>You choose a listener and talk. First names only, no photographs of you, nothing shared with anyone in your life, and nothing that shows up anywhere later. Listeners are available around the clock, including the hours when this feeling is worst, so having someone to lean on does not depend on office timings. You can find out whether this particular person actually gets it with a short trial session before committing to a longer one.</p>
         </div>
 
         {/* Listener cards */}
@@ -236,10 +236,10 @@ export default function SomeoneToLeanOnPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Find Someone to Lean On Tonight</h2>
-          <p>Browse verified peer listeners and start talking in under a minute. Anonymous, available 24/7, first 5 minutes free — no appointments, no waitlists.</p>
-          <div className="cta-btns">
+          <p>Browse verified peer listeners and start talking in under a minute. Anonymous, available 24/7 — no appointments, no waitlists.</p>
+<div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 
@@ -264,7 +264,7 @@ export default function SomeoneToLeanOnPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does it cost?</div>
-            <div className="faq-a">The first 5 minutes with a listener are free, so you can find the right person before paying anything. After that, listeners set their own rate between ₹8 and ₹25 per minute and keep all of it, while LeanOn adds a flat ₹10 platform fee per paid session. A 15-minute session works out to about ₹160 — far less than a therapy appointment in India, and available at any hour.</div>
+            <div className="faq-a">Listeners set their own rate between ₹8 and ₹25 per minute and keep all of it, while LeanOn adds a flat ₹10 platform fee per paid session. A 15-minute session works out to about ₹160 — far less than a therapy appointment in India, and available at any hour. A short trial session is available for new users.</div>
           </div>
         </div>
 

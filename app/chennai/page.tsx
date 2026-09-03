@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support in Chennai — Peer Listeners | LeanOn',
-  description: 'Connect with peer listeners in Chennai, India. Free first session. Talk anonymously in Tamil or English about anxiety, loneliness, family pressure, and more on LeanOn.',
+  description: 'Connect with peer listeners in Chennai, India. Available 24/7. Talk anonymously in Tamil or English about anxiety, loneliness, family pressure, and more on LeanOn.',
   alternates: { canonical: 'https://www.leanon.app/chennai', languages: { 'en-IN': 'https://www.leanon.app/chennai' } },
   keywords: 'peer support Chennai, emotional support Chennai, loneliness Chennai, talk to someone Chennai, Tamil emotional support, family pressure Chennai, leanon Chennai',
   openGraph: {
     title: 'Emotional Support in Chennai — Peer Listeners | LeanOn',
-    description: 'Connect with peer listeners in Chennai, India. Free first session. Talk anonymously in Tamil or English on LeanOn.',
+    description: 'Connect with peer listeners in Chennai, India. Available 24/7. Talk anonymously in Tamil or English on LeanOn.',
     url: 'https://www.leanon.app/chennai',
     siteName: 'LeanOn',
     type: 'article',
@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'How much does a session cost in Chennai?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'The same as everywhere in India: new users get up to 3 free 5-minute sessions, and paid sessions cost ₹8–25 per minute (set by each listener) plus a flat ₹10 platform fee — far more affordable than therapy in Chennai, which typically runs ₹1,500–3,500 per session.',
+        text: 'The same as everywhere in India: new users get up to 3 introductory 5-minute sessions, and paid sessions cost ₹8–25 per minute (set by each listener) plus a flat ₹10 platform fee — far more affordable than therapy in Chennai, which typically runs ₹1,500–3,500 per session.',
       },
     },
   ],
@@ -172,10 +172,10 @@ export default function ChennaiPage() {
 
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Gets Chennai?</h2>
-          <p>Browse peer listeners who understand family expectations, IT-corridor stress, and the weight of tradition. Sessions in Tamil or English. First 5 minutes free, completely private.</p>
+          <p>Browse peer listeners who understand family expectations, IT-corridor stress, and the weight of tradition. Sessions in Tamil or English. Available 24/7, completely private.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 
@@ -195,7 +195,7 @@ export default function ChennaiPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does a session cost in Chennai?</div>
-            <div className="faq-a">Same as everywhere in India: up to 3 free 5-minute sessions for new users, then ₹8–25 per minute (set by each listener) plus a flat ₹10 platform fee — far more affordable than therapy in Chennai, which typically costs ₹1,500–3,500 per session.</div>
+            <div className="faq-a">Same as everywhere in India: up to 3 introductory 5-minute sessions for new users, then ₹8–25 per minute (set by each listener) plus a flat ₹10 platform fee — far more affordable than therapy in Chennai, which typically costs ₹1,500–3,500 per session.</div>
           </div>
         </div>
 

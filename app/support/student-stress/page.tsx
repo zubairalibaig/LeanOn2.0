@@ -4,11 +4,11 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Student Stress Support India | LeanOn Peer Listeners',
-  description: 'Student stress getting overwhelming? Talk to a peer listener anonymously on LeanOn. Free for students. Available 24/7 across India.',
+  description: 'Student stress getting overwhelming? Talk to a peer listener anonymously on LeanOn. Available 24/7 across India.',
   alternates: { canonical: 'https://www.leanon.app/support/student-stress', languages: { 'en-IN': 'https://www.leanon.app/support/student-stress' } },
   openGraph: {
     title: 'Student Stress Support India | LeanOn Peer Listeners',
-    description: 'Student stress getting overwhelming? Talk to a peer listener anonymously on LeanOn. Free for students. Available 24/7 across India.',
+    description: 'Student stress getting overwhelming? Talk to a peer listener anonymously on LeanOn. Available 24/7 across India.',
     url: 'https://www.leanon.app/support/student-stress',
     siteName: 'LeanOn',
     type: 'article',
@@ -219,10 +219,10 @@ export default function StudentStressSupportPage() {
 
         <div className="cta-card">
           <h2>You Are More Than Your Rank</h2>
-          <p>Talk to someone who has been through the pressure of Indian student life and made it through. First 5 minutes free.</p>
+          <p>Talk to someone who has been through the pressure of Indian student life and made it through. Available 24/7.</p>
           <div className="cta-btns">
             <a href="/browse?topic=student-stress"><button className="btn-primary">Find a Student Listener</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 

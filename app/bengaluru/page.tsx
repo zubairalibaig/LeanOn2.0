@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support in Bengaluru — Peer Listeners | LeanOn',
-  description: 'Connect with peer listeners in Bengaluru, India. Free first session. Talk anonymously on LeanOn.',
+  description: 'Connect with peer listeners in Bengaluru, India. Available 24/7. Talk anonymously on LeanOn.',
   alternates: { canonical: 'https://www.leanon.app/bengaluru', languages: { 'en-IN': 'https://www.leanon.app/bengaluru' } },
   keywords: 'peer support Bengaluru, emotional support Bangalore, loneliness Bangalore, startup burnout Bengaluru, talk to someone Bangalore, leanon Bengaluru',
   openGraph: {
     title: 'Emotional Support in Bengaluru — Peer Listeners | LeanOn',
-    description: 'Connect with peer listeners in Bengaluru, India. Free first session. Talk anonymously on LeanOn.',
+    description: 'Connect with peer listeners in Bengaluru, India. Available 24/7. Talk anonymously on LeanOn.',
     url: 'https://www.leanon.app/bengaluru',
     siteName: 'LeanOn',
     type: 'article',
@@ -194,8 +194,8 @@ export default function BengaluruPage() {
           <h3>Browse and Choose Your Listener</h3>
           <p>Start by browsing listener profiles at <a href="/browse?city=bengaluru" style={{color:'var(--teal)',fontWeight:700}}>leanon.app/browse</a>. You can filter by topic — loneliness, startup burnout, career confusion, relationships — and read about each listener's personal background before you begin. No cold starts. No awkward first minutes wondering if this person gets it.</p>
 
-          <h3>First 5 Minutes Free</h3>
-          <p>Every session starts with a free five-minute window. Use it to gauge the connection before committing. If it feels right, continue. If not, find another listener. Sessions start at ₹160 for 15 minutes — significantly more accessible than therapy and available any time, including late nights when the weight feels heaviest.</p>
+          <h3>Start in Minutes</h3>
+          <p>Every session starts with a short five-minute window. Use it to gauge the connection before committing. If it feels right, continue. If not, find another listener. Sessions start at ₹160 for 15 minutes — significantly more accessible than therapy and available any time, including late nights when the weight feels heaviest.</p>
 
           <h3>Available When You Need It Most</h3>
           <p>Loneliness and burnout do not keep business hours. LeanOn listeners are available around the clock, including midnight on a Tuesday when you are staring at the ceiling in your Koramangala flat wondering if any of this is worth it.</p>
@@ -255,10 +255,10 @@ export default function BengaluruPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Gets Bengaluru?</h2>
-          <p>Browse peer listeners who understand the pressures of India's tech capital. First 5 minutes free — no appointments, no waitlists, available right now.</p>
+          <p>Browse peer listeners who understand the pressures of India's tech capital. No appointments, no waitlists, available right now.</p>
           <div className="cta-btns">
             <a href="/browse?city=bengaluru"><button className="btn-primary">Browse Bengaluru Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 

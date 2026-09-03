@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     default: 'LeanOn — Peer Emotional Support, India',
     template: '%s | LeanOn — Peer Support India',
   },
-  description: "Talk to a verified peer listener in India, anonymously and without judgment. First session is free. Available 24/7 in 12 Indian languages — for loneliness, anxiety, burnout, grief, and more.",
+  description: "Talk to a verified peer listener in India, anonymously and without judgment. Available 24/7, no appointment needed. 12 Indian languages — for loneliness, anxiety, burnout, grief, and more.",
   manifest: '/manifest.json',
   icons: { icon: '/logo.png', apple: '/logo.png' },
   keywords: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     'lean on app', 'lean on India', 'LeanOn',
     'peer listener India', 'emotional wellness app', 'talk to a friend online India',
     'loneliness support India', 'anxiety support India', 'grief support India',
-    'burnout help India', 'peer emotional support India', 'free emotional support India',
+    'burnout help India', 'peer emotional support India',
     'emotional support chat', 'online support group India',
     'empathy', 'empathetic listener India', 'empathetic support India', 'compassionate listener India',
     'peer counselling India', 'peer counsellor India', 'active listening India',
@@ -48,13 +48,13 @@ export const metadata: Metadata = {
     locale: 'en_IN',
     siteName: 'LeanOn',
     title: 'LeanOn — Peer Emotional Support, India',
-    description: "Talk to a trained peer listener, anonymously. Free first session.",
+    description: "Talk to a trained peer listener, anonymously. Available 24/7, no appointment needed.",
   },
   twitter: {
     card: 'summary_large_image',
     site: '@leanonapp',
     title: 'LeanOn — Peer Emotional Support, India',
-    description: "Talk to a trained peer listener, anonymously. Free first session.",
+    description: "Talk to a trained peer listener, anonymously. Available 24/7, no appointment needed.",
   },
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? undefined,
@@ -124,7 +124,7 @@ const jsonLd = {
         '@type': 'Offer',
         price: '0',
         priceCurrency: 'INR',
-        description: 'First 5-minute session is completely free',
+        description: '5-minute trial session available for new users',
         availability: 'https://schema.org/InStock',
       },
       description: 'LeanOn — someone to lean on anytime. Peer emotional support platform for India. Talk to verified listeners who have lived through what you are facing.',
@@ -143,7 +143,7 @@ const webAppJsonLd = {
   "serviceType": "Peer Emotional Support",
   "audience": { "@type": "Audience", "audienceType": "Adults in India experiencing loneliness, anxiety, grief, burnout, or relationship stress" },
   "areaServed": { "@type": "Country", "name": "India" },
-  "offers": { "@type": "Offer", "priceCurrency": "INR", "price": "0", "description": "First 5 minutes free" }
+  "offers": { "@type": "Offer", "priceCurrency": "INR", "price": "0", "description": "5-minute trial session for new users" }
 }
 
 const serviceJsonLd = {
@@ -174,10 +174,10 @@ const serviceJsonLd = {
   "offers": [
     {
       "@type": "Offer",
-      "name": "Free Trial Session",
+      "name": "Trial Session",
       "price": "0",
       "priceCurrency": "INR",
-      "description": "First 5-minute session is completely free — up to 3 free sessions per user, one per listener. No credit card required.",
+      "description": "5-minute trial session — up to 3 introductory sessions per user, one per listener. No credit card required.",
       "availability": "https://schema.org/InStock",
       "eligibleRegion": { "@type": "Country", "name": "India" }
     },

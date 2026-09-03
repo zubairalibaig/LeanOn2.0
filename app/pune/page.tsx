@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support in Pune — Peer Listeners | LeanOn',
-  description: 'Connect with peer listeners in Pune, India. Free first session. Talk anonymously in Marathi, Hindi, or English about stress, loneliness, and student life on LeanOn.',
+  description: 'Connect with peer listeners in Pune, India. Available 24/7. Talk anonymously in Marathi, Hindi, or English about stress, loneliness, and student life on LeanOn.',
   alternates: { canonical: 'https://www.leanon.app/pune', languages: { 'en-IN': 'https://www.leanon.app/pune' } },
   keywords: 'peer support Pune, emotional support Pune, loneliness Pune, student stress Pune, talk to someone Pune, Marathi emotional support, leanon Pune',
   openGraph: {
     title: 'Emotional Support in Pune — Peer Listeners | LeanOn',
-    description: 'Connect with peer listeners in Pune, India. Free first session. Talk anonymously on LeanOn.',
+    description: 'Connect with peer listeners in Pune, India. Available 24/7. Talk anonymously on LeanOn.',
     url: 'https://www.leanon.app/pune',
     siteName: 'LeanOn',
     type: 'article',
@@ -41,7 +41,7 @@ const faqSchema = {
       name: 'Is LeanOn useful for IT professionals in Hinjewadi and Magarpatta?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. Long commutes, project deadlines, layoff anxiety, and living far from family are everyday realities for Pune\'s IT workforce. Many of LeanOn\'s listeners have lived through exactly this and offer judgment-free, completely private conversations from ₹8 per minute — with up to 3 free 5-minute trial sessions to start.',
+        text: 'Yes. Long commutes, project deadlines, layoff anxiety, and living far from family are everyday realities for Pune\'s IT workforce. Many of LeanOn\'s listeners have lived through exactly this and offer judgment-free, completely private conversations from ₹8 per minute — with up to 3 introductory 5-minute sessions to start.',
       },
     },
     {
@@ -172,10 +172,10 @@ export default function PunePage() {
 
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Gets Pune?</h2>
-          <p>Browse peer listeners who understand student pressure, first-job stress, and the loneliness of starting over. Sessions in Marathi, Hindi, or English. First 5 minutes free.</p>
+          <p>Browse peer listeners who understand student pressure, first-job stress, and the loneliness of starting over. Sessions in Marathi, Hindi, or English. Available 24/7.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 
@@ -191,7 +191,7 @@ export default function PunePage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn useful for IT professionals in Hinjewadi and Magarpatta?</div>
-            <div className="faq-a">Yes. Long commutes, project deadlines, layoff anxiety, and living far from family are everyday realities for Pune&apos;s IT workforce. Many LeanOn listeners have lived exactly this. Sessions are private, judgment-free, and start with up to 3 free 5-minute trials.</div>
+            <div className="faq-a">Yes. Long commutes, project deadlines, layoff anxiety, and living far from family are everyday realities for Pune&apos;s IT workforce. Many LeanOn listeners have lived exactly this. Sessions are private, judgment-free, and start with up to 3 introductory 5-minute sessions.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn anonymous?</div>

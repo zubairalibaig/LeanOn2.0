@@ -69,7 +69,7 @@ export const post = {
 
 <p><strong>Availability when you actually need it.</strong> Support scheduled for two weeks from now does not help with what you are feeling tonight. Look for options that meet you in the moment, not just during business hours.</p>
 
-<p><strong>Affordability that does not force a trade-off.</strong> If getting support means skipping something else you need, the cost model is working against you. Free trials, per-minute pricing, and transparent costs matter.</p>
+<p><strong>Affordability that does not force a trade-off.</strong> If getting support means skipping something else you need, the cost model is working against you. Per-minute pricing and transparent costs matter.</p>
 
 <p><strong>Real lived experience, not just theoretical training.</strong> There is a specific kind of understanding that comes only from having actually been through something — not read about it, not studied it clinically, but lived it. That is what separates an empathetic peer listener from a well-meaning stranger.</p>
 
@@ -81,7 +81,7 @@ export const post = {
 
 <p>LeanOn is built specifically for the everyday-support layer of this landscape — the very large, very real category of need that sits between &quot;I am fine&quot; and &quot;I need clinical treatment.&quot; It connects you one-on-one, by text chat or voice call, with a verified peer listener who has personally lived through loneliness, anxiety, burnout, grief, breakups, or family pressure, and who has been trained in <strong>empathetic listener India</strong> practices — genuine, active, judgment-free listening, not scripted responses.</p>
 
-<p>Every session is anonymous by default. Listeners are manually verified. The first 5-minute session is completely free, so you can find the right listener before committing anything. After that, sessions run ₹8–25 per minute, a fraction of typical therapy costs, available 24/7, in 12 Indian languages.</p>
+<p>Every session is anonymous by default. Listeners are manually verified. A short trial session is available for new users, so you can find the right listener before committing to a longer session. After that, sessions run ₹8–25 per minute, a fraction of typical therapy costs, available 24/7, in 12 Indian languages.</p>
 
 <h3>Having a Good First Session</h3>
 

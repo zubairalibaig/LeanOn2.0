@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Online Emotional Support India | Talk to a Peer Listener | LeanOn',
-  description: 'Get online emotional support in India. Talk to verified peer listeners who have lived through what you\'re facing. Available 24/7, anonymous, starts free.',
+  description: 'Get online emotional support in India. Talk to verified peer listeners who have lived through what you\'re facing. Available 24/7, anonymous, instant access.',
   keywords: ['online emotional support india', 'emotional support online india', 'peer emotional support india', 'talk to someone online india'],
   alternates: { canonical: 'https://www.leanon.app/online-emotional-support-india' },
 }
@@ -36,7 +36,7 @@ export default function OnlineEmotionalSupportIndiaPage() {
       <style>{S}</style>
       <nav>
         <a href="/"><img src="/logo.png" alt="LeanOn" style={{height:48}} /></a>
-        <a href="/auth"><button className="btn" style={{fontSize:13,padding:'8px 20px'}}>Try free</button></a>
+        <a href="/auth"><button className="btn" style={{fontSize:13,padding:'8px 20px'}}>Try now</button></a>
       </nav>
       <div className="page">
         <a href="/" style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:14,fontWeight:700,color:'var(--gray)',marginBottom:28}}>← Back</a>
@@ -69,8 +69,8 @@ export default function OnlineEmotionalSupportIndiaPage() {
         </div>
 
         <div className="cta">
-          <h2>Start with a free session today</h2>
-          <p>Browse peer listeners by topic. First 5 minutes free.</p>
+          <h2>Start a session today</h2>
+          <p>Browse peer listeners by topic. Available 24/7.</p>
           <a href="/browse"><button className="btn">Browse listeners →</button></a>
         </div>
       </div>

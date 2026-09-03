@@ -3,12 +3,12 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Free Peer Support for Loneliness in India | LeanOn',
-  description: 'Feeling lonely? Talk to a peer listener anonymously. Free first session. LeanOn connects you with empathetic listeners in India, available 24/7.',
+  title: 'Peer Support for Loneliness in India | LeanOn',
+  description: 'Feeling lonely? Talk to a peer listener anonymously. Available 24/7. LeanOn connects you with empathetic listeners in India, available 24/7.',
   alternates: { canonical: 'https://www.leanon.app/support/loneliness', languages: { 'en-IN': 'https://www.leanon.app/support/loneliness' } },
   openGraph: {
-    title: 'Free Peer Support for Loneliness in India | LeanOn',
-    description: 'Feeling lonely? Talk to a peer listener anonymously. Free first session. LeanOn connects you with empathetic listeners in India, available 24/7.',
+    title: 'Peer Support for Loneliness in India | LeanOn',
+    description: 'Feeling lonely? Talk to a peer listener anonymously. Available 24/7. LeanOn connects you with empathetic listeners in India, available 24/7.',
     url: 'https://www.leanon.app/support/loneliness',
     siteName: 'LeanOn',
     type: 'article',
@@ -56,7 +56,7 @@ const faqSchema = {
       name: 'How much does LeanOn peer support cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn starts at ₹160 for a 15-minute session, with the first 5 minutes free so you can find the right listener before committing. It is significantly more affordable than therapy and available any time — including late nights when loneliness tends to peak.',
+        text: 'LeanOn starts at ₹160 for a 15-minute session, with a trial session available for new users. It is significantly more affordable than therapy and available any time — including late nights when loneliness tends to peak.',
       },
     },
   ],
@@ -225,10 +225,10 @@ export default function LonelinessSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Feel Less Alone?</h2>
-          <p>Talk to a peer listener who truly understands loneliness. First 5 minutes free — no appointments, no waitlists.</p>
+          <p>Talk to a peer listener who truly understands loneliness. Available 24/7, no appointments, no waitlists.</p>
           <div className="cta-btns">
             <a href="/browse?topic=loneliness"><button className="btn-primary">Browse Loneliness Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 
@@ -253,7 +253,7 @@ export default function LonelinessSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does LeanOn peer support cost?</div>
-            <div className="faq-a">LeanOn starts at ₹160 for a 15-minute session, with the first 5 minutes free. It is significantly more affordable than therapy and available any time — including late nights when loneliness tends to peak.</div>
+            <div className="faq-a">LeanOn starts at ₹160 for a 15-minute session, with a short trial session available for new users. It is significantly more affordable than therapy and available any time — including late nights when loneliness tends to peak.</div>
           </div>
         </div>
 

@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: "Sunday Night Loneliness — You're Not the Only One Feeling It | LeanOn",
-  description: 'Sunday scaries hitting hard? Talk to a peer listener anonymously before the week starts. Free first session, available every Sunday night.',
+  description: 'Sunday scaries hitting hard? Talk to a peer listener anonymously before the week starts. Available every Sunday night.',
   alternates: { canonical: 'https://www.leanon.app/support/sunday-night-loneliness', languages: { 'en-IN': 'https://www.leanon.app/support/sunday-night-loneliness' } },
   keywords: 'sunday scaries India, sunday night loneliness, sunday evening sadness, why do I feel lonely on sundays, someone to talk to sunday night',
   openGraph: {
     title: "Sunday Night Loneliness — You're Not the Only One Feeling It | LeanOn",
-    description: 'Sunday scaries hitting hard? Talk to a peer listener anonymously before the week starts. Free first session, available every Sunday night.',
+    description: 'Sunday scaries hitting hard? Talk to a peer listener anonymously before the week starts. Available every Sunday night.',
     url: 'https://www.leanon.app/support/sunday-night-loneliness',
     siteName: 'LeanOn',
     type: 'article',
@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'How much does LeanOn cost on a Sunday night?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn starts at ₹160 for a 15-minute session, with the first 5 minutes free so you can find the right listener before committing. It is available every Sunday evening and night, exactly when the scaries tend to peak.',
+        text: 'LeanOn starts at ₹160 for a 15-minute session, with a trial session available for new users. It is available every Sunday evening and night, exactly when the scaries tend to peak.',
       },
     },
   ],
@@ -226,10 +226,10 @@ export default function SundayNightLonelinessPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Don&apos;t Face Monday Alone Tonight</h2>
-          <p>Talk to a peer listener who understands the Sunday scaries. First 5 minutes free — no appointments, no waitlists.</p>
+          <p>Talk to a peer listener who understands the Sunday scaries. Available 24/7, no appointments, no waitlists.</p>
           <div className="cta-btns">
             <a href="/browse?topic=sunday-night"><button className="btn-primary">Browse Sunday Night Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 
@@ -254,7 +254,7 @@ export default function SundayNightLonelinessPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does LeanOn cost on a Sunday night?</div>
-            <div className="faq-a">LeanOn starts at ₹160 for a 15-minute session, with the first 5 minutes free so you can find the right listener before committing. It is available every Sunday evening and night, exactly when the scaries tend to peak.</div>
+            <div className="faq-a">LeanOn starts at ₹160 for a 15-minute session, with a trial session available for new users. It is available every Sunday evening and night, exactly when the scaries tend to peak.</div>
           </div>
         </div>
 

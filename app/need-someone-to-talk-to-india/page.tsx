@@ -4,9 +4,9 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Need Someone to Talk To in India? LeanOn — Real Humans, 24/7',
-  description: 'Need someone to talk to in India? LeanOn connects you with real peer listeners who understand. Anonymous, affordable, available even at 2 AM. First session free.',
+  description: 'Need someone to talk to in India? LeanOn connects you with real peer listeners who understand. Anonymous, affordable, available even at 2 AM. Available 24/7.',
   alternates: { canonical: 'https://www.leanon.app/need-someone-to-talk-to-india' },
-  keywords: ['need someone to talk to India', 'someone to talk to India', 'talk to someone India free', 'peer listener India 24/7'],
+  keywords: ['need someone to talk to India', 'someone to talk to India', 'peer listener India 24/7'],
 }
 
 const jsonLd = {
@@ -52,7 +52,7 @@ export default function NeedSomeoneToTalkToIndia() {
         <a href="/" className="back">← LeanOn Home</a>
         <h1>Need <span>Someone to Talk To</span> in India?</h1>
         <p className="lead">
-          You&apos;re not alone — even if it feels that way right now. LeanOn connects you with real peer listeners in India who have been through what you&apos;re going through. Available 24/7. First 5 minutes free.
+          You&apos;re not alone — even if it feels that way right now. LeanOn connects you with real peer listeners in India who have been through what you&apos;re going through. Available 24/7, instant access, no appointment.
         </p>
 
         <div className="crisis-box">
@@ -78,8 +78,8 @@ export default function NeedSomeoneToTalkToIndia() {
         <div className="section">
           <h2>How it works</h2>
           <p><strong>1. Sign up in 30 seconds</strong> — just your phone number. No full name, no email.</p>
-          <p><strong>2. Browse peer listeners</strong> — read their bios and find someone who gets your situation. It&apos;s free to browse.</p>
-          <p><strong>3. Start a free 5-min chat</strong> — no wallet, no card, no commitment.</p>
+          <p><strong>2. Browse peer listeners</strong> — read their bios and find someone who gets your situation. Browse anonymously.</p>
+          <p><strong>3. Start a 5-min chat</strong> — no wallet, no card, no commitment.</p>
           <p><strong>4. Talk</strong> — text or voice. Say what you need to say. Your listener is here for you.</p>
         </div>
 
@@ -91,7 +91,7 @@ export default function NeedSomeoneToTalkToIndia() {
 
         <div className="cta-box">
           <h2>Someone is online right now</h2>
-          <p>Browse peer listeners and start your free chat. You don&apos;t have to go through this alone.</p>
+          <p>Browse peer listeners and start talking. You don&apos;t have to go through this alone.</p>
           <a href="/browse"><button className="btn">Find a listener →</button></a>
         </div>
       </div>

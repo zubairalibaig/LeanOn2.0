@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Feeling Lonely in Your Marriage? Talk to Someone | LeanOn India',
-  description: 'Lonely in your marriage? Talk anonymously to a peer listener who has felt it too. Private, judgment-free emotional support in India. First 5 minutes free.',
+  description: 'Lonely in your marriage? Talk anonymously to a peer listener who has felt it too. Private, judgment-free emotional support in India. Available 24/7.',
   keywords: 'lonely in marriage, emotional loneliness marriage India, feeling alone in relationship, married but lonely, talk to someone about marriage, marriage loneliness support India, anonymous emotional support for married people',
   alternates: { canonical: 'https://www.leanon.app/support/marriage-loneliness', languages: { 'en-IN': 'https://www.leanon.app/support/marriage-loneliness' } },
   openGraph: {
     title: 'Feeling Lonely in Your Marriage? Talk to Someone | LeanOn India',
-    description: 'Lonely in your marriage? Talk anonymously to a peer listener who has felt it too. Private, judgment-free emotional support in India. First 5 minutes free.',
+    description: 'Lonely in your marriage? Talk anonymously to a peer listener who has felt it too. Private, judgment-free emotional support in India. Available 24/7.',
     url: 'https://www.leanon.app/support/marriage-loneliness',
     siteName: 'LeanOn',
     type: 'article',
@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'How much does LeanOn peer support cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn starts at ₹160 for a 15-minute session, with the first 5 minutes free so you can find the right listener before committing. There is no subscription and no appointment. LeanOn is peer support, not couples counselling or marriage therapy, and it is available any time, including late at night.',
+        text: 'LeanOn starts at ₹160 for a 15-minute session, with a trial session available for new users. There is no subscription and no appointment. LeanOn is peer support, not couples counselling or marriage therapy, and it is available any time, including late at night.',
       },
     },
   ],
@@ -241,10 +241,10 @@ export default function MarriageLonelinessSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Be Heard?</h2>
-          <p>Talk to a peer listener who understands loneliness inside a marriage. Completely anonymous, outside your circle. First 5 minutes free — no appointments, no waitlists.</p>
+          <p>Talk to a peer listener who understands loneliness inside a marriage. Completely anonymous, outside your circle. Available 24/7, no appointments, no waitlists.</p>
           <div className="cta-btns">
             <a href="/browse?topic=marriage-loneliness"><button className="btn-primary">Browse Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 
@@ -269,7 +269,7 @@ export default function MarriageLonelinessSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does LeanOn peer support cost?</div>
-            <div className="faq-a">LeanOn starts at ₹160 for a 15-minute session, with the first 5 minutes free so you can find the right listener before committing. There is no subscription and no appointment. LeanOn is peer support, not couples counselling or marriage therapy, and it is available any time, including late at night.</div>
+            <div className="faq-a">LeanOn starts at ₹160 for a 15-minute session, with a trial session available for new users. There is no subscription and no appointment. LeanOn is peer support, not couples counselling or marriage therapy, and it is available any time, including late at night.</div>
           </div>
         </div>
 

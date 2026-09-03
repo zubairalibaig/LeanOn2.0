@@ -5,7 +5,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Mental Health Resources & Guides | LeanOn',
-  description: 'Free mental health resources, guides, and articles for India. Active listening, loneliness, burnout, peer support, anxiety, grief and more. From LeanOn — India\'s peer support platform.',
+  description: 'Mental health resources, guides, and articles for India. Active listening, loneliness, burnout, peer support, anxiety, grief and more. From LeanOn — India\'s peer support platform.',
   alternates: { canonical: 'https://www.leanon.app/resources' },
 }
 
@@ -50,7 +50,7 @@ export default function ResourcesIndex() {
         <div className="hero">
           <p className="tag">Resources</p>
           <h1>Mental Health Resources &amp; Guides</h1>
-          <p className="lead">Free articles, guides, and resources on loneliness, burnout, anxiety, peer support, and emotional wellbeing — written for India.</p>
+          <p className="lead">Articles, guides, and resources on loneliness, burnout, anxiety, peer support, and emotional wellbeing — written for India.</p>
         </div>
 
         <div className="grid">
@@ -64,7 +64,7 @@ export default function ResourcesIndex() {
 
         <div className="cta-box">
           <h2>Sometimes reading isn&apos;t enough</h2>
-          <p>Talk to a real peer listener — someone who has been through what you&apos;re reading about. First 5 minutes free.</p>
+          <p>Talk to a real peer listener — someone who has been through what you&apos;re reading about. Available 24/7.</p>
           <a href="/browse"><button className="btn">Find a listener →</button></a>
         </div>
       </div>

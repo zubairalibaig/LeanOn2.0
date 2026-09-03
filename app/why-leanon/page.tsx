@@ -56,7 +56,7 @@ export default function WhyLeanOnPage() {
       <style>{S}</style>
       <nav>
         <a href="/"><img src="/logo.png" alt="LeanOn" style={{height:48}} /></a>
-        <a href="/auth"><button className="btn" style={{fontSize:13,padding:'8px 20px'}}>Try free</button></a>
+        <a href="/auth"><button className="btn" style={{fontSize:13,padding:'8px 20px'}}>Try now</button></a>
       </nav>
       <div className="page">
         <a href="/" style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:14,fontWeight:700,color:'var(--gray)',marginBottom:28}}>← Back</a>
@@ -72,7 +72,7 @@ export default function WhyLeanOnPage() {
             <h3>LeanOn Peer Support</h3>
             <ul>
               <li>Available 24/7 — even at 2 AM</li>
-              <li>First 5 minutes free, then ₹160 for 15 min</li>
+              <li>From ₹160 for 15 minutes</li>
               <li>No appointment needed</li>
               <li>Completely anonymous</li>
               <li>Real humans with lived experience</li>
@@ -113,8 +113,8 @@ export default function WhyLeanOnPage() {
         </div>
 
         <div className="cta">
-          <h2>Try LeanOn free today</h2>
-          <p>Your first 5 minutes are completely free. No card, no commitment.</p>
+          <h2>Try LeanOn today</h2>
+          <p>Available 24/7. No card, no commitment.</p>
           <a href="/browse"><button className="btn">Browse listeners →</button></a>
         </div>
       </div>

@@ -41,11 +41,11 @@ const faqs = [
     items: [
       {
         q: 'How do I start using LeanOn?',
-        a: 'Sign up with your mobile number (OTP verified — 30 seconds). Browse peer listeners for free — read bios, topics, and ratings. When you\'re ready, pick a session length and start immediately. New users get up to 3 free 5-minute sessions to try different listeners.',
+        a: 'Sign up with your mobile number (OTP verified — 30 seconds). Browse peer listeners anonymously — read bios, topics, and ratings. When you\'re ready, pick a session length and start immediately. New users get up to 3 introductory 5-minute sessions to try different listeners.',
       },
       {
-        q: 'Is it really free to start?',
-        a: 'Yes. New users get up to 3 free 5-minute sessions — one per listener — no credit card or wallet top-up needed. You just need to sign up with your phone number.',
+        q: 'How does pricing work?',
+        a: 'LeanOn charges a flat fee per session. 15-minute sessions start at ₹160. A short 5-minute trial session is available for new users — no credit card or wallet top-up needed.',
       },
       {
         q: 'Do I need to book in advance?',
@@ -62,7 +62,7 @@ const faqs = [
     items: [
       {
         q: 'How much does LeanOn cost?',
-        a: 'After your free trial, sessions cost ₹8–25 per minute depending on the listener. Sessions are billed in 15-minute slots. A 15-minute session costs ₹160 — ₹150 goes to your listener and ₹10 is the flat LeanOn platform fee. A 30-minute session costs ₹310.',
+        a: 'After your trial session, sessions cost ₹8–25 per minute depending on the listener. Sessions are billed in 15-minute slots. A 15-minute session costs ₹160 — ₹150 goes to your listener and ₹10 is the flat LeanOn platform fee. A 30-minute session costs ₹310.',
       },
       {
         q: 'How does the wallet work?',
@@ -158,7 +158,7 @@ export default function FAQPage() {
       <style>{S}</style>
       <nav className="nav">
         <a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a>
-        <a href="/auth" style={{background:'#FF9933',color:'white',fontFamily:'Nunito,sans-serif',fontWeight:800,fontSize:14,padding:'10px 22px',borderRadius:50,border:'none',cursor:'pointer'}}>Get started free</a>
+        <a href="/auth" style={{background:'#FF9933',color:'white',fontFamily:'Nunito,sans-serif',fontWeight:800,fontSize:14,padding:'10px 22px',borderRadius:50,border:'none',cursor:'pointer'}}>Get started</a>
       </nav>
 
       <div className="wrap">
@@ -183,9 +183,9 @@ export default function FAQPage() {
 
         <div className="cta-box">
           <h2>Still have questions?</h2>
-          <p>We&apos;re here to help. Start your free session or reach out to us directly.</p>
+          <p>We&apos;re here to help. Start a session or reach out to us directly.</p>
           <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
-            <a href="/auth"><button className="btn-cta">Start free — no card needed</button></a>
+            <a href="/auth"><button className="btn-cta">Start now</button></a>
             <a href="/contact" style={{color:'white',fontWeight:700,fontSize:15,padding:'14px 24px',display:'inline-block',opacity:0.85}}>Contact us →</a>
           </div>
         </div>

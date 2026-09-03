@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Laid Off? Talk to Someone Who Has Been There | LeanOn India',
-  description: 'Job loss hurts more than the paycheck. Talk anonymously to a peer listener who has been laid off and rebuilt. First session free. Available across India.',
+  description: 'Job loss hurts more than the paycheck. Talk anonymously to a peer listener who has been laid off and rebuilt. Available 24/7 across India.',
   alternates: { canonical: 'https://www.leanon.app/support/job-loss', languages: { 'en-IN': 'https://www.leanon.app/support/job-loss' } },
   keywords: 'job loss depression India, laid off emotional support, coping with layoff India, lost my job India, talk to someone after layoff, job loss anxiety, unemployment stress India, peer support after being fired',
   openGraph: {
     title: 'Laid Off? Talk to Someone Who Has Been There | LeanOn India',
-    description: 'Job loss hurts more than the paycheck. Talk anonymously to a peer listener who has been laid off and rebuilt. First session free. Available across India.',
+    description: 'Job loss hurts more than the paycheck. Talk anonymously to a peer listener who has been laid off and rebuilt. Available 24/7 across India.',
     url: 'https://www.leanon.app/support/job-loss',
     siteName: 'LeanOn',
     type: 'article',
@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'How much does LeanOn cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn starts at ₹160 for a 15-minute session, and the first 5 minutes are free so you can find the right listener before paying anything. We know you have just lost your income, so we will not pretend cost does not matter. It is a small fraction of what a therapy session costs in India, there is no subscription, and you decide session by session.',
+        text: 'LeanOn starts at ₹160 for a 15-minute session. A short trial session is available for new users. We know you have just lost your income, so we will not pretend cost does not matter. It is a small fraction of what a therapy session costs in India, there is no subscription, and you decide session by session.',
       },
     },
   ],
@@ -149,7 +149,7 @@ export default function JobLossSupportPage() {
         <div className="hero">
           <p className="tag">Peer Support · Job Loss</p>
           <h1>Losing a Job Isn&apos;t Losing Your <em>Worth</em></h1>
-          <p className="lead">A layoff email takes thirty seconds to read and months to absorb. If you&apos;re staring at a laptop you no longer have a login for, wondering how to tell anyone — LeanOn connects you with peer listeners who have been laid off themselves, and rebuilt. First 5 minutes free.</p>
+          <p className="lead">A layoff email takes thirty seconds to read and months to absorb. If you&apos;re staring at a laptop you no longer have a login for, wondering how to tell anyone — LeanOn connects you with peer listeners who have been laid off themselves, and rebuilt. Available 24/7.</p>
         </div>
 
         {/* Understanding */}
@@ -226,10 +226,10 @@ export default function JobLossSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>You Don&apos;t Have to Carry This Alone</h2>
-          <p>Talk to a peer listener who has been laid off and rebuilt. First 5 minutes free — no appointments, no subscription, no one in your life needs to know.</p>
+          <p>Talk to a peer listener who has been laid off and rebuilt. Available 24/7, no subscription, no one in your life needs to know.</p>
           <div className="cta-btns">
             <a href="/browse?topic=job-loss"><button className="btn-primary">Browse Job Loss Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Create Free Account</button></a>
+            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 
@@ -254,7 +254,7 @@ export default function JobLossSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does LeanOn cost?</div>
-            <div className="faq-a">LeanOn starts at ₹160 for a 15-minute session, and the first 5 minutes are free so you can find the right listener before paying anything. We know you have just lost your income, so we won&apos;t pretend cost does not matter — it is a small fraction of what a therapy session costs in India, there is no subscription, and you decide session by session.</div>
+            <div className="faq-a">LeanOn starts at ₹160 for a 15-minute session, . A short trial session is available for new users. We know you have just lost your income, so we won&apos;t pretend cost does not matter — it is a small fraction of what a therapy session costs in India, there is no subscription, and you decide session by session.</div>
           </div>
         </div>
 

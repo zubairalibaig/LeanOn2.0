@@ -120,7 +120,7 @@ export default function LonelinessStatisticsIndia() {
 
         <div className="cta-box">
           <h2>You don&apos;t have to be one of the statistics</h2>
-          <p>Talk to a real peer listener on LeanOn. First 5 minutes free. Available 24/7 across India.</p>
+          <p>Talk to a real peer listener on LeanOn. Available 24/7 across India.</p>
           <a href="/browse"><button className="btn">Find a listener →</button></a>
         </div>
       </div>

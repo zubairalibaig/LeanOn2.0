@@ -26,11 +26,11 @@ function WelcomeBanner() {
     <div style={{background:'var(--navy)',color:'white',padding:'12px 20px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,fontFamily:'Nunito,sans-serif'}}>
       <div style={{flex:1}}>
         {isNew ? (
-          <p style={{fontSize:14,fontWeight:800,margin:0}}>Welcome to LeanOn! Your first 5 minutes are free. 👋</p>
+          <p style={{fontSize:14,fontWeight:800,margin:0}}>Welcome to LeanOn 👋</p>
         ) : (
           <>
             <p style={{fontSize:14,fontWeight:800,margin:0,marginBottom:2}}>Not sure where to start?</p>
-            <p style={{fontSize:12,fontWeight:600,opacity:0.8,margin:0}}>Browse listeners by topic → Find one you like → Start with a free 5-min session</p>
+            <p style={{fontSize:12,fontWeight:600,opacity:0.8,margin:0}}>Browse listeners by topic → Find one you like → Start a 5-min session</p>
           </>
         )}
       </div>
