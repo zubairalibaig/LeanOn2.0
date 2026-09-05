@@ -15,7 +15,7 @@ export const FREE_SESSION_MINS  = 5
 // window while restoring a reason to recharge.
 // NOTE: any user-facing copy stating the number must be updated alongside this
 // (homepage FAQ, /faq, city page FAQs, layout Service schema, public/llms.txt).
-export const MAX_FREE_TRIALS    = 3
+export const MAX_FREE_TRIALS    = 2
 export const SESSION_DURATIONS  = [5, 15, 30, 45] as const
 export const RECHARGE_AMOUNTS   = [200, 500, 1000, 2000] as const
 export const UUID_RE            = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i

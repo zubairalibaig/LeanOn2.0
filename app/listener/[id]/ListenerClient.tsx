@@ -148,8 +148,8 @@ export default function ListenerClient({ id }: { id: string }) {
 
       const [{data: userData}, totalTrials, listenerTrial] = await Promise.all([
         client.from('users').select('wallet_balance').eq('id', user.id).single(),
-        unlimited ? Promise.resolve({ count: 0 }) : client.from('sessions').select('id', { count: 'exact', head: true }).eq('seeker_id', user.id).eq('is_free_trial', true),
-        unlimited ? Promise.resolve({ count: 0 }) : client.from('sessions').select('id', { count: 'exact', head: true }).eq('seeker_id', user.id).eq('listener_id', id).eq('is_free_trial', true),
+        unlimited ? Promise.resolve({ count: 0 }) : client.from('sessions').select('id', { count: 'exact', head: true }).eq('seeker_id', user.id).eq('is_free_trial', true).eq('status', 'completed'),
+        unlimited ? Promise.resolve({ count: 0 }) : client.from('sessions').select('id', { count: 'exact', head: true }).eq('seeker_id', user.id).eq('listener_id', id).eq('is_free_trial', true).eq('status', 'completed'),
       ])
       if (userData) setBalance(userData.wallet_balance)
       if (!unlimited) {

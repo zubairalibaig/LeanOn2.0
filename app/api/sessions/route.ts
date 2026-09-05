@@ -56,13 +56,14 @@ export async function POST(req: NextRequest) {
     // effectivelyFree = true means zero cost and free-trial flag — applies to all durations for unlimited testers
     const effectivelyFree = isFree || unlimitedTester
 
-    // Up to MAX_FREE_TRIALS free trials per user, ONE per listener — lets seekers try multiple listeners
+    // Up to MAX_FREE_TRIALS *completed* free trials per user, ONE per listener.
+    // Cancelled sessions do NOT count — the seeker never got value from them.
     if (isFree && !unlimitedTester) {
       const [totalTrials, listenerTrial] = await Promise.all([
         sb.from('sessions').select('id', { count: 'exact', head: true })
-          .eq('seeker_id', user.id).eq('is_free_trial', true),
+          .eq('seeker_id', user.id).eq('is_free_trial', true).eq('status', 'completed'),
         sb.from('sessions').select('id', { count: 'exact', head: true })
-          .eq('seeker_id', user.id).eq('listener_id', listenerId).eq('is_free_trial', true),
+          .eq('seeker_id', user.id).eq('listener_id', listenerId).eq('is_free_trial', true).eq('status', 'completed'),
       ])
       if ((totalTrials.count ?? 0) >= MAX_FREE_TRIALS) {
         return NextResponse.json({ error: 'free_trial_used', message: `You've used all ${MAX_FREE_TRIALS} of your free 5-min trials. Recharge your wallet to continue.` }, { status: 400 })
