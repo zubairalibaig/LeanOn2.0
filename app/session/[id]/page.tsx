@@ -715,6 +715,31 @@ function SessionContent() {
           if (!cancelled) setNetQuality(stats.uplinkNetworkQuality)
         })
 
+        // ── THE CRITICAL FIX ────────────────────────────────────────────────
+        // Subscribe to the remote user's audio track and play it.
+        // Without this handler, both users connect and publish their mic, but
+        // nobody ever calls subscribe() + play() on the incoming stream, so
+        // the channel is dead-silent for both parties from day one.
+        // Must be registered BEFORE client.join() so it fires for any user
+        // who is already in the channel when the local user joins.
+        client.on('user-published', async (remoteUser: any, mediaType: string) => {
+          if (cancelled || mediaType !== 'audio') return
+          try {
+            await client.subscribe(remoteUser, 'audio')
+            remoteUser.audioTrack?.play()
+          } catch (subErr) {
+            console.error('Agora subscribe error:', subErr)
+          }
+        })
+
+        // Stop playing when the remote user unpublishes (mute / leaves)
+        client.on('user-unpublished', (remoteUser: any, mediaType: string) => {
+          if (mediaType === 'audio') {
+            remoteUser.audioTrack?.stop()
+          }
+        })
+        // ────────────────────────────────────────────────────────────────────
+
         // Create microphone audio track
         // Bluetooth/Safari: createMicrophoneAudioTrack may need AEC disabled on some devices
         let micTrack: Awaited<ReturnType<typeof AgoraRTC.createMicrophoneAudioTrack>>
