@@ -687,32 +687,81 @@ function SessionContent() {
         // Create Agora RTC client
         const client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
 
-        // Handle network disconnect — attempt reconnect up to 3 times
-        client.on('connection-state-change', (curState: string) => {
+        // Handle network disconnect.
+        //
+        // STATE MACHINE (Agora Web SDK 4.x):
+        //   CONNECTING → CONNECTED (normal join)
+        //   CONNECTED → RECONNECTING (network drop — SDK retries automatically)
+        //   RECONNECTING → CONNECTED (SDK recovered — no action needed)
+        //   RECONNECTING → DISCONNECTED (SDK gave up after its own retries)
+        //   CONNECTED → DISCONNECTING → DISCONNECTED (intentional client.leave())
+        //
+        // Bug fixed: the old code triggered a manual reconnect on DISCONNECTING,
+        // which is the intentional-leave path (every clean exit caused a rogue
+        // reconnect). Only act on DISCONNECTED *after* RECONNECTING (SDK gave up).
+        // For DISCONNECTING (intentional leave) we do nothing — just update UI.
+        client.on('connection-state-change', (curState: string, prevState: string) => {
           if (cancelled) return
-          if (curState === 'DISCONNECTED' || curState === 'DISCONNECTING') {
+          if (curState === 'RECONNECTING') {
             setReconnecting(true)
-            if (reconnectAttempts < 3) {
-              reconnectAttempts++
-              setVoiceError(`Connection lost — reconnecting (${reconnectAttempts}/3)…`)
-              reconnectTimer = setTimeout(() => {
-                if (!cancelled) joinVoiceCall()
-              }, 2000 * reconnectAttempts)
-            } else {
-              setVoiceStatus('error')
-              setVoiceError('Connection lost. Please end and restart the call.')
-            }
+            setVoiceError('Connection dropped — reconnecting…')
           }
           if (curState === 'CONNECTED') {
             reconnectAttempts = 0
             setReconnecting(false)
             setVoiceError(null)
+            // Re-publish mic in case it was unpublished during reconnect
+            if (agoraRef.current) {
+              client.publish([agoraRef.current.micTrack]).catch(() => {})
+            }
+          }
+          // DISCONNECTED after RECONNECTING = SDK gave up. Try once more manually,
+          // then show error. DISCONNECTED after DISCONNECTING = intentional leave, ignore.
+          if (curState === 'DISCONNECTED' && prevState === 'RECONNECTING') {
+            setReconnecting(false)
+            if (reconnectAttempts < 3) {
+              reconnectAttempts++
+              setVoiceError(`Connection lost — retrying (${reconnectAttempts}/3)…`)
+              reconnectTimer = setTimeout(() => {
+                if (cancelled) return
+                // Clean up the old client first — critical to avoid two clients in the channel.
+                // The old client is already disconnected so leave() is a no-op,
+                // but we still need to release micTrack and null the ref.
+                if (agoraRef.current) {
+                  const { micTrack: oldMic } = agoraRef.current
+                  oldMic.close()
+                  agoraRef.current = null
+                }
+                joinVoiceCall()
+              }, 2000 * reconnectAttempts)
+            } else {
+              setVoiceStatus('error')
+              setVoiceError('Connection lost. Tap "Retry voice" to try again.')
+            }
           }
         })
 
         // Network quality monitoring (0=unknown, 1=excellent…6=disconnected)
         client.on('network-quality', (stats: { uplinkNetworkQuality: 0|1|2|3|4|5|6 }) => {
           if (!cancelled) setNetQuality(stats.uplinkNetworkQuality)
+        })
+
+        // Token expiry — Agora fires this 30 seconds before the token expires.
+        // Without a handler the SDK loses privileges mid-call and the call drops
+        // silently. Fetch a fresh token and renew in-place (no rejoin needed).
+        client.on('token-privilege-will-expire', async () => {
+          if (cancelled) return
+          try {
+            const r = await fetch(`/api/agora?sessionId=${sessionId}`, {
+              signal: AbortSignal.timeout(8000),
+            })
+            if (r.ok) {
+              const { token: newToken } = await r.json()
+              if (newToken && !cancelled) await client.renewToken(newToken)
+            }
+          } catch (e) {
+            console.error('Agora token renewal failed:', e)
+          }
         })
 
         // ── THE CRITICAL FIX ────────────────────────────────────────────────
