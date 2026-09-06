@@ -317,8 +317,8 @@ export default function AdminPage() {
   const [listenersLoginDir,  setListenersLoginDir]  = useState<SortDir | null>(null)
   // Which server-side column each table is ordered by. 'wallet' and 'earnings'
   // both sort across ALL pages (see /api/admin/users), not just the page shown.
-  const [usersSortBy,     setUsersSortBy]     = useState<'joined' | 'wallet'>('joined')
-  const [listenersSortBy, setListenersSortBy] = useState<'joined' | 'earnings'>('joined')
+  const [usersSortBy,     setUsersSortBy]     = useState<'joined' | 'wallet' | 'name'>('joined')
+  const [listenersSortBy, setListenersSortBy] = useState<'joined' | 'earnings' | 'name'>('joined')
   // Unspent seeker money across the whole filtered set. null = unavailable.
   const [usersWalletTotal, setUsersWalletTotal] = useState<number | null>(null)
 
@@ -1097,7 +1097,7 @@ export default function AdminPage() {
               ))}
               <input
                 className="search-input"
-                placeholder="Search by name..."
+                placeholder="Search by name or phone..."
                 value={usersSearch}
                 onChange={e => setUsersSearch(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') { setUsersPage(0); loadUsers(0, usersStatus, usersSearch) } }}
@@ -1132,13 +1132,21 @@ export default function AdminPage() {
                   <table>
                     <thead>
                       <tr>
-                        <th>Name</th>
+                        <th
+                          style={sortableTh}
+                          title="Sort by name A→Z / Z→A (across all pages)"
+                          onClick={() => {
+                            const next: SortDir = usersSortBy === 'name' ? (usersJoinedDir === 'asc' ? 'desc' : 'asc') : 'asc'
+                            setUsersJoinedDir(next); setUsersLoginDir(null); setUsersSortBy('name')
+                            setUsersPage(0); loadUsers(0, usersStatus, usersSearch, next, 'name')
+                          }}
+                        >Name{arrow(usersSortBy === 'name' ? usersJoinedDir : null)}</th>
                         <th>Phone</th>
                         <th
                           style={sortableTh}
                           title="Sort by joined date (across all pages)"
                           onClick={() => {
-                            const next: SortDir = usersJoinedDir === 'desc' ? 'asc' : 'desc'
+                            const next: SortDir = usersSortBy === 'joined' ? (usersJoinedDir === 'desc' ? 'asc' : 'desc') : 'desc'
                             setUsersJoinedDir(next); setUsersLoginDir(null); setUsersSortBy('joined')
                             setUsersPage(0); loadUsers(0, usersStatus, usersSearch, next, 'joined')
                           }}
@@ -1302,14 +1310,22 @@ export default function AdminPage() {
                     <thead>
                       <tr>
                         <th>Photo</th>
-                        <th>Name</th>
+                        <th
+                          style={sortableTh}
+                          title="Sort by name A→Z / Z→A (across all pages)"
+                          onClick={() => {
+                            const next: SortDir = listenersSortBy === 'name' ? (listenersJoinedDir === 'asc' ? 'desc' : 'asc') : 'asc'
+                            setListenersJoinedDir(next); setListenersLoginDir(null); setListenersSortBy('name')
+                            setListenersPage(0); loadListeners(0, listenersStatus, next, 'name')
+                          }}
+                        >Name{arrow(listenersSortBy === 'name' ? listenersJoinedDir : null)}</th>
                         <th>Phone</th>
                         <th>Aadhaar</th>
                         <th
                           style={sortableTh}
                           title="Sort by joined date (across all pages)"
                           onClick={() => {
-                            const next: SortDir = listenersJoinedDir === 'desc' ? 'asc' : 'desc'
+                            const next: SortDir = listenersSortBy === 'joined' ? (listenersJoinedDir === 'desc' ? 'asc' : 'desc') : 'desc'
                             setListenersJoinedDir(next); setListenersLoginDir(null); setListenersSortBy('joined')
                             setListenersPage(0); loadListeners(0, listenersStatus, next, 'joined')
                           }}

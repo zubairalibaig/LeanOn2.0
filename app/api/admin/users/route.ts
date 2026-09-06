@@ -88,18 +88,20 @@ export async function GET(req: NextRequest) {
         users!inner(id, name, email, phone, avatar_url, created_at, is_active, is_suspended, wallet_balance)
       `
 
-      // Earnings live in listener_earnings, so the database cannot ORDER BY
-      // them here. When sorting by earnings we fetch the whole filtered set,
-      // attach totals, sort, and slice the page in memory. That is only sane
-      // because the listener count is small (dozens); every other sort still
-      // paginates in the query.
+      // Earnings and name sorts require fetching the whole filtered set and
+      // sorting in memory (earnings live in another table; name lives on the
+      // joined users row which PostgREST can't order by directly). That is
+      // fine because listener counts are small (dozens). All other sorts
+      // paginate in the query.
       const sortByEarnings = sortBy === 'earnings'
+      const sortByName = sortBy === 'name'
+      const needsInMemorySort = sortByEarnings || sortByName
 
       const buildQuery = (selectStr: string) => {
         let q = sb.from('listener_profiles')
           .select(selectStr, { count: 'exact' })
-          .order('created_at', { ascending: sortByEarnings ? false : sortAsc })
-        if (!sortByEarnings) q = q.range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)
+          .order('created_at', { ascending: needsInMemorySort ? false : sortAsc })
+        if (!needsInMemorySort) q = q.range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)
 
         if (userIdFilter !== null) {
           q = q.in('user_id', userIdFilter)
@@ -173,11 +175,17 @@ export async function GET(req: NextRequest) {
         })
       }
 
-      // Earnings sort + in-memory pagination (see note on buildQuery above).
+      // In-memory sort + pagination for earnings and name sorts.
       let listenerTotal = count ?? 0
-      if (sortByEarnings) {
+      if (needsInMemorySort) {
         listenerTotal = items.length
         items.sort((a, b) => {
+          if (sortByName) {
+            const an = String((a.users as { name?: string } | undefined)?.name ?? '').toLowerCase()
+            const bn = String((b.users as { name?: string } | undefined)?.name ?? '').toLowerCase()
+            return sortAsc ? an.localeCompare(bn) : bn.localeCompare(an)
+          }
+          // sortByEarnings
           const d = Number(a.earned_total ?? 0) - Number(b.earned_total ?? 0)
           return sortAsc ? d : -d
         })
@@ -198,7 +206,7 @@ export async function GET(req: NextRequest) {
 
     let query = sb.from('users')
       .select('id, name, phone, email, avatar_url, created_at, is_active, is_suspended, wallet_balance, updated_at', { count: 'exact' })
-      .order(sortBy === 'wallet' ? 'wallet_balance' : 'created_at', { ascending: sortAsc })
+      .order(sortBy === 'wallet' ? 'wallet_balance' : sortBy === 'name' ? 'name' : 'created_at', { ascending: sortAsc })
       .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)
 
     // Unspent customer money across the WHOLE filtered set, not just this page.
