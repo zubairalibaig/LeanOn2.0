@@ -113,7 +113,7 @@ export async function GET(req: NextRequest) {
 
         if (search) {
           const safe = search.replace(/[,()*:\\%_]/g, '').slice(0, 100)
-          if (safe) q = q.ilike('users.name', `%${safe}%`)
+          if (safe) q = q.or(`users.name.ilike.%${safe}%,users.phone.ilike.%${safe}%`)
         }
         return q
       }

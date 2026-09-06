@@ -1279,7 +1279,7 @@ export default function AdminPage() {
               ))}
               <input
                 className="search-input"
-                placeholder="Search by name…"
+                placeholder="Search by name or phone…"
                 value={listenersSearch}
                 onChange={e => setListenersSearch(e.target.value)}
                 onKeyDown={e => {
