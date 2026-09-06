@@ -1321,6 +1321,7 @@ export default function AdminPage() {
                         >Name{arrow(listenersSortBy === 'name' ? listenersJoinedDir : null)}</th>
                         <th>Phone</th>
                         <th>Aadhaar</th>
+                        <th>Payout Details</th>
                         <th
                           style={sortableTh}
                           title="Sort by joined date (across all pages)"
@@ -1435,6 +1436,38 @@ export default function AdminPage() {
                             <td style={{ fontSize: 12, fontFamily: 'monospace', letterSpacing: 0.5 }}>
                               {l.application?.aadhaar
                                 || (l.application?.aadhaar_last4 ? `••••••••${l.application.aadhaar_last4}` : '—')}
+                            </td>
+                            <td style={{ fontSize: 11, minWidth: 160 }}>
+                              {l.application?.upi_id && (
+                                <div style={{ marginBottom: 3 }}>
+                                  <span style={{ fontWeight: 700, color: 'var(--gray)', marginRight: 4 }}>UPI</span>
+                                  <span
+                                    style={{ fontFamily: 'monospace', background: 'var(--light)', padding: '1px 6px', borderRadius: 4, cursor: 'pointer', userSelect: 'all' }}
+                                    title="Click to select and copy"
+                                  >{l.application.upi_id}</span>
+                                </div>
+                              )}
+                              {l.application?.bank_account && (
+                                <div style={{ marginBottom: 3 }}>
+                                  <span style={{ fontWeight: 700, color: 'var(--gray)', marginRight: 4 }}>Acct</span>
+                                  <span
+                                    style={{ fontFamily: 'monospace', background: 'var(--light)', padding: '1px 6px', borderRadius: 4, cursor: 'pointer', userSelect: 'all' }}
+                                    title="Click to select and copy"
+                                  >{l.application.bank_account}</span>
+                                </div>
+                              )}
+                              {l.application?.ifsc_code && (
+                                <div>
+                                  <span style={{ fontWeight: 700, color: 'var(--gray)', marginRight: 4 }}>IFSC</span>
+                                  <span
+                                    style={{ fontFamily: 'monospace', background: 'var(--light)', padding: '1px 6px', borderRadius: 4, cursor: 'pointer', userSelect: 'all' }}
+                                    title="Click to select and copy"
+                                  >{l.application.ifsc_code}</span>
+                                </div>
+                              )}
+                              {!l.application?.upi_id && !l.application?.bank_account && (
+                                <span style={{ color: 'var(--gray)', fontStyle: 'italic' }}>—</span>
+                              )}
                             </td>
                             <td style={{ color: 'var(--gray)', fontSize: 12 }}>{fmtDate(u?.created_at)}</td>
                             <td style={{ color: 'var(--gray)', fontSize: 12 }}>{fmtDateTime(l.last_sign_in_at)}</td>
