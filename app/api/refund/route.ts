@@ -74,6 +74,29 @@ export async function POST(req: NextRequest) {
       .maybeSingle()
     const razorpayPaymentId = lastCharge?.reference_id ?? null
 
+    // Guard: if there is no Razorpay recharge history at all, the balance is
+    // likely session earnings (listener). Refunding to the original payment
+    // method makes no sense — route the user to the payout flow instead.
+    // We only apply this guard when razorpayPaymentId is null (no recharge ever
+    // found), AND the user has at least one Session earnings credit, so that a
+    // pure seeker with no reference_id stored (edge case) is not blocked.
+    if (!razorpayPaymentId) {
+      const { data: earningsCredit } = await sb
+        .from('wallet_transactions')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('type', 'credit')
+        .ilike('description', '%earnings%')
+        .limit(1)
+        .maybeSingle()
+      if (earningsCredit) {
+        return NextResponse.json({
+          error: 'Your wallet balance is from session earnings, not a wallet recharge. To withdraw your earnings, go to Earnings → Request Payout.',
+          code: 'EARNINGS_USE_PAYOUT',
+        }, { status: 400 })
+      }
+    }
+
     // Insert refund request FIRST (idempotency anchor).
     //
     // The read-then-insert guard above is NOT atomic — two concurrent requests

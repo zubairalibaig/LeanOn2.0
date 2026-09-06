@@ -54,7 +54,7 @@ type RazorpayResponse = { razorpay_order_id: string; razorpay_payment_id: string
 type RazorpayOptions = { key: string | undefined; amount: number; currency: string; name: string; description: string; order_id: string; prefill: object; theme: { color: string }; handler: (r: RazorpayResponse) => void }
 declare global { interface Window { Razorpay: new (opts: RazorpayOptions) => { open(): void } } }
 
-type Txn = { id: string; description?: string; type: 'credit' | 'debit'; amount: number; created_at: string }
+type Txn = { id: string; description?: string; type: 'credit' | 'debit'; amount: number; reference_id?: string | null; created_at: string }
 
 export default function WalletPage() {
   const router = useRouter()
@@ -70,6 +70,9 @@ export default function WalletPage() {
   const [refundPendingAmount, setRefundPendingAmount] = useState<number|null>(null)
   const [paymentPending, setPaymentPending] = useState(false)
   const [showRefundConfirm, setShowRefundConfirm] = useState(false)
+  const [isListener, setIsListener] = useState(false)
+  const [hasEarningsCredits, setHasEarningsCredits] = useState(false)
+  const [hasRazorpayCredits, setHasRazorpayCredits] = useState(false)
   const rzpScriptRef = useRef(false)
 
   useEffect(() => {
@@ -129,9 +132,17 @@ export default function WalletPage() {
       }
     }
 
-    const { data: txns } = await sb.from('wallet_transactions')
-      .select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(10)
-    if (txns) setTransactions(txns)
+    const [{ data: txns }, { data: listenerRow }] = await Promise.all([
+      sb.from('wallet_transactions').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(20),
+      sb.from('listener_profiles').select('user_id').eq('user_id', user.id).maybeSingle(),
+    ])
+    if (txns) {
+      setTransactions(txns)
+      const credits = (txns as Txn[]).filter(t => t.type === 'credit')
+      setHasRazorpayCredits(credits.some(t => !!t.reference_id))
+      setHasEarningsCredits(credits.some(t => !t.reference_id && (t.description ?? '').toLowerCase().includes('earnings')))
+    }
+    if (listenerRow) setIsListener(true)
 
     // Check for a pre-existing pending refund so the banner shows on reload
     const { data: pendingRefund } = await sb
@@ -152,7 +163,15 @@ export default function WalletPage() {
     const res = await fetch('/api/refund', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) })
     const data = await res.json()
     setRefunding(false)
-    if (!res.ok) { showToast(data.error || 'Could not submit refund request.', 'error'); return }
+    if (!res.ok) {
+      if (data.code === 'EARNINGS_USE_PAYOUT') {
+        showToast('Use the Earnings page to withdraw session earnings.', 'info')
+        router.push('/dashboard/earnings')
+        return
+      }
+      showToast(data.error || 'Could not submit refund request.', 'error')
+      return
+    }
     // Balance is now 0 in the DB (zeroed atomically at request time).
     // The realtime subscription will pick up the DB change; also set it locally
     // for instant feedback.
@@ -255,28 +274,47 @@ export default function WalletPage() {
           {/* When a refund is pending, show ₹0 regardless of DB value — funds are earmarked. */}
           <div className="balance-amount">₹{refundPendingAmount !== null ? 0 : (balance ?? '—')}</div>
           <div className="balance-sub">{balance !== null ? `Available for sessions — rates vary by listener` : 'Loading...'}</div>
-          {showRefundConfirm ? (
-            <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.12)', borderRadius: 14, padding: '14px 16px', textAlign: 'left' }}>
-              <p style={{ fontSize: 13, color: 'white', fontWeight: 600, marginBottom: 12, lineHeight: 1.5 }}>
-                Request a refund of ₹{balance} to your original payment method? We&apos;ll process it within 3–5 business days.
-              </p>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button onClick={confirmRefund} style={{ flex: 1, padding: '9px 0', borderRadius: 50, background: 'white', color: 'var(--navy)', border: 'none', fontFamily: 'Nunito,sans-serif', fontWeight: 800, fontSize: 13, cursor: 'pointer' }}>
-                  Yes, refund
-                </button>
-                <button onClick={() => setShowRefundConfirm(false)} style={{ flex: 1, padding: '9px 0', borderRadius: 50, background: 'transparent', color: 'rgba(255,255,255,0.8)', border: '1px solid rgba(255,255,255,0.3)', fontFamily: 'Nunito,sans-serif', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
-                  Cancel
-                </button>
+          {/* Listener earnings: show "Withdraw Earnings" CTA */}
+          {isListener && hasEarningsCredits && !refundSubmitted && refundPendingAmount === null && (
+            <div style={{ marginTop: 14, background: 'rgba(255,255,255,0.12)', borderRadius: 12, padding: '12px 14px', textAlign: 'left' }}>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', fontWeight: 700, marginBottom: 4 }}>SESSION EARNINGS</div>
+              <div style={{ fontSize: 13, color: 'white', fontWeight: 600, lineHeight: 1.5, marginBottom: 10 }}>
+                Part of your balance is from session earnings. Withdraw directly to your UPI account.
               </div>
+              <button
+                onClick={() => router.push('/dashboard/earnings')}
+                style={{ width: '100%', padding: '9px 0', borderRadius: 50, background: 'white', color: 'var(--navy)', border: 'none', fontFamily: 'Nunito,sans-serif', fontWeight: 800, fontSize: 13, cursor: 'pointer' }}
+              >
+                Withdraw Earnings →
+              </button>
             </div>
-          ) : (refundSubmitted || refundPendingAmount !== null) ? (
-            <div style={{marginTop:16,fontSize:13,color:'rgba(255,255,255,0.85)',fontWeight:600,lineHeight:1.5,background:'rgba(255,255,255,0.12)',borderRadius:12,padding:'12px 14px'}}>
-              ✓ Refund of ₹{refundPendingAmount ?? balance} requested — the cash will arrive in 3–5 business days to your original payment method. We process refunds manually via Razorpay.
-            </div>
-          ) : (
-            <button className="refund-btn" onClick={() => setShowRefundConfirm(true)} disabled={refunding || !balance || balance <= 0}>
-              {refunding ? 'Submitting…' : 'Request refund of balance'}
-            </button>
+          )}
+
+          {/* Refund CTA — only shown when user has Razorpay recharge history, OR is not a listener */}
+          {(hasRazorpayCredits || !isListener) && (
+            showRefundConfirm ? (
+              <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.12)', borderRadius: 14, padding: '14px 16px', textAlign: 'left' }}>
+                <p style={{ fontSize: 13, color: 'white', fontWeight: 600, marginBottom: 12, lineHeight: 1.5 }}>
+                  Request a refund of ₹{balance} to your original payment method? We&apos;ll process it within 3–5 business days.
+                </p>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button onClick={confirmRefund} style={{ flex: 1, padding: '9px 0', borderRadius: 50, background: 'white', color: 'var(--navy)', border: 'none', fontFamily: 'Nunito,sans-serif', fontWeight: 800, fontSize: 13, cursor: 'pointer' }}>
+                    Yes, refund
+                  </button>
+                  <button onClick={() => setShowRefundConfirm(false)} style={{ flex: 1, padding: '9px 0', borderRadius: 50, background: 'transparent', color: 'rgba(255,255,255,0.8)', border: '1px solid rgba(255,255,255,0.3)', fontFamily: 'Nunito,sans-serif', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (refundSubmitted || refundPendingAmount !== null) ? (
+              <div style={{marginTop:16,fontSize:13,color:'rgba(255,255,255,0.85)',fontWeight:600,lineHeight:1.5,background:'rgba(255,255,255,0.12)',borderRadius:12,padding:'12px 14px'}}>
+                ✓ Refund of ₹{refundPendingAmount ?? balance} requested — the cash will arrive in 3–5 business days to your original payment method. We process refunds manually via Razorpay.
+              </div>
+            ) : (
+              <button className="refund-btn" onClick={() => setShowRefundConfirm(true)} disabled={refunding || !balance || balance <= 0} style={{ marginTop: isListener && hasEarningsCredits ? 8 : 16 }}>
+                {refunding ? 'Submitting…' : 'Request refund of balance'}
+              </button>
+            )
           )}
         </div>
 
