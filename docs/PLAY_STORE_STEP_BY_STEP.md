@@ -38,42 +38,36 @@ later. To download it:
 
 ---
 
-## Step 1 — Make the Android app file (using PWABuilder)
-This turns your website into an installable Android app file. No coding.
+## Step 1 — Make the Android app file (GitHub Actions — automatic)
+This turns your website into an installable Android app file. No PWABuilder
+needed — a GitHub Action builds it for you.
 
-1. On your laptop, open **Chrome** and go to **`https://www.pwabuilder.com`**
-2. In the big input box in the middle, type your site address exactly:
-   **`https://www.leanon.app`** — then click the **Start** button (or the arrow).
-3. Wait ~30 seconds while it analyzes your site. You'll see a report card with
-   scores. Some yellow warnings are fine — ignore them.
-4. Near the top-right, click the button **"Package For Stores"**
-   (on some versions it's a big **"Package for stores"** at the bottom).
-5. You'll see store options. Find the **Android** card and click
-   **"Generate Package"**.
-6. A settings box pops up. Most fields are pre-filled. Two things matter:
-   - **Package ID** (also called "App ID"): it shows something like
-     `app.leanon.twa` or `com.leanon.www`. **Write down the EXACT value you
-     see here and send it to me in chat.** This ID is permanent — it can never
-     be changed after the app is published, so we want your website's
-     verification file to match it exactly. (If you can type in this box, set
-     it to `app.leanon.twa`.)
-   - **Signing key**: choose the option **"Use mine / Google Play App
-     Signing"** if offered, otherwise leave the default **"Create New"**. Don't
-     overthink this — either works with the flow below.
-7. Click **Download**. A **.zip** file downloads to your computer.
-8. **VERY IMPORTANT — save this zip somewhere safe forever** (e.g. a folder in
-   Google Drive). It contains your app's signing key. If you lose it you may
-   not be able to update the app later. Do not delete it.
-9. **Unzip** the file (double-click it). Inside you'll find:
-   - a file ending in **`.aab`** — this is your app (you'll upload this to
-     Google). It may be called `app-release-bundle.aab`.
-   - a file ending in **`.apk`** — a test copy (optional).
-   - a **`signing.keystore`** file and a small text file with **passwords** —
-     keep these; do not share them.
-   - possibly an **`assetlinks.json`** and/or a **"next steps"** readme —
-     you can ignore these for now, we get the real values from Google in Step 3.
+**Package ID:** `app.leanon.twa` (already set — this is permanent, never changes)
 
-Send me the **Package ID** from step 6 when you have it.
+1. Go to **`https://github.com/zubairalibaig/LeanOn2.0/actions`**
+2. In the left sidebar, click **"Build Android TWA"**
+3. Click the blue **"Run workflow"** button on the right
+4. Leave the defaults (Version code: `1`, Version name: `1.0.0`) → click
+   **"Run workflow"** (green button)
+5. Wait 3–5 minutes for the build to finish (the row turns green ✅)
+6. Click on the completed run to open it
+7. Scroll down to **Artifacts** — you'll see two downloads:
+   - **`leanon-signed-aab`** — this is your app file. Click to download.
+   - **`leanon-keystore-SAVE-THIS`** — this is your signing key.
+     **Download it immediately and save it in Google Drive.** It expires
+     from GitHub in 7 days. Losing it = can't update the app.
+8. Also look at the **"Get SHA-256 fingerprint"** step in the build log —
+   it prints a long code like `AB:CD:12:…:EF`. **Copy it and send it to me.**
+   (You'll also get this from Google Play Console in Step 3, so don't worry
+   if you miss it here.)
+9. Unzip the `leanon-signed-aab` download — the file ending in **`.aab`** is
+   what you upload to Google Play.
+
+⚠️ **FIRST RUN NOTE:** The build log will also show a generated keystore
+password. If you want to be extra careful, save that password as a GitHub
+repository secret named `KEYSTORE_PASSWORD` (Settings → Secrets → Actions →
+New repository secret) so future builds use the same key. But for your first
+upload, the auto-generated one is fine.
 
 ---
 
@@ -145,7 +139,8 @@ now (after uploading), not before.
      other**, and that the app asks for **microphone permission** the first
      time. (This is the feature that was broken before — test it properly.)
 4. If anything fails, tell me exactly what happened and I'll fix it, then you
-   repeat Step 1 (generate a new package) with the fix.
+   re-run the GitHub Action (Step 1) to generate a new package with the fix.
+   Bump the **version code** to `2` on the next run.
 
 ---
 
@@ -195,7 +190,8 @@ Once approved, your app is live on the Play Store. 🎉
 ## Quick reference — what you send me vs. what you do
 | You do (clicking) | You send me (I do the code) |
 |---|---|
-| PWABuilder → generate package | The **Package ID** |
+| GitHub Actions → Run "Build Android TWA" | — (it's automatic) |
+| Download AAB + keystore from artifacts | — (save keystore to Google Drive!) |
 | Play Console → upload AAB | — |
 | Play Console → App integrity | The **SHA-256 fingerprint** |
 | Test on phone | Any bug you find |

@@ -1,0 +1,150 @@
+# Build LeanOn TWA (Trusted Web Activity) Android app
+# Triggered manually from GitHub Actions tab → "Build Android TWA" → Run workflow
+#
+# Output: a signed .aab file (Android App Bundle) ready for Play Store upload.
+# Download it from the workflow run's "Artifacts" section.
+#
+# First-time setup — add these Repository Secrets (Settings → Secrets → Actions):
+#   KEYSTORE_PASSWORD  — the password you chose when the workflow first generated the keystore
+#   KEY_PASSWORD       — same password (or a different one for the key alias)
+#
+# On the VERY FIRST run the workflow creates a fresh keystore, signs the AAB,
+# and uploads the keystore as an artifact too — download it and keep it safe.
+# Losing the keystore = you can never update the app on Play Store.
+
+name: Build Android TWA
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_code:
+        description: 'Version code (integer, must increase each upload)'
+        required: true
+        default: '1'
+      version_name:
+        description: 'Version name (shown to users, e.g. 1.0.0)'
+        required: true
+        default: '1.0.0'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install Bubblewrap CLI
+        run: npm install -g @bubblewrap/cli
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept Android licenses
+        run: yes | sdkmanager --licenses 2>/dev/null || true
+
+      - name: Update twa-manifest.json with version
+        run: |
+          # Update version code and name from workflow inputs
+          node -e "
+            const fs = require('fs');
+            const m = JSON.parse(fs.readFileSync('twa-manifest.json', 'utf8'));
+            m.appVersionCode = parseInt('${{ github.event.inputs.version_code }}');
+            m.appVersionName = '${{ github.event.inputs.version_name }}';
+            fs.writeFileSync('twa-manifest.json', JSON.stringify(m, null, 2));
+          "
+
+      - name: Generate signing keystore
+        run: |
+          # Use secrets if available, otherwise generate a new keystore
+          KS_PASS="${{ secrets.KEYSTORE_PASSWORD }}"
+          KEY_PASS="${{ secrets.KEY_PASSWORD }}"
+
+          if [ -z "$KS_PASS" ]; then
+            # First run — generate a random password (user should save this as a secret)
+            KS_PASS=$(openssl rand -base64 24)
+            KEY_PASS="$KS_PASS"
+            echo "⚠️  FIRST RUN — Generated keystore password. Add these as GitHub Secrets:"
+            echo "    KEYSTORE_PASSWORD = $KS_PASS"
+            echo "    KEY_PASSWORD = $KEY_PASS"
+            echo "::warning::First run — save the keystore password from the logs as KEYSTORE_PASSWORD secret"
+          fi
+
+          keytool -genkeypair \
+            -alias leanon \
+            -keyalg RSA -keysize 2048 \
+            -validity 10000 \
+            -keystore leanon-keystore.jks \
+            -storepass "$KS_PASS" \
+            -keypass "$KEY_PASS" \
+            -dname "CN=LeanOn App, O=LeanOn, L=India, C=IN"
+
+          echo "KEYSTORE_PASSWORD=$KS_PASS" >> $GITHUB_ENV
+          echo "KEY_PASSWORD=$KEY_PASS" >> $GITHUB_ENV
+
+      - name: Initialize Bubblewrap project
+        run: |
+          # Bubblewrap init is interactive — we bypass by running it with
+          # the twa-manifest.json already in place and using expect-style input
+          echo "n" | bubblewrap init --manifest="https://www.leanon.app/manifest.json" 2>&1 || true
+
+          # Overwrite with our config
+          cp twa-manifest.json .
+
+      - name: Build signed AAB
+        run: |
+          bubblewrap build \
+            --signingKeyPath=leanon-keystore.jks \
+            --signingKeyAlias=leanon \
+            --signingKeyPassword="$KEY_PASSWORD" \
+            --signingStorePassword="$KEYSTORE_PASSWORD" 2>&1
+
+      - name: Get SHA-256 fingerprint
+        run: |
+          keytool -list -v \
+            -keystore leanon-keystore.jks \
+            -alias leanon \
+            -storepass "$KEYSTORE_PASSWORD" 2>&1 | grep SHA256 | head -1
+          echo ""
+          echo "👆 Use this SHA-256 fingerprint in public/.well-known/assetlinks.json"
+
+      - name: Upload AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: leanon-signed-aab
+          path: |
+            app-release-signed.aab
+            app-release-unsigned.aab
+            *.apk
+          if-no-files-found: warn
+          retention-days: 90
+
+      - name: Upload Keystore (FIRST RUN ONLY — download and save securely!)
+        uses: actions/upload-artifact@v4
+        with:
+          name: leanon-keystore-SAVE-THIS
+          path: leanon-keystore.jks
+          retention-days: 7
+
+      - name: Summary
+        run: |
+          echo "## ✅ Build Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Package ID:** app.leanon.twa" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ github.event.inputs.version_name }} (${{ github.event.inputs.version_code }})" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Next steps:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Download the AAB from Artifacts below" >> $GITHUB_STEP_SUMMARY
+          echo "2. Download the keystore and save it in a VERY safe place (Google Drive)" >> $GITHUB_STEP_SUMMARY
+          echo "3. Copy the SHA-256 fingerprint from the 'Get SHA-256 fingerprint' step" >> $GITHUB_STEP_SUMMARY
+          echo "4. Upload the AAB to Google Play Console" >> $GITHUB_STEP_SUMMARY

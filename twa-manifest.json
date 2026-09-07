@@ -1,0 +1,43 @@
+{
+  "packageId": "app.leanon.twa",
+  "host": "www.leanon.app",
+  "name": "LeanOn — Peer Support",
+  "launcherName": "LeanOn",
+  "display": "standalone",
+  "themeColor": "#1A8FA0",
+  "themeColorDark": "#0F4867",
+  "navigationColor": "#0F4867",
+  "navigationColorDark": "#0F4867",
+  "navigationDividerColor": "#0F4867",
+  "navigationDividerColorDark": "#0F4867",
+  "backgroundColor": "#0F4867",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "https://www.leanon.app/icon-512.png",
+  "maskableIconUrl": "https://www.leanon.app/icon-512.png",
+  "monochromeIconUrl": "https://www.leanon.app/icon-512.png",
+  "shortcuts": [],
+  "signingKey": {
+    "path": "leanon-keystore.jks",
+    "alias": "leanon"
+  },
+  "appVersionCode": 1,
+  "appVersionName": "1.0.0",
+  "splashScreenFadeOutDuration": 300,
+  "enableSiteSettingsShortcut": true,
+  "orientation": "portrait",
+  "fingerprints": [],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "playBilling": {
+    "enabled": false
+  },
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "fallbackType": "customtabs",
+  "serviceAccountJsonFile": "",
+  "minSdkVersion": 19,
+  "generatorApp": "bubblewrap-cli"
+}
