@@ -6,6 +6,7 @@ import ErrorBoundary from './components/ErrorBoundary'
 import FloatingCTA from './components/FloatingCTA'
 import ListenerPresence from './components/ListenerPresence'
 import SiteFooter from './components/SiteFooter'
+import ServiceWorkerRegister from './components/ServiceWorkerRegister'
 import { Analytics } from '@vercel/analytics/next'
 
 export const metadata: Metadata = {
@@ -264,6 +265,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             own, or must not be interrupted). */}
         <ListenerPresence />
         <ToastProvider />
+        <ServiceWorkerRegister />
         <Analytics />
       </body>
     </html>
