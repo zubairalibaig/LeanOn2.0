@@ -196,8 +196,12 @@ export default function Home() {
 
         /* TOPICS */
         .topic-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-        .tc{background:var(--white);border:1.5px solid var(--border);border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px;font-weight:700;font-size:14px;color:var(--navy);transition:all 0.2s;cursor:pointer;box-shadow:0 1px 4px rgba(15,72,103,0.04);}
+        .tc{background:var(--white);border:1.5px solid var(--border);border-radius:16px;padding:15px 16px;display:flex;align-items:flex-start;gap:12px;transition:all 0.2s;cursor:pointer;box-shadow:0 1px 4px rgba(15,72,103,0.04);}
         .tc:hover{border-color:var(--teal);background:var(--light);transform:translateY(-2px);box-shadow:0 4px 16px rgba(15,72,103,0.08);}
+        .tc-ico{font-size:22px;flex-shrink:0;line-height:1.2;}
+        .tc-body{display:flex;flex-direction:column;gap:3px;min-width:0;}
+        .tc-label{font-weight:800;font-size:14px;color:var(--navy);line-height:1.2;}
+        .tc-sub{font-weight:600;font-size:11.5px;color:var(--gray);line-height:1.4;}
 
         /* ABOUT */
         .al{font-size:12px;font-weight:800;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;}
@@ -275,6 +279,15 @@ export default function Home() {
         .faq-q{font-size:15px;font-weight:800;color:var(--navy);margin-bottom:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;}
         .faq-a{font-size:14px;color:var(--gray);font-weight:500;line-height:1.7;}
 
+        /* BREATHE — quiet pause moment */
+        .breathe{max-width:600px;margin:0 auto;padding:8px 28px 28px;}
+        .breathe-card{background:radial-gradient(ellipse 120% 100% at 50% 0%, #EAF6FB 0%, #F6FBFD 60%, #FFFFFF 100%);border:1.5px solid var(--border);border-radius:24px;padding:38px 28px;text-align:center;}
+        .breathe-eyebrow{font-size:12px;font-weight:800;color:var(--teal);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:14px;}
+        .breathe-dot{width:52px;height:52px;border-radius:50%;background:rgba(26,143,160,0.12);margin:0 auto 18px;display:flex;align-items:center;justify-content:center;font-size:24px;animation:breathePulse 5s ease-in-out infinite;}
+        @keyframes breathePulse{0%,100%{transform:scale(1);opacity:0.85;}50%{transform:scale(1.14);opacity:1;}}
+        .breathe-quote{font-size:clamp(19px,4.6vw,24px);font-weight:900;color:var(--navy);line-height:1.35;margin-bottom:12px;}
+        .breathe-sub{font-size:14px;color:var(--gray);font-weight:600;line-height:1.65;max-width:360px;margin:0 auto;}
+
         /* BOTTOM CTA */
         .cta-c{background:var(--navy);border-radius:28px;padding:48px 28px;text-align:center;}
         .cta-c h2{font-size:clamp(20px,5vw,28px);font-weight:900;color:white;margin-bottom:12px;line-height:1.25;}
@@ -320,11 +333,26 @@ export default function Home() {
       {/* TOPICS */}
       <div className="white-section">
         <div className="inner">
-          <h2 className="sh">What&apos;s on your mind?</h2>
-          <p className="ss">Pick a topic and find someone who gets it.</p>
+          <h2 className="sh">What&apos;s weighing on you?</h2>
+          <p className="ss">Pick what feels closest — and find someone who gets it.</p>
           <div className="topic-grid">
-            {[{id:'loneliness',i:'🌙',l:'Loneliness'},{id:'stress',i:'💼',l:'Work stress'},{id:'career',i:'🧭',l:'Career confusion'},{id:'relationships',i:'💬',l:'Relationships'},{id:'grief',i:'🌿',l:'Grief & loss'},{id:'students',i:'📚',l:'Student pressure'},{id:'startup',i:'🚀',l:'Startup journey'},{id:'general',i:'☕',l:'Just need to talk'}].map(t=>(
-              <a key={t.id} href={`/browse?topic=${t.id}`} className="tc"><span style={{fontSize:22,flexShrink:0}}>{t.i}</span><span>{t.l}</span></a>
+            {[
+              {id:'loneliness',i:'🌙',l:'Loneliness',s:'the quiet after everyone’s asleep'},
+              {id:'stress',i:'💼',l:'Work stress',s:'when the day just won’t switch off'},
+              {id:'career',i:'🧭',l:'Career confusion',s:'not sure which way is forward'},
+              {id:'relationships',i:'💬',l:'Relationships',s:'what you can’t say to them, say here'},
+              {id:'grief',i:'🌿',l:'Grief & loss',s:'carrying someone no longer here'},
+              {id:'students',i:'📚',l:'Student pressure',s:'the weight of everyone’s expectations'},
+              {id:'startup',i:'🚀',l:'Startup journey',s:'the loneliness behind the highlight reel'},
+              {id:'general',i:'☕',l:'Just need to talk',s:'no reason needed — just talk'},
+            ].map(t=>(
+              <a key={t.id} href={`/browse?topic=${t.id}`} className="tc">
+                <span className="tc-ico">{t.i}</span>
+                <span className="tc-body">
+                  <span className="tc-label">{t.l}</span>
+                  <span className="tc-sub">{t.s}</span>
+                </span>
+              </a>
             ))}
           </div>
         </div>
@@ -495,11 +523,21 @@ export default function Home() {
         </div>
       </div>
 
+      {/* BREATHE — a quiet pause before the final ask */}
+      <div className="breathe">
+        <div className="breathe-card">
+          <div className="breathe-eyebrow">A small pause</div>
+          <div className="breathe-dot">🫧</div>
+          <p className="breathe-quote">Take one slow breath in.<br />Hold. And gently let it out.</p>
+          <p className="breathe-sub">Whatever you&apos;re carrying tonight, you don&apos;t have to carry it alone.</p>
+        </div>
+      </div>
+
       {/* CTA */}
       <div className="inner">
         <div className="cta-c">
-          <h2>You don&apos;t have to go through this alone.</h2>
-          <p>Someone is available right now. No appointment needed.</p>
+          <h2>Tonight doesn&apos;t have to feel this heavy.</h2>
+          <p>One breath, then one small step. A listener who gets it is a tap away — right now, no appointment.</p>
           <a href="/auth" className="btn-cta">Start now →</a>
         </div>
       </div>
