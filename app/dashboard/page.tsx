@@ -25,6 +25,10 @@ const sb = new Proxy({} as ReturnType<typeof createBrowserClient>, {
   }
 })
 
+// Seconds a listener has to answer an incoming request — kept in sync with the
+// seeker's server-side 5-minute auto-cancel window (see checkPendingRequest).
+const RESPONSE_WINDOW_SECS = 5 * 60
+
 const SPECIALTY_TAGS = [
   {id:'loneliness',  label:'Loneliness 🌙'},
   {id:'anxiety',     label:'Anxiety 😰'},
@@ -185,6 +189,13 @@ export default function DashboardPage() {
   const [monthEarned, setMonthEarned] = useState<number | null>(null)
   const [unreadMsgCount, setUnreadMsgCount] = useState(0)
   const [countdown, setCountdown] = useState(60)
+  // How long the listener has to answer, in sync with the seeker's server-side
+  // 5-minute auto-cancel window. Previously the dashboard auto-declined after
+  // just 60s — so a listener who stepped away for 90s lost the request (and the
+  // seeker got refunded) even though the seeker was still waiting for up to 5
+  // minutes. countdownMax tracks the window this specific request started with,
+  // so the progress bar fills correctly regardless of catch-up remaining time.
+  const [countdownMax, setCountdownMax] = useState(RESPONSE_WINDOW_SECS)
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const channelRef   = useRef<ReturnType<typeof sb.channel> | null>(null)
   // Tracks the id of the request currently shown in the modal, so the live
@@ -352,8 +363,9 @@ export default function DashboardPage() {
     if (savedTitleRef.current !== null) { document.title = savedTitleRef.current; savedTitleRef.current = null }
   }
 
-  function startCountdown(onExpire: () => void, initialSecs = 60) {
+  function startCountdown(onExpire: () => void, initialSecs = RESPONSE_WINDOW_SECS) {
     setCountdown(initialSecs)
+    setCountdownMax(initialSecs)
     if (countdownRef.current) clearInterval(countdownRef.current)
     countdownRef.current = setInterval(() => {
       setCountdown(prev => {
@@ -370,12 +382,21 @@ export default function DashboardPage() {
   // Surface a pending request in the accept/decline modal and wire its countdown.
   // Shared by the live realtime INSERT path and the catch-up query below, so both
   // behave identically. `secsLeft` is how long the listener has to respond.
-  function surfaceIncoming(s: IncomingSession & { status?: string }, secsLeft = 60) {
+  function surfaceIncoming(s: IncomingSession & { status?: string }, secsLeft?: number) {
     // Don't clobber a request already on screen (e.g. realtime + catch-up race)
     if (incomingIdRef.current && incomingIdRef.current !== s.id) return
     incomingIdRef.current = s.id
     setIncomingSession(s)
     startRequestAlert(s)
+    // Default to the time remaining in the seeker's 5-minute window, derived
+    // from created_at, so a request delivered live gets the FULL window and one
+    // recovered by catch-up gets whatever is left — never a hardcoded 60s.
+    const remaining = secsLeft ?? (() => {
+      const createdAt = (s as { created_at?: string }).created_at
+      if (!createdAt) return RESPONSE_WINDOW_SECS
+      const ageSecs = Math.floor((Date.now() - new Date(createdAt).getTime()) / 1000)
+      return Math.max(10, RESPONSE_WINDOW_SECS - ageSecs)
+    })()
     startCountdown(() => {
       const expiredId = s.id
       incomingIdRef.current = null
@@ -385,7 +406,7 @@ export default function DashboardPage() {
       // for their own 5-minute timeout to fire.
       fetch(`/api/sessions/${expiredId}/decline`, { method: 'POST' }).catch(() => {})
       showToast('Session request expired — seeker has been refunded.', 'info')
-    }, secsLeft)
+    }, remaining)
   }
 
   // Catch-up: fetch any pending request that arrived while the realtime channel
@@ -405,9 +426,11 @@ export default function DashboardPage() {
     const row = data?.[0]
     if (!row) return
     const ageSecs = Math.floor((Date.now() - new Date(row.created_at as string).getTime()) / 1000)
-    const remaining = 5 * 60 - ageSecs // seeker cancels at 5 min
+    const remaining = RESPONSE_WINDOW_SECS - ageSecs // seeker cancels at 5 min
     if (remaining <= 5) return // about to expire — don't bother surfacing
-    surfaceIncoming(row as IncomingSession & { status?: string }, Math.min(60, remaining))
+    // Give the listener the FULL remaining window (was capped at 60s, which
+    // auto-declined the seeker far earlier than their own 5-minute timeout).
+    surfaceIncoming(row as IncomingSession & { status?: string }, remaining)
   }
 
   function dismissIncoming() {
@@ -781,7 +804,7 @@ export default function DashboardPage() {
             <div className="modal-title2">New session request!</div>
             <div className="modal-sub">Someone wants to connect with you right now.</div>
             <div className="countdown-bar">
-              <div className="countdown-fill" style={{ width: `${(countdown / 60) * 100}%` }} />
+              <div className="countdown-fill" style={{ width: `${(countdown / countdownMax) * 100}%` }} />
             </div>
             <div className="modal-detail">
               <div className="modal-detail-item">
@@ -823,7 +846,7 @@ export default function DashboardPage() {
                   }
                 }}
               >
-                {respondingIncoming ? '…' : `✅ Accept (${countdown}s)`}
+                {respondingIncoming ? '…' : `✅ Accept (${countdown >= 60 ? `${Math.floor(countdown / 60)}:${String(countdown % 60).padStart(2, '0')}` : `${countdown}s`})`}
               </button>
               <button
                 className="btn-dismiss"

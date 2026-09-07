@@ -59,6 +59,32 @@ export default function MessageThreadPage({ params }: { params: { id: string } }
   const router = useRouter()
   const [thread, setThread] = useState<MsgThread | null>(null)
   const [notFound, setNotFound] = useState(false)
+  const [inviting, setInviting] = useState(false)
+  const [invited, setInvited] = useState(false)
+  const [inviteErr, setInviteErr] = useState<string | null>(null)
+  const [inviteOffline, setInviteOffline] = useState(false)
+
+  async function sendInvite() {
+    setInviting(true)
+    setInviteErr(null)
+    setInviteOffline(false)
+    try {
+      const res = await fetch(`/api/listener-messages/${params.id}`, { method: 'POST' })
+      const data = await res.json().catch(() => ({}))
+      if (res.ok) {
+        setInvited(true)
+      } else if (res.status === 409 && data.error === 'offline') {
+        setInviteOffline(true)
+        setInviteErr(data.message || 'Go online first, then invite them.')
+      } else {
+        setInviteErr(data.error || 'Could not send invite. Please try again.')
+      }
+    } catch {
+      setInviteErr('Network error. Please try again.')
+    } finally {
+      setInviting(false)
+    }
+  }
 
   useEffect(() => {
     fetch(`/api/listener-messages/${params.id}`)
@@ -131,7 +157,7 @@ export default function MessageThreadPage({ params }: { params: { id: string } }
 
           {thread.iAmListener && (
             <div style={{ marginTop: 12, background: '#F0F8FC', border: '1.5px solid #D5EEF6', borderRadius: 14, padding: '14px 16px', fontSize: 13, fontWeight: 600, color: '#5A7A8A', lineHeight: 1.6 }}>
-              💡 To respond to {thread.otherName}, go online in your dashboard. They can then book a session with you directly.
+              💡 Reach back out with one tap. Go online, then tap the button below — we&apos;ll let {thread.otherName} know you&apos;re available and send them to your profile to start a live session. (You can&apos;t chat here — LeanOn keeps support to live sessions.)
             </div>
           )}
 
@@ -150,9 +176,30 @@ export default function MessageThreadPage({ params }: { params: { id: string } }
 
       <div className="cta-bar">
         {thread.iAmListener ? (
-          <button className="btn-cta" onClick={() => router.push('/dashboard')}>
-            Go online to receive their session →
-          </button>
+          invited ? (
+            <div style={{ background: 'rgba(52,199,89,.1)', border: '1px solid rgba(52,199,89,.35)', borderRadius: 14, padding: '13px 16px', fontSize: 13.5, fontWeight: 700, color: '#166534', textAlign: 'center', lineHeight: 1.5 }}>
+              ✅ Invite sent — {thread.otherName} has been notified you&apos;re available. They can now start a live session with you.
+            </div>
+          ) : (
+            <>
+              <button className="btn-cta" disabled={inviting} onClick={sendInvite}>
+                {inviting ? 'Sending…' : `🔔 I'm available now — invite ${thread.otherName}`}
+              </button>
+              {inviteErr && (
+                <div style={{ marginTop: 10, fontSize: 12.5, fontWeight: 700, color: inviteOffline ? '#B35C00' : '#C0392B', lineHeight: 1.5, textAlign: 'center' }}>
+                  {inviteErr}
+                  {inviteOffline && (
+                    <button
+                      onClick={() => router.push('/dashboard')}
+                      style={{ display: 'block', margin: '10px auto 0', background: 'var(--navy)', color: 'white', border: 'none', borderRadius: 50, padding: '9px 20px', fontFamily: 'Nunito,sans-serif', fontWeight: 800, fontSize: 12.5, cursor: 'pointer' }}
+                    >
+                      Go online in dashboard →
+                    </button>
+                  )}
+                </div>
+              )}
+            </>
+          )
         ) : (
           <button className="btn-cta" onClick={() => router.push(`/listener/${thread.listener_id}`)}>
             Visit their profile to book →

@@ -20,16 +20,23 @@ import { registerPushNotifications } from '@/lib/firebase-client'
 //     reading their earnings or history simply missed the request and it
 //     expired.
 //
-// DELIBERATELY SKIPPED PATHS: /dashboard and /browse already implement their
-// own (richer) handling, so mounting here too would double-alert; /session/*
-// must never be interrupted mid-conversation; /auth and /admin are out of scope.
+// DELIBERATELY SKIPPED PATHS: /dashboard implements its own (richer) handling,
+// so mounting here too would double-alert; /session/* must never be interrupted
+// mid-conversation; /auth and /admin are out of scope.
+//
+// /browse is NOT skipped. It used to be — on the assumption it had its own
+// incoming-request handling — but it never actually subscribed to anything, so
+// a listener sitting on the browse page got NO ring and NO popup for an
+// incoming request (only an FCM push, if configured, could reach them). That
+// was a real "I was online but missed the request" bug. This global layer now
+// covers /browse too.
 //
 // PERFORMANCE / SEO: the very first thing this does is check for a session, and
 // it returns immediately for anonymous visitors — so public marketing pages do
 // no extra work. It never sets is_available on its own beyond the explicit
 // toggle the listener taps, keeping the availability contract intact.
 
-const SKIP_PREFIXES = ['/dashboard', '/browse', '/session', '/auth', '/admin']
+const SKIP_PREFIXES = ['/dashboard', '/session', '/auth', '/admin']
 
 type Incoming = {
   id: string

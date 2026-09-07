@@ -115,9 +115,18 @@ export async function PATCH(req: NextRequest) {
   }
 }
 
-// Send SMS to up to 5 seekers who had sessions with this listener in the last 30 days.
-// Non-blocking — called fire-and-forget. Failures are logged but do not affect the
-// availability toggle response.
+// Don't re-ping an offline-message seeker more than once per this window when
+// the listener toggles online repeatedly.
+const MSG_PING_COOLDOWN_MS = 12 * 60 * 60 * 1000 // 12 hours
+
+// When a listener comes online, notify the seekers most likely to want them:
+//   (a) seekers who COMPLETED a session with them in the last 30 days, and
+//   (b) seekers who left an OFFLINE MESSAGE in the last 30 days — the dead-end
+//       case (e.g. "Need a patient listener") where, previously, nobody was ever
+//       told the listener returned. That gap is exactly why a message could rot
+//       for weeks with no way to reconnect.
+// Each seeker gets a free in-app notification (realtime bell) plus an SMS.
+// Non-blocking — called fire-and-forget; failures are logged only.
 async function notifyRecentSeekers(
   sb: ReturnType<typeof createAdminClient>,
   listenerId: string,
@@ -130,6 +139,8 @@ async function notifyRecentSeekers(
   const listenerName = listenerUser?.name || 'Your listener'
 
   const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+
+  // (a) recent completed-session seekers
   const { data: recentSessions } = await sb
     .from('sessions')
     .select('seeker_id')
@@ -139,27 +150,71 @@ async function notifyRecentSeekers(
     .order('ended_at', { ascending: false })
     .limit(50)
 
-  if (!recentSessions || recentSessions.length === 0) return
+  // (b) recent offline-message seekers, respecting the ping cooldown when the
+  // last_invited_at column exists (migration 052). Tolerate its absence.
+  type MsgRow = { id: string; seeker_id: string; last_invited_at?: string | null }
+  let msgRows: MsgRow[] = []
+  const withCol = await sb
+    .from('listener_messages')
+    .select('id, seeker_id, last_invited_at')
+    .eq('listener_id', listenerId)
+    .gte('updated_at', since)
+  if (withCol.error) {
+    const fb = await sb
+      .from('listener_messages')
+      .select('id, seeker_id')
+      .eq('listener_id', listenerId)
+      .gte('updated_at', since)
+    msgRows = (fb.data as MsgRow[] | null) ?? []
+  } else {
+    msgRows = (withCol.data as MsgRow[] | null) ?? []
+  }
+  const now = Date.now()
+  const freshMsgRows = msgRows.filter(
+    r => !r.last_invited_at || now - new Date(r.last_invited_at).getTime() > MSG_PING_COOLDOWN_MS,
+  )
 
+  // Merge + dedupe (sessions first), cap total.
   const seen = new Set<string>()
   const seekerIds: string[] = []
-  for (const s of recentSessions) {
-    const id = s.seeker_id as string
+  for (const id of [...(recentSessions ?? []).map(s => s.seeker_id as string), ...freshMsgRows.map(r => r.seeker_id)]) {
     if (!seen.has(id)) { seen.add(id); seekerIds.push(id) }
-    if (seekerIds.length >= 5) break
+    if (seekerIds.length >= 10) break
   }
+  if (seekerIds.length === 0) return
 
   const { data: seekers } = await sb
     .from('users')
     .select('id, phone')
     .in('id', seekerIds)
-
   if (!seekers || seekers.length === 0) return
 
-  const message = `${listenerName} is now online on LeanOn and ready to listen. Start a session anytime: leanon.app/browse`
+  // In-app realtime notifications for everyone (free), linked to the listener.
+  const notifRows = seekerIds.map(sid => ({
+    user_id:    sid,
+    type:       'listener_available',
+    title:      `${listenerName} is online now 💬`,
+    body:       'A listener you connected with is available. Tap to start a session.',
+    action_url: `/listener/${listenerId}`,
+  }))
+  await sb.from('notifications').insert(notifRows).then(
+    () => {},
+    (e) => logger.error('notifyRecentSeekers notification insert failed (non-critical):', { error: String(e) }),
+  )
 
+  // SMS for reach.
+  const message = `${listenerName} is now online on LeanOn and ready to listen. Start a session anytime: leanon.app/browse`
   for (const seeker of seekers) {
     if (!seeker.phone) continue
     await sendSms(seeker.phone as string, message)
+  }
+
+  // Stamp the cooldown on the message rows we just pinged (tolerate missing column).
+  const stampedIds = freshMsgRows.map(r => r.id)
+  if (stampedIds.length > 0) {
+    await sb.from('listener_messages')
+      .update({ last_invited_at: new Date().toISOString() })
+      .in('id', stampedIds)
+      .then(() => {}, () => { /* column absent pre-migration 052 — ignore */ })
   }
 }
