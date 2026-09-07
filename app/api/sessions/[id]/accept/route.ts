@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
+import { REQUEST_RESPONSE_WINDOW_MS } from '@/lib/constants'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-const REQUEST_TTL_MS = 5 * 60_000
+const REQUEST_TTL_MS = REQUEST_RESPONSE_WINDOW_MS
 
 // POST /api/sessions/[id]/accept — listener accepts a pending session request
 export async function POST(
@@ -33,7 +34,7 @@ export async function POST(
     return NextResponse.json({ error: 'Session is no longer pending', status: session.status }, { status: 409 })
   }
 
-  // If the 5-minute window already lapsed, treat accept as too-late: cancel + refund.
+  // If the response window already lapsed, treat accept as too-late: cancel + refund.
   const ageMs = Date.now() - new Date(session.created_at as string).getTime()
   if (ageMs > REQUEST_TTL_MS) {
     await expireSession(sb, sessionId, session)

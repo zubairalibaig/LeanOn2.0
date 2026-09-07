@@ -4,7 +4,7 @@ import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { showToast } from '@/lib/toast'
 import ReportModal from '@/app/components/ReportModal'
-import { SESSION_DURATIONS, MESSAGE_REACTIONS } from '@/lib/constants'
+import { SESSION_DURATIONS, MESSAGE_REACTIONS, REQUEST_RESPONSE_WINDOW_MS } from '@/lib/constants'
 
 // ── CRITICAL FIX 1: Create client ONCE outside component
 // Previously inside component = new WebSocket on every render
@@ -397,7 +397,7 @@ function SessionContent() {
     return () => clearInterval(iv)
   }, [sessionStatus, sessionId])
 
-  // Seeker-side enforcement of the 5-minute request window. The seeker is the
+  // Seeker-side enforcement of the request-response window. The seeker is the
   // party watching the waiting screen, so they trigger the cancel + instant
   // refund the moment the window lapses (the daily cron is only a backstop).
   // Re-evaluates each second so the displayed countdown stays in sync.
@@ -405,7 +405,7 @@ function SessionContent() {
   useEffect(() => {
     if (sessionStatus !== 'pending' || !requestCreatedAt) { setRequestSecsLeft(null); return }
     const isSeeker = userIdRef.current !== null && listenerId !== null && userIdRef.current !== listenerId
-    const deadline = new Date(requestCreatedAt).getTime() + 5 * 60_000
+    const deadline = new Date(requestCreatedAt).getTime() + REQUEST_RESPONSE_WINDOW_MS
     let fired = false
     const tick = () => {
       const left = Math.max(0, Math.round((deadline - Date.now()) / 1000))

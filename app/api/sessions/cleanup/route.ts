@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
 import { settleSession } from '@/lib/session-billing'
+import { REQUEST_RESPONSE_WINDOW_MS } from '@/lib/constants'
 
 // POST — clean up sessions that have been "active" past their scheduled end time.
 // Called by Vercel cron job (daily at 02:00 UTC) and by session page on mount (self-heal).
@@ -155,12 +156,12 @@ export async function POST(req: Request) {
     cleaned++
   }
 
-  // Cancel stale pending sessions (stuck in 'pending' for > 5 minutes — refund seeker)
+  // Cancel stale pending sessions (stuck in 'pending' past the response window — refund seeker)
   const { data: stalePending } = await sb
     .from('sessions')
     .select('id, seeker_id, amount_held')
     .eq('status', 'pending')
-    .lt('created_at', new Date(Date.now() - 5 * 60_000).toISOString())
+    .lt('created_at', new Date(Date.now() - REQUEST_RESPONSE_WINDOW_MS).toISOString())
 
   let staleCancelled = 0
   for (const s of stalePending ?? []) {

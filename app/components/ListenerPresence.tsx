@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { showToast } from '@/lib/toast'
 import { registerPushNotifications } from '@/lib/firebase-client'
+import { REQUEST_RESPONSE_WINDOW_SECS } from '@/lib/constants'
 
 // ── Global listener presence layer ───────────────────────────────────────────
 //
@@ -149,7 +150,7 @@ export default function ListenerPresence() {
       const row = data?.[0]
       if (!row || cancelled) return
       const ageSecs = Math.floor((Date.now() - new Date(row.created_at as string).getTime()) / 1000)
-      if (5 * 60 - ageSecs <= 5) return       // about to expire — don't surface
+      if (REQUEST_RESPONSE_WINDOW_SECS - ageSecs <= 5) return  // about to expire — don't surface
       surface(row as unknown as Incoming)
     }
 

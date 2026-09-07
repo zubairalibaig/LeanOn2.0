@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
-import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE, PLATFORM_FEE } from '@/lib/constants'
+import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE, PLATFORM_FEE, REQUEST_RESPONSE_WINDOW_SECS } from '@/lib/constants'
 import { showToast } from '@/lib/toast'
 import { registerPushNotifications } from '@/lib/firebase-client'
 import { compressImage, extForType, AVATAR_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
@@ -25,9 +25,10 @@ const sb = new Proxy({} as ReturnType<typeof createBrowserClient>, {
   }
 })
 
-// Seconds a listener has to answer an incoming request — kept in sync with the
-// seeker's server-side 5-minute auto-cancel window (see checkPendingRequest).
-const RESPONSE_WINDOW_SECS = 5 * 60
+// Seconds a listener has to answer an incoming request. Single source of truth
+// lives in lib/constants (REQUEST_RESPONSE_WINDOW_SECS) so the listener countdown,
+// the seeker's waiting screen, and the server-side cancel can never drift apart.
+const RESPONSE_WINDOW_SECS = REQUEST_RESPONSE_WINDOW_SECS
 
 const SPECIALTY_TAGS = [
   {id:'loneliness',  label:'Loneliness 🌙'},
@@ -426,7 +427,7 @@ export default function DashboardPage() {
     const row = data?.[0]
     if (!row) return
     const ageSecs = Math.floor((Date.now() - new Date(row.created_at as string).getTime()) / 1000)
-    const remaining = RESPONSE_WINDOW_SECS - ageSecs // seeker cancels at 5 min
+    const remaining = RESPONSE_WINDOW_SECS - ageSecs // seeker auto-cancels when the window lapses
     if (remaining <= 5) return // about to expire — don't bother surfacing
     // Give the listener the FULL remaining window (was capped at 60s, which
     // auto-declined the seeker far earlier than their own 5-minute timeout).
@@ -1102,7 +1103,7 @@ export default function DashboardPage() {
               ))}
             </div>
             <div style={{ fontSize: 12, color: 'var(--gray)', fontWeight: 600, marginTop: -14, marginBottom: 24 }}>
-              💡 Stay online and respond within 5 minutes so you don&apos;t miss seekers who want to talk.
+              💡 Stay online and respond within 3 minutes so you don&apos;t miss seekers who want to talk.
             </div>
           </>
         )}

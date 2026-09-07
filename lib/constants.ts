@@ -17,6 +17,13 @@ export const FREE_SESSION_MINS  = 5
 // (homepage FAQ, /faq, city page FAQs, layout Service schema, public/llms.txt).
 export const MAX_FREE_TRIALS    = 2
 export const SESSION_DURATIONS  = [5, 15, 30, 45] as const
+// How long a seeker's session REQUEST stays open waiting for the listener to
+// accept, before it auto-cancels and refunds the seeker. This is the single
+// source of truth — the seeker waiting screen, the listener dashboard countdown,
+// the listener catch-up guard, the accept-too-late check, and the stale-pending
+// cleanup all read it, so they can never drift out of sync.
+export const REQUEST_RESPONSE_WINDOW_SECS = 180 // 3 minutes
+export const REQUEST_RESPONSE_WINDOW_MS   = REQUEST_RESPONSE_WINDOW_SECS * 1000
 export const RECHARGE_AMOUNTS   = [200, 500, 1000, 2000] as const
 export const UUID_RE            = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 export const CRISIS_RESOURCES   = {
