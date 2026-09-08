@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 34
+    namespace "app.leanon.twa"
 
     defaultConfig {
         applicationId "app.leanon.twa"
