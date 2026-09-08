@@ -22,6 +22,8 @@ import { post as noOneToTalkToPost } from '../posts/no-one-to-talk-to'
 import { post as therapyCostPost } from '../posts/therapy-cost-india'
 import { post as astrologerTalkPost } from '../posts/why-people-call-astrologers-to-talk'
 import { post as someoneToLeanOnPost } from '../posts/what-it-means-to-have-someone-to-lean-on'
+import { post as chatgptVsHumanPost } from '../posts/chatgpt-vs-human-listener'
+import { post as earnListeningPost } from '../posts/earn-money-listening-online-india'
 
 export const dynamic = 'force-static'
 
@@ -32,6 +34,7 @@ const allPosts = [
   empathyPost, whatIsPeerSupportPost, onlineEmotionalSupportGuidePost, astrologerTalkPost,
   someoneToLeanOnPost,
   overthinkingNightPost, noOneToTalkToPost, therapyCostPost,
+  chatgptVsHumanPost, earnListeningPost,
 ]
 
 function getPost(slug: string) {

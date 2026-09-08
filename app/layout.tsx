@@ -31,13 +31,26 @@ export const metadata: Metadata = {
     'affordable online counselling India', 'online counselling alternative India',
     'cheaper than therapy India', 'talk to someone online paid India',
     'book emotional support session India', 'online listener India price',
-    // Seeker-intent (Round 4) — acute need + price-comparison searches. These
-    // reach people looking for support to USE, not people looking to earn.
+    // Seeker-intent (Round 4) — acute need + price-comparison searches.
     'talk to someone right now', 'need someone to talk to now India',
     'no one to talk to', 'how to stop overthinking at night',
     'online counselling cost India', 'therapy cost India',
     'lonely in marriage India', 'job loss depression India',
     'urgent emotional support India', 'someone to listen to me India',
+    // AI/ChatGPT-alternative cluster — captures users who tried AI chatbots
+    // and want real human connection instead.
+    'chat with real person online India', 'talk to real human not AI',
+    'real person to talk to online India', 'AI chatbot alternative India',
+    'ChatGPT alternative for loneliness India', 'human listener not bot',
+    'tired of talking to AI', 'human connection instead of AI India',
+    'real human emotional support India', 'not a bot chat India',
+    'chatbot not helping anxiety', 'human vs AI mental health India',
+    // Listener-earning cluster — captures people who want to earn by
+    // helping others, driving listener supply.
+    'earn money by listening online India', 'paid listener job India',
+    'get paid to listen to people India', 'work from home listener India',
+    'side income listener India', 'earn from talking online India',
+    'online listener job India', 'earn money empathy India',
   ],
   authors: [{ name: 'LeanOn' }],
   creator: 'LeanOn',
@@ -50,12 +63,14 @@ export const metadata: Metadata = {
     siteName: 'LeanOn',
     title: 'LeanOn — Peer Emotional Support, India',
     description: "Talk to a trained peer listener, anonymously. Available 24/7, no appointment needed.",
+    images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn — Peer Emotional Support India' }],
   },
   twitter: {
     card: 'summary_large_image',
     site: '@leanonapp',
     title: 'LeanOn — Peer Emotional Support, India',
     description: "Talk to a trained peer listener, anonymously. Available 24/7, no appointment needed.",
+    images: ['/icon-512.png'],
   },
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? undefined,

@@ -105,6 +105,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/kolkata`,                          lastModified: d('2026-06-11'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/jaipur`,                           lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/ahmedabad`,                        lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.8 },
+    // AI/ChatGPT-alternative + earning pages — the highest-growth SEO cluster
+    { url: `${base}/chat-with-real-person`,            lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/ai-chatbot-alternative`,           lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/earn-by-listening`,                lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    // Blog: AI vs human + earning posts
+    { url: `${base}/blog/chatgpt-vs-human-listener`,   lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/blog/earn-money-listening-online-india`, lastModified: d(TODAY),  changeFrequency: 'monthly', priority: 0.9 },
     // New SEO pages (Items 18-21)
     { url: `${base}/why-leanon`,                       lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/how-leanon-works`,                 lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },

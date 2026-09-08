@@ -18,6 +18,10 @@ export const metadata: Metadata = {
     'book a listening session India', 'online emotional support session India',
     'talk to someone right now', 'no one to talk to', 'someone to listen to me',
     'how to stop overthinking at night', 'online counselling cost India',
+    'chat with real person online India', 'talk to real human not AI',
+    'AI chatbot alternative India', 'human listener not bot',
+    'tired of talking to AI', 'ChatGPT alternative India',
+    'earn money by listening online India', 'paid listener job India',
   ],
 }
 
@@ -91,6 +95,9 @@ const faqSchema = {
     { '@type': 'Question', name: 'How do I become a listener on LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'Apply at leanon.app/become-listener. Share your lived experience and complete a brief verification. Listeners are approved before they can take sessions.' } },
     { '@type': 'Question', name: 'Which cities does LeanOn serve?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is available across all of India — Bengaluru, Mumbai, Delhi, Chennai, Hyderabad, Pune, Kolkata, Jaipur, Ahmedabad, and everywhere else. It is fully online — accessible from anywhere.' } },
     { '@type': 'Question', name: 'What topics can I talk about on LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'Listeners on LeanOn specialise in loneliness, work stress, career confusion, relationships, grief and loss, student pressure, startup journey, breakups, anxiety, and more. If you just need someone to lean on with no specific topic, that\'s fine too.' } },
+    { '@type': 'Question', name: 'Is LeanOn an AI or are the listeners real people?', acceptedAnswer: { '@type': 'Answer', text: 'Every listener on LeanOn is a real, verified human being — no bots, no AI-generated responses, no scripts. Listeners apply to join, go through background verification, and complete active listening training before their first session. When you talk to someone on LeanOn, there is a real person on the other side of the conversation.' } },
+    { '@type': 'Question', name: 'Can ChatGPT or AI chatbots replace talking to a real person?', acceptedAnswer: { '@type': 'Answer', text: 'AI chatbots can provide information and be a starting point, but they have a fundamental limitation: they have never felt lonely, heartbroken, or anxious. Their responses are predictions, not empathy. A LeanOn peer listener has personally lived through what you are facing — their support comes from genuine shared experience, not pattern-matching. For real emotional relief, that difference is everything.' } },
+    { '@type': 'Question', name: 'Can I earn money as a peer listener on LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. If you have lived experience with loneliness, burnout, anxiety, grief, relationships, or similar challenges, you can apply to become a listener and earn ₹300–₹800 per hour helping others through what you have already overcome. You set your own rate, hours, and topics. Apply at leanon.app/become-listener.' } },
   ],
 }
 const orgSchema = {
