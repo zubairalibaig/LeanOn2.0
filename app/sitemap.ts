@@ -109,9 +109,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/chat-with-real-person`,            lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/ai-chatbot-alternative`,           lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/earn-by-listening`,                lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    // High-intent immediate-need landing page
+    { url: `${base}/i-need-someone-to-talk-to`,        lastModified: d(TODAY),        changeFrequency: 'weekly',  priority: 0.97 },
+    // New support topic pages
+    { url: `${base}/support/feeling-empty`,            lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/support/feeling-like-a-failure`,   lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/support/cant-sleep-anxiety`,       lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/support/need-to-vent`,             lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/support/emotional-exhaustion`,     lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/support/feeling-lost`,             lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
     // Blog: AI vs human + earning posts
     { url: `${base}/blog/chatgpt-vs-human-listener`,   lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/blog/earn-money-listening-online-india`, lastModified: d(TODAY),  changeFrequency: 'monthly', priority: 0.9 },
+    // Blog: ChatGPT-user + high-intent emotional queries
+    { url: `${base}/blog/is-chatgpt-good-for-mental-health`, lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.92 },
+    { url: `${base}/blog/feel-empty-inside-india`,     lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/blog/feel-like-a-failure-india`,   lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/blog/2am-loneliness-india`,        lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/blog/hate-job-cant-quit-india`,    lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
     // New SEO pages (Items 18-21)
     { url: `${base}/why-leanon`,                       lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/how-leanon-works`,                 lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },

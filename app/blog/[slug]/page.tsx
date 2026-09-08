@@ -24,6 +24,11 @@ import { post as astrologerTalkPost } from '../posts/why-people-call-astrologers
 import { post as someoneToLeanOnPost } from '../posts/what-it-means-to-have-someone-to-lean-on'
 import { post as chatgptVsHumanPost } from '../posts/chatgpt-vs-human-listener'
 import { post as earnListeningPost } from '../posts/earn-money-listening-online-india'
+import { post as feelEmptyPost } from '../posts/feel-empty-inside-india'
+import { post as feelFailurePost } from '../posts/feel-like-a-failure-india'
+import { post as am2LonelinessPost } from '../posts/2am-loneliness-india'
+import { post as hateJobPost } from '../posts/hate-job-cant-quit-india'
+import { post as chatgptMentalHealthPost } from '../posts/is-chatgpt-good-for-mental-health'
 
 export const dynamic = 'force-static'
 
@@ -35,6 +40,7 @@ const allPosts = [
   someoneToLeanOnPost,
   overthinkingNightPost, noOneToTalkToPost, therapyCostPost,
   chatgptVsHumanPost, earnListeningPost,
+  feelEmptyPost, feelFailurePost, am2LonelinessPost, hateJobPost, chatgptMentalHealthPost,
 ]
 
 function getPost(slug: string) {
