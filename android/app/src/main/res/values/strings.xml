@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LeanOn</string>
+    <!--
+        Digital Asset Links statement — tells Android this app is the owner of
+        https://www.leanon.app, which removes the URL bar from the TWA.
+        The real SHA-256 fingerprint goes into public/.well-known/assetlinks.json
+        on the website (Claude updates that file when you send the fingerprint).
+    -->
+    <string name="asset_statements">
+        [{"relation":["delegate_permission/common.handle_all_urls"],
+          "target":{"namespace":"web","site":"https://www.leanon.app"}}]
+    </string>
+</resources>
