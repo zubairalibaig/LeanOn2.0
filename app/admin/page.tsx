@@ -362,6 +362,7 @@ export default function AdminPage() {
   const [payoutsLoading, setPayoutsLoading] = useState(false)
   // Inline confirm state for destructive ban action (window.confirm blocked in mobile)
   const [confirmBanId, setConfirmBanId] = useState<string | null>(null)
+  const [confirmBanListenerId, setConfirmBanListenerId] = useState<string | null>(null)
   // Inline name-edit state (shared for both users and listeners tables)
   const [editingNameId, setEditingNameId] = useState<string | null>(null)
   const [editingNameValue, setEditingNameValue] = useState('')
@@ -1536,6 +1537,16 @@ export default function AdminPage() {
                                           {busy === `suspend:${l.user_id}` ? '…' : 'Suspend'}
                                         </button>
                                   )}
+                                  {/* Ban — permanent. Hidden when already suspended. Requires confirmation. */}
+                                  {!isPending && !isRejected && !l.is_suspended && (confirmBanListenerId === l.user_id ? (
+                                    <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
+                                      <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--red)' }}>Ban permanently?</span>
+                                      <button className="btn btn-red" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => { setConfirmBanListenerId(null); userAction(l.user_id, 'ban') }}>Yes, ban</button>
+                                      <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setConfirmBanListenerId(null)}>Cancel</button>
+                                    </span>
+                                  ) : (
+                                    !l.is_suspended && <button className="btn btn-red" disabled={busy !== null} onClick={() => setConfirmBanListenerId(l.user_id)}>Ban</button>
+                                  ))}
                                   <a href={`/listener/${l.user_id}`} target="_blank" rel="noopener" className="btn btn-gray" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
                                     View Profile
                                   </a>
