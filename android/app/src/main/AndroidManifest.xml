@@ -6,7 +6,7 @@
     <application
         android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
+        android:theme="@style/AppTheme">
 
         <!-- Digital Asset Links verification (removes the URL bar in TWA) -->
         <meta-data
