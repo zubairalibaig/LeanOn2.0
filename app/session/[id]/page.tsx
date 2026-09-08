@@ -218,6 +218,7 @@ function SessionContent() {
   const [voiceRetryKey, setVoiceRetryKey] = useState(0)
   const [showReport, setShowReport]       = useState(false)
   const [listenerId, setListenerId]       = useState<string | null>(null)
+  const [seekerId, setSeekerId]           = useState<string | null>(null)
   // Request lifecycle: 'pending' (awaiting listener), 'active' (live), 'cancelled'
   // (declined / timed out). null until the first DB read resolves.
   const [sessionStatus, setSessionStatus]       = useState<string | null>(null)
@@ -363,6 +364,7 @@ function SessionContent() {
         }
         if (data?.session_type) setIsVoice(data.session_type === 'voice')
         if (data?.listener_id) setListenerId(data.listener_id)
+        if (data?.seeker_id)   setSeekerId(data.seeker_id)
         // Show the OTHER person's name — listener sees seeker's name, seeker sees listener's name
         const myId = userIdRef.current
         if (!myId) return
@@ -1098,9 +1100,13 @@ function SessionContent() {
             🆘 Crisis: <a href="tel:08046110007">NIMHANS 080-46110007</a> · <a href="tel:14416">Tele-MANAS 14416</a>
           </div>
         </div>
-        {showReport && listenerId && (
+        {showReport && (listenerId || seekerId) && (
           <ReportModal
-            targetUserId={listenerId}
+            targetUserId={
+              // If the current user IS the listener, report is against the seeker.
+              // If the current user IS the seeker (or unknown), report is against the listener.
+              userId === listenerId ? (seekerId ?? listenerId ?? '') : (listenerId ?? seekerId ?? '')
+            }
             targetName={resolvedListenerName}
             sessionId={sessionId}
             onClose={() => setShowReport(false)}
