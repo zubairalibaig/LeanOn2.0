@@ -127,6 +127,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/blog/feel-like-a-failure-india`,   lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/blog/2am-loneliness-india`,        lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/blog/hate-job-cant-quit-india`,    lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
+    // Blog: vent/impulse persona — daytime, situational-trigger, pressure-valve
+    { url: `${base}/blog/getting-it-off-your-chest`,         lastModified: d(TODAY),  changeFrequency: 'monthly', priority: 0.92 },
+    { url: `${base}/blog/bad-morning-reset-india`,           lastModified: d(TODAY),  changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/blog/venting-to-a-stranger-india`,       lastModified: d(TODAY),  changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/blog/emotional-reset-workday-india`,     lastModified: d(TODAY),  changeFrequency: 'monthly', priority: 0.9 },
+    // Vent/impulse landing pages — highest-converting persona (daytime, one-session, acute trigger)
+    { url: `${base}/need-to-vent-right-now`,           lastModified: d(TODAY),        changeFrequency: 'weekly',  priority: 0.97 },
+    { url: `${base}/vent-to-someone-online`,           lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/having-a-bad-day`,                 lastModified: d(TODAY),        changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/just-had-a-fight`,                 lastModified: d(TODAY),        changeFrequency: 'weekly',  priority: 0.93 },
+    { url: `${base}/talk-to-stranger-online-india`,    lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.93 },
     // New SEO pages (Items 18-21)
     { url: `${base}/why-leanon`,                       lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/how-leanon-works`,                 lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },
