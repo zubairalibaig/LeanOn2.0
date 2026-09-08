@@ -1107,17 +1107,18 @@ export default function AdminPage() {
 
             {/* Money seekers have paid in but not yet spent. This is a LIABILITY,
                 not revenue — it must stay parked until they spend it or ask for
-                it back. Reflects the current filter/search, not just this page. */}
-            {usersWalletTotal !== null && (
+                it back. Always shows the GLOBAL total (all users) so it matches
+                the Overview card — not a per-filter subset, which was confusing. */}
+            {kpis?.walletLiability && (
               <div className="liability-bar">
                 <div>
                   <div className="liability-label">Unspent user balances — do not touch</div>
                   <div className="liability-sub">
-                    Money users have recharged but not yet spent. Hold this in reserve.
-                    {usersStatus !== 'all' || usersSearch ? ' (current filter only)' : ''}
+                    Held on behalf of {kpis.walletLiability.usersWithBalance} user{kpis.walletLiability.usersWithBalance === 1 ? '' : 's'} across all accounts.
+                    Park this and leave it until they spend it or ask for it back.
                   </div>
                 </div>
-                <div className="liability-amount">₹{usersWalletTotal.toLocaleString('en-IN')}</div>
+                <div className="liability-amount">{fmtRs(kpis.walletLiability.totalRupees)}</div>
               </div>
             )}
             {usersLoading ? (
