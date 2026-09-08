@@ -1216,6 +1216,7 @@ export default function AdminPage() {
                           </td>
                           <td>
                             <div className="action-row">
+                              {/* Suspend ↔ Unsuspend — temporary block, fully reversible */}
                               {u.is_suspended ? (
                                 <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(u.id, 'unsuspend')}>
                                   {busy === `unsuspend:${u.id}` ? '…' : 'Unsuspend'}
@@ -1225,23 +1226,17 @@ export default function AdminPage() {
                                   {busy === `suspend:${u.id}` ? '…' : 'Suspend'}
                                 </button>
                               )}
-                              {u.is_active
-                                ? <button className="btn btn-gray" disabled={busy !== null} onClick={() => userAction(u.id, 'deactivate')}>
-                                    {busy === `deactivate:${u.id}` ? '…' : 'Deactivate'}
-                                  </button>
-                                : <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(u.id, 'activate')}>
-                                    {busy === `activate:${u.id}` ? '…' : 'Activate'}
-                                  </button>
-                              }
-                              {confirmBanId === u.id ? (
+                              {/* Ban — permanent/severe. Requires confirmation.
+                                  Hidden when already suspended (no point re-banning). */}
+                              {!u.is_suspended && (confirmBanId === u.id ? (
                                 <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
-                                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--red)' }}>Ban?</span>
-                                  <button className="btn btn-red" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => { setConfirmBanId(null); userAction(u.id, 'ban') }}>Yes</button>
-                                  <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setConfirmBanId(null)}>No</button>
+                                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--red)' }}>Ban permanently?</span>
+                                  <button className="btn btn-red" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => { setConfirmBanId(null); userAction(u.id, 'ban') }}>Yes, ban</button>
+                                  <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setConfirmBanId(null)}>Cancel</button>
                                 </span>
                               ) : (
                                 <button className="btn btn-red" disabled={busy !== null} onClick={() => setConfirmBanId(u.id)}>Ban</button>
-                              )}
+                              ))}
                             </div>
                           </td>
                         </tr>

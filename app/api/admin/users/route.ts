@@ -335,8 +335,8 @@ export async function PATCH(req: NextRequest) {
         break
       }
 
-      case 'suspend':
-      case 'ban': {
+      case 'suspend': {
+        // Temporary block — can be reversed with 'unsuspend'.
         const { error: uErr } = await sb.from('users')
           .update({ is_suspended: true, is_active: false })
           .eq('id', userId)
@@ -344,12 +344,37 @@ export async function PATCH(req: NextRequest) {
           logger.error('suspend: users update failed', { userId, error: uErr.message })
           return NextResponse.json({ error: `Failed to suspend user: ${uErr.message}` }, { status: 500 })
         }
-        // Listener profile — best-effort (user might not be a listener)
         await sb.from('listener_profiles')
           .update({ is_active: false, is_available: false, is_suspended: true })
           .eq('user_id', userId)
           .then(() => {}, () => {})
         await sb.auth.admin.signOut(userId, 'global').then(() => {}, () => {})
+        break
+      }
+
+      case 'ban': {
+        // Permanent/severe block. Same enforcement as suspend but logged differently
+        // and intentionally not reversible via the normal Unsuspend button.
+        const { error: uErr } = await sb.from('users')
+          .update({ is_suspended: true, is_active: false })
+          .eq('id', userId)
+        if (uErr) {
+          logger.error('ban: users update failed', { userId, error: uErr.message })
+          return NextResponse.json({ error: `Failed to ban user: ${uErr.message}` }, { status: 500 })
+        }
+        await sb.from('listener_profiles')
+          .update({ is_active: false, is_available: false, is_suspended: true })
+          .eq('user_id', userId)
+          .then(() => {}, () => {})
+        await sb.auth.admin.signOut(userId, 'global').then(() => {}, () => {})
+        // Add a ban notification so the user knows why (optional — best-effort)
+        await sb.from('notifications').insert({
+          user_id: userId,
+          type: 'system',
+          title: 'Account banned',
+          body: notes || 'Your account has been permanently banned for violating our community guidelines.',
+          action_url: '/support',
+        }).then(() => {}, () => {})
         break
       }
 
