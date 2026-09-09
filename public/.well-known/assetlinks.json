@@ -5,7 +5,8 @@
       "namespace": "android_app",
       "package_name": "app.leanon.therapy",
       "sha256_cert_fingerprints": [
-        "E3:80:13:EC:DC:23:F5:C3:EB:4D:12:59:38:AD:63:A8:0A:18:58:E4:6B:F6:3A:78:CA:22:9E:9E:53:D6:C3:42"
+        "25:AA:B1:86:5D:B5:B1:06:91:EB:FE:AE:FE:89:13:BB:F6:D4:48:79:16:DB:47:D4:09:D7:08:72:FD:54:D2:21",
+        "PLAY_APP_SIGNING_FINGERPRINT_REPLACE_ME"
       ]
     }
   }
