@@ -2,20 +2,73 @@ import type { Metadata } from 'next'
 import { post as lonelinessPost } from './posts/loneliness-in-india'
 import { post as burnoutPost } from './posts/burnout-recovery-india'
 import { post as peerSupportPost } from './posts/how-peer-support-works'
+import { post as leanOnMeanPost } from './posts/what-does-lean-on-mean'
+import { post as lonelinessAtNightPost } from './posts/loneliness-at-night'
+import { post as emotionalBurnoutPost } from './posts/emotional-burnout'
+import { post as anonymousSupportPost } from './posts/anonymous-support-india'
+import { post as peerVsTherapyPost } from './posts/peer-support-vs-therapy-india'
+import { post as jointFamilyPost } from './posts/joint-family-emotional-support'
+import { post as lonelinessJointFamilyPost } from './posts/loneliness-in-joint-family'
+import { post as founderBurnoutPost } from './posts/startup-founder-burnout'
+import { post as affordableTherapyPost } from './posts/affordable-alternatives-therapy-india'
+import { post as mensMentalHealthPost } from './posts/mens-mental-health-india'
+import { post as womenLonelinessPost } from './posts/women-loneliness-india'
+import { post as empathyPost } from './posts/empathy-in-peer-support'
+import { post as whatIsPeerSupportPost } from './posts/what-is-peer-support-india'
+import { post as onlineEmotionalSupportGuidePost } from './posts/online-emotional-support-india-guide'
+import { post as overthinkingNightPost } from './posts/how-to-stop-overthinking-at-night'
+import { post as noOneToTalkToPost } from './posts/no-one-to-talk-to'
+import { post as therapyCostPost } from './posts/therapy-cost-india'
+import { post as astrologerTalkPost } from './posts/why-people-call-astrologers-to-talk'
+import { post as someoneToLeanOnPost } from './posts/what-it-means-to-have-someone-to-lean-on'
+import { post as chatgptVsHumanPost } from './posts/chatgpt-vs-human-listener'
+import { post as earnListeningPost } from './posts/earn-money-listening-online-india'
+import { post as feelEmptyPost } from './posts/feel-empty-inside-india'
+import { post as feelFailurePost } from './posts/feel-like-a-failure-india'
+import { post as am2LonelinessPost } from './posts/2am-loneliness-india'
+import { post as hateJobPost } from './posts/hate-job-cant-quit-india'
+import { post as chatgptMentalHealthPost } from './posts/is-chatgpt-good-for-mental-health'
+import { post as gettingItOffChestPost } from './posts/getting-it-off-your-chest'
+import { post as badMorningResetPost } from './posts/bad-morning-reset-india'
+import { post as ventingStrangerPost } from './posts/venting-to-a-stranger-india'
+import { post as emotionalResetWorkdayPost } from './posts/emotional-reset-workday-india'
+import { post as cantAffordTherapyPost } from './posts/cant-afford-therapy-india'
+import { post as familyPressurePost } from './posts/family-pressure-mental-health-india'
+import { post as lonelinessNewCityPost } from './posts/loneliness-new-city-india'
+import { post as signsNeedTalkPost } from './posts/signs-you-need-to-talk-to-someone'
 
 export const dynamic = 'force-static'
 
+// All posts — sorted newest first so Google and AI crawlers see fresh content at top
+const allPosts = [
+  chatgptMentalHealthPost, cantAffordTherapyPost, familyPressurePost, lonelinessNewCityPost,
+  signsNeedTalkPost, gettingItOffChestPost, badMorningResetPost, ventingStrangerPost,
+  emotionalResetWorkdayPost, hateJobPost, am2LonelinessPost, feelFailurePost, feelEmptyPost,
+  earnListeningPost, chatgptVsHumanPost, someoneToLeanOnPost, astrologerTalkPost,
+  therapyCostPost, noOneToTalkToPost, overthinkingNightPost, onlineEmotionalSupportGuidePost,
+  whatIsPeerSupportPost, empathyPost, womenLonelinessPost, mensMentalHealthPost,
+  affordableTherapyPost, founderBurnoutPost, lonelinessJointFamilyPost, jointFamilyPost,
+  peerVsTherapyPost, anonymousSupportPost, emotionalBurnoutPost, lonelinessAtNightPost,
+  leanOnMeanPost, peerSupportPost, burnoutPost, lonelinessPost,
+].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+
 export const metadata: Metadata = {
-  title: 'Mental Health Blog India | LeanOn',
-  description: 'Expert articles on emotional wellness, peer support, anxiety, loneliness, and mental health in India.',
-  keywords: ['peer support blog India', 'emotional wellness India', 'leanon blog', 'mental health India blog'],
+  title: 'Mental Health Blog India — Loneliness, Anxiety, Family Pressure & Peer Support | LeanOn',
+  description: 'Honest, practical articles about emotional health in India — loneliness, burnout, family pressure, therapy costs, career anxiety, venting, and peer support. Written for real Indian lives.',
+  keywords: [
+    'mental health blog India', 'emotional wellness India', 'peer support blog India',
+    'loneliness India blog', 'therapy alternative India', 'family pressure India',
+    'career anxiety India', 'burnout India', 'anxiety blog India', 'leanon blog',
+    'emotional support India articles', 'mental health articles India',
+  ],
   alternates: { canonical: 'https://www.leanon.app/blog', languages: { 'en-IN': 'https://www.leanon.app/blog' } },
   openGraph: {
-    title: 'Mental Health Blog India | LeanOn',
-    description: 'Expert articles on emotional wellness, peer support, anxiety, loneliness, and mental health in India.',
+    title: 'Mental Health Blog India — Loneliness, Anxiety, Family Pressure & Peer Support | LeanOn',
+    description: 'Honest, practical articles about emotional health in India.',
     url: 'https://www.leanon.app/blog',
     siteName: 'LeanOn',
     type: 'website',
+    images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn Blog — Mental Health India' }],
   },
 }
 
@@ -28,7 +81,20 @@ const breadcrumbSchema = {
   ],
 }
 
-const posts = [lonelinessPost, burnoutPost, peerSupportPost]
+const itemListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'LeanOn Mental Health Blog — India',
+  description: 'Articles on emotional wellness, peer support, loneliness, anxiety, and mental health in India.',
+  url: 'https://www.leanon.app/blog',
+  numberOfItems: allPosts.length,
+  itemListElement: allPosts.map((p, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    url: `https://www.leanon.app/blog/${p.slug}`,
+    name: p.title,
+  })),
+}
 
 function formatDate(dateStr: string) {
   const d = new Date(dateStr)
@@ -49,39 +115,43 @@ const S = `
   .breadcrumb{display:flex;gap:6px;align-items:center;font-size:13px;font-weight:600;color:var(--gray);margin-bottom:32px;flex-wrap:wrap;}
   .breadcrumb span{color:var(--border);}
   .breadcrumb a:hover{color:var(--teal);}
-  .hero{margin-bottom:48px;}
+  .hero{margin-bottom:40px;}
   .hero-tag{font-size:12px;font-weight:800;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;}
-  h1{font-size:clamp(28px,6vw,44px);font-weight:900;color:var(--navy);line-height:1.15;margin-bottom:16px;}
+  h1{font-size:clamp(26px,5vw,40px);font-weight:900;color:var(--navy);line-height:1.15;margin-bottom:14px;}
   h1 em{color:var(--orange);font-style:normal;}
-  .hero-lead{font-size:17px;color:var(--gray);line-height:1.78;font-weight:500;max-width:600px;}
-  .posts-grid{display:grid;gap:24px;margin-bottom:48px;}
-  .post-card{background:white;border-radius:24px;padding:28px 32px;border:1.5px solid var(--border);transition:border-color 0.2s,transform 0.15s;display:block;}
+  .hero-lead{font-size:16px;color:var(--gray);line-height:1.78;font-weight:500;max-width:600px;}
+  .section-label{font-size:11px;font-weight:800;color:var(--teal);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:16px;margin-top:40px;}
+  .section-label:first-of-type{margin-top:0;}
+  .posts-grid{display:grid;gap:20px;margin-bottom:12px;}
+  .post-card{background:white;border-radius:20px;padding:24px 28px;border:1.5px solid var(--border);transition:border-color 0.2s,transform 0.15s;display:block;}
   .post-card:hover{border-color:var(--teal);transform:translateY(-2px);}
-  .post-meta{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
-  .post-date{font-size:13px;font-weight:600;color:var(--gray);}
-  .post-read-time{font-size:13px;font-weight:600;color:var(--teal);background:var(--light);padding:3px 10px;border-radius:50px;}
-  .post-title{font-size:20px;font-weight:800;color:var(--navy);line-height:1.35;margin-bottom:10px;}
-  .post-desc{font-size:15px;color:#3A6070;line-height:1.70;font-weight:500;margin-bottom:16px;}
-  .post-topics{display:flex;gap:8px;flex-wrap:wrap;}
-  .post-topic{font-size:12px;font-weight:700;color:var(--teal);background:rgba(26,143,160,0.1);padding:4px 10px;border-radius:50px;}
-  .post-cta{display:inline-flex;align-items:center;gap:4px;margin-top:16px;font-size:14px;font-weight:800;color:var(--teal);}
-  .cta-card{background:var(--navy);border-radius:24px;padding:40px 32px;text-align:center;margin-bottom:24px;}
-  .cta-card h2{font-size:24px;font-weight:900;color:white;margin-bottom:12px;}
-  .cta-card p{font-size:15px;color:rgba(201,231,244,0.85);font-weight:500;margin-bottom:28px;line-height:1.7;}
+  .post-meta{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+  .post-date{font-size:12px;font-weight:600;color:var(--gray);}
+  .post-read-time{font-size:12px;font-weight:600;color:var(--teal);background:var(--light);padding:3px 10px;border-radius:50px;}
+  .post-title{font-size:18px;font-weight:800;color:var(--navy);line-height:1.35;margin-bottom:8px;}
+  .post-desc{font-size:14px;color:#3A6070;line-height:1.68;font-weight:500;margin-bottom:12px;}
+  .post-topics{display:flex;gap:6px;flex-wrap:wrap;}
+  .post-topic{font-size:11px;font-weight:700;color:var(--teal);background:rgba(26,143,160,0.1);padding:3px 8px;border-radius:50px;}
+  .post-cta{display:inline-flex;align-items:center;gap:4px;margin-top:12px;font-size:13px;font-weight:800;color:var(--teal);}
+  .cta-card{background:var(--navy);border-radius:24px;padding:40px 32px;text-align:center;margin-top:48px;}
+  .cta-card h2{font-size:22px;font-weight:900;color:white;margin-bottom:12px;}
+  .cta-card p{font-size:14px;color:rgba(201,231,244,0.85);font-weight:500;margin-bottom:24px;line-height:1.7;}
   .cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
-  .btn-primary{background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;padding:14px 28px;border-radius:50px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(255,153,51,0.35);}
-  .btn-secondary{background:rgba(255,255,255,0.12);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;padding:14px 28px;border-radius:50px;border:1.5px solid rgba(255,255,255,0.3);cursor:pointer;}
+  .btn-primary{background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;padding:12px 24px;border-radius:50px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(255,153,51,0.35);}
+  .btn-secondary{background:rgba(255,255,255,0.12);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;padding:12px 24px;border-radius:50px;border:1.5px solid rgba(255,255,255,0.3);cursor:pointer;}
+  .count{font-size:13px;font-weight:600;color:var(--gray);margin-bottom:20px;}
 `
 
 export default function BlogIndexPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
       <style>{S}</style>
 
       <nav className="nav">
         <a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a>
-        <a href="/auth"><button className="btn-nav">Open app</button></a>
+        <a href="/browse"><button className="btn-nav">Find a listener</button></a>
       </nav>
 
       <div className="page">
@@ -91,13 +161,15 @@ export default function BlogIndexPage() {
         </nav>
 
         <div className="hero">
-          <p className="hero-tag">Mental Health · India</p>
+          <p className="hero-tag">Mental Health · India · {allPosts.length} Articles</p>
           <h1>Honest Writing About <em>What You Are Going Through</em></h1>
-          <p className="hero-lead">Evidence-based articles about loneliness, burnout, grief, anxiety, and peer support — written for the realities of life in India.</p>
+          <p className="hero-lead">Practical articles on loneliness, burnout, anxiety, family pressure, career stress, peer support, and the real cost of emotional health in India — written for the way life in India actually is.</p>
         </div>
 
+        <p className="count">{allPosts.length} articles — newest first</p>
+
         <div className="posts-grid">
-          {posts.map((post) => (
+          {allPosts.map((post) => (
             <a key={post.slug} href={`/blog/${post.slug}`} className="post-card">
               <div className="post-meta">
                 <span className="post-date">{formatDate(post.date)}</span>
@@ -106,7 +178,7 @@ export default function BlogIndexPage() {
               <div className="post-title">{post.title}</div>
               <p className="post-desc">{post.description}</p>
               <div className="post-topics">
-                {post.topics.map((t) => (
+                {post.topics.slice(0, 3).map((t: string) => (
                   <span key={t} className="post-topic">{t}</span>
                 ))}
               </div>
@@ -116,10 +188,10 @@ export default function BlogIndexPage() {
         </div>
 
         <div className="cta-card">
-          <h2>Ready to Talk to Someone?</h2>
-          <p>Reading helps — but sometimes you need to actually talk. Browse peer listeners who understand what you are going through. Available 24/7.</p>
+          <h2>Reading is the start. Talking is the shift.</h2>
+          <p>Browse peer listeners who understand what you are going through — trained, anonymous, available 24/7 from ₹99.</p>
           <div className="cta-btns">
-            <a href="/browse"><button className="btn-primary">Browse All Listeners</button></a>
+            <a href="/browse"><button className="btn-primary">Browse Listeners</button></a>
             <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
