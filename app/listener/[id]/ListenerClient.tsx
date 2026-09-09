@@ -103,6 +103,8 @@ export default function ListenerClient({ id }: { id: string }) {
   const [bookError, setBookError] = useState<string | null>(null)
   const [freeTrialUsed, setFreeTrialUsed] = useState(false)
   const [isUnlimitedTester, setIsUnlimitedTester] = useState(false)
+  // Wallet top-up context: show confirmation when arriving back from /wallet?return=
+  const [fromWallet, setFromWallet] = useState(false)
   // Offline messaging state
   const [msgCount, setMsgCount]         = useState(0)
   const [showMsgCompose, setShowMsgCompose] = useState(false)
@@ -110,6 +112,16 @@ export default function ListenerClient({ id }: { id: string }) {
   const [sendingMsg, setSendingMsg]     = useState(false)
   const [msgSent, setMsgSent]           = useState(false)
   const [msgError, setMsgError]         = useState<string | null>(null)
+
+  // Read URL params client-side (avoids Suspense boundary requirement)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('from') === 'wallet') {
+      setFromWallet(true)
+      // Auto-select 15 min (not 5 min which is the free trial) since user just topped up
+      setDuration(15)
+    }
+  }, [])
 
   useEffect(() => {
     // Fetch via API route (admin client server-side) — avoids the
@@ -326,7 +338,9 @@ export default function ListenerClient({ id }: { id: string }) {
             </div>
             <div style={{display:'flex',gap:10}}>
               <button onClick={()=>setShowInsufficient(false)} style={{flex:1,padding:13,background:'white',border:'1.5px solid #D5EEF6',borderRadius:12,fontFamily:'Nunito,sans-serif',fontWeight:700,cursor:'pointer'}}>Cancel</button>
-              <a href="/wallet" style={{flex:1}}><button style={{width:'100%',padding:13,background:'#FF9933',color:'white',border:'none',borderRadius:12,fontFamily:'Nunito,sans-serif',fontWeight:800,cursor:'pointer'}}>Top Up Wallet →</button></a>
+              <a href={`/wallet?return=${encodeURIComponent(`/listener/${id}?from=wallet`)}`} style={{flex:1}}>
+                <button style={{width:'100%',padding:13,background:'#FF9933',color:'white',border:'none',borderRadius:12,fontFamily:'Nunito,sans-serif',fontWeight:800,cursor:'pointer'}}>Top Up Wallet →</button>
+              </a>
             </div>
           </div>
         </div>
@@ -344,6 +358,11 @@ export default function ListenerClient({ id }: { id: string }) {
         ) : listener.is_available ? (
           // ── Online: existing booking UI ──────────────────────────────────
           <>
+            {fromWallet && (
+              <div style={{background:'rgba(52,199,89,.12)',border:'1px solid rgba(52,199,89,.35)',borderRadius:12,padding:'10px 14px',fontSize:13,fontWeight:700,color:'#166534',marginBottom:12,textAlign:'center'}}>
+                ✅ Wallet topped up! Ready to book your session.
+              </div>
+            )}
             {bookError && <div className="wallet-warn">{bookError}</div>}
             <div className="book-opts">
               {([5,15,30,45] as const).map(d => {
@@ -370,6 +389,12 @@ export default function ListenerClient({ id }: { id: string }) {
                 )
               })}
             </div>
+            {userId && balance > 0 && (
+              <div style={{fontSize:12,fontWeight:700,color:'#5A7A8A',textAlign:'right',marginBottom:6}}>
+                💰 Wallet: ₹{balance}
+                {duration !== 5 && balance < cost && <span style={{color:'#c53030',marginLeft:6}}>· need ₹{cost - balance} more</span>}
+              </div>
+            )}
             <div className="type-row">
               <button className={`type-btn${type==='text'?' sel':''}`} onClick={()=>setType('text')}>💬 Text chat</button>
               <button className={`type-btn${type==='voice'?' sel':''}`} onClick={()=>setType('voice')}>🎙️ Voice call</button>

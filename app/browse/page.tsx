@@ -877,7 +877,7 @@ function BrowseContent() {
                 className={`btn-chat ${l.is_available ? 'avail' : 'offline'}`}
                 onClick={e=>{e.stopPropagation(); if(l.is_available) router.push(`/listener/${l.user_id}?type=text`)}}
               >
-                💬 {l.is_available ? `Chat now — ₹${Math.round(l.rate_per_min*15)+PLATFORM_FEE}` : 'Currently offline'}
+                {l.is_available ? '🎁 Try free · 5 min' : '💬 Currently offline'}
               </button>
               {l.is_available && (
                 <button className="btn-voice" onClick={e=>{e.stopPropagation();router.push(`/listener/${l.user_id}?type=voice`)}}>
@@ -885,6 +885,11 @@ function BrowseContent() {
                 </button>
               )}
             </div>
+            {l.is_available && (
+              <div style={{fontSize:11,color:'#5A7A8A',fontWeight:600,textAlign:'center',marginTop:4}}>
+                or ₹{Math.round(l.rate_per_min*15)+PLATFORM_FEE} for 15 min paid session
+              </div>
+            )}
           </div>
         ))}
       </div>

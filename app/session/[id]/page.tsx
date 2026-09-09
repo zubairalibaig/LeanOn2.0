@@ -248,6 +248,8 @@ function SessionContent() {
   // Free trial conversion screen — shown between session end and rating for seekers.
   // Starts true; "Rate and leave" sets it false to reveal the normal rating screen.
   const [showFreeTrialConversion, setShowFreeTrialConversion] = useState(true)
+  // Listener availability at the moment the conversion screen shows. null = loading.
+  const [listenerStillOnline, setListenerStillOnline] = useState<boolean | null>(null)
 
   const channelRef      = useRef<ReturnType<typeof supabase.channel> | null>(null)
   const bottomRef       = useRef<HTMLDivElement>(null)
@@ -587,6 +589,18 @@ function SessionContent() {
     }), 1000)
     return () => clearInterval(t)
   }, [ended, sessionStatus])
+
+  // Fetch listener availability when a free-trial conversion screen is about to show.
+  // We do this once (when ended + sessionIsFreeTrial + listenerId are all set)
+  // so the conversion screen can show "still online" vs. "browse other listeners".
+  useEffect(() => {
+    if (!ended || !sessionIsFreeTrial || !listenerId) return
+    if (listenerStillOnline !== null) return // already fetched
+    fetch(`/api/listener/${listenerId}`)
+      .then(r => r.json())
+      .then(j => setListenerStillOnline(j.profile?.is_available === true))
+      .catch(() => setListenerStillOnline(false))
+  }, [ended, sessionIsFreeTrial, listenerId, listenerStillOnline])
 
   // Auto-complete session in DB when ended (timer expiry or manual end)
   // Uses a ref so it fires exactly once even if component re-renders.
@@ -1067,8 +1081,9 @@ function SessionContent() {
     // Voice-failed sessions skip it — the user wasn't charged and needs to leave cleanly.
     if (sessionIsFreeTrial && isSeeker && !voiceFailed && showFreeTrialConversion) {
       const walletUrl = listenerId
-        ? `/wallet?return=${encodeURIComponent(`/listener/${listenerId}`)}`
+        ? `/wallet?return=${encodeURIComponent(`/listener/${listenerId}?from=wallet`)}`
         : '/wallet'
+
       return (
         <>
           <style>{S}</style>
@@ -1084,12 +1099,23 @@ function SessionContent() {
               <div className="trial-conv-icon">💙</div>
               <h2 className="trial-conv-h">You just used your free session.</h2>
               <p className="trial-conv-sub">
-                Want to keep talking?<br />Your listener is still here.
+                {listenerStillOnline === null
+                  ? <>Want to keep talking?<br />Checking if your listener is still here…</>
+                  : listenerStillOnline
+                  ? <>🟢 {resolvedListenerName} is still online.<br />Top up to continue talking.</>
+                  : <>Your listener has gone offline.<br />Browse other listeners — first 5 min free.</>
+                }
               </p>
               <div className="trial-conv-btns">
-                <a href={walletUrl} style={{ width: '100%' }}>
-                  <button className="btn-trial-continue">Continue — top up wallet</button>
-                </a>
+                {listenerStillOnline === false ? (
+                  <a href="/browse" style={{ width: '100%' }}>
+                    <button className="btn-trial-continue">Browse listeners →</button>
+                  </a>
+                ) : (
+                  <a href={walletUrl} style={{ width: '100%' }}>
+                    <button className="btn-trial-continue">Continue — top up wallet</button>
+                  </a>
+                )}
                 <button
                   className="btn-trial-leave"
                   onClick={() => setShowFreeTrialConversion(false)}
@@ -1097,7 +1123,9 @@ function SessionContent() {
                   Rate and leave
                 </button>
               </div>
-              <p className="trial-conv-hint">Top up ₹200 — enough for a full 15-min session.</p>
+              {listenerStillOnline !== false && (
+                <p className="trial-conv-hint">Top up ₹200 — enough for a full 15-min session.</p>
+              )}
             </div>
             <div className="crisis-footer dark">
               🆘 Crisis: <a href="tel:08046110007">NIMHANS 080-46110007</a> · <a href="tel:14416">Tele-MANAS 14416</a>
