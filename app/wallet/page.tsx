@@ -62,7 +62,7 @@ function WalletPageInner() {
   // After a successful recharge, redirect here (e.g. /listener/[id] from free-trial conversion screen).
   const returnUrl = searchParams.get('return')
   const sb = createClient()
-  const [selected, setSelected] = useState(500)
+  const [selected, setSelected] = useState(returnUrl ? 200 : 500)
   const [customInput, setCustomInput] = useState('')
   const [loading, setLoading]   = useState(false)
   const [balance, setBalance]   = useState<number|null>(null)

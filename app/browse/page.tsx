@@ -1,13 +1,16 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, RefObject } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { LANGUAGES, PLATFORM_FEE, AGE_RANGES, ageRangeId } from '@/lib/constants'
 import { showToast } from '@/lib/toast'
 import Avatar from '@/app/components/Avatar'
 
-// Post-login welcome banner (Item 5)
-function WelcomeBanner() {
+// Post-login welcome banner / onboarding modal
+// New users (leanon_welcome_new in sessionStorage) see a full-screen overlay
+// that explains the free trial and pushes them to pick a listener.
+// Returning but un-onboarded users see the original thin strip.
+function WelcomeBanner({ listenerGridRef }: { listenerGridRef?: RefObject<HTMLDivElement | null> }) {
   const [show, setShow] = useState(false)
   const [isNew, setIsNew] = useState(false)
   useEffect(() => {
@@ -22,17 +25,82 @@ function WelcomeBanner() {
     }
   }, [])
   if (!show) return null
+
+  // Full-screen onboarding overlay for brand-new signups
+  if (isNew) {
+    const dismiss = () => {
+      setShow(false)
+      localStorage.setItem('leanon_onboarded', '1')
+      // Scroll to the listener grid after a brief paint delay
+      setTimeout(() => {
+        listenerGridRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 80)
+    }
+    return (
+      <div style={{
+        position:'fixed', inset:0, zIndex:9999,
+        background:'var(--navy)',
+        display:'flex', flexDirection:'column',
+        alignItems:'center', justifyContent:'center',
+        padding:'32px 28px',
+        fontFamily:'Nunito,sans-serif',
+        textAlign:'center',
+      }}>
+        <div style={{fontSize:56, marginBottom:24, lineHeight:1}}>💙</div>
+        <h2 style={{
+          fontSize:'clamp(24px,6vw,32px)', fontWeight:900, color:'white',
+          lineHeight:1.15, marginBottom:14, maxWidth:320,
+        }}>
+          Your first 5 minutes are completely free.
+        </h2>
+        <p style={{
+          fontSize:16, color:'rgba(213,238,246,0.85)', fontWeight:600,
+          lineHeight:1.65, marginBottom:10, maxWidth:300,
+        }}>
+          Real person, not AI.
+        </p>
+        <p style={{
+          fontSize:16, color:'rgba(213,238,246,0.85)', fontWeight:600,
+          lineHeight:1.65, marginBottom:10, maxWidth:300,
+        }}>
+          Anonymous. No prescription.
+        </p>
+        <p style={{
+          fontSize:16, color:'rgba(213,238,246,0.85)', fontWeight:600,
+          lineHeight:1.65, marginBottom:40, maxWidth:300,
+        }}>
+          Just someone who listens.
+        </p>
+        <button
+          onClick={dismiss}
+          style={{
+            background:'#FF9933', color:'white',
+            border:'none', borderRadius:50,
+            padding:'16px 40px',
+            fontSize:17, fontWeight:900,
+            cursor:'pointer', width:'100%', maxWidth:320,
+            boxShadow:'0 4px 24px rgba(255,153,51,0.45)',
+            fontFamily:'Nunito,sans-serif',
+          }}
+        >
+          Find a listener →
+        </button>
+        <p style={{
+          fontSize:13, color:'rgba(213,238,246,0.45)',
+          marginTop:20, fontWeight:600,
+        }}>
+          No credit card needed for the free session.
+        </p>
+      </div>
+    )
+  }
+
+  // Thin strip for returning but un-onboarded users (unchanged)
   return (
     <div style={{background:'var(--navy)',color:'white',padding:'12px 20px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,fontFamily:'Nunito,sans-serif'}}>
       <div style={{flex:1}}>
-        {isNew ? (
-          <p style={{fontSize:14,fontWeight:800,margin:0}}>Welcome to LeanOn 👋</p>
-        ) : (
-          <>
-            <p style={{fontSize:14,fontWeight:800,margin:0,marginBottom:2}}>Not sure where to start?</p>
-            <p style={{fontSize:12,fontWeight:600,opacity:0.8,margin:0}}>Browse listeners by topic → Find one you like → Start a 5-min session</p>
-          </>
-        )}
+        <p style={{fontSize:14,fontWeight:800,margin:0,marginBottom:2}}>Not sure where to start?</p>
+        <p style={{fontSize:12,fontWeight:600,opacity:0.8,margin:0}}>Browse listeners by topic → Find one you like → Start a 5-min session</p>
       </div>
       <button onClick={() => { setShow(false); localStorage.setItem('leanon_onboarded','1') }} style={{background:'none',border:'none',color:'white',cursor:'pointer',fontSize:18,fontWeight:900,padding:0,lineHeight:1}}>✕</button>
     </div>
@@ -221,6 +289,7 @@ function BrowseContent() {
     id: string; duration_mins: number; session_type: string; amount_held: number
   } | null>(null)
   const channelRef = useRef<ReturnType<typeof client.channel> | null>(null)
+  const listenerGridRef = useRef<HTMLDivElement | null>(null)
 
   // Read ?topic= from URL after hydration to avoid SSR mismatch.
   //
@@ -489,7 +558,7 @@ function BrowseContent() {
         </div>
       )}
 
-      <WelcomeBanner />
+      <WelcomeBanner listenerGridRef={listenerGridRef} />
       <div className="topbar">
         <div className="topbar-row">
           <h1>Find a listener</h1>
@@ -551,7 +620,7 @@ function BrowseContent() {
         </div>
       </div>
 
-      <div className="list">
+      <div className="list" ref={listenerGridRef}>
         {loading ? (
           [1,2,3].map(i=><div key={i} className="skeleton"/>)
         ) : visible.length === 0 ? (
