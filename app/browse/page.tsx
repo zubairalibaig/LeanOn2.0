@@ -10,9 +10,21 @@ import Avatar from '@/app/components/Avatar'
 // New users (leanon_welcome_new in sessionStorage) see a full-screen overlay
 // that explains the free trial and pushes them to pick a listener.
 // Returning but un-onboarded users see the original thin strip.
-function WelcomeBanner({ listenerGridRef }: { listenerGridRef?: RefObject<HTMLDivElement | null> }) {
+function WelcomeBanner({
+  listenerGridRef,
+  onDismiss,
+}: {
+  listenerGridRef?: RefObject<HTMLDivElement | null>
+  // Called with the topic the user came from (if any), so the parent can
+  // pre-filter the listener grid before the modal closes.
+  onDismiss?: (topic: string | null) => void
+}) {
   const [show, setShow] = useState(false)
   const [isNew, setIsNew] = useState(false)
+  // Topic the new user came from — read from sessionStorage so it survives
+  // the /auth redirect that drops query params.
+  const [intentTopic, setIntentTopic] = useState<string | null>(null)
+
   useEffect(() => {
     const newUser = sessionStorage.getItem('leanon_welcome_new')
     const onboarded = localStorage.getItem('leanon_onboarded')
@@ -20,6 +32,13 @@ function WelcomeBanner({ listenerGridRef }: { listenerGridRef?: RefObject<HTMLDi
       setIsNew(true)
       setShow(true)
       sessionStorage.removeItem('leanon_welcome_new')
+      // Read topic intent that auth/page.tsx may have left behind.
+      // The browse page already cleared leanon_last_topic on mount, so read
+      // leanon_intent_topic instead — a separate key set only for this purpose.
+      try {
+        const t = sessionStorage.getItem('leanon_intent_topic')
+        if (t) { setIntentTopic(t); sessionStorage.removeItem('leanon_intent_topic') }
+      } catch { /* ignore */ }
     } else if (!onboarded) {
       setShow(true)
     }
@@ -31,11 +50,17 @@ function WelcomeBanner({ listenerGridRef }: { listenerGridRef?: RefObject<HTMLDi
     const dismiss = () => {
       setShow(false)
       localStorage.setItem('leanon_onboarded', '1')
+      onDismiss?.(intentTopic)
       // Scroll to the listener grid after a brief paint delay
       setTimeout(() => {
         listenerGridRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }, 80)
     }
+    // If we know the topic they came from, personalise the CTA label.
+    const topicLabel = intentTopic
+      ? TAGS.find(t => t.id === intentTopic)?.label ?? null
+      : null
+
     return (
       <div style={{
         position:'fixed', inset:0, zIndex:9999,
@@ -53,22 +78,13 @@ function WelcomeBanner({ listenerGridRef }: { listenerGridRef?: RefObject<HTMLDi
         }}>
           Your first 5 minutes are completely free.
         </h2>
-        <p style={{
-          fontSize:16, color:'rgba(213,238,246,0.85)', fontWeight:600,
-          lineHeight:1.65, marginBottom:10, maxWidth:300,
-        }}>
+        <p style={{fontSize:16, color:'rgba(213,238,246,0.85)', fontWeight:600, lineHeight:1.65, marginBottom:10, maxWidth:300}}>
           Real person, not AI.
         </p>
-        <p style={{
-          fontSize:16, color:'rgba(213,238,246,0.85)', fontWeight:600,
-          lineHeight:1.65, marginBottom:10, maxWidth:300,
-        }}>
+        <p style={{fontSize:16, color:'rgba(213,238,246,0.85)', fontWeight:600, lineHeight:1.65, marginBottom:10, maxWidth:300}}>
           Anonymous. No prescription.
         </p>
-        <p style={{
-          fontSize:16, color:'rgba(213,238,246,0.85)', fontWeight:600,
-          lineHeight:1.65, marginBottom:40, maxWidth:300,
-        }}>
+        <p style={{fontSize:16, color:'rgba(213,238,246,0.85)', fontWeight:600, lineHeight:1.65, marginBottom:40, maxWidth:300}}>
           Just someone who listens.
         </p>
         <button
@@ -83,12 +99,9 @@ function WelcomeBanner({ listenerGridRef }: { listenerGridRef?: RefObject<HTMLDi
             fontFamily:'Nunito,sans-serif',
           }}
         >
-          Find a listener →
+          {topicLabel ? `Find a ${topicLabel.toLowerCase()} listener →` : 'Find a listener →'}
         </button>
-        <p style={{
-          fontSize:13, color:'rgba(213,238,246,0.45)',
-          marginTop:20, fontWeight:600,
-        }}>
+        <p style={{fontSize:13, color:'rgba(213,238,246,0.45)', marginTop:20, fontWeight:600}}>
           No credit card needed for the free session.
         </p>
       </div>
@@ -296,6 +309,19 @@ a{text-decoration:none;color:inherit;}
 .session-toast-sub{font-size:12px;font-weight:600;opacity:.85;margin-top:2px;}
 .btn-toast-join{background:white;color:var(--orange);font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:9px 16px;border-radius:10px;border:none;cursor:pointer;white-space:nowrap;}
 .btn-toast-dismiss{background:transparent;color:white;font-family:'Nunito',sans-serif;font-weight:700;font-size:20px;border:none;cursor:pointer;padding:0 4px;line-height:1;}
+.avail-bar{margin:0 20px 4px;border-radius:16px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;font-weight:700;}
+.avail-bar.has-online{background:rgba(52,199,89,.1);border:1.5px solid rgba(52,199,89,.25);color:#1A5C2A;}
+.avail-bar.no-online{background:rgba(90,122,138,.07);border:1.5px solid var(--border);color:var(--gray);}
+.avail-bar-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.avail-bar-dot.on{background:#34C759;box-shadow:0 0 0 3px rgba(52,199,89,.2);}
+.avail-bar-dot.off{background:#C7C7CC;}
+.avail-bar-left{display:flex;align-items:center;gap:8px;}
+.avail-bar-recovery{margin:0 20px 0;background:rgba(255,153,51,.06);border:1.5px solid rgba(255,153,51,.2);border-radius:16px;padding:14px 16px;}
+.avail-bar-recovery-title{font-size:13px;font-weight:800;color:var(--navy);margin-bottom:8px;}
+.avail-bar-recovery-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.avail-bar-recovery-chip{background:white;border:1.5px solid var(--border);border-radius:50px;padding:6px 14px;font-size:12px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:5px;cursor:pointer;transition:border-color .15s;}
+.avail-bar-recovery-chip:hover{border-color:var(--teal);color:var(--teal);}
+.avail-bar-recovery-chip .dot-sm{width:6px;height:6px;border-radius:50%;background:#34C759;display:inline-block;}
 .free-nudge{margin:0 20px 0;background:linear-gradient(135deg,#0F4867 0%,#1A6E8A 100%);border-radius:20px 20px 0 0;padding:16px 18px 12px;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden;}
 .free-nudge::after{content:'';position:absolute;inset:0;background:rgba(255,153,51,.07);pointer-events:none;}
 .free-nudge-icon{font-size:28px;line-height:1;flex-shrink:0;}
@@ -342,9 +368,26 @@ function BrowseContent() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const raw = params.get('topic')
-    if (!raw) return
+    if (!raw) {
+      // Restore topic intent from a prior visit (e.g. after auth redirect drops
+      // the query param). Only restore once — clear it so it doesn't persist
+      // across unrelated visits.
+      try {
+        const saved = sessionStorage.getItem('leanon_last_topic')
+        if (saved) {
+          sessionStorage.removeItem('leanon_last_topic')
+          if (TAGS.some(t => t.id === saved)) setTag(saved)
+        }
+      } catch { /* sessionStorage unavailable */ }
+      return
+    }
     const mapped = TOPIC_ALIASES[raw] ?? raw
-    if (TAGS.some(t => t.id === mapped)) setTag(mapped)
+    if (TAGS.some(t => t.id === mapped)) {
+      setTag(mapped)
+      // Persist topic intent so it survives the auth redirect (auth drops
+      // query params when the redirect isn't set explicitly).
+      try { sessionStorage.setItem('leanon_last_topic', mapped) } catch { /* ignore */ }
+    }
   }, [])
 
   useEffect(() => { loadListeners(false) }, [tag, lang])
@@ -549,6 +592,19 @@ function BrowseContent() {
     return 0
   })
 
+  // ─── Availability stats for the current filter ───────────────────────────
+  // Computed at render time from the already-fetched `visible` list.
+  const onlineNow = visible.filter(l => l.is_available).length
+  const showAvailBar = !loading && tag !== 'all'
+
+  // Adjacent tags with at least one online listener — shown as recovery chips
+  // when no listeners are online for the current tag.
+  const recoveryTags = tag !== 'all' && onlineNow === 0
+    ? TAGS.filter(t => t.id !== 'all' && t.id !== tag).filter(t =>
+        listeners.some(l => l.is_available && l.specialty_tags?.includes(t.id))
+      ).slice(0, 4)
+    : []
+
   const ini = (n:string) => n.split(' ').map((x:string)=>x[0]||'').join('').slice(0,2).toUpperCase()||'?'
   const tagInfo = (id:string) => TAGS.find(t=>t.id===id)
 
@@ -613,7 +669,15 @@ function BrowseContent() {
         </div>
       )}
 
-      <WelcomeBanner listenerGridRef={listenerGridRef} />
+      <WelcomeBanner
+        listenerGridRef={listenerGridRef}
+        onDismiss={(topic) => {
+          // Pre-filter the listener grid to the user's topic intent when
+          // the onboarding modal closes — so they immediately see relevant
+          // listeners rather than the generic "All" view.
+          if (topic && TAGS.some(t => t.id === topic)) setTag(topic)
+        }}
+      />
       <div className="topbar">
         <div className="topbar-row">
           <h1>Find a listener</h1>
@@ -674,6 +738,48 @@ function BrowseContent() {
           </div>
         </div>
       </div>
+
+      {showAvailBar && (
+        onlineNow > 0 ? (
+          <div className="avail-bar has-online">
+            <div className="avail-bar-left">
+              <div className="avail-bar-dot on" />
+              <span>
+                {onlineNow === 1
+                  ? `1 ${tagInfo(tag)?.label ?? tag} listener available right now`
+                  : `${onlineNow} ${tagInfo(tag)?.label ?? tag} listeners available right now`}
+              </span>
+            </div>
+            <span style={{opacity:0.7,fontWeight:600,fontSize:12}}>First 5 min free</span>
+          </div>
+        ) : (
+          <div>
+            <div className="avail-bar no-online">
+              <div className="avail-bar-left">
+                <div className="avail-bar-dot off" />
+                <span>No {tagInfo(tag)?.label ?? tag} listeners online right now</span>
+              </div>
+            </div>
+            {recoveryTags.length > 0 && (
+              <div className="avail-bar-recovery">
+                <div className="avail-bar-recovery-title">Others available now:</div>
+                <div className="avail-bar-recovery-chips">
+                  {recoveryTags.map(t => (
+                    <button
+                      key={t.id}
+                      className="avail-bar-recovery-chip"
+                      onClick={() => setTag(t.id)}
+                    >
+                      <span className="dot-sm" />
+                      {t.icon} {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )
+      )}
 
       {showFreeNudge && (
         <div>

@@ -129,7 +129,24 @@ export default function AuthPage() {
   function getDestination(): string {
     const stored = sessionStorage.getItem('auth_redirect')
     const mode = sessionStorage.getItem('auth_mode')
-    const fallback = mode === 'listener' ? '/dashboard' : '/browse'
+    // Default fallback — if the user came from a topic page (/browse?topic=X),
+    // that topic was stored in sessionStorage.leanon_last_topic by browse/page.tsx.
+    // Restoring it here means new users land back on the right filtered view
+    // even when the explicit auth_redirect param wasn't set (e.g. clicking a nav
+    // "Open app" button rather than a listener card).
+    let fallback = mode === 'listener' ? '/dashboard' : '/browse'
+    if (mode !== 'listener') {
+      try {
+        const lastTopic = sessionStorage.getItem('leanon_last_topic')
+        if (lastTopic) {
+          fallback = `/browse?topic=${encodeURIComponent(lastTopic)}`
+          // Also keep a copy for the WelcomeBanner modal — browse/page.tsx clears
+          // leanon_last_topic on mount, but the modal reads leanon_intent_topic
+          // so it can personalise the CTA label even after the key is gone.
+          sessionStorage.setItem('leanon_intent_topic', lastTopic)
+        }
+      } catch { /* sessionStorage unavailable */ }
+    }
     return safeRedirect(stored, fallback)
   }
 
