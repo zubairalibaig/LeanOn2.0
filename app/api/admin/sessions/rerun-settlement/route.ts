@@ -78,7 +78,15 @@ export async function POST(req: NextRequest) {
     })
 
     if (listenerEarning <= 0) {
-      return NextResponse.json({ error: 'listenerEarning is 0 — nothing to credit', listenerEarning }, { status: 400 })
+      // Sessions under 60 seconds are "accidental starts": billing rules give full refund
+      // to the seeker and nothing to the listener. This is correct, not a gap.
+      const ranSecs = session.started_at && session.ended_at
+        ? (new Date(session.ended_at).getTime() - new Date(session.started_at).getTime()) / 1000
+        : null
+      const reason = ranSecs !== null && ranSecs < 60
+        ? `Accidental start (ran ${Math.round(ranSecs)}s < 60s) — seeker was fully refunded; no listener earnings per billing rules`
+        : 'listenerEarning is 0 — nothing to credit'
+      return NextResponse.json({ error: reason, listenerEarning, ranSecs }, { status: 400 })
     }
 
     // Run credit_wallet
