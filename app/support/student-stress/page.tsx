@@ -221,8 +221,8 @@ export default function StudentStressSupportPage() {
           <h2>You Are More Than Your Rank</h2>
           <p>Talk to someone who has been through the pressure of Indian student life and made it through. Available 24/7.</p>
           <div className="cta-btns">
-            <a href="/browse?topic=student-stress"><button className="btn-primary">Find a Student Listener</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/browse?topic=students"><button className="btn-primary">Talk to someone who gets student life — first 5 min free →</button></a>
+            <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>
           </div>
         </div>
 

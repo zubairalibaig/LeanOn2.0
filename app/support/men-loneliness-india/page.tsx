@@ -268,7 +268,7 @@ export default function MenLonelinessIndiaPage() {
           <h2>Just Wanted to Talk?</h2>
           <p>A real person. No judgment. No advice you didn&apos;t ask for. Anonymous, available now. First 5 minutes free.</p>
           <div className="cta-btns">
-            <a href="/browse"><button className="btn-primary">Find a listener</button></a>
+            <a href="/browse?topic=loneliness"><button className="btn-primary">Someone is listening — start free now →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works</button></a>
           </div>
         </div>

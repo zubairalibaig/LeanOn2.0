@@ -226,7 +226,7 @@ export default function HusbandNotSupportiveIndiaPage() {
           <h2>You Do Not Have to Carry This Alone</h2>
           <p>Talk to a real peer listener — anonymous, no judgment, not marriage counselling. Just a real person who will hear what you are actually carrying.</p>
           <div className="cta-btns">
-            <a href="/browse"><button className="btn-primary">Find a listener</button></a>
+            <a href="/browse?topic=relationships"><button className="btn-primary">Talk to someone who understands — first 5 min free →</button></a>
             <a href="/support/married-but-lonely"><button className="btn-secondary">Married but lonely</button></a>
           </div>
         </div>

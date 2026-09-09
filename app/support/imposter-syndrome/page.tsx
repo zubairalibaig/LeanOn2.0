@@ -227,8 +227,8 @@ export default function ImposterSyndromeSupportPage() {
           <h2>Ready to Quiet the Inner Critic?</h2>
           <p>Talk to a peer listener who truly understands imposter syndrome. Available 24/7, no appointments, no waitlists.</p>
           <div className="cta-btns">
-            <a href="/browse?topic=imposter-syndrome"><button className="btn-primary">Browse Imposter Syndrome Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/browse?topic=selfesteem"><button className="btn-primary">You belong here — talk to someone — first 5 min free →</button></a>
+            <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>
           </div>
         </div>
 

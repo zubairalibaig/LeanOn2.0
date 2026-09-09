@@ -144,7 +144,7 @@ export default function NewCityIndiaPage() {
           <p className="badge">New City · Relocation · Peer Support</p>
           <h1>Feeling Lonely in a New City in India — <em>You Are Not the Only One</em></h1>
           <p className="lead">You moved to Bengaluru, Mumbai, Hyderabad, or Pune for a job. The weekdays are manageable. But Friday evening arrives and the absence hits hard. This loneliness is real, specific, and more common than you think. Someone on LeanOn gets it.</p>
-          <a href="/browse" className="cta-hero">Talk to someone who understands →</a>
+          <a href="/browse?topic=loneliness" className="cta-hero">Talk to someone who understands →</a>
         </div>
 
         <div className="section">
@@ -221,7 +221,7 @@ export default function NewCityIndiaPage() {
         <div className="cta-card">
           <h2>Someone here understands what this city feels like on a Saturday</h2>
           <p>No appointment. No explaining why you moved or what you expected. Just open the app and find a listener who gets it.</p>
-          <a href="/browse" className="btn-cta">Browse listeners now →</a>
+          <a href="/browse?topic=loneliness" className="btn-cta">You're not the only one — start free now →</a>
         </div>
 
         <div className="section">

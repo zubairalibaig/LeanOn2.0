@@ -144,7 +144,7 @@ export default function EmotionalNumbnessPage() {
           <p className="badge">Peer Support · Anonymous · India</p>
           <h1>When You Have <em>Stopped Feeling</em> — and Cannot Remember When It Happened</h1>
           <p className="lead">Not depressed. Not sad. Just nothing. You do what you are supposed to do. You show up. You function. But somewhere along the way, things stopped landing. You stopped feeling things the way you used to — or maybe you never did, and you have just been waiting for it to start.</p>
-          <a href="/browse" className="cta-hero">Talk to someone who understands →</a>
+          <a href="/browse?topic=general" className="cta-hero">Talk to someone who understands →</a>
         </div>
 
         <div className="section">
@@ -206,7 +206,7 @@ export default function EmotionalNumbnessPage() {
         <div className="cta-card">
           <h2>Someone is here to listen — without needing you to feel it first</h2>
           <p>You do not have to perform emotions you do not have. Just say what is actually there — or not there. That is enough to begin.</p>
-          <a href="/browse" className="btn-cta">Find a listener →</a>
+          <a href="/browse?topic=general" className="btn-cta">You're not broken — talk to someone — first 5 min free →</a>
         </div>
 
         <div className="section">

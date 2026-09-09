@@ -243,8 +243,8 @@ export default function MarriageLonelinessSupportPage() {
           <h2>Ready to Be Heard?</h2>
           <p>Talk to a peer listener who understands loneliness inside a marriage. Completely anonymous, outside your circle. Available 24/7, no appointments, no waitlists.</p>
           <div className="cta-btns">
-            <a href="/browse?topic=marriage-loneliness"><button className="btn-primary">Browse Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/browse?topic=relationships"><button className="btn-primary">Talk to someone who understands — first 5 min free →</button></a>
+            <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>
           </div>
         </div>
 

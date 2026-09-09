@@ -260,7 +260,7 @@ export default function EmotionalSupportPage() {
           <h2>Start a Session Now</h2>
           <p>Find someone who understands. Available 24/7, no appointment needed.</p>
           <div className="cta-btns">
-            <a href="/auth"><button className="btn-primary">Get Emotional Support</button></a>
+            <a href="/browse?topic=general"><button className="btn-primary">Get support from a real person — first 5 min free →</button></a>
             <a href="/browse"><button className="btn-secondary">Browse Listeners First</button></a>
           </div>
         </div>

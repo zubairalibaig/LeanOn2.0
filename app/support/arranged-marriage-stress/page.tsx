@@ -144,7 +144,7 @@ export default function ArrangedMarriageStressPage() {
           <p className="badge">Marriage Pressure · Family Expectations · Peer Support</p>
           <h1>Arranged Marriage Pressure and Stress in India — <em>Talk to Someone Who Gets It</em></h1>
           <p className="lead">The profiles, the meetings, the family expectations, the age anxiety, the rejections you cannot grieve — the arranged marriage process is genuinely stressful in ways that most mental health content never touches. LeanOn listeners understand it from the inside.</p>
-          <a href="/browse" className="cta-hero">Talk to someone who understands →</a>
+          <a href="/browse?topic=relationships" className="cta-hero">Talk to someone who understands →</a>
         </div>
 
         <div className="section">
@@ -199,7 +199,7 @@ export default function ArrangedMarriageStressPage() {
         <div className="cta-card">
           <h2>A space for what you cannot say to your family</h2>
           <p>Anonymous. No agenda about what you should decide. A listener who understands the arranged marriage process from the inside.</p>
-          <a href="/browse" className="btn-cta">Find a listener now →</a>
+          <a href="/browse?topic=relationships" className="btn-cta">Talk to someone who understands — first 5 min free →</a>
         </div>
 
         <div className="section">

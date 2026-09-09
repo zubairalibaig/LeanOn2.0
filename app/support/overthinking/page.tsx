@@ -228,8 +228,8 @@ export default function OverthinkingSupportPage() {
           <h2>Ready to Get Out of Your Own Head?</h2>
           <p>Talk to a peer listener who knows the loop from the inside. Available 24/7, no appointments, no waitlists.</p>
           <div className="cta-btns">
-            <a href="/browse?topic=overthinking"><button className="btn-primary">Browse Overthinking Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/browse?topic=anxiety"><button className="btn-primary">Quiet the loop — talk it out — first 5 min free →</button></a>
+            <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>
           </div>
         </div>
 

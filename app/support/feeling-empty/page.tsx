@@ -253,8 +253,8 @@ export default function FeelingEmptyPage() {
           <h2>Ready to Talk About What You Are Feeling?</h2>
           <p>A peer listener who has personally navigated emptiness is available right now. No appointments, no waitlists. Start with a free trial session.</p>
           <div className="cta-btns">
-            <a href="/browse"><button className="btn-primary">Find a listener →</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/browse?topic=general"><button className="btn-primary">You don't have to feel this alone — first 5 min free →</button></a>
+            <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>
           </div>
         </div>
 

@@ -144,7 +144,7 @@ export default function RelationshipAnxietyPage() {
           <p className="badge">Relationships · Anxiety · Peer Support</p>
           <h1>Relationship Anxiety — When Worry About Your Relationship Becomes <em>Its Own Problem</em></h1>
           <p className="lead">Overanalysing a message. Replaying the last conversation. Needing reassurance but hating that you need it. Scared that the anxiety itself is pushing them away. Relationship anxiety is exhausting in ways that are hard to explain — and you do not have to carry it alone.</p>
-          <a href="/browse" className="cta-hero">Talk to someone who understands →</a>
+          <a href="/browse?topic=relationships" className="cta-hero">Talk to someone who understands →</a>
         </div>
 
         <div className="section">
@@ -204,7 +204,7 @@ export default function RelationshipAnxietyPage() {
         <div className="cta-card">
           <h2>You can say the thing you have been editing</h2>
           <p>Anonymous. No judgment. A real listener who has heard relationship anxiety before and will not flinch at yours.</p>
-          <a href="/browse" className="btn-cta">Find a listener now →</a>
+          <a href="/browse?topic=relationships" className="btn-cta">Talk to someone who gets it — first 5 min free →</a>
         </div>
 
         <div className="section">

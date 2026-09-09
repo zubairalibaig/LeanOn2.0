@@ -261,7 +261,7 @@ export default function MomBurnoutIndiaPage() {
           <h2>You Deserve to Be Heard Too</h2>
           <p>Talk to a real person who will actually listen — not advise, not fix, not make you feel guilty. Anonymous. Available now. First 5 minutes free.</p>
           <div className="cta-btns">
-            <a href="/browse"><button className="btn-primary">Find a listener</button></a>
+            <a href="/browse?topic=parenting"><button className="btn-primary">You deserve to be heard too — first 5 min free →</button></a>
             <a href="/for-women"><button className="btn-secondary">Support for women</button></a>
           </div>
         </div>

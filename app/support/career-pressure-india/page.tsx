@@ -165,7 +165,7 @@ export default function CareerPressureIndiaPage() {
           <p className="badge">Peer Support · Career Pressure · India</p>
           <h1>When Career Feels Like <em>Your Entire Identity</em></h1>
           <p className="lead">In India, your career is not just what you do — it is who you are, what your family sacrificed for, and what determines your place in the world. When it is going wrong — or just going nowhere — everything feels like it is going wrong. Talk to someone who understands this pressure from the inside.</p>
-          <a href="/browse" className="cta-hero">Find a listener →</a>
+          <a href="/browse?topic=career" className="cta-hero">Find a listener →</a>
         </div>
 
         <div className="section">
@@ -251,7 +251,7 @@ export default function CareerPressureIndiaPage() {
         <div className="cta-card">
           <h2>Your career struggle deserves more than silence</h2>
           <p>Talk to a peer listener who genuinely understands Indian career culture — the expectations, the comparisons, the weight of it. Anonymous, confidential, available now.</p>
-          <a href="/browse" className="btn-cta">Find a listener →</a>
+          <a href="/browse?topic=career" className="btn-cta">Someone is listening — start free now →</a>
         </div>
 
         <div className="section">

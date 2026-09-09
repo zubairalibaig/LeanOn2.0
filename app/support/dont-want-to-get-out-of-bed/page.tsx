@@ -252,7 +252,7 @@ export default function DontWantToGetOutOfBedPage() {
           <h2>You Do Not Have to Carry This Morning Alone</h2>
           <p>Talk to a real person who understands. No appointment. No judgment. Available now, from ₹99.</p>
           <div className="cta-btns">
-            <a href="/browse"><button className="btn-primary">Find a listener</button></a>
+            <a href="/browse?topic=general"><button className="btn-primary">You don't have to explain yourself — first 5 min free →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works</button></a>
           </div>
         </div>

@@ -144,7 +144,7 @@ export default function PostpartumIndiaPage() {
           <p className="badge">New Motherhood · Postpartum · Peer Support</p>
           <h1>Postpartum Loneliness and Exhaustion in India — <em>You Don&apos;t Have to Feel This Way Alone</em></h1>
           <p className="lead">New motherhood in India can be isolating in ways nobody warns you about — the judgment, the expectations, the loss of your identity, and the exhaustion you cannot admit. A LeanOn listener will not judge you for what you actually feel.</p>
-          <a href="/browse" className="cta-hero">Talk to someone who won&apos;t judge you →</a>
+          <a href="/browse?topic=parenting" className="cta-hero">Talk to someone who won&apos;t judge you →</a>
         </div>
 
         <div className="section">
@@ -226,7 +226,7 @@ export default function PostpartumIndiaPage() {
         <div className="cta-card">
           <h2>You do not have to feel this way alone</h2>
           <p>Anonymous. No judgment. A real person who will hear the complicated truth of what new motherhood has been like — without telling you how you should feel.</p>
-          <a href="/browse" className="btn-cta">Find a listener now →</a>
+          <a href="/browse?topic=parenting" className="btn-cta">You're not alone in this — first 5 min free →</a>
         </div>
 
         <div className="section">

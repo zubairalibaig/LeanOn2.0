@@ -222,8 +222,8 @@ export default function GriefSupportPage() {
           <h2>Your Grief Deserves to Be Witnessed</h2>
           <p>Talk to someone who knows loss from the inside. No pressure, no timeline, no judgment. Available 24/7.</p>
           <div className="cta-btns">
-            <a href="/browse?topic=grief"><button className="btn-primary">Find a Grief Listener</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/browse?topic=grief"><button className="btn-primary">Talk to someone who will sit with you — first 5 min free →</button></a>
+            <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>
           </div>
         </div>
 

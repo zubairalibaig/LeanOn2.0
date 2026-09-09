@@ -252,8 +252,8 @@ export default function FeelingLikeAFailurePage() {
           <h2>Talk to Someone Who Has Been There</h2>
           <p>A peer listener who has personally navigated failure — and come through it — is available right now. Anonymous, no judgment, no appointments.</p>
           <div className="cta-btns">
-            <a href="/browse"><button className="btn-primary">Find a listener →</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/browse?topic=selfesteem"><button className="btn-primary">Talk to someone who will listen — first 5 min free →</button></a>
+            <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>
           </div>
         </div>
 

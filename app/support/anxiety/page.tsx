@@ -222,8 +222,8 @@ export default function AnxietySupportPage() {
           <h2>Your Anxiety Doesn&apos;t Have to Be This Loud</h2>
           <p>Connect with a peer listener who truly understands. Available 24/7, no appointment needed.</p>
           <div className="cta-btns">
-            <a href="/browse?topic=anxiety"><button className="btn-primary">Find an Anxiety Listener</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/browse?topic=anxiety"><button className="btn-primary">Talk to someone who understands — first 5 min free →</button></a>
+            <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>
           </div>
         </div>
 

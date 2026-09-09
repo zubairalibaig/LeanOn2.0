@@ -165,7 +165,7 @@ export default function FamilyPressureIndiaPage() {
           <p className="badge">Peer Support · Family Pressure · India</p>
           <h1>When the Pressure Comes From <em>The People You Love</em></h1>
           <p className="lead">Indian family expectations around career, marriage, and money can feel like a weight you carry everywhere. The hardest part: you cannot vent to the people who are the source of it. LeanOn gives you a space outside all of that — anonymous, confidential, and genuinely understanding of the Indian family dynamic.</p>
-          <a href="/browse" className="cta-hero">Find a listener →</a>
+          <a href="/browse?topic=relationships" className="cta-hero">Find a listener →</a>
         </div>
 
         <div className="section">
@@ -251,7 +251,7 @@ export default function FamilyPressureIndiaPage() {
         <div className="cta-card">
           <h2>There is a space outside the pressure</h2>
           <p>Talk to someone who understands Indian family dynamics — anonymously, confidentially, and without it getting back to anyone in your life.</p>
-          <a href="/browse" className="btn-cta">Find a listener →</a>
+          <a href="/browse?topic=relationships" className="btn-cta">Talk to someone who gets the pressure — first 5 min free →</a>
         </div>
 
         <div className="section">

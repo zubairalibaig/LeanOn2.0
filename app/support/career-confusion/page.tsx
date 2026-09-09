@@ -231,8 +231,8 @@ export default function CareerConfusionSupportPage() {
           <h2>You Are Allowed to Want Something Different</h2>
           <p>Talk to someone who has been through career confusion and found their way. Available 24/7, no judgment, no scripts.</p>
           <div className="cta-btns">
-            <a href="/browse?topic=career-confusion"><button className="btn-primary">Find a Career Listener</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/browse?topic=career"><button className="btn-primary">Talk it through — first 5 min free →</button></a>
+            <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>
           </div>
         </div>
 

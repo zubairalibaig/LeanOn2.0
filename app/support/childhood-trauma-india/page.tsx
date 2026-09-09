@@ -144,7 +144,7 @@ export default function ChildhoodTraumaIndiaPage() {
           <p className="badge">Peer Support · Anonymous · India</p>
           <h1>The Things That Happened at 17 That Are <em>Still With You</em> at 25</h1>
           <p className="lead">A difficult childhood does not always look like what people call trauma. It can be an absent father, bad company at the wrong age, being the adult in the room before you were ready, a home where love was complicated or conditional. These experiences do not announce themselves. They show up later — in how you trust, how you feel, how you move through relationships and through yourself.</p>
-          <a href="/browse" className="cta-hero">Talk to someone who understands →</a>
+          <a href="/browse?topic=general" className="cta-hero">Talk to someone who understands →</a>
         </div>
 
         <div className="section">
@@ -204,7 +204,7 @@ export default function ChildhoodTraumaIndiaPage() {
         <div className="cta-card">
           <h2>The real version deserves to be spoken</h2>
           <p>Anonymous, no judgment, no family connections. Just a real person who will hear what it was actually like.</p>
-          <a href="/browse" className="btn-cta">Find a listener →</a>
+          <a href="/browse?topic=general" className="btn-cta">Talk to someone who listens without judgment — first 5 min free →</a>
         </div>
 
         <div className="section">

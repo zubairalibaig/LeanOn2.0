@@ -231,8 +231,8 @@ export default function FounderBurnoutSupportPage() {
           <h2>You Are Allowed to Not Be Okay</h2>
           <p>Talk to someone who has been in the trenches of building a startup and came out the other side. Available 24/7.</p>
           <div className="cta-btns">
-            <a href="/browse?topic=founder-burnout"><button className="btn-primary">Find a Founder Listener</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/browse?topic=startup"><button className="btn-primary">Talk to a listener who gets founders — first 5 min free →</button></a>
+            <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>
           </div>
         </div>
 

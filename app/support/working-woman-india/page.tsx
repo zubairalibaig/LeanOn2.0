@@ -223,7 +223,7 @@ export default function WorkingWomanIndiaPage() {
           <h2>You Carry Everyone. Let Someone Carry You for 15 Minutes.</h2>
           <p>Talk to a real trained peer listener. Anonymous. No appointment. First 5 minutes free. Sessions from ₹99.</p>
           <div className="cta-btns">
-            <a href="/browse"><button className="btn-primary">Find a listener</button></a>
+            <a href="/browse?topic=stress"><button className="btn-primary">Talk to someone who gets it — first 5 min free →</button></a>
             <a href="/for-women"><button className="btn-secondary">Support for women</button></a>
           </div>
         </div>

@@ -220,8 +220,8 @@ export default function BreakupSupportPage() {
           <h2>You Don&apos;t Have to Get Through This Alone</h2>
           <p>Connect with a peer listener who has been through heartbreak and found their way back. Available 24/7.</p>
           <div className="cta-btns">
-            <a href="/browse?topic=breakup"><button className="btn-primary">Find a Breakup Listener</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/browse?topic=breakup"><button className="btn-primary">Talk about it — first 5 min are free →</button></a>
+            <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>
           </div>
         </div>
 

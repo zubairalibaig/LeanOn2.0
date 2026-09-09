@@ -216,7 +216,7 @@ export default function NotReadyToGetMarriedIndiaPage() {
           <h2>You Can Say It Here</h2>
           <p>Talk to a real peer listener — no judgment, no pressure, no agenda. Anonymous. First 5 minutes free.</p>
           <div className="cta-btns">
-            <a href="/browse"><button className="btn-primary">Find a listener</button></a>
+            <a href="/browse?topic=relationships"><button className="btn-primary">Talk to someone without the pressure — first 5 min free →</button></a>
             <a href="/support/fear-of-marriage-india"><button className="btn-secondary">Fear of marriage</button></a>
           </div>
         </div>

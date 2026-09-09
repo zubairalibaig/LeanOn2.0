@@ -228,8 +228,8 @@ export default function JobLossSupportPage() {
           <h2>You Don&apos;t Have to Carry This Alone</h2>
           <p>Talk to a peer listener who has been laid off and rebuilt. Available 24/7, no subscription, no one in your life needs to know.</p>
           <div className="cta-btns">
-            <a href="/browse?topic=job-loss"><button className="btn-primary">Browse Job Loss Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/browse?topic=career"><button className="btn-primary">You're not alone in this — first 5 min free →</button></a>
+            <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>
           </div>
         </div>
 

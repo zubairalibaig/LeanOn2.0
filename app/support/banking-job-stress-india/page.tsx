@@ -190,7 +190,7 @@ export default function BankingJobStressIndiaPage() {
           <h2>Just Wanted to Talk?</h2>
           <p>Real person. No advice, no judgment. Anonymous. First 5 minutes free, sessions from ₹85.</p>
           <div className="cta-btns">
-            <a href="/browse"><button className="btn-primary">Find a listener</button></a>
+            <a href="/browse?topic=stress"><button className="btn-primary">Someone is listening — start free now →</button></a>
             <a href="/support/adulting-india"><button className="btn-secondary">Adulting pressure</button></a>
           </div>
         </div>

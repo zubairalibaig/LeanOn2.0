@@ -268,7 +268,7 @@ export default function SomeoneToTalkToPage() {
           <h2>Someone Is Ready to Listen Right Now</h2>
           <p>Anonymous, non-judgmental peer support available 24/7 across India. Available 24/7.</p>
           <div className="cta-btns">
-            <a href="/auth"><button className="btn-primary">Talk to Someone Now</button></a>
+            <a href="/browse?topic=general"><button className="btn-primary">Someone is here — start free now →</button></a>
             <a href="/browse"><button className="btn-secondary">Browse Listeners First</button></a>
           </div>
         </div>
