@@ -345,6 +345,9 @@ export default function AdminPage() {
   const [sessionsLoading, setSessionsLoading] = useState(false)
   const [sessionsSort, setSessionsSort] = useState<SortDir>('desc')
   const [sessionsAmountSort, setSessionsAmountSort] = useState<SortDir | null>(null)
+  // Sessions where listener was never credited (credit_wallet failed at settlement time)
+  const [unsettledIds, setUnsettledIds] = useState<Set<string>>(new Set())
+  const [fixingSettlement, setFixingSettlement] = useState<string | null>(null)
   // Full transcript viewer — primary admin only (see isPrimaryAdmin above).
   const [transcriptSession, setTranscriptSession] = useState<SessionRow | null>(null)
   const [transcriptMsgs, setTranscriptMsgs] = useState<TranscriptMsg[]>([])
@@ -478,9 +481,16 @@ export default function AdminPage() {
   const loadSessions = useCallback(async (st = sessionsStatus, sort = sessionsSort) => {
     setSessionsLoading(true)
     const params = new URLSearchParams({ status: st !== 'all' ? st : '', sort })
-    const res = await fetch(`/api/admin/sessions?${params}`, { headers: adminHeaders() }).catch(() => null)
-    if (res?.ok) setSessions((await res.json()).sessions ?? [])
+    const [sessRes, unsettledRes] = await Promise.all([
+      fetch(`/api/admin/sessions?${params}`, { headers: adminHeaders() }).catch(() => null),
+      fetch('/api/admin/sessions/unsettled', { headers: adminHeaders() }).catch(() => null),
+    ])
+    if (sessRes?.ok) setSessions((await sessRes.json()).sessions ?? [])
     else showToast('Failed to load sessions — tap Refresh to retry')
+    if (unsettledRes?.ok) {
+      const u = await unsettledRes.json()
+      setUnsettledIds(new Set((u.unsettled ?? []).map((s: { id: string }) => s.id)))
+    }
     setSessionsLoading(false)
   }, [sessionsStatus, sessionsSort]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -1594,6 +1604,11 @@ export default function AdminPage() {
         {tab === 'sessions' && (
           <>
             <div className="section-title">Recent Sessions</div>
+            {unsettledIds.size > 0 && (
+              <div style={{ background: '#FFF3CD', border: '1.5px solid #FFCA28', borderRadius: 12, padding: '10px 16px', marginBottom: 16, fontSize: 13, fontWeight: 700, color: '#7A4A00' }}>
+                ⚠️ {unsettledIds.size} session{unsettledIds.size > 1 ? 's' : ''} where the listener was never credited (credit_wallet failed). Look for <strong>⚠️ Fix settlement</strong> buttons below.
+              </div>
+            )}
             <div className="filter-row">
               {(['all', 'active', 'completed', 'cancelled'] as const).map(s => (
                 <button
@@ -1675,6 +1690,36 @@ export default function AdminPage() {
                             : s.status === 'completed'
                               ? <span className="badge badge-green">Completed</span>
                               : <span className="badge badge-gray">{s.status}</span>}
+                          {unsettledIds.has(s.id) && (
+                            <div style={{ marginTop: 4 }}>
+                              <button
+                                className="btn btn-orange"
+                                style={{ padding: '3px 10px', fontSize: 11 }}
+                                disabled={fixingSettlement === s.id}
+                                title="Listener was never credited — click to rerun settlement"
+                                onClick={async () => {
+                                  setFixingSettlement(s.id)
+                                  const res = await fetch('/api/admin/sessions/rerun-settlement', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json', ...adminHeaders() },
+                                    body: JSON.stringify({ sessionId: s.id }),
+                                  }).catch(() => null)
+                                  const json = res ? await res.json().catch(() => ({})) : {}
+                                  setFixingSettlement(null)
+                                  if (res?.ok) {
+                                    showToast(json.already_settled
+                                      ? `Already settled: ${json.message}`
+                                      : `✅ ₹${json.listenerEarning} credited to listener`)
+                                    setUnsettledIds(prev => { const n = new Set(prev); n.delete(s.id); return n })
+                                  } else {
+                                    showToast(`Failed: ${json.error || 'unknown error'}`)
+                                  }
+                                }}
+                              >
+                                {fixingSettlement === s.id ? '…' : '⚠️ Fix settlement'}
+                              </button>
+                            </div>
+                          )}
                         </td>
                         {isPrimaryAdmin && (
                           <td>
