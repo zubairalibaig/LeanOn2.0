@@ -95,7 +95,8 @@ export async function GET(req: NextRequest) {
       // paginate in the query.
       const sortByEarnings = sortBy === 'earnings'
       const sortByName = sortBy === 'name'
-      const needsInMemorySort = sortByEarnings || sortByName
+      const sortByWallet = sortBy === 'wallet'
+      const needsInMemorySort = sortByEarnings || sortByName || sortByWallet
 
       const buildQuery = (selectStr: string) => {
         let q = sb.from('listener_profiles')
@@ -186,6 +187,11 @@ export async function GET(req: NextRequest) {
             const an = String((a.users as { name?: string } | undefined)?.name ?? '').toLowerCase()
             const bn = String((b.users as { name?: string } | undefined)?.name ?? '').toLowerCase()
             return sortAsc ? an.localeCompare(bn) : bn.localeCompare(an)
+          }
+          if (sortByWallet) {
+            const aw = Number((a.users as { wallet_balance?: number } | undefined)?.wallet_balance ?? 0)
+            const bw = Number((b.users as { wallet_balance?: number } | undefined)?.wallet_balance ?? 0)
+            return sortAsc ? aw - bw : bw - aw
           }
           // sortByEarnings
           const d = Number(a.earned_total ?? 0) - Number(b.earned_total ?? 0)

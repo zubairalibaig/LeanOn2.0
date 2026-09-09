@@ -30,7 +30,7 @@ type ListenerRow = {
 }
 type SessionRow = {
   id: string; seeker_id: string; listener_id: string; session_type: string; duration_mins: number
-  amount_held: number; status: string; is_free_trial: boolean; started_at: string | null; ended_at?: string | null
+  amount_held: number; platform_fee?: number; status: string; is_free_trial: boolean; started_at: string | null; ended_at?: string | null
   crisis_flagged?: boolean; crisis_flagged_at?: string | null; created_at?: string
   seeker?: { name?: string }; listener?: { name?: string }
 }
@@ -318,7 +318,7 @@ export default function AdminPage() {
   // Which server-side column each table is ordered by. 'wallet' and 'earnings'
   // both sort across ALL pages (see /api/admin/users), not just the page shown.
   const [usersSortBy,     setUsersSortBy]     = useState<'joined' | 'wallet' | 'name'>('joined')
-  const [listenersSortBy, setListenersSortBy] = useState<'joined' | 'earnings' | 'name'>('joined')
+  const [listenersSortBy, setListenersSortBy] = useState<'joined' | 'earnings' | 'name' | 'wallet'>('joined')
   // Unspent seeker money across the whole filtered set. null = unavailable.
   const [usersWalletTotal, setUsersWalletTotal] = useState<number | null>(null)
 
@@ -1347,6 +1347,15 @@ export default function AdminPage() {
                             setListenersPage(0); loadListeners(0, listenersStatus, next, 'earnings')
                           }}
                         >Earned{arrow(listenersSortBy === 'earnings' ? listenersJoinedDir : null)}</th>
+                        <th
+                          style={sortableTh}
+                          title="Current wallet balance — what they haven't yet requested as payout (sorts across all pages)"
+                          onClick={() => {
+                            const next: SortDir = listenersSortBy === 'wallet' && listenersJoinedDir === 'desc' ? 'asc' : 'desc'
+                            setListenersJoinedDir(next); setListenersLoginDir(null); setListenersSortBy('wallet')
+                            setListenersPage(0); loadListeners(0, listenersStatus, next, 'wallet')
+                          }}
+                        >Wallet{arrow(listenersSortBy === 'wallet' ? listenersJoinedDir : null)}</th>
                         <th>Status</th>
                         <th>Actions</th>
                       </tr>
@@ -1481,6 +1490,15 @@ export default function AdminPage() {
                                   ₹{(l.earned_settled ?? 0).toLocaleString('en-IN')} settled
                                 </div>
                               )}
+                            </td>
+                            <td style={{ fontWeight: 700, whiteSpace: 'nowrap' }}>
+                              {/* wallet_balance is on the joined users row */}
+                              {(() => {
+                                const bal = Number((l.users as { wallet_balance?: number } | undefined)?.wallet_balance ?? 0)
+                                return bal > 0
+                                  ? <span style={{ color: 'var(--teal)' }}>₹{bal.toLocaleString('en-IN')}</span>
+                                  : <span style={{ color: 'var(--gray)' }}>₹0</span>
+                              })()}
                             </td>
                             <td>
                               {isPending
@@ -1622,11 +1640,11 @@ export default function AdminPage() {
                   </thead>
                   <tbody>
                     {(sessionsAmountSort
-                      ? [...sessions].sort((a, b) =>
-                          sessionsAmountSort === 'desc'
-                            ? b.amount_held - a.amount_held
-                            : a.amount_held - b.amount_held
-                        )
+                      ? [...sessions].sort((a, b) => {
+                          const ae = a.amount_held - (a.platform_fee ?? 0)
+                          const be = b.amount_held - (b.platform_fee ?? 0)
+                          return sessionsAmountSort === 'desc' ? be - ae : ae - be
+                        })
                       : sessions
                     ).map((s: SessionRow) => (
                       <tr key={s.id} style={s.crisis_flagged ? { background: '#FFF0F0' } : undefined}>
@@ -1635,7 +1653,21 @@ export default function AdminPage() {
                         <td>{s.listener?.name || s.listener_id.slice(0, 8) + '…'}</td>
                         <td><span className="badge badge-teal">{s.session_type}</span></td>
                         <td>{s.duration_mins} min</td>
-                        <td>{s.is_free_trial ? <span className="badge badge-gray">Free</span> : `₹${s.amount_held}`}</td>
+                        <td>
+                          {s.is_free_trial
+                            ? <span className="badge badge-gray">Free</span>
+                            : (() => {
+                                const fee = s.platform_fee ?? 0
+                                const listenerEarning = s.amount_held - fee
+                                return (
+                                  <span title={`Seeker paid ₹${s.amount_held} · Listener earned ₹${listenerEarning} · Platform fee ₹${fee}`}>
+                                    ₹{listenerEarning}
+                                    {fee > 0 && <span style={{ fontSize: 10, color: 'var(--gray)', marginLeft: 3 }}>+₹{fee}</span>}
+                                  </span>
+                                )
+                              })()
+                          }
+                        </td>
                         <td>
                           {s.crisis_flagged && <span className="badge badge-red" style={{ marginRight: 4 }}>⚠️ Crisis</span>}
                           {s.status === 'active'
@@ -1673,7 +1705,7 @@ export default function AdminPage() {
                   </div>
                   <div className="meta-text">
                     {fmtDateTime(transcriptSession.created_at)} · {transcriptSession.duration_mins} min {transcriptSession.session_type}
-                    {transcriptSession.is_free_trial ? ' · Free trial' : ` · ₹${transcriptSession.amount_held}`}
+                    {transcriptSession.is_free_trial ? ' · Free trial' : ` · ₹${transcriptSession.amount_held - (transcriptSession.platform_fee ?? 0)} listener + ₹${transcriptSession.platform_fee ?? 0} fee`}
                   </div>
                 </div>
                 <button className="btn btn-gray" style={{ padding: '4px 12px', fontSize: 12 }} onClick={() => setTranscriptSession(null)}>Close</button>
