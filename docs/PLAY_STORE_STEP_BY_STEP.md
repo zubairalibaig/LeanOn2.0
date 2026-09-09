@@ -42,7 +42,7 @@ later. To download it:
 This turns your website into an installable Android app file. No PWABuilder
 needed — a GitHub Action builds it for you.
 
-**Package ID:** `app.leanon.twa` (already set — this is permanent, never changes)
+**Package ID:** `app.leanon.therapy` (already set — this is permanent, never changes)
 
 1. Go to **`https://github.com/zubairalibaig/LeanOn2.0/actions`**
 2. In the left sidebar, click **"Build Android TWA"**

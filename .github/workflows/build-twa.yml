@@ -131,7 +131,7 @@ jobs:
             echo ""
             echo "| | |"
             echo "|---|---|"
-            echo "| Package ID | \`app.leanon.twa\` |"
+            echo "| Package ID | \`app.leanon.therapy\` |"
             echo "| Version | ${{ github.event.inputs.version_name }} (${{ github.event.inputs.version_code }}) |"
             echo ""
             echo "### What to do next"

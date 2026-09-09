@@ -2,10 +2,10 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 34
-    namespace "app.leanon.twa"
+    namespace "app.leanon.therapy"
 
     defaultConfig {
-        applicationId "app.leanon.twa"
+        applicationId "app.leanon.therapy"
         minSdkVersion 21
         targetSdkVersion 34
         // Version injected by CI via -PversionCode / -PversionName flags
