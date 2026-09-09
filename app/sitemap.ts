@@ -138,6 +138,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/having-a-bad-day`,                 lastModified: d(TODAY),        changeFrequency: 'weekly',  priority: 0.95 },
     { url: `${base}/just-had-a-fight`,                 lastModified: d(TODAY),        changeFrequency: 'weekly',  priority: 0.93 },
     { url: `${base}/talk-to-stranger-online-india`,    lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.93 },
+    // Seeker acquisition — high-commercial-intent pages targeting people who WANT support
+    // (not listeners). Addresses the listener-heavy supply/demand imbalance.
+    { url: `${base}/online-counseling-india`,            lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/cant-afford-therapy-india`,          lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/support/family-pressure-india`,      lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/support/career-pressure-india`,      lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/support/new-city-india`,             lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/support/relationship-anxiety`,       lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/support/arranged-marriage-stress`,   lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/support/postpartum-india`,           lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.93 },
+    // Blog: seeker-acquisition posts (therapy cost, family pressure, new city, signs)
+    { url: `${base}/blog/cant-afford-therapy-india`,     lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/blog/family-pressure-mental-health-india`, lastModified: d(TODAY),  changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/blog/loneliness-new-city-india`,     lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.92 },
+    { url: `${base}/blog/signs-you-need-to-talk-to-someone`, lastModified: d(TODAY),    changeFrequency: 'monthly', priority: 0.92 },
     // New SEO pages (Items 18-21)
     { url: `${base}/why-leanon`,                       lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/how-leanon-works`,                 lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },

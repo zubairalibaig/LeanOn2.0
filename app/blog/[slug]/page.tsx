@@ -33,6 +33,10 @@ import { post as gettingItOffChestPost } from '../posts/getting-it-off-your-ches
 import { post as badMorningResetPost } from '../posts/bad-morning-reset-india'
 import { post as ventingStrangerPost } from '../posts/venting-to-a-stranger-india'
 import { post as emotionalResetWorkdayPost } from '../posts/emotional-reset-workday-india'
+import { post as cantAffordTherapyPost } from '../posts/cant-afford-therapy-india'
+import { post as familyPressurePost } from '../posts/family-pressure-mental-health-india'
+import { post as lonelinessNewCityPost } from '../posts/loneliness-new-city-india'
+import { post as signsNeedTalkPost } from '../posts/signs-you-need-to-talk-to-someone'
 
 export const dynamic = 'force-static'
 
@@ -46,6 +50,7 @@ const allPosts = [
   chatgptVsHumanPost, earnListeningPost,
   feelEmptyPost, feelFailurePost, am2LonelinessPost, hateJobPost, chatgptMentalHealthPost,
   gettingItOffChestPost, badMorningResetPost, ventingStrangerPost, emotionalResetWorkdayPost,
+  cantAffordTherapyPost, familyPressurePost, lonelinessNewCityPost, signsNeedTalkPost,
 ]
 
 function getPost(slug: string) {
