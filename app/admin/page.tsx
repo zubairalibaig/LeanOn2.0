@@ -341,6 +341,8 @@ export default function AdminPage() {
 
   // Sessions
   const [sessions, setSessions] = useState<SessionRow[]>([])
+  const [sessionsTotal, setSessionsTotal] = useState(0)
+  const [sessionsPage, setSessionsPage] = useState(0)
   const [sessionsStatus, setSessionsStatus] = useState('all')
   const [sessionsLoading, setSessionsLoading] = useState(false)
   const [sessionsSort, setSessionsSort] = useState<SortDir>('desc')
@@ -478,21 +480,27 @@ export default function AdminPage() {
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const loadSessions = useCallback(async (st = sessionsStatus, sort = sessionsSort) => {
+  const SESSION_PAGE_SIZE = 50
+  const loadSessions = useCallback(async (st = sessionsStatus, sort = sessionsSort, pg = sessionsPage) => {
     setSessionsLoading(true)
-    const params = new URLSearchParams({ status: st !== 'all' ? st : '', sort })
+    const params = new URLSearchParams({ status: st !== 'all' ? st : '', sort, page: String(pg) })
     const [sessRes, unsettledRes] = await Promise.all([
       fetch(`/api/admin/sessions?${params}`, { headers: adminHeaders() }).catch(() => null),
       fetch('/api/admin/sessions/unsettled', { headers: adminHeaders() }).catch(() => null),
     ])
-    if (sessRes?.ok) setSessions((await sessRes.json()).sessions ?? [])
-    else showToast('Failed to load sessions — tap Refresh to retry')
+    if (sessRes?.ok) {
+      const json = await sessRes.json()
+      setSessions(json.sessions ?? [])
+      setSessionsTotal(json.total ?? 0)
+    } else {
+      showToast('Failed to load sessions — tap Refresh to retry')
+    }
     if (unsettledRes?.ok) {
       const u = await unsettledRes.json()
       setUnsettledIds(new Set((u.unsettled ?? []).map((s: { id: string }) => s.id)))
     }
     setSessionsLoading(false)
-  }, [sessionsStatus, sessionsSort]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sessionsStatus, sessionsSort, sessionsPage]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadTranscript = useCallback(async (session: SessionRow) => {
     setTranscriptSession(session)
@@ -1603,7 +1611,10 @@ export default function AdminPage() {
         {/* ─── SESSIONS ─────────────────────────────────────────────────────── */}
         {tab === 'sessions' && (
           <>
-            <div className="section-title">Recent Sessions</div>
+            <div className="section-title">
+              Sessions
+              {sessionsTotal > 0 && <span className="count-badge">{sessionsTotal}</span>}
+            </div>
             {unsettledIds.size > 0 && (
               <div style={{ background: '#FFF3CD', border: '1.5px solid #FFCA28', borderRadius: 12, padding: '10px 16px', marginBottom: 16, fontSize: 13, fontWeight: 700, color: '#7A4A00' }}>
                 ⚠️ {unsettledIds.size} session{unsettledIds.size > 1 ? 's' : ''} where the listener was never credited (credit_wallet failed). Look for <strong>⚠️ Fix settlement</strong> buttons below.
@@ -1614,12 +1625,12 @@ export default function AdminPage() {
                 <button
                   key={s}
                   className={`filter-btn${sessionsStatus === s ? ' active' : ''}`}
-                  onClick={() => { setSessionsStatus(s); loadSessions(s) }}
+                  onClick={() => { setSessionsStatus(s); setSessionsPage(0); loadSessions(s, sessionsSort, 0) }}
                 >
                   {s.charAt(0).toUpperCase() + s.slice(1)}
                 </button>
               ))}
-              <button className="btn btn-teal" style={{ marginLeft: 'auto' }} onClick={() => loadSessions(sessionsStatus)}>Refresh</button>
+              <button className="btn btn-teal" style={{ marginLeft: 'auto' }} onClick={() => { setSessionsPage(0); loadSessions(sessionsStatus, sessionsSort, 0) }}>Refresh</button>
             </div>
             {sessionsLoading ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -1628,13 +1639,14 @@ export default function AdminPage() {
             ) : sessions.length === 0 ? (
               <div className="empty">No sessions found for this filter.</div>
             ) : (
+              <>
               <div className="table-wrap">
                 <table>
                   <thead>
                     <tr>
                       <th
                         style={sortableTh}
-                        onClick={() => { setSessionsAmountSort(null); const next = sessionsSort === 'desc' ? 'asc' : 'desc'; setSessionsSort(next); loadSessions(sessionsStatus, next) }}
+                        onClick={() => { setSessionsAmountSort(null); const next = sessionsSort === 'desc' ? 'asc' : 'desc'; setSessionsSort(next); setSessionsPage(0); loadSessions(sessionsStatus, next, 0) }}
                       >
                         When{sessionsAmountSort === null ? arrow(sessionsSort) : ''}
                       </th>
@@ -1733,6 +1745,24 @@ export default function AdminPage() {
                   </tbody>
                 </table>
               </div>
+              {sessionsTotal > SESSION_PAGE_SIZE && (
+                <div className="pagination">
+                  <button
+                    className="btn btn-gray"
+                    disabled={sessionsPage === 0}
+                    onClick={() => { const p = sessionsPage - 1; setSessionsPage(p); loadSessions(sessionsStatus, sessionsSort, p) }}
+                  >← Prev</button>
+                  <span>
+                    {sessionsPage * SESSION_PAGE_SIZE + 1}–{Math.min((sessionsPage + 1) * SESSION_PAGE_SIZE, sessionsTotal)} of {sessionsTotal}
+                  </span>
+                  <button
+                    className="btn btn-gray"
+                    disabled={(sessionsPage + 1) * SESSION_PAGE_SIZE >= sessionsTotal}
+                    onClick={() => { const p = sessionsPage + 1; setSessionsPage(p); loadSessions(sessionsStatus, sessionsSort, p) }}
+                  >Next →</button>
+                </div>
+              )}
+              </>
             )}
           </>
         )}
