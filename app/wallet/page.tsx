@@ -1,6 +1,6 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect, useRef, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { showToast } from '@/lib/toast'
 import { grossRechargeAmount } from '@/lib/constants'
@@ -56,8 +56,11 @@ declare global { interface Window { Razorpay: new (opts: RazorpayOptions) => { o
 
 type Txn = { id: string; description?: string; type: 'credit' | 'debit'; amount: number; reference_id?: string | null; created_at: string }
 
-export default function WalletPage() {
+function WalletPageInner() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  // After a successful recharge, redirect here (e.g. /listener/[id] from free-trial conversion screen).
+  const returnUrl = searchParams.get('return')
   const sb = createClient()
   const [selected, setSelected] = useState(500)
   const [customInput, setCustomInput] = useState('')
@@ -247,6 +250,11 @@ export default function WalletPage() {
               .select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(10)
               .then(({ data: txns }) => { if (txns) setTransactions(txns) })
             showToast(`₹${selected} added to your wallet!`, 'success')
+            // If user came from the free-trial conversion screen, redirect back to the
+            // listener profile so they can immediately book a paid session.
+            if (returnUrl && returnUrl.startsWith('/')) {
+              setTimeout(() => router.push(returnUrl), 800)
+            }
           } else {
             const data = await res.json()
             showToast(data.error || 'Payment verification failed. Contact support.', 'error')
@@ -264,6 +272,12 @@ export default function WalletPage() {
     <>
       <style>{S}</style>
       <div className="page">
+        {/* Context banner: user came from the free-trial conversion screen */}
+        {returnUrl && (
+          <div style={{background:'#0F4867',color:'white',padding:'12px 20px',margin:'0 -20px',fontFamily:'Nunito,sans-serif',fontSize:14,fontWeight:700,lineHeight:1.5,borderBottom:'1px solid rgba(255,255,255,0.12)'}}>
+            💙 Top up to continue your conversation — your listener is still available.
+          </div>
+        )}
         <div className="topbar">
           <button className="back" onClick={() => router.back()}>←</button>
           <h1>My Wallet</h1>
@@ -430,5 +444,14 @@ export default function WalletPage() {
         )}
       </div>
     </>
+  )
+}
+
+// useSearchParams requires Suspense boundary in Next.js App Router
+export default function WalletPage() {
+  return (
+    <Suspense>
+      <WalletPageInner />
+    </Suspense>
   )
 }

@@ -71,7 +71,20 @@ body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:an
 .crisis-bar a{color:#C0392B;text-decoration:underline;}
 .crisis-footer{background:#FFF8F8;border-top:1px solid #FFCDD2;padding:6px 16px;font-size:11px;color:#7A2020;font-weight:700;text-align:center;flex-shrink:0;}
 .crisis-footer a{color:#C0392B;}
+.crisis-footer.dark{background:rgba(255,255,255,0.06);border-top:1px solid rgba(255,255,255,0.12);color:rgba(255,100,100,0.85);}
+.crisis-footer.dark a{color:rgba(255,130,130,0.9);}
 .end-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;background:white;}
+/* ── Free-trial conversion screen (shown instead of rating screen for seekers) ── */
+.trial-conv{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 28px;text-align:center;background:var(--navy);}
+.trial-conv-icon{font-size:52px;margin-bottom:24px;line-height:1;}
+.trial-conv-h{font-size:clamp(22px,5vw,28px);font-weight:900;color:white;line-height:1.18;margin-bottom:12px;}
+.trial-conv-sub{font-size:16px;color:rgba(213,238,246,0.8);font-weight:500;line-height:1.65;margin-bottom:36px;max-width:290px;}
+.trial-conv-btns{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:300px;}
+.btn-trial-continue{background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;padding:17px 36px;border-radius:50px;border:none;cursor:pointer;box-shadow:0 4px 24px rgba(255,153,51,0.45);width:100%;}
+.btn-trial-continue:hover{background:#e8861a;}
+.btn-trial-leave{background:transparent;color:rgba(255,255,255,0.65);font-family:'Nunito',sans-serif;font-weight:700;font-size:15px;padding:15px 36px;border-radius:50px;border:1.5px solid rgba(255,255,255,0.22);cursor:pointer;width:100%;}
+.btn-trial-leave:hover{background:rgba(255,255,255,0.06);}
+.trial-conv-hint{font-size:13px;color:rgba(213,238,246,0.5);font-weight:600;margin-top:18px;}
 .end-icon{font-size:56px;margin-bottom:20px;}
 .end-h{font-size:24px;font-weight:900;color:var(--navy);margin-bottom:8px;}
 .end-p{font-size:15px;color:var(--gray);font-weight:500;margin-bottom:28px;}
@@ -232,6 +245,9 @@ function SessionContent() {
   const [sessionAmountHeld, setSessionAmountHeld]   = useState<number | null>(null)
   const [sessionPlatformFee, setSessionPlatformFee] = useState(0)
   const [showListenerBanner, setShowListenerBanner] = useState(true)
+  // Free trial conversion screen — shown between session end and rating for seekers.
+  // Starts true; "Rate and leave" sets it false to reveal the normal rating screen.
+  const [showFreeTrialConversion, setShowFreeTrialConversion] = useState(true)
 
   const channelRef      = useRef<ReturnType<typeof supabase.channel> | null>(null)
   const bottomRef       = useRef<HTMLDivElement>(null)
@@ -1044,6 +1060,53 @@ function SessionContent() {
     const actualSecRemainder = actualSecs % 60
     const durationDisplay = actualMins > 0 ? `${actualMins}m ${actualSecRemainder}s` : `${actualSecs}s`
     const voiceFailed = isVoice && voiceError && voiceStatus === 'error'
+    const isSeeker = userId !== null && listenerId !== null && userId !== listenerId
+
+    // ── Free-trial conversion screen
+    // Shown for seekers on free-trial sessions (both the 1st and 2nd free session).
+    // Voice-failed sessions skip it — the user wasn't charged and needs to leave cleanly.
+    if (sessionIsFreeTrial && isSeeker && !voiceFailed && showFreeTrialConversion) {
+      const walletUrl = listenerId
+        ? `/wallet?return=${encodeURIComponent(`/listener/${listenerId}`)}`
+        : '/wallet'
+      return (
+        <>
+          <style>{S}</style>
+          <div className="wrap" style={{ background: 'var(--navy)' }}>
+            <div className="hdr">
+              <div className="av">{ini(resolvedListenerName)}</div>
+              <div className="hdr-info">
+                <div className="hdr-name">{resolvedListenerName}</div>
+                <div className="hdr-sub" style={{ color: 'rgba(255,255,255,0.55)' }}>Free session complete</div>
+              </div>
+            </div>
+            <div className="trial-conv">
+              <div className="trial-conv-icon">💙</div>
+              <h2 className="trial-conv-h">You just used your free session.</h2>
+              <p className="trial-conv-sub">
+                Want to keep talking?<br />Your listener is still here.
+              </p>
+              <div className="trial-conv-btns">
+                <a href={walletUrl} style={{ width: '100%' }}>
+                  <button className="btn-trial-continue">Continue — top up wallet</button>
+                </a>
+                <button
+                  className="btn-trial-leave"
+                  onClick={() => setShowFreeTrialConversion(false)}
+                >
+                  Rate and leave
+                </button>
+              </div>
+              <p className="trial-conv-hint">Top up ₹200 — enough for a full 15-min session.</p>
+            </div>
+            <div className="crisis-footer dark">
+              🆘 Crisis: <a href="tel:08046110007">NIMHANS 080-46110007</a> · <a href="tel:14416">Tele-MANAS 14416</a>
+            </div>
+          </div>
+        </>
+      )
+    }
+
     return (
       <>
         <style>{S}</style>
