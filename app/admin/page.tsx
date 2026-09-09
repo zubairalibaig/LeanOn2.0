@@ -344,6 +344,7 @@ export default function AdminPage() {
   const [sessionsStatus, setSessionsStatus] = useState('all')
   const [sessionsLoading, setSessionsLoading] = useState(false)
   const [sessionsSort, setSessionsSort] = useState<SortDir>('desc')
+  const [sessionsAmountSort, setSessionsAmountSort] = useState<SortDir | null>(null)
   // Full transcript viewer — primary admin only (see isPrimaryAdmin above).
   const [transcriptSession, setTranscriptSession] = useState<SessionRow | null>(null)
   const [transcriptMsgs, setTranscriptMsgs] = useState<TranscriptMsg[]>([])
@@ -1600,21 +1601,34 @@ export default function AdminPage() {
                     <tr>
                       <th
                         style={sortableTh}
-                        onClick={() => { const next = sessionsSort === 'desc' ? 'asc' : 'desc'; setSessionsSort(next); loadSessions(sessionsStatus, next) }}
+                        onClick={() => { setSessionsAmountSort(null); const next = sessionsSort === 'desc' ? 'asc' : 'desc'; setSessionsSort(next); loadSessions(sessionsStatus, next) }}
                       >
-                        When{arrow(sessionsSort)}
+                        When{sessionsAmountSort === null ? arrow(sessionsSort) : ''}
                       </th>
                       <th>Seeker</th>
                       <th>Listener</th>
                       <th>Type</th>
                       <th>Duration</th>
-                      <th>Amount</th>
+                      <th
+                        style={sortableTh}
+                        title="Click to sort by amount — groups free vs paid"
+                        onClick={() => setSessionsAmountSort(d => d === null ? 'desc' : d === 'desc' ? 'asc' : null)}
+                      >
+                        Amount{sessionsAmountSort ? arrow(sessionsAmountSort) : ' ↕'}
+                      </th>
                       <th>Status</th>
                       {isPrimaryAdmin && <th>Chat</th>}
                     </tr>
                   </thead>
                   <tbody>
-                    {sessions.map((s: SessionRow) => (
+                    {(sessionsAmountSort
+                      ? [...sessions].sort((a, b) =>
+                          sessionsAmountSort === 'desc'
+                            ? b.amount_held - a.amount_held
+                            : a.amount_held - b.amount_held
+                        )
+                      : sessions
+                    ).map((s: SessionRow) => (
                       <tr key={s.id} style={s.crisis_flagged ? { background: '#FFF0F0' } : undefined}>
                         <td style={{ color: 'var(--gray)', fontSize: 12 }}>{fmtDate(s.created_at)}</td>
                         <td>{s.seeker?.name || s.seeker_id.slice(0, 8) + '…'}</td>

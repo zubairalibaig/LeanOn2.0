@@ -153,6 +153,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/blog/family-pressure-mental-health-india`, lastModified: d(TODAY),  changeFrequency: 'monthly', priority: 0.93 },
     { url: `${base}/blog/loneliness-new-city-india`,     lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.92 },
     { url: `${base}/blog/signs-you-need-to-talk-to-someone`, lastModified: d(TODAY),    changeFrequency: 'monthly', priority: 0.92 },
+    // Sakshi-cluster pages — emotional numbness, morning dread, childhood trauma, professional help access
+    { url: `${base}/support/emotional-numbness`,          lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/support/dont-want-to-get-out-of-bed`, lastModified: d(TODAY),       changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/support/childhood-trauma-india`,      lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/i-need-professional-help-india`,      lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
     // New SEO pages (Items 18-21)
     { url: `${base}/why-leanon`,                       lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/how-leanon-works`,                 lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },
