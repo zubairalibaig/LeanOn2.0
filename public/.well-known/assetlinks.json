@@ -3,7 +3,7 @@
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
-      "package_name": "app.leanon.twa",
+      "package_name": "app.leanon.therapy",
       "sha256_cert_fingerprints": [
         "E3:80:13:EC:DC:23:F5:C3:EB:4D:12:59:38:AD:63:A8:0A:18:58:E4:6B:F6:3A:78:CA:22:9E:9E:53:D6:C3:42"
       ]
