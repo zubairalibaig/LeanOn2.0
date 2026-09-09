@@ -269,6 +269,15 @@ a{text-decoration:none;color:inherit;}
 .session-toast-sub{font-size:12px;font-weight:600;opacity:.85;margin-top:2px;}
 .btn-toast-join{background:white;color:var(--orange);font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:9px 16px;border-radius:10px;border:none;cursor:pointer;white-space:nowrap;}
 .btn-toast-dismiss{background:transparent;color:white;font-family:'Nunito',sans-serif;font-weight:700;font-size:20px;border:none;cursor:pointer;padding:0 4px;line-height:1;}
+.free-nudge{margin:0 20px 0;background:linear-gradient(135deg,#0F4867 0%,#1A6E8A 100%);border-radius:20px 20px 0 0;padding:16px 18px 12px;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden;}
+.free-nudge::after{content:'';position:absolute;inset:0;background:rgba(255,153,51,.07);pointer-events:none;}
+.free-nudge-icon{font-size:28px;line-height:1;flex-shrink:0;}
+.free-nudge-text{flex:1;min-width:0;}
+.free-nudge-title{font-size:15px;font-weight:900;color:white;margin-bottom:3px;line-height:1.2;}
+.free-nudge-sub{font-size:12px;color:rgba(213,238,246,0.75);font-weight:600;line-height:1.4;}
+.free-nudge-close{background:rgba(255,255,255,0.12);border:none;color:rgba(255,255,255,0.7);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;font-weight:900;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;}
+.free-nudge-arrow{text-align:center;padding:6px 20px 0;color:rgba(26,143,160,0.9);font-size:20px;line-height:1;animation:bounce 1.2s ease-in-out infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
 `
 
 function BrowseContent() {
@@ -290,6 +299,9 @@ function BrowseContent() {
   } | null>(null)
   const channelRef = useRef<ReturnType<typeof client.channel> | null>(null)
   const listenerGridRef = useRef<HTMLDivElement | null>(null)
+  // Free-trial nudge banner — shown to users who signed up within the last 30
+  // days and haven't had a single session yet. Disappears after first session.
+  const [showFreeNudge, setShowFreeNudge] = useState(false)
 
   // Read ?topic= from URL after hydration to avoid SSR mismatch.
   //
@@ -419,8 +431,24 @@ function BrowseContent() {
       if (!user) return
       // Remember who I am so I never see (or can book) my own listener card.
       setMyUserId(user.id)
-      const {data} = await client.from('users').select('wallet_balance').eq('id',user.id).single()
-      if (data) setBalance(data.wallet_balance)
+      const {data} = await client.from('users').select('wallet_balance,created_at').eq('id',user.id).single()
+      if (data) {
+        setBalance(data.wallet_balance)
+
+        // Free-trial nudge: new user (joined ≤30 days ago) with 0 seeker sessions.
+        // Check localStorage first — if they dismissed it, respect that.
+        const dismissed = localStorage.getItem('leanon_nudge_dismissed')
+        if (!dismissed && data.created_at) {
+          const joinedDaysAgo = (Date.now() - new Date(data.created_at).getTime()) / 86_400_000
+          if (joinedDaysAgo <= 30) {
+            const { count } = await client
+              .from('sessions')
+              .select('id', { count: 'exact', head: true })
+              .eq('seeker_id', user.id)
+            if ((count ?? 0) === 0) setShowFreeNudge(true)
+          }
+        }
+      }
 
       // Only subscribe to incoming sessions if user is an approved listener — avoids
       // wasteful realtime connections for regular seekers
@@ -619,6 +647,27 @@ function BrowseContent() {
           </div>
         </div>
       </div>
+
+      {showFreeNudge && (
+        <div>
+          <div className="free-nudge">
+            <div className="free-nudge-icon">💙</div>
+            <div className="free-nudge-text">
+              <div className="free-nudge-title">You have 2 free sessions.</div>
+              <div className="free-nudge-sub">Pick a listener — your first conversation is completely private.</div>
+            </div>
+            <button
+              className="free-nudge-close"
+              aria-label="Dismiss"
+              onClick={() => {
+                setShowFreeNudge(false)
+                try { localStorage.setItem('leanon_nudge_dismissed', '1') } catch { /* ignore */ }
+              }}
+            >✕</button>
+          </div>
+          <div className="free-nudge-arrow">↓</div>
+        </div>
+      )}
 
       <div className="list" ref={listenerGridRef}>
         {loading ? (
