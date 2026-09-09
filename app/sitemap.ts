@@ -187,6 +187,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/anonymous-support-online`,         lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/someone-to-talk-to-at-night`,      lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/online-emotional-support-india`,   lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },
+    // AstroTalk-overlap + relationship + loneliness cluster
+    { url: `${base}/astrotalk-alternative`,            lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/relationship-advice-online-india`, lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/talk-to-real-person-online-india`, lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/loneliness-support-india`,         lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/alternatives-to-therapy-india`,    lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/feeling-lonely-in-india`,          lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/our-story`,                        lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.8 },

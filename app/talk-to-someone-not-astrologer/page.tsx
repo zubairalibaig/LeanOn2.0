@@ -226,11 +226,11 @@ export default function TalkToSomeoneNotAstrologerPage() {
           <h2>Related Support Topics</h2>
           <p>Explore more peer support resources on LeanOn:</p>
           <div className="related">
+            <a href="/astrotalk-alternative" className="related-link">AstroTalk Alternative</a>
+            <a href="/relationship-advice-online-india" className="related-link">Relationship Advice Online</a>
             <a href="/support/loneliness" className="related-link">Loneliness</a>
             <a href="/someone-to-talk-to-at-night" className="related-link">Someone to Talk to at Night</a>
             <a href="/support/someone-to-talk-to" className="related-link">Someone to Talk To</a>
-            <a href="/support/overthinking" className="related-link">Overthinking</a>
-            <a href="/support/anonymous-support" className="related-link">Anonymous Support</a>
             <a href="/browse" className="related-link">Browse All Listeners</a>
           </div>
         </div>
