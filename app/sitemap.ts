@@ -153,6 +153,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/blog/family-pressure-mental-health-india`, lastModified: d(TODAY),  changeFrequency: 'monthly', priority: 0.93 },
     { url: `${base}/blog/loneliness-new-city-india`,     lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.92 },
     { url: `${base}/blog/signs-you-need-to-talk-to-someone`, lastModified: d(TODAY),    changeFrequency: 'monthly', priority: 0.92 },
+    // Women-targeting hub + seeker pages — Avantikka-cluster (married women, mothers, working women)
+    // Both paid sessions to date are women 20s-30s → dedicated women's SEO cluster
+    { url: `${base}/for-women`,                           lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/support/married-but-lonely`,          lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/support/mom-burnout-india`,           lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/support/working-woman-india`,         lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/support/husband-not-supportive-india`, lastModified: d(TODAY),       changeFrequency: 'monthly', priority: 0.95 },
+    // Blog: women-cluster posts
+    { url: `${base}/blog/married-but-lonely-india`,       lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/blog/working-mothers-mental-health-india`, lastModified: d(TODAY),   changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/blog/mom-burnout-signs-india`,        lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.93 },
     // Sakshi-cluster pages — emotional numbness, morning dread, childhood trauma, professional help access
     { url: `${base}/support/emotional-numbness`,          lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/support/dont-want-to-get-out-of-bed`, lastModified: d(TODAY),       changeFrequency: 'monthly', priority: 0.95 },

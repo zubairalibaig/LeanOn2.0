@@ -36,11 +36,15 @@ import { post as cantAffordTherapyPost } from './posts/cant-afford-therapy-india
 import { post as familyPressurePost } from './posts/family-pressure-mental-health-india'
 import { post as lonelinessNewCityPost } from './posts/loneliness-new-city-india'
 import { post as signsNeedTalkPost } from './posts/signs-you-need-to-talk-to-someone'
+import { post as marriedButLonelyPost } from './posts/married-but-lonely-india'
+import { post as workingMothersPost } from './posts/working-mothers-mental-health-india'
+import { post as momBurnoutSignsPost } from './posts/mom-burnout-signs-india'
 
 export const dynamic = 'force-static'
 
 // All posts — sorted newest first so Google and AI crawlers see fresh content at top
 const allPosts = [
+  marriedButLonelyPost, workingMothersPost, momBurnoutSignsPost,
   chatgptMentalHealthPost, cantAffordTherapyPost, familyPressurePost, lonelinessNewCityPost,
   signsNeedTalkPost, gettingItOffChestPost, badMorningResetPost, ventingStrangerPost,
   emotionalResetWorkdayPost, hateJobPost, am2LonelinessPost, feelFailurePost, feelEmptyPost,
