@@ -18,11 +18,13 @@ export async function GET(req: NextRequest) {
     const url = new URL(req.url)
     const statusFilter = url.searchParams.get('status') || ''
     const page = Math.max(0, parseInt(url.searchParams.get('page') || '0'))
-    // 'asc' | 'desc' — which end shows first. Sorts by created_at (always
-    // populated, unlike started_at which is null for pending/cancelled
-    // sessions) so every session — including ones that never went live —
-    // orders consistently by when the request actually happened.
+    // sort direction: 'asc' | 'desc'
     const sortAscending = url.searchParams.get('sort') === 'asc'
+    // sortBy: which column to order by across all pages.
+    // 'created_at' (default) — when the session was requested.
+    // 'amount'               — amount_held (listener earning proxy); lets admin
+    //                          surface highest-value sessions regardless of age.
+    const sortBy = url.searchParams.get('sortBy') || 'created_at'
     const PAGE_SIZE = 50
 
     let query = sb.from('sessions')
@@ -33,7 +35,7 @@ export async function GET(req: NextRequest) {
         seeker:users!seeker_id(name),
         listener:users!listener_id(name)
       `, { count: 'exact' })
-      .order('created_at', { ascending: sortAscending })
+      .order(sortBy === 'amount' ? 'amount_held' : 'created_at', { ascending: sortAscending })
       .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)
 
     if (statusFilter && statusFilter !== 'all') {
