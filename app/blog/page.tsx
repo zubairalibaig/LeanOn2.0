@@ -39,11 +39,15 @@ import { post as signsNeedTalkPost } from './posts/signs-you-need-to-talk-to-som
 import { post as marriedButLonelyPost } from './posts/married-but-lonely-india'
 import { post as workingMothersPost } from './posts/working-mothers-mental-health-india'
 import { post as momBurnoutSignsPost } from './posts/mom-burnout-signs-india'
+import { post as menLonelinessPost } from './posts/men-loneliness-india'
+import { post as fearOfMarriagePost } from './posts/fear-of-marriage-india'
+import { post as adultingLonelinessPost } from './posts/adulting-loneliness-india'
 
 export const dynamic = 'force-static'
 
 // All posts — sorted newest first so Google and AI crawlers see fresh content at top
 const allPosts = [
+  menLonelinessPost, fearOfMarriagePost, adultingLonelinessPost,
   marriedButLonelyPost, workingMothersPost, momBurnoutSignsPost,
   chatgptMentalHealthPost, cantAffordTherapyPost, familyPressurePost, lonelinessNewCityPost,
   signsNeedTalkPost, gettingItOffChestPost, badMorningResetPost, ventingStrangerPost,

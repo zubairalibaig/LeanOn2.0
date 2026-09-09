@@ -164,6 +164,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/blog/married-but-lonely-india`,       lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/blog/working-mothers-mental-health-india`, lastModified: d(TODAY),   changeFrequency: 'monthly', priority: 0.93 },
     { url: `${base}/blog/mom-burnout-signs-india`,        lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.93 },
+    // Harshit-cluster pages — men's loneliness, marriage pressure, fear of marriage, adulting, banking stress
+    // First male paid user: bank employee, lonely, job+marriage pressure, parents who cheated on each other
+    { url: `${base}/support/men-loneliness-india`,        lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/support/not-ready-to-get-married-india`, lastModified: d(TODAY),     changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/support/fear-of-marriage-india`,      lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/support/adulting-india`,              lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/support/banking-job-stress-india`,    lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    // Blog: Harshit-cluster posts
+    { url: `${base}/blog/men-loneliness-india`,           lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/blog/fear-of-marriage-india`,         lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/blog/adulting-loneliness-india`,      lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.93 },
     // Sakshi-cluster pages — emotional numbness, morning dread, childhood trauma, professional help access
     { url: `${base}/support/emotional-numbness`,          lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/support/dont-want-to-get-out-of-bed`, lastModified: d(TODAY),       changeFrequency: 'monthly', priority: 0.95 },

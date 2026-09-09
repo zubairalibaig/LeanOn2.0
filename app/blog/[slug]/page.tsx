@@ -40,6 +40,9 @@ import { post as signsNeedTalkPost } from '../posts/signs-you-need-to-talk-to-so
 import { post as marriedButLonelyPost } from '../posts/married-but-lonely-india'
 import { post as workingMothersPost } from '../posts/working-mothers-mental-health-india'
 import { post as momBurnoutSignsPost } from '../posts/mom-burnout-signs-india'
+import { post as menLonelinessPost } from '../posts/men-loneliness-india'
+import { post as fearOfMarriagePost } from '../posts/fear-of-marriage-india'
+import { post as adultingLonelinessPost } from '../posts/adulting-loneliness-india'
 
 export const dynamic = 'force-static'
 
@@ -55,6 +58,7 @@ const allPosts = [
   gettingItOffChestPost, badMorningResetPost, ventingStrangerPost, emotionalResetWorkdayPost,
   cantAffordTherapyPost, familyPressurePost, lonelinessNewCityPost, signsNeedTalkPost,
   marriedButLonelyPost, workingMothersPost, momBurnoutSignsPost,
+  menLonelinessPost, fearOfMarriagePost, adultingLonelinessPost,
 ]
 
 function getPost(slug: string) {
