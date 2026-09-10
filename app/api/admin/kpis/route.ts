@@ -88,6 +88,14 @@ export async function GET(req: NextRequest) {
         .select('platform_fee, started_at, ended_at')
         .eq('is_free_trial', false)
         .eq('status', 'completed'),
+
+      // index 27-32: Today/month breakdown for free trials, paid sessions, new listeners
+      sb.from('sessions').select('id', { count: 'exact', head: true }).eq('is_free_trial', true).gte('created_at', today),
+      sb.from('sessions').select('id', { count: 'exact', head: true }).eq('is_free_trial', true).gte('created_at', thisMonth),
+      sb.from('sessions').select('id', { count: 'exact', head: true }).eq('is_free_trial', false).eq('status', 'completed').gte('created_at', today),
+      sb.from('sessions').select('id', { count: 'exact', head: true }).eq('is_free_trial', false).eq('status', 'completed').gte('created_at', thisMonth),
+      sb.from('listener_profiles').select('id', { count: 'exact', head: true }).gte('created_at', today),
+      sb.from('listener_profiles').select('id', { count: 'exact', head: true }).gte('created_at', thisMonth),
     ])
 
     // Extract values safely — failed queries return zero/null defaults
@@ -125,6 +133,12 @@ export async function GET(req: NextRequest) {
     const gatewayFeesToday    = extract<{ amount: number }>(24)
     const walletBalances      = extract<{ wallet_balance: number }>(25)
     const feeSessions         = extract<{ platform_fee: number; started_at: string | null; ended_at: string | null }>(26)
+    const freeTrialToday      = extract<{ id: string }>(27)
+    const freeTrialThisMonth  = extract<{ id: string }>(28)
+    const paidToday           = extract<{ id: string }>(29)
+    const paidThisMonth       = extract<{ id: string }>(30)
+    const newListenersToday   = extract<{ id: string }>(31)
+    const newListenersMonth   = extract<{ id: string }>(32)
 
     // Platform fee actually KEPT, bucketed by when the session ended.
     // Mirrors lib/session-billing.ts: under 60 seconds is a full refund
@@ -161,6 +175,8 @@ export async function GET(req: NextRequest) {
         active: activeListeners.count ?? 0,
         pending: pendingListeners.count ?? 0,
         online: onlineListeners.count ?? 0,
+        newToday: newListenersToday.count ?? 0,
+        newThisMonth: newListenersMonth.count ?? 0,
       },
       sessions: {
         total: totalSessions.count ?? 0,
@@ -168,7 +184,11 @@ export async function GET(req: NextRequest) {
         thisMonth: sessionsThisMonth.count ?? 0,
         active: activeSessions.count ?? 0,
         freeTrial: freeTrialSessions.count ?? 0,
+        freeTrialToday: freeTrialToday.count ?? 0,
+        freeTrialThisMonth: freeTrialThisMonth.count ?? 0,
         paid: paidSessions.count ?? 0,
+        paidToday: paidToday.count ?? 0,
+        paidThisMonth: paidThisMonth.count ?? 0,
         avgDurationMins: avgDuration,
       },
       revenue: {

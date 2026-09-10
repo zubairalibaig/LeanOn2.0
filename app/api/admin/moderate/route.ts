@@ -122,8 +122,8 @@ export async function GET(req: NextRequest) {
   const { data, count, error: qErr } = await sb.from('reports')
     .select(`
       id, type, description, status, created_at, session_id, reported_user_id,
-      reporter:users!reporter_id(name, email),
-      target:users!reported_user_id(name, email)
+      reporter:users!reporter_id(name, email, phone),
+      target:users!reported_user_id(name, email, phone)
     `, { count: 'exact' })
     .eq('status', statusFilter)
     .order('created_at', { ascending: false })

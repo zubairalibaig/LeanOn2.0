@@ -6,8 +6,12 @@ import { createClient } from '@/lib/supabase'
 
 type KPIs = {
   users: { total: number; active: number; inactive: number; newToday: number; newThisMonth: number }
-  listeners: { total: number; active: number; pending: number; online: number }
-  sessions: { total: number; today: number; thisMonth: number; active: number; freeTrial: number; paid: number; avgDurationMins: number }
+  listeners: { total: number; active: number; pending: number; online: number; newToday?: number; newThisMonth?: number }
+  sessions: {
+    total: number; today: number; thisMonth: number; active: number; avgDurationMins: number
+    freeTrial: number; freeTrialToday?: number; freeTrialThisMonth?: number
+    paid: number; paidToday?: number; paidThisMonth?: number
+  }
   revenue: { totalRechargedRupees: number; thisMonthRupees: number; todayRupees: number; listenerEarningsRupees: number }
   // Optional: absent if an older API build is still deployed, so the UI must guard.
   walletLiability?: { totalRupees: number; usersWithBalance: number }
@@ -38,8 +42,8 @@ type TranscriptMsg = { id: string; sender_id: string; content: string; created_a
 type ReportRow = {
   id: string; type: string; description: string; status: string; created_at: string
   session_id: string | null; reported_user_id: string | null
-  reporter: { name?: string; email?: string } | null
-  target: { name?: string; email?: string } | null
+  reporter: { name?: string; email?: string; phone?: string } | null
+  target: { name?: string; email?: string; phone?: string } | null
 }
 type VerificationRow = {
   id: string; listener_id: string; full_name: string; id_type: string
@@ -978,67 +982,70 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Sessions</div>
-                <div className="kpi-grid" style={{ marginBottom: 20 }}>
-                  <div className="kpi-card">
-                    <div className="kpi-label">Total Sessions</div>
-                    <div className="kpi-value">{fmt(kpis.sessions.total)}</div>
-                  </div>
-                  <div className="kpi-card">
-                    <div className="kpi-label">Sessions Today</div>
-                    <div className="kpi-value">{fmt(kpis.sessions.today)}</div>
-                  </div>
-                  <div className="kpi-card">
-                    <div className="kpi-label">This Month</div>
-                    <div className="kpi-value">{fmt(kpis.sessions.thisMonth)}</div>
-                  </div>
-                  <div className="kpi-card">
-                    <div className="kpi-label">Active Now</div>
-                    <div className="kpi-value" style={{ color: 'var(--teal)' }}>{fmt(kpis.sessions.active)}</div>
-                  </div>
-                  <div className="kpi-card">
-                    <div className="kpi-label">Free Trials</div>
-                    <div className="kpi-value">{fmt(kpis.sessions.freeTrial)}</div>
-                  </div>
-                  <div className="kpi-card">
-                    <div className="kpi-label">Paid Sessions</div>
-                    <div className="kpi-value">{fmt(kpis.sessions.paid)}</div>
-                  </div>
-                  <div className="kpi-card">
-                    <div className="kpi-label">Avg Duration</div>
-                    <div className="kpi-value">{kpis.sessions.avgDurationMins}</div>
-                    <div className="kpi-sub">minutes</div>
+                {/* ── SESSIONS — free trials vs paid, Today / Month / Total ── */}
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>
+                  Sessions
+                  {kpis.sessions.active > 0 && (
+                    <span style={{ marginLeft: 10, fontWeight: 800, color: 'var(--teal)', fontSize: 12 }}>
+                      🟢 {kpis.sessions.active} live now
+                    </span>
+                  )}
+                </div>
+                {/* 3-column comparison table: Today | This Month | Total */}
+                <div style={{ background: 'white', border: '1.5px solid var(--border)', borderRadius: 16, overflow: 'hidden', marginBottom: 20 }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+                    <thead>
+                      <tr style={{ background: 'var(--light)' }}>
+                        <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 700, color: 'var(--gray)', fontSize: 12, width: '34%' }}></th>
+                        <th style={{ padding: '10px 16px', textAlign: 'center', fontWeight: 800, color: 'var(--navy)', fontSize: 12 }}>Today</th>
+                        <th style={{ padding: '10px 16px', textAlign: 'center', fontWeight: 800, color: 'var(--navy)', fontSize: 12 }}>This Month</th>
+                        <th style={{ padding: '10px 16px', textAlign: 'center', fontWeight: 800, color: 'var(--navy)', fontSize: 12 }}>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr style={{ borderTop: '1px solid var(--border)' }}>
+                        <td style={{ padding: '12px 16px', fontWeight: 700, color: 'var(--gray)', fontSize: 13 }}>Free Trials</td>
+                        <td style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 800, fontSize: 18, color: 'var(--navy)' }}>{fmt(kpis.sessions.freeTrialToday ?? 0)}</td>
+                        <td style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 800, fontSize: 18, color: 'var(--navy)' }}>{fmt(kpis.sessions.freeTrialThisMonth ?? 0)}</td>
+                        <td style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 700, fontSize: 15, color: 'var(--gray)' }}>{fmt(kpis.sessions.freeTrial)}</td>
+                      </tr>
+                      <tr style={{ borderTop: '1px solid var(--border)', background: '#FAFCFF' }}>
+                        <td style={{ padding: '12px 16px', fontWeight: 700, color: 'var(--gray)', fontSize: 13 }}>Paid Sessions</td>
+                        <td style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 800, fontSize: 18, color: 'var(--teal)' }}>{fmt(kpis.sessions.paidToday ?? 0)}</td>
+                        <td style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 800, fontSize: 18, color: 'var(--teal)' }}>{fmt(kpis.sessions.paidThisMonth ?? 0)}</td>
+                        <td style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 700, fontSize: 15, color: 'var(--gray)' }}>{fmt(kpis.sessions.paid)}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div style={{ padding: '8px 16px', borderTop: '1px solid var(--border)', fontSize: 12, color: 'var(--gray)', display: 'flex', gap: 20 }}>
+                    <span>Avg duration: <strong>{kpis.sessions.avgDurationMins} min</strong></span>
+                    <span>All sessions today: <strong>{fmt(kpis.sessions.today)}</strong></span>
+                    <span>This month: <strong>{fmt(kpis.sessions.thisMonth)}</strong></span>
                   </div>
                 </div>
 
-                {/* YOUR money — the flat fee kept per paid session. Everything
-                    else under Revenue is either customer money, a cost, or a
-                    pass-through, so this gets its own prominent row. */}
-                {kpis.platformEarnings && (
-                  <>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Your Earnings (platform fee)</div>
-                    <div className="kpi-grid" style={{ marginBottom: 20 }}>
-                      <div className="kpi-card" style={{ borderLeft: '5px solid var(--green)' }}>
-                        <div className="kpi-label">Earned All Time</div>
-                        <div className="kpi-value" style={{ fontSize: 22, color: 'var(--green)' }}>{fmtRs(kpis.platformEarnings.allTimeRupees)}</div>
-                        <div className="kpi-sub">{kpis.platformEarnings.paidSessions} paid session{kpis.platformEarnings.paidSessions === 1 ? '' : 's'}</div>
-                      </div>
-                      <div className="kpi-card">
-                        <div className="kpi-label">Earned This Month</div>
-                        <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.platformEarnings.thisMonthRupees)}</div>
-                      </div>
-                      <div className="kpi-card">
-                        <div className="kpi-label">Earned Today</div>
-                        <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.platformEarnings.todayRupees)}</div>
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* Unspent seeker money, surfaced above Revenue on purpose: it is
-                    the one figure on this page that is NOT yours to spend. */}
+                {/* ── WALLET RECHARGES — seeker money coming in ── */}
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Wallet Recharges (money in)</div>
+                <div style={{ background: 'white', border: '1.5px solid var(--border)', borderRadius: 16, overflow: 'hidden', marginBottom: 12 }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+                    <thead>
+                      <tr style={{ background: 'var(--light)' }}>
+                        <th style={{ padding: '10px 16px', textAlign: 'center', fontWeight: 800, color: 'var(--navy)', fontSize: 12 }}>Today</th>
+                        <th style={{ padding: '10px 16px', textAlign: 'center', fontWeight: 800, color: 'var(--navy)', fontSize: 12 }}>This Month</th>
+                        <th style={{ padding: '10px 16px', textAlign: 'center', fontWeight: 800, color: 'var(--navy)', fontSize: 12 }}>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style={{ padding: '14px 16px', textAlign: 'center', fontWeight: 800, fontSize: 20, color: 'var(--teal)' }}>{fmtRs(kpis.revenue.todayRupees)}</td>
+                        <td style={{ padding: '14px 16px', textAlign: 'center', fontWeight: 800, fontSize: 20, color: 'var(--navy)' }}>{fmtRs(kpis.revenue.thisMonthRupees)}</td>
+                        <td style={{ padding: '14px 16px', textAlign: 'center', fontWeight: 700, fontSize: 16, color: 'var(--gray)' }}>{fmtRs(kpis.revenue.totalRechargedRupees)}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
                 {kpis.walletLiability && (
-                  <div className="liability-bar">
+                  <div className="liability-bar" style={{ marginBottom: 20 }}>
                     <div>
                       <div className="liability-label">Unspent user balances — do not touch</div>
                       <div className="liability-sub">
@@ -1050,50 +1057,83 @@ export default function AdminPage() {
                   </div>
                 )}
 
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Revenue &amp; Payouts</div>
+                {/* ── NEW LISTENERS — Today / Month / Total ── */}
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>New Listeners</div>
+                <div style={{ background: 'white', border: '1.5px solid var(--border)', borderRadius: 16, overflow: 'hidden', marginBottom: 20 }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+                    <thead>
+                      <tr style={{ background: 'var(--light)' }}>
+                        <th style={{ padding: '10px 16px', textAlign: 'center', fontWeight: 800, color: 'var(--navy)', fontSize: 12 }}>Today</th>
+                        <th style={{ padding: '10px 16px', textAlign: 'center', fontWeight: 800, color: 'var(--navy)', fontSize: 12 }}>This Month</th>
+                        <th style={{ padding: '10px 16px', textAlign: 'center', fontWeight: 800, color: 'var(--navy)', fontSize: 12 }}>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style={{ padding: '14px 16px', textAlign: 'center', fontWeight: 800, fontSize: 20, color: 'var(--navy)' }}>{fmt(kpis.listeners.newToday ?? 0)}</td>
+                        <td style={{ padding: '14px 16px', textAlign: 'center', fontWeight: 800, fontSize: 20, color: 'var(--navy)' }}>{fmt(kpis.listeners.newThisMonth ?? 0)}</td>
+                        <td style={{ padding: '14px 16px', textAlign: 'center', fontWeight: 700, fontSize: 16, color: 'var(--gray)' }}>{fmt(kpis.listeners.total)}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div style={{ padding: '8px 16px', borderTop: '1px solid var(--border)', fontSize: 12, color: 'var(--gray)', display: 'flex', gap: 20 }}>
+                    <span>Active (approved): <strong>{fmt(kpis.listeners.active)}</strong></span>
+                    <span>Online now: <strong style={{ color: 'var(--green)' }}>{fmt(kpis.listeners.online)}</strong></span>
+                    {kpis.listeners.pending > 0 && (
+                      <span
+                        style={{ color: 'var(--orange)', fontWeight: 800, cursor: 'pointer' }}
+                        onClick={() => { setListenersStatus('pending'); setListenersPage(0); setTab('listeners') }}
+                      >
+                        ⏳ {kpis.listeners.pending} pending approval →
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* ── YOUR EARNINGS (platform fee) ── */}
+                {kpis.platformEarnings && (
+                  <>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Your Earnings (₹10 platform fee per paid session)</div>
+                    <div className="kpi-grid" style={{ marginBottom: 20 }}>
+                      <div className="kpi-card" style={{ borderLeft: '5px solid var(--green)' }}>
+                        <div className="kpi-label">All Time</div>
+                        <div className="kpi-value" style={{ fontSize: 22, color: 'var(--green)' }}>{fmtRs(kpis.platformEarnings.allTimeRupees)}</div>
+                        <div className="kpi-sub">{kpis.platformEarnings.paidSessions} paid session{kpis.platformEarnings.paidSessions === 1 ? '' : 's'}</div>
+                      </div>
+                      <div className="kpi-card">
+                        <div className="kpi-label">This Month</div>
+                        <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.platformEarnings.thisMonthRupees)}</div>
+                      </div>
+                      <div className="kpi-card">
+                        <div className="kpi-label">Today</div>
+                        <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.platformEarnings.todayRupees)}</div>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* ── PAYOUTS / REPORTS alerts ── */}
                 <div className="kpi-grid" style={{ marginBottom: 20 }}>
-                  <div className="kpi-card">
-                    <div className="kpi-label">Total Recharged</div>
-                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.revenue.totalRechargedRupees)}</div>
-                  </div>
-                  <div className="kpi-card">
-                    <div className="kpi-label">This Month</div>
-                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.revenue.thisMonthRupees)}</div>
-                  </div>
-                  <div className="kpi-card">
-                    <div className="kpi-label">Today</div>
-                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.revenue.todayRupees)}</div>
-                  </div>
-                  <div className="kpi-card">
-                    <div className="kpi-label">Listener Earnings</div>
-                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.revenue.listenerEarningsRupees)}</div>
-                    <div className="kpi-sub">settled</div>
-                  </div>
                   <div className="kpi-card" style={{ border: kpis.payouts.pendingCount > 0 ? '2px solid var(--orange)' : undefined }}>
                     <div className="kpi-label">Pending Payouts</div>
                     <div className="kpi-value" style={{ fontSize: 20, color: kpis.payouts.pendingCount > 0 ? 'var(--orange)' : undefined }}>{fmtRs(kpis.payouts.pendingAmountRupees)}</div>
                     <div className="kpi-sub">{kpis.payouts.pendingCount} requests</div>
                   </div>
+                  <div className="kpi-card">
+                    <div className="kpi-label">Listener Earnings (settled)</div>
+                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.revenue.listenerEarningsRupees)}</div>
+                  </div>
                   <div className="kpi-card" style={{ border: kpis.moderation.pendingReports > 0 ? '2px solid var(--red)' : undefined }}>
                     <div className="kpi-label">Reports Pending</div>
                     <div className="kpi-value" style={{ color: kpis.moderation.pendingReports > 0 ? 'var(--red)' : undefined }}>{kpis.moderation.pendingReports}</div>
                   </div>
-                </div>
-
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Gateway Fees Collected <span style={{ fontWeight: 500, fontSize: 11 }}>(Razorpay pass-through — offsets payment costs)</span></div>
-                <div className="kpi-grid" style={{ marginBottom: 20 }}>
                   <div className="kpi-card">
-                    <div className="kpi-label">All Time</div>
-                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.gatewayFees?.allTime ?? 0)}</div>
-                    <div className="kpi-sub">total Razorpay offset</div>
-                  </div>
-                  <div className="kpi-card">
-                    <div className="kpi-label">This Month</div>
-                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.gatewayFees?.thisMonth ?? 0)}</div>
-                  </div>
-                  <div className="kpi-card">
-                    <div className="kpi-label">Today</div>
-                    <div className="kpi-value" style={{ fontSize: 20 }}>{fmtRs(kpis.gatewayFees?.today ?? 0)}</div>
+                    <div className="kpi-label">Gateway Fees (Razorpay offset)</div>
+                    <div style={{ display: 'flex', gap: 12, marginTop: 4, flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: 11, color: 'var(--gray)' }}>Today <strong style={{ color: 'var(--navy)' }}>{fmtRs(kpis.gatewayFees?.today ?? 0)}</strong></span>
+                      <span style={{ fontSize: 11, color: 'var(--gray)' }}>Month <strong style={{ color: 'var(--navy)' }}>{fmtRs(kpis.gatewayFees?.thisMonth ?? 0)}</strong></span>
+                      <span style={{ fontSize: 11, color: 'var(--gray)' }}>Total <strong style={{ color: 'var(--navy)' }}>{fmtRs(kpis.gatewayFees?.allTime ?? 0)}</strong></span>
+                    </div>
                   </div>
                 </div>
               </>
@@ -1871,7 +1911,14 @@ export default function AdminPage() {
                   <div>
                     <div className="name-text">{r.type.replace(/_/g, ' ')}</div>
                     <div className="meta-text">
-                      From: {r.reporter?.name || '—'} · Against: {r.target?.name || 'unknown'}
+                      From: <strong>{r.reporter?.name || '—'}</strong>
+                      {(r.reporter?.phone || r.reporter?.email) && (
+                        <span style={{ fontWeight: 400 }}> ({r.reporter.phone || r.reporter.email})</span>
+                      )}
+                      {' · '}Against: <strong>{r.target?.name || 'unknown'}</strong>
+                      {(r.target?.phone || r.target?.email) && (
+                        <span style={{ fontWeight: 400 }}> ({r.target.phone || r.target.email})</span>
+                      )}
                       {r.session_id && <> · <a href={`/session/${r.session_id}`} style={{ color: 'var(--teal)' }}>session</a></>}
                     </div>
                   </div>
