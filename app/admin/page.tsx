@@ -32,7 +32,7 @@ type SessionRow = {
   id: string; seeker_id: string; listener_id: string; session_type: string; duration_mins: number
   amount_held: number; platform_fee?: number; status: string; is_free_trial: boolean; started_at: string | null; ended_at?: string | null
   crisis_flagged?: boolean; crisis_flagged_at?: string | null; created_at?: string
-  seeker?: { name?: string }; listener?: { name?: string }
+  seeker?: { name?: string; phone?: string }; listener?: { name?: string; phone?: string }
 }
 type TranscriptMsg = { id: string; sender_id: string; content: string; created_at: string; is_flagged?: boolean }
 type ReportRow = {
@@ -350,6 +350,7 @@ export default function AdminPage() {
   // applies across ALL pages, not just the 50 rows in memory.
   const [sessionsSort, setSessionsSort] = useState<SortDir>('desc')
   const [sessionsSortBy, setSessionsSortBy] = useState<'created_at' | 'amount'>('created_at')
+  const [sessionsSearch, setSessionsSearch] = useState('')
   // Sessions where listener was never credited (credit_wallet failed at settlement time)
   const [unsettledIds, setUnsettledIds] = useState<Set<string>>(new Set())
   const [fixingSettlement, setFixingSettlement] = useState<string | null>(null)
@@ -484,9 +485,10 @@ export default function AdminPage() {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const SESSION_PAGE_SIZE = 50
-  const loadSessions = useCallback(async (st = sessionsStatus, sort = sessionsSort, pg = sessionsPage, sortBy = sessionsSortBy) => {
+  const loadSessions = useCallback(async (st = sessionsStatus, sort = sessionsSort, pg = sessionsPage, sortBy = sessionsSortBy, search = sessionsSearch) => {
     setSessionsLoading(true)
     const params = new URLSearchParams({ status: st !== 'all' ? st : '', sort, page: String(pg), sortBy })
+    if (search.trim()) params.set('search', search.trim())
     const [sessRes, unsettledRes] = await Promise.all([
       fetch(`/api/admin/sessions?${params}`, { headers: adminHeaders() }).catch(() => null),
       fetch('/api/admin/sessions/unsettled', { headers: adminHeaders() }).catch(() => null),
@@ -503,7 +505,7 @@ export default function AdminPage() {
       setUnsettledIds(new Set((u.unsettled ?? []).map((s: { id: string }) => s.id)))
     }
     setSessionsLoading(false)
-  }, [sessionsStatus, sessionsSort, sessionsPage, sessionsSortBy]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sessionsStatus, sessionsSort, sessionsPage, sessionsSortBy, sessionsSearch]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadTranscript = useCallback(async (session: SessionRow) => {
     setTranscriptSession(session)
@@ -1623,17 +1625,35 @@ export default function AdminPage() {
                 ⚠️ {unsettledIds.size} session{unsettledIds.size > 1 ? 's' : ''} where the listener was never credited (credit_wallet failed). Look for <strong>⚠️ Fix settlement</strong> buttons below.
               </div>
             )}
+            <div style={{ marginBottom: 10 }}>
+              <input
+                type="search"
+                placeholder="Search by listener or seeker name / phone…"
+                value={sessionsSearch}
+                onChange={e => {
+                  const v = e.target.value
+                  setSessionsSearch(v)
+                  setSessionsPage(0)
+                  // Debounce: fire after 400 ms of no typing
+                  clearTimeout((window as Window & { _sessSearchTimer?: ReturnType<typeof setTimeout> })._sessSearchTimer)
+                  ;(window as Window & { _sessSearchTimer?: ReturnType<typeof setTimeout> })._sessSearchTimer = setTimeout(() => {
+                    loadSessions(sessionsStatus, sessionsSort, 0, sessionsSortBy, v)
+                  }, 400)
+                }}
+                style={{ width: '100%', padding: '9px 14px', borderRadius: 10, border: '1.5px solid #D5EEF6', fontSize: 14, fontFamily: 'inherit', outline: 'none' }}
+              />
+            </div>
             <div className="filter-row">
               {(['all', 'active', 'completed', 'cancelled'] as const).map(s => (
                 <button
                   key={s}
                   className={`filter-btn${sessionsStatus === s ? ' active' : ''}`}
-                  onClick={() => { setSessionsStatus(s); setSessionsPage(0); loadSessions(s, sessionsSort, 0, sessionsSortBy) }}
+                  onClick={() => { setSessionsStatus(s); setSessionsPage(0); loadSessions(s, sessionsSort, 0, sessionsSortBy, sessionsSearch) }}
                 >
                   {s.charAt(0).toUpperCase() + s.slice(1)}
                 </button>
               ))}
-              <button className="btn btn-teal" style={{ marginLeft: 'auto' }} onClick={() => { setSessionsPage(0); loadSessions(sessionsStatus, sessionsSort, 0, sessionsSortBy) }}>Refresh</button>
+              <button className="btn btn-teal" style={{ marginLeft: 'auto' }} onClick={() => { setSessionsPage(0); loadSessions(sessionsStatus, sessionsSort, 0, sessionsSortBy, sessionsSearch) }}>Refresh</button>
             </div>
             {sessionsLoading ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -1653,7 +1673,7 @@ export default function AdminPage() {
                         onClick={() => {
                           const next: SortDir = sessionsSortBy === 'created_at' ? (sessionsSort === 'desc' ? 'asc' : 'desc') : 'desc'
                           setSessionsSort(next); setSessionsSortBy('created_at'); setSessionsPage(0)
-                          loadSessions(sessionsStatus, next, 0, 'created_at')
+                          loadSessions(sessionsStatus, next, 0, 'created_at', sessionsSearch)
                         }}
                       >
                         When{sessionsSortBy === 'created_at' ? arrow(sessionsSort) : ' ⇅'}
@@ -1668,7 +1688,7 @@ export default function AdminPage() {
                         onClick={() => {
                           const next: SortDir = sessionsSortBy === 'amount' ? (sessionsSort === 'desc' ? 'asc' : 'desc') : 'desc'
                           setSessionsSort(next); setSessionsSortBy('amount'); setSessionsPage(0)
-                          loadSessions(sessionsStatus, next, 0, 'amount')
+                          loadSessions(sessionsStatus, next, 0, 'amount', sessionsSearch)
                         }}
                       >
                         Amount{sessionsSortBy === 'amount' ? arrow(sessionsSort) : ' ⇅'}
@@ -1681,8 +1701,14 @@ export default function AdminPage() {
                     {sessions.map((s: SessionRow) => (
                       <tr key={s.id} style={s.crisis_flagged ? { background: '#FFF0F0' } : undefined}>
                         <td style={{ color: 'var(--gray)', fontSize: 12 }}>{fmtDate(s.created_at)}</td>
-                        <td>{s.seeker?.name || s.seeker_id.slice(0, 8) + '…'}</td>
-                        <td>{s.listener?.name || s.listener_id.slice(0, 8) + '…'}</td>
+                        <td>
+                          <div>{s.seeker?.name || s.seeker_id.slice(0, 8) + '…'}</div>
+                          {s.seeker?.phone && <div style={{ fontSize: 11, color: 'var(--gray)' }}>{s.seeker.phone}</div>}
+                        </td>
+                        <td>
+                          <div>{s.listener?.name || s.listener_id.slice(0, 8) + '…'}</div>
+                          {s.listener?.phone && <div style={{ fontSize: 11, color: 'var(--gray)' }}>{s.listener.phone}</div>}
+                        </td>
                         <td><span className="badge badge-teal">{s.session_type}</span></td>
                         <td>{s.duration_mins} min</td>
                         <td>
@@ -1755,7 +1781,7 @@ export default function AdminPage() {
                   <button
                     className="btn btn-gray"
                     disabled={sessionsPage === 0}
-                    onClick={() => { const p = sessionsPage - 1; setSessionsPage(p); loadSessions(sessionsStatus, sessionsSort, p, sessionsSortBy) }}
+                    onClick={() => { const p = sessionsPage - 1; setSessionsPage(p); loadSessions(sessionsStatus, sessionsSort, p, sessionsSortBy, sessionsSearch) }}
                   >← Prev</button>
                   <span>
                     {sessionsPage * SESSION_PAGE_SIZE + 1}–{Math.min((sessionsPage + 1) * SESSION_PAGE_SIZE, sessionsTotal)} of {sessionsTotal}
@@ -1763,7 +1789,7 @@ export default function AdminPage() {
                   <button
                     className="btn btn-gray"
                     disabled={(sessionsPage + 1) * SESSION_PAGE_SIZE >= sessionsTotal}
-                    onClick={() => { const p = sessionsPage + 1; setSessionsPage(p); loadSessions(sessionsStatus, sessionsSort, p, sessionsSortBy) }}
+                    onClick={() => { const p = sessionsPage + 1; setSessionsPage(p); loadSessions(sessionsStatus, sessionsSort, p, sessionsSortBy, sessionsSearch) }}
                   >Next →</button>
                 </div>
               )}
