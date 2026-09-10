@@ -195,6 +195,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/alternatives-to-therapy-india`,    lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/feeling-lonely-in-india`,          lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/our-story`,                        lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.8 },
+    // Competitor-alternative pages — intercepts high-intent searchers who already
+    // know a competing product and are looking for something better
+    { url: `${base}/yourdost-alternative`,             lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/wysa-alternative`,                 lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
+    // Condition / emotion landing pages — some of the highest-volume mental-health
+    // searches in India; positioned as peer support, not clinical treatment
+    { url: `${base}/depression-support-india`,         lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/feeling-overwhelmed-india`,        lastModified: d(TODAY),        changeFrequency: 'weekly',  priority: 0.95 },
+    // Natural-language seeker queries — typed before the person knows the
+    // clinical vocabulary; often the first touchpoint in the funnel
+    { url: `${base}/talk-about-my-problems-online`,    lastModified: d(TODAY),        changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/peer-support-online-india`,        lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
     // Resources hub + all resource pages
     // NOTE: `loneliness-statistics-india` is intentionally NOT hardcoded here —
     // it lives in RESOURCES (resources-data.ts), so the .map below already emits

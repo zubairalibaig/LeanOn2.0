@@ -1173,8 +1173,11 @@ function SessionContent() {
                   : rating > 0 ? 'Submit & finish →' : 'Skip & finish →'}
             </button>
             {userId !== listenerId && (
-              <a href="/browse" style={{display:'block',marginTop:16,fontFamily:'Nunito,sans-serif',fontSize:14,fontWeight:700,color:'var(--teal)'}}>
-                Book another session →
+              <a
+                href={listenerId ? `/listener/${listenerId}` : '/browse'}
+                style={{display:'block',marginTop:16,fontFamily:'Nunito,sans-serif',fontSize:14,fontWeight:700,color:'var(--teal)'}}
+              >
+                {listenerId ? `Book another session with ${resolvedListenerName} →` : 'Book another session →'}
               </a>
             )}
             {listenerId && (

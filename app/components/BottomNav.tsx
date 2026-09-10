@@ -52,7 +52,47 @@ export default function BottomNav() {
     pathname.startsWith('/our-story') ||
     pathname.startsWith('/why-leanon') ||
     pathname.startsWith('/how-leanon-works') ||
-    pathname.startsWith('/is-leanon-safe')
+    pathname.startsWith('/is-leanon-safe') ||
+    // SEO / marketing landing pages — these are seeker-acquisition pages
+    // and must not show the authenticated app nav bar
+    pathname.startsWith('/astrotalk-alternative') ||
+    pathname.startsWith('/relationship-advice-online-india') ||
+    pathname.startsWith('/talk-to-real-person-online-india') ||
+    pathname.startsWith('/loneliness-support-india') ||
+    pathname.startsWith('/for-women') ||
+    pathname.startsWith('/i-need-someone-to-talk-to') ||
+    pathname.startsWith('/need-to-vent-right-now') ||
+    pathname.startsWith('/vent-to-someone-online') ||
+    pathname.startsWith('/having-a-bad-day') ||
+    pathname.startsWith('/just-had-a-fight') ||
+    pathname.startsWith('/talk-to-someone-not-astrologer') ||
+    pathname.startsWith('/talk-to-someone-right-now') ||
+    pathname.startsWith('/online-counseling-india') ||
+    pathname.startsWith('/online-counselling-india') ||
+    pathname.startsWith('/cant-afford-therapy-india') ||
+    pathname.startsWith('/chat-with-real-person') ||
+    pathname.startsWith('/ai-chatbot-alternative') ||
+    pathname.startsWith('/earn-by-listening') ||
+    pathname.startsWith('/i-need-professional-help-india') ||
+    pathname.startsWith('/someone-to-lean-on') ||
+    pathname.startsWith('/talk-to-stranger-online-india') ||
+    pathname.startsWith('/daily-check-in') ||
+    pathname.startsWith('/feeling/') ||
+    pathname === '/feeling' ||
+    pathname.startsWith('/feeling-lonely') ||
+    pathname.startsWith('/glossary') ||
+    pathname.startsWith('/press') ||
+    pathname.startsWith('/chennai') ||
+    pathname.startsWith('/pune') ||
+    pathname.startsWith('/kolkata') ||
+    pathname.startsWith('/jaipur') ||
+    pathname.startsWith('/ahmedabad') ||
+    pathname.startsWith('/yourdost-alternative') ||
+    pathname.startsWith('/wysa-alternative') ||
+    pathname.startsWith('/depression-support-india') ||
+    pathname.startsWith('/peer-support-online-india') ||
+    pathname.startsWith('/talk-about-my-problems-online') ||
+    pathname.startsWith('/feeling-overwhelmed-india')
 
   if (shouldHide) return null
 
