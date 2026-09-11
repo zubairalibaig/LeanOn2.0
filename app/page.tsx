@@ -55,27 +55,24 @@ const reviewSchema = {
   review: [
     {
       '@type': 'Review',
-      reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5' },
-      name: 'Finally someone who truly understood',
+      reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5', worstRating: '1' },
       reviewBody: 'I was dreading another sleepless night. LeanOn connected me with someone who just got it. No judgment, no advice I didn\'t ask for. Just someone who listened.',
       author: { '@type': 'Person', name: 'Priya M.' },
-      locationCreated: { '@type': 'City', name: 'Bengaluru' },
+      datePublished: '2026-07-15',
     },
     {
       '@type': 'Review',
-      reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5' },
-      name: 'Exactly what a founder needs',
+      reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5', worstRating: '1' },
       reviewBody: 'As a founder going through a hard patch I felt completely alone. Talking to someone who survived their own startup failure was exactly what I needed.',
       author: { '@type': 'Person', name: 'Arjun K.' },
-      locationCreated: { '@type': 'City', name: 'Mumbai' },
+      datePublished: '2026-06-28',
     },
     {
       '@type': 'Review',
-      reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5' },
-      name: 'More affordable and honest than anything else',
+      reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5', worstRating: '1' },
       reviewBody: 'More affordable and more honest than anything else I\'ve tried. I\'ve booked 4 sessions now and each one helped.',
       author: { '@type': 'Person', name: 'Sneha R.' },
-      locationCreated: { '@type': 'City', name: 'Hyderabad' },
+      datePublished: '2026-08-03',
     },
   ],
 }
