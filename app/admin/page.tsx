@@ -1750,17 +1750,49 @@ export default function AdminPage() {
                           {s.listener?.phone && <div style={{ fontSize: 11, color: 'var(--gray)' }}>{s.listener.phone}</div>}
                         </td>
                         <td><span className="badge badge-teal">{s.session_type}</span></td>
-                        <td>{s.duration_mins} min</td>
+                        <td>{(() => {
+                          // Show actual elapsed time for completed/expired sessions if we have both timestamps.
+                          // duration_mins is the BOOKED time; actual run-time is derived from started_at/ended_at.
+                          if (s.started_at && s.ended_at && (s.status === 'completed' || s.status === 'expired')) {
+                            const elapsedMs = new Date(s.ended_at).getTime() - new Date(s.started_at).getTime()
+                            const actualMins = Math.max(0, Math.ceil(elapsedMs / 60000))
+                            const billedMins = Math.min(s.duration_mins, actualMins)
+                            if (billedMins < s.duration_mins) {
+                              return (
+                                <span title={`Booked: ${s.duration_mins} min — Actual: ${billedMins} min`}>
+                                  <span style={{ color: 'var(--orange)', fontWeight: 600 }}>{billedMins}</span>
+                                  <span style={{ color: 'var(--gray)', fontSize: 11 }}>/{s.duration_mins} min</span>
+                                </span>
+                              )
+                            }
+                          }
+                          return <span>{s.duration_mins} min</span>
+                        })()}</td>
                         <td>
                           {s.is_free_trial
                             ? <span className="badge badge-gray">Free</span>
                             : (() => {
                                 const fee = s.platform_fee ?? 0
-                                const listenerEarning = s.amount_held - fee
+                                // If we have timestamps, compute actual billed amount from pro-rated logic.
+                                // Otherwise fall back to amount_held (which is the full booked amount).
+                                let listenerEarning = s.amount_held - fee
+                                let billedMins = s.duration_mins
+                                let isEarlyExit = false
+                                if (s.started_at && s.ended_at && (s.status === 'completed' || s.status === 'expired')) {
+                                  const elapsedMs = new Date(s.ended_at).getTime() - new Date(s.started_at).getTime()
+                                  const actualMins = Math.max(0, Math.ceil(elapsedMs / 60000))
+                                  billedMins = Math.min(s.duration_mins, actualMins)
+                                  if (billedMins < s.duration_mins && billedMins > 0) {
+                                    isEarlyExit = true
+                                    listenerEarning = Math.floor((s.amount_held - fee) * billedMins / s.duration_mins)
+                                  }
+                                }
+                                const refund = isEarlyExit ? Math.max(0, s.amount_held - listenerEarning - fee) : 0
                                 return (
-                                  <span title={`Seeker paid ₹${s.amount_held} · Listener earned ₹${listenerEarning} · Platform fee ₹${fee}`}>
+                                  <span title={`Seeker held ₹${s.amount_held}${isEarlyExit ? ` · ${billedMins}/${s.duration_mins} min used · Listener earned ₹${listenerEarning} · Refund ₹${refund}` : ` · Listener earned ₹${listenerEarning}`} · Platform fee ₹${fee}`}>
                                     ₹{listenerEarning}
                                     {fee > 0 && <span style={{ fontSize: 10, color: 'var(--gray)', marginLeft: 3 }}>+₹{fee}</span>}
+                                    {isEarlyExit && <span style={{ fontSize: 10, color: 'var(--orange)', marginLeft: 3 }}>↩₹{refund}</span>}
                                   </span>
                                 )
                               })()
@@ -1850,7 +1882,14 @@ export default function AdminPage() {
                     {transcriptSession.seeker?.name || 'Seeker'} ↔ {transcriptSession.listener?.name || 'Listener'}
                   </div>
                   <div className="meta-text">
-                    {fmtDateTime(transcriptSession.created_at)} · {transcriptSession.duration_mins} min {transcriptSession.session_type}
+                    {fmtDateTime(transcriptSession.created_at)} · {(() => {
+                      if (transcriptSession.started_at && transcriptSession.ended_at) {
+                        const elapsedMs = new Date(transcriptSession.ended_at).getTime() - new Date(transcriptSession.started_at).getTime()
+                        const billed = Math.min(transcriptSession.duration_mins, Math.max(0, Math.ceil(elapsedMs / 60000)))
+                        if (billed < transcriptSession.duration_mins) return `${billed}/${transcriptSession.duration_mins}`
+                      }
+                      return transcriptSession.duration_mins
+                    })()} min {transcriptSession.session_type}
                     {transcriptSession.is_free_trial ? ' · Free trial' : ` · ₹${transcriptSession.amount_held - (transcriptSession.platform_fee ?? 0)} listener + ₹${transcriptSession.platform_fee ?? 0} fee`}
                   </div>
                 </div>
