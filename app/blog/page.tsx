@@ -42,11 +42,14 @@ import { post as momBurnoutSignsPost } from './posts/mom-burnout-signs-india'
 import { post as menLonelinessPost } from './posts/men-loneliness-india'
 import { post as fearOfMarriagePost } from './posts/fear-of-marriage-india'
 import { post as adultingLonelinessPost } from './posts/adulting-loneliness-india'
+import { post as astrotalkExpensivePost } from './posts/astrotalk-expensive-alternative'
+import { post as talkRealPersonPost } from './posts/talk-to-real-person-not-astrologer'
 
 export const dynamic = 'force-static'
 
 // All posts — sorted newest first so Google and AI crawlers see fresh content at top
 const allPosts = [
+  astrotalkExpensivePost, talkRealPersonPost,
   menLonelinessPost, fearOfMarriagePost, adultingLonelinessPost,
   marriedButLonelyPost, workingMothersPost, momBurnoutSignsPost,
   chatgptMentalHealthPost, cantAffordTherapyPost, familyPressurePost, lonelinessNewCityPost,
