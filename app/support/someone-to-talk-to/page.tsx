@@ -315,6 +315,11 @@ export default function SomeoneToTalkToPage() {
             <a href="/support/anxiety" className="related-link">Anxiety Support</a>
             <a href="/support/relationship-stress" className="related-link">Relationship Stress</a>
             <a href="/support/grief" className="related-link">Grief Support</a>
+            <a href="/love-problems-india" className="related-link">Love problems</a>
+            <a href="/marriage-problems-india" className="related-link">Marriage problems</a>
+            <a href="/talk-about-my-problems-online" className="related-link">Talk about my problems</a>
+            <a href="/anonymous-chat-india" className="related-link">Anonymous chat India</a>
+            <a href="/pay-to-talk-online-india" className="related-link">Pay to talk online</a>
             <a href="/faq" className="related-link">FAQ</a>
             <a href="/browse" className="related-link">Browse All Listeners</a>
           </div>

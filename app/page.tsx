@@ -341,16 +341,16 @@ export default function Home() {
           <p className="ss">Pick what feels closest — and find someone who gets it.</p>
           <div className="topic-grid">
             {[
-              {id:'loneliness',i:'🌙',l:'Loneliness',s:'the quiet after everyone’s asleep'},
-              {id:'stress',i:'💼',l:'Work stress',s:'when the day just won’t switch off'},
-              {id:'career',i:'🧭',l:'Career confusion',s:'not sure which way is forward'},
-              {id:'relationships',i:'💬',l:'Relationships',s:'what you can’t say to them, say here'},
-              {id:'grief',i:'🌿',l:'Grief & loss',s:'carrying someone no longer here'},
-              {id:'students',i:'📚',l:'Student pressure',s:'the weight of everyone’s expectations'},
-              {id:'startup',i:'🚀',l:'Startup journey',s:'the loneliness behind the highlight reel'},
-              {id:'general',i:'☕',l:'Just need to talk',s:'no reason needed — just talk'},
+              {id:’loneliness’,i:’🌙’,l:’Loneliness’,s:’the quiet after everyone’s asleep’},
+              {id:’relationships’,i:’💕’,l:’Love & relationship problems’,s:’what you can’t say to them, say here’,href:’/love-problems-india’},
+              {id:’stress’,i:’💼’,l:’Work & money stress’,s:’when the day just won’t switch off’},
+              {id:’relationships’,i:’💍’,l:’Marriage & family’,s:’the weight you carry alone at home’,href:’/marriage-problems-india’},
+              {id:’grief’,i:’🌿’,l:’Grief & loss’,s:’carrying someone no longer here’},
+              {id:’students’,i:’📚’,l:’Student pressure’,s:’the weight of everyone’s expectations’},
+              {id:’career’,i:’🧭’,l:’Career confusion’,s:’not sure which way is forward’},
+              {id:’general’,i:’☕’,l:’Just need to talk’,s:’no reason needed — just talk’},
             ].map(t=>(
-              <a key={t.id} href={`/browse?topic=${t.id}`} className="tc">
+              <a key={t.l} href={(t as {href?:string}).href ?? `/browse?topic=${t.id}`} className="tc">
                 <span className="tc-ico">{t.i}</span>
                 <span className="tc-body">
                   <span className="tc-label">{t.l}</span>
@@ -589,6 +589,20 @@ export default function Home() {
             <a href="/blog/no-one-to-talk-to">No one to talk to?</a>
             <a href="/blog/how-to-stop-overthinking-at-night">Stop overthinking at night</a>
             <a href="/blog/why-people-call-astrologers-to-talk">Why people call astrologers just to talk</a>
+            <a href="/love-problems-india">Love problems India</a>
+            <a href="/marriage-problems-india">Marriage problems India</a>
+            <a href="/pay-to-talk-online-india">Pay to talk online India</a>
+            <a href="/anonymous-chat-india">Anonymous chat India</a>
+            <a href="/late-night-support-india">Late night support India</a>
+            <a href="/astrotalk-alternative">AstroTalk alternative</a>
+            <a href="/yourdost-alternative">YourDOST alternative</a>
+            <a href="/wysa-alternative">Wysa alternative</a>
+            <a href="/peer-support-online-india">Peer support online India</a>
+            <a href="/depression-support-india">Depression support India</a>
+            <a href="/talk-about-my-problems-online">Talk about my problems online</a>
+            <a href="/feeling-overwhelmed-india">Feeling overwhelmed India</a>
+            <a href="/blog/astrotalk-expensive-alternative">Is AstroTalk worth the cost?</a>
+            <a href="/blog/talk-to-real-person-not-astrologer">Talk to a real person, not an astrologer</a>
           </div>
           <div className="fli" style={{marginTop:4,fontSize:12,opacity:0.75}}>
             <a href="/blog/what-does-lean-on-mean">What does lean on mean</a>

@@ -307,7 +307,12 @@ export default function EmotionalSupportPage() {
             <a href="/support/anonymous-support" className="related-link">Anonymous Support</a>
             <a href="/support/grief" className="related-link">Grief &amp; Loss</a>
             <a href="/support/relationship-stress" className="related-link">Relationship Stress</a>
-            <a href="/support/founder-burnout" className="related-link">Founder Burnout</a>
+            <a href="/love-problems-india" className="related-link">Love problems India</a>
+            <a href="/marriage-problems-india" className="related-link">Marriage problems India</a>
+            <a href="/depression-support-india" className="related-link">Depression support India</a>
+            <a href="/peer-support-online-india" className="related-link">Peer support online</a>
+            <a href="/talk-about-my-problems-online" className="related-link">Talk about my problems</a>
+            <a href="/yourdost-alternative" className="related-link">YourDOST alternative</a>
             <a href="/browse" className="related-link">Browse All Listeners</a>
           </div>
         </div>
