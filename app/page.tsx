@@ -341,16 +341,16 @@ export default function Home() {
           <p className="ss">Pick what feels closest — and find someone who gets it.</p>
           <div className="topic-grid">
             {[
-              {id:’loneliness’,i:’🌙’,l:’Loneliness’,s:’the quiet after everyone’s asleep’},
-              {id:’relationships’,i:’💕’,l:’Love & relationship problems’,s:’what you can’t say to them, say here’,href:’/love-problems-india’},
-              {id:’stress’,i:’💼’,l:’Work & money stress’,s:’when the day just won’t switch off’},
-              {id:’relationships’,i:’💍’,l:’Marriage & family’,s:’the weight you carry alone at home’,href:’/marriage-problems-india’},
-              {id:’grief’,i:’🌿’,l:’Grief & loss’,s:’carrying someone no longer here’},
-              {id:’students’,i:’📚’,l:’Student pressure’,s:’the weight of everyone’s expectations’},
-              {id:’career’,i:’🧭’,l:’Career confusion’,s:’not sure which way is forward’},
-              {id:’general’,i:’☕’,l:’Just need to talk’,s:’no reason needed — just talk’},
+              {id:'loneliness',   i:'🌙', l:'Loneliness',                    s:"the quiet after everyone's asleep"},
+              {id:'relationships',i:'💕', l:'Love & relationship problems',   s:"what you can't say to them, say here",  href:'/love-problems-india'},
+              {id:'stress',       i:'💼', l:'Work & money stress',            s:"when the day just won't switch off"},
+              {id:'relationships',i:'💍', l:'Marriage & family',              s:'the weight you carry alone at home',    href:'/marriage-problems-india'},
+              {id:'grief',        i:'🌿', l:'Grief & loss',                   s:'carrying someone no longer here'},
+              {id:'students',     i:'📚', l:'Student pressure',               s:"the weight of everyone's expectations"},
+              {id:'career',       i:'🧭', l:'Career confusion',               s:'not sure which way is forward'},
+              {id:'general',      i:'☕', l:'Just need to talk',              s:'no reason needed — just talk'},
             ].map(t=>(
-              <a key={t.l} href={(t as {href?:string}).href ?? `/browse?topic=${t.id}`} className="tc">
+              <a key={t.l} href={'href' in t ? (t as {href:string}).href : `/browse?topic=${t.id}`} className="tc">
                 <span className="tc-ico">{t.i}</span>
                 <span className="tc-body">
                   <span className="tc-label">{t.l}</span>
