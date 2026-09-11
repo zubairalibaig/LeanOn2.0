@@ -207,6 +207,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // clinical vocabulary; often the first touchpoint in the funnel
     { url: `${base}/talk-about-my-problems-online`,    lastModified: d(TODAY),        changeFrequency: 'weekly',  priority: 0.95 },
     { url: `${base}/peer-support-online-india`,        lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    // AstroTalk competition cluster — intercepts searchers using astrology apps
+    // for emotional support (love/marriage/relationship problems, late-night chat,
+    // pay-per-minute chat). AstroTalk's top keywords reframed as peer support.
+    { url: `${base}/pay-to-talk-online-india`,         lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/love-problems-india`,              lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/marriage-problems-india`,          lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/anonymous-chat-india`,             lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/late-night-support-india`,         lastModified: d(TODAY),        changeFrequency: 'weekly',  priority: 0.97 },
+    // Blog: AstroTalk comparison posts
+    { url: `${base}/blog/astrotalk-expensive-alternative`,      lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/blog/talk-to-real-person-not-astrologer`,   lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
     // Resources hub + all resource pages
     // NOTE: `loneliness-statistics-india` is intentionally NOT hardcoded here —
     // it lives in RESOURCES (resources-data.ts), so the .map below already emits
