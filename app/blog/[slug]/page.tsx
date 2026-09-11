@@ -45,6 +45,9 @@ import { post as fearOfMarriagePost } from '../posts/fear-of-marriage-india'
 import { post as adultingLonelinessPost } from '../posts/adulting-loneliness-india'
 import { post as astrotalkExpensivePost } from '../posts/astrotalk-expensive-alternative'
 import { post as talkRealPersonPost } from '../posts/talk-to-real-person-not-astrologer'
+import { post as bestPeerAppsPost } from '../posts/best-peer-support-apps-india-2026'
+import { post as peerCounsellingGuidePost } from '../posts/peer-counselling-india-guide'
+import { post as mentalHealthCostPost } from '../posts/mental-health-support-cost-india'
 
 export const dynamic = 'force-static'
 
@@ -62,6 +65,7 @@ const allPosts = [
   marriedButLonelyPost, workingMothersPost, momBurnoutSignsPost,
   menLonelinessPost, fearOfMarriagePost, adultingLonelinessPost,
   astrotalkExpensivePost, talkRealPersonPost,
+  bestPeerAppsPost, peerCounsellingGuidePost, mentalHealthCostPost,
 ]
 
 function getPost(slug: string) {

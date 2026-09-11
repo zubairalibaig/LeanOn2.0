@@ -207,6 +207,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // clinical vocabulary; often the first touchpoint in the funnel
     { url: `${base}/talk-about-my-problems-online`,    lastModified: d(TODAY),        changeFrequency: 'weekly',  priority: 0.95 },
     { url: `${base}/peer-support-online-india`,        lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    // Peer support keyword cluster (Round 8) — "peer support" has no LeanOn
+    // result on Google; highest-priority SEO gap. Also targets AI citation.
+    { url: `${base}/peer-support`,                     lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/peer-counselling-india`,           lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/mental-health-support-india`,      lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/best-peer-support-app-india`,      lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.97 },
     // AstroTalk competition cluster — intercepts searchers using astrology apps
     // for emotional support (love/marriage/relationship problems, late-night chat,
     // pay-per-minute chat). AstroTalk's top keywords reframed as peer support.
@@ -218,6 +224,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Blog: AstroTalk comparison posts
     { url: `${base}/blog/astrotalk-expensive-alternative`,      lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
     { url: `${base}/blog/talk-to-real-person-not-astrologer`,   lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    // Round 8: peer support keyword cluster blog posts
+    { url: `${base}/blog/best-peer-support-apps-india-2026`,   lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/blog/peer-counselling-india-guide`,         lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/blog/mental-health-support-cost-india`,     lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
     // Resources hub + all resource pages
     // NOTE: `loneliness-statistics-india` is intentionally NOT hardcoded here —
     // it lives in RESOURCES (resources-data.ts), so the .map below already emits

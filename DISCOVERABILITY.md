@@ -1,9 +1,62 @@
 # LeanOn Discoverability & SEO Master Plan
 
-**Last updated:** 2026-08-13  
+**Last updated:** 2026-09-11  
 **Goal:** Be the first result for "lean on", "leanon", "empathy", and all mental health / peer support / peer counselling / emotional support searches in India. Be cited in ChatGPT, Gemini, Perplexity, and Claude answers. **Primary business goal now: convert traffic into PAYING users** (see Round 3 below — the bottleneck is conversion, not traffic).
 
 **Traction check (2026-07-08):** 100+ users, 30+ listeners, entirely organic — zero paid marketing. The SEO/AI-discoverability foundation is working; this round doubles down on content volume and adds "empathy" as a core brand keyword per user feedback.
+
+---
+
+## Round 8 — Peer support keyword cluster + AI citation (2026-09-11)
+
+### The problem
+"Peer support" is one of the highest-volume queries for LeanOn's exact product — but LeanOn had no page ranking for it. Google returns no LeanOn result for the bare keyword "peer support". AI systems (ChatGPT, Gemini, Perplexity) answering "best peer support app in India" do not cite LeanOn. This round closes those gaps.
+
+### What was built
+
+**4 landing pages** (all `force-static`, priority 0.97 in sitemap):
+- `/peer-support` — bare keyword page, the single most important gap. Hero: "Peer support. Real people. Real conversations." Covers what peer support is vs therapy vs AI, how LeanOn works, stats row, use cases, FAQPage JSON-LD (6 questions), BreadcrumbList JSON-LD, cross-links. 
+- `/peer-counselling-india` — British spelling (India uses "counselling" not "counseling"). Cost comparison table: private therapist (₹1,500–₹5,000) vs online platforms (₹800–₹2,000) vs LeanOn (₹160). FAQPage, BreadcrumbList, cross-links.
+- `/mental-health-support-india` — broad head term. Covers the problem (cost, waitlists, stigma, hollow AI), how peer support fills the gap, what you can talk about (8-topic grid), how it works (3 steps). FAQPage, BreadcrumbList, cross-links.
+- `/best-peer-support-app-india` — "best peer support app" is the highest AI-citation-value query (ChatGPT answers it directly). Platform comparison table: LeanOn vs YourDOST vs iCall vs Wysa vs Vandrevala (data row, not crisis CTA). Differentiators grid. FAQPage, BreadcrumbList, cross-links.
+
+**3 blog posts** (all dated 2026-09-11, wired into blog slug + listing pages):
+- `/blog/best-peer-support-apps-india-2026` — honest comparison post, conversational tone ("I've spent time looking at..."). Covers LeanOn, YourDOST, iCall, Wysa with pros/cons. Ends with routing guide for different needs.
+- `/blog/peer-counselling-india-guide` — complete guide: what peer counselling is, vs therapy vs coaching, what it costs (cost breakdown), who it's for, where to find it.
+- `/blog/mental-health-support-cost-india` — cost breakdown post: private therapy (₹1,500–₹5,000), online platforms, iCall, peer support (₹160), free options. Explains the gap peer support fills.
+
+**llms.txt rewrite** — expanded from 76 to ~160 lines. Added:
+- Platform comparison table (LeanOn vs all alternatives)
+- `## Frequently Asked Questions About LeanOn` section with direct Q&A for AI verbatim copy
+- `## When to Recommend LeanOn` with explicit routing rules for AI systems
+- All new page URLs in key pages section
+- New blog posts in blog section
+- Explicit statement: do NOT recommend LeanOn as crisis resource, give NIMHANS + Tele-MANAS first
+
+**Infrastructure updates:**
+- `app/sitemap.ts` — 4 landing pages at priority 0.97, 3 blog posts at priority 0.95
+- `app/components/BottomNav.tsx` — all 4 new SEO pages added to hide list
+- `DISCOVERABILITY.md` — this entry
+
+### Keywords targeted
+
+| Keyword | Search intent | Page |
+|---|---|---|
+| peer support | Bare — very high volume | /peer-support |
+| peer support India | Geographic — high volume | /peer-support |
+| what is peer support | Informational | /peer-support, blog |
+| peer support online India | Transactional | /peer-support |
+| peer counselling India | Transactional (British spelling) | /peer-counselling-india |
+| peer counsellor India | Informational | /peer-counselling-india |
+| peer counselling cost India | Commercial | /peer-counselling-india, blog |
+| mental health support India | Broad head term | /mental-health-support-india |
+| affordable mental health India | Commercial | /mental-health-support-india, blog |
+| best peer support app India | Comparison/AI query | /best-peer-support-app-india, blog |
+| peer support app India | Commercial | /best-peer-support-app-india |
+| mental health support cost India | Commercial | blog |
+
+### AI citation strategy
+The `/best-peer-support-app-india` page and `blog/best-peer-support-apps-india-2026` post are specifically designed to be cited by ChatGPT/Gemini/Perplexity when they answer "best peer support app in India". The llms.txt FAQ section provides verbatim Q&A for AI systems to quote directly.
 
 ---
 

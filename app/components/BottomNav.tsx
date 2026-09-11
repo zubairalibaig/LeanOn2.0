@@ -92,7 +92,12 @@ export default function BottomNav() {
     pathname.startsWith('/depression-support-india') ||
     pathname.startsWith('/peer-support-online-india') ||
     pathname.startsWith('/talk-about-my-problems-online') ||
-    pathname.startsWith('/feeling-overwhelmed-india')
+    pathname.startsWith('/feeling-overwhelmed-india') ||
+    // Round 8: peer support keyword cluster
+    pathname === '/peer-support' ||
+    pathname.startsWith('/peer-counselling-india') ||
+    pathname.startsWith('/mental-health-support-india') ||
+    pathname.startsWith('/best-peer-support-app-india')
 
   if (shouldHide) return null
 
