@@ -117,7 +117,15 @@ export default function BottomNav() {
     pathname.startsWith('/noida') ||
     pathname.startsWith('/gurgaon') ||
     pathname.startsWith('/chandigarh') ||
-    pathname.startsWith('/kochi')
+    pathname.startsWith('/kochi') ||
+    // Round 10: relationship & moment-specific landing pages
+    pathname.startsWith('/vent-about-relationship-india') ||
+    pathname.startsWith('/relationship-frustration-india') ||
+    pathname.startsWith('/partner-not-understanding-india') ||
+    pathname.startsWith('/morning-emotional-support-india') ||
+    pathname.startsWith('/after-fight-with-partner-india') ||
+    pathname.startsWith('/talk-during-commute-india') ||
+    pathname.startsWith('/relationship-advice-vs-venting-india')
 
   if (shouldHide) return null
 

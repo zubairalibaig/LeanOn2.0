@@ -249,6 +249,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/gurgaon`,                           lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/chandigarh`,                        lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/kochi`,                             lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.85 },
+    // Round 10: relationship & moment-specific landing pages
+    { url: `${base}/vent-about-relationship-india`,         lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/relationship-frustration-india`,        lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/partner-not-understanding-india`,       lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/morning-emotional-support-india`,       lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/after-fight-with-partner-india`,        lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/talk-during-commute-india`,             lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/relationship-advice-vs-venting-india`,  lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    // Round 10: 3 blog posts
+    { url: `${base}/blog/morning-fight-with-partner-india`,    lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/blog/venting-relationship-india`,          lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/blog/talk-to-someone-workday-india`,       lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
     // Round 9: 5 blog posts
     { url: `${base}/blog/best-mental-health-apps-india-2026`,             lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/blog/it-burnout-india-how-to-cope`,                   lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
