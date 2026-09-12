@@ -1,14 +1,14 @@
 import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'LeanOn — Peer Emotional Support India | Talk to Someone Now',
-  description: 'Talk to a trained peer listener in India, anonymously. Available 24/7. Connect with empathetic listeners for anxiety, loneliness, grief, and more.',
+  description: 'Had a fight. Need to vent. Going through something. Talk to a real peer listener in India — anonymous, no appointment, from ₹160. Not AI. Not a bot. A real person.',
   alternates: { canonical: 'https://www.leanon.app', languages: { 'en-IN': 'https://www.leanon.app' } },
   keywords: [
     'leanon', 'lean on', 'LeanOn', 'lean on app', 'leanon app India',
     'someone to lean on', 'peer support India', 'mental health India',
     'talk to someone India', 'emotional support India',
     'anonymous emotional support India', 'peer listener app India',
-'emotional support chat India',
+    'emotional support chat India',
     'anxiety help India', 'loneliness app India', 'burnout support', 'grief support India',
     'someone to talk to', 'mental health chat', 'online emotional support',
     'online listener India', 'peer support India',
@@ -17,10 +17,12 @@ export const metadata: Metadata = {
     'affordable online counselling India', 'cheaper than therapy India',
     'book a listening session India', 'online emotional support session India',
     'talk to someone right now', 'no one to talk to', 'someone to listen to me',
-    'how to stop overthinking at night', 'online counselling cost India',
+    'need to vent about relationship India', 'talk after a fight India',
+    'relationship fight support India', 'online counselling cost India',
     'chat with real person online India', 'talk to real human not AI',
     'AI chatbot alternative India', 'human listener not bot',
     'tired of talking to AI', 'ChatGPT alternative India',
+    'venting online India', 'need to vent India',
     'earn money by listening online India', 'paid listener job India',
   ],
 }
@@ -56,7 +58,7 @@ const reviewSchema = {
     {
       '@type': 'Review',
       reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5', worstRating: '1' },
-      reviewBody: 'I was dreading another sleepless night. LeanOn connected me with someone who just got it. No judgment, no advice I didn\'t ask for. Just someone who listened.',
+      reviewBody: 'Had a fight with my husband before he left for work. I was sitting at my desk unable to focus. Opened LeanOn, talked for 15 minutes, and I could actually breathe again. No judgment, no advice I didn\'t ask for. Just someone who listened.',
       author: { '@type': 'Person', name: 'Priya M.' },
       datePublished: '2026-07-15',
     },
@@ -324,9 +326,9 @@ export default function Home() {
 
       {/* HERO — flows with same gradient background */}
       <section className="hero">
-        <div className="hero-badge"><span>🌙</span><span>Available 24 / 7 — even at 2 AM</span></div>
-        <h1>Someone to<br /><span className="o">lean on,</span><br />anytime.</h1>
-        <p>Talk to a real peer listener in India who has been through what you&apos;re going through — loneliness, burnout, anxiety, grief, relationships. No appointments. No stigma. Available even at 2 AM.</p>
+        <div className="hero-badge"><span>🤝</span><span>Real people · Real conversations · In minutes</span></div>
+        <h1>Someone to<br /><span className="o">lean on,</span><br />right now.</h1>
+        <p>Had a fight. Going through something. Need to vent before you explode. Talk to a real peer listener in India — trained, anonymous, no appointment needed. Available now.</p>
         <div className="hero-btns">
           <a href="/auth" className="btn-primary">Start your 5-min chat</a>
           <a href="/browse" className="btn-outline">Browse peer listeners</a>
@@ -341,7 +343,7 @@ export default function Home() {
           <p className="ss">Pick what feels closest — and find someone who gets it.</p>
           <div className="topic-grid">
             {[
-              {id:'loneliness',   i:'🌙', l:'Loneliness',                    s:"the quiet after everyone's asleep"},
+              {id:'loneliness',   i:'😔', l:'Loneliness',                    s:"when you feel alone even with people around"},
               {id:'relationships',i:'💕', l:'Love & relationship problems',   s:"what you can't say to them, say here",  href:'/love-problems-india'},
               {id:'stress',       i:'💼', l:'Work & money stress',            s:"when the day just won't switch off"},
               {id:'relationships',i:'💍', l:'Marriage & family',              s:'the weight you carry alone at home',    href:'/marriage-problems-india'},

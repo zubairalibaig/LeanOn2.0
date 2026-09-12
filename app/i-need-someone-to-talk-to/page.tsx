@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'I Need Someone to Talk To Right Now | LeanOn India',
-  description: 'Need someone to talk to right now? LeanOn connects you with a real peer listener in India in minutes. Anonymous, no appointment, available at any hour — even 2 AM.',
+  description: 'Need someone to talk to right now? LeanOn connects you with a real peer listener in India in minutes. Had a fight, need to vent, going through something — anonymous, no appointment, available now.',
   keywords: [
     'i need someone to talk to right now', 'need someone to talk to India',
     'someone to talk to online India', 'I want to talk to someone India',
@@ -13,7 +13,8 @@ export const metadata: Metadata = {
     'need emotional support right now India', 'I want to talk about my feelings India',
     'find someone to talk to online India', 'someone to listen to me India',
     'talk to someone about my problems India', 'I need to vent right now',
-    'need a friend to talk to India',
+    'need a friend to talk to India', 'talk to someone after a fight India',
+    'need to vent about relationship India', 'talk to someone morning India',
   ],
   alternates: { canonical: 'https://www.leanon.app/i-need-someone-to-talk-to', languages: { 'en-IN': 'https://www.leanon.app/i-need-someone-to-talk-to' } },
   openGraph: {
