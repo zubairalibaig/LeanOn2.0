@@ -47,6 +47,9 @@ import { post as talkRealPersonPost } from './posts/talk-to-real-person-not-astr
 import { post as bestPeerAppsPost } from './posts/best-peer-support-apps-india-2026'
 import { post as peerCounsellingGuidePost } from './posts/peer-counselling-india-guide'
 import { post as mentalHealthCostPost } from './posts/mental-health-support-cost-india'
+import { post as morningFightPost } from './posts/morning-fight-with-partner-india'
+import { post as ventingRelationshipPost } from './posts/venting-relationship-india'
+import { post as talkWorkdayPost } from './posts/talk-to-someone-workday-india'
 
 export const dynamic = 'force-static'
 
@@ -65,6 +68,7 @@ const allPosts = [
   affordableTherapyPost, founderBurnoutPost, lonelinessJointFamilyPost, jointFamilyPost,
   peerVsTherapyPost, anonymousSupportPost, emotionalBurnoutPost, lonelinessAtNightPost,
   leanOnMeanPost, peerSupportPost, burnoutPost, lonelinessPost,
+  morningFightPost, ventingRelationshipPost, talkWorkdayPost,
 ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
 export const metadata: Metadata = {

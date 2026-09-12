@@ -48,6 +48,9 @@ import { post as talkRealPersonPost } from '../posts/talk-to-real-person-not-ast
 import { post as bestPeerAppsPost } from '../posts/best-peer-support-apps-india-2026'
 import { post as peerCounsellingGuidePost } from '../posts/peer-counselling-india-guide'
 import { post as mentalHealthCostPost } from '../posts/mental-health-support-cost-india'
+import { post as morningFightPost } from '../posts/morning-fight-with-partner-india'
+import { post as ventingRelationshipPost } from '../posts/venting-relationship-india'
+import { post as talkWorkdayPost } from '../posts/talk-to-someone-workday-india'
 import { post as bestMentalHealthApps2026Post } from '../posts/best-mental-health-apps-india-2026'
 import { post as itBurnoutPost } from '../posts/it-burnout-india-how-to-cope'
 import { post as nriMentalHealthPost } from '../posts/nri-mental-health-india-guide'
@@ -73,6 +76,7 @@ const allPosts = [
   bestPeerAppsPost, peerCounsellingGuidePost, mentalHealthCostPost,
   bestMentalHealthApps2026Post, itBurnoutPost, nriMentalHealthPost,
   relationshipCounsellingVsPeerPost, angerManagementPost,
+  morningFightPost, ventingRelationshipPost, talkWorkdayPost,
 ]
 
 function getPost(slug: string) {
