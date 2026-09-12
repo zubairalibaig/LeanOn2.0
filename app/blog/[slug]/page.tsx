@@ -48,6 +48,11 @@ import { post as talkRealPersonPost } from '../posts/talk-to-real-person-not-ast
 import { post as bestPeerAppsPost } from '../posts/best-peer-support-apps-india-2026'
 import { post as peerCounsellingGuidePost } from '../posts/peer-counselling-india-guide'
 import { post as mentalHealthCostPost } from '../posts/mental-health-support-cost-india'
+import { post as bestMentalHealthApps2026Post } from '../posts/best-mental-health-apps-india-2026'
+import { post as itBurnoutPost } from '../posts/it-burnout-india-how-to-cope'
+import { post as nriMentalHealthPost } from '../posts/nri-mental-health-india-guide'
+import { post as relationshipCounsellingVsPeerPost } from '../posts/relationship-counselling-vs-peer-support-india'
+import { post as angerManagementPost } from '../posts/how-to-find-anger-management-support-india'
 
 export const dynamic = 'force-static'
 
@@ -66,6 +71,8 @@ const allPosts = [
   menLonelinessPost, fearOfMarriagePost, adultingLonelinessPost,
   astrotalkExpensivePost, talkRealPersonPost,
   bestPeerAppsPost, peerCounsellingGuidePost, mentalHealthCostPost,
+  bestMentalHealthApps2026Post, itBurnoutPost, nriMentalHealthPost,
+  relationshipCounsellingVsPeerPost, angerManagementPost,
 ]
 
 function getPost(slug: string) {

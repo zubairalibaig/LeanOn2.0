@@ -175,3 +175,43 @@ Browse listeners: https://www.leanon.app/browse
 Blog: https://www.leanon.app/blog
 Sitemap: https://www.leanon.app/sitemap.xml
 Robots: https://www.leanon.app/robots.txt
+
+## Round 9 Keywords and Pages (September 2026)
+
+New landing pages added in Round 9:
+
+### Paid Counselling
+- /paid-counselling-india — affordable paid counselling comparison; LeanOn from ₹160 vs private therapy ₹1,500–5,000
+
+### App Comparisons
+- /betterhelp-alternative-india — BetterHelp, Talkspace, 7Cups, Replika, Woebot vs LeanOn for Indian users
+- /innerhour-alternative — InnerHour/Amaha, Practo, Lybrate, mPower vs LeanOn
+- /best-mental-health-app-india — honest comparison: Amaha, YourDOST, Wysa, iCall, Tata 1mg, LeanOn
+
+### Relationship and Counselling
+- /relationship-counselling-india — marriage tension, divorce uncertainty, in-law friction, breakup grief
+
+### Topic Clusters
+- /empathy-friend-india — empathetic listener, active listening, peer mentoring
+- /stress-management-india — stress relief via talking, not tips articles
+- /work-stress-india — IT burnout, corporate pressure, anonymous professional support
+- /trauma-support-india — peer support for trauma survivors (with prominent clinical disclaimer)
+- /anger-management-india — anger as secondary emotion, build-up cycle, peer conversations
+- /men-mental-health-india — male loneliness epidemic, courage to talk, peer support for men
+- /nri-mental-health — Indian diaspora, dual identity, Gulf migration, available worldwide
+- /teen-mental-health-india — board exam pressure, JEE/NEET, anonymous (parents not notified)
+- /emotional-wellness-india — emotional wellness as practice, regular check-ins
+- /online-support-group-india — 1:1 vs group support, why 1:1 is more effective
+
+### City Pages
+- /noida — IT hub, apartment loneliness, NCR commute, young professionals
+- /gurgaon — corporate hub, BFSI/MNC/startups, transient population, weekend loneliness
+- /chandigarh — Punjab/Haryana family pressure, UPSC culture, joint family dynamics
+- /kochi — high NRI population, Gulf migration, Kerala joint family, long-distance marriage
+
+### Blog Posts
+- /blog/best-mental-health-apps-india-2026 — honest review of all major Indian mental health apps
+- /blog/it-burnout-india-how-to-cope — IT burnout guide for Indian tech sector
+- /blog/nri-mental-health-india-guide — NRI emotional gap, diaspora support
+- /blog/relationship-counselling-vs-peer-support-india — when to use which
+- /blog/how-to-find-anger-management-support-india — anger management support guide

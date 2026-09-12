@@ -228,6 +228,33 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/blog/best-peer-support-apps-india-2026`,   lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/blog/peer-counselling-india-guide`,         lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/blog/mental-health-support-cost-india`,     lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    // Round 9: 15 landing pages — paid counselling, app comparisons, topic clusters, city pages
+    { url: `${base}/paid-counselling-india`,            lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/relationship-counselling-india`,    lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/betterhelp-alternative-india`,      lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/innerhour-alternative`,             lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/empathy-friend-india`,              lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/stress-management-india`,           lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/work-stress-india`,                 lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/trauma-support-india`,              lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/anger-management-india`,            lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/men-mental-health-india`,           lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/nri-mental-health`,                 lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/teen-mental-health-india`,          lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/best-mental-health-app-india`,      lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/emotional-wellness-india`,          lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/online-support-group-india`,        lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    // Round 9: 4 city pages
+    { url: `${base}/noida`,                             lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/gurgaon`,                           lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/chandigarh`,                        lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/kochi`,                             lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.85 },
+    // Round 9: 5 blog posts
+    { url: `${base}/blog/best-mental-health-apps-india-2026`,             lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/blog/it-burnout-india-how-to-cope`,                   lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/blog/nri-mental-health-india-guide`,                  lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/blog/relationship-counselling-vs-peer-support-india`, lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/blog/how-to-find-anger-management-support-india`,     lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
     // Resources hub + all resource pages
     // NOTE: `loneliness-statistics-india` is intentionally NOT hardcoded here —
     // it lives in RESOURCES (resources-data.ts), so the .map below already emits

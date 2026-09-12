@@ -1,9 +1,54 @@
 # LeanOn Discoverability & SEO Master Plan
 
-**Last updated:** 2026-09-11  
+**Last updated:** 2026-09-12  
 **Goal:** Be the first result for "lean on", "leanon", "empathy", and all mental health / peer support / peer counselling / emotional support searches in India. Be cited in ChatGPT, Gemini, Perplexity, and Claude answers. **Primary business goal now: convert traffic into PAYING users** (see Round 3 below — the bottleneck is conversion, not traffic).
 
 **Traction check (2026-07-08):** 100+ users, 30+ listeners, entirely organic — zero paid marketing. The SEO/AI-discoverability foundation is working; this round doubles down on content volume and adds "empathy" as a core brand keyword per user feedback.
+
+---
+
+## Round 9 — 15 landing pages + 4 city pages + 5 blog posts (2026-09-12)
+
+### The problem
+54 keyword gaps remained uncovered after Round 8. Key gaps: paid counselling comparison, competitor alternatives (BetterHelp, InnerHour/Amaha), topic clusters (stress, work stress, trauma, anger, men's mental health, NRI, teens, emotional wellness, support groups), city pages for major markets (Noida, Gurgaon, Chandigarh, Kochi), and supporting blog posts for long-tail traffic and AI citation context.
+
+### What was built
+
+**15 landing pages** (all `force-static`, FAQPage + BreadcrumbList JSON-LD, priority 0.97/0.95 in sitemap):
+- `/paid-counselling-india` — cost comparison table (private therapy ₹1,500–5,000 | online ₹500–2,000 | LeanOn ₹160). Keywords: paid counselling India, affordable counselling India, online counselling cost India.
+- `/relationship-counselling-india` — marriage tension, divorce uncertainty, in-law friction, breakup grief, toxic patterns. 3-step flow. Cross-links to /marriage-problems-india, /love-problems-india.
+- `/betterhelp-alternative-india` — comparison table (BetterHelp ~₹20,000/mo | Talkspace ~₹15,000/mo | 7Cups free–₹5,000/mo | Replika ₹500–2,000/mo | Woebot free | LeanOn ₹160/session). Why BetterHelp doesn't work for India.
+- `/innerhour-alternative` — InnerHour→Amaha rebrand 2022, comparison (Amaha ₹2,500–12,000/mo | Practo | Lybrate | mPower | LeanOn ₹160). Clinical vs just-need-to-talk routing.
+- `/empathy-friend-india` — what empathy looks like, active listening, 3-step to find listener. Keywords: empathy friend India, active listener India, peer mentoring India.
+- `/stress-management-india` — subverts "tips article" framing; talking is the intervention. Stress types: work/family/relationship/financial/exam.
+- `/work-stress-india` — IT burnout, corporate politics, layoff fear. "Why HR isn't the answer" section. Cross-links to /support/banking-job-stress-india.
+- `/trauma-support-india` — prominent disclaimer + NIMHANS/Tele-MANAS. What peer support CAN and CANNOT do. Cross-links to /i-need-professional-help-india.
+- `/anger-management-india` — anger as secondary emotion, build-up cycle. Crisis section with NIMHANS/Tele-MANAS.
+- `/men-mental-health-india` — male loneliness epidemic, "talking is strength" highlight, what men talk about.
+- `/nri-mental-health` — Gulf migration, dual identity, homesickness, available worldwide, INR from abroad.
+- `/teen-mental-health-india` — board exams, JEE/NEET, parent expectations. "Note to parents." Anonymous (parents not notified). NIMHANS/Tele-MANAS.
+- `/best-mental-health-app-india` — comparison table (6 apps). Routing guide: clinical→Amaha; affordable professional→iCall; human peer→LeanOn; AI self-help→Wysa; crisis→NIMHANS/Tele-MANAS.
+- `/emotional-wellness-india` — wellness as practice not destination. Emotional intelligence through conversation. CTAs to /browse and /daily-check-in.
+- `/online-support-group-india` — problems with group support, 1:1 benefits, community aspect.
+
+**4 city pages** (all `force-static`, FAQPage + BreadcrumbList + LocalBusiness JSON-LD, priority 0.85):
+- `/noida` — IT hub (Sector 50/62/137), apartment loneliness, NCR commute. Listeners: Arjun (IT Burnout), Priya (Relocation), Rahul (Work-Life).
+- `/gurgaon` — corporate hub, BFSI/MNC/startups, transient population, weekend loneliness. Listeners: Vivek (Corporate Burnout), Ananya (Startup), Sameer (Weekend Loneliness).
+- `/chandigarh` — Punjab/Haryana family pressure, UPSC culture, joint family dynamics, marriage pressure. Listeners: Gurpreet (Family Pressure), Simran (Career Confusion), Harman (Marriage Pressure).
+- `/kochi` — Kerala NRI/Gulf migration, long-distance marriage, joint family, high education pressure, Malayalam listeners. Listeners: Rajan (Gulf Migration), Divya (Long-Distance Family), Arun (Education Pressure).
+
+**5 blog posts** (all wired into blog slug page + sitemap, priority 0.95/0.93):
+- `/blog/best-mental-health-apps-india-2026` — honest comparison of Amaha, YourDOST, Wysa, iCall, Tata 1mg, LeanOn. Routing guide. (~800 words)
+- `/blog/it-burnout-india-how-to-cope` — IT burnout guide: what it is, why it's common in India, what doesn't help, what does. (~700 words)
+- `/blog/nri-mental-health-india-guide` — NRI emotional gap: diaspora challenges, why Western/Indian frameworks don't fit, what helps. (~700 words)
+- `/blog/relationship-counselling-vs-peer-support-india` — when to use counselling vs peer support; how they complement each other. (~700 words)
+- `/blog/how-to-find-anger-management-support-india` — anger as secondary emotion, build-up cycle, types of support (clinical/peer/self-help). (~600 words)
+
+**File updates:**
+- `app/sitemap.ts` — 15 landing pages (0.97/0.95) + 4 city pages (0.85) + 5 blog posts (0.95/0.93)
+- `app/components/BottomNav.tsx` — all 19 new paths added to shouldHide list
+- `public/llms.txt` — Round 9 keywords section appended
+- `DISCOVERABILITY.md` — this section
 
 ---
 

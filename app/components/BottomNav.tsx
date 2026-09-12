@@ -97,7 +97,27 @@ export default function BottomNav() {
     pathname === '/peer-support' ||
     pathname.startsWith('/peer-counselling-india') ||
     pathname.startsWith('/mental-health-support-india') ||
-    pathname.startsWith('/best-peer-support-app-india')
+    pathname.startsWith('/best-peer-support-app-india') ||
+    // Round 9: landing pages + city pages
+    pathname.startsWith('/paid-counselling-india') ||
+    pathname.startsWith('/relationship-counselling-india') ||
+    pathname.startsWith('/betterhelp-alternative-india') ||
+    pathname.startsWith('/innerhour-alternative') ||
+    pathname.startsWith('/empathy-friend-india') ||
+    pathname.startsWith('/stress-management-india') ||
+    pathname.startsWith('/work-stress-india') ||
+    pathname.startsWith('/trauma-support-india') ||
+    pathname.startsWith('/anger-management-india') ||
+    pathname.startsWith('/men-mental-health-india') ||
+    pathname.startsWith('/nri-mental-health') ||
+    pathname.startsWith('/teen-mental-health-india') ||
+    pathname.startsWith('/best-mental-health-app-india') ||
+    pathname.startsWith('/emotional-wellness-india') ||
+    pathname.startsWith('/online-support-group-india') ||
+    pathname.startsWith('/noida') ||
+    pathname.startsWith('/gurgaon') ||
+    pathname.startsWith('/chandigarh') ||
+    pathname.startsWith('/kochi')
 
   if (shouldHide) return null
 
