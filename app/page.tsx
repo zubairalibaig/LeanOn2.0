@@ -404,7 +404,7 @@ export default function Home() {
               {i:'📱',t:'Phone OTP sign-up',d:'No email. No full name. Sign up in 30 seconds with just your number.'},
               {i:'🔒',t:'Private & anonymous',d:'Your first name only. No last name, no profile photo required. Safe in joint families.'},
               {i:'💸',t:'UPI & wallet payments',d:'Recharge with UPI, cards, or net banking. Refundable, no subscription lock-in.'},
-              {i:'🌙',t:'Available at 2 AM',d:'Someone is online right now — even on late nights when you can\'t sleep.'},
+              {i:'⚡',t:'Available right now',d:'Someone is online right now — no appointment, no wait. Start talking in under a minute.'},
               {i:'🗣️',t:'Text or voice in Hindi',d:'Chat in English or Hindi. Voice call when you need a real voice.'},
               {i:'🤝',t:'Lived-experience listeners',d:'Listeners from Bengaluru, Mumbai, Delhi, Chennai, Hyderabad and across India.'},
             ].map((item,i)=>(
@@ -474,7 +474,7 @@ export default function Home() {
           <p className="ss">Real sessions. Real relief.</p>
           <div className="tlist">
             {[
-              {tx:"I was dreading another sleepless night. LeanOn connected me with someone who just got it. No judgment, no advice I didn't ask for. Just someone who listened.",nm:'Priya M.',cy:'Bengaluru',ini:'P'},
+              {tx:"Had a fight with my husband before he left for work. I was sitting at my desk, unable to focus. Opened LeanOn, talked for 15 minutes, and I could actually breathe again.",nm:'Priya M.',cy:'Bengaluru',ini:'P'},
               {tx:"As a founder going through a hard patch I felt completely alone. Talking to someone who survived their own startup failure was exactly what I needed.",nm:'Arjun K.',cy:'Mumbai',ini:'A'},
               {tx:"More affordable and more honest than anything else I've tried. I've booked 4 sessions now and each one helped.",nm:'Sneha R.',cy:'Hyderabad',ini:'S'},
             ].map((r,i)=>(
@@ -491,7 +491,7 @@ export default function Home() {
       {/* TRUST */}
       <div className="inner">
         <div className="tg">
-          {[{i:'🔒',l:'Safe & private'},{i:'💬',l:'Text or voice'},{i:'🔄',l:'Refund anytime'},{i:'⚡',l:'Instant access'},{i:'🤝',l:'Lived experience'},{i:'🌙',l:'Available 24/7'}].map((t,i)=>(
+          {[{i:'🔒',l:'Safe & private'},{i:'💬',l:'Text or voice'},{i:'🔄',l:'Refund anytime'},{i:'⚡',l:'Instant access'},{i:'🤝',l:'Lived experience'},{i:'⏱️',l:'Available now'}].map((t,i)=>(
             <div key={i} className="ti"><div className="tic">{t.i}</div><span className="tl">{t.l}</span></div>
           ))}
         </div>
