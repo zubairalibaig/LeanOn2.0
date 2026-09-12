@@ -50,11 +50,21 @@ import { post as mentalHealthCostPost } from './posts/mental-health-support-cost
 import { post as morningFightPost } from './posts/morning-fight-with-partner-india'
 import { post as ventingRelationshipPost } from './posts/venting-relationship-india'
 import { post as talkWorkdayPost } from './posts/talk-to-someone-workday-india'
+import { post as empathyMeaningPost } from './posts/empathy-meaning-india'
+import { post as paidFriendPost } from './posts/paid-friend-vs-peer-support-india'
+import { post as quarterLifePost } from './posts/quarter-life-crisis-india-guide'
+import { post as tarotAstrologyPost } from './posts/tarot-astrology-emotional-support-india'
+import { post as housewifeGuidePost } from './posts/housewife-mental-health-india-guide'
+import { post as divorceRecoveryPost } from './posts/divorce-india-emotional-recovery'
+import { post as strangerConvPost } from './posts/stranger-conversation-healing-india'
+import { post as rantVsVentPost } from './posts/rant-vs-vent-india'
 
 export const dynamic = 'force-static'
 
 // All posts — sorted newest first so Google and AI crawlers see fresh content at top
 const allPosts = [
+  empathyMeaningPost, paidFriendPost, quarterLifePost, tarotAstrologyPost,
+  housewifeGuidePost, divorceRecoveryPost, strangerConvPost, rantVsVentPost,
   bestPeerAppsPost, peerCounsellingGuidePost, mentalHealthCostPost,
   astrotalkExpensivePost, talkRealPersonPost,
   menLonelinessPost, fearOfMarriagePost, adultingLonelinessPost,

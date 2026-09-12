@@ -7,6 +7,64 @@
 
 ---
 
+## Round 11 — 20 landing pages + 5 city pages + 8 blog posts (2026-09-12)
+
+### The problem
+100 keyword gaps across connection/listening, astrology alternatives, therapy access, life stage crises, specific life situations (housewife, single parent, divorce, interfaith), and 5 tier-2 city markets (Lucknow, Surat, Nagpur, Bhopal, Visakhapatnam).
+
+### What was built
+
+**20 landing pages** (all `force-static`, FAQPage + BreadcrumbList JSON-LD, priority 0.97 in sitemap):
+
+Connection and Listening Cluster (A):
+- `/empathy-india` — empathy meaning, active listening, what it feels like to be truly heard. Keywords: empathy India, someone who understands India.
+- `/paid-friend-india` — paid friendship model vs peer support; comparison table; cost. Keywords: paid friend India, rent a friend India.
+- `/online-friend-india` — online emotional connection, real human listeners. Keywords: online friend India, virtual friend India.
+- `/stranger-friend-india` — the stranger-on-the-train effect; anonymous conversation psychology. Keywords: talk to stranger India, stranger friend India.
+- `/someone-who-gets-it-india` — finding someone who understands without full explanation. Keywords: someone who understands me India.
+- `/rant-online-india` — safe space to rant; rant vs vent distinction; emotional release. Keywords: rant online India, vent online India.
+- `/get-it-off-your-chest-india` — saying the thing you've been carrying; relief of expression. Keywords: get it off your chest India.
+
+Astrology/Tarot Alternatives (B):
+- `/tarot-alternative-india` — tarot/astrology apps vs real human support; what users are really seeking. Keywords: tarot alternative India, astrology alternative India.
+- `/astroyogi-alternative` — Astroyogi and similar platforms; why peer support addresses the underlying need. Keywords: Astroyogi alternative, astrology app alternative India.
+
+Therapy and Counselling Access (C):
+- `/talk-therapy-india` — talk therapy explained; peer support as accessible first step; cost comparison. Keywords: talk therapy India.
+- `/walk-in-counselling-india` — walk-in counselling in India; immediate emotional support options. Keywords: walk-in counselling India.
+
+Life Stage Crises (D):
+- `/quarter-life-crisis-india` — late 20s identity crisis; career confusion; marriage pressure; parental investment. Keywords: quarter life crisis India, late 20s crisis India.
+- `/midlife-crisis-india` — midlife identity questions; career vs meaning; marriage dissatisfaction. Keywords: midlife crisis India.
+- `/existential-crisis-india` — existential questions; purpose and identity; making sense of it. Keywords: existential crisis India.
+
+Specific Life Situations (E–K):
+- `/housewife-support-india` — Indian homemaker emotional isolation; invisible labour; financial dependence; support barriers. Keywords: housewife support India, homemaker mental health India.
+- `/single-parent-india` — single parenting in India; social stigma; emotional exhaustion; the invisible community. Keywords: single parent support India.
+- `/divorce-support-india` — divorce in India; social fallout; identity disruption; emotional stages. Keywords: divorce support India, divorce recovery India.
+- `/interfaith-relationship-india` — Hindu-Muslim/Hindu-Christian/Sikh-Hindu/intercaste; family opposition; political climate. Keywords: interfaith relationship India.
+- `/cant-tell-anyone-india` — the thing you haven't been able to say; anonymity enabling honesty. Keywords: can't tell anyone India.
+- `/doctor-burnout-india` — healthcare worker burnout; professional stigma; 60–80% burnout rates; crisis banner. Keywords: doctor burnout India.
+
+**5 city pages** (all `force-static`, LocalBusiness + FAQPage JSON-LD, priority 0.85 in sitemap):
+- `/lucknow` — UPSC/civil services pressure, Awadhi Tehzeeb culture, marriage timelines, migration and return.
+- `/surat` — diamond industry, textile trade, Gujarati business culture, success imperative, marriage readiness.
+- `/nagpur` — Maharashtra legal capital, UPSC/MPSC aspirants, conservative family structure.
+- `/bhopal` — UPSC hub, large student population, MPPSC, hostel life, family expectations.
+- `/visakhapatnam` — port city, pharma/IT corridor, Navy families, Telugu family culture, staying vs leaving.
+
+**8 blog posts** (all published 2026-09-12, priority 0.95 in sitemap):
+- `/blog/empathy-meaning-india` — empathy vs sympathy; Indian conversation patterns; what genuine listening looks like.
+- `/blog/paid-friend-vs-peer-support-india` — paid friend model vs peer emotional support; which addresses which need.
+- `/blog/quarter-life-crisis-india-guide` — late 20s crisis; Indian-specific pressures; what actually helps.
+- `/blog/tarot-astrology-emotional-support-india` — why Indians call astrologers for emotional support; what they're really seeking.
+- `/blog/housewife-mental-health-india-guide` — hidden mental health crisis among Indian housewives; barriers to support.
+- `/blog/divorce-india-emotional-recovery` — emotional recovery from divorce in India; stages; why neutral space matters.
+- `/blog/stranger-conversation-healing-india` — the train conversation effect; psychology of anonymous disclosure.
+- `/blog/rant-vs-vent-india` — rant vs vent distinction; co-rumination research; what good listening creates.
+
+---
+
 ## Round 9 — 15 landing pages + 4 city pages + 5 blog posts (2026-09-12)
 
 ### The problem

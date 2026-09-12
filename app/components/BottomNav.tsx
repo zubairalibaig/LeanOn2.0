@@ -125,7 +125,28 @@ export default function BottomNav() {
     pathname.startsWith('/morning-emotional-support-india') ||
     pathname.startsWith('/after-fight-with-partner-india') ||
     pathname.startsWith('/talk-during-commute-india') ||
-    pathname.startsWith('/relationship-advice-vs-venting-india')
+    pathname.startsWith('/relationship-advice-vs-venting-india') ||
+    // Round 11: emotional support verticals
+    pathname.startsWith('/empathy-india') ||
+    pathname.startsWith('/paid-friend-india') ||
+    pathname.startsWith('/online-friend-india') ||
+    pathname.startsWith('/stranger-friend-india') ||
+    pathname.startsWith('/someone-who-gets-it-india') ||
+    pathname.startsWith('/rant-online-india') ||
+    pathname.startsWith('/get-it-off-your-chest-india') ||
+    pathname.startsWith('/tarot-alternative-india') ||
+    pathname.startsWith('/astroyogi-alternative') ||
+    pathname.startsWith('/talk-therapy-india') ||
+    pathname.startsWith('/walk-in-counselling-india') ||
+    pathname.startsWith('/quarter-life-crisis-india') ||
+    pathname.startsWith('/midlife-crisis-india') ||
+    pathname.startsWith('/existential-crisis-india') ||
+    pathname.startsWith('/housewife-support-india') ||
+    pathname.startsWith('/single-parent-india') ||
+    pathname.startsWith('/divorce-support-india') ||
+    pathname.startsWith('/interfaith-relationship-india') ||
+    pathname.startsWith('/cant-tell-anyone-india') ||
+    pathname.startsWith('/doctor-burnout-india')
 
   if (shouldHide) return null
 
