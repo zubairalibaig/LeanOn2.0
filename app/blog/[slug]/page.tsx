@@ -169,7 +169,7 @@ function getRelatedPosts(post: ReturnType<typeof getPost>, count = 3) {
 
 export default function BlogPostPage({ params }: { params: { slug: string } }) {
   const post = getPost(params.slug)
-  if (!post) notFound()
+  if (!post) return notFound()
 
   const relatedPosts = getRelatedPosts(post)
 
