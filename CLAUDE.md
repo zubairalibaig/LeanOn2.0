@@ -101,6 +101,5 @@ daily cron); `/contact,/wallet,/history,/profile,/sessions` made static (were
 ## Deploy flow
 
 - Push to `main` → Vercel auto-deploys leanon.app.
-- Also push to `claude/setup-leanon-access-eEw0A`.
 - Migrations are MANUAL: owner runs them in Supabase SQL Editor, then
   refreshes `db/LIVE_SCHEMA.md`.
