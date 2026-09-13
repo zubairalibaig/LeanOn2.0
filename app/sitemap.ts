@@ -350,5 +350,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/relationship-trust-issues-india`,          lastModified: d('2026-09-13'), changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/communication-problems-relationship-india`, lastModified: d('2026-09-13'), changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/feeling-invisible-india`,                  lastModified: d('2026-09-13'), changeFrequency: 'monthly', priority: 0.97 },
+    // Round 13: NRI, diaspora, and global emotional support pages (2026-09-13)
+    { url: `${base}/nri-support`,                lastModified: d('2026-09-13'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/indian-diaspora-support`,    lastModified: d('2026-09-13'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/talk-to-someone-online`,     lastModified: d('2026-09-13'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/online-emotional-support`,   lastModified: d('2026-09-13'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/loneliness-support-online`,  lastModified: d('2026-09-13'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/someone-to-talk-to`,         lastModified: d('2026-09-13'), changeFrequency: 'weekly',  priority: 0.95 },
   ]
 }

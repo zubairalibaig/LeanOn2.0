@@ -304,3 +304,15 @@ New landing pages added in Round 11:
 - /relationship-trust-issues-india — hypervigilance, phone checking; past betrayal applied forward; exhaustion of vigilance
 - /communication-problems-relationship-india — every conversation becomes a fight; gap grows; processing one's side first
 - /feeling-invisible-india — in the room, talking, not in focus; stranger has no prior model of you as invisible
+
+## Round 13 — NRI, Diaspora, and Global Emotional Support Pages (2026-09-13)
+
+### NRI and Indian Diaspora
+- /nri-support — Indians living abroad; NRI loneliness; cultural disconnect; family pressure from afar; time zone overlap (India evening = US morning, UK evening)
+- /indian-diaspora-support — Indian diaspora in UK, USA, Canada, Australia, Gulf; dual identity; immigrant loneliness; family WhatsApp pressure; guilt of leaving
+
+### Global Emotional Support (English-language, broader than India)
+- /talk-to-someone-online — real person not AI; explicit AI vs human contrast; no appointment; available now; peer support middle ground
+- /online-emotional-support — online emotional support from real people; 24/7; more human than AI, more accessible than therapy
+- /loneliness-support-online — loneliness support; types of loneliness (new city, surrounded-by-people, post-breakup, digital, existential, relationship); real listener
+- /someone-to-talk-to — need someone to talk to; no reason required; no crisis threshold; real peer listeners with lived experience
