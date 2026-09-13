@@ -110,6 +110,14 @@ const faqs = [
         q: 'Do I need professional qualifications to be a listener?',
         a: 'No professional qualifications are required. What matters is lived experience — you\'ve personally been through the challenge you want to support others with, and you\'ve found your way through it.',
       },
+      {
+        q: 'How many sessions will I actually get?',
+        a: 'Session volume depends entirely on how many seekers are actively using LeanOn when you\'re online. LeanOn is a growing platform — early listeners typically start with a handful of sessions as the user base builds. There is no guaranteed session frequency. The best way to maximise your bookings is to keep your availability on consistently, maintain a complete profile, and build up your first few ratings.',
+      },
+      {
+        q: 'Is there a guaranteed minimum income?',
+        a: 'No. Earnings are variable and depend on session volume, which is tied to seeker traffic on LeanOn. We don\'t promise a specific income. What we do promise: you keep 100% of your rate, LeanOn\'s platform fee (₹10 flat) is paid by the seeker — your earnings are never reduced by platform fees.',
+      },
     ],
   },
 ]

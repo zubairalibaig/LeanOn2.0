@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE, PLATFORM_FEE, REQUEST_RESPONSE_WINDOW_SECS } from '@/lib/constants'
+import { SHOW_LISTENER_GROWTH_NOTICE } from '@/lib/feature-flags'
 import { showToast } from '@/lib/toast'
 import { registerPushNotifications } from '@/lib/firebase-client'
 import { compressImage, extForType, AVATAR_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
@@ -1167,6 +1168,12 @@ export default function DashboardPage() {
         {sessions.length === 0 && (
           <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--gray)', fontSize: 14, fontWeight: 600 }}>
             No sessions yet — go available to start receiving requests.
+          </div>
+        )}
+
+        {sessions.length === 0 && SHOW_LISTENER_GROWTH_NOTICE && (
+          <div style={{marginTop:8,background:'rgba(255,153,51,0.08)',border:'1.5px solid rgba(255,153,51,0.25)',borderRadius:12,padding:'12px 14px',fontSize:13,color:'#7A5200',lineHeight:1.6,fontWeight:500}}>
+            <strong style={{fontWeight:800}}>A heads up:</strong> LeanOn is a growing platform with a smaller user base right now. Your first session request might take a few days — session volume depends on how many seekers are active when you&apos;re online. Keep your availability on and we&apos;ll notify you the moment someone books.
           </div>
         )}
       </div>

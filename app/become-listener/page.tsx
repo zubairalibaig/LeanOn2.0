@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, PLATFORM_FEE, LANGUAGES, MONTHS, MIN_LISTENER_AGE, MAX_LISTENER_AGE, ageFromBirth } from '@/lib/constants'
 import { createClient } from '@/lib/supabase'
+import { SHOW_LISTENER_GROWTH_NOTICE } from '@/lib/feature-flags'
 import { compressImage, extForType, AVATAR_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
 
 const TAGS = [
@@ -462,12 +463,17 @@ export default function BecomeListenerPage() {
         {step === 1 && (
           <div className="hero-card">
             <h1>Earn by listening 🎧</h1>
-            <p>You keep 100% of your rate. LeanOn adds a small flat fee on top — paid by the user, not taken from you.</p>
+            <p>You keep 100% of your rate. LeanOn adds a flat ₹10 platform fee on top — paid by the user, not taken from you.</p>
             <div className="earn-row">
               <div className="earn-item"><div className="amount">₹{MIN_LISTENER_RATE}+</div><div className="label">per minute (you choose)</div></div>
               <div className="earn-item"><div className="amount">₹13K+</div><div className="label">per month possible</div></div>
               <div className="earn-item"><div className="amount">100%</div><div className="label">of your rate you keep</div></div>
             </div>
+            {SHOW_LISTENER_GROWTH_NOTICE && (
+              <div style={{marginTop:16,background:'rgba(255,153,51,0.08)',border:'1.5px solid rgba(255,153,51,0.25)',borderRadius:12,padding:'12px 14px',fontSize:13,color:'#7A5200',lineHeight:1.6,fontWeight:500}}>
+                <strong style={{fontWeight:800}}>Honest note:</strong> LeanOn is a growing platform. How much you earn depends entirely on how many seekers are using LeanOn when you&apos;re online. Early listeners focus on building their profile and first few ratings — volume grows as the platform does. We don&apos;t promise a specific income.
+              </div>
+            )}
           </div>
         )}
 

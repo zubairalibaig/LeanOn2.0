@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
+import { SHOW_LISTENER_GROWTH_NOTICE } from '@/lib/feature-flags'
 
 const S = `
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
@@ -129,6 +130,11 @@ export default function ListenerStatusPage() {
             </div>
           )}
 
+          {status === 'approved' && SHOW_LISTENER_GROWTH_NOTICE && (
+            <div style={{marginBottom:16,background:'rgba(255,153,51,0.08)',border:'1.5px solid rgba(255,153,51,0.25)',borderRadius:12,padding:'12px 14px',fontSize:13,color:'#7A5200',lineHeight:1.6,fontWeight:500,textAlign:'left'}}>
+              <strong style={{fontWeight:800}}>One thing to know:</strong> LeanOn is a growing platform. Your first session request might take a few days — session volume depends on how many seekers are online. Keep your availability on and we&apos;ll notify you the moment someone books.
+            </div>
+          )}
           {status === 'approved' && (
             <a href="/dashboard"><button className="btn">Complete your profile →</button></a>
           )}
