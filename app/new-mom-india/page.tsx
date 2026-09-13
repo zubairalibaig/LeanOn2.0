@@ -82,7 +82,7 @@ export default function NewMomIndiaPage() {
         <div className="section">
           <h2>This Is Not Postpartum Depression Necessarily</h2>
           <p>Postpartum depression is a clinical condition that requires professional support &mdash; if you are experiencing it, please speak to a doctor. But much of what new mothers feel in India does not reach clinical threshold: it is the ordinary distress of an enormous transition that comes with no preparation, no acknowledgment, and no room to express anything other than gratitude.</p>
-          <p>LeanOn is for that gap &mdash; the space between clinical need and just-needing-to-talk. See also: <a href="/support/postpartum-india" style="color:#1A8FA0;font-weight:700">Postpartum support India</a>.</p>
+          <p>LeanOn is for that gap &mdash; the space between clinical need and just-needing-to-talk. See also: <a href="/support/postpartum-india" style={{color:"#1A8FA0",fontWeight:700}}>Postpartum support India</a>.</p>
         </div>
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>New motherhood is hard. You are allowed to say that.</h2><p>Anonymous peer support. No judgment. From ₹160. First 5 minutes free.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>

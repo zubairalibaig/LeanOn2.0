@@ -82,7 +82,7 @@ export default function SocialAnxietyIndiaPage() {
         <div className="section">
           <h2>Why Online Peer Support Helps</h2>
           <p>One of the ironies of social anxiety is that you need social connection &mdash; being heard, understood, feeling less alone &mdash; but the anxiety makes it very hard to seek it in person. A text-based conversation with an anonymous listener offers connection without the social performance anxiety. You can take your time. You can think before responding. You are not being judged on how you come across.</p>
-          <p>See also: <a href="/support/social-anxiety" style="color:#1A8FA0;font-weight:700">Social anxiety support</a> &mdash; the topic page.</p>
+          <p>See also: <a href="/support/social-anxiety" style={{color:"#1A8FA0",fontWeight:700}}>Social anxiety support</a> &mdash; the topic page.</p>
         </div>
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>You deserve connection without the performance.</h2><p>Anonymous peer support. No judgment. From ₹160. First 5 minutes free.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>

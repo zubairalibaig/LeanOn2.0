@@ -82,7 +82,7 @@ export default function FeelingEmptyInsideIndiaPage() {
         <div className="section">
           <h2>Why It Is Hard to Ask for Help</h2>
           <p>Because you cannot easily describe it. "I feel sad" gives someone something to respond to. "I feel nothing" is harder. People tend to respond by trying to cheer you up &mdash; suggesting activities, pointing to things you have to be grateful for. This misses the point entirely. What you need is not cheering up. You need to be heard.</p>
-          <p>A LeanOn listener will not try to cheer you up. They will try to understand what you are describing and hold space for it. See also: <a href="/support/feeling-empty" style="color:#1A8FA0;font-weight:700">Support for feeling empty</a> &mdash; the topic page.</p>
+          <p>A LeanOn listener will not try to cheer you up. They will try to understand what you are describing and hold space for it. See also: <a href="/support/feeling-empty" style={{color:"#1A8FA0",fontWeight:700}}>Support for feeling empty</a> &mdash; the topic page.</p>
         </div>
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>You are not broken. You are carrying something.</h2><p>Anonymous peer support. No judgment. From ₹160. First 5 minutes free.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>

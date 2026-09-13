@@ -82,7 +82,7 @@ export default function ParentsForcingMarriageIndiaPage() {
         <div className="section">
           <h2>What You Need Right Now</h2>
           <p>Not advice about whether to agree or refuse. Not a script for the conversation with your parents. Just somewhere to put the weight of it &mdash; the guilt, the anger at having your life timeline managed, the genuine confusion about what you want. A neutral listener holds this without telling you what to do.</p>
-          <p>See also: <a href="/support/not-ready-to-get-married-india" style="color:#1A8FA0;font-weight:700">Not ready to get married</a> and <a href="/support/arranged-marriage-stress" style="color:#1A8FA0;font-weight:700">Arranged marriage stress</a>.</p>
+          <p>See also: <a href="/support/not-ready-to-get-married-india" style={{color:"#1A8FA0",fontWeight:700}}>Not ready to get married</a> and <a href="/support/arranged-marriage-stress" style={{color:"#1A8FA0",fontWeight:700}}>Arranged marriage stress</a>.</p>
         </div>
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>Your timeline matters too.</h2><p>Anonymous peer support. No judgment. From ₹160. First 5 minutes free.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>

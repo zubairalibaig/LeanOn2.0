@@ -82,7 +82,7 @@ export default function WorkingWomanStressIndiaPage() {
         <div className="section">
           <h2>Why This Is Hard to Talk About</h2>
           <p>Because the prevailing narrative is that working women should be grateful for the opportunity. Expressing how hard it is can feel like ingratitude, or like admitting failure, or like giving ammunition to people who said it was not a good idea. LeanOn is a space where you can say how hard it actually is, without any of those consequences.</p>
-          <p>See also: <a href="/support/working-woman-india" style="color:#1A8FA0;font-weight:700">Working woman India</a> &mdash; the topic page.</p>
+          <p>See also: <a href="/support/working-woman-india" style={{color:"#1A8FA0",fontWeight:700}}>Working woman India</a> &mdash; the topic page.</p>
         </div>
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>You are doing enough. Let someone tell you they see it.</h2><p>Anonymous peer support. No judgment. From ₹160. First 5 minutes free.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>

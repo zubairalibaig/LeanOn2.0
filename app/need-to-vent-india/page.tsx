@@ -82,7 +82,7 @@ export default function NeedToVentIndiaPage() {
         <div className="section">
           <h2>No Advice Unless You Want It</h2>
           <p>LeanOn listeners follow your lead. If you want to vent, they listen. If you want to think through a decision, they help you think. If you want both, you say so. The session belongs to you.</p>
-          <p>See also: <a href="/support/need-to-vent" style="color:#1A8FA0;font-weight:700">Need to vent</a> &mdash; the topic page.</p>
+          <p>See also: <a href="/support/need-to-vent" style={{color:"#1A8FA0",fontWeight:700}}>Need to vent</a> &mdash; the topic page.</p>
         </div>
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>Let it out. Someone is listening.</h2><p>Anonymous peer support. No advice unless you want it. From ₹160. First 5 minutes free.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
