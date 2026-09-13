@@ -1077,12 +1077,15 @@ function SessionContent() {
     const isSeeker = userId !== null && listenerId !== null && userId !== listenerId
 
     // ── Free-trial conversion screen
-    // Shown for seekers on free-trial sessions (both the 1st and 2nd free session).
+    // Shown for seekers after their one free 5-min trial.
     // Voice-failed sessions skip it — the user wasn't charged and needs to leave cleanly.
     if (sessionIsFreeTrial && isSeeker && !voiceFailed && showFreeTrialConversion) {
-      const walletUrl = listenerId
-        ? `/wallet?return=${encodeURIComponent(`/listener/${listenerId}?from=wallet`)}`
-        : '/wallet'
+      // Send the user directly to the listener booking page (skip the wallet interstitial).
+      // If their balance is insufficient the listener page shows an inline top-up modal —
+      // one fewer redirect than the old wallet-first flow.
+      const continueUrl = listenerId
+        ? `/listener/${listenerId}?from=trial`
+        : '/browse'
 
       return (
         <>
@@ -1097,13 +1100,13 @@ function SessionContent() {
             </div>
             <div className="trial-conv">
               <div className="trial-conv-icon">💙</div>
-              <h2 className="trial-conv-h">You just used your free session.</h2>
+              <h2 className="trial-conv-h">Your free session is over.</h2>
               <p className="trial-conv-sub">
                 {listenerStillOnline === null
                   ? <>Want to keep talking?<br />Checking if your listener is still here…</>
                   : listenerStillOnline
-                  ? <>🟢 {resolvedListenerName} is still online.<br />Top up to continue talking.</>
-                  : <>Your listener has gone offline.<br />Browse other listeners — first 5 min free.</>
+                  ? <>🟢 {resolvedListenerName} is still online.<br />Continue for ₹160 — 15 minutes, pay now.</>
+                  : <>Your listener has gone offline.<br />Browse other listeners and start a paid session.</>
                 }
               </p>
               <div className="trial-conv-btns">
@@ -1112,8 +1115,8 @@ function SessionContent() {
                     <button className="btn-trial-continue">Browse listeners →</button>
                   </a>
                 ) : (
-                  <a href={walletUrl} style={{ width: '100%' }}>
-                    <button className="btn-trial-continue">Continue — top up wallet</button>
+                  <a href={continueUrl} style={{ width: '100%' }}>
+                    <button className="btn-trial-continue">Continue talking — ₹160 for 15 min →</button>
                   </a>
                 )}
                 <button
@@ -1124,7 +1127,7 @@ function SessionContent() {
                 </button>
               </div>
               {listenerStillOnline !== false && (
-                <p className="trial-conv-hint">Top up ₹200 — enough for a full 15-min session.</p>
+                <p className="trial-conv-hint">No subscription. Pay once, talk now.</p>
               )}
             </div>
             <div className="crisis-footer dark">

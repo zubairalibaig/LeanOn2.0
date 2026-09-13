@@ -85,7 +85,7 @@ LeanOn is a **PEER SUPPORT** platform. It is not a mental health, clinical, or t
 |---|---|
 | Base rate | ₹10/min base; listeners set ₹8–25/min |
 | Session blocks | Fixed only: **15 min**, **30 min**, or **45 min**. No open-ended metered calls. |
-| Free trial | Up to 5 free 5-minute sessions per seeker (one per listener). |
+| Free trial | **1 free 5-minute session per seeker** (one per listener). Reduced from 5 → 3 → 2 → 1 as each reduction improved paid conversion without hurting top-of-funnel. |
 | Platform fee | **Flat ₹10 per paid session**, paid by the seeker on top of the listener's rate, shown as a separate transparent line item at checkout. Razorpay's gateway commission is also borne by the seeker. Do not over-advertise the fee — just keep the logic and checkout display honest. |
 | Listener keeps | **100% of their stated rate.** The fee never comes out of listener earnings. |
 | Wallet | Recharge in fixed pools: ₹200 / ₹500 / ₹1000 / ₹2000. **Refundable anytime.** |
@@ -228,5 +228,36 @@ If a user appears to be in crisis, surface these and do not attempt to handle th
 
 ---
 
-*Source of truth for LeanOn 2.0. Update only on major, deliberate decisions.
-Volatile items — roadmap, build status, accounts, costs — belong in STATUS.md.*
+---
+
+## 14. Geographic Strategy (decided 2026-09-13)
+
+**Current:** India-only supply and demand.
+
+**Strategic direction decided:** Test global demand (UK, US, Indian diaspora) with Indian listener supply as the sole supply engine. Decision is "demand experiment first" — do NOT build global listener supply, do NOT create a parallel pricing tier, do NOT build separate /us or /uk booking flows yet.
+
+### Why this is interesting
+The LeanOn supply/demand cost arbitrage becomes much stronger internationally:
+- Indian listeners' rates in INR = low absolute cost
+- International willingness-to-pay is 3–5× India on the same absolute time
+- "Global customers, Indian supply" is the Fiverr / Toptal model
+
+### First beachhead: Indian diaspora (US, UK, Canada, UAE, Australia)
+Strong cultural alignment with Indian listeners. Distinct pain points — immigration isolation, family pressure, arranged marriage — that generic Western peer support cannot serve. Near-zero competition in this niche.
+
+### What NOT to do
+- Do NOT create /us or /uk booking pages with different prices — creates arbitrage where Indian users bypass the India price by visiting the US URL. The browse page is a single universal page.
+- Do NOT build a global listener base yet. Keep all listeners as Indian supply.
+- Do NOT build separate Stripe or international payment infrastructure until demand is confirmed. Razorpay already accepts international cards.
+
+### Technical approach for geo-pricing (when ready to build)
+Use `x-vercel-ip-country` header (set automatically on Vercel, no extra infra) to detect country server-side. Phase 1 (experiment): display prices in USD/GBP equivalent on browse and listener profile pages for international visitors — same underlying INR cost, Razorpay handles FX at checkout. Phase 2 (confirmed demand): add `account_country` field to users table set at registration; international accounts get USD pricing; platform takes the FX margin above the listener's INR rate.
+
+### The single /browse approach
+SEO landing pages (/india-diaspora, /us-peer-support) are marketing copy that link to /browse. All actual booking happens on /browse. Geo-detection happens on /browse itself via server header — no separate page with a different booking flow.
+
+### Payments
+Razorpay international gateway is the first option — already approved for most markets, no new entity needed. Stripe India (currently invite-only) is the fallback. Do not build custom cross-border infrastructure — this is table stakes that Razorpay solves.
+
+### Decision trigger for full build
+Run a 30-day demand experiment (diaspora landing page + ₹25–30k Meta spend targeting Indians in US/UK). If paid conversion ≥ 2× India, build the real geo-pricing layer. If flat, fix product first before expanding.

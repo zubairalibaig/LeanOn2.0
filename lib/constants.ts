@@ -7,15 +7,16 @@ export const grossRechargeAmount = (amount: number) => Math.ceil(amount * (1 + G
 export const MIN_LISTENER_RATE  = 1    // ₹/min (suggestion floor; no hard mandate)
 export const MAX_LISTENER_RATE  = 500  // ₹/min — requires migration 039 (011 was a no-op; live cap stays ≤200 until 039 runs)
 export const FREE_SESSION_MINS  = 5
-// Each user gets N free 5-min trials, ONE per listener (so they can try a few
-// listeners before paying). Reduced 5 → 3 on 2026-08-11: at 5 trials a seeker
-// could get 25 free minutes across 5 listeners, which fully satisfied most
-// casual "just need to vent" needs and meant the paywall was never reached
-// (62 free trials vs 1 paid session). 3 keeps a genuine try-before-you-buy
-// window while restoring a reason to recharge.
+// Each user gets N free 5-min trials, ONE per listener (so they can try the
+// product before paying). Reduced 5 → 3 (2026-08-11) → 2 → 1 (2026-09-13):
+// multiple free trials let users satisfy casual "need to vent" needs without
+// ever reaching the paywall — at 2 trials, 101/104 free users never recharged.
+// 1 trial preserves a genuine try-before-you-buy moment while making the
+// paywall decision unavoidable after the first session.
 // NOTE: any user-facing copy stating the number must be updated alongside this
-// (homepage FAQ, /faq, city page FAQs, layout Service schema, public/llms.txt).
-export const MAX_FREE_TRIALS    = 2
+// (app/browse/page.tsx nudge, app/session/[id]/page.tsx conversion screen,
+// homepage FAQ, /faq, city page FAQs, layout Service schema, public/llms.txt).
+export const MAX_FREE_TRIALS    = 1
 export const SESSION_DURATIONS  = [5, 15, 30, 45] as const
 // How long a seeker's session REQUEST stays open waiting for the listener to
 // accept, before it auto-cancels and refunds the seeker. This is the single

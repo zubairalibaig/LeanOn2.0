@@ -786,7 +786,7 @@ function BrowseContent() {
           <div className="free-nudge">
             <div className="free-nudge-icon">💙</div>
             <div className="free-nudge-text">
-              <div className="free-nudge-title">You have 2 free sessions.</div>
+              <div className="free-nudge-title">Your first session is free.</div>
               <div className="free-nudge-sub">Pick a listener — your first conversation is completely private.</div>
             </div>
             <button
