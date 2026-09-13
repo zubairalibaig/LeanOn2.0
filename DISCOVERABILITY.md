@@ -1,9 +1,69 @@
 # LeanOn Discoverability & SEO Master Plan
 
-**Last updated:** 2026-09-12  
+**Last updated:** 2026-09-13  
 **Goal:** Be the first result for "lean on", "leanon", "empathy", and all mental health / peer support / peer counselling / emotional support searches in India. Be cited in ChatGPT, Gemini, Perplexity, and Claude answers. **Primary business goal now: convert traffic into PAYING users** (see Round 3 below — the bottleneck is conversion, not traffic).
 
 **Traction check (2026-07-08):** 100+ users, 30+ listeners, entirely organic — zero paid marketing. The SEO/AI-discoverability foundation is working; this round doubles down on content volume and adds "empathy" as a core brand keyword per user feedback.
+
+---
+
+## Round 12 — 35 high-intent paying-user keyword pages (2026-09-13)
+
+### The problem
+35 high-commercial-intent keyword gaps across relationship pain (highest paying intent), financial/career anxiety, mental health symptoms, social/identity, Indian family situations, immediate need, and underserved demographics. These are the keywords typed by people ready to pay for emotional support.
+
+### What was built
+
+**35 landing pages** (all `force-static`, FAQPage + BreadcrumbList JSON-LD, priority 0.97 in sitemap, hidden from app bottom nav):
+
+Cluster A — Relationship Pain (highest paying intent):
+- `/cheating-partner-india` — anonymous support for infidelity discovery; shock, betrayal, who to tell safely
+- `/mother-in-law-stress-india` — saas-bahu tension, controlling in-laws, joint family conflict
+- `/toxic-relationship-india` — signs a relationship is draining you; why you cannot see it from inside
+- `/emotional-abuse-india` — constant criticism, silent treatment, being made to feel crazy; crisis box included
+- `/affair-recovery-india` — betrayal trauma, replaying discovery, processing without others' opinions
+- `/feeling-trapped-india` — trapped in marriage, job, or family; every exit has a real cost
+- `/heartbreak-india` — heartbreak is physical; trained listener holds grief without rushing resolution
+- `/overthinking-relationship-india` — analysing every text and silence; conversation breaks the loop
+- `/controlling-relationship-india` — possessive partner; gradually stopped being yourself
+- `/gaslighting-india` — being told you are imagining things; first outside validation in a long time
+
+Cluster B — Financial/Career Anxiety:
+- `/financial-anxiety-india` — EMI stress, job insecurity, 2am money thoughts; shame in India
+- `/job-loss-support-india` — job loss as identity event, not just financial
+- `/upsc-stress-india` — indefinite timeline, family expectations, silence around UPSC mental health
+- `/competitive-exam-stress-india` — CAT, GATE, banking, UPSC; social stakes beyond syllabus
+
+Cluster C — Mental Health Symptoms:
+- `/anxiety-attack-india` — aftermath of anxiety attack; shame and fear of next one; crisis box
+- `/crying-for-no-reason-india` — unexplained tears are the body processing unacknowledged weight
+- `/no-motivation-india` — loss of motivation as symptom not character flaw
+- `/feeling-empty-inside-india` — not sad, just hollow; being witnessed begins to change something
+- `/panic-attack-india` — panic aftermath; verbal processing reduces power of the event; crisis box
+
+Cluster D — Social/Identity:
+- `/people-pleaser-india` — exhausted from saying yes; lost track of what you want
+- `/low-self-esteem-india` — inner critic; Indian comparison culture; being heard shifts the model
+- `/social-anxiety-india` — fear of social evaluation; text-based session removes performance anxiety
+- `/imposter-syndrome-india` — waiting to be found out despite achievements; epidemic in India
+
+Cluster E — Indian Family Situations:
+- `/joint-family-stress-india` — no privacy, constant interference; love and exhaustion simultaneously
+- `/parents-forcing-marriage-india` — marriage deadlines, family ultimatums; not ready is treated as deficiency
+- `/sasural-problems-india` — saas, devar, nand politics; listener has no prior relationship with anyone
+
+Cluster F — Immediate Need / Situation:
+- `/bad-day-india` — immediate low-friction page; first 5 minutes free; strong CTA
+- `/need-to-vent-india` — not advice or solutions; pressure release; listener follows your lead
+- `/emotional-support-india` — broad high-volume landing; real people not AI; what genuine support means
+- `/talk-to-someone-free-india` — free trial conversion page; how 5 free minutes works
+
+Cluster G — Underserved Demographics:
+- `/working-woman-stress-india` — invisible double shift; guilt without acknowledgment
+- `/new-mom-india` — ordinary distress of enormous transition; not necessarily clinical postpartum
+- `/relationship-trust-issues-india` — hypervigilance, past betrayal applied forward
+- `/communication-problems-relationship-india` — every conversation becomes a fight; gap grows
+- `/feeling-invisible-india` — in the room, talking, not in focus; stranger has no prior model of you as invisible
 
 ---
 

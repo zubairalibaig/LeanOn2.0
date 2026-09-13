@@ -146,7 +146,43 @@ export default function BottomNav() {
     pathname.startsWith('/divorce-support-india') ||
     pathname.startsWith('/interfaith-relationship-india') ||
     pathname.startsWith('/cant-tell-anyone-india') ||
-    pathname.startsWith('/doctor-burnout-india')
+    pathname.startsWith('/doctor-burnout-india') ||
+    // Round 12: high-intent paying-user keyword pages
+    pathname.startsWith('/cheating-partner-india') ||
+    pathname.startsWith('/mother-in-law-stress-india') ||
+    pathname.startsWith('/toxic-relationship-india') ||
+    pathname.startsWith('/emotional-abuse-india') ||
+    pathname.startsWith('/affair-recovery-india') ||
+    pathname.startsWith('/feeling-trapped-india') ||
+    pathname.startsWith('/heartbreak-india') ||
+    pathname.startsWith('/overthinking-relationship-india') ||
+    pathname.startsWith('/controlling-relationship-india') ||
+    pathname.startsWith('/gaslighting-india') ||
+    pathname.startsWith('/financial-anxiety-india') ||
+    pathname.startsWith('/job-loss-support-india') ||
+    pathname.startsWith('/upsc-stress-india') ||
+    pathname.startsWith('/competitive-exam-stress-india') ||
+    pathname.startsWith('/anxiety-attack-india') ||
+    pathname.startsWith('/crying-for-no-reason-india') ||
+    pathname.startsWith('/no-motivation-india') ||
+    pathname.startsWith('/feeling-empty-inside-india') ||
+    pathname.startsWith('/panic-attack-india') ||
+    pathname.startsWith('/people-pleaser-india') ||
+    pathname.startsWith('/low-self-esteem-india') ||
+    pathname.startsWith('/social-anxiety-india') ||
+    pathname.startsWith('/imposter-syndrome-india') ||
+    pathname.startsWith('/joint-family-stress-india') ||
+    pathname.startsWith('/parents-forcing-marriage-india') ||
+    pathname.startsWith('/sasural-problems-india') ||
+    pathname.startsWith('/bad-day-india') ||
+    pathname.startsWith('/need-to-vent-india') ||
+    pathname.startsWith('/emotional-support-india') ||
+    pathname.startsWith('/talk-to-someone-free-india') ||
+    pathname.startsWith('/working-woman-stress-india') ||
+    pathname.startsWith('/new-mom-india') ||
+    pathname.startsWith('/relationship-trust-issues-india') ||
+    pathname.startsWith('/communication-problems-relationship-india') ||
+    pathname.startsWith('/feeling-invisible-india')
 
   if (shouldHide) return null
 

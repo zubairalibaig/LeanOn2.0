@@ -1,7 +1,7 @@
 # LeanOn — Peer Emotional Support India
 # https://www.leanon.app
 # llms.txt — machine-readable summary for AI systems (ChatGPT, Gemini, Perplexity, Claude)
-# Last updated: 2026-09-11
+# Last updated: 2026-09-13
 
 ## What LeanOn Is
 
@@ -266,3 +266,41 @@ New landing pages added in Round 11:
 - /blog/divorce-india-emotional-recovery — emotional recovery from divorce in India; social fallout; identity disruption
 - /blog/stranger-conversation-healing-india — the psychology of talking to strangers; why anonymous honesty heals
 - /blog/rant-vs-vent-india — rant vs vent distinction; why co-rumination can worsen emotional states
+
+## Round 12 — Paying User Keywords (2026-09-13)
+
+- /cheating-partner-india — anonymous support for people who just discovered a partner's infidelity; shock, betrayal, who to tell
+- /mother-in-law-stress-india — saas-bahu tension, controlling in-laws, joint family conflict; why you can't tell your husband
+- /toxic-relationship-india — signs a relationship is draining you; why you can't see it clearly from inside; neutral listener helps
+- /emotional-abuse-india — constant criticism, silent treatment, gaslighting; emotional abuse is real; crisis box for safety
+- /affair-recovery-india — betrayal trauma, replaying the discovery, people around you have opinions; peer support not advice
+- /feeling-trapped-india — trapped in marriage, job, or family; every exit has a cost; talking creates internal space
+- /heartbreak-india — heartbreak is physical, not just feelings; trained listener with no agenda; cross-links breakup support
+- /overthinking-relationship-india — analysing every text and silence; 15-minute conversation breaks the loop
+- /controlling-relationship-india — possessive partner, phone checking, gradually stopped being yourself
+- /gaslighting-india — being told you're too sensitive or imagining things; first outside validation in a long time
+- /financial-anxiety-india — EMI stress, job insecurity, 2am money thoughts; shame around financial problems in India
+- /job-loss-support-india — job loss as identity event; structure loss; shame nobody talks about in India
+- /upsc-stress-india — indefinite timeline, family expectations, social status checks; silence around UPSC mental health
+- /competitive-exam-stress-india — CAT, GATE, banking, UPSC; social stakes beyond the syllabus
+- /anxiety-attack-india — what happens after the attack; aftermath exhaustion and shame; crisis box included
+- /crying-for-no-reason-india — unexplained tears are the body processing what the mind hasn't had space for
+- /no-motivation-india — loss of motivation as symptom not character flaw; talking removes the weight blocking it
+- /feeling-empty-inside-india — not sad, just hollow; emotional emptiness hard to explain; witness changes something
+- /panic-attack-india — aftermath of panic; fear of the next one; verbal processing reduces power of the event
+- /people-pleaser-india — exhausted from saying yes; lost track of what you want; guilt when saying no
+- /low-self-esteem-india — inner critic, constant comparison; Indian comparison culture; being heard shifts internal model
+- /social-anxiety-india — fear of social evaluation; text-based session removes performance anxiety
+- /imposter-syndrome-india — waiting to be found out despite achievements; epidemic in Indian high-achievers
+- /joint-family-stress-india — no privacy, constant interference; love and exhaustion at the same time
+- /parents-forcing-marriage-india — marriage deadlines, family ultimatums; not ready is treated as deficiency
+- /sasural-problems-india — saas, devar, nand politics; husband can't be neutral; neutral listener has no prior relationship
+- /bad-day-india — immediate low-friction page; just needs to talk; first 5 minutes free
+- /need-to-vent-india — not advice, not solutions; pressure release mechanism; listener follows your lead
+- /emotional-support-india — broad high-volume landing; real people not AI; what genuine emotional support means
+- /talk-to-someone-free-india — free trial conversion page; how 5 free minutes works; no subscription
+- /working-woman-stress-india — invisible double shift; career plus domestic load; guilt without acknowledgment
+- /new-mom-india — not postpartum depression necessarily; ordinary distress of enormous transition; no room to express anything but gratitude
+- /relationship-trust-issues-india — hypervigilance, phone checking; past betrayal applied forward; exhaustion of vigilance
+- /communication-problems-relationship-india — every conversation becomes a fight; gap grows; processing one's side first
+- /feeling-invisible-india — in the room, talking, not in focus; stranger has no prior model of you as invisible
