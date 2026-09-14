@@ -37,6 +37,12 @@ type SessionRow = {
   amount_held: number; platform_fee?: number; status: string; is_free_trial: boolean; started_at: string | null; ended_at?: string | null
   crisis_flagged?: boolean; crisis_flagged_at?: string | null; created_at?: string
   seeker?: { name?: string; phone?: string }; listener?: { name?: string; phone?: string }
+  // Set by /api/admin/sessions when a listener_earnings row exists for this session.
+  // listener_service_fee = 15% of rawShare (0 for old sessions settled before 2026-09-14).
+  // listener_net_amount  = what the listener was actually credited.
+  // null means no earnings row yet (unsettled, accidental-start, or free trial).
+  listener_service_fee?: number | null
+  listener_net_amount?: number | null
 }
 type TranscriptMsg = { id: string; sender_id: string; content: string; created_at: string; is_flagged?: boolean }
 type ReportRow = {
@@ -1093,7 +1099,7 @@ export default function AdminPage() {
                 {/* ── YOUR EARNINGS (platform fee) ── */}
                 {kpis.platformEarnings && (
                   <>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Your Earnings (₹10 platform fee per paid session)</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Your Earnings (₹10 flat fee + 15% service fee per paid session)</div>
                     <div className="kpi-grid" style={{ marginBottom: 20 }}>
                       <div className="kpi-card" style={{ borderLeft: '5px solid var(--green)' }}>
                         <div className="kpi-label">All Time</div>
@@ -1772,10 +1778,41 @@ export default function AdminPage() {
                           {s.is_free_trial
                             ? <span className="badge badge-gray">Free</span>
                             : (() => {
-                                const fee = s.platform_fee ?? 0
-                                // If we have timestamps, compute actual billed amount from pro-rated logic.
-                                // Otherwise fall back to amount_held (which is the full booked amount).
-                                let listenerEarning = s.amount_held - fee
+                                const platformFee = s.platform_fee ?? 0  // seeker's flat ₹10
+
+                                // ── Settled path (listener_earnings row exists) ──────────────
+                                // listener_net_amount and listener_service_fee come from the
+                                // actual settlement ledger — exact, accounts for early exits
+                                // and the 15% service fee.  Use these when available.
+                                if (s.listener_net_amount != null && s.listener_service_fee != null) {
+                                  const svcFee     = s.listener_service_fee  // 15% (0 for old sessions)
+                                  const leanOnEarned = platformFee + svcFee  // LeanOn total
+                                  const listenerNet  = s.listener_net_amount
+                                  const refund = Math.max(0, s.amount_held - leanOnEarned - listenerNet)
+                                  const isEarlyExit = refund > 0
+                                  const tooltip = [
+                                    `Seeker held ₹${s.amount_held}`,
+                                    `Listener earned ₹${listenerNet}`,
+                                    svcFee > 0 ? `Service fee ₹${svcFee}` : null,
+                                    `Platform fee ₹${platformFee}`,
+                                    `LeanOn total ₹${leanOnEarned}`,
+                                    isEarlyExit ? `Refund ₹${refund}` : null,
+                                  ].filter(Boolean).join(' · ')
+                                  return (
+                                    <span title={tooltip}>
+                                      ₹{listenerNet}
+                                      <span style={{ fontSize: 10, color: 'var(--green)', marginLeft: 3 }}>+₹{leanOnEarned}</span>
+                                      {isEarlyExit && <span style={{ fontSize: 10, color: 'var(--orange)', marginLeft: 3 }}>↩₹{refund}</span>}
+                                    </span>
+                                  )
+                                }
+
+                                // ── Legacy / unsettled path ──────────────────────────────────
+                                // No listener_earnings row: session not yet settled, or was
+                                // settled before 2026-09-14 without a listener_earnings row.
+                                // Recompute from timestamps + rate (same as old logic) so
+                                // nothing changes for historical data.
+                                let listenerEarning = s.amount_held - platformFee
                                 let billedMins = s.duration_mins
                                 let isEarlyExit = false
                                 if (s.started_at && s.ended_at && (s.status === 'completed' || s.status === 'expired')) {
@@ -1784,14 +1821,14 @@ export default function AdminPage() {
                                   billedMins = Math.min(s.duration_mins, actualMins)
                                   if (billedMins < s.duration_mins && billedMins > 0) {
                                     isEarlyExit = true
-                                    listenerEarning = Math.floor((s.amount_held - fee) * billedMins / s.duration_mins)
+                                    listenerEarning = Math.floor((s.amount_held - platformFee) * billedMins / s.duration_mins)
                                   }
                                 }
-                                const refund = isEarlyExit ? Math.max(0, s.amount_held - listenerEarning - fee) : 0
+                                const refund = isEarlyExit ? Math.max(0, s.amount_held - listenerEarning - platformFee) : 0
                                 return (
-                                  <span title={`Seeker held ₹${s.amount_held}${isEarlyExit ? ` · ${billedMins}/${s.duration_mins} min used · Listener earned ₹${listenerEarning} · Refund ₹${refund}` : ` · Listener earned ₹${listenerEarning}`} · Platform fee ₹${fee}`}>
+                                  <span title={`Seeker held ₹${s.amount_held}${isEarlyExit ? ` · ${billedMins}/${s.duration_mins} min used · Listener earned ₹${listenerEarning} · Refund ₹${refund}` : ` · Listener earned ₹${listenerEarning}`} · Platform fee ₹${platformFee}`}>
                                     ₹{listenerEarning}
-                                    {fee > 0 && <span style={{ fontSize: 10, color: 'var(--gray)', marginLeft: 3 }}>+₹{fee}</span>}
+                                    {platformFee > 0 && <span style={{ fontSize: 10, color: 'var(--gray)', marginLeft: 3 }}>+₹{platformFee}</span>}
                                     {isEarlyExit && <span style={{ fontSize: 10, color: 'var(--orange)', marginLeft: 3 }}>↩₹{refund}</span>}
                                   </span>
                                 )
@@ -1890,7 +1927,15 @@ export default function AdminPage() {
                       }
                       return transcriptSession.duration_mins
                     })()} min {transcriptSession.session_type}
-                    {transcriptSession.is_free_trial ? ' · Free trial' : ` · ₹${transcriptSession.amount_held - (transcriptSession.platform_fee ?? 0)} listener + ₹${transcriptSession.platform_fee ?? 0} fee`}
+                    {transcriptSession.is_free_trial ? ' · Free trial' : (() => {
+                      const pFee = transcriptSession.platform_fee ?? 0
+                      const svcFee = transcriptSession.listener_service_fee ?? 0
+                      const listenerNet = transcriptSession.listener_net_amount != null
+                        ? transcriptSession.listener_net_amount
+                        : transcriptSession.amount_held - pFee - svcFee
+                      const leanOn = pFee + svcFee
+                      return ` · ₹${listenerNet} listener + ₹${leanOn} LeanOn${svcFee > 0 ? ` (₹${pFee}+₹${svcFee})` : ''}`
+                    })()}
                   </div>
                 </div>
                 <button className="btn btn-gray" style={{ padding: '4px 12px', fontSize: 12 }} onClick={() => setTranscriptSession(null)}>Close</button>

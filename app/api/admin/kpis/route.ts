@@ -77,17 +77,15 @@ export async function GET(req: NextRequest) {
       // anywhere else would silently reindex every KPI after it.
       sb.from('users').select('wallet_balance'),
 
-      // PLATFORM EARNINGS — LeanOn's actual income: the flat fee per paid
-      // session. Not derivable from wallet_transactions, because the fee is
-      // never moved as its own ledger row; it is simply the part of the hold
-      // that is not returned. So we recompute it from the sessions themselves,
-      // mirroring settleSession(): a session that ended inside the first
-      // minute is refunded IN FULL, fee included, and must not be counted.
-      // Bucketed by ended_at in JS below, so one query yields all three periods.
-      sb.from('sessions')
-        .select('platform_fee, started_at, ended_at')
-        .eq('is_free_trial', false)
-        .eq('status', 'completed'),
+      // PLATFORM EARNINGS — LeanOn's actual income: the flat ₹10 seeker fee
+      // PLUS the 15% listener service fee (both captured in
+      // listener_earnings.platform_fee since the 2026-09-14 deploy).
+      // For sessions settled before that deploy, platform_fee in
+      // listener_earnings is just ₹10 (the old billing), so old data is
+      // preserved automatically.  Only rows with platform_fee > 0 are counted
+      // (zero-fee rows are accidental-start full-refunds).
+      sb.from('listener_earnings')
+        .select('platform_fee, created_at'),
 
       // index 27-32: Today/month breakdown for free trials, paid sessions, new listeners
       sb.from('sessions').select('id', { count: 'exact', head: true }).eq('is_free_trial', true).gte('created_at', today),
@@ -132,7 +130,7 @@ export async function GET(req: NextRequest) {
     const gatewayFeesMonth    = extract<{ amount: number }>(23)
     const gatewayFeesToday    = extract<{ amount: number }>(24)
     const walletBalances      = extract<{ wallet_balance: number }>(25)
-    const feeSessions         = extract<{ platform_fee: number; started_at: string | null; ended_at: string | null }>(26)
+    const earningsForKpi      = extract<{ platform_fee: number; created_at: string }>(26)
     const freeTrialToday      = extract<{ id: string }>(27)
     const freeTrialThisMonth  = extract<{ id: string }>(28)
     const paidToday           = extract<{ id: string }>(29)
@@ -140,19 +138,18 @@ export async function GET(req: NextRequest) {
     const newListenersToday   = extract<{ id: string }>(31)
     const newListenersMonth   = extract<{ id: string }>(32)
 
-    // Platform fee actually KEPT, bucketed by when the session ended.
-    // Mirrors lib/session-billing.ts: under 60 seconds is a full refund
-    // (fee included), so those sessions contribute nothing.
+    // Platform earnings: sum listener_earnings.platform_fee (= ₹10 seeker fee
+    // + 15% service fee for sessions after 2026-09-14; just ₹10 for older rows).
+    // Accidental-start full-refund rows have platform_fee = 0 → skipped.
+    // Bucketed by listener_earnings.created_at (set at settlement time ≈ session end).
     const platformFee = { allTime: 0, thisMonth: 0, today: 0, sessions: 0 }
-    for (const s of feeSessions.data ?? []) {
-      const fee = Number(s.platform_fee ?? 0)
-      if (fee <= 0 || !s.started_at || !s.ended_at) continue
-      const secs = (new Date(s.ended_at).getTime() - new Date(s.started_at).getTime()) / 1000
-      if (!Number.isFinite(secs) || secs < 60) continue
+    for (const e of earningsForKpi.data ?? []) {
+      const fee = Number(e.platform_fee ?? 0)
+      if (fee <= 0) continue
       platformFee.allTime += fee
       platformFee.sessions += 1
-      if (s.ended_at >= thisMonth) platformFee.thisMonth += fee
-      if (s.ended_at >= today) platformFee.today += fee
+      if (e.created_at >= thisMonth) platformFee.thisMonth += fee
+      if (e.created_at >= today) platformFee.today += fee
     }
 
     const sum = (rows: { amount?: number; net_amount?: number }[] | null, field: 'amount' | 'net_amount' = 'amount') =>

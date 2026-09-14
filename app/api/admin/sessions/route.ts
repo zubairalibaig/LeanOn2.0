@@ -73,7 +73,44 @@ export async function GET(req: NextRequest) {
     const { data, count, error: qErr } = await query
     if (qErr) throw qErr
 
-    return NextResponse.json({ sessions: data ?? [], total: count ?? 0, page })
+    // Attach listener_earnings data so the admin UI can show the accurate
+    // LeanOn earning per session (₹10 seeker fee + 15% service fee) and the
+    // precise listener net_amount, rather than re-computing from raw columns.
+    // Old sessions (no earnings row or platform_fee = ₹10 only) return null for
+    // listener_service_fee so the UI falls back to the legacy display.
+    const sessionIds = (data ?? []).map((s: { id: string }) => s.id)
+    let earningsMap: Record<string, { listener_service_fee: number; listener_net_amount: number }> = {}
+    if (sessionIds.length > 0) {
+      const { data: earnings } = await sb
+        .from('listener_earnings')
+        .select('session_id, platform_fee, net_amount')
+        .in('session_id', sessionIds)
+      for (const e of earnings ?? []) {
+        if (!e.session_id) continue
+        // service_fee = combined_platform_fee − seeker_platform_fee
+        // (for old sessions both are ₹10 → service_fee = 0, preserving old display)
+        // We don't have sessions.platform_fee here, but it's returned in the row
+        // below — so we store the raw combined value and let the UI subtract.
+        earningsMap[e.session_id] = {
+          listener_service_fee: e.platform_fee,   // combined; UI subtracts sessions.platform_fee
+          listener_net_amount:  e.net_amount,
+        }
+      }
+    }
+
+    const sessions = (data ?? []).map((s: { id: string; platform_fee?: number }) => {
+      const e = earningsMap[s.id]
+      return e
+        ? {
+            ...s,
+            // service fee = combined_le_platform_fee − seeker's flat ₹10
+            listener_service_fee: e.listener_service_fee - (s.platform_fee ?? 0),
+            listener_net_amount:  e.listener_net_amount,
+          }
+        : { ...s, listener_service_fee: null, listener_net_amount: null }
+    })
+
+    return NextResponse.json({ sessions, total: count ?? 0, page })
   } catch (err) {
     logger.error('Admin sessions GET error:', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
