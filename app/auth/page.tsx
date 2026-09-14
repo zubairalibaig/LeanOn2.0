@@ -1,5 +1,5 @@
 'use client'
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, useId } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 
@@ -71,9 +71,21 @@ const S = `
   .label{font-size:13px;font-weight:800;color:var(--navy);margin-bottom:8px;display:block;}
   .phone-wrap{display:flex;align-items:center;background:white;border:2px solid var(--border);border-radius:14px;overflow:hidden;transition:border-color 0.2s;margin-bottom:8px;}
   .phone-wrap:focus-within{border-color:var(--navy);}
-  .country-select-wrap{position:relative;border-right:2px solid var(--border);flex-shrink:0;}
-  .country-select{appearance:none;-webkit-appearance:none;background:transparent;border:none;outline:none;padding:14px 28px 14px 14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;color:var(--gray);cursor:pointer;white-space:nowrap;}
+  .country-btn-wrap{position:relative;border-right:2px solid var(--border);flex-shrink:0;}
+  .country-btn{display:flex;align-items:center;gap:4px;background:transparent;border:none;outline:none;padding:14px 28px 14px 14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;color:var(--navy);cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;}
+  .country-btn:focus-visible{box-shadow:inset 0 0 0 2px var(--orange);}
+  .country-btn .flag{font-size:18px;line-height:1;}
+  .country-btn .dial{font-size:14px;font-weight:800;color:var(--gray);}
   .country-caret{position:absolute;right:8px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:10px;color:var(--gray);}
+  .country-panel{position:absolute;top:calc(100% + 4px);left:0;z-index:200;background:white;border:2px solid var(--border);border-radius:14px;box-shadow:0 8px 32px rgba(15,72,103,0.14);min-width:220px;max-height:280px;overflow-y:auto;padding:6px;}
+  .country-panel::-webkit-scrollbar{width:4px;}
+  .country-panel::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+  .country-option{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:var(--navy);white-space:nowrap;background:none;border:none;width:100%;text-align:left;}
+  .country-option:hover,.country-option:focus{background:var(--light);outline:none;}
+  .country-option.selected{background:var(--light);color:var(--teal);}
+  .country-option .opt-flag{font-size:18px;line-height:1;}
+  .country-option .opt-dial{color:var(--gray);font-weight:800;font-size:13px;min-width:38px;}
+  .country-option .opt-name{flex:1;}
   .phone-prefix{padding:14px 14px 14px 16px;font-weight:800;font-size:16px;color:var(--gray);border-right:2px solid var(--border);white-space:nowrap;}
   .phone-input{flex:1;padding:14px 16px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:700;color:var(--navy);border:none;outline:none;background:transparent;}
   .phone-input::placeholder{color:#B0C8D8;font-weight:500;}
@@ -146,6 +158,9 @@ export default function AuthPage() {
 
   const [isListenerMode, setIsListenerMode] = useState(false)
   const [country, setCountry] = useState<Country>(DEFAULT_COUNTRY)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  const dropdownId = useId()
 
   // Strip non-digits; no length cap here — validation uses country.minDigits/maxDigits
   const digits = () => phone.replace(/\D/g, '')
@@ -288,6 +303,18 @@ export default function AuthPage() {
     const t = setTimeout(() => setCountdown(c => c-1), 1000)
     return () => clearTimeout(t)
   }, [countdown])
+
+  // Close country dropdown on outside click or Escape
+  useEffect(() => {
+    if (!dropdownOpen) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setDropdownOpen(false) }
+    const onClick = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) setDropdownOpen(false)
+    }
+    document.addEventListener('keydown', onKey)
+    document.addEventListener('mousedown', onClick)
+    return () => { document.removeEventListener('keydown', onKey); document.removeEventListener('mousedown', onClick) }
+  }, [dropdownOpen])
 
   function requestOtp() {
     setError('')
@@ -437,26 +464,44 @@ export default function AuthPage() {
               </p>
               <label className="label">Mobile number</label>
               <div className="phone-wrap">
-                {/* Country code dropdown — 8 countries matching MSG91 allowed list */}
-                <div className="country-select-wrap">
-                  <select
-                    className="country-select"
-                    aria-label="Country code"
-                    value={country.code}
-                    onChange={e => {
-                      const c = COUNTRIES.find(x => x.code === e.target.value) ?? DEFAULT_COUNTRY
-                      setCountry(c)
-                      setPhone('')  // clear number when country changes to avoid length mismatches
-                      setError('')
-                    }}
+                {/* Custom country code dropdown — emoji flags render properly in a div-based list */}
+                <div className="country-btn-wrap" ref={dropdownRef}>
+                  <button
+                    type="button"
+                    className="country-btn"
+                    aria-haspopup="listbox"
+                    aria-expanded={dropdownOpen}
+                    aria-controls={dropdownId}
+                    aria-label={`Country: ${country.name} +${country.dialCode}`}
+                    onClick={() => setDropdownOpen(o => !o)}
                   >
-                    {COUNTRIES.map(c => (
-                      <option key={c.code} value={c.code}>
-                        {c.flag} +{c.dialCode} {c.name}
-                      </option>
-                    ))}
-                  </select>
-                  <span className="country-caret">▾</span>
+                    <span className="flag">{country.flag}</span>
+                    <span className="dial">+{country.dialCode}</span>
+                  </button>
+                  <span className="country-caret" aria-hidden="true">▾</span>
+                  {dropdownOpen && (
+                    <div id={dropdownId} className="country-panel" role="listbox" aria-label="Select country">
+                      {COUNTRIES.map(c => (
+                        <button
+                          key={c.code}
+                          type="button"
+                          role="option"
+                          aria-selected={c.code === country.code}
+                          className={`country-option${c.code === country.code ? ' selected' : ''}`}
+                          onClick={() => {
+                            setCountry(c)
+                            setPhone('')  // clear number when country changes — avoid length mismatches
+                            setError('')
+                            setDropdownOpen(false)
+                          }}
+                        >
+                          <span className="opt-flag">{c.flag}</span>
+                          <span className="opt-dial">+{c.dialCode}</span>
+                          <span className="opt-name">{c.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <input
                   className="phone-input"
