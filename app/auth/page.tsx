@@ -69,10 +69,10 @@ const S = `
   h1{font-size:28px;font-weight:900;color:var(--navy);line-height:1.2;margin-bottom:10px;}
   .subtitle{font-size:15px;color:var(--gray);font-weight:500;line-height:1.6;margin-bottom:32px;}
   .label{font-size:13px;font-weight:800;color:var(--navy);margin-bottom:8px;display:block;}
-  .phone-wrap{display:flex;align-items:center;background:white;border:2px solid var(--border);border-radius:14px;overflow:hidden;transition:border-color 0.2s;margin-bottom:8px;}
+  .phone-wrap{display:flex;align-items:center;background:white;border:2px solid var(--border);border-radius:14px;transition:border-color 0.2s;margin-bottom:8px;}
   .phone-wrap:focus-within{border-color:var(--navy);}
-  .country-btn-wrap{position:relative;border-right:2px solid var(--border);flex-shrink:0;}
-  .country-btn{display:flex;align-items:center;gap:4px;background:transparent;border:none;outline:none;padding:14px 28px 14px 14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;color:var(--navy);cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;}
+  .country-btn-wrap{position:relative;border-right:2px solid var(--border);flex-shrink:0;border-radius:12px 0 0 12px;overflow:visible;}
+  .country-btn{display:flex;align-items:center;gap:4px;background:transparent;border:none;outline:none;padding:14px 28px 14px 14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;color:var(--navy);cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;border-radius:12px 0 0 12px;}
   .country-btn:focus-visible{box-shadow:inset 0 0 0 2px var(--orange);}
   .country-btn .flag{font-size:18px;line-height:1;}
   .country-btn .dial{font-size:14px;font-weight:800;color:var(--gray);}
@@ -87,7 +87,7 @@ const S = `
   .country-option .opt-dial{color:var(--gray);font-weight:800;font-size:13px;min-width:38px;}
   .country-option .opt-name{flex:1;}
   .phone-prefix{padding:14px 14px 14px 16px;font-weight:800;font-size:16px;color:var(--gray);border-right:2px solid var(--border);white-space:nowrap;}
-  .phone-input{flex:1;padding:14px 16px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:700;color:var(--navy);border:none;outline:none;background:transparent;}
+  .phone-input{flex:1;padding:14px 16px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:700;color:var(--navy);border:none;outline:none;background:transparent;border-radius:0 12px 12px 0;}
   .phone-input::placeholder{color:#B0C8D8;font-weight:500;}
   .text-input{width:100%;padding:14px 16px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:700;color:var(--navy);border:2px solid var(--border);border-radius:14px;outline:none;background:white;transition:border-color 0.2s;margin-bottom:8px;}
   .text-input:focus{border-color:var(--navy);}
