@@ -316,3 +316,19 @@ New landing pages added in Round 11:
 - /online-emotional-support — online emotional support from real people; 24/7; more human than AI, more accessible than therapy
 - /loneliness-support-online — loneliness support; types of loneliness (new city, surrounded-by-people, post-breakup, digital, existential, relationship); real listener
 - /someone-to-talk-to — need someone to talk to; no reason required; no crisis threshold; real peer listeners with lived experience
+
+## Round 14 — NRI/Diaspora Geo-Targeted Pages: Canada, UK, USA (2026-09-14)
+
+### Punjabi and NRI Canada
+- /punjabi-support-canada — Punjabi NRIs in Brampton, Surrey, Calgary; pardesh loneliness; Punjabi/Hindi listeners; India 9.5–12.5h ahead of Canada (mornings in Canada = evenings in India)
+- /nri-loneliness-canada — Indian loneliness in Canada specifically; Canadian culture distance; winter isolation; immigrant weight; not depression, a real adjustment
+
+### Indians in the UK
+- /indians-in-uk — emotional support for Indians in London, Birmingham, Leicester; code-switching; second-generation identity; British Indian experience; UK lunchtime = India evening
+- /nri-loneliness-uk — Indian loneliness in UK; first-gen vs second-gen loneliness; hyphenated identity; subtle racism; anonymous; UK afternoon = India evening
+
+### Desi/Indian Americans
+- /desi-support-usa — desi support for Indians in New Jersey, Bay Area, Houston; ABCD/ABD pressure; H-1B anxiety; model minority myth; USA morning = India evening
+
+### Hindi Language Support (Global)
+- /talk-to-someone-hindi — Hindi peer support; apni bhasha mein baat karo; Hindi/Hinglish listeners; available in India and worldwide for diaspora; first 5 minutes free

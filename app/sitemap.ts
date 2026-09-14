@@ -357,5 +357,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/online-emotional-support`,   lastModified: d('2026-09-13'), changeFrequency: 'weekly',  priority: 0.95 },
     { url: `${base}/loneliness-support-online`,  lastModified: d('2026-09-13'), changeFrequency: 'weekly',  priority: 0.95 },
     { url: `${base}/someone-to-talk-to`,         lastModified: d('2026-09-13'), changeFrequency: 'weekly',  priority: 0.95 },
+    // Round 14: NRI/diaspora geo-targeted pages — Canada, UK, USA (2026-09-14)
+    { url: `${base}/punjabi-support-canada`,     lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/indians-in-uk`,              lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/desi-support-usa`,           lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/nri-loneliness-canada`,      lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/nri-loneliness-uk`,          lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/talk-to-someone-hindi`,      lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
   ]
 }
