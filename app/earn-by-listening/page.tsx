@@ -33,7 +33,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'How much can I earn as a peer listener on LeanOn?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Listeners on LeanOn set their own session rate (typically ₹100–₹300 per 15 minutes). Active listeners conducting 3–5 sessions per day can earn ₹300–₹800 per hour of sessions. Your earnings depend on your rate, availability, and how many seekers book with you. There are no upfront costs or hidden deductions.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Listeners on LeanOn set their own session rate (typically ₹100–₹300 per 15 minutes). LeanOn applies a 15% service fee on earnings, so active listeners conducting 3–5 sessions per day can earn ₹255–₹680 per hour of sessions after the fee. Your earnings depend on your rate, availability, and how many seekers book with you. There are no upfront costs or hidden fees — the 15% service fee is the only deduction, shown transparently on every session.' },
     },
     {
       '@type': 'Question',
@@ -214,11 +214,11 @@ export default function EarnByListeningPage() {
         {/* What you earn */}
         <div className="section">
           <h2>What You Can Realistically Earn</h2>
-          <p>Listeners set their own rate — typically ₹100–₹300 per 15-minute session.</p>
-          <p><strong>Casual (4–6 sessions/week):</strong> ₹3,200–₹7,200/month — solid side income with minimal time.</p>
-          <p><strong>Part-time (2–3 sessions/day, 5 days/week):</strong> ₹20,000–₹45,000/month depending on your rate.</p>
-          <p><strong>Active (4+ sessions/day, consistent availability):</strong> ₹40,000–₹80,000+/month.</p>
-          <p>No upfront costs. No subscription fees. No commission taken from your rate — LeanOn charges a flat platform fee per session directly.</p>
+          <p>Listeners set their own rate — typically ₹100–₹300 per 15-minute session (before LeanOn&apos;s 15% service fee).</p>
+          <p><strong>Casual (4–6 sessions/week):</strong> ₹2,700–₹6,100/month after fees — solid side income with minimal time.</p>
+          <p><strong>Part-time (2–3 sessions/day, 5 days/week):</strong> ₹17,000–₹38,000/month depending on your rate.</p>
+          <p><strong>Active (4+ sessions/day, consistent availability):</strong> ₹34,000–₹68,000+/month.</p>
+          <p>No upfront costs. No subscription fees. LeanOn applies a 15% service fee on your earnings — you keep 85% of your rate.</p>
         </div>
 
         {/* FAQ */}

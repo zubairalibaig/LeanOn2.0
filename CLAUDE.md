@@ -56,10 +56,27 @@
 
 ## Business invariants
 
-- Platform fee: **flat ₹10 per paid session** (`PLATFORM_FEE`), listener
-  keeps 100% of their rate. Seeker bears the Razorpay gateway fee at
-  recharge (`grossRechargeAmount`). Wallet credits the tier amount from
+- Platform fee: **flat ₹10 per paid session** (`PLATFORM_FEE`), paid by the
+  seeker on top of the listener's rate. Seeker bears the Razorpay gateway fee
+  at recharge (`grossRechargeAmount`). Wallet credits the tier amount from
   server-set order notes — never the gross.
+- Listener service fee (2026-09-14): **15%** of listener earnings
+  (`LISTENER_SERVICE_FEE_RATE`, `lib/constants.ts`), deducted at settlement
+  (`lib/session-billing.ts settleSession()` — the single source of truth used
+  by `/api/sessions` PATCH, `cleanup`, and `expire`). Listeners keep **85%**
+  of their stated rate. Entirely separate from `PLATFORM_FEE` above — the
+  seeker's charge and refund math are untouched by this fee; the seeker never
+  sees or pays it. Applies only to sessions settled after the deploy date —
+  `settleSession()` runs once per session at completion, so already-completed
+  sessions are never recalculated. **Never call this a "commission" in any
+  user-facing copy — "service fee" only.** User-facing surfaces that must stay
+  in sync if this rate changes: `app/become-listener/page.tsx` (onboarding —
+  mentions ONLY the 15% service fee, never the seeker's ₹10),
+  `app/dashboard/page.tsx` (fee-update banner + per-session earnings display,
+  which reads `listener_earnings.net_amount` — NOT `sessions.amount_held -
+  sessions.platform_fee`, which no longer equals what the listener receives),
+  `app/faq/page.tsx`, `app/get-paid-to-chat-india/page.tsx`, `app/terms/page.tsx`,
+  `app/press/page.tsx`, `app/blog/posts/therapy-cost-india.ts`.
 - Session durations: 5 (free trial) / 15 / 30 / 45 minutes.
 - Crisis helplines: ONLY NIMHANS (080-46110007) and Tele-MANAS (14416).
   Never add iCall, Vandrevala, SNEHI, or any other number.

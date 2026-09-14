@@ -269,7 +269,7 @@ export async function PATCH(req: NextRequest) {
     // an early exit still pro-rates; < 60s is a full refund (accidental start).
     const endedAt = completed.ended_at ?? new Date().toISOString()
     const bookedMins = session.duration_mins as number
-    const { billedMins, listenerEarning, refundAmount } = settleSession({
+    const { billedMins, listenerEarning, refundAmount, listenerServiceFee } = settleSession({
       startedAt:   session.started_at ?? null,
       endedAt,
       bookedMins,
@@ -315,12 +315,16 @@ export async function PATCH(req: NextRequest) {
           session_id:  sessionId,
         })
 
-        // Track earnings in listener_earnings for dashboard
+        // Track earnings in listener_earnings for dashboard. platform_fee here
+        // is the seeker's flat ₹10 PLUS LeanOn's 15% service fee on the
+        // listener's share — the dashboard's "Gross · Fee" line already reads
+        // this column, so combining them keeps gross - fee = net exactly true
+        // with no dashboard change required.
         await sb.from('listener_earnings').insert({
           listener_id:  session.listener_id,
           session_id:   sessionId,
           gross_amount: Math.round(session.amount_held),
-          platform_fee: Math.round(session.platform_fee ?? 0),
+          platform_fee: Math.round((session.platform_fee ?? 0) + listenerServiceFee),
           net_amount:   Math.round(listenerEarning),
           status:       'settled',
         }).then(

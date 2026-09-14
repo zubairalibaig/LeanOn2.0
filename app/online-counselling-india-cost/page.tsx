@@ -197,8 +197,8 @@ export default function OnlineCounsellingCostPage() {
           <h3>Peers, not clinicians</h3>
           <p>LeanOn listeners are trained peers with lived experience — people who have been through loneliness, heartbreak, career collapse, family pressure, grief — and who have been screened and trained to listen well. They are not licensed psychologists or psychiatrists. There is no decade of clinical training, licensing and supervision to recover in the price, because that training is not what they are offering. They are offering attention, empathy, and the particular credibility of having been there. That is worth a lot, but it does not cost what a clinical qualification costs.</p>
 
-          <h3>Listeners keep 100 percent of their rate</h3>
-          <p>Whatever a listener sets as their per-minute rate, they keep all of it. LeanOn charges a flat ₹10 platform fee per paid session — not a percentage cut. The platform does not take a bigger slice as your session gets longer, which means there is no incentive built into the system to keep you talking, and listeners are not pressured to raise rates to absorb a commission.</p>
+          <h3>A simple, transparent fee — not a growing cut</h3>
+          <p>What you pay is the listener&apos;s stated per-minute rate plus a flat ₹10 platform fee per paid session — not a percentage of your bill. The fee does not grow as your session gets longer, which means there is no incentive built into the system to keep you talking.</p>
 
           <h3>You pay by the minute, not by the hour</h3>
           <p>Therapy is sold in fixed blocks of 45 or 60 minutes because that is how clinical work is structured. Sometimes you do not need an hour. Sometimes you need twelve minutes to say the thing out loud to someone who gets it. Charging by the minute means you pay for what you actually use, and a short honest conversation stays genuinely affordable instead of costing the same as a full clinical hour.</p>

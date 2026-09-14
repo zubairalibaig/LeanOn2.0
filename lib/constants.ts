@@ -1,4 +1,14 @@
-export const PLATFORM_FEE       = 10   // flat ₹10 per session added on top of listener rate (paid by seeker)
+export const PLATFORM_FEE       = 10   // flat ₹10 per session added on top of listener rate (paid by seeker) — unchanged by the service fee below
+// LeanOn's service fee on listener earnings (2026-09-14). Deducted from the
+// listener's share at settlement (lib/session-billing.ts) — the seeker's
+// charge (amountHeld) and the flat PLATFORM_FEE above are completely
+// unaffected; the seeker never sees or pays this. Applies to sessions that
+// go active on or after the deploy date — settleSession() only ever runs
+// once per session at its own completion, so already-completed sessions are
+// never recalculated under the new rate.
+// NOTE: any user-facing copy stating this number must be updated alongside
+// it (app/become-listener/page.tsx, app/faq/page.tsx, dashboard earnings copy).
+export const LISTENER_SERVICE_FEE_RATE = 0.15
 // Razorpay gateway commission (2%) + 18% GST on the fee — borne by the seeker
 // at recharge time. The wallet is credited the selected tier; the gross charge
 // includes this fee.

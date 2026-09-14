@@ -74,7 +74,7 @@ export async function GET(req: NextRequest) {
       // Shared settlement math (lib/session-billing.ts). This path only fires
       // when a session overran by 10+ minutes, so it settles as a full session.
       const bookedMins = session.duration_mins as number
-      const { billedMins, listenerEarning, refundAmount } = settleSession({
+      const { billedMins, listenerEarning, refundAmount, listenerServiceFee } = settleSession({
         startedAt:   (session.started_at as string | null) ?? null,
         endedAt,
         bookedMins,
@@ -94,11 +94,14 @@ export async function GET(req: NextRequest) {
           session_id: session.id,
         }).then(() => {}, () => {})
 
+        // platform_fee = seeker's flat ₹10 + LeanOn's 15% service fee on the
+        // listener's share (lib/session-billing.ts) — combined so the
+        // dashboard's Gross/Fee/Net line stays consistent unchanged.
         await sb.from('listener_earnings').insert({
           listener_id: session.listener_id,
           session_id: session.id,
           gross_amount: Math.round(session.amount_held),
-          platform_fee: Math.round(session.platform_fee ?? 0),
+          platform_fee: Math.round((session.platform_fee ?? 0) + listenerServiceFee),
           net_amount: Math.round(listenerEarning),
           status: 'settled',
         }).then(() => {}, () => {})

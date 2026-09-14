@@ -438,7 +438,9 @@ export default function Home() {
         </div>
       </div>
 
-      {/* PRICING — FIXED: listener keeps 100%, flat ₹10 added on top */}
+      {/* PRICING — seeker pays listener's rate + flat ₹10 (PLATFORM_FEE). Listener
+          side of the ledger (15% LISTENER_SERVICE_FEE_RATE) is not this page's
+          concern — never claim "100% to listener" here, it's no longer true. */}
       <div className="inner">
         <h2 className="sh">Simple, honest pricing</h2>
         <p className="ss">No subscriptions. Pay only for the time you use — refundable anytime.</p>
@@ -463,7 +465,7 @@ export default function Home() {
         </div>
         <div className="fee-note">
           <span>💡</span>
-          <span><strong>Where your money goes:</strong> Every rupee of your listener&apos;s rate goes to your listener. LeanOn adds a flat ₹10 per session on top — that&apos;s how we keep the lights on, and it&apos;s the only cut we take. Unused wallet balance is fully refundable, anytime.</span>
+          <span><strong>Where your money goes:</strong> You pay your listener&apos;s rate plus a flat ₹10 per session — that&apos;s the only fee you see, and it&apos;s how we keep the lights on. Unused wallet balance is fully refundable, anytime.</span>
         </div>
       </div>
 

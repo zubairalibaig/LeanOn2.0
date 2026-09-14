@@ -65,7 +65,8 @@ export default function TermsPage() {
           <li>Wallet top-ups are processed via Razorpay</li>
           <li>Unused wallet balance is fully refundable on request</li>
           <li>Completed sessions are non-refundable unless a safety violation occurred</li>
-          <li>LeanOn adds a flat ₹10 platform fee per session, shown transparently at checkout — listeners keep 100% of their stated rate</li>
+          <li>LeanOn adds a flat ₹10 platform fee per session, shown transparently at checkout, paid by the seeker</li>
+          <li>LeanOn applies a 15% service fee on listener earnings, deducted at session settlement; listeners keep 85% of their stated rate</li>
         </ul>
 
         <h2>6. Content moderation</h2>

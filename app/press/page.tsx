@@ -102,7 +102,7 @@ export default function PressPage() {
             {[
               ['Product', 'Peer emotional support platform (web app, mobile-first)'],
               ['Market', 'India — Bengaluru, Mumbai, Delhi, Chennai, Hyderabad and all cities'],
-              ['Model', 'Pay-per-session wallet; listeners keep 100% of their rate'],
+              ['Model', 'Pay-per-session wallet; 15% listener service fee, flat ₹10 seeker platform fee'],
               ['Free trial', 'First 5 minutes completely free, no payment method required'],
               ['Pricing', '₹160 for 15 min, ₹310 for 30 min (listener rate + ₹10 platform fee)'],
               ['Technology', 'Next.js, Supabase, Agora (voice), Razorpay (payments)'],

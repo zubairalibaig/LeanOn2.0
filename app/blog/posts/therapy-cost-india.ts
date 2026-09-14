@@ -76,7 +76,7 @@ export const post = {
 
 <p>The first reason is the honest one: <strong>LeanOn listeners are peers, not licensed clinicians.</strong> They are people who have lived through anxiety, burnout, grief, loneliness, family pressure, heartbreak — and who have been verified and trained to listen without judgment. They are not carrying a decade of clinical training whose cost has to be recovered, because they are not doing clinical work. They are offering understanding from experience. That is a different service, and it costs less because it is genuinely different, not because it is a discounted version of therapy.</p>
 
-<p>The second reason is our fee structure. Listeners keep 100% of their rate. LeanOn takes a flat ₹10 per session — not a percentage, not a subscription, not a cut that grows with the listener&apos;s price. That is the entire platform fee.</p>
+<p>The second reason is our fee structure. What you pay is the listener&apos;s stated rate plus a flat ₹10 per session — not a percentage of your bill, not a subscription, not a cut that grows with the listener&apos;s price. That is the entire fee you see as a seeker.</p>
 
 <p>The third is that you pay by the minute for what you actually use, rather than buying a fixed fifty-minute hour whether you need it or not. Some evenings you need twenty minutes. Some evenings you need five. A short trial session is available for new users, so you can find out whether a particular listener feels right before committing to a longer session. And if you top up your wallet and do not use it, the unused balance is fully refundable. We would rather refund you than hold your money hostage.</p>
 

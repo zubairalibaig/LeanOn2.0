@@ -86,8 +86,8 @@ LeanOn is a **PEER SUPPORT** platform. It is not a mental health, clinical, or t
 | Base rate | ₹10/min base; listeners set ₹8–25/min |
 | Session blocks | Fixed only: **15 min**, **30 min**, or **45 min**. No open-ended metered calls. |
 | Free trial | **1 free 5-minute session per seeker** (one per listener). Reduced from 5 → 3 → 2 → 1 as each reduction improved paid conversion without hurting top-of-funnel. |
-| Platform fee | **Flat ₹10 per paid session**, paid by the seeker on top of the listener's rate, shown as a separate transparent line item at checkout. Razorpay's gateway commission is also borne by the seeker. Do not over-advertise the fee — just keep the logic and checkout display honest. |
-| Listener keeps | **100% of their stated rate.** The fee never comes out of listener earnings. |
+| Platform fee (seeker) | **Flat ₹10 per paid session**, paid by the seeker on top of the listener's rate, shown as a separate transparent line item at checkout. Razorpay's gateway commission is also borne by the seeker. Do not over-advertise the fee — just keep the logic and checkout display honest. |
+| Service fee (listener) | **15% of listener earnings** (`LISTENER_SERVICE_FEE_RATE`, `lib/constants.ts`), deducted at settlement (`lib/session-billing.ts`). Effective 2026-09-14 — applies to sessions that go active on/after that date; sessions settled before it are untouched (settlement runs once, at session completion, never retroactively). Listeners keep **85%** of their stated rate. Never call this a "commission" in user-facing copy — "service fee" only. This is entirely separate from the seeker's flat ₹10: the seeker's charge and refund math are completely unaffected by this fee. |
 | Wallet | Recharge in fixed pools: ₹200 / ₹500 / ₹1000 / ₹2000. **Refundable anytime.** |
 | Payments | Razorpay. |
 
@@ -153,7 +153,7 @@ Build status for each lives in STATUS.md, not here.
    - **Why 15 minutes, not the 3 originally specified:** mobile browsers aggressively throttle (and often suspend) background timers. At a 3-minute threshold, a genuinely-online listener who simply switched apps or locked their phone for a few minutes was repeatedly swept offline — the single most-reported listener bug, and one that took weeks to stabilise. 15 minutes is wide enough to absorb that throttling while still clearing genuinely dead sessions. **Treat this number as load-bearing: do not lower it without first proving heartbeats survive mobile backgrounding.**
    - `is_available` is written ONLY by the authenticated availability toggle. Heartbeats refresh the timestamp and may never set availability back to `true` — a stale tab doing so was a real source of "ghost online" listeners.
 4. **Incoming session:** banner with **60-second countdown**. Accept or decline. If ignored, slot times out and the seeker's reservation reverts.
-5. **Earnings ledger:** on completion, `payout = rate × duration` (the listener's full stated rate — the flat ₹10 platform fee is paid by the seeker on top, never deducted) is appended to the listener's internal balance ledger.
+5. **Earnings ledger:** on completion, `payout = (rate × duration) × 85%` — the listener's full stated rate minus LeanOn's 15% service fee (§5). The seeker's flat ₹10 platform fee is separate, paid by the seeker on top, and never deducted from the listener's share. Recorded in `listener_earnings` (`gross_amount`, `platform_fee` — which for a session settled after 2026-09-14 holds the seeker's ₹10 PLUS the 15% service fee combined, `net_amount`).
 
 ### 8.3 Admin workflow
 1. **Verification desk:** list profiles in `pending_review`; Approve / Reject actions flip verification flags.
@@ -190,7 +190,7 @@ No other session states may exist. Any new state requires updating this file fir
 1. **Phone OTP only.** No email/password friction. Mobile-first.
 2. **Session-based, not open-ended.** 15 or 30 min blocks. No meter anxiety.
 3. **Wallet refundable anytime.** Trust driver.
-4. **Flat ₹10 fee, shown transparently.** Listener keeps their full rate; seeker sees the fee as a separate line at checkout. Don't over-advertise the fee in marketing copy.
+4. **Flat ₹10 seeker fee, shown transparently.** Seeker sees the fee as a separate line at checkout. Don't over-advertise the fee in marketing copy. Separately (2026-09-14), a 15% service fee applies to listener earnings — see §5 and §8.2.5. Never call it a "commission" in user-facing copy.
 5. **No photo prominence.** Specialty + lived experience first; prevents attractiveness-based selection.
 6. **No parasocial hooks.** No tipping, gifting, gift delivery, public comments, profile-photo enlargement, or login streaks. These create dependency — do not build them.
 7. **Text-first.** Voice is secondary; most users need privacy from joint family.

@@ -22,3 +22,16 @@ export const SHOW_LISTENER_GROWTH_NOTICE = true
  * DO NOT touch is_available flag logic — that is completely separate.
  */
 export const SHOW_LISTENER_IN_SESSION_STATUS = true
+
+/**
+ * Shows a one-time dashboard banner to listeners who have at least one
+ * completed PAID session (amount_held > 0), announcing the 15% listener
+ * service fee (lib/constants.ts LISTENER_SERVICE_FEE_RATE, effective
+ * 2026-09-14). Dismissal is stored in localStorage per-device
+ * (leanon_fee_notice_dismissed) — matches the existing dismissible-banner
+ * pattern (leanon_nudge_dismissed). A durable in-app notification is also
+ * inserted once per listener (type 'fee_update') so it survives across
+ * devices even if this flag or the banner is later removed.
+ * Set to false to hide the banner instantly without a redeploy.
+ */
+export const SHOW_LISTENER_FEE_UPDATE_NOTICE = true

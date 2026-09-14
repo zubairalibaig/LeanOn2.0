@@ -104,7 +104,11 @@ const faqs = [
       },
       {
         q: 'How much do listeners earn?',
-        a: 'Listeners set their own rate — ₹8 to ₹25 per minute. You keep 100% of your rate. LeanOn adds a flat ₹10 platform fee on top, which seekers pay — it never comes out of your earnings.',
+        a: 'Listeners set their own rate — ₹8 to ₹25 per minute. LeanOn applies a 15% service fee on your earnings, so you keep 85% of your stated rate. This is separate from the flat ₹10 fee seekers pay — that one is paid by the seeker and never touches your earnings.',
+      },
+      {
+        q: 'What is the LeanOn service fee?',
+        a: 'It\'s a 15% fee on listener earnings, deducted automatically when a session settles — you never have to calculate or pay it yourself. It funds bringing you seekers, secure payments, listener support, and ongoing platform improvements — the same way most marketplaces (Upwork, Preply, Fiverr) take a share to keep the platform running. Your stated rate and what seekers pay are unaffected; only your net earnings reflect the fee.',
       },
       {
         q: 'Do I need professional qualifications to be a listener?',
@@ -116,7 +120,7 @@ const faqs = [
       },
       {
         q: 'Is there a guaranteed minimum income?',
-        a: 'No. Earnings are variable and depend on session volume, which is tied to seeker traffic on LeanOn. We don\'t promise a specific income. What we do promise: you keep 100% of your rate, LeanOn\'s platform fee (₹10 flat) is paid by the seeker — your earnings are never reduced by platform fees.',
+        a: 'No. Earnings are variable and depend on session volume, which is tied to seeker traffic on LeanOn. We don\'t promise a specific income. What we do promise: your rate is entirely yours to set, and after LeanOn\'s 15% service fee, you keep 85% of it — that percentage doesn\'t change with volume.',
       },
     ],
   },

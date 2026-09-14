@@ -3,8 +3,8 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
-import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE, PLATFORM_FEE, REQUEST_RESPONSE_WINDOW_SECS } from '@/lib/constants'
-import { SHOW_LISTENER_GROWTH_NOTICE } from '@/lib/feature-flags'
+import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE, PLATFORM_FEE, LISTENER_SERVICE_FEE_RATE, REQUEST_RESPONSE_WINDOW_SECS } from '@/lib/constants'
+import { SHOW_LISTENER_GROWTH_NOTICE, SHOW_LISTENER_FEE_UPDATE_NOTICE } from '@/lib/feature-flags'
 import { showToast } from '@/lib/toast'
 import { registerPushNotifications } from '@/lib/firebase-client'
 import { compressImage, extForType, AVATAR_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
@@ -188,6 +188,16 @@ export default function DashboardPage() {
   const [incomingSession, setIncomingSession] = useState<IncomingSession | null>(null)
   const [respondingIncoming, setRespondingIncoming] = useState(false)
   const [missedSessions, setMissedSessions] = useState<Array<{ id: string; created_at: string; duration_mins: number; session_type: string }>>([])
+  // Fee-update banner — shown once to listeners who have completed at least
+  // one PAID session, announcing the 15% listener service fee. Dismissal is
+  // per-device (localStorage); a durable in-app notification is also written
+  // once per listener so the announcement survives even if this banner or
+  // its localStorage flag is cleared.
+  const [showFeeNotice, setShowFeeNotice] = useState(false)
+  // session_id -> authoritative net_amount from listener_earnings, used to
+  // render "Recent sessions" correctly now that amount_held - platform_fee
+  // no longer equals what the listener actually received (see loadData()).
+  const [sessionEarnings, setSessionEarnings] = useState<Map<string, number>>(new Map())
   const [monthEarned, setMonthEarned] = useState<number | null>(null)
   const [unreadMsgCount, setUnreadMsgCount] = useState(0)
   const [countdown, setCountdown] = useState(60)
@@ -488,6 +498,34 @@ export default function DashboardPage() {
 
     if (recent) setSessions(recent)
 
+    // Fee-update banner — only for listeners with at least one completed PAID
+    // session (amount_held > 0; free trials are 0). Checked here (not a
+    // separate effect) so it reuses the `recent` fetch above with no extra query.
+    if (SHOW_LISTENER_FEE_UPDATE_NOTICE && recent?.some(s => (s.amount_held || 0) > 0)) {
+      let dismissed = false
+      try { dismissed = localStorage.getItem('leanon_fee_notice_dismissed') === '1' } catch { /* ignore */ }
+      if (!dismissed) setShowFeeNotice(true)
+
+      // Durable in-app notification — written once per listener regardless of
+      // the banner's dismiss state, so the announcement survives across
+      // devices. Guarded by checking for an existing row first (RLS scopes
+      // both to the listener's own rows, so this is safe from the client).
+      sb.from('notifications')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', u.id)
+        .eq('type', 'fee_update')
+        .then(({ count }) => {
+          if (count) return
+          sb.from('notifications').insert({
+            user_id: u.id,
+            type: 'fee_update',
+            title: 'A new LeanOn service fee for listeners',
+            body: `Starting now, LeanOn applies a ${Math.round(LISTENER_SERVICE_FEE_RATE * 100)}% service fee on listener earnings — the same way we've always kept a small fee from seekers. This helps us bring you more people to talk to and keep improving LeanOn. Your rate is unchanged, and every session you've already completed is unaffected.`,
+            action_url: '/faq',
+          }).then(() => {}, () => {})
+        }, () => {})
+    }
+
     // Missed requests — pending sessions that were cancelled (declined/timed out)
     // and never started, in the last 24h. Shown so the listener knows they
     // missed someone who wanted to talk.
@@ -502,13 +540,18 @@ export default function DashboardPage() {
     if (missed) setMissedSessions(missed.filter(s => !s.started_at))
 
     // Authoritative earnings come from the listener_earnings ledger (net_amount),
-    // which already accounts for pro-rated partial sessions. Deriving "this month"
-    // from amount_held - platform_fee overstates partial-session earnings and
-    // disagrees with the wallet and the /dashboard/earnings page.
+    // which already accounts for pro-rated partial sessions AND (2026-09-14) the
+    // 15% listener service fee. Deriving earnings from amount_held - platform_fee
+    // overstates them — that's true for partial sessions as before, and now also
+    // for every new full session, since sessions.platform_fee only ever holds
+    // the seeker's flat ₹10 and never the service fee. session_id here builds a
+    // lookup so the per-session "Recent sessions" list below can show the real
+    // net amount instead of recomputing (and overstating) it inline.
     const { data: earnings } = await sb
       .from('listener_earnings')
-      .select('net_amount, created_at, status')
+      .select('session_id, net_amount, created_at, status')
       .eq('listener_id', u.id)
+    const earningsBySession = new Map<string, number>()
     if (earnings) {
       const now = new Date()
       const sum = earnings
@@ -516,7 +559,9 @@ export default function DashboardPage() {
         .filter(e => { const d = new Date(e.created_at); return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear() })
         .reduce((s, e) => s + (e.net_amount || 0), 0)
       setMonthEarned(sum)
+      earnings.forEach(e => { if (e.session_id) earningsBySession.set(e.session_id, e.net_amount || 0) })
     }
+    setSessionEarnings(earningsBySession)
 
     // Unread offline message requests — gracefully skips if migration 048 not run yet
     fetch('/api/listener-messages')
@@ -1139,12 +1184,41 @@ export default function DashboardPage() {
           <span style={{ fontSize:20 }}>💬</span>
         </button>
 
+        {showFeeNotice && (
+          <div style={{marginBottom:20,background:'var(--light)',border:'1.5px solid var(--border)',borderRadius:18,padding:'18px 20px',position:'relative'}}>
+            <button
+              onClick={() => {
+                setShowFeeNotice(false)
+                try { localStorage.setItem('leanon_fee_notice_dismissed', '1') } catch { /* ignore */ }
+              }}
+              aria-label="Dismiss"
+              style={{position:'absolute',top:14,right:14,background:'transparent',border:'none',color:'var(--gray)',fontSize:18,fontWeight:900,cursor:'pointer',lineHeight:1,padding:4}}
+            >×</button>
+            <div style={{fontSize:15,fontWeight:900,color:'var(--navy)',marginBottom:8,paddingRight:24}}>
+              A new LeanOn service fee for listeners
+            </div>
+            <div style={{fontSize:13,color:'#3A6070',lineHeight:1.7,fontWeight:500,marginBottom:10}}>
+              Starting now, LeanOn applies a <strong>{Math.round(LISTENER_SERVICE_FEE_RATE * 100)}% service fee</strong> on
+              listener earnings — the same way we&apos;ve always kept a small fee from seekers. It helps us bring you more
+              people to talk to, keep payments secure, and keep improving LeanOn. Your rate is unchanged — you still set
+              what you charge per minute, and every session you&apos;ve already completed is unaffected.
+            </div>
+            <a href="/faq" style={{fontSize:13,fontWeight:800,color:'var(--teal)'}}>Read more in the FAQ →</a>
+          </div>
+        )}
+
         {sessions.length > 0 && (
           <>
             <div className="section-title">Recent sessions</div>
             <div className="session-list">
               {sessions.map((s, i) => {
-                const earned = s.amount_held - (s.platform_fee ?? 0)
+                // Prefer the authoritative listener_earnings.net_amount (accounts
+                // for the 15% service fee + pro-ration); fall back to the old
+                // approximation only for rows with no ledger entry yet (a very
+                // old session predating the ledger, or the write briefly failing).
+                const earned = sessionEarnings.has(s.id)
+                  ? sessionEarnings.get(s.id)!
+                  : s.amount_held - (s.platform_fee ?? 0)
                 const seeker = s.users?.name
                 const seekerDisplay = seeker
                   ? seeker.split(' ').map((p: string) => p[0] || '').join('.') + '.'

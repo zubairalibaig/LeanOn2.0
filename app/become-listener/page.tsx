@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, PLATFORM_FEE, LANGUAGES, MONTHS, MIN_LISTENER_AGE, MAX_LISTENER_AGE, ageFromBirth } from '@/lib/constants'
+import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, LISTENER_SERVICE_FEE_RATE, LANGUAGES, MONTHS, MIN_LISTENER_AGE, MAX_LISTENER_AGE, ageFromBirth } from '@/lib/constants'
 import { createClient } from '@/lib/supabase'
 import { SHOW_LISTENER_GROWTH_NOTICE } from '@/lib/feature-flags'
 import { compressImage, extForType, AVATAR_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
@@ -247,14 +247,19 @@ export default function BecomeListenerPage() {
   }, [])
 
   // Use raw input for the live preview — validation blocks invalid values on submit.
-  const rateNum     = Math.max(0, parseInt(rate) || 0)
-  const earn15      = rateNum * 15
-  const earn30      = rateNum * 30
-  const earn45      = rateNum * 45
-  const platformFee = PLATFORM_FEE  // flat ₹10 added to every session (paid by seeker)
-  const userPays15  = earn15 + platformFee
-  const userPays30  = earn30 + platformFee
-  const userPays45  = earn45 + platformFee
+  // This page deliberately shows only the LISTENER_SERVICE_FEE_RATE (15%) math —
+  // the seeker's separate flat PLATFORM_FEE never touches listener earnings and
+  // isn't shown here (see lib/constants.ts for both).
+  const rateNum      = Math.max(0, parseInt(rate) || 0)
+  const gross15       = rateNum * 15
+  const gross30       = rateNum * 30
+  const gross45       = rateNum * 45
+  const serviceFee15  = Math.round(gross15 * LISTENER_SERVICE_FEE_RATE)
+  const serviceFee30  = Math.round(gross30 * LISTENER_SERVICE_FEE_RATE)
+  const serviceFee45  = Math.round(gross45 * LISTENER_SERVICE_FEE_RATE)
+  const earn15        = gross15 - serviceFee15
+  const earn30        = gross30 - serviceFee30
+  const earn45        = gross45 - serviceFee45
 
   function toggleTag(t: string) {
     setTags(p => p.includes(t) ? p.filter(x => x !== t) : [...p, t])
@@ -463,11 +468,11 @@ export default function BecomeListenerPage() {
         {step === 1 && (
           <div className="hero-card">
             <h1>Earn by listening 🎧</h1>
-            <p>You keep 100% of your rate. LeanOn adds a flat ₹10 platform fee on top — paid by the user, not taken from you.</p>
+            <p>You set your rate. LeanOn applies a {Math.round(LISTENER_SERVICE_FEE_RATE * 100)}% service fee to bring you seekers, handle payments, and keep the platform safe — you keep the rest.</p>
             <div className="earn-row">
               <div className="earn-item"><div className="amount">₹{MIN_LISTENER_RATE}+</div><div className="label">per minute (you choose)</div></div>
               <div className="earn-item"><div className="amount">₹13K+</div><div className="label">per month possible</div></div>
-              <div className="earn-item"><div className="amount">100%</div><div className="label">of your rate you keep</div></div>
+              <div className="earn-item"><div className="amount">{Math.round((1 - LISTENER_SERVICE_FEE_RATE) * 100)}%</div><div className="label">of your rate you keep</div></div>
             </div>
             {SHOW_LISTENER_GROWTH_NOTICE && (
               <div style={{marginTop:16,background:'rgba(255,153,51,0.08)',border:'1.5px solid rgba(255,153,51,0.25)',borderRadius:12,padding:'12px 14px',fontSize:13,color:'#7A5200',lineHeight:1.6,fontWeight:500}}>
@@ -668,25 +673,27 @@ export default function BecomeListenerPage() {
               <span className="rate-suffix">/ minute</span>
             </div>
             {fieldErrors.rate && <span className="field-err">{fieldErrors.rate}</span>}
-            <p style={{fontSize:12,color:'var(--gray)',marginBottom:12,fontWeight:500}}>You keep 100% of your rate. New listeners often start at ₹10–₹15 and raise it as they build reviews.</p>
+            <p style={{fontSize:12,color:'var(--gray)',marginBottom:12,fontWeight:500}}>You keep {Math.round((1 - LISTENER_SERVICE_FEE_RATE) * 100)}% of your rate after LeanOn&apos;s service fee. New listeners often start at ₹10–₹15 and raise it as they build reviews.</p>
 
             <div style={{background:'#F0F8FC',borderRadius:12,padding:'10px 14px',marginBottom:12,fontSize:13,color:'#0F4867',fontWeight:600}}>
               📅 Sessions are booked in <strong>15, 30, or 45 minute slots</strong>. No open-ended calls — clean start and end times for both sides.
             </div>
 
             <div className="rate-preview">
-              <p>At <strong>₹{rateNum.toLocaleString('en-IN')}/min</strong> you earn:</p>
-              <p>15 min → you earn <strong>₹{earn15.toLocaleString('en-IN')}</strong> · user pays <strong>₹{userPays15.toLocaleString('en-IN')}</strong></p>
-              <p>30 min → you earn <strong>₹{earn30.toLocaleString('en-IN')}</strong> · user pays <strong>₹{userPays30.toLocaleString('en-IN')}</strong></p>
-              <p>45 min → you earn <strong>₹{earn45.toLocaleString('en-IN')}</strong> · user pays <strong>₹{userPays45.toLocaleString('en-IN')}</strong></p>
+              <p>At <strong>₹{rateNum.toLocaleString('en-IN')}/min</strong> you earn (after the service fee):</p>
+              <p>15 min → you earn <strong>₹{earn15.toLocaleString('en-IN')}</strong></p>
+              <p>30 min → you earn <strong>₹{earn30.toLocaleString('en-IN')}</strong></p>
+              <p>45 min → you earn <strong>₹{earn45.toLocaleString('en-IN')}</strong></p>
             </div>
 
             <div className="fee-box">
-              <h3>How the ₹{platformFee} platform fee works</h3>
-              <div className="fee-row"><span className="label">Your rate (15 min at ₹{rateNum}/min)</span><span className="value">₹{earn15.toLocaleString('en-IN')}</span></div>
-              <div className="fee-row"><span className="label">LeanOn platform fee (paid by user)</span><span className="value">+ ₹{platformFee}</span></div>
-              <div className="fee-row"><span className="label">Razorpay fee (paid by LeanOn)</span><span className="value">~ −₹3</span></div>
+              <h3>How the {Math.round(LISTENER_SERVICE_FEE_RATE * 100)}% LeanOn service fee works</h3>
+              <div className="fee-row"><span className="label">Your rate (15 min at ₹{rateNum}/min)</span><span className="value">₹{gross15.toLocaleString('en-IN')}</span></div>
+              <div className="fee-row"><span className="label">LeanOn service fee ({Math.round(LISTENER_SERVICE_FEE_RATE * 100)}%)</span><span className="value">− ₹{serviceFee15.toLocaleString('en-IN')}</span></div>
               <div className="fee-row highlight"><span className="label">You receive</span><span className="value">₹{earn15.toLocaleString('en-IN')} ✓</span></div>
+              <p style={{fontSize:12,color:'var(--gray)',fontWeight:500,marginTop:10,lineHeight:1.6}}>
+                This fee funds bringing you seekers, secure payments, and platform support — it&apos;s taken from your earnings, not added to what the seeker pays.
+              </p>
             </div>
 
             <label className="lbl">Bank account number (9–18 digits)</label>
