@@ -58,11 +58,9 @@ export function isNriCountry(country: string | null | undefined): boolean {
 export function formatNriPrice(inrAmount: number, country: string): string {
   const cfg = CURRENCY_MAP[country] ?? CURRENCY_MAP['US']
   const localAmount = inrAmount / cfg.rate
-  // Round to nearest 0.5 for clean display
-  const rounded = Math.round(localAmount * 2) / 2
-  // Show no decimals when it's a whole number
-  const display = rounded % 1 === 0 ? rounded.toFixed(0) : rounded.toFixed(1)
-  return `${cfg.symbol}${display}`
+  // Always round UP to the next whole integer — no decimals ever shown
+  const rounded = Math.ceil(localAmount)
+  return `${cfg.symbol}${rounded}`
 }
 
 /**

@@ -52,6 +52,7 @@ export async function GET(req: NextRequest) {
       .select(`
         id, seeker_id, listener_id, session_type, duration_mins,
         amount_held, status, is_free_trial, started_at, ended_at, platform_fee,
+        listener_rate_per_min,
         crisis_flagged, crisis_flagged_at, created_at,
         seeker:users!seeker_id(name, phone),
         listener:users!listener_id(name, phone)

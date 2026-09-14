@@ -38,11 +38,15 @@ type SessionRow = {
   crisis_flagged?: boolean; crisis_flagged_at?: string | null; created_at?: string
   seeker?: { name?: string; phone?: string }; listener?: { name?: string; phone?: string }
   // Set by /api/admin/sessions when a listener_earnings row exists for this session.
-  // listener_service_fee = 15% of rawShare (0 for old sessions settled before 2026-09-14).
-  // listener_net_amount  = what the listener was actually credited.
+  // listener_service_fee = combined LeanOn extra beyond seeker's ₹10 flat fee.
+  //   India sessions: just the 15% service fee on rawShare.
+  //   NRI sessions: 15% service fee + NRI margin (amountHeld was the flat USD rate).
+  // listener_net_amount = what the listener was actually credited (after 15% svc fee).
   // null means no earnings row yet (unsettled, accidental-start, or free trial).
   listener_service_fee?: number | null
   listener_net_amount?: number | null
+  // Non-null for NRI sessions only (set at booking from listener_profiles.rate_per_min)
+  listener_rate_per_min?: number | null
 }
 type TranscriptMsg = { id: string; sender_id: string; content: string; created_at: string; is_flagged?: boolean }
 type ReportRow = {
@@ -1099,7 +1103,7 @@ export default function AdminPage() {
                 {/* ── YOUR EARNINGS (platform fee) ── */}
                 {kpis.platformEarnings && (
                   <>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Your Earnings (₹10 flat fee + 15% service fee per paid session)</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Your Earnings (India: ₹10 flat + 15% svc fee · NRI: ₹10 flat + 15% svc fee + USD price margin)</div>
                     <div className="kpi-grid" style={{ marginBottom: 20 }}>
                       <div className="kpi-card" style={{ borderLeft: '5px solid var(--green)' }}>
                         <div className="kpi-label">All Time</div>
@@ -1785,21 +1789,39 @@ export default function AdminPage() {
                                 // actual settlement ledger — exact, accounts for early exits
                                 // and the 15% service fee.  Use these when available.
                                 if (s.listener_net_amount != null && s.listener_service_fee != null) {
-                                  const svcFee     = s.listener_service_fee  // 15% (0 for old sessions)
-                                  const leanOnEarned = platformFee + svcFee  // LeanOn total
+                                  const leanOnExtra  = s.listener_service_fee  // beyond ₹10 flat
+                                  const leanOnEarned = platformFee + leanOnExtra  // LeanOn total
                                   const listenerNet  = s.listener_net_amount
                                   const refund = Math.max(0, s.amount_held - leanOnEarned - listenerNet)
                                   const isEarlyExit = refund > 0
-                                  const tooltip = [
-                                    `Seeker held ₹${s.amount_held}`,
-                                    `Listener earned ₹${listenerNet}`,
-                                    svcFee > 0 ? `Service fee ₹${svcFee}` : null,
-                                    `Platform fee ₹${platformFee}`,
-                                    `LeanOn total ₹${leanOnEarned}`,
-                                    isEarlyExit ? `Refund ₹${refund}` : null,
-                                  ].filter(Boolean).join(' · ')
+                                  const isNri = !!s.listener_rate_per_min
+
+                                  // For NRI sessions: break out the 15% service fee from the NRI margin
+                                  // rawShare ≈ listener earns before fee → net / 0.85; svcFee = rawShare × 0.15
+                                  const listenerRawShare = isNri ? Math.round(listenerNet / 0.85) : 0
+                                  const nriSvcFee   = isNri ? Math.round(listenerRawShare * 0.15) : 0
+                                  const nriMargin   = isNri ? leanOnExtra - nriSvcFee : 0
+
+                                  const tooltip = isNri
+                                    ? [
+                                        `NRI session · Seeker held ₹${s.amount_held}`,
+                                        `Listener ₹${listenerNet} (rate ₹${s.listener_rate_per_min}/min × 85%)`,
+                                        `Svc fee ₹${nriSvcFee} · NRI margin ₹${nriMargin} · Flat ₹${platformFee}`,
+                                        `LeanOn total ₹${leanOnEarned}`,
+                                        isEarlyExit ? `Refund ₹${refund}` : null,
+                                      ].filter(Boolean).join(' | ')
+                                    : [
+                                        `Seeker held ₹${s.amount_held}`,
+                                        `Listener earned ₹${listenerNet}`,
+                                        leanOnExtra > 0 ? `Service fee ₹${leanOnExtra}` : null,
+                                        `Platform fee ₹${platformFee}`,
+                                        `LeanOn total ₹${leanOnEarned}`,
+                                        isEarlyExit ? `Refund ₹${refund}` : null,
+                                      ].filter(Boolean).join(' · ')
+
                                   return (
                                     <span title={tooltip}>
+                                      {isNri && <span style={{ fontSize: 9, background: '#E8F4FF', color: '#0066CC', borderRadius: 3, padding: '1px 4px', marginRight: 4, fontWeight: 800 }}>NRI</span>}
                                       ₹{listenerNet}
                                       <span style={{ fontSize: 10, color: 'var(--green)', marginLeft: 3 }}>+₹{leanOnEarned}</span>
                                       {isEarlyExit && <span style={{ fontSize: 10, color: 'var(--orange)', marginLeft: 3 }}>↩₹{refund}</span>}
@@ -1929,12 +1951,19 @@ export default function AdminPage() {
                     })()} min {transcriptSession.session_type}
                     {transcriptSession.is_free_trial ? ' · Free trial' : (() => {
                       const pFee = transcriptSession.platform_fee ?? 0
-                      const svcFee = transcriptSession.listener_service_fee ?? 0
+                      const extra = transcriptSession.listener_service_fee ?? 0
                       const listenerNet = transcriptSession.listener_net_amount != null
                         ? transcriptSession.listener_net_amount
-                        : transcriptSession.amount_held - pFee - svcFee
-                      const leanOn = pFee + svcFee
-                      return ` · ₹${listenerNet} listener + ₹${leanOn} LeanOn${svcFee > 0 ? ` (₹${pFee}+₹${svcFee})` : ''}`
+                        : transcriptSession.amount_held - pFee - extra
+                      const leanOn = pFee + extra
+                      const isNri = !!transcriptSession.listener_rate_per_min
+                      if (isNri) {
+                        const rawShare = Math.round(listenerNet / 0.85)
+                        const nriSvcFee = Math.round(rawShare * 0.15)
+                        const nriMargin = extra - nriSvcFee
+                        return ` · NRI ₹${transcriptSession.amount_held} · Listener ₹${listenerNet} + LeanOn ₹${leanOn} (₹${pFee} flat+₹${nriSvcFee} fee+₹${nriMargin} margin)`
+                      }
+                      return ` · ₹${listenerNet} listener + ₹${leanOn} LeanOn${extra > 0 ? ` (₹${pFee}+₹${extra})` : ''}`
                     })()}
                   </div>
                 </div>
