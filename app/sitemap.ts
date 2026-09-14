@@ -364,5 +364,40 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/nri-loneliness-canada`,      lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
     { url: `${base}/nri-loneliness-uk`,          lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
     { url: `${base}/talk-to-someone-hindi`,      lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    // Round 15: City-targeted & NRI marriage/dating/relationship pages (2026-09-14)
+    // US cities
+    { url: `${base}/indians-in-texas`,           lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/indians-in-houston`,         lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/indians-in-dallas`,          lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/indians-in-atlanta`,         lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/indians-in-new-jersey`,      lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/indians-in-bay-area`,        lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/indians-in-chicago`,         lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/indians-in-seattle`,         lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/indians-in-new-york`,        lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/indians-in-florida`,         lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/indians-in-boston`,          lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/indians-in-phoenix`,         lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    // UK & Canada cities
+    { url: `${base}/indians-in-birmingham`,      lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/indians-in-leicester`,       lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/indians-in-toronto`,         lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/indians-in-vancouver`,       lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    // NRI marriage, dating, relationships
+    { url: `${base}/nri-marriage-usa`,           lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/nri-marriage-uk`,            lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/nri-marriage-canada`,        lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/nri-dating-usa`,             lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/nri-dating-uk`,              lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/nri-long-distance-relationship`, lastModified: d('2026-09-14'), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/nri-relationship-problems`,  lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/arranged-marriage-nri`,      lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/nri-loneliness-usa`,         lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/second-generation-indian-usa`, lastModified: d('2026-09-14'), changeFrequency: 'weekly', priority: 0.95 },
+    // NRI identity & emotional
+    { url: `${base}/nri-homesick`,               lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/nri-identity-crisis`,        lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/nri-anxiety-abroad`,         lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/indian-diaspora-mental-health`, lastModified: d('2026-09-14'), changeFrequency: 'weekly', priority: 0.95 },
   ]
 }
