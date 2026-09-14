@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
-import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE, PLATFORM_FEE, LISTENER_SERVICE_FEE_RATE, REQUEST_RESPONSE_WINDOW_SECS } from '@/lib/constants'
+import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE, LISTENER_SERVICE_FEE_RATE, REQUEST_RESPONSE_WINDOW_SECS } from '@/lib/constants'
 import { SHOW_LISTENER_GROWTH_NOTICE, SHOW_LISTENER_FEE_UPDATE_NOTICE } from '@/lib/feature-flags'
 import { showToast } from '@/lib/toast'
 import { registerPushNotifications } from '@/lib/firebase-client'
@@ -962,15 +962,23 @@ export default function DashboardPage() {
                 />
                 <span style={{fontSize:14,color:'var(--gray)',fontWeight:600}}>/min</span>
               </div>
-              {/* Earnings preview — updates live as rate changes */}
+              {/* Earnings preview — updates live as rate changes. Shows net-of-service-fee
+                  earnings (matches become-listener/page.tsx's calculator and what
+                  listener_earnings.net_amount will actually credit) — never the seeker's
+                  flat ₹10, which is irrelevant to listener economics. */}
               {(() => {
                 const r = Math.min(Math.max(parseInt(editRate)||MIN_LISTENER_RATE, MIN_LISTENER_RATE), MAX_LISTENER_RATE)
+                const net = (mins: number) => {
+                  const gross = r * mins
+                  return gross - Math.round(gross * LISTENER_SERVICE_FEE_RATE)
+                }
                 return (
                   <div style={{marginTop:10,background:'var(--light)',borderRadius:12,padding:'10px 14px',fontSize:12,color:'var(--gray)',fontWeight:600,lineHeight:1.9}}>
                     📅 Sessions are booked in <strong style={{color:'var(--navy)'}}>15 / 30 / 45 min slots</strong>
-                    <br/>15 min → you earn <strong style={{color:'var(--navy)'}}>₹{r*15}</strong> · user pays ₹{r*15+PLATFORM_FEE}
-                    <br/>30 min → you earn <strong style={{color:'var(--navy)'}}>₹{r*30}</strong> · user pays ₹{r*30+PLATFORM_FEE}
-                    <br/>45 min → you earn <strong style={{color:'var(--navy)'}}>₹{r*45}</strong> · user pays ₹{r*45+PLATFORM_FEE}
+                    <br/>15 min → you earn <strong style={{color:'var(--navy)'}}>₹{net(15)}</strong>
+                    <br/>30 min → you earn <strong style={{color:'var(--navy)'}}>₹{net(30)}</strong>
+                    <br/>45 min → you earn <strong style={{color:'var(--navy)'}}>₹{net(45)}</strong>
+                    <br/><span style={{fontSize:11,opacity:0.85}}>After LeanOn&apos;s {Math.round(LISTENER_SERVICE_FEE_RATE*100)}% service fee</span>
                   </div>
                 )
               })()}
