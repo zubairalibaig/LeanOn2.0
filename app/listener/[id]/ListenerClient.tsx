@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { LANGUAGES, PLATFORM_FEE, MAX_FREE_TRIALS } from '@/lib/constants'
 import { SHOW_LISTENER_IN_SESSION_STATUS } from '@/lib/feature-flags'
+import { isNriCountry, getBookingPriceDisplay } from '@/lib/geo-pricing'
 import Avatar from '@/app/components/Avatar'
 
 type ListenerProfile = {
@@ -107,6 +108,7 @@ export default function ListenerClient({ id }: { id: string }) {
   const [isUnlimitedTester, setIsUnlimitedTester] = useState(false)
   // Wallet top-up context: show confirmation when arriving back from /wallet?return=
   const [fromWallet, setFromWallet] = useState(false)
+  const [accountCountry, setAccountCountry] = useState<string | null>(null)
   // Offline messaging state
   const [msgCount, setMsgCount]         = useState(0)
   const [showMsgCompose, setShowMsgCompose] = useState(false)
@@ -159,6 +161,8 @@ export default function ListenerClient({ id }: { id: string }) {
       const profileData = profileRes.ok ? await profileRes.json() : {}
       const unlimited = profileData.is_unlimited_tester === true
       setIsUnlimitedTester(unlimited)
+      // Store for geo-pricing display (NRI vs India)
+      if (profileData.account_country) setAccountCountry(profileData.account_country as string)
 
       const [{data: userData}, totalTrials, listenerTrial] = await Promise.all([
         client.from('users').select('wallet_balance').eq('id', user.id).single(),
@@ -396,7 +400,14 @@ export default function ListenerClient({ id }: { id: string }) {
                     style={disabled ? {opacity:0.45,cursor:'not-allowed'} : undefined}
                   >
                     <div className="opt-label">{d} min</div>
-                    <div className="opt-price">{isFreeTier ? '—' : `₹${listener.rate_per_min*d+PLATFORM_FEE}`}</div>
+                    <div className="opt-price">
+                      {isFreeTier ? '—' : (() => {
+                        const inrCost = listener.rate_per_min * d + PLATFORM_FEE
+                        if (!isNriCountry(accountCountry)) return `₹${inrCost}`
+                        const { primary } = getBookingPriceDisplay(inrCost, accountCountry, d)
+                        return primary
+                      })()}
+                    </div>
                     {isFreeTier && (
                       freeTrialUsed
                         ? <div className="opt-free" style={{background:'#8E8E93'}}>Used</div>
@@ -421,10 +432,24 @@ export default function ListenerClient({ id }: { id: string }) {
                 ✅ No payment needed — completely free for 5 minutes
               </div>
             )}
+            {isNriCountry(accountCountry) && duration !== 5 && (() => {
+              const { note } = getBookingPriceDisplay(cost, accountCountry, duration)
+              return note ? (
+                <div style={{fontSize:11,color:'#5A7A8A',fontWeight:600,textAlign:'center',marginBottom:6}}>
+                  {note}
+                </div>
+              ) : null
+            })()}
             <button className="btn-book" onClick={book} disabled={isBooking}>
               {isBooking ? <span className="spin">⟳</span>
                 : duration===5 ? '🎁 Try Free — 5 min, no payment needed →'
-                : `Book ${duration}-min ${type} — ₹${cost} →`}
+                : (() => {
+                    if (isNriCountry(accountCountry)) {
+                      const { primary } = getBookingPriceDisplay(cost, accountCountry, duration)
+                      return `Book ${duration}-min ${type} — ${primary} →`
+                    }
+                    return `Book ${duration}-min ${type} — ₹${cost} →`
+                  })()}
             </button>
           </>
         ) : (

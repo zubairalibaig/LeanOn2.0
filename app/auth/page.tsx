@@ -16,6 +16,25 @@ import { createClient } from '@/lib/supabase'
 // Supabase never sees this OTP, so the session is minted server-side — see the
 // route for the full trust model.
 
+// Supported countries — must match MSG91 "Country Wise Restriction" allowed list.
+// Alphabetical order; India is the default (index 1 in this sorted list is index
+// where code === 'IN'). US + CA share dial code +1 — we use the country code
+// internally so analytics can distinguish them.
+const COUNTRIES = [
+  { code: 'CA', name: 'Canada',         dialCode: '1',   flag: '🇨🇦', minDigits: 10, maxDigits: 10 },
+  { code: 'IN', name: 'India',          dialCode: '91',  flag: '🇮🇳', minDigits: 10, maxDigits: 10 },
+  { code: 'KW', name: 'Kuwait',         dialCode: '965', flag: '🇰🇼', minDigits: 8,  maxDigits: 8  },
+  { code: 'MY', name: 'Malaysia',       dialCode: '60',  flag: '🇲🇾', minDigits: 9,  maxDigits: 11 },
+  { code: 'OM', name: 'Oman',           dialCode: '968', flag: '🇴🇲', minDigits: 8,  maxDigits: 8  },
+  { code: 'SG', name: 'Singapore',      dialCode: '65',  flag: '🇸🇬', minDigits: 8,  maxDigits: 8  },
+  { code: 'AE', name: 'UAE',            dialCode: '971', flag: '🇦🇪', minDigits: 9,  maxDigits: 9  },
+  { code: 'GB', name: 'United Kingdom', dialCode: '44',  flag: '🇬🇧', minDigits: 10, maxDigits: 10 },
+  { code: 'US', name: 'United States',  dialCode: '1',   flag: '🇺🇸', minDigits: 10, maxDigits: 10 },
+] as const
+
+type Country = typeof COUNTRIES[number]
+const DEFAULT_COUNTRY: Country = COUNTRIES.find(c => c.code === 'IN')!
+
 const WIDGET_ID  = process.env.NEXT_PUBLIC_MSG91_WIDGET_ID || ''
 const TOKEN_AUTH = process.env.NEXT_PUBLIC_MSG91_TOKEN_AUTH || ''
 // The widget's OTP length is set in the MSG91 dashboard; keep this in sync.
@@ -52,6 +71,9 @@ const S = `
   .label{font-size:13px;font-weight:800;color:var(--navy);margin-bottom:8px;display:block;}
   .phone-wrap{display:flex;align-items:center;background:white;border:2px solid var(--border);border-radius:14px;overflow:hidden;transition:border-color 0.2s;margin-bottom:8px;}
   .phone-wrap:focus-within{border-color:var(--navy);}
+  .country-select-wrap{position:relative;border-right:2px solid var(--border);flex-shrink:0;}
+  .country-select{appearance:none;-webkit-appearance:none;background:transparent;border:none;outline:none;padding:14px 28px 14px 14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;color:var(--gray);cursor:pointer;white-space:nowrap;}
+  .country-caret{position:absolute;right:8px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:10px;color:var(--gray);}
   .phone-prefix{padding:14px 14px 14px 16px;font-weight:800;font-size:16px;color:var(--gray);border-right:2px solid var(--border);white-space:nowrap;}
   .phone-input{flex:1;padding:14px 16px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:700;color:var(--navy);border:none;outline:none;background:transparent;}
   .phone-input::placeholder{color:#B0C8D8;font-weight:500;}
@@ -123,8 +145,14 @@ export default function AuthPage() {
   const tokenHandledRef = useRef(false) // guards double token delivery (verifyOtp cb + config.success)
 
   const [isListenerMode, setIsListenerMode] = useState(false)
+  const [country, setCountry] = useState<Country>(DEFAULT_COUNTRY)
 
-  const digits = () => phone.replace(/\D/g,'').slice(-10)
+  // Strip non-digits; no length cap here — validation uses country.minDigits/maxDigits
+  const digits = () => phone.replace(/\D/g, '')
+  const isValidPhone = () => {
+    const d = digits()
+    return d.length >= country.minDigits && d.length <= country.maxDigits
+  }
 
   function getDestination(): string {
     const stored = sessionStorage.getItem('auth_redirect')
@@ -161,7 +189,9 @@ export default function AuthPage() {
       const res = await fetch('/api/auth/phone-widget', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token }),
+        // country is sent so the server can store account_country on the users row
+        // for geo-pricing (NRI vs India). Validated as 2-letter ISO code server-side.
+        body: JSON.stringify({ token, country: country.code }),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
@@ -261,15 +291,22 @@ export default function AuthPage() {
 
   function requestOtp() {
     setError('')
-    if (digits().length !== 10) { setError('Enter a valid 10-digit mobile number'); return }
+    if (!isValidPhone()) {
+      const len = country.minDigits === country.maxDigits
+        ? `${country.minDigits}-digit`
+        : `${country.minDigits}–${country.maxDigits}-digit`
+      setError(`Enter a valid ${len} mobile number for ${country.name}`)
+      return
+    }
     if (!widgetReady || typeof window.sendOtp !== 'function') {
       setError('Verification is still loading — give it a second and try again.')
       return
     }
     tokenHandledRef.current = false
     setLoading(true)
+    // MSG91 expects the number WITHOUT '+': dialCode + local digits (no leading 0)
     window.sendOtp(
-      '91' + digits(),
+      country.dialCode + digits(),
       () => { setLoading(false); setOtp(Array(OTP_LEN).fill('')); setStep('otp'); setCountdown(30) },
       (err) => { setLoading(false); setError(errText(err) || 'Could not send the code. Please try again.') },
     )
@@ -292,7 +329,7 @@ export default function AuthPage() {
     setError('')
     // Re-send via sendOtp (robust) rather than guessing retryOtp's channel code.
     if (typeof window.sendOtp === 'function') {
-      window.sendOtp('91' + digits(), () => setCountdown(30), (err) => setError(errText(err) || 'Could not resend. Please try again.'))
+      window.sendOtp(country.dialCode + digits(), () => setCountdown(30), (err) => setError(errText(err) || 'Could not resend. Please try again.'))
     }
   }
 
@@ -400,17 +437,45 @@ export default function AuthPage() {
               </p>
               <label className="label">Mobile number</label>
               <div className="phone-wrap">
-                <div className="phone-prefix">🇮🇳 +91</div>
-                <input className="phone-input" type="tel" inputMode="numeric" maxLength={10}
-                  placeholder="98765 43210" autoFocus aria-label="Mobile number"
-                  value={digits()} onChange={e => setPhone(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && requestOtp()} />
+                {/* Country code dropdown — 8 countries matching MSG91 allowed list */}
+                <div className="country-select-wrap">
+                  <select
+                    className="country-select"
+                    aria-label="Country code"
+                    value={country.code}
+                    onChange={e => {
+                      const c = COUNTRIES.find(x => x.code === e.target.value) ?? DEFAULT_COUNTRY
+                      setCountry(c)
+                      setPhone('')  // clear number when country changes to avoid length mismatches
+                      setError('')
+                    }}
+                  >
+                    {COUNTRIES.map(c => (
+                      <option key={c.code} value={c.code}>
+                        {c.flag} +{c.dialCode} {c.name}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="country-caret">▾</span>
+                </div>
+                <input
+                  className="phone-input"
+                  type="tel"
+                  inputMode="numeric"
+                  maxLength={country.maxDigits}
+                  placeholder={country.code === 'IN' ? '98765 43210' : country.code === 'US' || country.code === 'CA' ? '(555) 012-3456' : '…'}
+                  autoFocus
+                  aria-label="Mobile number"
+                  value={digits()}
+                  onChange={e => setPhone(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && requestOtp()}
+                />
               </div>
               {/* MSG91's invisible-captcha renders here when required. */}
               <div id="msg91-captcha" />
               {error && <p className="error">{error}</p>}
               <p className="tos">By continuing you agree to our <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</p>
-              <button className="btn" onClick={requestOtp} disabled={loading || digits().length < 10}>
+              <button className="btn" onClick={requestOtp} disabled={loading || !isValidPhone()}>
                 {loading ? <span className="spin">⟳</span> : !widgetReady ? 'Loading…' : 'Send OTP →'}
               </button>
             </>
@@ -420,7 +485,7 @@ export default function AuthPage() {
             <>
               <div className="step-icon">🔐</div>
               <h1>Enter the code</h1>
-              <p className="subtitle">Sent to +91 {digits()}</p>
+              <p className="subtitle">Sent to +{country.dialCode} {digits()}</p>
               <div className="otp-row" onPaste={handleOtpPaste}>
                 {otp.map((d,i) => (
                   <input key={i} ref={el => { otpRefs.current[i] = el }} className="otp-box"

@@ -13,7 +13,7 @@ export async function GET() {
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ name: null, role: null, wallet_balance: null })
     const admin = createAdminClient()
-    let { data } = await admin.from('users').select('name, role, wallet_balance, avatar_url, phone, created_at').eq('id', user.id).maybeSingle()
+    let { data } = await admin.from('users').select('name, role, wallet_balance, avatar_url, phone, created_at, account_country').eq('id', user.id).maybeSingle()
     const phone = data?.phone ?? (user.phone ? '+' + user.phone.replace(/^\+/, '') : null)
 
     // BACKSTOP: an OTP-verified user with no public.users row.
@@ -39,7 +39,7 @@ export async function GET() {
         logger.warn('profile GET: could not backfill missing users row', { userId: user.id })
       } else {
         const re = await admin.from('users')
-          .select('name, role, wallet_balance, avatar_url, phone, created_at')
+          .select('name, role, wallet_balance, avatar_url, phone, created_at, account_country')
           .eq('id', user.id).maybeSingle()
         data = re.data
       }
@@ -53,6 +53,9 @@ export async function GET() {
       phone,
       created_at: data?.created_at ?? null,
       is_unlimited_tester: isUnlimitedTestPhone(phone),
+      // ISO country code from phone-prefix selection at signup (e.g. 'IN', 'US', 'GB').
+      // Used by listener profile page for NRI vs India price display.
+      account_country: data?.account_country ?? null,
     })
   } catch {
     return NextResponse.json({ name: null, role: null, wallet_balance: null })

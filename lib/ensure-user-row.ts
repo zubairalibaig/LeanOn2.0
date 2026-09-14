@@ -8,6 +8,12 @@ type EnsureArgs = {
   phone?: string | null
   /** True when `phone` comes from the verified auth session (OTP-proven). */
   phoneVerified?: boolean
+  /**
+   * ISO 3166-1 alpha-2 country code from the phone-country selector at signup
+   * (e.g. 'IN', 'US', 'GB', 'AE'). Separate from the +1/+44 dial code because
+   * +1 covers both USA and Canada. Stored for geo-pricing and analytics.
+   */
+  accountCountry?: string | null
 }
 
 /**
@@ -22,11 +28,14 @@ type EnsureArgs = {
  */
 export async function ensureUserRow(
   admin: SupabaseClient,
-  { id, name, phone, phoneVerified }: EnsureArgs
+  { id, name, phone, phoneVerified, accountCountry }: EnsureArgs
 ): Promise<{ error: string | null; debug: string | null }> {
   const row: Record<string, unknown> = { id }
   if (name) row.name = name
   if (phone) row.phone = phone
+  // Only write account_country on first set (non-null). Never overwrite an
+  // existing country — the user may have changed countries since signup.
+  if (accountCountry) row.account_country = accountCountry
 
   const fmt = (e: { code?: string; message: string; details?: string; hint?: string }) =>
     `[${e.code ?? 'no-code'}] ${e.message}${e.details ? ' | ' + e.details : ''}${e.hint ? ' | hint: ' + e.hint : ''}`

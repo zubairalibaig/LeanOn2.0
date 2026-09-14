@@ -138,6 +138,10 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}))
   const token = typeof body?.token === 'string' ? body.token : ''
   if (!token) return NextResponse.json({ error: 'Missing verification token.' }, { status: 400 })
+  // ISO country code from the auth page's country selector (e.g. 'IN', 'US', 'GB').
+  // Validated as a simple 2-letter string; unknown values are stored as-is (tolerated).
+  const accountCountry = typeof body?.country === 'string' && /^[A-Z]{2}$/.test(body.country)
+    ? body.country : null
 
   // ── 1. Verify the widget token with MSG91 (authoritative) ──────────────────
   let verifyJson: unknown
@@ -253,7 +257,15 @@ export async function POST(req: NextRequest) {
   }
 
   // ── 5. Backfill public.users (wallet/sessions/browse all read the public row)
-  const { error: rowErr } = await ensureUserRow(admin, { id: userId, phone: e164, phoneVerified: true })
+  const { error: rowErr } = await ensureUserRow(admin, {
+    id: userId,
+    phone: e164,
+    phoneVerified: true,
+    // Store the country the user selected in the phone prefix dropdown.
+    // Passed from auth/page.tsx → POST body → here. Used for geo-pricing.
+    // Falls back to null (existing rows and India signups where country isn't sent).
+    accountCountry: accountCountry ?? null,
+  })
   if (rowErr) {
     // The session is already valid — do not fail the login over the mirror row.
     logger.error('phone-widget: session minted but users row did not', { userId })
