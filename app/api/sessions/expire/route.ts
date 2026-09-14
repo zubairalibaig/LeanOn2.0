@@ -116,11 +116,12 @@ export async function GET(req: NextRequest) {
         }).then(() => {}, () => {})
       }
 
-      // Increment total_sessions on listener profile
+      // Increment total_sessions on listener profile and clear in-session flag
       const { data: lp } = await sb.from('listener_profiles')
         .select('total_sessions').eq('user_id', session.listener_id).maybeSingle()
       await sb.from('listener_profiles').update({
         total_sessions: ((lp?.total_sessions as number) || 0) + 1,
+        is_in_session: false,
       }).eq('user_id', session.listener_id).then(() => {}, () => {})
 
       logger.info('Auto-expired session', { sessionId: session.id, billedMins, listenerEarning, refundAmount })

@@ -60,6 +60,15 @@ export async function POST(
     return NextResponse.json({ error: 'Failed to accept session' }, { status: 500 })
   }
 
+  // Mark listener as in-session on listener_profiles so the Realtime
+  // subscription in browse page can show the orange "In session" dot immediately.
+  // Fire-and-forget: a failure here is cosmetic — the session itself is already
+  // active. The column is also reset when the session ends.
+  await sb.from('listener_profiles')
+    .update({ is_in_session: true })
+    .eq('user_id', user.id)
+    .then(() => {}, () => {})
+
   // Notify seeker that the session was accepted (in-app)
   await sb.from('notifications').insert({
     user_id:    session.seeker_id,

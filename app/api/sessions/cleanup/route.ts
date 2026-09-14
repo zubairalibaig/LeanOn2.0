@@ -146,11 +146,12 @@ export async function POST(req: Request) {
       }
     }
 
-    // Increment listener total_sessions
+    // Increment listener total_sessions and clear in-session flag
     const { data: lp } = await sb.from('listener_profiles')
       .select('total_sessions').eq('user_id', session.listener_id).single()
     await sb.from('listener_profiles').update({
       total_sessions: ((lp?.total_sessions as number) || 0) + 1,
+      is_in_session: false,
     }).eq('user_id', session.listener_id)
 
     cleaned++

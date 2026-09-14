@@ -89,13 +89,24 @@ export async function GET(req: NextRequest) {
     // last_heartbeat_at powers the "last online" label + offline ordering on
     // browse. The column is guaranteed present (migration 041; the staleness
     // sweep above already queries it), so no fallback select is needed.
+    // is_in_session (migration 052): included in SELECT; if the column doesn't
+    // exist yet, the query retries with SELECT_BASE (same fallback as birth_*).
     const SELECT_BASE = 'user_id, bio, specialty_tags, languages_spoken, rate_per_min, rating, total_sessions, is_available, is_verified, last_heartbeat_at, users!inner(name, avatar_url, phone)'
+    // is_in_session drives the orange "In session" dot on browse cards.
+    const SELECT_WITH_IN_SESSION = SELECT_BASE.replace('is_available', 'is_available, is_in_session')
     // birth_year/birth_month drive the browse age-range filter (migration 049).
-    const SELECT_WITH_AGE = SELECT_BASE.replace(', users!inner', ', birth_year, birth_month, users!inner')
+    const SELECT_WITH_AGE = SELECT_WITH_IN_SESSION.replace(', users!inner', ', birth_year, birth_month, users!inner')
 
     let { data, error } = await buildQuery(SELECT_WITH_AGE)
     if (error && (error.message?.includes('birth_year') || error.message?.includes('birth_month'))) {
-      ;({ data, error } = await buildQuery(SELECT_BASE))
+      ;({ data, error } = await buildQuery(SELECT_WITH_IN_SESSION))
+    }
+    // If is_in_session column not present yet (migration 052 pending), fall back
+    if (error && error.message?.includes('is_in_session')) {
+      ;({ data, error } = await buildQuery(SELECT_WITH_AGE.replace(', is_in_session', '')))
+      if (error && (error.message?.includes('birth_year') || error.message?.includes('birth_month'))) {
+        ;({ data, error } = await buildQuery(SELECT_BASE))
+      }
     }
 
     if (error) {
@@ -137,23 +148,36 @@ export async function GET(req: NextRequest) {
       return ((b as { rating?: number }).rating || 0) - ((a as { rating?: number }).rating || 0)
     })
 
-    // Derive is_in_session for each listener from the sessions table.
-    // Admin client bypasses RLS — reads all active sessions safely.
-    // Fire-and-forget: any failure leaves all listeners with is_in_session=false.
-    // This is a derived display field only — is_available is NOT modified.
+    // is_in_session: prefer the DB column (listener_profiles.is_in_session, set
+    // by the accept route and cleared on session end — migration 052). If the
+    // column was already selected above, we just count it. If not in SELECT yet,
+    // fall back to a cross-table sessions query (pre-migration path).
+    // Either way this is a derived display field — is_available is NOT modified.
+    const hasDbColumn = listeners.length === 0 || 'is_in_session' in (listeners[0] as Record<string, unknown>)
+    let inSessionCount = 0
     if (SHOW_LISTENER_IN_SESSION_STATUS) {
-      try {
-        const { data: activeSessions } = await sb
-          .from('sessions')
-          .select('listener_id')
-          .eq('status', 'active')
-          .not('listener_id', 'is', null)
-        const inSessionSet = new Set((activeSessions || []).map((s: Record<string, unknown>) => s.listener_id as string))
-        listeners.forEach(l => {
-          (l as Record<string, unknown>).is_in_session = inSessionSet.has((l as Record<string, unknown>).user_id as string)
-        })
-      } catch {
-        // silent — all listeners default to is_in_session=false
+      if (hasDbColumn) {
+        // Migration 052 applied: is_in_session is already in each listener row.
+        inSessionCount = listeners.filter(l => Boolean((l as Record<string, unknown>).is_in_session)).length
+      } else {
+        // Pre-migration fallback: derive from sessions table.
+        try {
+          const { data: activeSessions, error: sessErr } = await sb
+            .from('sessions')
+            .select('listener_id')
+            .eq('status', 'active')
+          if (sessErr) {
+            logger.warn('is_in_session query failed', { error: sessErr.message, code: sessErr.code })
+          } else {
+            const inSessionSet = new Set((activeSessions || []).map((s: Record<string, unknown>) => s.listener_id as string))
+            inSessionCount = inSessionSet.size
+            listeners.forEach(l => {
+              (l as Record<string, unknown>).is_in_session = inSessionSet.has((l as Record<string, unknown>).user_id as string)
+            })
+          }
+        } catch (e) {
+          logger.warn('is_in_session threw', { error: String(e) })
+        }
       }
     }
 
@@ -169,6 +193,7 @@ export async function GET(req: NextRequest) {
         // what the server sees, without exposing sensitive data.
         'X-LeanOn-Ts': new Date().toISOString(),
         'X-LeanOn-Online': String(onlineCount),
+        'X-LeanOn-InSession': String(inSessionCount),
       },
     })
   } catch (err) {

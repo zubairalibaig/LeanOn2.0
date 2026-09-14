@@ -479,7 +479,7 @@ function BrowseContent() {
         schema: 'public',
         table: 'listener_profiles',
       }, (payload) => {
-        const updated = payload.new as { user_id: string; is_available: boolean; last_heartbeat_at?: string | null }
+        const updated = payload.new as { user_id: string; is_available: boolean; last_heartbeat_at?: string | null; is_in_session?: boolean }
         setListeners(prev => {
           const mapped = prev.map(l =>
             l.user_id === updated.user_id
@@ -487,8 +487,12 @@ function BrowseContent() {
               // through when present (migration 046 sets REPLICA IDENTITY FULL,
               // so UPDATE payloads include it) to keep the "last online" label
               // and the offline ordering fresh without a refetch.
+              // is_in_session: updated from the DB column (migration 052) so the
+              // orange dot appears instantly when a listener accepts a session,
+              // without waiting for the 60-second poll.
               ? { ...l, is_available: updated.is_available,
-                  last_heartbeat_at: updated.last_heartbeat_at ?? l.last_heartbeat_at }
+                  last_heartbeat_at: updated.last_heartbeat_at ?? l.last_heartbeat_at,
+                  is_in_session: updated.is_in_session ?? l.is_in_session }
               : l
           )
           return [...mapped].sort(compareListeners)

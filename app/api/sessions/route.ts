@@ -347,6 +347,7 @@ export async function PATCH(req: NextRequest) {
 
     await sb.from('listener_profiles').update({
       total_sessions: (lp?.total_sessions || 0) + 1,
+      is_in_session: false,
     }).eq('user_id', session.listener_id)
 
     // Update rating average when session has a rating
