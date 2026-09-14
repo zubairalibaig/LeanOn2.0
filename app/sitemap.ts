@@ -399,5 +399,65 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/nri-identity-crisis`,        lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
     { url: `${base}/nri-anxiety-abroad`,         lastModified: d('2026-09-14'), changeFrequency: 'weekly',  priority: 0.95 },
     { url: `${base}/indian-diaspora-mental-health`, lastModified: d('2026-09-14'), changeFrequency: 'weekly', priority: 0.95 },
+
+    // Round 16: Singapore & Malaysia NRI pages (2026-09-14)
+    { url: `${base}/singapore-loneliness`,            lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/singapore-relationship-advice`,   lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/singapore-rant`,                  lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/singapore-empathy-listener`,      lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/singapore-talk-to-someone`,       lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/malaysia-loneliness`,             lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/malaysia-relationship-advice`,    lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/malaysia-rant`,                   lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/malaysia-empathy-listener`,       lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/malaysia-talk-to-someone`,        lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+
+    // Round 17: UAE, Dubai, Gulf & Middle East NRI pages (2026-09-14)
+    { url: `${base}/uae-loneliness`,                  lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/uae-relationship-advice`,         lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/dubai-loneliness`,                lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/middle-east-rant`,                lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/middle-east-empathy-listener`,    lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/middle-east-loneliness`,          lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/kuwait-loneliness`,               lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/oman-loneliness`,                 lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/gulf-nri-support`,                lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/gulf-relationship-support`,       lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+
+    // Round 18: UK NRI pages (2026-09-14)
+    { url: `${base}/uk-loneliness`,                   lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/uk-relationship-advice`,          lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/uk-rant-to-someone`,              lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/uk-empathy-listener`,             lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/london-loneliness`,               lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/uk-mental-health-south-asian`,    lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/uk-nri-support`,                  lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/uk-talk-to-someone`,              lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/british-indian-support`,          lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/uk-winter-loneliness`,            lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+
+    // Round 19: Canada NRI pages (2026-09-14)
+    { url: `${base}/canada-loneliness`,               lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/canada-relationship-advice`,      lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/canada-rant-to-someone`,          lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/canada-empathy-listener`,         lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/toronto-loneliness`,              lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/canada-immigration-stress`,       lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/canada-nri-support`,              lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/canada-winter-loneliness`,        lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/canada-talk-to-someone`,          lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/desi-canada-support`,             lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+
+    // Round 20: USA NRI pages (2026-09-14)
+    { url: `${base}/usa-loneliness`,                  lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/usa-relationship-advice`,         lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/usa-rant-to-someone`,             lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/usa-empathy-listener`,            lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/indian-american-loneliness`,      lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/usa-h1b-visa-stress`,             lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/usa-nri-support`,                 lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/usa-talk-to-someone`,             lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/desi-usa-support`,                lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/usa-therapy-alternative`,         lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
   ]
 }
