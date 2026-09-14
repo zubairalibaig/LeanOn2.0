@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
 import { UUID_RE } from '@/lib/constants'
+import { SHOW_LISTENER_IN_SESSION_STATUS } from '@/lib/feature-flags'
 
 // GET — public listener profile (admin client bypasses RLS, so the
 // users!inner join can't fail due to users_select_listener_public policy drift)
@@ -27,5 +28,22 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     return NextResponse.json({ error: 'not_found' }, { status: 404 })
   }
 
-  return NextResponse.json({ profile: lp })
+  // Derive is_in_session from the sessions table (admin client, bypasses RLS).
+  // Fire-and-forget safety: any failure defaults to false — never blocks the
+  // profile load. is_available is NOT modified; this is a derived display field.
+  let is_in_session = false
+  if (SHOW_LISTENER_IN_SESSION_STATUS) {
+    try {
+      const { count } = await admin
+        .from('sessions')
+        .select('id', { count: 'exact', head: true })
+        .eq('listener_id', id)
+        .eq('status', 'active')
+      is_in_session = (count ?? 0) > 0
+    } catch {
+      // silent — default false
+    }
+  }
+
+  return NextResponse.json({ profile: { ...lp, is_in_session } })
 }

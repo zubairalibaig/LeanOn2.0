@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { LANGUAGES, PLATFORM_FEE, MAX_FREE_TRIALS } from '@/lib/constants'
+import { SHOW_LISTENER_IN_SESSION_STATUS } from '@/lib/feature-flags'
 import Avatar from '@/app/components/Avatar'
 
 type ListenerProfile = {
@@ -14,6 +15,7 @@ type ListenerProfile = {
   total_sessions: number
   rate_per_min: number
   is_available: boolean
+  is_in_session?: boolean  // derived: has an active session right now (feature-flagged)
   is_verified: boolean
   specialty_tags: string[]
   languages_spoken: string[]
@@ -49,7 +51,7 @@ a{text-decoration:none;color:inherit;}
 .av{width:80px;height:80px;border-radius:24px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:28px;color:white;position:relative;flex-shrink:0;overflow:hidden;}
 .av img{width:100%;height:100%;object-fit:cover;border-radius:24px;}
 .av-dot{position:absolute;bottom:-2px;right:-2px;width:16px;height:16px;border-radius:50%;border:3px solid white;}
-.av-dot.on{background:#34C759;}.av-dot.off{background:#C7C7CC;}
+.av-dot.on{background:#34C759;}.av-dot.off{background:#C7C7CC;}.av-dot.busy{background:#FF9933;}
 .listener-name{font-size:24px;font-weight:900;color:var(--navy);margin-bottom:4px;}
 .verified-badge{display:inline-flex;align-items:center;gap:4px;background:#E6F6FF;color:#0F4867;font-size:11px;font-weight:800;padding:3px 8px;border-radius:50px;border:1.5px solid #B8D9F0;}
 .stats-row{display:flex;align-items:center;gap:12px;}
@@ -288,7 +290,7 @@ export default function ListenerClient({ id }: { id: string }) {
               {listener.avatar_url
                 ? <Avatar src={listener.avatar_url} alt={listener.name} size={192} />
                 : ini(listener.name)}
-              <div className={`av-dot ${listener.is_available?'on':'off'}`}/>
+              <div className={`av-dot ${SHOW_LISTENER_IN_SESSION_STATUS && listener.is_in_session ? 'busy' : listener.is_available ? 'on' : 'off'}`}/>
             </div>
             <div style={{flex:1}}>
               <div className="listener-name">{listener.name}</div>
@@ -354,6 +356,21 @@ export default function ListenerClient({ id }: { id: string }) {
               👀 This is your public listener profile — exactly how seekers see you.
             </div>
             <a href="/dashboard"><button className="btn-book">Go to your dashboard →</button></a>
+          </div>
+        ) : SHOW_LISTENER_IN_SESSION_STATUS && listener.is_in_session ? (
+          // ── In session: show waiting state, no booking possible ──────────
+          <div style={{textAlign:'center',padding:'4px 0'}}>
+            <div style={{fontSize:28,marginBottom:10}}>🟠</div>
+            <div style={{fontSize:16,fontWeight:900,color:'var(--navy)',marginBottom:8}}>
+              {listener.name} is in a session
+            </div>
+            <div style={{fontSize:13,fontWeight:600,color:'var(--gray)',lineHeight:1.65,marginBottom:16}}>
+              They&apos;re with someone right now. Sessions are typically 15–45 minutes.
+              Check back shortly — they&apos;ll be available again soon.
+            </div>
+            <a href="/browse">
+              <button className="btn-book" style={{background:'var(--teal)'}}>Browse other listeners →</button>
+            </a>
           </div>
         ) : listener.is_available ? (
           // ── Online: existing booking UI ──────────────────────────────────

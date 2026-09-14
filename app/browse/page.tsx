@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, RefObject } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { LANGUAGES, PLATFORM_FEE, AGE_RANGES, ageRangeId } from '@/lib/constants'
+import { SHOW_LISTENER_IN_SESSION_STATUS } from '@/lib/feature-flags'
 import { showToast } from '@/lib/toast'
 import Avatar from '@/app/components/Avatar'
 
@@ -129,6 +130,7 @@ type Listener = {
   total_sessions: number
   rate_per_min: number
   is_available: boolean
+  is_in_session?: boolean  // derived: has an active session right now (feature-flagged)
   is_verified?: boolean
   specialty_tags: string[]
   languages_spoken: string[]
@@ -280,7 +282,7 @@ a{text-decoration:none;color:inherit;}
 .av{width:48px;height:48px;border-radius:16px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:white;flex-shrink:0;position:relative;overflow:hidden;}
 .av img{width:100%;height:100%;object-fit:cover;border-radius:16px;}
 .dot{position:absolute;bottom:-2px;right:-2px;width:12px;height:12px;border-radius:50%;border:2px solid white;}
-.dot.on{background:#34C759;}.dot.off{background:#C7C7CC;}
+.dot.on{background:#34C759;}.dot.off{background:#C7C7CC;}.dot.busy{background:var(--orange);}
 .meta{flex:1;min-width:0;}
 .name{font-size:15px;font-weight:800;color:var(--navy);margin-bottom:3px;}
 .stats{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--gray);font-weight:600;}
@@ -294,12 +296,12 @@ a{text-decoration:none;color:inherit;}
 .btn-chat{flex:1;color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:11px;border-radius:12px;border:none;cursor:pointer;transition:all .2s;}
 .btn-chat.avail{background:#34C759;box-shadow:0 2px 10px rgba(52,199,89,.3);}
 .btn-chat.avail:hover{background:#28a745;}
-.btn-chat.busy{background:var(--orange);}
-.btn-chat.busy:hover{background:#e8861a;}
+.btn-chat.busy{background:var(--orange);cursor:not-allowed;opacity:.85;}
+.btn-chat.busy:hover{background:var(--orange);}
 .btn-chat.offline{background:#C7C7CC;cursor:not-allowed;box-shadow:none;}
 .btn-voice{background:white;color:var(--navy);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;padding:11px 16px;border-radius:12px;border:1.5px solid var(--border);cursor:pointer;white-space:nowrap;}
 .avail-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;}
-.avail-label.on{color:#34C759;}.avail-label.off{color:#C7C7CC;}
+.avail-label.on{color:#34C759;}.avail-label.off{color:#C7C7CC;}.avail-label.busy{color:var(--orange);}
 .skeleton{background:linear-gradient(90deg,#e8e8e4 25%,#f2f2ee 50%,#e8e8e4 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:12px;height:160px;}
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 .empty{text-align:center;padding:60px 20px;}
@@ -836,7 +838,7 @@ function BrowseContent() {
                 {l.avatar_url
                   ? <Avatar src={l.avatar_url} alt={l.name} size={96} />
                   : ini(l.name)}
-                <div className={`dot ${l.is_available?'on':'off'}`}/>
+                <div className={`dot ${SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session ? 'busy' : l.is_available ? 'on' : 'off'}`}/>
               </div>
               <div className="meta">
                 <div className="name">
@@ -849,12 +851,14 @@ function BrowseContent() {
               </div>
               <div style={{textAlign:'right',flexShrink:0}}>
                 <div className="rate">₹{l.rate_per_min}<span>/min</span></div>
-                <div className={`avail-label ${l.is_available?'on':'off'}`}>{l.is_available?'● Online':'● Offline'}</div>
+                <div className={`avail-label ${SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session ? 'busy' : l.is_available ? 'on' : 'off'}`}>
+                  {SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session ? '● In session' : l.is_available ? '● Online' : '● Offline'}
+                </div>
                 {/* Last-online hint — only for offline listeners; an online tile
                     already says "● Online". Hidden entirely once a listener has
                     been away long enough that the label would only signal
                     dormancy (see lastOnlineLabel). */}
-                {!l.is_available && lastOnlineLabel(l) && (
+                {!l.is_available && !l.is_in_session && lastOnlineLabel(l) && (
                   <div style={{fontSize:11,fontWeight:600,color:'var(--gray)',marginTop:2,whiteSpace:'nowrap'}}>
                     {lastOnlineLabel(l)}
                   </div>
@@ -873,19 +877,28 @@ function BrowseContent() {
               })}
             </div>
             <div className="btns">
-              <button
-                className={`btn-chat ${l.is_available ? 'avail' : 'offline'}`}
-                onClick={e=>{e.stopPropagation(); if(l.is_available) router.push(`/listener/${l.user_id}?type=text`)}}
-              >
-                {l.is_available ? '🎁 Try free · 5 min' : '💬 Currently offline'}
-              </button>
-              {l.is_available && (
-                <button className="btn-voice" onClick={e=>{e.stopPropagation();router.push(`/listener/${l.user_id}?type=voice`)}}>
-                  🎙️
+              {SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session ? (
+                // Listener is currently in a session — show disabled button, no voice icon
+                <button className="btn-chat busy" onClick={e => e.stopPropagation()}>
+                  🔴 In session — back soon
                 </button>
+              ) : (
+                <>
+                  <button
+                    className={`btn-chat ${l.is_available ? 'avail' : 'offline'}`}
+                    onClick={e=>{e.stopPropagation(); if(l.is_available) router.push(`/listener/${l.user_id}?type=text`)}}
+                  >
+                    {l.is_available ? '🎁 Try free · 5 min' : '💬 Currently offline'}
+                  </button>
+                  {l.is_available && (
+                    <button className="btn-voice" onClick={e=>{e.stopPropagation();router.push(`/listener/${l.user_id}?type=voice`)}}>
+                      🎙️
+                    </button>
+                  )}
+                </>
               )}
             </div>
-            {l.is_available && (
+            {l.is_available && !(SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session) && (
               <div style={{fontSize:11,color:'#5A7A8A',fontWeight:600,textAlign:'center',marginTop:4}}>
                 or ₹{Math.round(l.rate_per_min*15)+PLATFORM_FEE} for 15 min paid session
               </div>

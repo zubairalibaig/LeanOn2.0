@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
+import { SHOW_LISTENER_IN_SESSION_STATUS } from '@/lib/feature-flags'
 
 export const dynamic = 'force-dynamic'
 
@@ -135,6 +136,26 @@ export async function GET(req: NextRequest) {
       }
       return ((b as { rating?: number }).rating || 0) - ((a as { rating?: number }).rating || 0)
     })
+
+    // Derive is_in_session for each listener from the sessions table.
+    // Admin client bypasses RLS — reads all active sessions safely.
+    // Fire-and-forget: any failure leaves all listeners with is_in_session=false.
+    // This is a derived display field only — is_available is NOT modified.
+    if (SHOW_LISTENER_IN_SESSION_STATUS) {
+      try {
+        const { data: activeSessions } = await sb
+          .from('sessions')
+          .select('listener_id')
+          .eq('status', 'active')
+          .not('listener_id', 'is', null)
+        const inSessionSet = new Set((activeSessions || []).map((s: Record<string, unknown>) => s.listener_id as string))
+        listeners.forEach(l => {
+          (l as Record<string, unknown>).is_in_session = inSessionSet.has((l as Record<string, unknown>).user_id as string)
+        })
+      } catch {
+        // silent — all listeners default to is_in_session=false
+      }
+    }
 
     const onlineCount = listeners.filter(l => l.is_available).length
 
