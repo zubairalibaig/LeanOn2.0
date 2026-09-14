@@ -28,9 +28,16 @@ export type SettlementInput = {
   startedAt: string | null   // sessions.started_at (null → treat as 0s used)
   endedAt: string            // sessions.ended_at
   bookedMins: number         // sessions.duration_mins
-  amountHeld: number         // sessions.amount_held (listener total + platform fee)
-  platformFee: number        // sessions.platform_fee
+  amountHeld: number         // sessions.amount_held (flat NRI price or rate×duration+fee)
+  platformFee: number        // sessions.platform_fee (always ₹10 for paid sessions)
   isFreeTrial: boolean       // sessions.is_free_trial
+  /**
+   * When set (NRI sessions), the listener earns at most this rate × billed_mins.
+   * The NRI flat price in amountHeld is higher; the difference is LeanOn's margin.
+   * For India sessions leave undefined — billing uses amountHeld - platformFee as always.
+   * sessions.listener_rate_per_min (stored at booking time, migration 054).
+   */
+  listenerRatePerMin?: number | null
 }
 
 export type Settlement = {
@@ -53,12 +60,26 @@ export function settleSession(s: SettlementInput): Settlement {
   }
 
   const billedMins = Math.min(s.bookedMins, Math.ceil(actualSecs / 60))
-  // rawShare = what the listener would have earned before LeanOn's service fee —
-  // this is also what refundAmount is computed against, so the seeker's side of
-  // the ledger is byte-for-byte identical to the pre-service-fee behaviour.
-  const rawShare = billedMins >= s.bookedMins
-    ? s.amountHeld - (s.platformFee ?? 0)
-    : Math.floor((s.amountHeld - (s.platformFee ?? 0)) * billedMins / s.bookedMins)
+
+  // rawShare = the listener's pre-fee earnings for the billed minutes.
+  //
+  // India sessions: rawShare = amount_held − platform_fee (pro-rated for early exit).
+  //   This is unchanged — the listener earns the full booked rate.
+  //
+  // NRI sessions (listenerRatePerMin set): listener_rate_per_min × billedMins.
+  //   The seeker paid a flat NRI price; the listener earns only their configured
+  //   rate. LeanOn keeps the difference (NRI margin). rawShare is capped at the
+  //   available hold (amountHeld − platformFee) as a safety net.
+  const maxRawShare = s.listenerRatePerMin
+    ? s.listenerRatePerMin * billedMins
+    : Infinity
+
+  const rawShare = Math.min(
+    billedMins >= s.bookedMins
+      ? s.amountHeld - (s.platformFee ?? 0)
+      : Math.floor((s.amountHeld - (s.platformFee ?? 0)) * billedMins / s.bookedMins),
+    maxRawShare,
+  )
 
   // Fee computed first, earning is the remainder — guarantees
   // listenerEarning + listenerServiceFee === rawShare exactly (no rounding leak).

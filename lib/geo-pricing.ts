@@ -1,37 +1,37 @@
-// Geo-pricing utilities — NRI vs India price display.
+// Geo-pricing utilities — NRI vs India price display and billing.
 //
-// Phase 1 (now): display USD/GBP/AED equivalent prices to international users.
-//   The underlying wallet and Razorpay charge still runs in INR; Razorpay's
-//   international gateway handles FX at checkout. The display price is a flat
-//   simplified amount so NRI users aren't confused by variable listener rates.
-//
-// Phase 2 (later): actual billing in international currency with LeanOn keeping
-//   the FX margin. Requires account_country gating in create_session RPC.
+// Phase 2 (now, 2026-09-14): actual billing at flat USD rates for NRI users.
+//   Razorpay processes in INR (no multi-currency setup needed). "We do the
+//   conversion" — LeanOn stores pre-defined INR equivalents; the seeker's
+//   Indian/foreign bank card sees the INR charge and does FX at market rate.
+//   Listener still earns their configured rate × 85% (unchanged). LeanOn keeps
+//   the NRI margin = flat_price − listener_earnings − ₹10 platform fee.
 //
 // Rate: approximate mid-market rate stored here. Update quarterly.
 // Do NOT use live FX APIs in the render path — rate calls are slow, have quotas,
-// and the variability is not meaningful at these price points (~₹5 swing on $6).
+// and the variability is not meaningful at these price points (~₹5 swing on $10).
 
 export const INDIA_COUNTRY = 'IN'
 
-// Flat USD prices shown to NRI users for the 3 paid session durations.
-// ₹10 platform fee is bundled in (not shown separately to international users).
+// Flat USD prices billed to NRI users for the 3 paid session durations.
+// Total amount the seeker pays (inclusive of ₹10 platform fee — not shown
+// separately to international users; the flat price is the all-in price).
 export const NRI_USD_PRICES: Record<15 | 30 | 45, number> = {
-  15: 6,
-  30: 10,
-  45: 15,
+  15: 10,
+  30: 15,
+  45: 20,
 }
 
-// Approximate USD → INR for display parity. Razorpay settles at live rate.
-// Update this when it drifts ≥10% from mid-market.
+// Approximate USD → INR for billing. Razorpay processes at this INR amount.
+// Update this when it drifts ≥10% from mid-market (check quarterly).
 export const APPROX_USD_TO_INR = 84
 
-// Pre-computed INR equivalents of the flat USD prices. Used in session creation
-// for Phase 2 when we actually bill at the NRI rate (currently display-only).
+// Pre-computed INR equivalents — the actual amount_held on the session and
+// the amount deducted from the seeker's wallet for NRI bookings.
 export const NRI_INR_EQUIV: Record<15 | 30 | 45, number> = {
-  15: Math.round(NRI_USD_PRICES[15] * APPROX_USD_TO_INR),  // ₹504
-  30: Math.round(NRI_USD_PRICES[30] * APPROX_USD_TO_INR),  // ₹840
-  45: Math.round(NRI_USD_PRICES[45] * APPROX_USD_TO_INR),  // ₹1260
+  15: Math.round(NRI_USD_PRICES[15] * APPROX_USD_TO_INR),  // $10 → ₹840
+  30: Math.round(NRI_USD_PRICES[30] * APPROX_USD_TO_INR),  // $15 → ₹1260
+  45: Math.round(NRI_USD_PRICES[45] * APPROX_USD_TO_INR),  // $20 → ₹1680
 }
 
 // Per-currency display config for the 8 supported countries.
@@ -82,7 +82,7 @@ export function getNriDisplayPrice(
 /**
  * Full price line for booking UI:
  * India:  "₹310"
- * NRI:    "~$6" (with a note that INR is charged at checkout)
+ * NRI:    "$10" (flat price; INR equivalent charged from wallet)
  */
 export function getBookingPriceDisplay(
   inrCost: number,
@@ -92,9 +92,10 @@ export function getBookingPriceDisplay(
   if (!isNriCountry(country)) return { primary: `₹${inrCost}`, note: null }
   const nriPrice = getNriDisplayPrice(durationMins, country)
   if (!nriPrice) return { primary: `₹${inrCost}`, note: null }
-  const cfg = CURRENCY_MAP[country!] ?? CURRENCY_MAP['US']
+  const inrEquiv = NRI_INR_EQUIV[durationMins as 15 | 30 | 45]
   return {
     primary: nriPrice,
-    note: `Charged in ₹ at checkout (${cfg.code} equiv.)`,
+    // Show exact INR amount deducted from wallet so there are no surprises
+    note: `₹${inrEquiv} deducted from wallet`,
   }
 }

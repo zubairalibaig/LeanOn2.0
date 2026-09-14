@@ -55,7 +55,7 @@ export async function POST(req: Request) {
   // Find sessions that started more than (duration + 2 min grace) ago and are still active
   const { data: orphans, error } = await sb
     .from('sessions')
-    .select('id, seeker_id, listener_id, amount_held, platform_fee, is_free_trial, duration_mins, started_at')
+    .select('id, seeker_id, listener_id, amount_held, platform_fee, is_free_trial, duration_mins, started_at, listener_rate_per_min')
     .eq('status', 'active')
     .lt('started_at', new Date(Date.now() - 2 * 60_000).toISOString()) // at least 2 min old
 
@@ -89,13 +89,14 @@ export async function POST(req: Request) {
     // UP capped at booked, so a full-length session never gets shaved by floor.
     const endedAt = completed.ended_at ?? new Date().toISOString()
     const bookedMins = session.duration_mins as number
-    const { billedMins, listenerEarning: earning, refundAmount, listenerServiceFee } = settleSession({
-      startedAt:   (session.started_at as string | null) ?? null,
+    const { billedMins, listenerEarning: earning, refundAmount } = settleSession({
+      startedAt:          (session.started_at as string | null) ?? null,
       endedAt,
       bookedMins,
-      amountHeld:  session.amount_held as number,
-      platformFee: (session.platform_fee as number) ?? 0,
-      isFreeTrial: session.is_free_trial as boolean,
+      amountHeld:         session.amount_held as number,
+      platformFee:        (session.platform_fee as number) ?? 0,
+      isFreeTrial:        session.is_free_trial as boolean,
+      listenerRatePerMin: (session.listener_rate_per_min as number | null) ?? undefined,
     })
 
     // Refund seeker for unused portion
@@ -131,17 +132,15 @@ export async function POST(req: Request) {
           description: `Session earnings (auto-closed, ${billedMins}/${bookedMins} min)`,
           session_id: session.id,
         })
-        // Insert earnings record so it appears in the earnings dashboard
-        // platform_fee = seeker's flat ₹10 + LeanOn's 15% service fee on the
-        // listener's share (see lib/session-billing.ts) — combined so the
-        // dashboard's Gross/Fee/Net line stays consistent unchanged.
+        // Insert earnings record. platform_fee = gross − refund − net =
+        // LeanOn's actual take (₹10 flat + 15% service fee + any NRI margin).
         await sb.from('listener_earnings').insert({
-          listener_id: session.listener_id,
-          session_id: session.id,
+          listener_id:  session.listener_id,
+          session_id:   session.id,
           gross_amount: Math.round(session.amount_held as number),
-          platform_fee: Math.round(((session.platform_fee as number) ?? 0) + listenerServiceFee),
-          net_amount: Math.round(earning),
-          status: 'settled',
+          platform_fee: Math.round(session.amount_held as number) - Math.round(refundAmount) - Math.round(earning),
+          net_amount:   Math.round(earning),
+          status:       'settled',
         }).then(
           () => {},
           (e) => logger.error('cleanup: listener_earnings insert failed (earnings ledger gap):', { sessionId: session.id, error: String(e) }),

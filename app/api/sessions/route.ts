@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { PLATFORM_FEE, FREE_SESSION_MINS, MAX_FREE_TRIALS, SESSION_DURATIONS } from '@/lib/constants'
+import { isNriCountry, NRI_INR_EQUIV } from '@/lib/geo-pricing'
 import { isUnlimitedTestPhone } from '@/lib/test-users'
 import { settleSession } from '@/lib/session-billing'
 import { notifySessionComplete } from '@/lib/notify'
@@ -121,7 +122,24 @@ export async function POST(req: NextRequest) {
     }
 
     const rate  = lp.rate_per_min ?? 10  // ?? not || — a legitimate rate of 0 must not be overridden
-    const base  = effectivelyFree ? 0 : rate * durationMins
+
+    // NRI pricing (Phase 2): if the seeker signed up with a non-India country,
+    // bill at the flat INR equivalent of the USD price. The listener still earns
+    // their configured rate × billed_mins × 85% — LeanOn keeps the NRI margin.
+    // We read account_country from the DB (never from the request body) so a
+    // crafted request cannot claim India status to avoid NRI pricing.
+    let isNriSession = false
+    if (!effectivelyFree && (SESSION_DURATIONS as readonly number[]).includes(durationMins) && durationMins !== FREE_SESSION_MINS) {
+      const { data: seekerCountryRow } = await sb
+        .from('users').select('account_country').eq('id', user.id).single()
+      if (isNriCountry(seekerCountryRow?.account_country) && NRI_INR_EQUIV[durationMins as 15 | 30 | 45]) {
+        isNriSession = true
+      }
+    }
+
+    const base  = effectivelyFree ? 0 : isNriSession
+      ? NRI_INR_EQUIV[durationMins as 15 | 30 | 45] - PLATFORM_FEE  // flat price minus the ₹10 fee
+      : rate * durationMins
     const total = effectivelyFree ? 0 : base + PLATFORM_FEE
 
     // Note: balance check, seeker-active-session check, and listener-busy check are
@@ -156,12 +174,23 @@ export async function POST(req: NextRequest) {
       throw rpcErr
     }
 
+    // Store listener's rate on the session so settlement can correctly split
+    // earnings for NRI sessions (where amount_held = flat NRI price, not rate×duration).
+    // Fire-and-forget — a failure here is an analytics gap, not a billing error
+    // (settlement falls back to the India formula if the column is null).
+    if (!effectivelyFree && sessionId) {
+      sb.from('sessions')
+        .update({ listener_rate_per_min: Math.round(rate) })
+        .eq('id', sessionId)
+        .then(() => {}, (e) => logger.error('Session POST: listener_rate_per_min update failed', { sessionId, error: String(e) }))
+    }
+
     if (!effectivelyFree) {
       const { error: txErr } = await sb.from('wallet_transactions').insert({
         user_id:     user.id,
         amount:      total,
         type:        'debit',
-        description: `${durationMins}-min ${sessionType} session`,
+        description: `${durationMins}-min ${sessionType} session${isNriSession ? ' (NRI)' : ''}`,
         session_id:  sessionId,
       })
       if (txErr) logger.error('Session POST: wallet_transactions insert failed (audit gap):', { sessionId, error: txErr.message })
@@ -270,12 +299,15 @@ export async function PATCH(req: NextRequest) {
     const endedAt = completed.ended_at ?? new Date().toISOString()
     const bookedMins = session.duration_mins as number
     const { billedMins, listenerEarning, refundAmount, listenerServiceFee } = settleSession({
-      startedAt:   session.started_at ?? null,
+      startedAt:         session.started_at ?? null,
       endedAt,
       bookedMins,
-      amountHeld:  session.amount_held,
-      platformFee: session.platform_fee ?? 0,
-      isFreeTrial: session.is_free_trial,
+      amountHeld:        session.amount_held,
+      platformFee:       session.platform_fee ?? 0,
+      isFreeTrial:       session.is_free_trial,
+      // NRI sessions: caps listener's rawShare at their configured rate × billed_mins.
+      // NULL for India sessions or pre-migration rows → India formula used as before.
+      listenerRatePerMin: (session.listener_rate_per_min as number | null) ?? undefined,
     })
 
     // Issue refund to seeker if applicable
@@ -315,16 +347,17 @@ export async function PATCH(req: NextRequest) {
           session_id:  sessionId,
         })
 
-        // Track earnings in listener_earnings for dashboard. platform_fee here
-        // is the seeker's flat ₹10 PLUS LeanOn's 15% service fee on the
-        // listener's share — the dashboard's "Gross · Fee" line already reads
-        // this column, so combining them keeps gross - fee = net exactly true
-        // with no dashboard change required.
+        // Track earnings in listener_earnings for dashboard.
+        // platform_fee = gross − refund − net = LeanOn's actual take, which
+        // correctly includes: seeker's flat ₹10 + 15% service fee + any NRI
+        // margin. For India sessions this equals (session.platform_fee +
+        // listenerServiceFee) exactly, so historical data is unchanged.
+        // For NRI sessions it adds the NRI margin, making the admin KPI accurate.
         await sb.from('listener_earnings').insert({
           listener_id:  session.listener_id,
           session_id:   sessionId,
           gross_amount: Math.round(session.amount_held),
-          platform_fee: Math.round((session.platform_fee ?? 0) + listenerServiceFee),
+          platform_fee: Math.round(session.amount_held) - Math.round(refundAmount) - Math.round(listenerEarning),
           net_amount:   Math.round(listenerEarning),
           status:       'settled',
         }).then(
