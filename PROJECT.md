@@ -261,3 +261,53 @@ Razorpay international gateway is the first option — already approved for most
 
 ### Decision trigger for full build
 Run a 30-day demand experiment (diaspora landing page + ₹25–30k Meta spend targeting Indians in US/UK). If paid conversion ≥ 2× India, build the real geo-pricing layer. If flat, fix product first before expanding.
+
+---
+
+## 15. Product-Market Fit Learnings (from live usage, Sept 2026)
+
+### The core mechanism that actually drives paid repeat usage
+
+A listener (Aanchal) earned ₹7K + ₹2K in two consecutive days from a single seeker (Hemang, divorced man seeking someone who would genuinely listen to his daily life). Validated learnings:
+
+**Why he pays:**
+- He tried the free 5-minute trial first — that's the correct funnel working.
+- He tried multiple other listeners and rejected them. He pays specifically for Aanchal's voice, empathy, and genuine engagement — not for "a listener" generically.
+- His stated reason: "no one else actually listens."
+
+**What this means for the product:**
+People do not pay for access to listeners. They pay for a specific human who makes them feel genuinely heard. The product-market fit is: *seeker discovers the right listener via trial → feels heard → returns and pays repeatedly*. This is a relationship marketplace, not a commodity chat marketplace. Every product decision should serve the "discovery → trust → repeat" loop, not just session volume.
+
+**The supply-side fraud problem (highest priority risk):**
+Multiple listeners apparently accepted Hemang's calls and then said nothing — just holding the line to earn the per-minute fee. He reported this explicitly and it drove him to only trust Aanchal. This is the single most dangerous failure mode:
+- A seeker experiencing a silent listener attributes it to LeanOn, not to the individual.
+- It directly destroys the core value proposition.
+- It is technically detectable (very short completed sessions, no meaningful duration).
+- **This must be monitored and acted on before scaling acquisition.**
+
+**The concentration risk:**
+₹9K spent with one listener in 2 days by one seeker is a strong revenue signal AND a platform-drift warning (§10.6). The product principles deliberately exclude tipping, gifting, and parasocial features. High single-listener concentration should be flagged — not to block it, but to ensure the seeker's wellbeing is the goal, not dependency.
+
+### What to measure (priority order)
+
+1. **Repeat paid sessions per listener** — listeners with seekers who book them 3+ times paid are the Aanchal pattern. This is the quality signal that matters most.
+2. **Free-to-paid conversion per listener** — what % of a listener's free trials convert to a paid session. Low conversion = low quality or poor fit.
+3. **Silent session rate** — voice sessions completed with duration < 2 minutes (accepted call, no real engagement). Any listener with >10% silent-session rate needs review.
+4. **Seeker concentration** — seekers where >70% of paid sessions are with one listener. Monitor, don't block.
+5. **Session completion rate** — sessions that start but end much earlier than booked duration (listener or seeker leaves early).
+
+### What NOT to build based on this signal
+
+- ❌ A "favorite listener" or follow feature — this is a parasocial hook (§10.6). The discovery loop already creates affinity without building it in explicitly.
+- ❌ Rating or review system visible on listener profiles — creates attractiveness-based selection (§10.5) and reputational gaming. Use quality metrics internally for moderation, never publicly.
+- ❌ Tipping or gifting (§10.6).
+- ❌ "₹9K in 2 days" as a marketing angle — the seeker's spend is private data.
+
+### The listener playbook (Aanchal as prototype)
+
+What makes the Aanchal pattern work (from her own description):
+- Genuine, active listening — not just being present but asking, engaging, remembering
+- Consistency — available reliably, seeker can predict she'll be there
+- Psychology background helps but is not the filter — the real trait is treating the seeker's stories as genuinely worth hearing, not as a job to sit through
+
+This suggests the listener onboarding and vetting criteria should screen for **genuine empathy and active listening** above credentials or topic expertise. The admin interview/approval step should probe this, not just check bank details.
