@@ -10,6 +10,7 @@ import ServiceWorkerRegister from './components/ServiceWorkerRegister'
 import { Analytics } from '@vercel/analytics/next'
 
 const countries = ['India', 'United States', 'United Kingdom', 'Canada', 'United Arab Emirates', 'Oman', 'Kuwait', 'Singapore', 'Malaysia', 'Australia']
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.leanon.app'),
@@ -132,7 +133,6 @@ const webAppJsonLd = {
   offers: {
     '@type': 'Offer',
     price: '0',
-    priceCurrency: 'INR',
     description: 'One free 5-minute introductory session for eligible new users. Paid session pricing is shown at checkout and may vary by market.',
     availability: 'https://schema.org/InStock',
   },
