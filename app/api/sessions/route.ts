@@ -353,17 +353,18 @@ export async function PATCH(req: NextRequest) {
         // margin. For India sessions this equals (session.platform_fee +
         // listenerServiceFee) exactly, so historical data is unchanged.
         // For NRI sessions it adds the NRI margin, making the admin KPI accurate.
-        await sb.from('listener_earnings').insert({
+        const { error: earningsErr } = await sb.from('listener_earnings').insert({
           listener_id:  session.listener_id,
           session_id:   sessionId,
           gross_amount: Math.round(session.amount_held),
           platform_fee: Math.round(session.amount_held) - Math.round(refundAmount) - Math.round(listenerEarning),
           net_amount:   Math.round(listenerEarning),
           status:       'settled',
-        }).then(
-          () => {},
-          (e) => logger.error('listener_earnings insert failed (earnings ledger gap):', { sessionId, error: String(e) }),
-        )
+        })
+        // 23505 = unique_violation — already recorded, not an error worth logging
+        if (earningsErr && earningsErr.code !== '23505') {
+          logger.error('listener_earnings insert failed (earnings ledger gap):', { sessionId, error: earningsErr.message })
+        }
       }
     }
 

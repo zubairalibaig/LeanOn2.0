@@ -97,14 +97,17 @@ export async function GET(req: NextRequest) {
 
         // platform_fee = gross − refund − net = LeanOn's actual take
         // (₹10 flat + 15% service fee + any NRI margin).
-        await sb.from('listener_earnings').insert({
+        const { error: earningsErr } = await sb.from('listener_earnings').insert({
           listener_id:  session.listener_id,
           session_id:   session.id,
           gross_amount: Math.round(session.amount_held),
           platform_fee: Math.round(session.amount_held) - Math.round(refundAmount) - Math.round(listenerEarning),
           net_amount:   Math.round(listenerEarning),
           status:       'settled',
-        }).then(() => {}, () => {})
+        })
+        if (earningsErr && earningsErr.code !== '23505') {
+          logger.error('expire: listener_earnings insert failed (earnings ledger gap):', { sessionId: session.id, error: earningsErr.message })
+        }
       }
 
       if (refundAmount > 0) {
