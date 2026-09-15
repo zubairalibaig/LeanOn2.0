@@ -1160,10 +1160,10 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                {/* ── YOUR EARNINGS (platform fee) ── */}
+                {/* ── GROSS PLATFORM REVENUE (platform fee) ── */}
                 {kpis.platformEarnings && (
                   <>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Your Earnings (India: ₹10 flat + 15% svc fee · NRI: ₹10 flat + 15% svc fee + USD price margin)</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Gross Platform Revenue (India: ₹10 flat + 15% svc fee · NRI: ₹10 flat + 15% svc fee + USD price margin)</div>
                     <div className="kpi-grid" style={{ marginBottom: 20 }}>
                       <div className="kpi-card" style={{ borderLeft: '5px solid var(--green)' }}>
                         <div className="kpi-label">All Time</div>
@@ -1943,13 +1943,20 @@ export default function AdminPage() {
                                 // Active sessions: project earnings with 15% service fee
                                 // (same rate applied at settlement by settleSession()).
                                 // Show with ~ prefix so it's clear this is a live estimate.
+                                // NRI: rawShare = listener's India rate × booked mins (NOT amount_held − ₹10),
+                                // because amount_held includes the NRI USD margin that goes to LeanOn, not the listener.
                                 if (s.status === 'active') {
-                                  const rawShare   = s.amount_held - platformFee
+                                  const isNriActive = !!s.listener_rate_per_min &&
+                                    s.listener_rate_per_min * s.duration_mins < s.amount_held - platformFee
+                                  const rawShare   = isNriActive
+                                    ? s.listener_rate_per_min! * s.duration_mins
+                                    : s.amount_held - platformFee
                                   const serviceFee = Math.floor(rawShare * 0.15)
                                   const listenerNet  = rawShare - serviceFee
-                                  const platformTotal = platformFee + serviceFee
+                                  const nriMargin  = isNriActive ? (s.amount_held - platformFee - rawShare) : 0
+                                  const platformTotal = platformFee + serviceFee + nriMargin
                                   return (
-                                    <span title={`Seeker held ₹${s.amount_held} · Projected listener ₹${listenerNet} (15% svc fee ₹${serviceFee}) · LeanOn ₹${platformTotal} (₹${platformFee} flat + ₹${serviceFee} svc fee)`}>
+                                    <span title={`Seeker held ₹${s.amount_held} · Projected listener ₹${listenerNet} (15% svc fee ₹${serviceFee})${isNriActive ? ` · NRI margin ₹${nriMargin}` : ''} · LeanOn ~₹${platformTotal}`}>
                                       ~₹{listenerNet}
                                       <span style={{ fontSize: 10, color: 'var(--green)', marginLeft: 3 }}>+₹{platformTotal}</span>
                                     </span>
