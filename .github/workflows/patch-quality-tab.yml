@@ -12,23 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Diagnose and apply Quality UI patch
+      - name: Apply robust Quality UI patch
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-          s = Path('app/admin/page.tsx').read_text()
-          out = []
-          out.append(f'quality_state_marker={s.count("  // Quality metrics\\n")}')
-          out.append(f'load_quality_marker={s.count("  const loadQuality = useCallback(async () =>\\n")}')
-          out.append(f'quality_render_marker={s.count("        {/* ─── QUALITY") }')
-          out.append(f'quality_tab_marker={s.count("{tab === \'quality\' && (")}')
-          out.append(f'show_toast={s.count("  const showToast =")}')
-          Path('/tmp/quality_debug.txt').write_text('\\n'.join(out) + '\\n')
-          print('\\n'.join(out))
-          PY
-          cat /tmp/quality_debug.txt
-          python3 scripts/patch_admin_quality.py
+          python3 scripts/patch_admin_quality2.py
           grep -Fq 'Trial → Paid · 7d' app/admin/page.tsx
           grep -Fq 'Missing telemetry' app/admin/page.tsx
           grep -Fq 'qualityWindow' app/admin/page.tsx
