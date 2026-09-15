@@ -459,5 +459,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/usa-talk-to-someone`,             lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
     { url: `${base}/desi-usa-support`,                lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
     { url: `${base}/usa-therapy-alternative`,         lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+
+    // Round 21: Gulf gap-fill + Australia NRI + AEO AI-alternative (2026-09-15)
+    { url: `${base}/kuwait-talk-to-someone`,          lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/kuwait-nri-support`,              lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/oman-talk-to-someone`,            lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/oman-nri-support`,                lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/uae-talk-to-someone`,             lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/australia-talk-to-someone`,       lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/australia-nri-support`,           lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    // AEO: AI chatbot alternative — country-specific (targets ChatGPT/Claude/Gemini users)
+    { url: `${base}/ai-chatbot-alternative-uae`,      lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/ai-chatbot-alternative-uk`,       lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/ai-chatbot-alternative-singapore`,lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/ai-chatbot-alternative-malaysia`, lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
   ]
 }

@@ -55,6 +55,20 @@ const PUBLIC_PAGES = [
   '/terms',
   '/glossary',
   '/admin', // handled client-side with Supabase auth + PIN gate
+  // Gulf country pages
+  '/kuwait-talk-to-someone',
+  '/kuwait-nri-support',
+  '/oman-talk-to-someone',
+  '/oman-nri-support',
+  '/uae-talk-to-someone',
+  // AEO — AI chatbot alternative (country-specific)
+  '/ai-chatbot-alternative-uae',
+  '/ai-chatbot-alternative-uk',
+  '/ai-chatbot-alternative-singapore',
+  '/ai-chatbot-alternative-malaysia',
+  // Australia NRI
+  '/australia-talk-to-someone',
+  '/australia-nri-support',
 ]
 
 const AUTH_REQUIRED_PREFIXES = [

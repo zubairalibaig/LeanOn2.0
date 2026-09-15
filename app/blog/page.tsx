@@ -58,11 +58,14 @@ import { post as housewifeGuidePost } from './posts/housewife-mental-health-indi
 import { post as divorceRecoveryPost } from './posts/divorce-india-emotional-recovery'
 import { post as strangerConvPost } from './posts/stranger-conversation-healing-india'
 import { post as rantVsVentPost } from './posts/rant-vs-vent-india'
+import { post as claudeGeminiPost } from './posts/claude-gemini-chatgpt-emotional-support'
+import { post as aiChatbotNriPost } from './posts/ai-chatbot-nri-abroad'
 
 export const dynamic = 'force-static'
 
 // All posts — sorted newest first so Google and AI crawlers see fresh content at top
 const allPosts = [
+  claudeGeminiPost, aiChatbotNriPost,
   empathyMeaningPost, paidFriendPost, quarterLifePost, tarotAstrologyPost,
   housewifeGuidePost, divorceRecoveryPost, strangerConvPost, rantVsVentPost,
   bestPeerAppsPost, peerCounsellingGuidePost, mentalHealthCostPost,
