@@ -9,67 +9,64 @@ import SiteFooter from './components/SiteFooter'
 import ServiceWorkerRegister from './components/ServiceWorkerRegister'
 import { Analytics } from '@vercel/analytics/next'
 
+const countries = ['India', 'United States', 'United Kingdom', 'Canada', 'United Arab Emirates', 'Oman', 'Kuwait', 'Singapore', 'Malaysia', 'Australia']
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.leanon.app'),
   title: {
-    default: 'LeanOn — Peer Emotional Support, India',
-    template: '%s | LeanOn — Peer Support India',
+    default: 'LeanOn — Real Human Peer Support Online | India & Indian Diaspora',
+    template: '%s | LeanOn — Real Human Peer Support',
   },
-  description: "Talk to a verified peer listener in India, anonymously and without judgment. Available 24/7, no appointment needed. 12 Indian languages — for loneliness, anxiety, burnout, grief, and more.",
+  description: 'Talk to a real human peer listener when you want someone to hear you. LeanOn offers private, pseudonymous text and voice peer support for people in India and supported countries, including Indians and South Asians living abroad.',
   manifest: '/manifest.json',
   icons: { icon: '/logo.png', apple: '/logo.png' },
   keywords: [
-    'leanon', 'lean on', 'peer support India', 'emotional support India', 'talk to someone India',
-    'mental health India', 'anonymous support', 'online listener India', 'mental health chat India',
-    'lean on app', 'lean on India', 'LeanOn',
-    'peer listener India', 'emotional wellness app', 'talk to a friend online India',
-    'loneliness support India', 'anxiety support India', 'grief support India',
-    'burnout help India', 'peer emotional support India',
-    'emotional support chat', 'online support group India',
-    'empathy', 'empathetic listener India', 'empathetic support India', 'compassionate listener India',
-    'peer counselling India', 'peer counsellor India', 'active listening India',
-    'affordable online counselling India', 'online counselling alternative India',
-    'cheaper than therapy India', 'talk to someone online paid India',
-    'book emotional support session India', 'online listener India price',
-    // Seeker-intent (Round 4) — acute need + price-comparison searches.
-    'talk to someone right now', 'need someone to talk to now India',
-    'no one to talk to', 'how to stop overthinking at night',
-    'online counselling cost India', 'therapy cost India',
-    'lonely in marriage India', 'job loss depression India',
-    'urgent emotional support India', 'someone to listen to me India',
-    // AI/ChatGPT-alternative cluster — captures users who tried AI chatbots
-    // and want real human connection instead.
-    'chat with real person online India', 'talk to real human not AI',
-    'real person to talk to online India', 'AI chatbot alternative India',
-    'ChatGPT alternative for loneliness India', 'human listener not bot',
-    'tired of talking to AI', 'human connection instead of AI India',
-    'real human emotional support India', 'not a bot chat India',
-    'chatbot not helping anxiety', 'human vs AI mental health India',
-    // Listener-earning cluster — captures people who want to earn by
-    // helping others, driving listener supply.
-    'earn money by listening online India', 'paid listener job India',
-    'get paid to listen to people India', 'work from home listener India',
-    'side income listener India', 'earn from talking online India',
-    'online listener job India', 'earn money empathy India',
+    'leanon', 'lean on', 'LeanOn app', 'peer support', 'emotional support',
+    'talk to someone online', 'talk to a real person online', 'real human listener',
+    'human connection online', 'someone to talk to', 'someone to listen to me',
+    'peer emotional support', 'online peer support', 'active listening',
+    'support for Indians abroad', 'NRI emotional support', 'Indian diaspora support',
+    'Indian expat loneliness', 'homesick Indian abroad', 'Indian living abroad',
+    'talk to a real person instead of AI', 'human alternative to AI chatbot',
+    'ChatGPT alternative for human connection', 'AI companion alternative',
+    'India peer support', 'USA peer support', 'UK peer support', 'Canada peer support',
+    'UAE peer support', 'Oman peer support', 'Kuwait peer support',
+    'Singapore peer support', 'Malaysia peer support', 'Australia peer support',
   ],
   authors: [{ name: 'LeanOn' }],
   creator: 'LeanOn',
   publisher: 'LeanOn',
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-snippet': -1, 'max-image-preview': 'large' } },
-  alternates: { canonical: 'https://www.leanon.app', languages: { 'en-IN': 'https://www.leanon.app' } },
+  alternates: {
+    canonical: 'https://www.leanon.app',
+    languages: {
+      'en': 'https://www.leanon.app',
+      'en-IN': 'https://www.leanon.app',
+      'en-US': 'https://www.leanon.app',
+      'en-GB': 'https://www.leanon.app',
+      'en-CA': 'https://www.leanon.app',
+      'en-AE': 'https://www.leanon.app',
+      'en-OM': 'https://www.leanon.app',
+      'en-KW': 'https://www.leanon.app',
+      'en-SG': 'https://www.leanon.app',
+      'en-MY': 'https://www.leanon.app',
+      'en-AU': 'https://www.leanon.app',
+      'x-default': 'https://www.leanon.app',
+    },
+  },
   openGraph: {
     type: 'website',
-    locale: 'en_IN',
+    locale: 'en_US',
     siteName: 'LeanOn',
-    title: 'LeanOn — Peer Emotional Support, India',
-    description: "Talk to a trained peer listener, anonymously. Available 24/7, no appointment needed.",
-    images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn — Peer Emotional Support India' }],
+    title: 'LeanOn — Real Human Peer Support Online | India & Indian Diaspora',
+    description: 'Talk to a real human peer listener through private text or voice conversations. Available in India and supported countries for people who want human connection.',
+    images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn — Real Human Peer Support Online' }],
   },
   twitter: {
     card: 'summary_large_image',
     site: '@leanonapp',
-    title: 'LeanOn — Peer Emotional Support, India',
-    description: "Talk to a trained peer listener, anonymously. Available 24/7, no appointment needed.",
+    title: 'LeanOn — Real Human Peer Support Online',
+    description: 'Talk to a real human peer listener when you want someone to hear you. Private text and voice conversations.',
     images: ['/icon-512.png'],
   },
   verification: {
@@ -83,168 +80,92 @@ export const viewport: Viewport = {
   initialScale: 1,
 }
 
-const jsonLd = {
+const organizationJsonLd = {
   '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': ['WebApplication', 'Organization'],
-      '@id': 'https://www.leanon.app/#organization',
-      name: 'LeanOn',
-      alternateName: ['Lean On', 'leanon', 'LeanOn App'],
-      url: 'https://www.leanon.app',
-      logo: {
-        '@type': 'ImageObject',
-        url: 'https://www.leanon.app/logo.png',
-        width: 512,
-        height: 512,
-      },
-      description: "LeanOn is India's peer emotional support platform. Real humans with lived experience, available 24/7.",
-      disambiguatingDescription: 'LeanOn (one word) is an Indian peer emotional support web platform at leanon.app — not related to the 2015 song "Lean On" by Major Lazer and DJ Snake.',
-      knowsAbout: [
-        'peer support', 'emotional support', 'loneliness', 'anxiety', 'burnout',
-        'grief support', 'mental health India', 'active listening', 'breakup support',
-        'student stress', 'family pressure India', 'alternatives to therapy India',
-        'empathy', 'empathetic listening', 'peer counselling India', 'compassionate support',
-      ],
-      foundingDate: '2024',
-      foundingLocation: { '@type': 'Place', name: 'India' },
-      areaServed: { '@type': 'Country', name: 'India' },
-      serviceType: 'Peer Emotional Support',
-      slogan: 'You are not alone.',
-      sameAs: [
-        'https://www.instagram.com/leanonapp',
-        'https://twitter.com/leanonapp',
-        'https://www.linkedin.com/company/leanonapp',
-      ],
-    },
-    {
-      '@type': 'WebSite',
-      '@id': 'https://www.leanon.app/#website',
-      url: 'https://www.leanon.app',
-      name: 'LeanOn',
-      alternateName: 'Lean On',
-      publisher: { '@id': 'https://www.leanon.app/#organization' },
-      potentialAction: {
-        '@type': 'SearchAction',
-        target: 'https://www.leanon.app/browse?q={search_term_string}',
-        'query-input': 'required name=search_term_string',
-      },
-    },
-    {
-      '@type': 'SoftwareApplication',
-      name: 'LeanOn',
-      alternateName: 'Lean On',
-      applicationCategory: 'HealthApplication',
-      operatingSystem: 'Web, iOS, Android',
-      offers: {
-        '@type': 'Offer',
-        price: '0',
-        priceCurrency: 'INR',
-        description: '5-minute trial session available for new users',
-        availability: 'https://schema.org/InStock',
-      },
-      description: 'LeanOn — someone to lean on anytime. Peer emotional support platform for India. Talk to verified listeners who have lived through what you are facing.',
-    },
+  '@type': 'Organization',
+  '@id': 'https://www.leanon.app/#organization',
+  name: 'LeanOn',
+  alternateName: ['Lean On', 'leanon', 'LeanOn App'],
+  url: 'https://www.leanon.app',
+  logo: { '@type': 'ImageObject', url: 'https://www.leanon.app/logo.png', width: 512, height: 512 },
+  description: 'LeanOn is an India-origin peer support platform connecting people with real human peer listeners through private text and voice conversations. It serves people in India and supported international markets, including members of the Indian diaspora.',
+  disambiguatingDescription: 'LeanOn (one word) is the peer support platform at leanon.app. It is not related to the 2015 song “Lean On” by Major Lazer and DJ Snake.',
+  foundingDate: '2024',
+  foundingLocation: { '@type': 'Country', name: 'India' },
+  areaServed: countries.map(name => ({ '@type': 'Country', name })),
+  serviceType: 'Peer Emotional Support',
+  knowsAbout: [
+    'peer support', 'emotional support', 'loneliness', 'active listening', 'human connection',
+    'NRI emotional support', 'Indian diaspora support', 'homesickness', 'expat loneliness',
+    'relationship stress', 'work stress', 'burnout', 'grief support', 'student stress',
+    'real human conversation', 'peer listening',
   ],
+  sameAs: [
+    'https://www.instagram.com/leanonapp',
+    'https://twitter.com/leanonapp',
+    'https://www.linkedin.com/company/leanonapp',
+  ],
+}
+
+const webSiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': 'https://www.leanon.app/#website',
+  url: 'https://www.leanon.app',
+  name: 'LeanOn',
+  alternateName: ['Lean On', 'LeanOn App'],
+  publisher: { '@id': 'https://www.leanon.app/#organization' },
 }
 
 const webAppJsonLd = {
-  "@context": "https://schema.org",
-  "@type": ["WebApplication", "HealthAndBeautyBusiness"],
-  "name": "LeanOn",
-  "url": "https://www.leanon.app",
-  "applicationCategory": "HealthApplication",
-  "operatingSystem": "Web",
-  "description": "LeanOn is India's peer emotional support platform. Talk to trained active listeners — not AI, not therapists — real humans with lived experience.",
-  "serviceType": "Peer Emotional Support",
-  "audience": { "@type": "Audience", "audienceType": "Adults in India experiencing loneliness, anxiety, grief, burnout, or relationship stress" },
-  "areaServed": { "@type": "Country", "name": "India" },
-  "offers": { "@type": "Offer", "priceCurrency": "INR", "price": "0", "description": "5-minute trial session for new users" }
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': 'https://www.leanon.app/#webapplication',
+  name: 'LeanOn',
+  url: 'https://www.leanon.app',
+  applicationCategory: 'HealthApplication',
+  operatingSystem: 'Web, iOS, Android',
+  description: 'Peer emotional support through real human listeners. LeanOn is for people in India and supported international markets who want a private text or voice conversation with another person. It is not therapy and does not replace emergency or clinical care.',
+  provider: { '@id': 'https://www.leanon.app/#organization' },
+  areaServed: countries.map(name => ({ '@type': 'Country', name })),
+  audience: { '@type': 'Audience', audienceType: 'Adults seeking peer emotional support and human connection' },
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'INR',
+    description: 'One free 5-minute introductory session for eligible new users. Paid session pricing is shown at checkout and may vary by market.',
+    availability: 'https://schema.org/InStock',
+  },
 }
 
 const serviceJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Service",
-  "@id": "https://www.leanon.app/#service",
-  "name": "Peer Emotional Support Session",
-  "serviceType": "Peer Emotional Support",
-  "alternateName": ["Peer Support Session", "Online Listener Session", "Emotional Support Chat"],
-  "provider": {
-    "@type": "Organization",
-    "@id": "https://www.leanon.app/#organization",
-    "name": "LeanOn"
-  },
-  "description": "One-on-one text or voice session with a verified peer listener in India. Listeners have lived experience of loneliness, anxiety, burnout, grief, breakups, career stress, and family pressure. Not therapy — human peer support available 24/7.",
-  "category": "Mental Health Support",
-  "areaServed": { "@type": "Country", "name": "India", "sameAs": "https://www.wikidata.org/wiki/Q668" },
-  "availableLanguage": [
-    "English", "Hindi", "Tamil", "Telugu", "Kannada", "Malayalam",
-    "Marathi", "Bengali", "Gujarati", "Punjabi", "Odia", "Urdu"
-  ],
-  "hoursAvailable": {
-    "@type": "OpeningHoursSpecification",
-    "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-    "opens": "00:00",
-    "closes": "23:59"
-  },
-  "offers": [
-    {
-      "@type": "Offer",
-      "name": "Trial Session",
-      "price": "0",
-      "priceCurrency": "INR",
-      "description": "5-minute trial session — up to 3 introductory sessions per user, one per listener. No credit card required.",
-      "availability": "https://schema.org/InStock",
-      "eligibleRegion": { "@type": "Country", "name": "India" }
-    },
-    {
-      // AggregateOffer with lowPrice/highPrice — NOT `priceRange`, which is only
-      // valid on LocalBusiness/Organization and is silently ignored on an Offer.
-      // While it was used here Google could parse only the free trial's price:"0",
-      // so LeanOn's paid pricing was invisible in search and the platform read as
-      // free-only. Range = a real session: 15 min at the ₹8/min floor + ₹10
-      // platform fee = ₹130; 45 min at the ₹25/min ceiling + ₹10 = ₹1135.
-      "@type": "AggregateOffer",
-      "name": "Paid Peer Support Session",
-      "description": "15, 30, or 45-minute sessions at listener-set rates of ₹8–25 per minute, plus a flat ₹10 platform fee. Unused time fully refunded.",
-      "priceCurrency": "INR",
-      "lowPrice": "130",
-      "highPrice": "1135",
-      "offerCount": "3",
-      "availability": "https://schema.org/InStock",
-      "eligibleRegion": { "@type": "Country", "name": "India" }
-    }
-  ]
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  '@id': 'https://www.leanon.app/#service',
+  name: 'LeanOn Peer Emotional Support',
+  serviceType: 'Peer Emotional Support',
+  alternateName: ['Peer Support Session', 'Online Listener Session', 'Emotional Support Chat'],
+  provider: { '@id': 'https://www.leanon.app/#organization' },
+  description: 'One-on-one text or voice peer support with a real human listener. LeanOn is not therapy; it provides listening, empathy and human connection for people dealing with everyday emotional challenges.',
+  category: 'Peer Support',
+  areaServed: countries.map(name => ({ '@type': 'Country', name })),
+  availableLanguage: ['English', 'Hindi', 'Tamil', 'Telugu', 'Kannada', 'Malayalam', 'Marathi', 'Bengali', 'Gujarati', 'Punjabi', 'Odia', 'Urdu'],
+  hoursAvailable: { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], opens: '00:00', closes: '23:59' },
 }
-
-const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }} />
         <meta name="theme-color" content="#1A8FA0" />
-        {/* India geo-targeting signals */}
-        <meta name="geo.region" content="IN" />
-        <meta name="geo.placename" content="India" />
-        <meta name="distribution" content="IN" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="LeanOn" />
-        {/* Google Analytics — set NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX in Vercel */}
         {GA_ID && (
           <>
             <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
@@ -256,10 +177,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             `}} />
           </>
         )}
-        {/* Google Fonts preconnect for performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* Bing Webmaster Tools — set NEXT_PUBLIC_BING_VERIFICATION in Vercel */}
         {process.env.NEXT_PUBLIC_BING_VERIFICATION && (
           <meta name="msvalidate.01" content={process.env.NEXT_PUBLIC_BING_VERIFICATION} />
         )}
@@ -268,16 +187,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ErrorBoundary>
           {children}
         </ErrorBoundary>
-        {/* Site-wide "reach us" + legal footer. Flows after page content;
-            hides itself on the homepage (own footer) and on immersive routes
-            (/auth, /session, /admin, chat detail). See SiteFooter.tsx. */}
         <SiteFooter />
         <BottomNav />
         <FloatingCTA />
-        {/* Listener-only: offline nudge + incoming-request alert on every page.
-            No-ops instantly for anonymous visitors and non-listeners, and skips
-            /dashboard, /browse, /session, /auth and /admin (which handle their
-            own, or must not be interrupted). */}
         <ListenerPresence />
         <ToastProvider />
         <ServiceWorkerRegister />
