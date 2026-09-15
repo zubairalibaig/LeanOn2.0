@@ -9,6 +9,7 @@ const URLS = [
   ['singapore', '2026-09-16'],
   ['malaysia', '2026-09-16'],
   ['kuwait', '2026-09-16'],
+  ['oman', '2026-09-16'],
 ] as const
 
 export const dynamic = 'force-static'
