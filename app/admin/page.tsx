@@ -1075,7 +1075,7 @@ export default function AdminPage() {
                     <span>Avg duration: <strong>{kpis.sessions.avgDurationMins} min</strong></span>
                     <span>All created today: <strong>{fmt(kpis.sessions.today)}</strong></span>
                     <span>Created this month: <strong>{fmt(kpis.sessions.thisMonth)}</strong></span>
-                    <span style={{ color: 'var(--teal)' }}>Completed today: <strong>{fmt((kpis.sessions.freeTrialToday ?? 0) + (kpis.sessions.paidToday ?? 0))}</strong></span>
+                    <span style={{ color: 'var(--teal)' }}>Completed today: <strong>{fmt((kpis.sessions.freeTrialToday ?? 0) + (kpis.sessions.paidToday ?? 0))}</strong> (trials + paid)</span>
                   </div>
                 </div>
 
@@ -1172,7 +1172,7 @@ export default function AdminPage() {
                 {/* ── GROSS PLATFORM REVENUE (platform fee) ── */}
                 {kpis.platformEarnings && (
                   <>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Gross Platform Revenue (India: ₹10 flat + 15% svc fee · NRI: ₹10 flat + 15% svc fee + USD price margin)</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>LeanOn Revenue — before gateway costs (India: ₹10 flat + 15% svc fee · NRI: ₹10 flat + 15% svc fee + USD price margin)</div>
                     <div className="kpi-grid" style={{ marginBottom: 20 }}>
                       <div className="kpi-card" style={{ borderLeft: '5px solid var(--green)' }}>
                         <div className="kpi-label">All Time</div>

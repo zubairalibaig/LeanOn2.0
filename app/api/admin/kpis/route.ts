@@ -91,8 +91,10 @@ export async function GET(req: NextRequest) {
         .select('platform_fee, created_at'),
 
       // index 27-32: Today/month breakdown for free trials, paid sessions, new listeners
-      sb.from('sessions').select('id', { count: 'exact', head: true }).eq('is_free_trial', true).gte('created_at', today),
-      sb.from('sessions').select('id', { count: 'exact', head: true }).eq('is_free_trial', true).gte('created_at', thisMonth),
+      // Free trial today/month: filter by status='completed' to match the paid-session queries.
+      // Without this filter, free trials with status=cancelled/active would inflate "completed today".
+      sb.from('sessions').select('id', { count: 'exact', head: true }).eq('is_free_trial', true).eq('status', 'completed').gte('created_at', today),
+      sb.from('sessions').select('id', { count: 'exact', head: true }).eq('is_free_trial', true).eq('status', 'completed').gte('created_at', thisMonth),
       sb.from('sessions').select('id', { count: 'exact', head: true }).eq('is_free_trial', false).eq('status', 'completed').gte('created_at', today),
       sb.from('sessions').select('id', { count: 'exact', head: true }).eq('is_free_trial', false).eq('status', 'completed').gte('created_at', thisMonth),
       sb.from('listener_profiles').select('id', { count: 'exact', head: true }).gte('created_at', today),
