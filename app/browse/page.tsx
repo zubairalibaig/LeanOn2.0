@@ -890,15 +890,10 @@ function BrowseContent() {
                 <>
                   <button
                     className={`btn-chat ${l.is_available ? 'avail' : 'offline'}`}
-                    onClick={e=>{e.stopPropagation(); if(l.is_available) router.push(`/listener/${l.user_id}?type=text`)}}
+                    onClick={e=>{e.stopPropagation(); if(l.is_available) router.push(`/listener/${l.user_id}`)}}
                   >
                     {l.is_available ? '🎁 Try free · 5 min' : '💬 Currently offline'}
                   </button>
-                  {l.is_available && (
-                    <button className="btn-voice" onClick={e=>{e.stopPropagation();router.push(`/listener/${l.user_id}?type=voice`)}}>
-                      🎙️
-                    </button>
-                  )}
                 </>
               )}
             </div>

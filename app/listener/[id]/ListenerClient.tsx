@@ -78,8 +78,9 @@ a{text-decoration:none;color:inherit;}
 .opt-label{font-size:13px;font-weight:800;color:var(--navy);}
 .opt-price{font-size:12px;color:var(--gray);font-weight:600;margin-top:2px;}
 .opt-free{font-size:10px;background:var(--orange);color:white;font-weight:800;padding:2px 7px;border-radius:50px;display:inline-block;margin-top:3px;}
-.type-row{display:flex;gap:8px;margin-bottom:12px;}
-.type-btn{flex:1;padding:10px;border:2px solid var(--border);border-radius:12px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;color:var(--gray);background:white;cursor:pointer;transition:all .15s;}
+.type-row{display:flex;gap:6px;margin-bottom:12px;align-items:center;}
+.type-row-label{font-size:12px;font-weight:700;color:var(--gray);margin-right:4px;white-space:nowrap;}
+.type-btn{padding:7px 14px;border:1.5px solid var(--border);border-radius:20px;font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;color:var(--gray);background:white;cursor:pointer;transition:all .15s;}
 .type-btn.sel{border-color:var(--navy);color:var(--navy);background:var(--light);}
 .btn-book{width:100%;padding:15px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:white;background:var(--orange);border:none;border-radius:50px;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(255,153,51,.3);}
 .btn-book:hover{background:#e8861a;}
@@ -424,8 +425,9 @@ export default function ListenerClient({ id }: { id: string }) {
               </div>
             )}
             <div className="type-row">
-              <button className={`type-btn${type==='text'?' sel':''}`} onClick={()=>setType('text')}>💬 Text chat</button>
-              <button className={`type-btn${type==='voice'?' sel':''}`} onClick={()=>setType('voice')}>🎙️ Voice call</button>
+              <span className="type-row-label">Mode:</span>
+              <button className={`type-btn${type==='text'?' sel':''}`} onClick={()=>setType('text')}>💬 Text</button>
+              <button className={`type-btn${type==='voice'?' sel':''}`} onClick={()=>setType('voice')}>🎙️ Voice</button>
             </div>
             {duration === 5 && !freeTrialUsed && (
               <div style={{background:'rgba(52,199,89,.1)',border:'1px solid rgba(52,199,89,.3)',borderRadius:10,padding:'8px 12px',fontSize:12,fontWeight:700,color:'#166534',marginBottom:8,textAlign:'center'}}>

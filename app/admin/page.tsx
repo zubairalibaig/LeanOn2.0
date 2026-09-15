@@ -68,7 +68,7 @@ type PayoutRow = {
 }
 type RefundRow  = { id: string; amount: number; reason?: string; status: string; created_at: string; razorpay_payment_id?: string | null; users: { name?: string; email?: string } | null }
 
-type Tab = 'overview' | 'users' | 'listeners' | 'sessions' | 'reports' | 'payouts' | 'verifications'
+type Tab = 'overview' | 'users' | 'listeners' | 'sessions' | 'reports' | 'payouts' | 'verifications' | 'quality'
 
 // ── Style ─────────────────────────────────────────────────────────────────────
 
@@ -397,6 +397,17 @@ export default function AdminPage() {
   const [verifsLoading, setVerifsLoading] = useState(false)
   const [verifRejectNotes, setVerifRejectNotes] = useState<Record<string, string>>({})
 
+  // Quality metrics
+  type ListenerQuality = {
+    listener_id: string; name: string; paid_sessions: number
+    unique_paid_seekers: number; repeat_seekers: number; free_trials: number
+    conversion_pct: number; silent_sessions: number; avg_duration_mins: number
+  }
+  type RepeatPair = { seeker_name: string; listener_name: string; count: number }
+  const [qualityListeners, setQualityListeners] = useState<ListenerQuality[]>([])
+  const [qualityPairs, setQualityPairs]         = useState<RepeatPair[]>([])
+  const [qualityLoading, setQualityLoading]     = useState(false)
+
   const showToast = (msg: string) => {
     if (toastTimer.current) clearTimeout(toastTimer.current)
     setToast(msg)
@@ -566,6 +577,19 @@ export default function AdminPage() {
     setVerifsLoading(false)
   }, [verifsStatus]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const loadQuality = useCallback(async () => {
+    setQualityLoading(true)
+    const res = await fetch('/api/admin/quality', { headers: adminHeaders() }).catch(() => null)
+    if (res?.ok) {
+      const json = await res.json()
+      setQualityListeners(json.listeners ?? [])
+      setQualityPairs(json.repeatPairs ?? [])
+    } else {
+      showToast('Failed to load quality metrics')
+    }
+    setQualityLoading(false)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   // ── Effects ─────────────────────────────────────────────────────────────────
 
   // Only fire loadKPIs after session check completes and user is confirmed logged in.
@@ -608,6 +632,10 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (tab === 'verifications') loadVerifs(verifsStatus)
+  }, [tab]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (tab === 'quality') loadQuality()
   }, [tab]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Actions ─────────────────────────────────────────────────────────────────
@@ -810,6 +838,7 @@ export default function AdminPage() {
     { key: 'reports', label: `Reports${kpis ? ` (${kpis.moderation.pendingReports})` : ''}` },
     { key: 'payouts', label: `Payouts${kpis ? ` (${kpis.payouts.pendingCount})` : ''}` },
     { key: 'verifications', label: 'Verifications' },
+    { key: 'quality', label: '⭐ Quality' },
   ]
 
   const PAGE_SIZE = 25
@@ -2406,6 +2435,129 @@ export default function AdminPage() {
                 )}
               </div>
             ))}
+          </>
+        )}
+
+        {/* ─── QUALITY ──────────────────────────────────────────────────────── */}
+        {tab === 'quality' && (
+          <>
+            <div className="section-title">
+              Listener Quality Metrics
+              <button className="action-btn" style={{ marginLeft: 12, fontSize: 12 }} onClick={loadQuality}>↻ Refresh</button>
+            </div>
+            <p style={{ fontSize: 12, color: 'var(--gray)', fontWeight: 600, marginBottom: 16 }}>
+              Repeat seekers = a seeker who booked the same listener 3+ paid times.
+              Silent sessions = voice calls completed in under 2 minutes (possible non-engagement).
+              Conversion = paid sessions ÷ (paid + free trials).
+            </p>
+
+            {qualityLoading ? (
+              <div style={{ padding: 40, textAlign: 'center', color: 'var(--gray)' }}>Loading…</div>
+            ) : (
+              <>
+                {/* Summary row */}
+                {qualityListeners.length > 0 && (() => {
+                  const totalSilent = qualityListeners.reduce((s, l) => s + l.silent_sessions, 0)
+                  const withRepeat  = qualityListeners.filter(l => l.repeat_seekers > 0).length
+                  return (
+                    <div className="kpi-grid" style={{ marginBottom: 24 }}>
+                      <div className="kpi-card">
+                        <div className="kpi-value">{withRepeat}</div>
+                        <div className="kpi-label">Listeners with repeat seekers</div>
+                      </div>
+                      <div className="kpi-card">
+                        <div className="kpi-value" style={{ color: totalSilent > 5 ? 'var(--orange)' : undefined }}>{totalSilent}</div>
+                        <div className="kpi-label">Silent voice sessions detected</div>
+                      </div>
+                      <div className="kpi-card">
+                        <div className="kpi-value">{qualityPairs.length}</div>
+                        <div className="kpi-label">Repeat seeker-listener pairs</div>
+                      </div>
+                    </div>
+                  )
+                })()}
+
+                {/* Per-listener table */}
+                <div className="table-wrap" style={{ marginBottom: 32 }}>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Listener</th>
+                        <th style={{ textAlign: 'right' }}>Paid sessions</th>
+                        <th style={{ textAlign: 'right' }}>Unique seekers</th>
+                        <th style={{ textAlign: 'right' }}>Repeat seekers (3+)</th>
+                        <th style={{ textAlign: 'right' }}>Free trials</th>
+                        <th style={{ textAlign: 'right' }}>Conversion %</th>
+                        <th style={{ textAlign: 'right' }}>Silent sessions ⚠</th>
+                        <th style={{ textAlign: 'right' }}>Avg duration</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {qualityListeners.map(l => (
+                        <tr key={l.listener_id}>
+                          <td style={{ fontWeight: 700 }}>{l.name}</td>
+                          <td style={{ textAlign: 'right' }}>{l.paid_sessions}</td>
+                          <td style={{ textAlign: 'right' }}>{l.unique_paid_seekers}</td>
+                          <td style={{ textAlign: 'right' }}>
+                            {l.repeat_seekers > 0
+                              ? <span style={{ color: 'var(--green)', fontWeight: 800 }}>{l.repeat_seekers}</span>
+                              : '—'}
+                          </td>
+                          <td style={{ textAlign: 'right' }}>{l.free_trials}</td>
+                          <td style={{ textAlign: 'right' }}>
+                            <span style={{ color: l.conversion_pct >= 50 ? 'var(--green)' : l.conversion_pct >= 25 ? undefined : 'var(--orange)' }}>
+                              {l.conversion_pct}%
+                            </span>
+                          </td>
+                          <td style={{ textAlign: 'right' }}>
+                            {l.silent_sessions > 0
+                              ? <span style={{ color: l.silent_sessions >= 3 ? '#c53030' : 'var(--orange)', fontWeight: 800 }}>⚠ {l.silent_sessions}</span>
+                              : <span style={{ color: 'var(--green)' }}>0</span>}
+                          </td>
+                          <td style={{ textAlign: 'right' }}>{l.avg_duration_mins > 0 ? `${l.avg_duration_mins} min` : '—'}</td>
+                        </tr>
+                      ))}
+                      {qualityListeners.length === 0 && (
+                        <tr><td colSpan={8} style={{ textAlign: 'center', color: 'var(--gray)', padding: 24 }}>No data yet</td></tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Repeat seeker-listener pairs */}
+                {qualityPairs.length > 0 && (
+                  <>
+                    <div className="section-title" style={{ fontSize: 15, marginBottom: 12 }}>
+                      Repeat Seeker–Listener Pairs (3+ paid sessions)
+                    </div>
+                    <div className="table-wrap">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Seeker</th>
+                            <th>Listener</th>
+                            <th style={{ textAlign: 'right' }}>Paid sessions together</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {qualityPairs.map((p, i) => (
+                            <tr key={i}>
+                              <td>{p.seeker_name}</td>
+                              <td style={{ fontWeight: 700 }}>{p.listener_name}</td>
+                              <td style={{ textAlign: 'right' }}>
+                                <span style={{ fontWeight: 800, color: p.count >= 10 ? 'var(--green)' : undefined }}>
+                                  {p.count >= 10 ? '🔥 ' : ''}{p.count}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </>
+                )}
+              </>
+            )}
           </>
         )}
 
