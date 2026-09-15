@@ -12,28 +12,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Apply Quality UI patch
+      - name: Diagnose and apply Quality UI patch
         run: |
-          if git log -1 --pretty=%B | grep -q '\[quality-patched\]'; then
-            echo 'Quality UI already patched; nothing to do.'
-            exit 0
-          fi
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          s = Path('app/admin/page.tsx').read_text()
+          out = []
+          out.append(f'quality_state_marker={s.count("  // Quality metrics\\n")}')
+          out.append(f'load_quality_marker={s.count("  const loadQuality = useCallback(async () =>\\n")}')
+          out.append(f'quality_render_marker={s.count("        {/* ─── QUALITY") }')
+          out.append(f'quality_tab_marker={s.count("{tab === \'quality\' && (")}')
+          out.append(f'show_toast={s.count("  const showToast =")}')
+          Path('/tmp/quality_debug.txt').write_text('\\n'.join(out) + '\\n')
+          print('\\n'.join(out))
+          PY
+          cat /tmp/quality_debug.txt
           python3 scripts/patch_admin_quality.py
-          grep -q 'Trial → Paid · 7d' app/admin/page.tsx
-          grep -q 'Missing telemetry' app/admin/page.tsx
-          grep -q 'qualityWindow' app/admin/page.tsx
+          grep -Fq 'Trial → Paid · 7d' app/admin/page.tsx
+          grep -Fq 'Missing telemetry' app/admin/page.tsx
+          grep -Fq 'qualityWindow' app/admin/page.tsx
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add app/admin/page.tsx
           git commit -m 'Rebuild admin Quality tab [quality-patched]'
           git push
-      - name: Remove one-time patch workflow and script
-        run: |
-          if git log -1 --pretty=%B | grep -q '\[quality-patched\]'; then
-            rm -f .github/workflows/patch-quality-tab.yml scripts/patch_admin_quality.py
-            git config user.name 'github-actions[bot]'
-            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add -A
-            git commit -m 'Remove one-time Quality patch tooling [quality-patched]'
-            git push
-          fi
