@@ -58,14 +58,15 @@ export async function GET(req: NextRequest) {
   const since = dateFloor(days)
   const now = new Date()
 
-  const [sessionsRes, usersRes, profilesRes, reportsRes, refundsRes, blocksRes, earningsRes] = await Promise.all([
-    (() => { let q = sb.from('sessions').select('*'); if (since) q = q.gte('created_at', since); return q.limit(10000) })(),
-    sb.from('users').select('id,name').limit(10000),
-    sb.from('listener_profiles').select('*').limit(10000),
-    (() => { let q = sb.from('reports').select('*'); if (since) q = q.gte('created_at', since); return q.limit(10000) })(),
-    (() => { let q = sb.from('refund_requests').select('*'); if (since) q = q.gte('created_at', since); return q.limit(10000) })(),
-    (() => { let q = sb.from('user_blocks').select('*'); if (since) q = q.gte('created_at', since); return q.limit(10000) })(),
-    (() => { let q = sb.from('listener_earnings').select('*'); if (since) q = q.gte('created_at', since); return q.limit(10000) })(),
+  // Refunds: wallet_transactions with type='refund' (no separate refund_requests table).
+  // Blocks: no user_blocks table exists; block signals come from content_flags.
+  const [sessionsRes, usersRes, profilesRes, reportsRes, refundsRes, earningsRes] = await Promise.all([
+    (() => { let q = sb.from('sessions').select('id,listener_id,seeker_id,session_type,duration_mins,status,is_free_trial,started_at,ended_at,created_at,crisis_flagged,listener_rate_per_min,amount_held'); if (since) q = q.gte('created_at', since); return q.limit(50000) })(),
+    sb.from('users').select('id,name').limit(50000),
+    sb.from('listener_profiles').select('user_id,is_available,is_active,is_approved,rating').limit(10000),
+    (() => { let q = sb.from('reports').select('id,target_user_id,created_at'); if (since) q = q.gte('created_at', since); return q.limit(10000) })(),
+    (() => { let q = sb.from('wallet_transactions').select('user_id,amount,session_id,created_at').eq('type', 'refund'); if (since) q = q.gte('created_at', since); return q.limit(10000) })(),
+    (() => { let q = sb.from('listener_earnings').select('listener_id,gross_amount,created_at'); if (since) q = q.gte('created_at', since); return q.limit(50000) })(),
   ])
 
   if (sessionsRes.error) {
@@ -76,8 +77,9 @@ export async function GET(req: NextRequest) {
   const users = (usersRes.data ?? []) as AnyRow[]
   const profiles = (profilesRes.data ?? []) as AnyRow[]
   const reports = reportsRes.error ? [] : (reportsRes.data ?? []) as AnyRow[]
+  // Refunds come from wallet_transactions type='refund'; no user_blocks table exists.
   const refunds = refundsRes.error ? [] : (refundsRes.data ?? []) as AnyRow[]
-  const blocks = blocksRes.error ? [] : (blocksRes.data ?? []) as AnyRow[]
+  const blocks: AnyRow[] = []
   const earnings = earningsRes.error ? [] : (earningsRes.data ?? []) as AnyRow[]
   const userMap = new Map(users.map(u => [String(u.id), u.name || '—']))
 
@@ -103,12 +105,12 @@ export async function GET(req: NextRequest) {
   }
   const trialCohort = (horizonDays: number) => {
     const eligible = new Map<string, Date>()
-    for (const [id, arr] of trialBySeeker) {
+    for (const [id, arr] of Array.from(trialBySeeker)) {
       const first = [...arr].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())[0]
       if (first?.created_at && addDays(first.created_at, horizonDays) <= now) eligible.set(id, new Date(first.created_at))
     }
     let converted = 0
-    for (const [id, firstAt] of eligible) {
+    for (const [id, firstAt] of Array.from(eligible)) {
       const deadline = addDays(firstAt.toISOString(), horizonDays).getTime()
       if (sessions.some(s => !s.is_free_trial && s.status === 'completed' && String(s.seeker_id) === id && new Date(s.created_at).getTime() >= firstAt.getTime() && new Date(s.created_at).getTime() <= deadline)) converted++
     }
@@ -134,24 +136,13 @@ export async function GET(req: NextRequest) {
     return { converted, eligible: eligible.length, pct: pct(converted, eligible.length) }
   }
 
-  // Rating history is detected defensively because the project has used an aggregate
-  // listener_profiles.rating field and may have rating history in a separate table.
-  let ratingRows: AnyRow[] = []
-  for (const table of ['ratings', 'listener_ratings', 'session_ratings']) {
-    const r = await sb.from(table).select('*').limit(10000)
-    if (!r.error) { ratingRows = (r.data ?? []) as AnyRow[]; break }
-  }
-  const ratingValue = (r: AnyRow) => {
-    const n = Number(firstDefined(r, ['rating', 'score', 'stars', 'value']))
-    return Number.isFinite(n) && n >= 1 && n <= 5 ? n : null
-  }
-  const ratingListenerId = (r: AnyRow) => firstDefined(r, ['listener_id', 'target_user_id', 'rated_user_id', 'user_id'])
-  const windowRatings = ratingRows.filter(r => !since || !r.created_at || new Date(r.created_at) >= new Date(since))
-  const validRatings = windowRatings.map(r => ({ row: r, value: ratingValue(r), listenerId: ratingListenerId(r) })).filter(x => x.value !== null)
-  const avgRating = validRatings.length ? Number((validRatings.reduce((a, x) => a + (x.value as number), 0) / validRatings.length).toFixed(2)) : null
-  const fiveStarPct = pct(validRatings.filter(x => x.value === 5).length, validRatings.length)
-  const lowRatingPct = pct(validRatings.filter(x => (x.value as number) <= 2).length, validRatings.length)
-  const ratingCoverage = ratingRows.length ? pct(validRatings.length, completedPaid.length) : null
+  // No separate ratings table exists — ratings are stored as aggregate on listener_profiles.rating.
+  // Per-session rating history is not yet in the DB; leave fields null until a ratings table is added.
+  const validRatings: { value: number; listenerId: string | null }[] = []
+  const avgRating = null
+  const fiveStarPct = null
+  const lowRatingPct = null
+  const ratingCoverage = null
 
   type LS = {
     paid: number; uniqueSeekers: Set<string>; seekerCounts: Map<string, number>; free: number
@@ -183,18 +174,23 @@ export async function GET(req: NextRequest) {
       }
     }
   }
-  for (const r of reports) { const id = firstDefined(r, ['reported_user_id', 'reportedUserId']); if (id) ensure(String(id)).reports++ }
-  for (const b of blocks) { const id = firstDefined(b, ['blocked_id', 'blocked_user_id', 'blockedId']); if (id) ensure(String(id)).blocks++ }
+  // reports.target_user_id is the reported user (schema: content_flags / reports table)
+  for (const r of reports) { const id = r.target_user_id; if (id) ensure(String(id)).reports++ }
+  // blocks array is empty (no user_blocks table); loop is a no-op kept for future wiring
+  for (const b of blocks) { const id = firstDefined(b, ['blocked_id', 'blocked_user_id']); if (id) ensure(String(id)).blocks++ }
   for (const r of validRatings) { const id = r.listenerId; if (id) ensure(String(id)).ratings.push(r.value as number) }
   for (const e of earnings) {
-    const id = firstDefined(e, ['listener_id', 'user_id'])
-    const amount = Number(firstDefined(e, ['gross_amount', 'gross_earning', 'net_amount', 'amount']))
+    const id = e.listener_id
+    const amount = Number(e.gross_amount ?? 0)
     if (id && Number.isFinite(amount)) ensure(String(id)).earnings += amount
   }
+  // Refunds are wallet_transactions type='refund' credited to the seeker; attribute back
+  // to the listener via session_id→listener_id lookup.
+  const sessionListenerMap = new Map(sessions.filter(s => s.listener_id).map(s => [String(s.id), String(s.listener_id)]))
   let attributedRefunds = 0
   for (const r of refunds) {
-    const id = firstDefined(r, ['listener_id', 'reported_listener_id'])
-    if (id) { ensure(String(id)).refunds++; attributedRefunds++ }
+    const listenerId = r.session_id ? sessionListenerMap.get(String(r.session_id)) : undefined
+    if (listenerId) { ensure(listenerId).refunds++; attributedRefunds++ }
   }
 
   const profileMap = new Map(profiles.map(p => [String(p.user_id), p]))
@@ -277,7 +273,7 @@ export async function GET(req: NextRequest) {
       five_star_pct: fiveStarPct,
       low_rating_pct: lowRatingPct,
       sessions_rated_pct: ratingCoverage,
-      rating_history_available: ratingRows.length > 0,
+      rating_history_available: false,
       completion_rate_pct: completionRate,
       short_voice_sessions: shortVoice,
       short_voice_pct: pct(shortVoice, completedVoice.length),
