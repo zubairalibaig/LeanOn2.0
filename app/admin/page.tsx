@@ -1894,14 +1894,41 @@ export default function AdminPage() {
                                 }
 
                                 // ── Legacy / unsettled path ──────────────────────────────────
-                                // No listener_earnings row: session not yet settled, or was
-                                // settled before 2026-09-14 without a listener_earnings row.
-                                // Recompute from timestamps + rate (same as old logic) so
-                                // nothing changes for historical data.
+                                // No listener_earnings row: active session, cancelled session,
+                                // or completed before 2026-09-14 without an earnings row.
+
+                                // Cancelled: seeker is fully refunded — nothing was earned.
+                                if (s.status === 'cancelled') {
+                                  return (
+                                    <span title={`Cancelled — seeker refunded ₹${s.amount_held}`} style={{ color: 'var(--gray)' }}>
+                                      ₹0
+                                    </span>
+                                  )
+                                }
+
+                                // Active sessions: project earnings with 15% service fee
+                                // (same rate applied at settlement by settleSession()).
+                                // Show with ~ prefix so it's clear this is a live estimate.
+                                if (s.status === 'active') {
+                                  const rawShare   = s.amount_held - platformFee
+                                  const serviceFee = Math.floor(rawShare * 0.15)
+                                  const listenerNet  = rawShare - serviceFee
+                                  const platformTotal = platformFee + serviceFee
+                                  return (
+                                    <span title={`Seeker held ₹${s.amount_held} · Projected listener ₹${listenerNet} (15% svc fee ₹${serviceFee}) · LeanOn ₹${platformTotal} (₹${platformFee} flat + ₹${serviceFee} svc fee)`}>
+                                      ~₹{listenerNet}
+                                      <span style={{ fontSize: 10, color: 'var(--green)', marginLeft: 3 }}>+₹{platformTotal}</span>
+                                    </span>
+                                  )
+                                }
+
+                                // Completed/expired with no listener_earnings row: session
+                                // was settled before the 2026-09-14 fee deploy — listener
+                                // kept the full share. Recompute from timestamps for early exits.
                                 let listenerEarning = s.amount_held - platformFee
                                 let billedMins = s.duration_mins
                                 let isEarlyExit = false
-                                if (s.started_at && s.ended_at && (s.status === 'completed' || s.status === 'expired')) {
+                                if (s.started_at && s.ended_at) {
                                   const elapsedMs = new Date(s.ended_at).getTime() - new Date(s.started_at).getTime()
                                   const actualMins = Math.max(0, Math.ceil(elapsedMs / 60000))
                                   billedMins = Math.min(s.duration_mins, actualMins)
