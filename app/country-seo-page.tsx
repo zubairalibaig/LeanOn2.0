@@ -3,8 +3,37 @@
 import type { CountrySeoData } from '@/lib/country-seo'
 
 export default function CountrySeoPage({ data }: { data: CountrySeoData }) {
+  const pageUrl = `https://www.leanon.app/${data.slug}`
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': `${pageUrl}#webpage`,
+        url: pageUrl,
+        name: data.title,
+        description: data.description,
+        inLanguage: 'en',
+        isPartOf: { '@id': 'https://www.leanon.app/#website' },
+        about: { '@type': 'Service', name: `LeanOn peer support in ${data.country}`, serviceType: 'Peer Emotional Support', areaServed: { '@type': 'Country', name: data.country } },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'LeanOn', item: 'https://www.leanon.app' },
+          { '@type': 'ListItem', position: 2, name: `Peer Support ${data.country}`, item: pageUrl },
+        ],
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: data.faqs.map(faq => ({ '@type': 'Question', name: faq.q, acceptedAnswer: { '@type': 'Answer', text: faq.a } })),
+      },
+    ],
+  }
+
   return (
     <main className="min-h-screen bg-white text-[#0F4867]">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="mx-auto max-w-3xl px-5 py-8 sm:px-8 sm:py-12">
         <nav className="mb-8 flex items-center justify-between" aria-label="Primary">
           <a href="/" className="text-2xl font-black tracking-tight">Lean<span className="text-[#1A8FA0]">On</span></a>
