@@ -3,33 +3,13 @@ import { MetadataRoute } from 'next'
 // Private routes hidden from all crawlers
 const PRIVATE = ['/api/', '/session/', '/dashboard/', '/wallet/', '/admin/', '/profile/', '/sessions/', '/auth']
 
-// AI/LLM crawlers explicitly allowed — being indexed by these is how LeanOn
-// gets cited in ChatGPT, Claude, Gemini, Perplexity, and Copilot answers.
+// AI/LLM crawlers explicitly allowed — public SEO pages can be discovered by
+// search and answer engines while private application routes stay blocked.
 const AI_CRAWLERS = [
-  'GPTBot',             // OpenAI training
-  'OAI-SearchBot',      // ChatGPT Search
-  'ChatGPT-User',       // ChatGPT live browsing
-  'ClaudeBot',          // Anthropic training
-  'Claude-Web',         // Claude live browsing
-  'anthropic-ai',       // Anthropic (legacy)
-  'Google-Extended',    // Gemini training
-  'Googlebot',          // Google core (redundant with * but explicit)
-  'Bingbot',            // Bing / Microsoft Copilot indexing
-  'msnbot',             // Bing legacy
-  'BingPreview',        // Bing link preview
-  'PerplexityBot',      // Perplexity indexing
-  'Perplexity-User',    // Perplexity live browsing
-  'Applebot-Extended',  // Apple Intelligence
-  'Applebot',           // Apple web crawler
-  'Amazonbot',          // Alexa / Rufus
-  'meta-externalagent', // Meta AI
-  'DuckAssistBot',      // DuckDuckGo AI
-  'cohere-ai',          // Cohere AI
-  'YouBot',             // You.com AI
-  'CCBot',              // Common Crawl — feeds many open models
-  'Bytespider',         // ByteDance / TikTok AI
-  'Diffbot',            // Structured data extraction, feeds AI datasets
-  'ia_archiver',        // Wayback Machine — improves AI training data quality
+  'GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-Web', 'anthropic-ai',
+  'Google-Extended', 'Googlebot', 'Bingbot', 'msnbot', 'BingPreview', 'PerplexityBot',
+  'Perplexity-User', 'Applebot-Extended', 'Applebot', 'Amazonbot', 'meta-externalagent',
+  'DuckAssistBot', 'cohere-ai', 'YouBot', 'CCBot', 'Bytespider', 'Diffbot', 'ia_archiver',
 ]
 
 export default function robots(): MetadataRoute.Robots {
@@ -39,7 +19,13 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: 'Googlebot', allow: '/', disallow: PRIVATE },
       ...AI_CRAWLERS.map(userAgent => ({ userAgent, allow: '/', disallow: PRIVATE })),
     ],
-    sitemap: 'https://www.leanon.app/sitemap.xml',
+    // Keep the main Next sitemap and the dedicated country sitemap discoverable.
+    // This avoids needing to rewrite the large generated sitemap just to add the
+    // nine new country URLs.
+    sitemap: [
+      'https://www.leanon.app/sitemap.xml',
+      'https://www.leanon.app/country-sitemap.xml',
+    ],
     host: 'https://www.leanon.app',
   }
 }
