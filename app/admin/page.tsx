@@ -1575,7 +1575,12 @@ export default function AdminPage() {
                                   >{l.application.ifsc_code}</span>
                                 </div>
                               )}
-                              {!l.application?.upi_id && !l.application?.bank_account && (
+                              {l.application === null && (
+                                <span style={{ color: '#C0392B', fontWeight: 700, fontSize: 11 }}>
+                                  ⚠️ No application on file — ask to resubmit at /become-listener
+                                </span>
+                              )}
+                              {l.application !== null && !l.application?.upi_id && !l.application?.bank_account && (
                                 <span style={{ color: 'var(--gray)', fontStyle: 'italic' }}>—</span>
                               )}
                             </td>
@@ -1647,6 +1652,35 @@ export default function AdminPage() {
                                         {busy === `approve_listener:${l.user_id}` ? 'Approving…' : 'Re-approve'}
                                       </button>
                                     </div>
+                                  </div>
+                                )}
+                                {l.application === null && l.is_approved && (
+                                  <div className="action-row">
+                                    <button
+                                      className="btn btn-teal"
+                                      style={{ fontSize: 11 }}
+                                      disabled={busy !== null}
+                                      onClick={() => {
+                                        const bank = window.prompt(`Bank account number for ${u?.name || 'this listener'}:`)
+                                        if (!bank?.trim()) return
+                                        const ifsc = window.prompt('IFSC code:')
+                                        if (!ifsc?.trim()) return
+                                        const upi = window.prompt('UPI ID (optional — press Cancel to skip):')
+                                        const payload: Record<string, string | null> = {
+                                          userId: l.user_id, action: 'update_bank_details',
+                                          bank_account: bank.trim(), ifsc_code: ifsc.trim(),
+                                        }
+                                        if (upi?.trim()) payload.upi_id = upi.trim()
+                                        fetch('/api/admin/users', {
+                                          method: 'PATCH',
+                                          headers: { 'Content-Type': 'application/json', ...adminHeaders() },
+                                          body: JSON.stringify(payload),
+                                        }).then(r => r.json()).then(j => {
+                                          if (j.ok) { showToast('Payout details saved'); loadListeners() }
+                                          else showToast(j.error || 'Failed to save')
+                                        })
+                                      }}
+                                    >Enter Payout Details</button>
                                   </div>
                                 )}
                                 <div className="action-row">

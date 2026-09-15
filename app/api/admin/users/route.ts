@@ -481,7 +481,8 @@ export async function PATCH(req: NextRequest) {
 
       case 'update_bank_details': {
         // Admin-only: update bank/UPI details + account holder name on listener_applications.
-        // Triggered when a listener reaches out (e.g. email) to correct their payout details.
+        // Works for both existing rows (UPDATE) and listeners whose application row was never
+        // created due to the account_holder_name column-missing bug (INSERT).
         const updates: Record<string, string | null> = {}
         const holderName = typeof body.account_holder_name === 'string' ? body.account_holder_name.trim() : null
         const bankAcc    = typeof body.bank_account        === 'string' ? body.bank_account.trim() : null
@@ -494,12 +495,41 @@ export async function PATCH(req: NextRequest) {
         if (Object.keys(updates).length === 0) {
           return NextResponse.json({ error: 'No fields to update' }, { status: 400 })
         }
-        const { error: baErr } = await sb.from('listener_applications')
-          .update(updates)
-          .eq('user_id', userId)
-        if (baErr) {
-          logger.error('update_bank_details: failed', { userId, error: baErr.message })
-          return NextResponse.json({ error: `Failed to update bank details: ${baErr.message}` }, { status: 500 })
+
+        const { data: existingApp } = await sb.from('listener_applications')
+          .select('user_id').eq('user_id', userId).maybeSingle()
+
+        if (existingApp) {
+          const { error: baErr } = await sb.from('listener_applications')
+            .update(updates)
+            .eq('user_id', userId)
+          if (baErr) {
+            logger.error('update_bank_details: update failed', { userId, error: baErr.message })
+            return NextResponse.json({ error: `Failed to update bank details: ${baErr.message}` }, { status: 500 })
+          }
+        } else {
+          // No application row — listener applied during the broken period. Create one.
+          // bank_account and ifsc_code are required by the DB; abort if not supplied.
+          if (!updates.bank_account || !updates.ifsc_code) {
+            return NextResponse.json({ error: 'Bank account and IFSC code are required to create an application record.' }, { status: 400 })
+          }
+          const { data: listenerUser } = await sb.from('users').select('name, phone').eq('id', userId).maybeSingle()
+          const insertRow: Record<string, string | null | undefined> = {
+            user_id: userId,
+            name: listenerUser?.name ?? '',
+            phone: listenerUser?.phone ?? null,
+            status: 'approved',
+            ...updates,
+          }
+          let baErr = (await sb.from('listener_applications').insert(insertRow)).error
+          if (baErr?.message?.includes('account_holder_name')) {
+            delete insertRow.account_holder_name
+            baErr = (await sb.from('listener_applications').insert(insertRow)).error
+          }
+          if (baErr) {
+            logger.error('update_bank_details: insert failed', { userId, error: baErr.message })
+            return NextResponse.json({ error: `Failed to create application record: ${baErr.message}` }, { status: 500 })
+          }
         }
         break
       }
