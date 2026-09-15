@@ -164,6 +164,22 @@ export const COUNTRY_SEO: CountrySeoData[] = [
     ],
     searchTerms: ['Indian peer support Kuwait', 'Indian emotional support Kuwait', 'Indian someone to talk to Kuwait', 'South Asian peer support Kuwait', 'Indian loneliness Kuwait'],
   },
+  {
+    slug: 'oman', country: 'Oman', regionCode: 'OM', audience: 'Indian and South Asian people living in Oman',
+    title: 'Peer Support for Indians in Oman — Talk to Someone | LeanOn',
+    description: 'Living in Oman and need someone who understands Indian or South Asian life abroad? LeanOn connects you with real peer listeners for private conversations.',
+    eyebrow: 'Peer support · Oman',
+    intro: 'Living abroad can make ordinary problems harder to talk about. LeanOn gives Indians and South Asians in Oman a private way to speak with a real peer listener about homesickness, work, relationships, family and everyday pressure.',
+    localAngle: 'Whether you are in Muscat, Salalah, Sohar or elsewhere in Oman, you can talk about distance from family, expatriate work life, marriage and relationship pressure, cultural adjustment or simply needing someone to listen. Choose by lived experience and topic.',
+    situations: ['Missing family and life in India', 'Long workdays, shift work or expatriate pressure', 'Relationship and marriage concerns while living abroad', 'Feeling isolated despite living in an Indian community', 'Family responsibilities and financial pressure', 'Needing a neutral person to listen without judgement'],
+    howItWorks: ['Browse real listener profiles and choose someone who feels relevant to your situation.', 'Start with one free 5-minute introductory session.', 'Use text when privacy matters or voice when you prefer speaking.', 'Continue with a paid session only if the conversation is useful to you.'],
+    faqs: [
+      { q: 'Can Indians in Oman use LeanOn?', a: 'Yes. LeanOn has an Oman-focused peer-support experience for Indians and South Asians. Live listener availability is shown in the app.' },
+      { q: 'Can I talk about homesickness and family back in India?', a: 'Yes. Homesickness, family distance, relationships, work pressure and cultural adjustment are appropriate peer-support topics.' },
+      { q: 'Is LeanOn therapy?', a: 'No. LeanOn provides peer support and human connection, not therapy, counselling, diagnosis or clinical treatment.' },
+    ],
+    searchTerms: ['Indian peer support Oman', 'Indian emotional support Oman', 'Indian someone to talk to Oman', 'South Asian peer support Oman', 'Indian loneliness Oman'],
+  },
 ]
 
 export const COUNTRY_SEO_BY_SLUG = Object.fromEntries(COUNTRY_SEO.map(c => [c.slug, c])) as Record<string, CountrySeoData>
