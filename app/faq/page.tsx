@@ -41,7 +41,7 @@ const faqs = [
     items: [
       {
         q: 'How do I start using LeanOn?',
-        a: 'Sign up with your mobile number (OTP verified — 30 seconds). Browse peer listeners anonymously — read bios, topics, and ratings. When you\'re ready, pick a session length and start immediately. New users get up to 3 introductory 5-minute sessions to try different listeners.',
+        a: 'Sign up with your mobile number (OTP verified — 30 seconds). Browse peer listeners anonymously — read bios, topics, and ratings. When you\'re ready, pick a session length and start immediately. Every new listener you try comes with a free 5-minute trial — once per listener.',
       },
       {
         q: 'How does pricing work?',

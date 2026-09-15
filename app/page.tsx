@@ -453,7 +453,7 @@ export default function Home() {
             not to over-advertise it in marketing copy. */}
         <div className="pc">
           {[
-            {l:'Trial session',d:'5 minutes · Text only · No wallet needed · Up to 3 trials',p:'₹0',b:'Trial',feat:false},
+            {l:'Trial session',d:'5 minutes · Text only · No wallet needed · Free once per listener',p:'₹0',b:'Trial',feat:false},
             {l:'Quick chat',d:'15 minutes · One-on-one · Text or voice',p:'₹160',b:'',feat:false},
             {l:'Deep dive',d:'30 minutes · One-on-one · Text or voice',p:'₹310',b:'Most popular',feat:true},
           ].map((item,i)=>(

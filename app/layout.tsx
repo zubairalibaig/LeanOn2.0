@@ -193,7 +193,7 @@ const serviceJsonLd = {
       "name": "Trial Session",
       "price": "0",
       "priceCurrency": "INR",
-      "description": "5-minute trial session — up to 3 introductory sessions per user, one per listener. No credit card required.",
+      "description": "5-minute trial session — free once per listener. No credit card required.",
       "availability": "https://schema.org/InStock",
       "eligibleRegion": { "@type": "Country", "name": "India" }
     },
