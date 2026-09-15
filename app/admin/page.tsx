@@ -397,17 +397,26 @@ export default function AdminPage() {
   const [verifsLoading, setVerifsLoading] = useState(false)
   const [verifRejectNotes, setVerifRejectNotes] = useState<Record<string, string>>({})
 
-  // Quality metrics
-  type ListenerQuality = {
-    listener_id: string; name: string; paid_sessions: number
-    unique_paid_seekers: number; repeat_seekers: number; free_trials: number
-    conversion_pct: number; silent_sessions: number; avg_duration_mins: number
+  // Quality metrics — owner-facing quality and retention signals.
+  type QualitySummary = {
+    trial_to_paid_24h: { converted: number; eligible: number; pct: number | null }
+    trial_to_paid_7d: { converted: number; eligible: number; pct: number | null }
+    paid_to_second_7d: { converted: number; eligible: number; pct: number | null }
+    paid_to_second_30d: { converted: number; eligible: number; pct: number | null }
+    one_paid_seekers: number; two_plus_paid_seekers: number; three_plus_paid_seekers: number; five_plus_paid_seekers: number; three_plus_rate_pct: number | null
+    avg_rating: number | null; rating_count: number | null; five_star_pct: number | null; low_rating_pct: number | null; sessions_rated_pct: number | null
+    completion_rate_pct: number | null; short_voice_sessions: number; short_voice_pct: number | null; missing_duration_telemetry: number
+    refund_requests: number; refund_amount: number; refund_rate_pct: number; report_count: number; report_rate_per_1000: number; block_count: number; block_rate_per_100_sessions: number; crisis_flags: number
+    paid_sessions: number; paid_minutes: number; listeners_taking_sessions: number; online_listeners_now: number; top_listener_concentration_pct: number | null; failed_starts: number; unmatched_sessions: number
+    voice_paid_sessions: number; text_paid_sessions: number; avg_session_duration_mins: number | null
   }
+  type ListenerQuality = { listener_id: string; name: string; paid_sessions: number; unique_paid_seekers: number; second_session_pct: number | null; three_plus_seekers: number; rating: number | null; rating_count: number | null; reports_per_100: number; refunds_per_100: number; blocks_per_100: number; short_voice_pct: number | null; avg_duration_mins: number | null; earnings: number }
   type RepeatPair = { seeker_name: string; listener_name: string; count: number }
+  const [qualitySummary, setQualitySummary] = useState<QualitySummary | null>(null)
+  const [qualityWindow, setQualityWindow] = useState<'today' | '7d' | '30d' | '90d' | 'all'>('30d')
   const [qualityListeners, setQualityListeners] = useState<ListenerQuality[]>([])
-  const [qualityPairs, setQualityPairs]         = useState<RepeatPair[]>([])
-  const [qualityLoading, setQualityLoading]     = useState(false)
-
+  const [qualityPairs, setQualityPairs] = useState<RepeatPair[]>([])
+  const [qualityLoading, setQualityLoading] = useState(false)
   const showToast = (msg: string) => {
     if (toastTimer.current) clearTimeout(toastTimer.current)
     setToast(msg)
@@ -577,18 +586,18 @@ export default function AdminPage() {
     setVerifsLoading(false)
   }, [verifsStatus]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const loadQuality = useCallback(async () => {
+  const loadQuality = useCallback(async (windowKey: 'today' | '7d' | '30d' | '90d' | 'all' = qualityWindow) => {
     setQualityLoading(true)
-    const res = await fetch('/api/admin/quality', { headers: adminHeaders() }).catch(() => null)
+    const res = await fetch(`/api/admin/quality?window=${windowKey}`, { headers: adminHeaders() }).catch(() => null)
     if (res?.ok) {
       const json = await res.json()
+      setQualitySummary(json.summary ?? null)
       setQualityListeners(json.listeners ?? [])
       setQualityPairs(json.repeatPairs ?? [])
-    } else {
-      showToast('Failed to load quality metrics')
-    }
+    } else showToast('Failed to load quality metrics')
     setQualityLoading(false)
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [qualityWindow]) // eslint-disable-line react-hooks/exhaustive-deps
+
 
   // ── Effects ─────────────────────────────────────────────────────────────────
 
@@ -2446,128 +2455,60 @@ export default function AdminPage() {
           </>
         )}
 
-        {/* ─── QUALITY ──────────────────────────────────────────────────────── */}
         {tab === 'quality' && (
           <>
-            <div className="section-title">
-              Listener Quality Metrics
-              <button className="action-btn" style={{ marginLeft: 12, fontSize: 12 }} onClick={loadQuality}>↻ Refresh</button>
+            <div className="section-title" style={{justifyContent:'space-between',flexWrap:'wrap'}}>
+              <span>Quality</span>
+              <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+                {(['today','7d','30d','90d','all'] as const).map(w => <button key={w} className={`filter-btn${qualityWindow===w?' active':''}`} onClick={()=>{setQualityWindow(w);loadQuality(w)}}>{w==='today'?'Today':w==='7d'?'7 days':w==='30d'?'30 days':w==='90d'?'90 days':'All time'}</button>)}
+                <button className="btn btn-teal" onClick={()=>loadQuality(qualityWindow)}>↻ Refresh</button>
+              </div>
             </div>
-            <p style={{ fontSize: 12, color: 'var(--gray)', fontWeight: 600, marginBottom: 16 }}>
-              Repeat seekers = a seeker who booked the same listener 3+ paid times.
-              Silent sessions = voice calls completed in under 2 minutes (possible non-engagement).
-              Conversion = paid sessions ÷ (paid + free trials).
-            </p>
-
-            {qualityLoading ? (
-              <div style={{ padding: 40, textAlign: 'center', color: 'var(--gray)' }}>Loading…</div>
-            ) : (
-              <>
-                {/* Summary row */}
-                {qualityListeners.length > 0 && (() => {
-                  const totalSilent = qualityListeners.reduce((s, l) => s + l.silent_sessions, 0)
-                  const withRepeat  = qualityListeners.filter(l => l.repeat_seekers > 0).length
-                  return (
-                    <div className="kpi-grid" style={{ marginBottom: 24 }}>
-                      <div className="kpi-card">
-                        <div className="kpi-value">{withRepeat}</div>
-                        <div className="kpi-label">Listeners with repeat seekers</div>
-                      </div>
-                      <div className="kpi-card">
-                        <div className="kpi-value" style={{ color: totalSilent > 5 ? 'var(--orange)' : undefined }}>{totalSilent}</div>
-                        <div className="kpi-label">Silent voice sessions detected</div>
-                      </div>
-                      <div className="kpi-card">
-                        <div className="kpi-value">{qualityPairs.length}</div>
-                        <div className="kpi-label">Repeat seeker-listener pairs</div>
-                      </div>
-                    </div>
-                  )
-                })()}
-
-                {/* Per-listener table */}
-                <div className="table-wrap" style={{ marginBottom: 32 }}>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Listener</th>
-                        <th style={{ textAlign: 'right' }}>Paid sessions</th>
-                        <th style={{ textAlign: 'right' }}>Unique seekers</th>
-                        <th style={{ textAlign: 'right' }}>Repeat seekers (3+)</th>
-                        <th style={{ textAlign: 'right' }}>Free trials</th>
-                        <th style={{ textAlign: 'right' }}>Conversion %</th>
-                        <th style={{ textAlign: 'right' }}>Silent sessions ⚠</th>
-                        <th style={{ textAlign: 'right' }}>Avg duration</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {qualityListeners.map(l => (
-                        <tr key={l.listener_id}>
-                          <td style={{ fontWeight: 700 }}>{l.name}</td>
-                          <td style={{ textAlign: 'right' }}>{l.paid_sessions}</td>
-                          <td style={{ textAlign: 'right' }}>{l.unique_paid_seekers}</td>
-                          <td style={{ textAlign: 'right' }}>
-                            {l.repeat_seekers > 0
-                              ? <span style={{ color: 'var(--green)', fontWeight: 800 }}>{l.repeat_seekers}</span>
-                              : '—'}
-                          </td>
-                          <td style={{ textAlign: 'right' }}>{l.free_trials}</td>
-                          <td style={{ textAlign: 'right' }}>
-                            <span style={{ color: l.conversion_pct >= 50 ? 'var(--green)' : l.conversion_pct >= 25 ? undefined : 'var(--orange)' }}>
-                              {l.conversion_pct}%
-                            </span>
-                          </td>
-                          <td style={{ textAlign: 'right' }}>
-                            {l.silent_sessions > 0
-                              ? <span style={{ color: l.silent_sessions >= 3 ? '#c53030' : 'var(--orange)', fontWeight: 800 }}>⚠ {l.silent_sessions}</span>
-                              : <span style={{ color: 'var(--green)' }}>0</span>}
-                          </td>
-                          <td style={{ textAlign: 'right' }}>{l.avg_duration_mins > 0 ? `${l.avg_duration_mins} min` : '—'}</td>
-                        </tr>
-                      ))}
-                      {qualityListeners.length === 0 && (
-                        <tr><td colSpan={8} style={{ textAlign: 'center', color: 'var(--gray)', padding: 24 }}>No data yet</td></tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Repeat seeker-listener pairs */}
-                {qualityPairs.length > 0 && (
-                  <>
-                    <div className="section-title" style={{ fontSize: 15, marginBottom: 12 }}>
-                      Repeat Seeker–Listener Pairs (3+ paid sessions)
-                    </div>
-                    <div className="table-wrap">
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>Seeker</th>
-                            <th>Listener</th>
-                            <th style={{ textAlign: 'right' }}>Paid sessions together</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {qualityPairs.map((p, i) => (
-                            <tr key={i}>
-                              <td>{p.seeker_name}</td>
-                              <td style={{ fontWeight: 700 }}>{p.listener_name}</td>
-                              <td style={{ textAlign: 'right' }}>
-                                <span style={{ fontWeight: 800, color: p.count >= 10 ? 'var(--green)' : undefined }}>
-                                  {p.count >= 10 ? '🔥 ' : ''}{p.count}
-                                </span>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </>
-                )}
-              </>
-            )}
+            {qualityLoading ? <div className="kpi-grid">{Array.from({length:8}).map((_,i)=><div key={i} className="skeleton" style={{height:90}} />)}</div> : qualitySummary ? <>
+              <p style={{fontSize:12,color:'var(--gray)',fontWeight:700,marginBottom:16}}>Quality for {qualityWindow==='today'?'today':qualityWindow==='7d'?'the last 7 days':qualityWindow==='30d'?'the last 30 days':qualityWindow==='90d'?'the last 90 days':'all time'}. Cohort rates only include matured cohorts.</p>
+              <div className="section-title" style={{fontSize:15}}>Customer outcome</div>
+              <div className="kpi-grid" style={{marginBottom:24}}>
+                <div className="kpi-card"><div className="kpi-label">Trial → Paid · 7d</div><div className="kpi-value">{qualitySummary.trial_to_paid_7d.pct==null?'—':`${qualitySummary.trial_to_paid_7d.pct}%`}</div><div className="kpi-sub">{qualitySummary.trial_to_paid_7d.converted}/{qualitySummary.trial_to_paid_7d.eligible} matured trials</div></div>
+                <div className="kpi-card"><div className="kpi-label">Trial → Paid · 24h</div><div className="kpi-value">{qualitySummary.trial_to_paid_24h.pct==null?'—':`${qualitySummary.trial_to_paid_24h.pct}%`}</div><div className="kpi-sub">{qualitySummary.trial_to_paid_24h.converted}/{qualitySummary.trial_to_paid_24h.eligible} matured trials</div></div>
+                <div className="kpi-card"><div className="kpi-label">Paid → 2nd Paid · 7d</div><div className="kpi-value">{qualitySummary.paid_to_second_7d.pct==null?'—':`${qualitySummary.paid_to_second_7d.pct}%`}</div><div className="kpi-sub">{qualitySummary.paid_to_second_7d.converted}/{qualitySummary.paid_to_second_7d.eligible} matured</div></div>
+                <div className="kpi-card"><div className="kpi-label">Paid → 2nd Paid · 30d</div><div className="kpi-value">{qualitySummary.paid_to_second_30d.pct==null?'—':`${qualitySummary.paid_to_second_30d.pct}%`}</div><div className="kpi-sub">{qualitySummary.paid_to_second_30d.converted}/{qualitySummary.paid_to_second_30d.eligible} matured</div></div>
+                <div className="kpi-card"><div className="kpi-label">1 paid session</div><div className="kpi-value">{fmt(qualitySummary.one_paid_seekers)}</div></div>
+                <div className="kpi-card"><div className="kpi-label">2+ paid sessions</div><div className="kpi-value">{fmt(qualitySummary.two_plus_paid_seekers)}</div></div>
+                <div className="kpi-card"><div className="kpi-label">3+ paid sessions</div><div className="kpi-value">{fmt(qualitySummary.three_plus_paid_seekers)}</div><div className="kpi-sub">{qualitySummary.three_plus_rate_pct==null?'—':`${qualitySummary.three_plus_rate_pct}% of paid seekers`}</div></div>
+                <div className="kpi-card"><div className="kpi-label">5+ paid sessions</div><div className="kpi-value">{fmt(qualitySummary.five_plus_paid_seekers)}</div></div>
+              </div>
+              <div className="section-title" style={{fontSize:15}}>Listener quality</div>
+              <div className="table-wrap" style={{marginBottom:28}}><table><thead><tr><th>Listener</th><th>Paid</th><th>Unique seekers</th><th>2nd-session %</th><th>3+ seekers</th><th>Rating</th><th>Rated</th><th>Reports / 100</th><th>Refunds / 100</th><th>Blocks / 100</th><th>Short voice</th><th>Avg duration</th><th>Earnings</th></tr></thead><tbody>
+                {qualityListeners.map(l=><tr key={l.listener_id}><td style={{fontWeight:800}}>{l.name}</td><td>{l.paid_sessions}</td><td>{l.unique_paid_seekers}</td><td>{l.second_session_pct==null?'—':`${l.second_session_pct}%`}</td><td>{l.three_plus_seekers}</td><td>{l.rating==null?'—':`${l.rating} ⭐`}</td><td>{l.rating_count==null?'—':l.rating_count}</td><td>{l.paid_sessions?l.reports_per_100:'—'}</td><td>{l.paid_sessions?l.refunds_per_100:'—'}</td><td>{l.paid_sessions?l.blocks_per_100:'—'}</td><td>{l.paid_sessions?`${l.short_voice_pct??0}%`:'—'}</td><td>{l.avg_duration_mins==null?'—':`${l.avg_duration_mins} min`}</td><td>₹{fmt(l.earnings)}</td></tr>)}
+                {qualityListeners.length===0&&<tr><td colSpan={13} className="empty">No completed paid-session listener data in this window.</td></tr>}
+              </tbody></table></div>
+              <div className="section-title" style={{fontSize:15}}>Session quality</div>
+              <div className="kpi-grid" style={{marginBottom:24}}>
+                <div className="kpi-card"><div className="kpi-label">Completion rate</div><div className="kpi-value">{qualitySummary.completion_rate_pct==null?'—':`${qualitySummary.completion_rate_pct}%`}</div><div className="kpi-sub">Completed / terminal</div></div>
+                <div className="kpi-card"><div className="kpi-label">Short voice sessions</div><div className="kpi-value">{qualitySummary.short_voice_pct==null?'—':`${qualitySummary.short_voice_pct}%`}</div><div className="kpi-sub">{qualitySummary.short_voice_sessions} under 2 min; missing telemetry excluded</div></div>
+                <div className="kpi-card"><div className="kpi-label">Sessions rated</div><div className="kpi-value">{qualitySummary.sessions_rated_pct==null?'—':`${qualitySummary.sessions_rated_pct}%`}</div><div className="kpi-sub">{qualitySummary.rating_count==null?'Rating history unavailable':`${qualitySummary.rating_count} ratings`}</div></div>
+                <div className="kpi-card"><div className="kpi-label">Average rating</div><div className="kpi-value">{qualitySummary.avg_rating==null?'—':`${qualitySummary.avg_rating} ⭐`}</div><div className="kpi-sub">5-star {qualitySummary.five_star_pct==null?'—':`${qualitySummary.five_star_pct}%`} · 1–2 star {qualitySummary.low_rating_pct==null?'—':`${qualitySummary.low_rating_pct}%`}</div></div>
+                <div className="kpi-card"><div className="kpi-label">Refund rate</div><div className="kpi-value">{qualitySummary.refund_rate_pct}%</div><div className="kpi-sub">{qualitySummary.refund_requests} requests · ₹{fmt(qualitySummary.refund_amount)}</div></div>
+                <div className="kpi-card"><div className="kpi-label">Reports / 1K</div><div className="kpi-value">{qualitySummary.report_rate_per_1000}</div><div className="kpi-sub">{qualitySummary.report_count} reports</div></div>
+                <div className="kpi-card"><div className="kpi-label">Blocks / 100</div><div className="kpi-value">{qualitySummary.block_rate_per_100_sessions}</div><div className="kpi-sub">{qualitySummary.block_count} blocks</div></div>
+                <div className="kpi-card"><div className="kpi-label">Crisis flags</div><div className="kpi-value">{qualitySummary.crisis_flags}</div></div>
+              </div>
+              <div className="section-title" style={{fontSize:15}}>Marketplace health</div>
+              <div className="kpi-grid" style={{marginBottom:24}}>
+                <div className="kpi-card"><div className="kpi-label">Paid sessions</div><div className="kpi-value">{fmt(qualitySummary.paid_sessions)}</div><div className="kpi-sub">{fmt(qualitySummary.paid_minutes)} paid minutes</div></div>
+                <div className="kpi-card"><div className="kpi-label">Listeners taking sessions</div><div className="kpi-value">{fmt(qualitySummary.listeners_taking_sessions)}</div><div className="kpi-sub">Online now: {fmt(qualitySummary.online_listeners_now)}</div></div>
+                <div className="kpi-card"><div className="kpi-label">Top listener concentration</div><div className="kpi-value">{qualitySummary.top_listener_concentration_pct==null?'—':`${qualitySummary.top_listener_concentration_pct}%`}</div><div className="kpi-sub">Share from #1 listener</div></div>
+                <div className="kpi-card"><div className="kpi-label">Failed starts</div><div className="kpi-value">{fmt(qualitySummary.failed_starts)}</div></div>
+                <div className="kpi-card"><div className="kpi-label">Unmatched sessions</div><div className="kpi-value">{fmt(qualitySummary.unmatched_sessions)}</div></div>
+                <div className="kpi-card"><div className="kpi-label">Voice / text</div><div className="kpi-value">{fmt(qualitySummary.voice_paid_sessions)} / {fmt(qualitySummary.text_paid_sessions)}</div></div>
+                <div className="kpi-card"><div className="kpi-label">Avg duration</div><div className="kpi-value">{qualitySummary.avg_session_duration_mins==null?'—':`${qualitySummary.avg_session_duration_mins} min`}</div></div>
+                <div className="kpi-card"><div className="kpi-label">Missing telemetry</div><div className="kpi-value">{fmt(qualitySummary.missing_duration_telemetry)}</div><div className="kpi-sub">Never treated as silent</div></div>
+              </div>
+              {qualityPairs.length>0&&<><div className="section-title" style={{fontSize:15}}>Repeat seeker–listener relationships</div><div className="table-wrap"><table><thead><tr><th>Seeker</th><th>Listener</th><th>Paid sessions together</th></tr></thead><tbody>{qualityPairs.map((p,i)=><tr key={i}><td>{p.seeker_name}</td><td style={{fontWeight:800}}>{p.listener_name}</td><td>{p.count}</td></tr>)}</tbody></table></div></>}
+            </> : <div className="empty">No quality data available.</div>}
           </>
         )}
+
 
       </div>
 

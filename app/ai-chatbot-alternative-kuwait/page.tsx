@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import AICountryPage, { AI_COUNTRIES, buildAICountryMetadata } from '@/app/ai-country-page'
 
-const data = AI_COUNTRIES.singapore
+const data = AI_COUNTRIES.kuwait
 export const metadata: Metadata = buildAICountryMetadata(data)
 export default function Page() { return <AICountryPage data={data} /> }
