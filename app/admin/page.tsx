@@ -1622,11 +1622,11 @@ export default function AdminPage() {
                                 <div className="action-row">
                                   {!isPending && !isRejected && (
                                     l.is_suspended || !l.is_active
-                                      ? <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'unsuspend')}>
-                                          {busy === `unsuspend:${l.user_id}` ? '…' : 'Unsuspend'}
+                                      ? <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'unsuspend_listener')}>
+                                          {busy === `unsuspend_listener:${l.user_id}` ? '…' : 'Unsuspend'}
                                         </button>
-                                      : <button className="btn btn-orange" disabled={busy !== null} onClick={() => userAction(l.user_id, 'suspend')}>
-                                          {busy === `suspend:${l.user_id}` ? '…' : 'Suspend'}
+                                      : <button className="btn btn-orange" disabled={busy !== null} onClick={() => userAction(l.user_id, 'suspend_listener')}>
+                                          {busy === `suspend_listener:${l.user_id}` ? '…' : 'Suspend listener'}
                                         </button>
                                   )}
                                   {/* Ban — permanent. Hidden when already suspended. Requires confirmation. */}

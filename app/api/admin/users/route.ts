@@ -275,7 +275,7 @@ export async function PATCH(req: NextRequest) {
   const { userId, action, notes, name } = body
   if (!userId || !UUID_RE.test(userId)) return NextResponse.json({ error: 'Invalid userId' }, { status: 400 })
 
-  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'approve_listener', 'reject_listener', 'rename']
+  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'suspend_listener', 'unsuspend_listener', 'approve_listener', 'reject_listener', 'rename']
   if (!action || !validActions.includes(action)) return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
 
   const sb = createAdminClient()
@@ -397,6 +397,35 @@ export async function PATCH(req: NextRequest) {
           .update({ is_active: true, is_suspended: false })
           .eq('user_id', userId)
           .then(() => {}, () => {})
+        break
+      }
+
+      case 'suspend_listener': {
+        // Listener-profile-only suspension — does NOT touch the users row.
+        // The person retains seeker access and their wallet is unaffected.
+        const { error: lpErr } = await sb.from('listener_profiles')
+          .update({ is_active: false, is_available: false, is_suspended: true })
+          .eq('user_id', userId)
+        if (lpErr) {
+          logger.error('suspend_listener: listener_profiles update failed', { userId, error: lpErr.message })
+          return NextResponse.json({ error: `Failed to suspend listener profile: ${lpErr.message}` }, { status: 500 })
+        }
+        break
+      }
+
+      case 'unsuspend_listener': {
+        // Restores listener activity only when already approved — unsuspending a
+        // rejected applicant must not put them online (they need re-approval first).
+        const { data: lp } = await sb.from('listener_profiles')
+          .select('is_approved').eq('user_id', userId).maybeSingle()
+        const wasApproved = lp?.is_approved === true
+        const { error: lpErr } = await sb.from('listener_profiles')
+          .update({ is_suspended: false, is_active: wasApproved, is_available: false })
+          .eq('user_id', userId)
+        if (lpErr) {
+          logger.error('unsuspend_listener: listener_profiles update failed', { userId, error: lpErr.message })
+          return NextResponse.json({ error: `Failed to unsuspend listener profile: ${lpErr.message}` }, { status: 500 })
+        }
         break
       }
 
