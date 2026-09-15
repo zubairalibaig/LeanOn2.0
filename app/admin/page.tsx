@@ -1858,7 +1858,11 @@ export default function AdminPage() {
                                   const listenerNet  = s.listener_net_amount
                                   const refund = Math.max(0, s.amount_held - leanOnEarned - listenerNet)
                                   const isEarlyExit = refund > 0
-                                  const isNri = !!s.listener_rate_per_min
+                                  // NRI: listener_rate_per_min is set for ALL non-free sessions
+                                  // (migration 054), but NRI is only when the flat NRI price
+                                  // exceeds what rate × duration would cost (India price).
+                                  const isNri = !!s.listener_rate_per_min &&
+                                    s.listener_rate_per_min * s.duration_mins < s.amount_held - platformFee
 
                                   // For NRI sessions: break out the 15% service fee from the NRI margin
                                   // rawShare ≈ listener earns before fee → net / 0.85; svcFee = rawShare × 0.15
@@ -2047,7 +2051,8 @@ export default function AdminPage() {
                         ? transcriptSession.listener_net_amount
                         : transcriptSession.amount_held - pFee - extra
                       const leanOn = pFee + extra
-                      const isNri = !!transcriptSession.listener_rate_per_min
+                      const isNri = !!transcriptSession.listener_rate_per_min &&
+                        transcriptSession.listener_rate_per_min * transcriptSession.duration_mins < transcriptSession.amount_held - pFee
                       if (isNri) {
                         const rawShare = Math.round(listenerNet / 0.85)
                         const nriSvcFee = Math.round(rawShare * 0.15)
