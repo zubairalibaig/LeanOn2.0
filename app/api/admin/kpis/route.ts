@@ -37,10 +37,11 @@ export async function GET(req: NextRequest) {
       sb.from('listener_applications').select('user_id', { count: 'exact', head: true }).eq('status', 'pending'),
       sb.from('listener_profiles').select('id', { count: 'exact', head: true }).eq('is_available', true),
 
-      // Session KPIs
+      // Session KPIs — use created_at for today/thisMonth (started_at is NULL
+      // for cancelled/pending sessions and would undercount).
       sb.from('sessions').select('id', { count: 'exact', head: true }),
-      sb.from('sessions').select('id', { count: 'exact', head: true }).gte('started_at', today),
-      sb.from('sessions').select('id', { count: 'exact', head: true }).gte('started_at', thisMonth),
+      sb.from('sessions').select('id', { count: 'exact', head: true }).gte('created_at', today),
+      sb.from('sessions').select('id', { count: 'exact', head: true }).gte('created_at', thisMonth),
       sb.from('sessions').select('id', { count: 'exact', head: true }).eq('status', 'active'),
 
       // Revenue KPIs — wallet recharges
@@ -94,6 +95,10 @@ export async function GET(req: NextRequest) {
       sb.from('sessions').select('id', { count: 'exact', head: true }).eq('is_free_trial', false).eq('status', 'completed').gte('created_at', thisMonth),
       sb.from('listener_profiles').select('id', { count: 'exact', head: true }).gte('created_at', today),
       sb.from('listener_profiles').select('id', { count: 'exact', head: true }).gte('created_at', thisMonth),
+
+      // index 33: all payout requests that are NOT rejected (pending + processing + completed/paid)
+      // Used to compute unrequested listener earnings = settled earnings - claimed payouts.
+      sb.from('payout_requests').select('amount').neq('status', 'rejected'),
     ])
 
     // Extract values safely — failed queries return zero/null defaults
@@ -137,6 +142,7 @@ export async function GET(req: NextRequest) {
     const paidThisMonth       = extract<{ id: string }>(30)
     const newListenersToday   = extract<{ id: string }>(31)
     const newListenersMonth   = extract<{ id: string }>(32)
+    const allClaimedPayouts   = extract<{ amount: number }>(33)
 
     // Platform earnings: sum listener_earnings.platform_fee (= ₹10 seeker fee
     // + 15% service fee for sessions after 2026-09-14; just ₹10 for older rows).
@@ -209,6 +215,12 @@ export async function GET(req: NextRequest) {
       walletLiability: {
         totalRupees: (walletBalances.data ?? []).reduce((s, r) => s + Number(r.wallet_balance ?? 0), 0),
         usersWithBalance: (walletBalances.data ?? []).filter(r => Number(r.wallet_balance ?? 0) > 0).length,
+        // Listener earnings settled but not yet requested for payout.
+        // = sum(listener_earnings.net_amount WHERE settled) - sum(payout_requests WHERE not rejected)
+        // This is money owed to listeners — a separate liability from seeker wallet balances.
+        listenerEarningsUnrequestedRupees: Math.max(0,
+          sum(totalEarnings.data, 'net_amount') - sum(allClaimedPayouts.data)
+        ),
       },
       payouts: {
         pendingAmountRupees: sum(pendingPayouts.data),

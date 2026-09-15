@@ -14,7 +14,7 @@ type KPIs = {
   }
   revenue: { totalRechargedRupees: number; thisMonthRupees: number; todayRupees: number; listenerEarningsRupees: number }
   // Optional: absent if an older API build is still deployed, so the UI must guard.
-  walletLiability?: { totalRupees: number; usersWithBalance: number }
+  walletLiability?: { totalRupees: number; usersWithBalance: number; listenerEarningsUnrequestedRupees?: number }
   platformEarnings?: { allTimeRupees: number; thisMonthRupees: number; todayRupees: number; paidSessions: number }
   gatewayFees: { allTime: number; thisMonth: number; today: number }
   payouts: { pendingAmountRupees: number; pendingCount: number; totalPaidRupees: number }
@@ -442,22 +442,27 @@ export default function AdminPage() {
 
   const loadKPIs = useCallback(async () => {
     setKpisLoading(true)
-    const res = await fetch('/api/admin/kpis', { headers: adminHeaders() })
-    if (res.status === 401) { setAuthUser(null); setDenied(true); setKpisLoading(false); return }
-    if (res.status === 403) {
-      const body = await res.json().catch(() => ({}))
-      // PIN_REQUIRED → user IS admin but PIN missing/wrong — show PIN gate
-      // NOT_ADMIN / anything else → clear session and show login form
-      if (body.code === 'PIN_REQUIRED') { setPinRequired(true) } else { setAuthUser(null); setDenied(true) }
+    try {
+      const res = await fetch('/api/admin/kpis', { headers: adminHeaders() })
+      if (res.status === 401) { setAuthUser(null); setDenied(true); return }
+      if (res.status === 403) {
+        const body = await res.json().catch(() => ({}))
+        if (body.code === 'PIN_REQUIRED') { setPinRequired(true) } else { setAuthUser(null); setDenied(true) }
+        return
+      }
+      if (res.status === 429) { showToast('Too many requests — please wait a moment'); return }
+      if (res.ok) {
+        const json = await res.json()
+        setKpis(json)
+        setIsPrimaryAdmin(!!json.isPrimaryAdmin)
+      } else {
+        showToast('Failed to refresh KPIs — server error')
+      }
+    } catch {
+      showToast('Failed to refresh KPIs — check your connection')
+    } finally {
       setKpisLoading(false)
-      return
     }
-    if (res.ok) {
-      const json = await res.json()
-      setKpis(json)
-      setIsPrimaryAdmin(!!json.isPrimaryAdmin)
-    }
-    setKpisLoading(false)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadUsers = useCallback(async (pg = usersPage, st = usersStatus, q = usersSearch, dir = usersJoinedDir, sort = usersSortBy) => {
@@ -823,10 +828,11 @@ export default function AdminPage() {
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <button
               className="btn btn-teal"
-              style={{ fontSize: 13 }}
+              style={{ fontSize: 13, opacity: kpisLoading ? 0.6 : 1 }}
+              disabled={kpisLoading}
               onClick={loadKPIs}
             >
-              Refresh KPIs
+              {kpisLoading ? '⟳ Refreshing…' : 'Refresh KPIs'}
             </button>
             <button
               className="btn"
@@ -1027,10 +1033,11 @@ export default function AdminPage() {
                       </tr>
                     </tbody>
                   </table>
-                  <div style={{ padding: '8px 16px', borderTop: '1px solid var(--border)', fontSize: 12, color: 'var(--gray)', display: 'flex', gap: 20 }}>
+                  <div style={{ padding: '8px 16px', borderTop: '1px solid var(--border)', fontSize: 12, color: 'var(--gray)', display: 'flex', gap: 20, flexWrap: 'wrap' }}>
                     <span>Avg duration: <strong>{kpis.sessions.avgDurationMins} min</strong></span>
-                    <span>All sessions today: <strong>{fmt(kpis.sessions.today)}</strong></span>
-                    <span>This month: <strong>{fmt(kpis.sessions.thisMonth)}</strong></span>
+                    <span>All created today: <strong>{fmt(kpis.sessions.today)}</strong></span>
+                    <span>Created this month: <strong>{fmt(kpis.sessions.thisMonth)}</strong></span>
+                    <span style={{ color: 'var(--teal)' }}>Completed today: <strong>{fmt((kpis.sessions.freeTrialToday ?? 0) + (kpis.sessions.paidToday ?? 0))}</strong></span>
                   </div>
                 </div>
 
@@ -1055,15 +1062,38 @@ export default function AdminPage() {
                   </table>
                 </div>
                 {kpis.walletLiability && (
-                  <div className="liability-bar" style={{ marginBottom: 20 }}>
-                    <div>
-                      <div className="liability-label">Unspent user balances — do not touch</div>
-                      <div className="liability-sub">
-                        Held on behalf of {kpis.walletLiability.usersWithBalance} user{kpis.walletLiability.usersWithBalance === 1 ? '' : 's'}.
-                        Park this and leave it until they spend it or ask for it back.
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+                    {/* 1 — Unspent seeker wallet balances */}
+                    <div className="liability-bar">
+                      <div>
+                        <div className="liability-label">Unspent user balances — do not touch</div>
+                        <div className="liability-sub">
+                          Held on behalf of {kpis.walletLiability.usersWithBalance} user{kpis.walletLiability.usersWithBalance === 1 ? '' : 's'}.
+                          Park this — return it only when they spend it or request a refund.
+                        </div>
                       </div>
+                      <div className="liability-amount">{fmtRs(kpis.walletLiability.totalRupees)}</div>
                     </div>
-                    <div className="liability-amount">{fmtRs(kpis.walletLiability.totalRupees)}</div>
+                    {/* 2 — Listener earnings settled but not yet requested for payout */}
+                    {(kpis.walletLiability.listenerEarningsUnrequestedRupees ?? 0) > 0 && (
+                      <div className="liability-bar" style={{ borderLeftColor: 'var(--teal)', borderColor: '#B2DEB2', background: '#F0FBF8' }}>
+                        <div>
+                          <div className="liability-label" style={{ color: '#0d6e7e' }}>Unrequested listener earnings</div>
+                          <div className="liability-sub">Settled earnings listeners haven't requested as payout yet. Owed to them on demand.</div>
+                        </div>
+                        <div className="liability-amount" style={{ color: '#0d6e7e' }}>{fmtRs(kpis.walletLiability.listenerEarningsUnrequestedRupees ?? 0)}</div>
+                      </div>
+                    )}
+                    {/* 3 — Pending payout requests already submitted */}
+                    {kpis.payouts.pendingCount > 0 && (
+                      <div className="liability-bar" style={{ borderLeftColor: '#c0392b', borderColor: '#FFB3AE', background: '#FFF5F5' }}>
+                        <div>
+                          <div className="liability-label" style={{ color: '#c0392b' }}>Pending payout requests ({kpis.payouts.pendingCount})</div>
+                          <div className="liability-sub">Submitted by listeners, awaiting your manual transfer. Action needed.</div>
+                        </div>
+                        <div className="liability-amount" style={{ color: '#c0392b' }}>{fmtRs(kpis.payouts.pendingAmountRupees)}</div>
+                      </div>
+                    )}
                   </div>
                 )}
 

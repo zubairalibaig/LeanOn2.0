@@ -185,6 +185,11 @@ export async function POST(req: NextRequest) {
       delete appRow.upi_id
       appErr = (await admin.from('listener_applications').upsert(appRow, { onConflict: 'user_id' })).error
     }
+    if (appErr?.message?.includes('account_holder_name')) {
+      // account_holder_name column not yet in DB (pre-migration 055) — retry without it
+      delete appRow.account_holder_name
+      appErr = (await admin.from('listener_applications').upsert(appRow, { onConflict: 'user_id' })).error
+    }
     if (appErr) {
       logger.error('listener apply: application upsert failed', { userId: user.id, error: appErr.message, code: appErr.code })
       return NextResponse.json({ error: 'Could not save your application.' }, { status: 500 })
