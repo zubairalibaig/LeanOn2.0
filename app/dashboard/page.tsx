@@ -161,7 +161,7 @@ type DashProfile = {
   user_id: string; bio?: string; rate_per_min: number; specialty_tags: string[]
   languages_spoken: string[]; total_sessions: number; rating: number
   is_available: boolean; is_approved?: boolean; avatar_url?: string | null; balance: number
-  bank_account?: string; ifsc_code?: string; aadhaar_last4?: string
+  bank_account?: string; ifsc_code?: string; aadhaar_last4?: string; account_holder_name?: string | null
   name?: string; wallet_balance?: number
 }
 type DashUser = { id: string; name?: string; email?: string; wallet_balance?: number }
@@ -473,13 +473,13 @@ export default function DashboardPage() {
     }
 
     if (lp) {
-      const { data: usr } = await sb
-        .from('users')
-        .select('name, wallet_balance, avatar_url')
-        .eq('id', u.id)
-        .maybeSingle()
+      const [{ data: usr }, { data: appRow }] = await Promise.all([
+        sb.from('users').select('name, wallet_balance, avatar_url').eq('id', u.id).maybeSingle(),
+        sb.from('listener_applications').select('account_holder_name').eq('user_id', u.id).maybeSingle(),
+      ])
       const avatarUrl = usr?.avatar_url || null
-      setProfile({ ...lp, name: usr?.name || 'Listener', balance: usr?.wallet_balance || 0, avatar_url: avatarUrl })
+      const holderName = (appRow as Record<string, unknown> | null)?.account_holder_name as string | null | undefined
+      setProfile({ ...lp, name: usr?.name || 'Listener', balance: usr?.wallet_balance || 0, avatar_url: avatarUrl, account_holder_name: holderName ?? null })
       setAvail(lp.is_available)
       setEditBio(lp.bio || '')
       setEditTags(lp.specialty_tags || [])
@@ -1081,6 +1081,27 @@ export default function DashboardPage() {
             {totalSessions} / {nextTierAt} sessions to unlock higher rate
           </div>
         </div>
+
+        {/* Banner for listeners missing account holder name — shown until they add it */}
+        {profile.account_holder_name === null && (
+          <div style={{ background: '#FFF8F0', border: '1.5px solid #FFD9A0', borderRadius: 14, padding: '14px 16px', marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: '#7A5C00' }}>⚠️ Add your account holder name</div>
+              <div style={{ fontSize: 12, color: '#7A5C00', marginTop: 2 }}>Your bank account holder name is missing. We need this to verify payouts match your bank records before processing.</div>
+            </div>
+            <button
+              style={{ background: '#FF9933', color: 'white', border: 'none', borderRadius: 10, padding: '8px 16px', fontFamily: 'inherit', fontWeight: 800, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' }}
+              onClick={async () => {
+                const n = window.prompt('Enter the name exactly as it appears on your bank account / UPI registration:')
+                if (!n?.trim()) return
+                const res = await fetch('/api/listener/bank-name', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ account_holder_name: n.trim() }) }).catch(() => null)
+                const json = await res?.json().catch(() => ({}))
+                if (res?.ok) setProfile(p => p ? { ...p, account_holder_name: n.trim() } : p)
+                else window.alert(json?.error || 'Could not save. Please try again.')
+              }}
+            >Add name →</button>
+          </div>
+        )}
 
         <div className="section-title">Pending payout</div>
         <div className="payout-card">

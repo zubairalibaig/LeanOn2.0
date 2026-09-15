@@ -79,7 +79,7 @@ export async function GET(req: NextRequest) {
     id: string; user_id: string; amount: number; upi_id: string | null
     status: string; created_at: string
     users: { name: string | null; email: string | null; phone: string | null } | null
-    bank: { upi_id: string | null; bank_account: string | null; ifsc_code: string | null } | null
+    bank: { upi_id: string | null; bank_account: string | null; ifsc_code: string | null; account_holder_name: string | null } | null
   }
   let payoutsOut: PayoutRowOut[] = []
   {
@@ -90,13 +90,13 @@ export async function GET(req: NextRequest) {
     if (ids.length > 0) {
       const [uRes, aRes] = await Promise.all([
         admin.from('users').select('id, name, email, phone').in('id', ids),
-        admin.from('listener_applications').select('user_id, upi_id, bank_account, ifsc_code').in('user_id', ids),
+        admin.from('listener_applications').select('user_id, upi_id, bank_account, ifsc_code, account_holder_name').in('user_id', ids),
       ])
       for (const u of uRes.data ?? []) {
         userMap[u.id as string] = { name: u.name ?? null, email: u.email ?? null, phone: u.phone ?? null }
       }
       for (const a of aRes.data ?? []) {
-        appMap[a.user_id as string] = { upi_id: a.upi_id ?? null, bank_account: a.bank_account ?? null, ifsc_code: a.ifsc_code ?? null }
+        appMap[a.user_id as string] = { upi_id: a.upi_id ?? null, bank_account: a.bank_account ?? null, ifsc_code: a.ifsc_code ?? null, account_holder_name: (a as Record<string,unknown>).account_holder_name as string | null ?? null }
       }
     }
     payoutsOut = rows.map(r => ({ ...r, users: userMap[r.user_id] ?? null, bank: appMap[r.user_id] ?? null }))

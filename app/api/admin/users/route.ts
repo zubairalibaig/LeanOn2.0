@@ -265,7 +265,7 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 
-  let body: { userId?: string; action?: string; notes?: string; name?: string }
+  let body: { userId?: string; action?: string; notes?: string; name?: string; account_holder_name?: string; bank_account?: string; ifsc_code?: string; upi_id?: string }
   try {
     body = await req.json()
   } catch {
@@ -275,7 +275,7 @@ export async function PATCH(req: NextRequest) {
   const { userId, action, notes, name } = body
   if (!userId || !UUID_RE.test(userId)) return NextResponse.json({ error: 'Invalid userId' }, { status: 400 })
 
-  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'suspend_listener', 'unsuspend_listener', 'approve_listener', 'reject_listener', 'rename']
+  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'suspend_listener', 'unsuspend_listener', 'approve_listener', 'reject_listener', 'rename', 'update_bank_details']
   if (!action || !validActions.includes(action)) return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
 
   const sb = createAdminClient()
@@ -460,6 +460,31 @@ export async function PATCH(req: NextRequest) {
         // Keep listener_profiles display name in sync if applicable.
         await sb.from('listener_profiles').update({ display_name: newName }).eq('user_id', userId)
           .then(() => {}, () => {})
+        break
+      }
+
+      case 'update_bank_details': {
+        // Admin-only: update bank/UPI details + account holder name on listener_applications.
+        // Triggered when a listener reaches out (e.g. email) to correct their payout details.
+        const updates: Record<string, string | null> = {}
+        const holderName = typeof body.account_holder_name === 'string' ? body.account_holder_name.trim() : null
+        const bankAcc    = typeof body.bank_account        === 'string' ? body.bank_account.trim() : null
+        const ifsc       = typeof body.ifsc_code           === 'string' ? body.ifsc_code.trim().toUpperCase() : null
+        const upi        = typeof body.upi_id              === 'string' ? body.upi_id.trim() : null
+        if (holderName !== null) updates.account_holder_name = holderName || null
+        if (bankAcc    !== null) updates.bank_account        = bankAcc
+        if (ifsc       !== null) updates.ifsc_code           = ifsc
+        if (upi        !== null) updates.upi_id              = upi || null
+        if (Object.keys(updates).length === 0) {
+          return NextResponse.json({ error: 'No fields to update' }, { status: 400 })
+        }
+        const { error: baErr } = await sb.from('listener_applications')
+          .update(updates)
+          .eq('user_id', userId)
+        if (baErr) {
+          logger.error('update_bank_details: failed', { userId, error: baErr.message })
+          return NextResponse.json({ error: `Failed to update bank details: ${baErr.message}` }, { status: 500 })
+        }
         break
       }
     }

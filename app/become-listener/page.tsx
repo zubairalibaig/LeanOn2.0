@@ -188,6 +188,7 @@ export default function BecomeListenerPage() {
   const [tags, setTags]   = useState<string[]>([])
   const [rate, setRate]   = useState('10')
   const [langs, setLangs] = useState<string[]>(['english'])
+  const [accountHolder, setAccountHolder] = useState('')
   const [bank, setBank]   = useState('')
   const [ifsc, setIfsc]   = useState('')
   const [upi, setUpi]     = useState('')
@@ -285,6 +286,7 @@ export default function BecomeListenerPage() {
     const errs: string[] = []
     const bde = validateBirth(birthMonth, birthYear); if (bde) errs.push(bde)
     const re = validateRate(rate); if (re) errs.push(re)
+    if (!accountHolder.trim()) errs.push('Enter the name exactly as on your bank account')
     const banke = validateBank(bank); if (banke) errs.push(banke)
     const ifsce = validateIFSC(ifsc); if (ifsce) errs.push(ifsce)
     const aae = validateAadhaar(aadhaar); if (aae) errs.push(aae)
@@ -341,6 +343,7 @@ export default function BecomeListenerPage() {
       const fe: Record<string,string> = {}
       const bde = validateBirth(birthMonth, birthYear); if (bde) fe.birth = bde
       const re = validateRate(rate); if (re) fe.rate = re
+      if (!accountHolder.trim()) fe.accountHolder = 'Enter the name exactly as on your bank account'
       const banke = validateBank(bank); if (banke) fe.bank = banke
       const ifsce = validateIFSC(ifsc); if (ifsce) fe.ifsc = ifsce
       const aae = validateAadhaar(aadhaar); if (aae) fe.aadhaar = aae
@@ -376,6 +379,7 @@ export default function BecomeListenerPage() {
           rate:       rateNum,
           birthMonth: parseInt(birthMonth, 10),
           birthYear:  parseInt(birthYear, 10),
+          account_holder_name: accountHolder.trim(),
           bank:       bank.trim(),
           ifsc:       ifsc.trim().toUpperCase(),
           upi:        upi.trim(),
@@ -695,6 +699,19 @@ export default function BecomeListenerPage() {
                 This fee funds bringing you seekers, secure payments, and platform support — it&apos;s taken from your earnings, not added to what the seeker pays.
               </p>
             </div>
+
+            <label className="lbl">Account holder name <span style={{color:'#c0392b'}}>*</span></label>
+            <input
+              className={`input${fieldErrors.accountHolder ? ' err' : ''}`}
+              type="text"
+              placeholder="Full name exactly as on your bank account"
+              value={accountHolder}
+              onChange={e => { setAccountHolder(e.target.value); if (fieldErrors.accountHolder) setFieldErrors(f => ({...f, accountHolder: ''})) }}
+            />
+            {fieldErrors.accountHolder
+              ? <span className="field-err">{fieldErrors.accountHolder}</span>
+              : <span style={{fontSize:11,color:'#8aabbc',marginTop:2,display:'block'}}>Must match your bank records exactly — used to verify payouts</span>
+            }
 
             <label className="lbl">Bank account number (9–18 digits)</label>
             <input

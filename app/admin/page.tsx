@@ -61,10 +61,10 @@ type VerificationRow = {
   submitted_at: string; admin_notes: string | null
 }
 type PayoutRow = {
-  id: string; amount: number; upi_id?: string | null; status: string; created_at: string
+  id: string; user_id: string; amount: number; upi_id?: string | null; status: string; created_at: string
   users: { name?: string | null; email?: string | null; phone?: string | null } | null
   // Bank/UPI details captured at listener application time (for manual transfer)
-  bank?: { upi_id?: string | null; bank_account?: string | null; ifsc_code?: string | null } | null
+  bank?: { upi_id?: string | null; bank_account?: string | null; ifsc_code?: string | null; account_holder_name?: string | null } | null
 }
 type RefundRow  = { id: string; amount: number; reason?: string; status: string; created_at: string; razorpay_payment_id?: string | null; users: { name?: string; email?: string } | null }
 
@@ -2096,14 +2096,40 @@ export default function AdminPage() {
             ) : payouts.length === 0 ? (
               <div className="empty">No pending payout requests — all clear!</div>
             ) : payouts.map((p: PayoutRow) => (
-              <div key={p.id} style={{ background: 'white', border: '1.5px solid var(--border)', borderRadius: 16, padding: '16px 20px', marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+              <div key={p.id} style={{ background: 'white', border: `1.5px solid ${p.bank?.account_holder_name ? 'var(--border)' : '#FFD9A0'}`, borderRadius: 16, padding: '16px 20px', marginBottom: 12, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--navy)' }}>{p.users?.name || '—'}</div>
+                  {/* Listener display name + phone + date */}
+                  <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--navy)' }}>{p.users?.name || '—'}
+                    <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--gray)', marginLeft: 8 }}>(display name)</span>
+                  </div>
                   <div style={{ fontSize: 12, color: 'var(--gray)', fontWeight: 600, marginTop: 2 }}>
                     {p.users?.phone ? <span style={{ marginRight: 8 }}>Phone: {p.users.phone}</span> : null}
                     {p.users?.email ? <span style={{ marginRight: 8 }}>{p.users.email}</span> : null}
                     {p.created_at ? <span>Requested {fmtDate(p.created_at)}</span> : null}
                   </div>
+
+                  {/* Account holder name — the legal name on the bank account */}
+                  <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                    {p.bank?.account_holder_name ? (
+                      <div style={{ fontSize: 14, fontWeight: 800, color: '#1A5F1A', background: '#E8F8E8', border: '1px solid #B2DEB2', borderRadius: 8, padding: '4px 10px' }}>
+                        A/C Holder: {p.bank.account_holder_name}
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: 13, fontWeight: 700, color: '#7A5C00', background: '#FFF8F0', border: '1px solid #FFD9A0', borderRadius: 8, padding: '4px 10px', display: 'flex', alignItems: 'center', gap: 6 }}>
+                        ⚠️ Account holder name missing
+                        <button
+                          style={{ fontSize: 11, fontWeight: 800, color: 'var(--teal)', background: 'transparent', border: '1px solid var(--teal)', borderRadius: 6, padding: '1px 8px', cursor: 'pointer' }}
+                          onClick={() => {
+                            const n = window.prompt(`Enter bank account holder name for ${p.users?.name || 'this listener'} (${p.users?.phone || ''}):\n\nThis should match the name on their bank account exactly.`)
+                            if (!n?.trim()) return
+                            fetch('/api/admin/users', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: p.user_id, action: 'update_bank_details', account_holder_name: n.trim() }) })
+                              .then(r => r.json()).then(j => { if (j.ok) { setPayouts(prev => prev.map(x => x.id === p.id ? { ...x, bank: { ...x.bank, account_holder_name: n.trim() } } : x)); setToast('Account holder name saved.') } else { setToast(j.error || 'Failed to save') } })
+                          }}
+                        >+ Add name</button>
+                      </div>
+                    )}
+                  </div>
+
                   {(() => {
                     // Payment destination: a real VPA gets the UPI deep link; a
                     // "bank:IFSC/ACCT" marker (listener without UPI) renders as a
@@ -2124,7 +2150,7 @@ export default function AdminPage() {
                             UPI: <span style={pill}>{p.upi_id}</span>
                             {!rzpxEnabled && (
                               <a
-                                href={`upi://pay?pa=${encodeURIComponent(p.upi_id!)}&pn=${encodeURIComponent(p.users?.name || 'LeanOn Listener')}&am=${encodeURIComponent(String(p.amount))}&cu=INR&tn=${encodeURIComponent('LeanOn listener payout')}`}
+                                href={`upi://pay?pa=${encodeURIComponent(p.upi_id!)}&pn=${encodeURIComponent(p.bank?.account_holder_name || p.users?.name || 'LeanOn Listener')}&am=${encodeURIComponent(String(p.amount))}&cu=INR&tn=${encodeURIComponent('LeanOn listener payout')}`}
                                 style={{ background: 'var(--teal)', color: 'white', padding: '3px 12px', borderRadius: 20, fontSize: 12, fontWeight: 800, textDecoration: 'none' }}
                               >
                                 📲 Pay in UPI app
@@ -2148,8 +2174,9 @@ export default function AdminPage() {
                     )
                   })()}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
                   <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--navy)' }}>₹{p.amount}</div>
+                  <div style={{ display: 'flex', gap: 8 }}>
                   <button className="btn btn-teal" disabled={busy !== null} onClick={() => adminAction('complete_payout', p.id, rzpxEnabled && p.upi_id ? `₹${p.amount} sent via RazorpayX` : `Marked ₹${p.amount} payout complete`)}>
                     {busy === `complete_payout:${p.id}` ? 'Sending…' : rzpxEnabled && p.upi_id ? '⚡ Pay via UPI' : 'Mark Paid'}
                   </button>
@@ -2164,6 +2191,7 @@ export default function AdminPage() {
                   >
                     {busy === `reject_payout:${p.id}` ? 'Saving…' : 'Reject'}
                   </button>
+                  </div>
                 </div>
               </div>
             ))}

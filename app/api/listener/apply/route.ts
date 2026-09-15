@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json().catch(() => ({}))
     const name      = typeof body?.name       === 'string' ? body.name.trim() : ''
     const bio       = typeof body?.bio        === 'string' ? body.bio.trim()  : ''
+    const accountHolderName = typeof body?.account_holder_name === 'string' ? body.account_holder_name.trim() : ''
     const bank      = typeof body?.bank       === 'string' ? body.bank.trim() : ''
     const ifsc      = typeof body?.ifsc       === 'string' ? body.ifsc.trim().toUpperCase() : ''
     const upi       = typeof body?.upi        === 'string' ? body.upi.trim()  : ''
@@ -155,12 +156,13 @@ export async function POST(req: NextRequest) {
       : existingApp.status
 
     const appRow: Record<string, unknown> = {
-      user_id:      user.id,
+      user_id:             user.id,
       name,
-      phone:        formPhone || sessionPhone,
-      bank_account: bank,
-      ifsc_code:    ifsc,
-      upi_id:       upi || null,
+      phone:               formPhone || sessionPhone,
+      account_holder_name: accountHolderName || null,
+      bank_account:        bank,
+      ifsc_code:           ifsc,
+      upi_id:              upi || null,
       status,
     }
     // Aadhaar (admin-only KYC). aadhaar_last4 predates this work; aadhaar (full)
