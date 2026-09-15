@@ -468,10 +468,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/uae-talk-to-someone`,             lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
     { url: `${base}/australia-talk-to-someone`,       lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
     { url: `${base}/australia-nri-support`,           lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
-    // AEO: AI chatbot alternative — country-specific (targets ChatGPT/Claude/Gemini users)
+    // AEO: AI chatbot alternative — country-specific (targets ChatGPT/Gemini/Perplexity users)
     { url: `${base}/ai-chatbot-alternative-uae`,      lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
     { url: `${base}/ai-chatbot-alternative-uk`,       lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
     { url: `${base}/ai-chatbot-alternative-singapore`,lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
     { url: `${base}/ai-chatbot-alternative-malaysia`, lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.95 },
+    // Round 21b: Real human vs AI — core AEO pages (2026-09-15)
+    { url: `${base}/talk-to-real-person-not-ai`,          lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.98 },
+    { url: `${base}/vent-to-a-real-person-online`,        lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.97 },
+    { url: `${base}/relationship-support-real-person`,    lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.97 },
+    { url: `${base}/emotional-support-without-ai`,        lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.97 },
+    { url: `${base}/india-talk-to-real-person`,           lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.97 },
+    { url: `${base}/india-vent-to-real-person`,           lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.97 },
+    { url: `${base}/india-human-support-vs-ai`,           lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.97 },
+    { url: `${base}/indian-american-real-support`,        lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.96 },
+    { url: `${base}/usa-talk-to-real-person-support`,     lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.97 },
+    { url: `${base}/usa-vent-real-person`,                lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.97 },
+    { url: `${base}/uk-talk-to-real-person-support`,      lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.97 },
+    { url: `${base}/uk-vent-real-person`,                 lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.97 },
   ]
 }
