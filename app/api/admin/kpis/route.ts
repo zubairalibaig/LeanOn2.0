@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
       // Listener KPIs
       sb.from('listener_profiles').select('id', { count: 'exact', head: true }),
       sb.from('listener_profiles').select('id', { count: 'exact', head: true }).eq('is_active', true).eq('is_approved', true),
-      sb.from('listener_applications').select('user_id', { count: 'exact', head: true }).eq('status', 'pending'),
+      sb.from('listener_applications').select('user_id', { count: 'exact', head: true }).in('status', ['pending', 'needs_resubmission']),
       sb.from('listener_profiles').select('id', { count: 'exact', head: true }).eq('is_available', true),
 
       // Session KPIs — use created_at for today/thisMonth (started_at is NULL

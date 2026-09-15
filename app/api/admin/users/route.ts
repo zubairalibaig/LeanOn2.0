@@ -63,10 +63,26 @@ export async function GET(req: NextRequest) {
       // which can be ambiguous for new applicants whose is_active defaults to TRUE).
       let userIdFilter: string[] | null = null
       if (userStatus === 'pending') {
+        // Source 1: applications explicitly awaiting or needing admin action
         const { data: pendingApps } = await sb.from('listener_applications')
           .select('user_id')
-          .eq('status', 'pending')
-        userIdFilter = pendingApps?.map((a: { user_id: string }) => a.user_id) ?? []
+          .in('status', ['pending', 'needs_resubmission'])
+        const idSet = new Set(pendingApps?.map((a: { user_id: string }) => a.user_id) ?? [])
+
+        // Source 2: unapproved profiles with NO application row at all (recovery
+        // for broken states where apply/route.ts wrote listener_profiles but the
+        // listener_applications upsert failed — e.g. during the account_holder_name
+        // column-missing window).
+        const [unapprovedRes, allAppsRes] = await Promise.all([
+          sb.from('listener_profiles').select('user_id').eq('is_approved', false).eq('is_suspended', false),
+          sb.from('listener_applications').select('user_id'),
+        ])
+        const allAppIds = new Set((allAppsRes.data ?? []).map((a: { user_id: string }) => a.user_id))
+        for (const p of (unapprovedRes.data ?? [])) {
+          if (!allAppIds.has(p.user_id as string)) idSet.add(p.user_id as string)
+        }
+
+        userIdFilter = Array.from(idSet)
         if (userIdFilter.length === 0) {
           return NextResponse.json({ items: [], total: 0, page, type: 'listener' })
         }
