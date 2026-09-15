@@ -191,7 +191,16 @@ export async function PATCH(req: NextRequest) {
   const { userId, action, notes } = body
   if (!userId || !UUID_RE.test(userId)) return NextResponse.json({ error: 'Invalid userId' }, { status: 400 })
 
-  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'approve_listener', 'reject_listener']
+  // suspend / ban / unsuspend — platform-level: affect BOTH users and listener_profiles.
+  //   Use from the Users tab to block someone from the entire platform.
+  // suspend_listener / unsuspend_listener — listener-profile-only: do NOT touch users.
+  //   Use from the Listeners tab when someone is unfit to listen but should still
+  //   be able to book sessions as a seeker (their wallet credit is untouched).
+  const validActions = [
+    'activate', 'deactivate', 'suspend', 'ban', 'unsuspend',
+    'suspend_listener', 'unsuspend_listener',
+    'approve_listener', 'reject_listener',
+  ]
   if (!action || !validActions.includes(action)) return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
 
   const sb = createAdminClient()
@@ -257,8 +266,42 @@ export async function PATCH(req: NextRequest) {
         break
       }
 
+      case 'suspend_listener': {
+        // Listener-profile-only suspension — does NOT touch the users row.
+        // The person retains seeker access and their wallet is unaffected.
+        // Reversed by 'unsuspend_listener'. No global sign-out.
+        const { error: lpErr } = await sb.from('listener_profiles')
+          .update({ is_active: false, is_available: false, is_suspended: true })
+          .eq('user_id', userId)
+        if (lpErr) {
+          logger.error('suspend_listener: listener_profiles update failed', { userId, error: lpErr.message })
+          return NextResponse.json({ error: `Failed to suspend listener profile: ${lpErr.message}` }, { status: 500 })
+        }
+        break
+      }
+
+      case 'unsuspend_listener': {
+        // Reverses suspend_listener. Restores is_active only when already approved —
+        // unsuspending a rejected applicant would otherwise put them online.
+        const { data: lp } = await sb.from('listener_profiles')
+          .select('is_approved')
+          .eq('user_id', userId)
+          .maybeSingle()
+        const wasApproved = lp?.is_approved === true
+        const { error: lpErr } = await sb.from('listener_profiles')
+          .update({ is_suspended: false, is_active: wasApproved, is_available: false })
+          .eq('user_id', userId)
+        if (lpErr) {
+          logger.error('unsuspend_listener: listener_profiles update failed', { userId, error: lpErr.message })
+          return NextResponse.json({ error: `Failed to unsuspend listener profile: ${lpErr.message}` }, { status: 500 })
+        }
+        break
+      }
+
       case 'suspend':
       case 'ban': {
+        // Platform-level block — suspends BOTH seeker account and listener profile.
+        // Use from the Users tab. For listener-only suspension use 'suspend_listener'.
         const { error: uErr } = await sb.from('users')
           .update({ is_suspended: true, is_active: false })
           .eq('id', userId)

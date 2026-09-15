@@ -1298,13 +1298,16 @@ export default function AdminPage() {
                                   </div>
                                 )}
                                 <div className="action-row">
+                                  {/* Suspend/Unsuspend here is listener-profile-only —
+                                      seeker access is preserved. To block the whole platform
+                                      use Suspend from the Users tab instead. */}
                                   {!isPending && !isRejected && (
                                     l.is_suspended || !l.is_active
-                                      ? <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'unsuspend')}>
-                                          {busy === `unsuspend:${l.user_id}` ? '…' : 'Unsuspend'}
+                                      ? <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'unsuspend_listener')}>
+                                          {busy === `unsuspend_listener:${l.user_id}` ? '…' : 'Unsuspend'}
                                         </button>
-                                      : <button className="btn btn-orange" disabled={busy !== null} onClick={() => userAction(l.user_id, 'suspend')}>
-                                          {busy === `suspend:${l.user_id}` ? '…' : 'Suspend'}
+                                      : <button className="btn btn-orange" disabled={busy !== null} onClick={() => userAction(l.user_id, 'suspend_listener')}>
+                                          {busy === `suspend_listener:${l.user_id}` ? '…' : 'Suspend listener'}
                                         </button>
                                   )}
                                   <a href={`/listener/${l.user_id}`} target="_blank" rel="noopener" className="btn btn-gray" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
