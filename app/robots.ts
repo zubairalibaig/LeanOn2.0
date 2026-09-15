@@ -19,12 +19,10 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: 'Googlebot', allow: '/', disallow: PRIVATE },
       ...AI_CRAWLERS.map(userAgent => ({ userAgent, allow: '/', disallow: PRIVATE })),
     ],
-    // Keep the main Next sitemap and the dedicated country sitemap discoverable.
-    // This avoids needing to rewrite the large generated sitemap just to add the
-    // nine new country URLs.
     sitemap: [
       'https://www.leanon.app/sitemap.xml',
       'https://www.leanon.app/country-sitemap.xml',
+      'https://www.leanon.app/nri-sitemap.xml',
     ],
     host: 'https://www.leanon.app',
   }
