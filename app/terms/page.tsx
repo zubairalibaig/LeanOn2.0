@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Terms of Use — LeanOn',
-  description: 'LeanOn terms of use. Read our terms governing use of the peer support platform, sessions, wallet, and listener services.',
+  description: 'LeanOn terms of use. Read our terms governing use of the peer support platform, sessions, wallet, payments, and listener services.',
   alternates: { canonical: 'https://www.leanon.app/terms' },
 }
 
@@ -31,10 +31,10 @@ export default function TermsPage() {
       <div className="page">
         <a href="/" className="back">← Back to LeanOn</a>
         <h1>Terms of Use</h1>
-        <p className="updated">Last updated: May 2025</p>
+        <p className="updated">Last updated: September 16, 2026</p>
 
         <div className="warning-box">
-          <p>⚠️ LeanOn is a peer support platform only. It is NOT a mental health service, therapy platform, or medical service. Listeners are not licensed therapists, psychologists, or counselors. If you are in crisis, call <strong><a href="tel:08046110007">NIMHANS 080-46110007</a></strong> or the national Tele-MANAS helpline: <strong><a href="tel:14416">14416</a></strong> (free, 24/7, Govt of India).</p>
+          <p>⚠️ LeanOn is a peer support platform only. It is NOT a mental health service, therapy platform, or medical service. Listeners are not licensed therapists, psychologists, or counselors unless an individual profile explicitly states a relevant qualification. If you are in crisis or immediate danger, contact an appropriate local emergency or crisis service where you are.</p>
         </div>
 
         <h2>1. What LeanOn is</h2>
@@ -43,9 +43,11 @@ export default function TermsPage() {
         <h2>2. Who can use LeanOn</h2>
         <ul>
           <li>You must be 18 years or older to use LeanOn</li>
-          <li>You must be located in India</li>
-          <li>You must provide a valid Indian mobile number</li>
+          <li>You must be located in a country or territory where LeanOn is currently offered</li>
+          <li>You must provide a valid mobile number and any other information required to create an account</li>
+          <li>Country availability, payment methods, and other product features may vary by market</li>
         </ul>
+        <p>Current public country experiences include India, the United States, United Kingdom, Canada, Australia, United Arab Emirates, Oman, Kuwait, Singapore and Malaysia. LeanOn may change supported markets from time to time.</p>
 
         <h2>3. Prohibited conduct</h2>
         <ul>
@@ -58,25 +60,26 @@ export default function TermsPage() {
         </ul>
 
         <h2>4. Listener responsibilities</h2>
-        <p>Listeners confirm they are sharing personal lived experience only and are not providing clinical, medical, or professional advice. Listeners must not claim to be therapists, counselors, or mental health professionals.</p>
+        <p>Listeners confirm they are sharing personal lived experience only and are not providing clinical, medical, or professional advice unless a specific service and qualification is explicitly presented and permitted by LeanOn. Listeners must not misrepresent their qualifications.</p>
 
         <h2>5. Payments and refunds</h2>
         <ul>
-          <li>Wallet top-ups are processed via Razorpay</li>
-          <li>Unused wallet balance is fully refundable on request</li>
-          <li>Completed sessions are non-refundable unless a safety violation occurred</li>
-          <li>LeanOn adds a flat ₹10 platform fee per session, shown transparently at checkout, paid by the seeker</li>
-          <li>LeanOn applies a 15% service fee on listener earnings, deducted at session settlement; listeners keep 85% of their stated rate</li>
+          <li>Wallet top-ups and payments are processed using the payment methods made available to you at checkout</li>
+          <li>Unused wallet balance is refundable subject to the current refund process and applicable payment rules</li>
+          <li>Completed sessions are generally non-refundable unless a safety, billing, or platform error requires an adjustment</li>
+          <li>Any platform fee and applicable taxes are shown before a paid session is started</li>
+          <li>LeanOn applies a 15% service fee on listener earnings, deducted at session settlement; the listener's net settlement is shown in the applicable listener terms or dashboard</li>
+          <li>Prices and currency presentation may vary by market and are determined by the checkout experience</li>
         </ul>
 
         <h2>6. Content moderation</h2>
-        <p>LeanOn uses AI-assisted moderation. Sessions that violate these terms may be terminated without refund. Repeat violations will result in permanent account suspension.</p>
+        <p>LeanOn uses AI-assisted moderation and human safety processes. Sessions that violate these terms may be terminated without refund. Repeat violations may result in permanent account suspension.</p>
 
         <h2>7. Limitation of liability</h2>
         <p>LeanOn is not liable for the advice or content shared by listeners. We do not guarantee outcomes from peer support sessions. We are a platform, not a healthcare provider.</p>
 
         <h2>8. Governing law</h2>
-        <p>These terms are governed by the laws of India. Disputes will be subject to the jurisdiction of courts in Bengaluru, Karnataka.</p>
+        <p>These terms are governed by the laws of India. Disputes will be subject to the jurisdiction of courts in Bengaluru, Karnataka, subject to applicable law.</p>
 
         <h2>9. Contact</h2>
         <p>For legal or compliance queries, please use the <a href="/contact">contact form</a> on our website and select &ldquo;Legal&rdquo; as the topic.</p>
