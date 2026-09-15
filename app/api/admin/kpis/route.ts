@@ -74,9 +74,11 @@ export async function GET(req: NextRequest) {
       // Wallet liability — money seekers have recharged but NOT yet spent.
       // This is customer money held on their behalf, not revenue. It must stay
       // parked and untouched until they spend it or it is refunded.
+      // id is included so we can exclude approved-listener accounts below (their
+      // wallet_balance = session earnings, already tracked in listener_earnings).
       // Appended LAST on purpose: extract() below is positional, so adding
       // anywhere else would silently reindex every KPI after it.
-      sb.from('users').select('wallet_balance'),
+      sb.from('users').select('id, wallet_balance'),
 
       // PLATFORM EARNINGS — LeanOn's actual income: the flat ₹10 seeker fee
       // PLUS the 15% listener service fee (both captured in
@@ -99,6 +101,12 @@ export async function GET(req: NextRequest) {
       // index 33: all payout requests that are NOT rejected (pending + processing + completed/paid)
       // Used to compute unrequested listener earnings = settled earnings - claimed payouts.
       sb.from('payout_requests').select('amount').neq('status', 'rejected'),
+
+      // index 34: approved listener user IDs — used to EXCLUDE their wallet_balance from
+      // the seeker wallet liability figure. Listener wallet_balance = session earnings
+      // credited to their wallet, which is already tracked via listener_earnings.
+      // Including it in the seeker figure double-counts the unrequested earnings.
+      sb.from('listener_profiles').select('user_id').eq('is_approved', true),
     ])
 
     // Extract values safely — failed queries return zero/null defaults
@@ -134,7 +142,7 @@ export async function GET(req: NextRequest) {
     const gatewayFeesAllTime  = extract<{ amount: number }>(22)
     const gatewayFeesMonth    = extract<{ amount: number }>(23)
     const gatewayFeesToday    = extract<{ amount: number }>(24)
-    const walletBalances      = extract<{ wallet_balance: number }>(25)
+    const walletBalances      = extract<{ id: string; wallet_balance: number }>(25)
     const earningsForKpi      = extract<{ platform_fee: number; created_at: string }>(26)
     const freeTrialToday      = extract<{ id: string }>(27)
     const freeTrialThisMonth  = extract<{ id: string }>(28)
@@ -142,7 +150,21 @@ export async function GET(req: NextRequest) {
     const paidThisMonth       = extract<{ id: string }>(30)
     const newListenersToday   = extract<{ id: string }>(31)
     const newListenersMonth   = extract<{ id: string }>(32)
-    const allClaimedPayouts   = extract<{ amount: number }>(33)
+    const allClaimedPayouts     = extract<{ amount: number }>(33)
+    const approvedListenerRows  = extract<{ user_id: string }>(34)
+
+    // Build a set of approved-listener user IDs so we can strip their wallet
+    // balances from the seeker liability figure. Their earnings are already
+    // tracked in listener_earnings / unrequested-earnings — double-counting them
+    // here would overstate what we owe seekers and confuse cash-flow reporting.
+    const approvedListenerIds = new Set(
+      (approvedListenerRows.data ?? []).map(r => r.user_id)
+    )
+
+    // Seeker-only wallet balances (exclude approved listeners)
+    const seekerWalletRows = (walletBalances.data ?? []).filter(
+      r => !approvedListenerIds.has(r.id)
+    )
 
     // Platform earnings: sum listener_earnings.platform_fee (= ₹10 seeker fee
     // + 15% service fee for sessions after 2026-09-14; just ₹10 for older rows).
@@ -210,11 +232,13 @@ export async function GET(req: NextRequest) {
         todayRupees:     platformFee.today,
         paidSessions:    platformFee.sessions,
       },
-      // Unspent customer money. NOT revenue — this is a liability that must be
-      // held in reserve until the seeker spends it or asks for it back.
+      // Unspent SEEKER money. NOT revenue — held until they spend it or request a refund.
+      // Approved-listener wallet balances are EXCLUDED: their wallet_balance = session
+      // earnings credited by credit_wallet(), already captured in listenerEarningsUnrequestedRupees.
+      // Including them here would double-count the same liability under two labels.
       walletLiability: {
-        totalRupees: (walletBalances.data ?? []).reduce((s, r) => s + Number(r.wallet_balance ?? 0), 0),
-        usersWithBalance: (walletBalances.data ?? []).filter(r => Number(r.wallet_balance ?? 0) > 0).length,
+        totalRupees: seekerWalletRows.reduce((s, r) => s + Number(r.wallet_balance ?? 0), 0),
+        usersWithBalance: seekerWalletRows.filter(r => Number(r.wallet_balance ?? 0) > 0).length,
         // Listener earnings settled but not yet requested for payout.
         // = sum(listener_earnings.net_amount WHERE settled) - sum(payout_requests WHERE not rejected)
         // This is money owed to listeners — a separate liability from seeker wallet balances.

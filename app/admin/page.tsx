@@ -1095,10 +1095,11 @@ export default function AdminPage() {
                     {/* 1 — Unspent seeker wallet balances */}
                     <div className="liability-bar">
                       <div>
-                        <div className="liability-label">Unspent user balances — do not touch</div>
+                        <div className="liability-label">Unspent seeker balances — do not touch</div>
                         <div className="liability-sub">
-                          Held on behalf of {kpis.walletLiability.usersWithBalance} user{kpis.walletLiability.usersWithBalance === 1 ? '' : 's'}.
+                          Held on behalf of {kpis.walletLiability.usersWithBalance} seeker{kpis.walletLiability.usersWithBalance === 1 ? '' : 's'}.
                           Park this — return it only when they spend it or request a refund.
+                          Listener wallet balances are excluded (already in Unrequested Listener Earnings below).
                         </div>
                       </div>
                       <div className="liability-amount">{fmtRs(kpis.walletLiability.totalRupees)}</div>
@@ -1246,9 +1247,9 @@ export default function AdminPage() {
             {kpis?.walletLiability && (
               <div className="liability-bar">
                 <div>
-                  <div className="liability-label">Unspent user balances — do not touch</div>
+                  <div className="liability-label">Unspent seeker balances — do not touch</div>
                   <div className="liability-sub">
-                    Held on behalf of {kpis.walletLiability.usersWithBalance} user{kpis.walletLiability.usersWithBalance === 1 ? '' : 's'} across all accounts.
+                    Held on behalf of {kpis.walletLiability.usersWithBalance} seeker{kpis.walletLiability.usersWithBalance === 1 ? '' : 's'} (listener balances excluded — already in unrequested earnings).
                     Park this and leave it until they spend it or ask for it back.
                   </div>
                 </div>
