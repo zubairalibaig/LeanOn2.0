@@ -196,21 +196,46 @@ export default function AdminPage() {
   // Admin flow: sign in via the normal app OTP flow → come back to /admin → enter PIN.
   useEffect(() => {
     async function init() {
-      const sb = createClient()
-      sb.auth.getUser().then(async ({ data: { user } }) => {
+      try {
+        const sb = createClient()
+        const { data: { user } } = await sb.auth.getUser()
         if (!user) { setAuthChecking(false); setDenied(true); return }
-        // Verify the session is actually an admin before granting access.
+
+        // Set authUser early — the denied/PIN screens both need it to branch correctly.
+        const u = user as { id: string; email?: string; phone?: string }
+
+        // Ping with no PIN header first. Three outcomes:
+        //   200 ok       → full admin access (no PIN configured, or PIN already carried)
+        //   403 PIN_REQUIRED / PHONE_VERIFIED → identity confirmed, PIN gate needed
+        //   403 NOT_ADMIN / other             → show Access Denied
         const pingRes = await fetch('/api/admin/ping').catch(() => null)
         if (pingRes?.ok) {
           const body = await pingRes.json().catch(() => ({}))
           setIsPrimaryAdmin(!!body.isPrimaryAdmin)
-          setAuthUser(user as { id: string; email?: string; phone?: string })
+          setAuthUser(u)
           setAuthChecking(false)
+        } else if (pingRes?.status === 403) {
+          const body = await pingRes.json().catch(() => ({}))
+          setAuthUser(u)
+          if (body.code === 'PIN_REQUIRED' || body.code === 'PHONE_VERIFIED') {
+            // Admin identity confirmed — show PIN gate
+            setPinRequired(true)
+            setAuthChecking(false)
+          } else {
+            // NOT_ADMIN or similar — show "Access Denied" (authUser is set → right branch)
+            setAuthChecking(false)
+            setDenied(true)
+          }
         } else {
+          // Network error or 5xx — show denied
+          setAuthUser(u)
           setAuthChecking(false)
           setDenied(true)
         }
-      }).catch(() => { setAuthChecking(false); setDenied(true) })
+      } catch {
+        setAuthChecking(false)
+        setDenied(true)
+      }
     }
     init()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
