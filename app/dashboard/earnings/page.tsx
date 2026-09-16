@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
-import { LISTENER_SERVICE_FEE_RATE } from '@/lib/constants'
+import { PLATFORM_FEE } from '@/lib/constants'
 
 const sb = createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -187,11 +187,13 @@ export default function EarningsPage() {
             <div style={{ textAlign: 'right' }}>
               <div className="earning-net">{fmt(e.net_amount)}</div>
               <div className="earning-fee">{(() => {
-                // Show listener-centric breakdown: your gross share and the 15%
-                // service fee deducted from it. gross_amount is amount_held (seeker
-                // payment) — misleading here because Gross − Fee ≠ Net for pro-rated
-                // sessions (there's a seeker refund). Compute from net_amount instead.
-                const svcFee = Math.round(e.net_amount * LISTENER_SERVICE_FEE_RATE / (1 - LISTENER_SERVICE_FEE_RATE))
+                // listener_earnings.platform_fee = PLATFORM_FEE + listenerServiceFee
+                // for all India sessions (proven: amount_held − refund − net simplifies
+                // to 10 + serviceFee regardless of pro-ration). So platform_fee − 10
+                // is the exact service fee, no rounding approximation needed.
+                // NRI-priced sessions (when geo-pricing ships) will include the NRI
+                // margin here too — handled separately when that feature launches.
+                const svcFee = e.platform_fee - PLATFORM_FEE
                 const listenerGross = e.net_amount + svcFee
                 return `Your share ₹${listenerGross} · Service fee ₹${svcFee}`
               })()}</div>
