@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { compressImage, extForType, AVATAR_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
 import Avatar from '@/app/components/Avatar'
+import SelfieCapture from '@/app/components/SelfieCapture'
 
 const S = `
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
@@ -107,25 +108,18 @@ export default function ProfilePage() {
     loadProfile()
   }, [])
 
-  async function uploadAvatar(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file || !userId) return
-    if (!file.type.startsWith('image/')) { alert('Please choose an image file'); return }
-    // Raised from 2 MB: we downscale before upload, so a raw phone photo is
-    // fine as INPUT. The guard now only stops absurd files (see MAX_INPUT_BYTES).
+  async function doAvatarUpload(file: File) {
+    if (!userId) return
     if (file.size > MAX_INPUT_BYTES) { alert('Photo must be under 20 MB'); return }
     setUploadingAvatar(true)
     try {
-      // Downscale to 256px before upload — a 48px avatar does not need 5 MB.
-      // Returns the original file untouched if compression is not possible.
       const upload = await compressImage(file, AVATAR_OPTS)
-      // Derive extension from MIME type, not the user-controlled filename
       const ext = extForType(upload.type)
       const path = `${userId}.${ext}`
       const { error: upErr } = await supabase.storage.from('avatars').upload(path, upload, { upsert: true, contentType: upload.type })
       if (upErr) throw upErr
       const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path)
-      const url = `${publicUrl}?t=${Date.now()}` // cache bust
+      const url = `${publicUrl}?t=${Date.now()}`
       const res = await fetch('/api/auth/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -139,6 +133,14 @@ export default function ProfilePage() {
     } finally {
       setUploadingAvatar(false)
     }
+  }
+
+  // For seekers: traditional file-input upload (no selfie restriction)
+  async function uploadAvatar(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!file.type.startsWith('image/')) { alert('Please choose an image file'); return }
+    await doAvatarUpload(file)
   }
 
   async function saveName() {
@@ -198,16 +200,19 @@ export default function ProfilePage() {
                 ? <Avatar src={avatarUrl} alt={name} size={192} />
                 : ini(name)}
             </div>
-            <label style={{cursor:'pointer'}}>
-              <input type="file" accept="image/*" capture="user" style={{display:'none'}} onChange={uploadAvatar} />
-              <span className="avatar-upload-btn">
-                {uploadingAvatar ? 'Uploading...' : avatarUrl ? (isListener ? 'Retake selfie' : 'Change photo') : (isListener ? '+ Take selfie' : '+ Add photo')}
-              </span>
-            </label>
-            {isListener && (
-              <div style={{fontSize:11,color:'var(--gray)',fontWeight:600,textAlign:'center',marginTop:2,marginBottom:4}}>
-                Selfie required · no uploaded photos
-              </div>
+            {isListener ? (
+              <SelfieCapture
+                preview={avatarUrl}
+                loading={uploadingAvatar}
+                onCapture={doAvatarUpload}
+              />
+            ) : (
+              <label style={{cursor:'pointer'}}>
+                <input type="file" accept="image/*" style={{display:'none'}} onChange={uploadAvatar} />
+                <span className="avatar-upload-btn">
+                  {uploadingAvatar ? 'Uploading...' : avatarUrl ? 'Change photo' : '+ Add photo'}
+                </span>
+              </label>
             )}
             {editingName ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>

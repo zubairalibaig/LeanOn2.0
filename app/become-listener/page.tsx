@@ -1,10 +1,11 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, LISTENER_SERVICE_FEE_RATE, LANGUAGES, MONTHS, MIN_LISTENER_AGE, MAX_LISTENER_AGE, ageFromBirth } from '@/lib/constants'
 import { createClient } from '@/lib/supabase'
 import { SHOW_LISTENER_GROWTH_NOTICE } from '@/lib/feature-flags'
 import { compressImage, extForType, AVATAR_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
+import SelfieCapture from '@/app/components/SelfieCapture'
 
 const TAGS = [
   {id:'loneliness', label:'Loneliness 🌙'},
@@ -206,7 +207,6 @@ export default function BecomeListenerPage() {
   const [avatarPreview, setAvatarPreview] = useState<string>('')
   const [avatarUrl, setAvatarUrl] = useState<string>('')
   const [avatarUploading, setAvatarUploading] = useState(false)
-  const photoInputRef = useRef<HTMLInputElement | null>(null)
 
   // Phone verification now happens ONCE at sign-in via the MSG91 widget on /auth.
   // The in-form OTP flow (signInWithOtp / verifyOtp) is permanently dead —
@@ -552,21 +552,12 @@ export default function BecomeListenerPage() {
             {fieldErrors.bio && <span className="field-err">{fieldErrors.bio}</span>}
 
             <label className="lbl">Profile photo — selfie required</label>
-            <input
-              ref={photoInputRef}
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              capture="user"
-              style={{display:'none'}}
-              onChange={async e => {
-                const file = e.target.files?.[0]
-                if (!file) return
-                // Raised from 5 MB: the photo is downscaled below, so a raw
-                // phone camera file is a fine INPUT. Only absurd files are blocked.
+            <SelfieCapture
+              preview={avatarPreview || null}
+              loading={avatarUploading}
+              hasError={!!fieldErrors.avatar}
+              onCapture={async (file) => {
                 if (file.size > MAX_INPUT_BYTES) { setFieldErrors(f => ({...f, avatar:'Photo must be under 20 MB'})); return }
-                // Compress at SELECTION time, not upload time, so the preview
-                // shows exactly the image that will be stored, and the later
-                // upload step is instant.
                 const shrunk = await compressImage(file, AVATAR_OPTS)
                 setAvatarFile(shrunk)
                 setAvatarUrl('')
@@ -576,22 +567,9 @@ export default function BecomeListenerPage() {
                 if (fieldErrors.avatar) setFieldErrors(f => ({...f, avatar:''}))
               }}
             />
-            <div
-              className={`photo-box${avatarPreview ? ' has-photo' : ''}${fieldErrors.avatar ? ' err' : ''}`}
-              onClick={() => photoInputRef.current?.click()}
-            >
-              {avatarPreview
-                ? <img src={avatarPreview} alt="Preview" className="photo-preview" />
-                : <div className="photo-placeholder">🤳</div>
-              }
-              <span className="photo-label">
-                {avatarPreview ? 'Retake selfie' : 'Take a selfie'}
-              </span>
-              <span className="photo-sub">Front camera · JPG / PNG / WebP · max 20 MB</span>
-            </div>
             {fieldErrors.avatar && <span className="field-err">{fieldErrors.avatar}</span>}
-            <div style={{background:'rgba(26,143,160,0.06)',border:'1px solid rgba(26,143,160,0.2)',borderRadius:10,padding:'10px 14px',marginBottom:16,fontSize:12,color:'#1A5F6A',fontWeight:600,lineHeight:1.5}}>
-              🤳 Take a selfie — no stock photos, avatars, or pictures of pictures. Seekers trust listeners who show their real face. We review every photo before approving your account.
+            <div style={{background:'rgba(26,143,160,0.06)',border:'1px solid rgba(26,143,160,0.2)',borderRadius:10,padding:'10px 14px',marginBottom:16,marginTop:8,fontSize:12,color:'#1A5F6A',fontWeight:600,lineHeight:1.5}}>
+              🤳 Selfie required — no stock photos, avatars, or screenshots. Seekers trust listeners who show their real face. Every photo is reviewed before your account is approved.
             </div>
 
             <label className="lbl">Topics you can speak to (select all that apply)</label>
