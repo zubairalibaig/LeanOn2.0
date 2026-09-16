@@ -152,22 +152,17 @@ export async function GET(req: NextRequest) {
       let items: Record<string, unknown>[] = (data ?? []) as unknown as Record<string, unknown>[]
       if (items.length > 0) {
         const userIds = items.map(p => p.user_id as string)
-        // aadhaar (full) needs migration 047; aadhaar_last4 + admin_notes are
-        // long-standing. Select optimistically and fall back column-by-column so
-        // a pre-migration DB never errors the listener list.
-        const fullSelect = 'user_id, status, admin_notes, upi_id, bank_account, ifsc_code, aadhaar, aadhaar_last4'
-        const noAadhaarSelect = 'user_id, status, admin_notes, upi_id, bank_account, ifsc_code, aadhaar_last4'
+        // Full Aadhaar number is intentionally excluded from the listener listing —
+        // aadhaar_last4 is sufficient for display here. The full document is
+        // accessible only via the dedicated /api/admin/verify-listener endpoint
+        // where an admin is specifically reviewing the identity submission.
+        const withNotesSelect = 'user_id, status, admin_notes, upi_id, bank_account, ifsc_code, aadhaar_last4'
         const minimalSelect = 'user_id, status, upi_id, bank_account, ifsc_code'
         let appsData: Record<string, unknown>[] = []
-        const fullRes = await sb.from('listener_applications').select(fullSelect).in('user_id', userIds)
-        if (!fullRes.error) {
-          appsData = (fullRes.data ?? []) as Record<string, unknown>[]
-        } else {
-          const midRes = await sb.from('listener_applications').select(noAadhaarSelect).in('user_id', userIds)
-          appsData = !midRes.error
-            ? (midRes.data ?? []) as Record<string, unknown>[]
-            : ((await sb.from('listener_applications').select(minimalSelect).in('user_id', userIds)).data ?? []) as Record<string, unknown>[]
-        }
+        const notesRes = await sb.from('listener_applications').select(withNotesSelect).in('user_id', userIds)
+        appsData = !notesRes.error
+          ? (notesRes.data ?? []) as Record<string, unknown>[]
+          : ((await sb.from('listener_applications').select(minimalSelect).in('user_id', userIds)).data ?? []) as Record<string, unknown>[]
         const appMap = new Map(appsData.map(a => [a.user_id as string, a]))
         items = items.map(p => ({ ...p, application: appMap.get(p.user_id as string) ?? null }))
 
@@ -535,11 +530,16 @@ export async function PATCH(req: NextRequest) {
       }
     }
 
-    await sb.from('admin_audit_logs').insert({
+    const { error: auditErr } = await sb.from('admin_audit_logs').insert({
       admin_id: dbUserIdOrNull(user!.id),
       action: `user_${action}`,
       target_id: userId,
-    }).then(() => {}, () => {})
+    })
+    if (auditErr) {
+      logger.error('Admin audit log write FAILED — privileged action completed without audit trail', {
+        action: `user_${action}`, userId, error: auditErr.message,
+      })
+    }
 
     return NextResponse.json({ ok: true })
   } catch (err) {

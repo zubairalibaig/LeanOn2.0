@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
-import { requireAdmin, ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS } from '@/lib/require-admin'
+import { requireAdmin, ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS, dbUserIdOrNull } from '@/lib/require-admin'
 
 // GET /api/admin/session-messages?sessionId=... — full raw transcript for one
 // session, with real seeker/listener names.
@@ -54,6 +54,16 @@ export async function GET(req: NextRequest) {
       .eq('session_id', sessionId)
       .order('created_at', { ascending: sort })
     if (mErr) throw mErr
+
+    // Audit every transcript read — this is the highest-sensitivity endpoint.
+    const { error: auditErr } = await sb.from('admin_audit_logs').insert({
+      admin_id: dbUserIdOrNull(user!.id),
+      action: 'read_session_transcript',
+      target_id: sessionId,
+    })
+    if (auditErr) {
+      logger.error('Audit log write FAILED for transcript read', { sessionId, error: auditErr.message })
+    }
 
     return NextResponse.json({ session, messages: messages ?? [] })
   } catch (err) {

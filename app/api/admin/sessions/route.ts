@@ -54,8 +54,8 @@ export async function GET(req: NextRequest) {
         amount_held, status, is_free_trial, started_at, ended_at, platform_fee,
         listener_rate_per_min,
         crisis_flagged, crisis_flagged_at, created_at,
-        seeker:users!seeker_id(name, phone),
-        listener:users!listener_id(name, phone)
+        seeker:users!seeker_id(name),
+        listener:users!listener_id(name)
       `, { count: 'exact' })
       .order(sortBy === 'amount' ? 'amount_held' : 'created_at', { ascending: sortAscending })
       .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)

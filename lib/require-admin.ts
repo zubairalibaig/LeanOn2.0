@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
-import { isRateLimited, recordAttempt } from '@/lib/rate-limit'
+import { isRateLimited, recordAttempt, isRateLimitedAsync, recordAttemptAsync } from '@/lib/rate-limit'
 
 // Brute-force guard for admin credentials.
 //
@@ -109,9 +109,11 @@ export async function requireAdmin(req: Request) {
     const providedPw = req.headers.get('x-admin-password') ?? ''
     if (providedPw) {
       // Brute-force guard counts FAILED attempts only (see note below).
+      // isRateLimitedAsync / recordAttemptAsync use Redis when configured,
+      // giving globally-consistent enforcement across all serverless containers.
       const clientIp = (req.headers.get('x-forwarded-for') ?? 'unknown').split(',')[0].trim()
       const key = `admin-pw:${clientIp}`
-      if (isRateLimited(key, FAILED_AUTH_LIMIT, FAILED_AUTH_WINDOW_MS)) {
+      if (await isRateLimitedAsync(key, FAILED_AUTH_LIMIT, FAILED_AUTH_WINDOW_MS)) {
         return { error: 'Too many attempts. Please wait.', code: 'PIN_RATE_LIMITED', status: 429 as const, user: null }
       }
       if (timingSafeEqual(providedPw, adminPassword)) {
@@ -123,10 +125,7 @@ export async function requireAdmin(req: Request) {
           isPrimaryAdmin: false,
         }
       }
-      // Wrong password — add artificial delay to slow brute-force across serverless containers.
-      // The in-memory rate limiter is per-container and cannot be relied on in serverless,
-      // so a timing delay is the primary defense until Redis rate limiting is configured.
-      recordAttempt(key, FAILED_AUTH_WINDOW_MS)
+      await recordAttemptAsync(key, FAILED_AUTH_WINDOW_MS)
       await new Promise(r => setTimeout(r, 1000))
       return { error: 'Forbidden', code: 'NOT_ADMIN', status: 403 as const, user: null }
     }
@@ -139,12 +138,12 @@ export async function requireAdmin(req: Request) {
   if (phonePinHeader) {
     const clientIp = (req.headers.get('x-forwarded-for') ?? 'unknown').split(',')[0].trim()
     const key = `admin-phone:${clientIp}`
-    if (isRateLimited(key, FAILED_AUTH_LIMIT, FAILED_AUTH_WINDOW_MS)) {
+    if (await isRateLimitedAsync(key, FAILED_AUTH_LIMIT, FAILED_AUTH_WINDOW_MS)) {
       return { error: 'Too many attempts. Please wait.', code: 'PIN_RATE_LIMITED', status: 429 as const, user: null }
     }
     const account = adminAccounts().find(a => a.phone === normalizePhone(phonePinHeader))
     if (!account) {
-      recordAttempt(key, FAILED_AUTH_WINDOW_MS)
+      await recordAttemptAsync(key, FAILED_AUTH_WINDOW_MS)
       await new Promise(r => setTimeout(r, 1000))
       return { error: 'Invalid phone number', code: 'NOT_ADMIN', status: 403 as const, user: null }
     }
@@ -155,7 +154,7 @@ export async function requireAdmin(req: Request) {
       return { error: 'PIN required', code: 'PHONE_VERIFIED', status: 403 as const, user: null }
     }
     if (!timingSafeEqual(providedPin, account.pin)) {
-      recordAttempt(key, FAILED_AUTH_WINDOW_MS)
+      await recordAttemptAsync(key, FAILED_AUTH_WINDOW_MS)
       await new Promise(r => setTimeout(r, 500))
       return { error: 'Incorrect PIN', code: 'PIN_REQUIRED', status: 403 as const, user: null }
     }
@@ -229,13 +228,13 @@ export async function requireAdmin(req: Request) {
   const requiredPin = matchedAccount?.pin ?? process.env.ADMIN_PIN
   if (requiredPin) {
     const key = `admin-pin:${user.id}`
-    if (isRateLimited(key, FAILED_AUTH_LIMIT, FAILED_AUTH_WINDOW_MS)) {
+    if (await isRateLimitedAsync(key, FAILED_AUTH_LIMIT, FAILED_AUTH_WINDOW_MS)) {
       return { error: 'Too many attempts. Please wait.', code: 'PIN_RATE_LIMITED', status: 429 as const, user: null }
     }
     const authHeader = req.headers.get('x-admin-pin') ?? req.headers.get('authorization')
     const providedPin = (authHeader?.replace(/^Bearer\s+/i, '') ?? '')
     if (!timingSafeEqual(providedPin, requiredPin)) {
-      recordAttempt(key, FAILED_AUTH_WINDOW_MS)
+      await recordAttemptAsync(key, FAILED_AUTH_WINDOW_MS)
       return { error: 'PIN required', code: 'PIN_REQUIRED', status: 403 as const, user: null }
     }
   }

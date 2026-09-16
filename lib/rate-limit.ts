@@ -106,3 +106,43 @@ export async function checkRateLimitAsync(key: string, max: number, windowMs: nu
   }
   return checkRateLimit(key, max, windowMs)
 }
+
+/**
+ * Async read-only rate-limit check (does NOT record an attempt).
+ * Mirrors isRateLimited() but uses Redis sliding window when configured,
+ * giving globally-consistent enforcement across all serverless containers.
+ * Pair with recordAttemptAsync() for failure-only counting.
+ */
+export async function isRateLimitedAsync(key: string, limit: number, windowMs: number): Promise<boolean> {
+  const rl = getRedisLimiter()
+  if (rl.redis) {
+    try {
+      const now = Date.now()
+      const count = await rl.redis.zcount(key, now - windowMs, now)
+      return count >= limit
+    } catch {
+      // Fall through to in-memory on Redis error
+    }
+  }
+  return isRateLimited(key, limit, windowMs)
+}
+
+/**
+ * Async version of recordAttempt() — records one failed attempt.
+ * Uses Redis sorted set for cross-container persistence when configured.
+ */
+export async function recordAttemptAsync(key: string, windowMs: number): Promise<void> {
+  const rl = getRedisLimiter()
+  if (rl.redis) {
+    try {
+      const now = Date.now()
+      await rl.redis.zadd(key, { score: now, member: `${now}-${Math.random().toString(36).slice(2)}` })
+      await rl.redis.zremrangebyscore(key, 0, now - windowMs)
+      await rl.redis.expire(key, Math.ceil(windowMs / 1000) + 60)
+      return
+    } catch {
+      // Fall through to in-memory on Redis error
+    }
+  }
+  recordAttempt(key, windowMs)
+}
