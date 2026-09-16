@@ -14,187 +14,34 @@ const GA_ID = process.env.NEXT_PUBLIC_GA_ID
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.leanon.app'),
-  title: {
-    default: 'LeanOn — Real Human Peer Support Online | India & Indian Diaspora',
-    template: '%s | LeanOn — Real Human Peer Support',
-  },
-  description: 'Talk to a real human peer listener when you want someone to hear you. LeanOn offers private, pseudonymous text and voice peer support for people in India and supported countries, including Indians and South Asians living abroad.',
+  title: { default: 'LeanOn — Real Human Peer Support Online | India & Indian Diaspora', template: '%s | LeanOn — Real Human Peer Support' },
+  description: 'Talk to a real human peer listener when you want someone to hear you. LeanOn offers private, pseudonymous text and voice peer support for people seeking empathy, emotional support and human connection in India and supported countries.',
   manifest: '/manifest.json',
   icons: { icon: '/logo.png', apple: '/logo.png' },
   keywords: [
-    'leanon', 'lean on', 'LeanOn app', 'peer support', 'emotional support',
-    'talk to someone online', 'talk to a real person online', 'real human listener',
-    'human connection online', 'someone to talk to', 'someone to listen to me',
-    'peer emotional support', 'online peer support', 'active listening',
-    'support for Indians abroad', 'NRI emotional support', 'Indian diaspora support',
-    'Indian expat loneliness', 'homesick Indian abroad', 'Indian living abroad',
-    'talk to a real person instead of AI', 'human alternative to AI chatbot',
-    'ChatGPT alternative for human connection', 'AI companion alternative',
-    'India peer support', 'USA peer support', 'UK peer support', 'Canada peer support',
-    'UAE peer support', 'Oman peer support', 'Kuwait peer support',
-    'Singapore peer support', 'Malaysia peer support', 'Australia peer support',
+    'leanon','lean on','LeanOn app','peer support','peer support online','peer support India','peer emotional support','peer listener','emotional support','emotional support online','human emotional support','mental health support','mental health support online','mental health support India','talk to someone online','talk to a real person online','real human listener','human connection online','someone to talk to','someone to listen to me','active listening','empathetic listening','empathetic listener','empathy','empathy in peer support','peer counselling','peer support vs counselling','counselling vs peer support','peer support vs therapy','online counselling alternative','support for loneliness','relationship support','burnout support','grief support',
+    'support for Indians abroad','NRI emotional support','Indian diaspora support','Indian expat loneliness','homesick Indian abroad','Indian living abroad','talk to a real person instead of AI','human alternative to AI chatbot','ChatGPT alternative for human connection','AI companion alternative',
+    'India peer support','USA peer support','UK peer support','Canada peer support','UAE peer support','Oman peer support','Kuwait peer support','Singapore peer support','Malaysia peer support','Australia peer support',
   ],
-  authors: [{ name: 'LeanOn' }],
-  creator: 'LeanOn',
-  publisher: 'LeanOn',
+  authors: [{ name: 'LeanOn' }], creator: 'LeanOn', publisher: 'LeanOn',
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-snippet': -1, 'max-image-preview': 'large' } },
-  alternates: {
-    canonical: 'https://www.leanon.app',
-    languages: {
-      'en': 'https://www.leanon.app',
-      'en-IN': 'https://www.leanon.app',
-      'en-US': 'https://www.leanon.app',
-      'en-GB': 'https://www.leanon.app',
-      'en-CA': 'https://www.leanon.app',
-      'en-AE': 'https://www.leanon.app',
-      'en-OM': 'https://www.leanon.app',
-      'en-KW': 'https://www.leanon.app',
-      'en-SG': 'https://www.leanon.app',
-      'en-MY': 'https://www.leanon.app',
-      'en-AU': 'https://www.leanon.app',
-      'x-default': 'https://www.leanon.app',
-    },
-  },
-  openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    siteName: 'LeanOn',
-    title: 'LeanOn — Real Human Peer Support Online | India & Indian Diaspora',
-    description: 'Talk to a real human peer listener through private text or voice conversations. Available in India and supported countries for people who want human connection.',
-    images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn — Real Human Peer Support Online' }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    site: '@leanonapp',
-    title: 'LeanOn — Real Human Peer Support Online',
-    description: 'Talk to a real human peer listener when you want someone to hear you. Private text and voice conversations.',
-    images: ['/icon-512.png'],
-  },
-  verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? undefined,
-  },
+  alternates: { canonical: 'https://www.leanon.app', languages: { 'en':'https://www.leanon.app','en-IN':'https://www.leanon.app','en-US':'https://www.leanon.app','en-GB':'https://www.leanon.app','en-CA':'https://www.leanon.app','en-AE':'https://www.leanon.app','en-OM':'https://www.leanon.app','en-KW':'https://www.leanon.app','en-SG':'https://www.leanon.app','en-MY':'https://www.leanon.app','en-AU':'https://www.leanon.app','x-default':'https://www.leanon.app' } },
+  openGraph: { type:'website', locale:'en_US', siteName:'LeanOn', title:'LeanOn — Real Human Peer Support Online | India & Indian Diaspora', description:'Talk to a real human peer listener through private text or voice conversations. LeanOn focuses on peer support, empathy, emotional support and human connection.', images:[{url:'/icon-512.png',width:512,height:512,alt:'LeanOn — Real Human Peer Support Online'}] },
+  twitter: { card:'summary_large_image', site:'@leanonapp', title:'LeanOn — Real Human Peer Support Online', description:'Talk to a real human peer listener when you want someone to hear you. Private text and voice conversations.', images:['/icon-512.png'] },
+  verification: { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? undefined },
 }
 
-export const viewport: Viewport = {
-  themeColor: '#0F4867',
-  width: 'device-width',
-  initialScale: 1,
-}
+export const viewport: Viewport = { themeColor:'#0F4867', width:'device-width', initialScale:1 }
 
 const organizationJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  '@id': 'https://www.leanon.app/#organization',
-  name: 'LeanOn',
-  alternateName: ['Lean On', 'leanon', 'LeanOn App'],
-  url: 'https://www.leanon.app',
-  logo: { '@type': 'ImageObject', url: 'https://www.leanon.app/logo.png', width: 512, height: 512 },
-  description: 'LeanOn is an India-origin peer support platform connecting people with real human peer listeners through private text and voice conversations. It serves people in India and supported international markets, including members of the Indian diaspora.',
-  disambiguatingDescription: 'LeanOn (one word) is the peer support platform at leanon.app. It is not related to the 2015 song “Lean On” by Major Lazer and DJ Snake.',
-  foundingDate: '2024',
-  foundingLocation: { '@type': 'Country', name: 'India' },
-  areaServed: countries.map(name => ({ '@type': 'Country', name })),
-  serviceType: 'Peer Emotional Support',
-  knowsAbout: [
-    'peer support', 'emotional support', 'loneliness', 'active listening', 'human connection',
-    'NRI emotional support', 'Indian diaspora support', 'homesickness', 'expat loneliness',
-    'relationship stress', 'work stress', 'burnout', 'grief support', 'student stress',
-    'real human conversation', 'peer listening',
-  ],
-  sameAs: [
-    'https://www.instagram.com/leanonapp',
-    'https://twitter.com/leanonapp',
-    'https://www.linkedin.com/company/leanonapp',
-  ],
+  '@context':'https://schema.org','@type':'Organization','@id':'https://www.leanon.app/#organization',name:'LeanOn',alternateName:['Lean On','leanon','LeanOn App'],url:'https://www.leanon.app',logo:{'@type':'ImageObject',url:'https://www.leanon.app/logo.png',width:512,height:512},
+  description:'LeanOn is an India-origin peer support platform connecting people with real human peer listeners through private text and voice conversations. It serves people in India and supported international markets, including members of the Indian diaspora.',
+  disambiguatingDescription:'LeanOn (one word) is the peer support platform at leanon.app. It is not related to the 2015 song “Lean On” by Major Lazer and DJ Snake.',foundingDate:'2024',foundingLocation:{'@type':'Country',name:'India'},areaServed:countries.map(name=>({'@type':'Country',name})),serviceType:'Peer Support',
+  knowsAbout:['peer support','peer emotional support','mental health support','emotional support','human connection','empathy','empathetic listening','active listening','peer listener','loneliness support','relationship support','work stress','burnout support','grief support','student stress','counselling','peer support vs counselling','peer support vs therapy','NRI emotional support','Indian diaspora support','homesickness','expat loneliness','real human conversation'],
+  sameAs:['https://www.instagram.com/leanonapp','https://twitter.com/leanonapp','https://www.linkedin.com/company/leanonapp'],
 }
+const webSiteJsonLd={'@context':'https://schema.org','@type':'WebSite','@id':'https://www.leanon.app/#website',url:'https://www.leanon.app',name:'LeanOn',alternateName:['Lean On','LeanOn App'],publisher:{'@id':'https://www.leanon.app/#organization'}}
+const webAppJsonLd={'@context':'https://schema.org','@type':'WebApplication','@id':'https://www.leanon.app/#webapplication',name:'LeanOn',url:'https://www.leanon.app',applicationCategory:'HealthApplication',operatingSystem:'Web, iOS, Android',description:'Peer emotional support through real human listeners. LeanOn provides non-clinical peer support and human connection for people who want a private text or voice conversation. It is not therapy and does not replace emergency or clinical care.',provider:{'@id':'https://www.leanon.app/#organization'},areaServed:countries.map(name=>({'@type':'Country',name})),audience:{'@type':'Audience',audienceType:'Adults seeking peer support, emotional support and human connection'},offers:{'@type':'Offer',price:'0',description:'One free 5-minute introductory session for eligible new users. Paid session pricing is shown at checkout and may vary by market.',availability:'https://schema.org/InStock'}}
+const serviceJsonLd={'@context':'https://schema.org','@type':'Service','@id':'https://www.leanon.app/#service',name:'LeanOn Peer Support',serviceType:'Peer Support',alternateName:['Peer Support Session','Online Listener Session','Emotional Support Chat'],provider:{'@id':'https://www.leanon.app/#organization'},description:'One-on-one text or voice peer support with a real human listener. LeanOn provides listening, empathy and human connection for people dealing with everyday emotional challenges; it is not therapy.',category:'Peer Support',areaServed:countries.map(name=>({'@type':'Country',name})),availableLanguage:['English','Hindi','Tamil','Telugu','Kannada','Malayalam','Marathi','Bengali','Gujarati','Punjabi','Odia','Urdu'],hoursAvailable:{'@type':'OpeningHoursSpecification',dayOfWeek:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],opens:'00:00',closes:'23:59'}}
 
-const webSiteJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  '@id': 'https://www.leanon.app/#website',
-  url: 'https://www.leanon.app',
-  name: 'LeanOn',
-  alternateName: ['Lean On', 'LeanOn App'],
-  publisher: { '@id': 'https://www.leanon.app/#organization' },
-}
-
-const webAppJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'WebApplication',
-  '@id': 'https://www.leanon.app/#webapplication',
-  name: 'LeanOn',
-  url: 'https://www.leanon.app',
-  applicationCategory: 'HealthApplication',
-  operatingSystem: 'Web, iOS, Android',
-  description: 'Peer emotional support through real human listeners. LeanOn is for people in India and supported international markets who want a private text or voice conversation with another person. It is not therapy and does not replace emergency or clinical care.',
-  provider: { '@id': 'https://www.leanon.app/#organization' },
-  areaServed: countries.map(name => ({ '@type': 'Country', name })),
-  audience: { '@type': 'Audience', audienceType: 'Adults seeking peer emotional support and human connection' },
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    description: 'One free 5-minute introductory session for eligible new users. Paid session pricing is shown at checkout and may vary by market.',
-    availability: 'https://schema.org/InStock',
-  },
-}
-
-const serviceJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Service',
-  '@id': 'https://www.leanon.app/#service',
-  name: 'LeanOn Peer Emotional Support',
-  serviceType: 'Peer Emotional Support',
-  alternateName: ['Peer Support Session', 'Online Listener Session', 'Emotional Support Chat'],
-  provider: { '@id': 'https://www.leanon.app/#organization' },
-  description: 'One-on-one text or voice peer support with a real human listener. LeanOn is not therapy; it provides listening, empathy and human connection for people dealing with everyday emotional challenges.',
-  category: 'Peer Support',
-  areaServed: countries.map(name => ({ '@type': 'Country', name })),
-  availableLanguage: ['English', 'Hindi', 'Tamil', 'Telugu', 'Kannada', 'Malayalam', 'Marathi', 'Bengali', 'Gujarati', 'Punjabi', 'Odia', 'Urdu'],
-  hoursAvailable: { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], opens: '00:00', closes: '23:59' },
-}
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }} />
-        <meta name="theme-color" content="#1A8FA0" />
-        <link rel="apple-touch-icon" href="/icon-192.png" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="LeanOn" />
-        {GA_ID && (
-          <>
-            <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
-            <script dangerouslySetInnerHTML={{ __html: `
-              window.dataLayer=window.dataLayer||[];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js',new Date());
-              gtag('config','${GA_ID}',{page_path:window.location.pathname});
-            `}} />
-          </>
-        )}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {process.env.NEXT_PUBLIC_BING_VERIFICATION && (
-          <meta name="msvalidate.01" content={process.env.NEXT_PUBLIC_BING_VERIFICATION} />
-        )}
-      </head>
-      <body style={{ margin: 0, padding: 0 }}>
-        <ErrorBoundary>
-          {children}
-        </ErrorBoundary>
-        <SiteFooter />
-        <BottomNav />
-        <FloatingCTA />
-        <ListenerPresence />
-        <ToastProvider />
-        <ServiceWorkerRegister />
-        <Analytics />
-      </body>
-    </html>
-  )
-}
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en"><head><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(organizationJsonLd)}}/><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(webSiteJsonLd)}}/><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(webAppJsonLd)}}/><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(serviceJsonLd)}}/><meta name="theme-color" content="#1A8FA0"/><link rel="apple-touch-icon" href="/icon-192.png"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-status-bar-style" content="default"/><meta name="apple-mobile-web-app-title" content="LeanOn"/>{GA_ID&&<><script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}/><script dangerouslySetInnerHTML={{__html:`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}',{page_path:window.location.pathname});`}}/></>}<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous"/>{process.env.NEXT_PUBLIC_BING_VERIFICATION&&<meta name="msvalidate.01" content={process.env.NEXT_PUBLIC_BING_VERIFICATION}/>}</head><body style={{margin:0,padding:0}}><ErrorBoundary>{children}</ErrorBoundary><SiteFooter/><BottomNav/><FloatingCTA/><ListenerPresence/><ToastProvider/><ServiceWorkerRegister/><Analytics/></body></html>}
