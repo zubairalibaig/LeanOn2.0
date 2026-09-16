@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
+import { LISTENER_SERVICE_FEE_RATE } from '@/lib/constants'
 
 const sb = createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -185,7 +186,15 @@ export default function EarningsPage() {
             </div>
             <div style={{ textAlign: 'right' }}>
               <div className="earning-net">{fmt(e.net_amount)}</div>
-              <div className="earning-fee">Gross {fmt(e.gross_amount)} · Fee {fmt(e.platform_fee)}</div>
+              <div className="earning-fee">{(() => {
+                // Show listener-centric breakdown: your gross share and the 15%
+                // service fee deducted from it. gross_amount is amount_held (seeker
+                // payment) — misleading here because Gross − Fee ≠ Net for pro-rated
+                // sessions (there's a seeker refund). Compute from net_amount instead.
+                const svcFee = Math.round(e.net_amount * LISTENER_SERVICE_FEE_RATE / (1 - LISTENER_SERVICE_FEE_RATE))
+                const listenerGross = e.net_amount + svcFee
+                return `Your share ₹${listenerGross} · Service fee ₹${svcFee}`
+              })()}</div>
             </div>
           </div>
         ))}
