@@ -9,6 +9,7 @@ import { showToast } from '@/lib/toast'
 import { registerPushNotifications } from '@/lib/firebase-client'
 import { compressImage, extForType, AVATAR_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
 import Avatar from '@/app/components/Avatar'
+import SelfieCapture from '@/app/components/SelfieCapture'
 
 let _sb: ReturnType<typeof createBrowserClient> | null = null
 function initSb() {
@@ -687,19 +688,12 @@ export default function DashboardPage() {
     setShowEdit(true)
   }
 
-  async function uploadAvatar(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file || !user) return
-    if (!file.type.startsWith('image/')) { alert('Please choose an image file'); return }
-    // Raised from 2 MB: we downscale before upload, so a raw phone photo is
-    // fine as INPUT. The guard now only stops absurd files (see MAX_INPUT_BYTES).
+  async function uploadAvatar(file: File) {
+    if (!user) return
     if (file.size > MAX_INPUT_BYTES) { alert('Photo must be under 20 MB'); return }
     setUploadingAv(true)
     try {
-      // Downscale to 256px before upload — a 48px avatar does not need 5 MB.
-      // Returns the original file untouched if compression is not possible.
       const upload = await compressImage(file, AVATAR_OPTS)
-      // Derive extension from MIME type, not the user-controlled filename
       const ext = extForType(upload.type)
       const path = `${user.id}.${ext}`
       const { error: upErr } = await sb.storage.from('avatars').upload(path, upload, { upsert: true, contentType: upload.type })
@@ -711,8 +705,6 @@ export default function DashboardPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ avatar_url: url }),
       })
-      // Only reflect the new avatar if the server actually saved it — otherwise
-      // the UI shows a photo that's gone on the next reload.
       if (!res.ok) throw new Error('profile update failed')
       setEditAvatar(url)
     } catch (err) {
@@ -930,12 +922,11 @@ export default function DashboardPage() {
                   ? <Avatar src={editAvatar} alt="avatar" size={192} />
                   : ini(profile?.name)}
               </div>
-              <label style={{cursor:'pointer'}}>
-                <input type="file" accept="image/*" style={{display:'none'}} onChange={uploadAvatar} />
-                <span className="avatar-upload-btn">
-                  {uploadingAv ? 'Uploading...' : editAvatar ? 'Change photo' : '+ Add photo'}
-                </span>
-              </label>
+              <SelfieCapture
+                preview={editAvatar}
+                loading={uploadingAv}
+                onCapture={uploadAvatar}
+              />
             </div>
 
             {/* Bio */}

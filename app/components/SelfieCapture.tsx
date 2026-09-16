@@ -63,7 +63,7 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
 
   const capture = useCallback(() => {
     const video = videoRef.current
-    if (!video || !videoReady) return
+    if (!video || !videoReady || video.videoWidth <= 0 || video.videoHeight <= 0) return
     setBusy(true)
     const canvas = document.createElement('canvas')
     canvas.width  = video.videoWidth  || 640
