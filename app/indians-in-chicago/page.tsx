@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand what Indian life in Chicago is like?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are based in India and understand the NRI experience in American Midwest metros. The Chicago Indian experience — the Schaumburg and Naperville communities, the Midwest winters, the community dynamics — doesn\'t need explaining. They already know.' } },
   { '@type': 'Question', name: 'When can I connect from Chicago?', acceptedAnswer: { '@type': 'Answer', text: 'Chicago (CST) is 11.5 hours behind IST. 8am Chicago = 7:30pm India. Your early morning before the commute is Indian evening — a reliable window for finding a listener. No appointment needed.' } },
   { '@type': 'Question', name: 'Is this private from my Schaumburg or Naperville community?', acceptedAnswer: { '@type': 'Answer', text: 'Completely private. Sessions are anonymous — phone number and first name only. Listeners are in India, with no connection to the Chicago Indian network. Nothing is shared with anyone.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free every session. Sessions from ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [

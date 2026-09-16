@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'I am a working professional. Will this take up too much of my time?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Sessions start at 15 minutes. Many women use LeanOn during a lunch break, after the child is in bed, or in a quiet twenty minutes in the car. There is no appointment, no commute, no waiting room. You open the app, choose a listener, and talk. The first 5 minutes are always free.',
+        text: 'Sessions start at 15 minutes. Many women use LeanOn during a lunch break, after the child is in bed, or in a quiet twenty minutes in the car. There is no appointment, no commute, no waiting room. You open the app, choose a listener, and talk. The first 5 minutes free — once per listener.',
       },
     },
     {
@@ -217,7 +217,7 @@ export default function ForWomenPage() {
         <p>
           LeanOn is not therapy. It is trained peer support — real people who have lived through their own hard
           seasons and learned to listen without fixing, without judging, and without making it about themselves.
-          Sessions start at ₹99 for 15 minutes. The first 5 minutes are always free.
+          Sessions start at ₹99 for 15 minutes. The first 5 minutes free — once per listener.
         </p>
 
         <h2>How It Works</h2>

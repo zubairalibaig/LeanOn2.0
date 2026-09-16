@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'How is talking to a peer listener different from talking to a friend?', acceptedAnswer: { '@type': 'Answer', text: 'A friend has their own life, their own opinions, and sometimes their own stake in what you do. A peer listener has none of that. They are there only to listen, ask the right questions, and help you think through what you\'re carrying. No agenda, no advice you didn\'t ask for.' } },
   { '@type': 'Question', name: 'Are LeanOn listeners trained?', acceptedAnswer: { '@type': 'Answer', text: 'Listeners go through a selection and orientation process and are guided on active listening and empathetic engagement. They are not counsellors — they are skilled peers with lived experience. That distinction is the point.' } },
   { '@type': 'Question', name: 'How do I start a session?', acceptedAnswer: { '@type': 'Answer', text: 'Browse available listeners at leanon.app/browse, pick someone whose profile resonates, and start a session. First 5 minutes are free. No appointment needed.' } },
-  { '@type': 'Question', name: 'How much does NRI peer support cost on LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes are free every session. Paid sessions start from ₹160 for 15 minutes. There is no subscription or commitment.' } },
+  { '@type': 'Question', name: 'How much does NRI peer support cost on LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. There is no subscription or commitment.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [

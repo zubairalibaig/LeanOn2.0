@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand the Leicester Gujarati and Indian community?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are based in India and understand the British Indian diaspora experience — including the unique Leicester context of a community with roots going back to the East African Indian migration of the 1970s, and the specific Gujarati cultural pressures. No explanation needed.' } },
   { '@type': 'Question', name: 'When is a good time to connect from Leicester?', acceptedAnswer: { '@type': 'Answer', text: 'Leicester (GMT/BST) is 5.5 hours behind IST in winter and 4.5 hours in summer. Indian evenings (6–10pm IST) are Leicester afternoons (1:30–5:30pm BST in summer). Afternoons in Leicester map well to Indian evening availability.' } },
   { '@type': 'Question', name: 'Is this private from the Belgrave Road community?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Listeners are in India with no connection to the Leicester Indian community. Nothing is shared with anyone.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free every session. Sessions from ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -89,7 +89,7 @@ export default function IndiansInLeicesterPage() {
         <div className="section">
           <h2>When the Community Is Everywhere and Yet</h2>
           <p>The Leicester Indian community&rsquo;s density creates the same paradox that all tight-knit diaspora communities know: you are surrounded by your people and yet there are things you cannot say among them. The community gossip network is real. The expectation to be fine — to honour the sacrifice of your grandparents who built this from nothing — is heavy. Mental health is not something discussed openly.</p>
-          <p>Leicester (GMT/BST) is 5.5 hours behind IST in winter and 4.5 hours in summer. Indian evenings (6–10pm IST) fall in Leicester afternoons (1:30–5:30pm BST in summer). Your lunch break, or early afternoon before school pickup — that window is India&rsquo;s evening. A real Indian listener is available. No appointment needed. Anonymous. The first 5 minutes are always free.</p>
+          <p>Leicester (GMT/BST) is 5.5 hours behind IST in winter and 4.5 hours in summer. Indian evenings (6–10pm IST) fall in Leicester afternoons (1:30–5:30pm BST in summer). Your lunch break, or early afternoon before school pickup — that window is India&rsquo;s evening. A real Indian listener is available. No appointment needed. Anonymous. The first 5 minutes free — once per listener.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>

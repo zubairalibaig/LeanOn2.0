@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Is the NRI identity crisis a real thing?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. The experience of being neither fully from here nor fully from there — of not being claimed completely by either culture — is one of the most common things NRIs describe. It is not a personal failure. It is the structural reality of living between two worlds.' } },
   { '@type': 'Question', name: 'Will a listener in India understand identity questions from abroad?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners are Indian and understand NRI identity dynamics from the Indian side — they know what "foreign-returned" means, they know the gap between how NRIs are perceived in India and how they feel. They understand the in-between.' } },
   { '@type': 'Question', name: 'What if I don\'t even know how to describe my identity problem?', acceptedAnswer: { '@type': 'Answer', text: 'That is completely okay. A listener\'s job is not to receive a well-formulated problem. They can sit with "I don\'t know who I am anymore" just as well as any specific issue. Start where you are.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free every session. Sessions from ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -89,7 +89,7 @@ export default function NriIdentityCrisisPage() {
         <div className="section">
           <h2>When the Question Becomes &ldquo;Who Am I?&rdquo;</h2>
           <p>For many NRIs, the identity question deepens over time rather than resolving. The longer you are abroad, the more the India you carry is the India you left — not the one that has continued changing. You miss a place that partly no longer exists. You carry values that India has partly moved on from. And the abroad-self you have built is not quite the Indian self your family sees.</p>
-          <p>The question &ldquo;who am I?&rdquo; in this context is genuine and weighty. A real Indian peer listener at LeanOn can sit with you in that question — not to resolve it, which would be dishonest, but to hear you explore it. Sometimes naming the in-between is itself a kind of relief. Sessions are anonymous and private. First 5 minutes always free.</p>
+          <p>The question &ldquo;who am I?&rdquo; in this context is genuine and weighty. A real Indian peer listener at LeanOn can sit with you in that question — not to resolve it, which would be dishonest, but to hear you explore it. Sometimes naming the in-between is itself a kind of relief. Sessions are anonymous and private. First 5 minutes free — once per listener.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>

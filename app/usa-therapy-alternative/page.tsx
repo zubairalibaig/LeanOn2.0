@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'How much does LeanOn cost compared to therapy in the USA?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'A single therapy session in the USA can cost $150-$250. LeanOn sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first 5 minutes are always free. That is over 10 times more affordable per minute than most therapy options.',
+        text: 'A single therapy session in the USA can cost $150-$250. LeanOn sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first 5 minutes free — once per listener. That is over 10 times more affordable per minute than most therapy options.',
       },
     },
     {
@@ -185,7 +185,7 @@ export default function UsaTherapyAlternativePage() {
           <p>LeanOn listeners are available <strong>right now</strong> — not in six weeks.
             Many are Indian and understand the NRI experience without needing it explained.
             Sessions are <strong>$10 for 15 minutes</strong>, <strong>$15 for 30 minutes</strong>,
-            and <strong>$20 for 45 minutes</strong> — with your first 5 minutes always free.</p>
+            and <strong>$20 for 45 minutes</strong> — with your first 5 minutes free — once per listener.</p>
           <p>You do not spend your session explaining what an H-1B is, what it means to miss Diwali,
             or why your parents&apos; expectations feel so heavy. You get straight to the feelings.
             That is a different kind of accessibility.</p>
@@ -233,7 +233,7 @@ export default function UsaTherapyAlternativePage() {
           <div className="faq-item">
             <h3>How much does LeanOn cost compared to therapy in the USA?</h3>
             <p>A therapy session costs $150-$250. LeanOn sessions are $10 for 15 minutes, $15 for 30 minutes,
-              and $20 for 45 minutes — with the first 5 minutes always free.</p>
+              and $20 for 45 minutes — with the first 5 minutes free — once per listener.</p>
           </div>
           <div className="faq-item">
             <h3>Why should Indians in the USA use LeanOn specifically?</h3>

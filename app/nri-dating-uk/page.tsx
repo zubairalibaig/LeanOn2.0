@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand British Indian dating culture?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are based in India and understand the British Indian diaspora experience — the generational dynamics, the community gossip, the expectations around who you should marry and when. They won\'t need the cultural context explained.' } },
   { '@type': 'Question', name: 'What if I\'m in a secret relationship and it\'s taking a toll?', acceptedAnswer: { '@type': 'Answer', text: 'That is exactly the kind of weight peer support is for. The exhaustion of a hidden relationship, the fear of coming out to your family, the guilt and the longing — a listener will hear all of it without judgement.' } },
   { '@type': 'Question', name: 'Is this for British Indians of all backgrounds — Punjabi, Gujarati, Tamil?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners have cultural familiarity across North and South Indian backgrounds. Your specific community context doesn\'t need extensive explanation.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free every session. Sessions from ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
   { '@type': 'Question', name: 'Is this confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Nothing is shared with your family, community, or anyone else.' } },
 ] }
 
@@ -90,7 +90,7 @@ export default function NriDatingUkPage() {
         <div className="section">
           <h2>What You Actually Need to Say</h2>
           <p>British Indian dating has its own specific things that go unsaid. The white partner you have been with for two years and your parents still don&rsquo;t know about. The Indian match your parents love and you feel nothing for. The community gossip that someone saw you out with someone &ldquo;inappropriate.&rdquo; The loneliness of wanting a relationship that works in both worlds and not finding it. The grief of knowing your parents&rsquo; happiness and your own may be in conflict.</p>
-          <p>UK afternoons (2–4pm GMT/BST) are Indian evenings (7:30–9:30pm IST) — a natural window when listeners are available. No appointment needed. Anonymous. Completely private from the Leicester, Birmingham, or London Indian community. First 5 minutes always free.</p>
+          <p>UK afternoons (2–4pm GMT/BST) are Indian evenings (7:30–9:30pm IST) — a natural window when listeners are available. No appointment needed. Anonymous. Completely private from the Leicester, Birmingham, or London Indian community. First 5 minutes free — once per listener.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>

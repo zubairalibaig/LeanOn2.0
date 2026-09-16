@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand the Gulf Malayali experience specifically?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. The Gulf-Kerala corridor is deeply understood — the sacrifice of Gulf workers, the remittances that built Kerala, and the identity crisis of returning after years abroad to a home that has moved on. Both Gulf experiences and Western country experiences are understood.' } },
   { '@type': 'Question', name: 'I am a nurse in the UK and very isolated. Is this for me?', acceptedAnswer: { '@type': 'Answer', text: 'Absolutely. Malayali nurses in the UK are one of the most isolated NRI groups — working difficult hours, in a new country, often far from their immediate family who may still be in Kerala or the Gulf. You do not have to minimise that. A listener will hear it.' } },
   { '@type': 'Question', name: 'Is this confidential from my family in Kerala?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Your family in Kerala and your community abroad will never know. Sessions are anonymous — phone number and first name only.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free every session. Sessions from ₹160 for 15 minutes. No subscription needed.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription needed.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [

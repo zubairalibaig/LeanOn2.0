@@ -208,7 +208,7 @@ export default function TalkToRealPersonPage() {
             <li>
               <div>
                 <strong>Start for free</strong>
-                <p>First 5 minutes are always free. No payment details needed to start.</p>
+                <p>First 5 minutes free — once per listener. No payment details needed to start.</p>
               </div>
             </li>
             <li>

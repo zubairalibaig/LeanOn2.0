@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Is LeanOn the right place for marriage problems?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is peer support, not mediation or professional advice. But peer listeners are real Indians who have heard many of these stories. Sometimes what you need before anything else is to be heard — by someone who truly understands the cultural complexity, without judgement.' } },
   { '@type': 'Question', name: 'What if I\'m not sure my marriage is a problem — just that something feels off?', acceptedAnswer: { '@type': 'Answer', text: 'That is exactly what peer support is for. You don\'t need a crisis or a clear problem to talk to someone. "Something feels off and I can\'t name it" is a completely valid reason to reach out.' } },
   { '@type': 'Question', name: 'Is this confidential from my family?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are completely anonymous. Only a phone number and first name. Nothing is shared with your family in India or the US, your community, or anyone else.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free every session. Sessions from ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [

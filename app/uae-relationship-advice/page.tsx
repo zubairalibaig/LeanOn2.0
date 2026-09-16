@@ -201,7 +201,7 @@ export default function UAERelationshipAdvicePage() {
             <li>15-minute session — AED 37</li>
             <li>30-minute session — AED 55</li>
             <li>45-minute session — AED 74</li>
-            <li>First 5 minutes always free on your first session</li>
+            <li>First 5 minutes free — once per listener</li>
           </ul>
           <p style={{ marginTop: '12px' }}>Anonymous. No subscription. Talk in Hindi, Tamil, Telugu, Malayalam, or any Indian language.</p>
         </div>

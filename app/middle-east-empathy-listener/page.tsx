@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'How much does a session cost from the Gulf?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'From the UAE: AED 37 for 15 min, AED 55 for 30 min, AED 74 for 45 min. From Kuwait: KD 4 / KD 5 / KD 7. From Oman: OMR 4 / OMR 6 / OMR 8. First 5 minutes are always free on your first session.',
+        text: 'From the UAE: AED 37 for 15 min, AED 55 for 30 min, AED 74 for 45 min. From Kuwait: KD 4 / KD 5 / KD 7. From Oman: OMR 4 / OMR 6 / OMR 8. First 5 minutes are free — once per listener.',
       },
     },
     {
@@ -198,7 +198,7 @@ export default function MiddleEastEmpathyListenerPage() {
             <li>UAE: AED 37 / AED 55 / AED 74 for 15/30/45 min</li>
             <li>Kuwait: KD 4 / KD 5 / KD 7 for 15/30/45 min</li>
             <li>Oman: OMR 4 / OMR 6 / OMR 8 for 15/30/45 min</li>
-            <li>First 5 minutes always free on your first session</li>
+            <li>First 5 minutes free — once per listener</li>
           </ul>
         </div>
 

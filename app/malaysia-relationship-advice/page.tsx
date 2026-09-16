@@ -196,7 +196,7 @@ export default function MalaysiaRelationshipAdvicePage() {
 
         <div className="card">
           <h2>Session pricing for Malaysia</h2>
-          <p>Pay in Malaysian ringgit. Your first 5 minutes are always free.</p>
+          <p>Pay in Malaysian ringgit. Your first 5 minutes free — once per listener.</p>
           <div className="pricing-grid">
             <div className="price-card">
               <div className="dur">15 min</div>

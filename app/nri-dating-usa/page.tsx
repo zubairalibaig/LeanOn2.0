@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Will the listener judge me for dating non-Indians or outside my caste?', acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn listeners are peer listeners, not moral authorities. They will hear you without judgement, whatever your choices or situation. Their role is to understand, not to assess.' } },
   { '@type': 'Question', name: 'Is this confidential from my family and community?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Nothing is shared with your family, community, or anyone else.' } },
   { '@type': 'Question', name: 'What if I\'m second-generation and my dating life is complicated by identity questions?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is particularly well-suited to second-generation Indian-Americans, who often navigate an identity gap between their American life and their Indian family. Listeners understand the ABCD experience without needing extensive explanation.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free every session. Sessions from ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -90,7 +90,7 @@ export default function NriDatingUsaPage() {
         <div className="section">
           <h2>What People Actually Need to Say</h2>
           <p>The things people actually need to say about NRI dating are not the things that fit into a casual conversation with friends. "I&rsquo;m afraid that if I date the person I want, it will destroy my relationship with my parents." "I&rsquo;ve been on the apps for two years and I&rsquo;m starting to feel like something is wrong with me." "I&rsquo;m in a relationship I can&rsquo;t tell anyone about and it&rsquo;s exhausting." "My parents have a shortlist and I don&rsquo;t know how to say no without breaking their hearts."</p>
-          <p>These are real. A LeanOn listener will hear them — really hear them — without judgement, without advice you didn&rsquo;t ask for, and without the community gossip risk. Sessions are anonymous and completely private. First 5 minutes always free.</p>
+          <p>These are real. A LeanOn listener will hear them — really hear them — without judgement, without advice you didn&rsquo;t ask for, and without the community gossip risk. Sessions are anonymous and completely private. First 5 minutes free — once per listener.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>

@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand arranged marriage dynamics?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners are Indian and most have direct experience with arranged marriage dynamics — either in their own families or personally. They understand rishta culture, bio-data, the family pressure involved, and the specific weight it carries when you are an NRI navigating expectations from two continents.' } },
   { '@type': 'Question', name: 'Can I talk about this anonymously?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are private — only your phone number and first name are used. Nothing goes back to your family, your community, or anyone in your life. You can say exactly what you actually feel without it going anywhere.' } },
   { '@type': 'Question', name: 'Can I talk at any time or do I need to book?', acceptedAnswer: { '@type': 'Answer', text: 'No appointment needed. Browse available listeners and start a session when you need one. First 5 minutes are free.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes are free every session. Sessions continue from ₹160 for 15 minutes. No subscription, no commitment.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription, no commitment.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [

@@ -48,7 +48,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is LeanOn available 24/7?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are available whenever you need them — early morning, late night, or during the workday. There is no appointment. You browse listeners who are online right now and start a session. The first 5 minutes are always free.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are available whenever you need them — early morning, late night, or during the workday. There is no appointment. You browse listeners who are online right now and start a session. The first 5 minutes free — once per listener.' },
     },
     {
       '@type': 'Question',

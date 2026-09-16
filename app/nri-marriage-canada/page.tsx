@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'What if I\'m facing pressure to get married and don\'t want to?', acceptedAnswer: { '@type': 'Answer', text: 'That is exactly the kind of thing a peer listener can hold with you. The pressure to marry, the fear of disappointing your family, the guilt of wanting something different — these are real and complicated. A listener won\'t tell you what to do, but they will genuinely hear you.' } },
   { '@type': 'Question', name: 'What if my marriage is in trouble and I don\'t want the community to know?', acceptedAnswer: { '@type': 'Answer', text: 'Sessions are completely anonymous. Only a phone number and first name. Listeners are in India, outside your Brampton or Surrey community entirely. Nothing is shared with anyone.' } },
   { '@type': 'Question', name: 'Is this also for men dealing with marriage pressure?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn is for anyone, regardless of gender. Men in the Indian diaspora often have fewer places to talk about marriage pressure, relationship struggles, or family expectations. A real peer listener will hear you without judgement.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free every session. Sessions from ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [

@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Is peer support the right thing when my relationship is really struggling?', acceptedAnswer: { '@type': 'Answer', text: 'Peer support is not a substitute for other kinds of help when things are serious. But it is often the first and most accessible step — being heard by someone who truly understands the cultural context, before you decide what else you need.' } },
   { '@type': 'Question', name: 'What if my problem involves my partner\'s family as much as my partner?', acceptedAnswer: { '@type': 'Answer', text: 'NRI relationship problems almost always involve families, not just couples. Listeners understand Indian family dynamics — joint family expectations, parental involvement in couples\' decisions, the weight of family honour — and won\'t need that context explained.' } },
   { '@type': 'Question', name: 'Is this confidential from my partner and family?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are completely anonymous. Only a phone number and first name. Nothing is shared with your partner, family, or community.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free every session. Sessions from ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -90,7 +90,7 @@ export default function NriRelationshipProblemsPage() {
         <div className="section">
           <h2>When There Is Nobody Safe to Talk To</h2>
           <p>One of the loneliest aspects of NRI relationship problems is having no one safe to talk to. You cannot tell your parents — they have opinions that would make things worse, or they would worry, or they would tell other family members. You cannot tell your Indian community friends — it goes in the gossip circuit. You cannot tell your non-Indian friends — they don&rsquo;t have the cultural framework to understand. You are alone with the weight of it.</p>
-          <p>LeanOn is built for exactly this gap. A real Indian peer listener in India — outside your social network entirely, inside the cultural context completely — who can hear what you are actually carrying. Anonymous. Private. No appointment. First 5 minutes always free.</p>
+          <p>LeanOn is built for exactly this gap. A real Indian peer listener in India — outside your social network entirely, inside the cultural context completely — who can hear what you are actually carrying. Anonymous. Private. No appointment. First 5 minutes free — once per listener.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>

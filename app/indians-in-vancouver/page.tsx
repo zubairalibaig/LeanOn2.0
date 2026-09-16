@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand the Surrey and BC Punjabi community?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are based in India and understand the Punjabi diaspora experience — including the specific BC Punjabi community, the pressure of the community in Surrey, and the identity weight of immigrant life in Canada. No explanation needed.' } },
   { '@type': 'Question', name: 'When can I connect from Vancouver?', acceptedAnswer: { '@type': 'Answer', text: 'Vancouver (PST/PDT) is 13.5 hours behind IST. 8am Vancouver = 9:30pm India. Early mornings in Vancouver are late Indian evenings — still workable. 6am Vancouver = 7:30pm India, a stronger window.' } },
   { '@type': 'Question', name: 'Is this private from the Surrey community?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Listeners are in India with no connection to the Surrey or BC Indian community. Nothing is shared.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free every session. Sessions from ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -89,7 +89,7 @@ export default function IndiansInVancouverPage() {
         <div className="section">
           <h2>BC Rain and Real Connection</h2>
           <p>Vancouver is one of the most beautiful cities in the world — the mountains, the ocean, Stanley Park. It is also one of the rainiest. The long grey and rainy season from October through April has a genuine effect on wellbeing. Combined with the pressures of immigrant life — a housing market that remains extraordinarily expensive, the pressure to establish yourself in a Canadian career, the distance from family in India — the rain can compound a quiet isolation.</p>
-          <p>Vancouver (PST/PDT) is 13.5 hours behind IST. 6am Vancouver is 7:30pm India — a strong window. 8am Vancouver is 9:30pm India — still workable. Weekend mornings before the gurdwara or the family gathering in Surrey are India&rsquo;s evenings. No appointment needed, sessions are anonymous, first 5 minutes always free.</p>
+          <p>Vancouver (PST/PDT) is 13.5 hours behind IST. 6am Vancouver is 7:30pm India — a strong window. 8am Vancouver is 9:30pm India — still workable. Weekend mornings before the gurdwara or the family gathering in Surrey are India&rsquo;s evenings. No appointment needed, sessions are anonymous, first 5 minutes free — once per listener.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>

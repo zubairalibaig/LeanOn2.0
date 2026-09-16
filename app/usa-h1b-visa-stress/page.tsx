@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'What if I cannot afford therapy while dealing with this stress?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Therapy in the USA can cost $150-$250 per hour with a six-week waitlist. LeanOn sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes, with your first 5 minutes always free. You can start a conversation right now.',
+        text: 'Therapy in the USA can cost $150-$250 per hour with a six-week waitlist. LeanOn sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes, with your first 5 minutes free — once per listener. You can start a conversation right now.',
       },
     },
     {
@@ -188,7 +188,7 @@ export default function UsaH1bVisaStressPage() {
           <p>A LeanOn listener is a neutral, confidential space. They understand the H-1B system without
             needing it explained. They will sit with you in the uncertainty without minimising it or
             catastrophising it.</p>
-          <p>Sessions start at <strong>$10 for 15 minutes</strong> — your first 5 minutes are always free.</p>
+          <p>Sessions start at <strong>$10 for 15 minutes</strong> — your first 5 minutes free — once per listener.</p>
         </div>
 
         <div className="card">
@@ -229,7 +229,7 @@ export default function UsaH1bVisaStressPage() {
           <div className="faq-item">
             <h3>What if I cannot afford therapy while dealing with this stress?</h3>
             <p>Therapy in the USA costs $150-$250 per hour with long waitlists. LeanOn sessions are
-              $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes — first 5 minutes always free.</p>
+              $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes — first 5 minutes free — once per listener.</p>
           </div>
           <div className="faq-item">
             <h3>Can I talk to a LeanOn listener in Hindi or Telugu?</h3>

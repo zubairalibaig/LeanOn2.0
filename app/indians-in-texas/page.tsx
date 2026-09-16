@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand the Texas Indian experience?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are based in India and understand the NRI experience in American metros including the Texas corridor — Houston\'s energy sector, Dallas tech, Austin startups. You don\'t need to explain the context.' } },
   { '@type': 'Question', name: 'What time works to connect from Texas?', acceptedAnswer: { '@type': 'Answer', text: 'Texas (CST/CDT) is 11–11.5 hours behind IST. 7am in Houston or Dallas = 6:30pm in India. Early Texas morning aligns well with Indian evenings when listeners are active.' } },
   { '@type': 'Question', name: 'Is my session completely confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are anonymous — only a phone number and first name required. Nothing leaves the session. Your community, employer, and family won\'t know.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free every session. Paid sessions from ₹160 for 15 minutes. No subscription required.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription required.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [

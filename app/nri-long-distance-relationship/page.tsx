@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'What if I\'m feeling guilty about my partner waiting?', acceptedAnswer: { '@type': 'Answer', text: 'Guilt is one of the most common things people carry in this situation — guilt for leaving, guilt for the waiting, guilt for the times you feel resentment about the sacrifice. A peer listener can hold this with you without judgement.' } },
   { '@type': 'Question', name: 'What if the relationship is starting to struggle under the distance?', acceptedAnswer: { '@type': 'Answer', text: 'That happens. Long-distance strains the best relationships. A peer listener won\'t give you relationship advice, but they will hear what you\'re going through and help you feel less alone in it.' } },
   { '@type': 'Question', name: 'Is this confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are anonymous — phone number and first name only. Nothing is shared with your partner, family, or anyone else.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free every session. Sessions from ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [

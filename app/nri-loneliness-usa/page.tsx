@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'What does NRI loneliness in America feel like?', acceptedAnswer: { '@type': 'Answer', text: 'It often feels like a low-grade, persistent sense that something is missing. It is not always acute. It shows up at Diwali away from home, at family occasions you miss, in conversations where you feel like a stranger, in the gap between the life you show people and the life you actually feel.' } },
   { '@type': 'Question', name: 'Will a listener understand this even if I can\'t describe it clearly?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners are Indian and many have direct experience with family abroad or with dual cultural identity. You don\'t need to describe it clearly — they already know the shape of it.' } },
   { '@type': 'Question', name: 'Is this confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Nothing is shared with your family, community, or employer.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free every session. Sessions from ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -90,7 +90,7 @@ export default function NriLonelinessUsaPage() {
         <div className="section">
           <h2>Why It&rsquo;s Harder to Name Than It Looks</h2>
           <p>NRI loneliness is particularly hard to name because it comes wrapped in privilege. You chose to come here. You have a good job. You live in a better house than most. Your children go to excellent schools. The people who sacrificed to get you here would be confused and hurt to hear that you feel lonely. The guilt of feeling lonely in the middle of a good life is one of the most common things Indian peer listeners at LeanOn hear.</p>
-          <p>The thing that helps is simply being heard by someone who gets it — without the guilt, without the gratitude calculation, without having to justify the feeling. A real Indian peer listener, in India. Anonymous. Private. First 5 minutes always free.</p>
+          <p>The thing that helps is simply being heard by someone who gets it — without the guilt, without the gratitude calculation, without having to justify the feeling. A real Indian peer listener, in India. Anonymous. Private. First 5 minutes free — once per listener.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>

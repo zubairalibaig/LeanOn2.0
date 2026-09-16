@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Will the listener understand British Indian culture?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners are based in India and understand the British Indian diaspora experience — the Gujarati and Punjabi communities of the Midlands and North, the intergenerational dynamics, the specific pressures of being raised British and Indian simultaneously. No lengthy explanation needed.' } },
   { '@type': 'Question', name: 'What if my situation feels complicated — is this still right?', acceptedAnswer: { '@type': 'Answer', text: 'Complicated is exactly what peer support is designed for. Listeners don\'t need a simple problem to work with. They can sit with complexity and ambiguity without pushing you toward any particular answer.' } },
   { '@type': 'Question', name: 'Is this confidential from my family and community?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Nothing is shared with your family, community, or anyone else.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free every session. Sessions from ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -90,7 +90,7 @@ export default function NriMarriageUkPage() {
         <div className="section">
           <h2>What Peer Support Looks Like for Marriage Pressure</h2>
           <p>LeanOn listeners are not advisors and will not tell you what to do about your marriage. They are real people — trained peer listeners with lived experience of Indian cultural dynamics — who will genuinely hear you. No judgement. No advice you didn&rsquo;t ask for. Just the experience of being understood by someone who gets the cultural context without needing it explained.</p>
-          <p>UK (GMT/BST) afternoons align with Indian evenings — 3pm in Birmingham or Leicester is 8:30pm in India. Your quiet afternoon at home, or your lunch break at work, is when Indian listeners are in their evenings. No appointment needed. Anonymous. First 5 minutes always free.</p>
+          <p>UK (GMT/BST) afternoons align with Indian evenings — 3pm in Birmingham or Leicester is 8:30pm in India. Your quiet afternoon at home, or your lunch break at work, is when Indian listeners are in their evenings. No appointment needed. Anonymous. First 5 minutes free — once per listener.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>

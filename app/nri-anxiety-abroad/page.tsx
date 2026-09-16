@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'What is NRI anxiety and how is it different from regular anxiety?', acceptedAnswer: { '@type': 'Answer', text: 'NRI anxiety is regular anxiety layered with specific immigrant stressors: visa status tied to employment, the weight of family expectations from afar, the performance of success for a community watching from India, the fear of returning without having "made it," and the constant background calculation of when and whether to come back.' } },
   { '@type': 'Question', name: 'Is H-1B anxiety common among Indians in America?', acceptedAnswer: { '@type': 'Answer', text: 'Extremely common. The H-1B tethers your entire life to your employer\'s goodwill. You cannot speak up at work, cannot leave a bad situation, cannot take a gap to breathe. This structural dependency creates anxiety that is not pathological — it is a rational response to a genuinely precarious situation.' } },
   { '@type': 'Question', name: 'Will a listener understand immigration-related stress?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners are Indian and understand the H-1B and visa situation, the immigration-career dependency, and the specific way these create anxiety. Many have close family members living with this. No explanation needed.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free every session. Sessions from ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -89,7 +89,7 @@ export default function NriAnxietyAbroadPage() {
         <div className="section">
           <h2>What You Need Is to Be Heard</h2>
           <p>There are very few places where NRI anxiety can be voiced honestly. Your manager cannot hear it — your job depends on seeming fine. Your parents cannot hear it — they would worry or feel responsible. Your Indian community friends are performing the same fine-ness. The result is a private anxiety carried alone.</p>
-          <p>A real Indian peer listener at LeanOn can hear all of this — the visa fear, the performance pressure, the family expectation, the quiet question underneath — without judgment, without advice you didn&rsquo;t ask for, and without telling you to be grateful. Listeners are available when India is in the evening (morning US time, afternoon UK time). Anonymous. First 5 minutes always free.</p>
+          <p>A real Indian peer listener at LeanOn can hear all of this — the visa fear, the performance pressure, the family expectation, the quiet question underneath — without judgment, without advice you didn&rsquo;t ask for, and without telling you to be grateful. Listeners are available when India is in the evening (morning US time, afternoon UK time). Anonymous. First 5 minutes free — once per listener.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>

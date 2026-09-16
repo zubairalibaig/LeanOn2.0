@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'I secretly wish I could go back to India. Is that normal?', acceptedAnswer: { '@type': 'Answer', text: 'Yes, and it is more common than people admit. The return fantasy — wanting to undo the move, to reclaim the life you had before — is something many NRIs carry quietly because it feels ungrateful or like a failure. Listeners understand it completely. It is not weakness. It is a human response to long-term displacement.' } },
   { '@type': 'Question', name: 'I feel guilty because my life is objectively good. Am I wrong to feel burnt out?', acceptedAnswer: { '@type': 'Answer', text: 'No. The privilege guilt that comes with NRI burnout is real and it makes the burnout harder to address, but it does not make the burnout less real. You can have a good life and still be depleted. The two are not incompatible.' } },
   { '@type': 'Question', name: 'Is this confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Your family, your employer, and your community will never know.' } },
-  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free every session. Sessions from ₹160 for 15 minutes. No subscription or commitment.' } },
+  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription or commitment.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [

@@ -58,7 +58,7 @@ const faqSchema = {
       name: 'How much does it cost to talk to a listener from the Gulf?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'From the UAE, sessions cost AED 37 for 15 min, AED 55 for 30 min, and AED 74 for 45 min. From Kuwait: KD 4 for 15 min, KD 5 for 30 min, KD 7 for 45 min. From Oman: OMR 4 for 15 min, OMR 6 for 30 min, OMR 8 for 45 min. First 5 minutes are always free.',
+        text: 'From the UAE, sessions cost AED 37 for 15 min, AED 55 for 30 min, and AED 74 for 45 min. From Kuwait: KD 4 for 15 min, KD 5 for 30 min, KD 7 for 45 min. From Oman: OMR 4 for 15 min, OMR 6 for 30 min, OMR 8 for 45 min. First 5 minutes free — once per listener.',
       },
     },
     {
@@ -225,7 +225,7 @@ export default function MiddleEastRantPage() {
           <div className="faq-item">
             <h3>How much does it cost to talk from the Gulf?</h3>
             <p>UAE: AED 37 / AED 55 / AED 74 for 15/30/45 min. Kuwait: KD 4 / KD 5 / KD 7.
-              Oman: OMR 4 / OMR 6 / OMR 8. First 5 minutes always free.</p>
+              Oman: OMR 4 / OMR 6 / OMR 8. First 5 minutes free — once per listener.</p>
           </div>
           <div className="faq-item">
             <h3>What if I do not know what to say — I just feel overwhelmed?</h3>

@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand the Birmingham Indian community?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are based in India and understand the British Indian diaspora experience — including Birmingham\'s Punjabi and Gujarati communities, the intergenerational pressures of a community that has been here for generations, and the particular dynamics of Handsworth and Soho Road. No explanation needed.' } },
   { '@type': 'Question', name: 'When is a good time to connect from Birmingham?', acceptedAnswer: { '@type': 'Answer', text: 'UK (GMT/BST) is 5.5 hours behind IST in winter and 4.5 hours in summer. 3pm Birmingham = 8:30pm India. Afternoon in Birmingham is Indian evening — a reliable window for listeners.' } },
   { '@type': 'Question', name: 'Is this private from the Birmingham community?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Listeners are in India with no connection to the Birmingham Indian network. Nothing is shared.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free every session. Sessions from ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -89,7 +89,7 @@ export default function IndiansInBirminghamPage() {
         <div className="section">
           <h2>The Birmingham Indian Experience: What Goes Unsaid</h2>
           <p>The British Indian experience in Birmingham has its own particular weight. The identity question: British or Indian, and what does each mean? The generational gap between parents who came here with nothing and children who have everything but feel something is missing. The community&rsquo;s views on marriage, on mental health, on what is acceptable to say and what must be kept private.</p>
-          <p>Birmingham (GMT/BST) is 5.5 hours behind IST in winter (4.5 hours in summer). 3pm in Birmingham is 8:30pm in India — a natural afternoon window when India is in the evening. A real Indian listener is available, no appointment needed. The sessions are anonymous and completely private from the Handsworth and Soho Road community. First 5 minutes always free.</p>
+          <p>Birmingham (GMT/BST) is 5.5 hours behind IST in winter (4.5 hours in summer). 3pm in Birmingham is 8:30pm in India — a natural afternoon window when India is in the evening. A real Indian listener is available, no appointment needed. The sessions are anonymous and completely private from the Handsworth and Soho Road community. First 5 minutes free — once per listener.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>

@@ -40,7 +40,7 @@ const faqSchema = {
       name: 'How much does it cost per minute to talk on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn works out to about ₹10 per minute for a 15-minute session at ₹160 — compared to ₹10–50 per minute on AstroTalk. Your first 5 minutes are always free, so you can try before you pay anything.',
+        text: 'LeanOn works out to about ₹10 per minute for a 15-minute session at ₹160 — compared to ₹10–50 per minute on AstroTalk. Your first 5 minutes free — once per listener, so you can try before you pay anything.',
       },
     },
     {
@@ -293,7 +293,7 @@ export default function PayToTalkOnlineIndiaPage() {
           <div className="faq-item">
             <h3>How much does it cost per minute?</h3>
             <p>LeanOn works out to about ₹10 per minute for a 15-minute session at ₹160 — compared to ₹10–50 per
-              minute on AstroTalk. Your first 5 minutes are always free, so you can try before you pay anything.</p>
+              minute on AstroTalk. Your first 5 minutes free — once per listener, so you can try before you pay anything.</p>
           </div>
           <div className="faq-item">
             <h3>Is it anonymous?</h3>

@@ -177,7 +177,7 @@ export default function GulfNriSupportPage() {
           <h2>🌙 Across the Gulf — someone is always awake to listen</h2>
           <p>Whether you are in Dubai, Riyadh, Kuwait City, Muscat, Doha, or Manama — LeanOn
             listeners are available 24/7. No appointments. Talk in your language whenever you need.</p>
-          <p>First 5 minutes are always free. Start right now.</p>
+          <p>First 5 minutes free — once per listener. Start right now.</p>
           <a href="/browse" className="cta-night">Find an Indian listener now →</a>
         </div>
 
@@ -196,7 +196,7 @@ export default function GulfNriSupportPage() {
             <li>UAE: AED 37 / AED 55 / AED 74 for 15/30/45 min</li>
             <li>Kuwait: KD 4 / KD 5 / KD 7 for 15/30/45 min</li>
             <li>Oman: OMR 4 / OMR 6 / OMR 8 for 15/30/45 min</li>
-            <li>First 5 minutes always free on your first session</li>
+            <li>First 5 minutes free — once per listener</li>
           </ul>
           <p style={{ marginTop: '12px' }}>Anonymous. No subscription. Available in Saudi Arabia, Qatar, and Bahrain too.</p>
         </div>

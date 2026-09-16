@@ -45,7 +45,7 @@ const faqs = [
       },
       {
         q: 'How does pricing work?',
-        a: 'LeanOn charges a flat fee per session. 15-minute sessions start at ₹160. A short 5-minute trial session is available for new users — no credit card or wallet top-up needed.',
+        a: 'LeanOn charges a flat fee per session. 15-minute sessions start at ₹160. Your first session with each new listener is free (5 minutes) — no credit card or wallet top-up needed.',
       },
       {
         q: 'Do I need to book in advance?',

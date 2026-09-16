@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'What kinds of NRI relationship situations can I talk about?', acceptedAnswer: { '@type': 'Answer', text: 'Any situation that is weighing on you — arranged marriage pressure, long-distance with a partner in India, marriage strain abroad, dating as an NRI, breakup in a foreign country, relationship with parents from abroad. Nothing is too specific or too complex.' } },
   { '@type': 'Question', name: 'Is this session confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are private — only your phone number and first name are used. Nothing goes back to your partner, your family, or anyone else in your life.' } },
   { '@type': 'Question', name: 'Do listeners understand the NRI relationship context?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners are Indian and many have direct experience with the relationship dynamics NRIs navigate — the cultural expectations, the immigration pressures, the family involvement. You will not need to explain the basics.' } },
-  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes are free every session. Sessions continue from ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [

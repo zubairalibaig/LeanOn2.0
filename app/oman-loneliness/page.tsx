@@ -196,7 +196,7 @@ export default function OmanLonelinessPage() {
             <li>15-minute session — OMR 4</li>
             <li>30-minute session — OMR 6</li>
             <li>45-minute session — OMR 8</li>
-            <li>First 5 minutes always free on your first session</li>
+            <li>First 5 minutes free — once per listener</li>
           </ul>
           <p style={{ marginTop: '12px' }}>Anonymous. No subscription. Pay only for what you use.</p>
         </div>

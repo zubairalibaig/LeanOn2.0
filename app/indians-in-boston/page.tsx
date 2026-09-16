@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand the Boston Indian academic and professional experience?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are based in India and understand the NRI experience — including the specific weight of Boston\'s Indian community: the academic pressure of Cambridge, the PhD and postdoc experience, the residency grind, the high-achieving culture that leaves little room to say "I\'m not okay".' } },
   { '@type': 'Question', name: 'When can I connect from Boston?', acceptedAnswer: { '@type': 'Answer', text: 'Boston (EST) is 10.5 hours behind IST. 8am Boston = 6:30pm India. Before your lab meeting or your morning clinic round, India is in the evening and listeners are available.' } },
   { '@type': 'Question', name: 'Is this confidential from my department or colleagues?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Nothing reaches your supervisor, your research group, your hospital, or your Boston community.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free every session. Sessions from ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -89,7 +89,7 @@ export default function IndiansInBostonPage() {
         <div className="section">
           <h2>The Weight That Excellence Doesn&rsquo;t Dissolve</h2>
           <p>The Boston Indian experience has its own specific character. The PhD student in year four of five, watching their stipend fail to cover Cambridge rent, questioning whether the sacrifice is worth it. The medical resident working 80-hour weeks and calling home to parents who are deeply proud and completely unaware of how exhausted you are. The biotech professional who has made it by every external measure and still feels something missing.</p>
-          <p>Boston (EST) is 10.5 hours behind IST. 8am in Cambridge or Burlington is 6:30pm in India. Before your lab meeting starts, India is in the evening. A real Indian peer listener is available, no appointment needed, anonymous and private. The first 5 minutes are always free. High achievement does not require silent suffering.</p>
+          <p>Boston (EST) is 10.5 hours behind IST. 8am in Cambridge or Burlington is 6:30pm in India. Before your lab meeting starts, India is in the evening. A real Indian peer listener is available, no appointment needed, anonymous and private. The first 5 minutes free — once per listener. High achievement does not require silent suffering.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>

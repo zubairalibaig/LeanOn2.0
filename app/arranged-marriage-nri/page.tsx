@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'What if I\'m considering an arranged match but have genuine fears?', acceptedAnswer: { '@type': 'Answer', text: 'Fear before a life decision is completely normal. Talking through your fears with someone who understands the cultural context — without the pressure of family involvement — can help you get clearer about what you actually want.' } },
   { '@type': 'Question', name: 'What if I\'ve already said yes to someone my parents chose and I\'m having doubts?', acceptedAnswer: { '@type': 'Answer', text: 'Pre-wedding doubt is common and rarely talked about. The pressure to continue once the families are involved is enormous. A peer listener can hold that weight with you — not tell you what to do, but help you feel less alone while you figure it out.' } },
   { '@type': 'Question', name: 'Is this confidential from my family?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Nothing is shared with your family, your prospective match\'s family, or anyone else.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free every session. Sessions from ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -90,7 +90,7 @@ export default function ArrangedMarriageNriPage() {
         <div className="section">
           <h2>Before You Make a Life Decision Under Pressure</h2>
           <p>Arranged marriages happen under time pressure, social pressure, and emotional pressure. The combination makes it genuinely difficult to know what you actually want. The fear of disappointing your parents. The guilt about your own desires. The pressure of the community watching. The sense that everyone else has figured this out and you are the only one struggling.</p>
-          <p>Talking to a real Indian peer listener — who has heard many of these stories and genuinely understands the cultural forces at play — before you make a decision can create space. Not to give you the answer, but to help you hear yourself. Sessions are anonymous and completely private. First 5 minutes always free.</p>
+          <p>Talking to a real Indian peer listener — who has heard many of these stories and genuinely understands the cultural forces at play — before you make a decision can create space. Not to give you the answer, but to help you hear yourself. Sessions are anonymous and completely private. First 5 minutes free — once per listener.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
