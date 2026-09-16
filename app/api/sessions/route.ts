@@ -176,13 +176,12 @@ export async function POST(req: NextRequest) {
 
     // Store listener's rate on the session so settlement can correctly split
     // earnings for NRI sessions (where amount_held = flat NRI price, not rate×duration).
-    // Fire-and-forget — a failure here is an analytics gap, not a billing error
-    // (settlement falls back to the India formula if the column is null).
+    // Awaited so settlement always has the correct rate before the session starts.
     if (!effectivelyFree && sessionId) {
-      sb.from('sessions')
+      const { error: rpmErr } = await sb.from('sessions')
         .update({ listener_rate_per_min: Math.round(rate) })
         .eq('id', sessionId)
-        .then(() => {}, (e) => logger.error('Session POST: listener_rate_per_min update failed', { sessionId, error: String(e) }))
+      if (rpmErr) logger.error('Session POST: listener_rate_per_min update failed', { sessionId, error: rpmErr.message })
     }
 
     if (!effectivelyFree) {
@@ -348,18 +347,20 @@ export async function PATCH(req: NextRequest) {
         })
 
         // Track earnings in listener_earnings for dashboard.
-        // platform_fee = gross − refund − net = LeanOn's actual take, which
-        // correctly includes: seeker's flat ₹10 + 15% service fee + any NRI
-        // margin. For India sessions this equals (session.platform_fee +
-        // listenerServiceFee) exactly, so historical data is unchanged.
-        // For NRI sessions it adds the NRI margin, making the admin KPI accurate.
+        // platform_fee = gross − refund − net = LeanOn's actual take (₹10 flat
+        // + 15% service fee + any NRI margin). listener_gross and service_fee
+        // are stored directly from settleSession() so the dashboard can show
+        // exact per-session breakdown without deriving from platform_fee.
+        const listenerGross = Math.round(listenerEarning + listenerServiceFee)
         const { error: earningsErr } = await sb.from('listener_earnings').insert({
-          listener_id:  session.listener_id,
-          session_id:   sessionId,
-          gross_amount: Math.round(session.amount_held),
-          platform_fee: Math.round(session.amount_held) - Math.round(refundAmount) - Math.round(listenerEarning),
-          net_amount:   Math.round(listenerEarning),
-          status:       'settled',
+          listener_id:   session.listener_id,
+          session_id:    sessionId,
+          gross_amount:  Math.round(session.amount_held),
+          platform_fee:  Math.round(session.amount_held) - Math.round(refundAmount) - Math.round(listenerEarning),
+          net_amount:    Math.round(listenerEarning),
+          listener_gross: listenerGross,
+          service_fee:   Math.round(listenerServiceFee),
+          status:        'settled',
         })
         // 23505 = unique_violation — already recorded, not an error worth logging
         if (earningsErr && earningsErr.code !== '23505') {

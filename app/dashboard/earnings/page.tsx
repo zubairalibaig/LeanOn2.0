@@ -10,14 +10,16 @@ const sb = createBrowserClient(
 )
 
 type Earning = {
-  id:          string
-  session_id:  string | null
-  gross_amount: number
-  platform_fee: number
-  net_amount:  number
-  status:      string
-  settled_at:  string
-  created_at:  string
+  id:             string
+  session_id:     string | null
+  gross_amount:   number
+  platform_fee:   number
+  net_amount:     number
+  listener_gross: number | null
+  service_fee:    number | null
+  status:         string
+  settled_at:     string
+  created_at:     string
 }
 
 type PayoutRequest = {
@@ -187,14 +189,11 @@ export default function EarningsPage() {
             <div style={{ textAlign: 'right' }}>
               <div className="earning-net">{fmt(e.net_amount)}</div>
               <div className="earning-fee">{(() => {
-                // listener_earnings.platform_fee = PLATFORM_FEE + listenerServiceFee
-                // for all India sessions (proven: amount_held − refund − net simplifies
-                // to 10 + serviceFee regardless of pro-ration). So platform_fee − 10
-                // is the exact service fee, no rounding approximation needed.
-                // NRI-priced sessions (when geo-pricing ships) will include the NRI
-                // margin here too — handled separately when that feature launches.
-                const svcFee = e.platform_fee - PLATFORM_FEE
-                const listenerGross = e.net_amount + svcFee
+                // New rows store listener_gross and service_fee directly at settlement.
+                // Old India-only rows fall back to platform_fee − PLATFORM_FEE, which
+                // is algebraically exact for India sessions (= 10 + listenerServiceFee).
+                const svcFee = e.service_fee ?? (e.platform_fee - PLATFORM_FEE)
+                const listenerGross = e.listener_gross ?? (e.net_amount + svcFee)
                 return `Your share ₹${listenerGross} · Service fee ₹${svcFee}`
               })()}</div>
             </div>

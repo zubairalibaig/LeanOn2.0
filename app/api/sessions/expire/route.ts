@@ -74,7 +74,7 @@ export async function GET(req: NextRequest) {
       // Shared settlement math (lib/session-billing.ts). This path only fires
       // when a session overran by 10+ minutes, so it settles as a full session.
       const bookedMins = session.duration_mins as number
-      const { billedMins, listenerEarning, refundAmount } = settleSession({
+      const { billedMins, listenerEarning, refundAmount, listenerServiceFee } = settleSession({
         startedAt:          (session.started_at as string | null) ?? null,
         endedAt,
         bookedMins,
@@ -96,14 +96,18 @@ export async function GET(req: NextRequest) {
         }).then(() => {}, () => {})
 
         // platform_fee = gross − refund − net = LeanOn's actual take
-        // (₹10 flat + 15% service fee + any NRI margin).
+        // (₹10 flat + 15% service fee + any NRI margin). listener_gross and
+        // service_fee are stored directly for accurate per-session dashboard display.
+        const listenerGross = Math.round(listenerEarning + listenerServiceFee)
         const { error: earningsErr } = await sb.from('listener_earnings').insert({
-          listener_id:  session.listener_id,
-          session_id:   session.id,
-          gross_amount: Math.round(session.amount_held),
-          platform_fee: Math.round(session.amount_held) - Math.round(refundAmount) - Math.round(listenerEarning),
-          net_amount:   Math.round(listenerEarning),
-          status:       'settled',
+          listener_id:    session.listener_id,
+          session_id:     session.id,
+          gross_amount:   Math.round(session.amount_held),
+          platform_fee:   Math.round(session.amount_held) - Math.round(refundAmount) - Math.round(listenerEarning),
+          net_amount:     Math.round(listenerEarning),
+          listener_gross: listenerGross,
+          service_fee:    Math.round(listenerServiceFee),
+          status:         'settled',
         })
         if (earningsErr && earningsErr.code !== '23505') {
           logger.error('expire: listener_earnings insert failed (earnings ledger gap):', { sessionId: session.id, error: earningsErr.message })

@@ -89,7 +89,7 @@ export async function POST(req: Request) {
     // UP capped at booked, so a full-length session never gets shaved by floor.
     const endedAt = completed.ended_at ?? new Date().toISOString()
     const bookedMins = session.duration_mins as number
-    const { billedMins, listenerEarning: earning, refundAmount } = settleSession({
+    const { billedMins, listenerEarning: earning, refundAmount, listenerServiceFee } = settleSession({
       startedAt:          (session.started_at as string | null) ?? null,
       endedAt,
       bookedMins,
@@ -134,13 +134,17 @@ export async function POST(req: Request) {
         })
         // Insert earnings record. platform_fee = gross − refund − net =
         // LeanOn's actual take (₹10 flat + 15% service fee + any NRI margin).
+        // listener_gross and service_fee stored directly for accurate dashboard display.
+        const listenerGross = Math.round(earning + listenerServiceFee)
         const { error: earningsErr } = await sb.from('listener_earnings').insert({
-          listener_id:  session.listener_id,
-          session_id:   session.id,
-          gross_amount: Math.round(session.amount_held as number),
-          platform_fee: Math.round(session.amount_held as number) - Math.round(refundAmount) - Math.round(earning),
-          net_amount:   Math.round(earning),
-          status:       'settled',
+          listener_id:    session.listener_id,
+          session_id:     session.id,
+          gross_amount:   Math.round(session.amount_held as number),
+          platform_fee:   Math.round(session.amount_held as number) - Math.round(refundAmount) - Math.round(earning),
+          net_amount:     Math.round(earning),
+          listener_gross: listenerGross,
+          service_fee:    Math.round(listenerServiceFee),
+          status:         'settled',
         })
         if (earningsErr && earningsErr.code !== '23505') {
           logger.error('cleanup: listener_earnings insert failed (earnings ledger gap):', { sessionId: session.id, error: earningsErr.message })
