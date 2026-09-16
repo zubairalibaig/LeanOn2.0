@@ -218,6 +218,26 @@ export default function AdminPage() {
           const body = await pingRes.json().catch(() => ({}))
           setAuthUser(u)
           if (body.code === 'PIN_REQUIRED' || body.code === 'PHONE_VERIFIED') {
+            // Check sessionStorage for a PIN saved from a previous verification
+            const savedPin = (() => { try { return sessionStorage.getItem('admin_pin') } catch { return null } })()
+            if (savedPin) {
+              // Try the saved PIN automatically — avoids re-entering it on refresh
+              const pinRes = await fetch('/api/admin/kpis', {
+                headers: { 'x-admin-pin': savedPin },
+              }).catch(() => null)
+              if (pinRes?.ok) {
+                verifiedPinRef.current = savedPin
+                const kpiJson = await pinRes.json().catch(() => ({}))
+                setKpis(kpiJson)
+                setIsPrimaryAdmin(!!kpiJson.isPrimaryAdmin)
+                setKpisLoading(false)
+                setPinVerified(true)
+                setAuthChecking(false)
+                return
+              }
+              // Saved PIN rejected — clear it and show the PIN gate
+              try { sessionStorage.removeItem('admin_pin') } catch { /* ignore */ }
+            }
             // Admin identity confirmed — show PIN gate
             setPinRequired(true)
             setAuthChecking(false)
@@ -385,6 +405,7 @@ export default function AdminPage() {
     })
     if (res.ok) {
       verifiedPinRef.current = pin
+      try { sessionStorage.setItem('admin_pin', pin) } catch { /* ignore */ }
       setPinVerified(true)
       setPinRequired(false)
       const json = await res.json()
@@ -785,6 +806,7 @@ export default function AdminPage() {
                 setDenied(true)
                 setPinVerified(false)
                 verifiedPinRef.current = ''
+                try { sessionStorage.removeItem('admin_pin') } catch { /* ignore */ }
               }}
             >
               Sign out

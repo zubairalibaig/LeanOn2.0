@@ -138,9 +138,12 @@ const orgSchema = {
   ],
 }
 
+import AuthRedirect from '@/app/components/AuthRedirect'
+
 export default function Home() {
   return (
     <>
+      <AuthRedirect />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewSchema) }} />
