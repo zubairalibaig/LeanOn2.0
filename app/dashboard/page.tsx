@@ -975,10 +975,10 @@ export default function DashboardPage() {
                 return (
                   <div style={{marginTop:10,background:'var(--light)',borderRadius:12,padding:'10px 14px',fontSize:12,color:'var(--gray)',fontWeight:600,lineHeight:1.9}}>
                     📅 Sessions are booked in <strong style={{color:'var(--navy)'}}>15 / 30 / 45 min slots</strong>
-                    <br/>15 min → you earn <strong style={{color:'var(--navy)'}}>₹{net(15)}</strong> <span style={{fontWeight:400,opacity:0.75}}>(seeker pays ₹{r*15+10})</span>
-                    <br/>30 min → you earn <strong style={{color:'var(--navy)'}}>₹{net(30)}</strong> <span style={{fontWeight:400,opacity:0.75}}>(seeker pays ₹{r*30+10})</span>
-                    <br/>45 min → you earn <strong style={{color:'var(--navy)'}}>₹{net(45)}</strong> <span style={{fontWeight:400,opacity:0.75}}>(seeker pays ₹{r*45+10})</span>
-                    <br/><span style={{fontSize:11,opacity:0.85}}>LeanOn deducts {Math.round(LISTENER_SERVICE_FEE_RATE*100)}% of <em>your</em> earnings as a service fee. The ₹10 seeker platform fee is a separate charge paid by the seeker — it does not reduce your earnings.</span>
+                    <br/>15 min → you earn <strong style={{color:'var(--navy)'}}>₹{net(15)}</strong>
+                    <br/>30 min → you earn <strong style={{color:'var(--navy)'}}>₹{net(30)}</strong>
+                    <br/>45 min → you earn <strong style={{color:'var(--navy)'}}>₹{net(45)}</strong>
+                    <br/><span style={{fontSize:11,opacity:0.85}}>LeanOn deducts {Math.round(LISTENER_SERVICE_FEE_RATE*100)}% of your earnings as a service fee.</span>
                   </div>
                 )
               })()}

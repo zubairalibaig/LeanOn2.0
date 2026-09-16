@@ -695,10 +695,6 @@ export default function BecomeListenerPage() {
               <div className="fee-row"><span className="label">Your rate (15 min at ₹{rateNum}/min)</span><span className="value">₹{gross15.toLocaleString('en-IN')}</span></div>
               <div className="fee-row"><span className="label">LeanOn service fee ({Math.round(LISTENER_SERVICE_FEE_RATE * 100)}% of your earnings)</span><span className="value">− ₹{serviceFee15.toLocaleString('en-IN')}</span></div>
               <div className="fee-row highlight"><span className="label">You receive</span><span className="value">₹{earn15.toLocaleString('en-IN')} ✓</span></div>
-              <div className="fee-row" style={{borderTop:'1px solid #E5F0F6',marginTop:4,paddingTop:8,opacity:0.7}}><span className="label">Seeker platform fee (flat, paid by seeker)</span><span className="value">₹10</span></div>
-              <p style={{fontSize:12,color:'var(--gray)',fontWeight:500,marginTop:10,lineHeight:1.6}}>
-                The 15% service fee is calculated on <strong>your earnings only</strong> — not on the seeker&apos;s total payment. The ₹10 seeker platform fee is a separate charge paid by the seeker; it does not come out of your earnings.
-              </p>
             </div>
 
             <label className="lbl">Account holder name <span style={{color:'#c0392b'}}>*</span></label>
