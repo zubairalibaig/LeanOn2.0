@@ -192,88 +192,14 @@ export default function AdminPage() {
   const [isPrimaryAdmin, setIsPrimaryAdmin] = useState(false)
   const [denied, setDenied] = useState(false)
 
-  // Phone + PIN login state
-  const [loginPhone, setLoginPhone] = useState('')
-  const [phoneVerified, setPhoneVerified] = useState(false)
-  const [loginPin, setLoginPin] = useState('')
-  const [loginLoading, setLoginLoading] = useState(false)
-  const [loginError, setLoginError] = useState('')
-  // Stores auth headers for all subsequent API calls
-  const adminPhoneRef = useRef<string>('')
-  const adminPinRef = useRef<string>('')
-
-  async function tryPhoneVerify() {
-    const phone = loginPhone.trim()
-    if (!phone) { setLoginError('Enter your phone number'); return }
-    setLoginLoading(true)
-    setLoginError('')
-    const res = await fetch('/api/admin/ping', {
-      headers: { 'x-admin-phone': phone },
-    }).catch(() => null)
-    setLoginLoading(false)
-    if (!res) { setLoginError('Connection error. Try again.'); return }
-    if (res.status === 429) { setLoginError('Too many attempts. Please wait a minute.'); return }
-    const body = await res.json().catch(() => ({}))
-    if (body.code === 'PHONE_VERIFIED') {
-      adminPhoneRef.current = phone
-      setPhoneVerified(true)
-      setLoginError('')
-      return
-    }
-    if (res.status === 403) { setLoginError('Phone number not recognized.'); return }
-    setLoginError('Server error. Please try again.')
-  }
-
-  async function tryPinLogin() {
-    const pin = loginPin.trim()
-    if (!pin) { setLoginError('Enter your PIN'); return }
-    setLoginLoading(true)
-    setLoginError('')
-    const res = await fetch('/api/admin/ping', {
-      headers: { 'x-admin-phone': adminPhoneRef.current, 'x-admin-pin': pin },
-    }).catch(() => null)
-    setLoginLoading(false)
-    if (!res) { setLoginError('Connection error. Try again.'); return }
-    if (res.status === 429) { setLoginError('Too many attempts. Please wait a minute.'); return }
-    if (res.status === 403) { setLoginError('Incorrect PIN.'); setLoginPin(''); return }
-    if (!res.ok) { setLoginError('Server error. Please try again.'); return }
-    const body = await res.json().catch(() => ({}))
-    adminPinRef.current = pin
-    try { sessionStorage.setItem('adminPhone', adminPhoneRef.current); sessionStorage.setItem('adminPin', pin) } catch {}
-    setIsPrimaryAdmin(!!body.isPrimaryAdmin)
-    setAuthUser({ id: 'password-admin', email: undefined })
-    setDenied(false)
-    setAuthChecking(false)
-  }
-
-  // On mount: check sessionStorage for stored phone+PIN, then fall back to Supabase session.
+  // On mount: require a valid Supabase session (OTP login) — no phone+PIN header bypass.
+  // Admin flow: sign in via the normal app OTP flow → come back to /admin → enter PIN.
   useEffect(() => {
     async function init() {
-      let storedPhone = '', storedPin = ''
-      try { storedPhone = sessionStorage.getItem('adminPhone') ?? ''; storedPin = sessionStorage.getItem('adminPin') ?? '' } catch {}
-      if (storedPhone && storedPin) {
-        adminPhoneRef.current = storedPhone
-        adminPinRef.current = storedPin
-        const res = await fetch('/api/admin/ping', { headers: { 'x-admin-phone': storedPhone, 'x-admin-pin': storedPin } }).catch(() => null)
-        if (res?.ok) {
-          const body = await res.json().catch(() => ({}))
-          setIsPrimaryAdmin(!!body.isPrimaryAdmin)
-          setAuthUser({ id: 'password-admin', email: undefined })
-          setAuthChecking(false)
-          return
-        }
-        adminPhoneRef.current = ''
-        adminPinRef.current = ''
-        try { sessionStorage.removeItem('adminPhone'); sessionStorage.removeItem('adminPin') } catch {}
-      }
-      // Fall back to Supabase session check (for existing OTP-authenticated admins).
-      // IMPORTANT: verify the session is actually admin via ping BEFORE setting authUser.
-      // Without this, a regular logged-in user would see "Access Denied" with no way
-      // to enter the admin password — loadKPIs would set denied=true while authUser
-      // was already set from their session, showing the wrong screen.
       const sb = createClient()
       sb.auth.getUser().then(async ({ data: { user } }) => {
         if (!user) { setAuthChecking(false); setDenied(true); return }
+        // Verify the session is actually an admin before granting access.
         const pingRes = await fetch('/api/admin/ping').catch(() => null)
         if (pingRes?.ok) {
           const body = await pingRes.json().catch(() => ({}))
@@ -281,7 +207,6 @@ export default function AdminPage() {
           setAuthUser(user as { id: string; email?: string; phone?: string })
           setAuthChecking(false)
         } else {
-          // Has a Supabase session but not an admin — show password login form
           setAuthChecking(false)
           setDenied(true)
         }
@@ -452,10 +377,6 @@ export default function AdminPage() {
   // Returns Authorization headers including the admin PIN when it has been verified
   function adminHeaders(extra: Record<string, string> = {}): Record<string, string> {
     const h: Record<string, string> = { ...extra }
-    if (adminPhoneRef.current && adminPinRef.current) {
-      h['x-admin-phone'] = adminPhoneRef.current
-      h['x-admin-pin'] = adminPinRef.current
-    }
     if (verifiedPinRef.current) h['x-admin-pin'] = verifiedPinRef.current
     return h
   }
@@ -777,62 +698,19 @@ export default function AdminPage() {
             </p>
           </div>
         ) : (
-          // Not logged in — phone + PIN admin login
-          <div style={{background:'white',borderRadius:24,padding:'36px 28px',boxShadow:'0 8px 40px rgba(15,72,103,0.12)',maxWidth:360,width:'100%'}}>
-            <div style={{textAlign:'center',marginBottom:24}}>
-              <div style={{fontSize:36,marginBottom:12}}>🔐</div>
-              <h2 style={{fontSize:20,fontWeight:900,color:'#0F4867',marginBottom:6}}>Admin Access</h2>
-              <p style={{fontSize:13,color:'#5A7A8A',fontWeight:600,lineHeight:1.5}}>
-                {phoneVerified ? 'Enter your admin PIN to continue.' : 'Enter your admin phone number to continue.'}
-              </p>
-            </div>
-            {!phoneVerified ? (
-              <>
-                <input
-                  type="tel"
-                  placeholder="Phone number (e.g. +91...)"
-                  value={loginPhone}
-                  onChange={e => { setLoginPhone(e.target.value); setLoginError('') }}
-                  onKeyDown={e => { if (e.key === 'Enter') tryPhoneVerify() }}
-                  style={{width:'100%',padding:'13px 16px',border:'2px solid #D5EEF6',borderRadius:14,fontFamily:'Nunito,sans-serif',fontSize:15,fontWeight:700,color:'#0F4867',outline:'none',boxSizing:'border-box',marginBottom:8,background:'white'}}
-                  autoFocus
-                />
-                {loginError && <p style={{color:'#E53935',fontSize:13,fontWeight:700,marginBottom:8}}>{loginError}</p>}
-                <button
-                  onClick={tryPhoneVerify}
-                  disabled={loginLoading || !loginPhone.trim()}
-                  style={{width:'100%',padding:'14px',background:'#0F4867',color:'white',border:'none',borderRadius:50,fontFamily:'Nunito,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',opacity:(loginLoading || !loginPhone.trim())?0.5:1,marginTop:8}}
-                >
-                  {loginLoading ? '⟳ Verifying…' : 'Continue →'}
-                </button>
-              </>
-            ) : (
-              <>
-                <input
-                  type="password"
-                  placeholder="Enter PIN"
-                  value={loginPin}
-                  onChange={e => { setLoginPin(e.target.value); setLoginError('') }}
-                  onKeyDown={e => { if (e.key === 'Enter') tryPinLogin() }}
-                  style={{width:'100%',padding:'13px 16px',border:'2px solid #D5EEF6',borderRadius:14,fontFamily:'Nunito,sans-serif',fontSize:15,fontWeight:700,color:'#0F4867',outline:'none',boxSizing:'border-box',marginBottom:8,background:'white'}}
-                  autoFocus
-                />
-                {loginError && <p style={{color:'#E53935',fontSize:13,fontWeight:700,marginBottom:8}}>{loginError}</p>}
-                <button
-                  onClick={tryPinLogin}
-                  disabled={loginLoading || !loginPin.trim()}
-                  style={{width:'100%',padding:'14px',background:'#0F4867',color:'white',border:'none',borderRadius:50,fontFamily:'Nunito,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',opacity:(loginLoading || !loginPhone.trim())?0.5:1,marginTop:8}}
-                >
-                  {loginLoading ? '⟳ Verifying…' : 'Access Dashboard →'}
-                </button>
-                <button
-                  onClick={() => { setPhoneVerified(false); setLoginPin(''); setLoginError('') }}
-                  style={{width:'100%',padding:'10px',background:'transparent',color:'var(--gray)',border:'none',fontFamily:'Nunito,sans-serif',fontWeight:700,fontSize:13,cursor:'pointer',marginTop:4}}
-                >
-                  ← Change phone number
-                </button>
-              </>
-            )}
+          // Not logged in — redirect to app sign-in
+          <div style={{textAlign:'center',padding:'40px 24px',maxWidth:380}}>
+            <div style={{fontSize:48,marginBottom:16}}>🔐</div>
+            <h2 style={{fontSize:22,fontWeight:900,color:'#0F4867',marginBottom:10}}>Sign in required</h2>
+            <p style={{fontSize:14,color:'#5A7A8A',fontWeight:600,lineHeight:1.7,marginBottom:24}}>
+              Sign in to your LeanOn account first, then return to this page.
+            </p>
+            <a
+              href="/auth?redirect=/admin"
+              style={{display:'block',padding:'14px',background:'#0F4867',color:'white',textDecoration:'none',borderRadius:50,fontFamily:'Nunito,sans-serif',fontWeight:800,fontSize:15}}
+            >
+              Sign in →
+            </a>
           </div>
         )}
       </div>
@@ -875,13 +753,9 @@ export default function AdminPage() {
             <button
               className="btn"
               style={{ fontSize: 13, background: 'white', color: 'var(--gray)', border: '1.5px solid var(--border)' }}
-              onClick={() => {
-                try { sessionStorage.removeItem('adminPhone'); sessionStorage.removeItem('adminPin') } catch {}
-                adminPhoneRef.current = ''
-                adminPinRef.current = ''
-                setPhoneVerified(false)
-                setLoginPhone('')
-                setLoginPin('')
+              onClick={async () => {
+                const sb = createClient()
+                await sb.auth.signOut()
                 setAuthUser(null)
                 setDenied(true)
                 setPinVerified(false)
