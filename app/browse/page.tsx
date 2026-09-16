@@ -509,13 +509,13 @@ function BrowseContent() {
       setMyUserId(user.id)
       const {data} = await client.from('users').select('wallet_balance,created_at').eq('id',user.id).single()
       if (data) {
-        setBalance(data.wallet_balance)
+        setBalance(data.wallet_balance as number | null)
 
         // Free-trial nudge: new user (joined ≤30 days ago) with 0 seeker sessions.
         // Check localStorage first — if they dismissed it, respect that.
         const dismissed = localStorage.getItem('leanon_nudge_dismissed')
         if (!dismissed && data.created_at) {
-          const joinedDaysAgo = (Date.now() - new Date(data.created_at).getTime()) / 86_400_000
+          const joinedDaysAgo = (Date.now() - new Date(data.created_at as string).getTime()) / 86_400_000
           if (joinedDaysAgo <= 30) {
             const { count } = await client
               .from('sessions')

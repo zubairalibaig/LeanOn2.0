@@ -61,10 +61,10 @@ export default function ListenerStatusPage() {
           setStatus('approved')
         } else if (app?.status === 'rejected') {
           setStatus('rejected')
-          setNotes(app.admin_notes || null)
+          setNotes((app.admin_notes as string | null) || null)
         } else if (app?.status === 'needs_resubmission') {
           setStatus('needs_resubmission')
-          setNotes(app.admin_notes || null)
+          setNotes((app.admin_notes as string | null) || null)
         } else {
           setStatus('pending')
         }

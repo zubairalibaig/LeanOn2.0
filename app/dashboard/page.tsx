@@ -461,11 +461,12 @@ export default function DashboardPage() {
     // Two separate queries instead of users!inner join — an RLS or join failure
     // on users must not silently filter out the profile row and show the
     // misleading "you haven't applied" screen to a real listener.
-    const { data: lp, error: lpErr } = await sb
+    const { data: _lp, error: lpErr } = await sb
       .from('listener_profiles')
       .select('*')
       .eq('user_id', u.id)
       .maybeSingle()
+    const lp = _lp as Record<string, any> | null
 
     if (lpErr) {
       setLoadError('Could not load your listener profile. Please retry.')
@@ -473,13 +474,14 @@ export default function DashboardPage() {
     }
 
     if (lp) {
-      const [{ data: usr }, { data: appRow }] = await Promise.all([
+      const [{ data: _usr }, { data: appRow }] = await Promise.all([
         sb.from('users').select('name, wallet_balance, avatar_url').eq('id', u.id).maybeSingle(),
         sb.from('listener_applications').select('account_holder_name').eq('user_id', u.id).maybeSingle(),
       ])
+      const usr = _usr as { name: string; wallet_balance: number; avatar_url: string | null } | null
       const avatarUrl = usr?.avatar_url || null
       const holderName = (appRow as Record<string, unknown> | null)?.account_holder_name as string | null | undefined
-      setProfile({ ...lp, name: usr?.name || 'Listener', balance: usr?.wallet_balance || 0, avatar_url: avatarUrl, account_holder_name: holderName ?? null })
+      setProfile({ ...lp, name: usr?.name || 'Listener', balance: usr?.wallet_balance || 0, avatar_url: avatarUrl, account_holder_name: holderName ?? null } as any)
       setAvail(lp.is_available)
       setEditBio(lp.bio || '')
       setEditTags(lp.specialty_tags || [])
@@ -496,12 +498,12 @@ export default function DashboardPage() {
       .order('ended_at', { ascending: false })
       .limit(100)
 
-    if (recent) setSessions(recent)
+    if (recent) setSessions(recent as any)
 
     // Fee-update banner — only for listeners with at least one completed PAID
     // session (amount_held > 0; free trials are 0). Checked here (not a
     // separate effect) so it reuses the `recent` fetch above with no extra query.
-    if (SHOW_LISTENER_FEE_UPDATE_NOTICE && recent?.some(s => (s.amount_held || 0) > 0)) {
+    if (SHOW_LISTENER_FEE_UPDATE_NOTICE && recent?.some(s => ((s as any).amount_held || 0) > 0)) {
       let dismissed = false
       try { dismissed = localStorage.getItem('leanon_fee_notice_dismissed') === '1' } catch { /* ignore */ }
       if (!dismissed) setShowFeeNotice(true)
@@ -537,7 +539,7 @@ export default function DashboardPage() {
       .gte('created_at', new Date(Date.now() - 24 * 60 * 60_000).toISOString())
       .order('created_at', { ascending: false })
       .limit(10)
-    if (missed) setMissedSessions(missed.filter(s => !s.started_at))
+    if (missed) setMissedSessions((missed as any[]).filter(s => !s.started_at))
 
     // Authoritative earnings come from the listener_earnings ledger (net_amount),
     // which already accounts for pro-rated partial sessions AND (2026-09-14) the
@@ -547,10 +549,11 @@ export default function DashboardPage() {
     // the seeker's flat ₹10 and never the service fee. session_id here builds a
     // lookup so the per-session "Recent sessions" list below can show the real
     // net amount instead of recomputing (and overstating) it inline.
-    const { data: earnings } = await sb
+    const { data: _earnings } = await sb
       .from('listener_earnings')
       .select('session_id, net_amount, created_at, status')
       .eq('listener_id', u.id)
+    const earnings = _earnings as Array<{ session_id: string | null; net_amount: number; created_at: string; status: string }> | null
     const earningsBySession = new Map<string, number>()
     if (earnings) {
       const now = new Date()

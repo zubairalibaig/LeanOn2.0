@@ -106,7 +106,7 @@ export default function ChatHistoryPage() {
 
     const iAmListener = sess.listener_id === user.id
     const other = iAmListener ? one(sess.seeker) : one(sess.listener)
-    setSession({ ...sess, other, iAmListener })
+    setSession({ ...(sess as any), other, iAmListener })
 
     const { data: messages } = await sb
       .from('messages')

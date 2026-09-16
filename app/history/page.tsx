@@ -123,7 +123,7 @@ export default function HistoryPage() {
         fetch('/api/listener-messages').then(r => r.ok ? r.json() : { sent: [], received: [] }).catch(() => ({ sent: [], received: [] })),
       ])
 
-      const data = sessionsRes.data ?? []
+      const data = (sessionsRes.data ?? []) as any[]
 
       const withMsgs: ChatRow[] = await Promise.all(
         data.map(async (s) => {

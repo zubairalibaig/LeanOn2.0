@@ -118,7 +118,7 @@ function WalletPageInner() {
     // e.g. users who completed payment before their public.users row was created.
     const { data: userData } = await sb.from('users').select('wallet_balance').eq('id', user.id).maybeSingle()
     if (userData !== null) {
-      setBalance(userData?.wallet_balance ?? 0)
+      setBalance((userData?.wallet_balance as number) ?? 0)
     } else {
       // Browser client returned null — row may be missing or RLS blocked.
       // Server API uses admin client so it always reaches the row if it exists.
@@ -140,7 +140,7 @@ function WalletPageInner() {
       sb.from('listener_profiles').select('user_id').eq('user_id', user.id).maybeSingle(),
     ])
     if (txns) {
-      setTransactions(txns)
+      setTransactions(txns as Txn[])
       const credits = (txns as Txn[]).filter(t => t.type === 'credit')
       setHasRazorpayCredits(credits.some(t => !!t.reference_id))
       setHasEarningsCredits(credits.some(t => !t.reference_id && (t.description ?? '').toLowerCase().includes('earnings')))
@@ -248,7 +248,7 @@ function WalletPageInner() {
             // Reload transaction history to show the new credit entry
             sb.from('wallet_transactions')
               .select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(10)
-              .then(({ data: txns }) => { if (txns) setTransactions(txns) })
+              .then(({ data: txns }) => { if (txns) setTransactions(txns as Txn[]) })
             showToast(`₹${selected} added to your wallet!`, 'success')
             // If user came from the free-trial conversion screen, redirect back to the
             // listener profile so they can immediately book a paid session.

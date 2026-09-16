@@ -170,7 +170,7 @@ export default function ListenerClient({ id }: { id: string }) {
         unlimited ? Promise.resolve({ count: 0 }) : client.from('sessions').select('id', { count: 'exact', head: true }).eq('seeker_id', user.id).eq('is_free_trial', true).eq('status', 'completed'),
         unlimited ? Promise.resolve({ count: 0 }) : client.from('sessions').select('id', { count: 'exact', head: true }).eq('seeker_id', user.id).eq('listener_id', id).eq('is_free_trial', true).eq('status', 'completed'),
       ])
-      if (userData) setBalance(userData.wallet_balance)
+      if (userData) setBalance(userData.wallet_balance as number)
       if (!unlimited) {
         const used = (totalTrials.count ?? 0) >= MAX_FREE_TRIALS || (listenerTrial.count ?? 0) > 0
         setFreeTrialUsed(used)
