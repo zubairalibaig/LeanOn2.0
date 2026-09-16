@@ -190,22 +190,15 @@ export async function middleware(req: NextRequest) {
 
   // 4a. Home page: redirect logged-in users straight to /browse so opening a
   //     new tab (same browser, same cookies) doesn't strand them on the
-  //     marketing page. Only fires when an auth cookie is present — anonymous
-  //     visitors and crawlers hit zero added latency.
+  //     marketing page. Cookie-presence check only — no getUser() network call
+  //     needed here (fast, can't fail). /browse is public so landing there
+  //     without a valid session is safe. Anonymous visitors and crawlers
+  //     short-circuit instantly with zero added latency.
   if (pathname === '/') {
-    if (!hasAuthCookie(req)) return NextResponse.next()
-    const res = NextResponse.next()
-    try {
-      const supabase = makeClient(req, res)
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const dest = NextResponse.redirect(new URL('/browse', req.url))
-        // Carry any refreshed cookies onto the redirect response
-        res.cookies.getAll().forEach(c => dest.cookies.set(c))
-        return dest
-      }
-    } catch { /* Transient error — serve the home page normally */ }
-    return res
+    if (hasAuthCookie(req)) {
+      return NextResponse.redirect(new URL('/browse', req.url))
+    }
+    return NextResponse.next()
   }
 
   // 4. Public / non-gated pages: pass through, but keep an existing session
