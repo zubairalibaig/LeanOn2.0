@@ -30,7 +30,7 @@ type ListenerRow = {
   // everything the ledger credits them; earned_settled is the payable subset.
   earned_total?: number; earned_settled?: number
   users: { id: string; name?: string; email?: string; phone?: string; avatar_url?: string | null; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number }
-  application?: { status: string; admin_notes: string | null; upi_id?: string | null; bank_account?: string | null; ifsc_code?: string | null; aadhaar?: string | null; aadhaar_last4?: string | null } | null
+  application?: { status: string; admin_notes: string | null; upi_id?: string | null; bank_account?: string | null; ifsc_code?: string | null; aadhaar?: string | null; aadhaar_last4?: string | null; account_holder_name?: string | null } | null
 }
 type SessionRow = {
   id: string; seeker_id: string; listener_id: string; session_type: string; duration_mins: number
@@ -1508,6 +1508,11 @@ export default function AdminPage() {
                                 || (l.application?.aadhaar_last4 ? `••••••••${l.application.aadhaar_last4}` : '—')}
                             </td>
                             <td style={{ fontSize: 11, minWidth: 160 }}>
+                              {l.application?.account_holder_name && (
+                                <div style={{ marginBottom: 4, fontWeight: 800, color: 'var(--navy)', fontSize: 12 }}>
+                                  {l.application.account_holder_name}
+                                </div>
+                              )}
                               {l.application?.upi_id && (
                                 <div style={{ marginBottom: 3 }}>
                                   <span style={{ fontWeight: 700, color: 'var(--gray)', marginRight: 4 }}>UPI</span>

@@ -156,8 +156,8 @@ export async function GET(req: NextRequest) {
         // aadhaar_last4 is sufficient for display here. The full document is
         // accessible only via the dedicated /api/admin/verify-listener endpoint
         // where an admin is specifically reviewing the identity submission.
-        const withNotesSelect = 'user_id, status, admin_notes, upi_id, bank_account, ifsc_code, aadhaar_last4'
-        const minimalSelect = 'user_id, status, upi_id, bank_account, ifsc_code'
+        const withNotesSelect = 'user_id, status, admin_notes, upi_id, bank_account, ifsc_code, aadhaar_last4, account_holder_name'
+        const minimalSelect = 'user_id, status, upi_id, bank_account, ifsc_code, account_holder_name'
         let appsData: Record<string, unknown>[] = []
         const notesRes = await sb.from('listener_applications').select(withNotesSelect).in('user_id', userIds)
         appsData = !notesRes.error
