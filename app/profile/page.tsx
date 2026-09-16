@@ -199,11 +199,16 @@ export default function ProfilePage() {
                 : ini(name)}
             </div>
             <label style={{cursor:'pointer'}}>
-              <input type="file" accept="image/*" style={{display:'none'}} onChange={uploadAvatar} />
+              <input type="file" accept="image/*" capture="user" style={{display:'none'}} onChange={uploadAvatar} />
               <span className="avatar-upload-btn">
-                {uploadingAvatar ? 'Uploading...' : avatarUrl ? 'Change photo' : '+ Add photo'}
+                {uploadingAvatar ? 'Uploading...' : avatarUrl ? (isListener ? 'Retake selfie' : 'Change photo') : (isListener ? '+ Take selfie' : '+ Add photo')}
               </span>
             </label>
+            {isListener && (
+              <div style={{fontSize:11,color:'var(--gray)',fontWeight:600,textAlign:'center',marginTop:2,marginBottom:4}}>
+                Selfie required · no uploaded photos
+              </div>
+            )}
             {editingName ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
                 <input

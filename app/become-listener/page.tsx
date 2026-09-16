@@ -551,11 +551,12 @@ export default function BecomeListenerPage() {
             </div>
             {fieldErrors.bio && <span className="field-err">{fieldErrors.bio}</span>}
 
-            <label className="lbl">Profile photo (required — builds trust with seekers)</label>
+            <label className="lbl">Profile photo — selfie required</label>
             <input
               ref={photoInputRef}
               type="file"
               accept="image/jpeg,image/png,image/webp"
+              capture="user"
               style={{display:'none'}}
               onChange={async e => {
                 const file = e.target.files?.[0]
@@ -581,16 +582,16 @@ export default function BecomeListenerPage() {
             >
               {avatarPreview
                 ? <img src={avatarPreview} alt="Preview" className="photo-preview" />
-                : <div className="photo-placeholder">📷</div>
+                : <div className="photo-placeholder">🤳</div>
               }
               <span className="photo-label">
-                {avatarPreview ? 'Change photo' : 'Tap to upload your photo'}
+                {avatarPreview ? 'Retake selfie' : 'Take a selfie'}
               </span>
-              <span className="photo-sub">JPG / PNG / WebP · max 5 MB · real photo required</span>
+              <span className="photo-sub">Front camera · JPG / PNG / WebP · max 20 MB</span>
             </div>
             {fieldErrors.avatar && <span className="field-err">{fieldErrors.avatar}</span>}
             <div style={{background:'rgba(26,143,160,0.06)',border:'1px solid rgba(26,143,160,0.2)',borderRadius:10,padding:'10px 14px',marginBottom:16,fontSize:12,color:'#1A5F6A',fontWeight:600,lineHeight:1.5}}>
-              💙 Listeners with a genuine photo receive 3× more bookings. Use a clear, well-lit photo of yourself — no avatars or illustrations.
+              🤳 Take a selfie — no stock photos, avatars, or pictures of pictures. Seekers trust listeners who show their real face. We review every photo before approving your account.
             </div>
 
             <label className="lbl">Topics you can speak to (select all that apply)</label>
