@@ -30,10 +30,17 @@ export async function POST(req: NextRequest) {
     const bank      = typeof body?.bank       === 'string' ? body.bank.trim() : ''
     const ifsc      = typeof body?.ifsc       === 'string' ? body.ifsc.trim().toUpperCase() : ''
     const upi       = typeof body?.upi        === 'string' ? body.upi.trim()  : ''
-    // Validate avatar_url is from this project's Supabase Storage — prevents
-    // injection of arbitrary external URLs into the users row.
-    const supabaseStorageBase = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '') + '/storage/'
-    const avatarUrl = typeof body?.avatar_url === 'string' && body.avatar_url.startsWith(supabaseStorageBase) ? body.avatar_url : null
+    // Validate avatar_url — must be this project's Supabase Storage, in the
+    // avatars bucket, and the path must start with the caller's own user ID.
+    // Strips query params before comparing so cache-bust ?t=... is handled.
+    // This prevents a listener from submitting a URL that points to another
+    // user's avatar or any file in the verifications bucket.
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
+    const ownAvatarPrefix = `${supabaseUrl}/storage/v1/object/public/avatars/${user.id}.`
+    const rawAvatarUrl = typeof body?.avatar_url === 'string' ? body.avatar_url.trim() : ''
+    const avatarUrl = rawAvatarUrl && rawAvatarUrl.split('?')[0].startsWith(ownAvatarPrefix)
+      ? rawAvatarUrl
+      : null
     const formPhone = typeof body?.phone === 'string' ? body.phone.trim() : ''
     // Aadhaar: digits only. Optional at the API (legacy callers / tests omit it),
     // but the become-listener form requires it. Validate strictly when present.

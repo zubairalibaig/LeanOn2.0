@@ -159,9 +159,11 @@ export async function PATCH(req: NextRequest) {
 
     if (typeof body?.avatar_url === 'string') {
       const url = body.avatar_url.trim()
-      // Only allow Supabase Storage URLs (same project) — prevents arbitrary URL injection
+      // Require: this project's Supabase Storage, avatars bucket, caller's own path.
+      // Strips ?t=... cache-bust before comparing so the check is stable.
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
-      if (!url.startsWith(supabaseUrl + '/storage/')) {
+      const ownAvatarPrefix = `${supabaseUrl}/storage/v1/object/public/avatars/${user.id}.`
+      if (!url.split('?')[0].startsWith(ownAvatarPrefix)) {
         return NextResponse.json({ error: 'Invalid avatar URL' }, { status: 400 })
       }
       updates.avatar_url = url

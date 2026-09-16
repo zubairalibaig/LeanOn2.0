@@ -17,6 +17,7 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
   const [stream, setStream]     = useState<MediaStream | null>(null)
   const [camError, setCamError] = useState<string | null>(null)
   const [busy, setBusy]         = useState(false)
+  const [videoReady, setVideoReady] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
 
   // Stop all camera tracks — call before closing the modal
@@ -30,6 +31,7 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
   // Wire the stream to the <video> element once the modal is open
   useEffect(() => {
     if (open && stream && videoRef.current) {
+      setVideoReady(false)
       videoRef.current.srcObject = stream
       videoRef.current.play().catch(() => {})
     }
@@ -61,16 +63,16 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
 
   const capture = useCallback(() => {
     const video = videoRef.current
-    if (!video) return
+    if (!video || !videoReady) return
     setBusy(true)
     const canvas = document.createElement('canvas')
     canvas.width  = video.videoWidth  || 640
     canvas.height = video.videoHeight || 640
     const ctx = canvas.getContext('2d')
     if (!ctx) { setBusy(false); return }
-    // Mirror horizontally — selfie should match what the user saw in the live preview
-    ctx.translate(canvas.width, 0)
-    ctx.scale(-1, 1)
+    // Draw unmirrored — the live preview is mirrored via CSS (natural selfie feel)
+    // but the stored image should be the real camera orientation so text/logos
+    // in clothing read correctly in the profile.
     ctx.drawImage(video, 0, 0)
     canvas.toBlob(blob => {
       setBusy(false)
@@ -80,7 +82,7 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
       setOpen(false)
       onCapture(new File([blob], 'selfie.jpg', { type: 'image/jpeg' }))
     }, 'image/jpeg', 0.92)
-  }, [stream, stopStream, onCapture])
+  }, [stream, stopStream, onCapture, videoReady])
 
   const close = useCallback(() => {
     stopStream(stream)
@@ -154,6 +156,7 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
                 autoPlay
                 playsInline
                 muted
+                onCanPlay={() => setVideoReady(true)}
                 style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scaleX(-1)', display: 'block' }}
               />
               {/* Face oval guide */}
@@ -177,16 +180,16 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
             {/* Capture button */}
             <button
               onClick={capture}
-              disabled={busy}
+              disabled={busy || !videoReady}
               style={{
                 width: '100%', padding: '16px', borderRadius: 50,
-                background: busy ? 'rgba(26,143,160,0.5)' : '#1A8FA0',
-                color: 'white', border: 'none', cursor: busy ? 'default' : 'pointer',
+                background: (busy || !videoReady) ? 'rgba(26,143,160,0.5)' : '#1A8FA0',
+                color: 'white', border: 'none', cursor: (busy || !videoReady) ? 'default' : 'pointer',
                 fontWeight: 800, fontSize: 16, fontFamily: 'inherit',
                 transition: 'background .15s',
               }}
             >
-              {busy ? 'Capturing…' : '📸 Take Photo'}
+              {busy ? 'Capturing…' : !videoReady ? 'Starting camera…' : '📸 Take Photo'}
             </button>
           </div>
         </div>
