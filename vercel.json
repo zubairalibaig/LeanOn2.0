@@ -6,13 +6,5 @@
     }
   ],
   "buildCommand": "next build",
-  "framework": "nextjs",
-  "redirects": [
-    {
-      "source": "/(.*)",
-      "has": [{ "type": "host", "value": "leanon.app" }],
-      "destination": "https://www.leanon.app/$1",
-      "permanent": true
-    }
-  ]
+  "framework": "nextjs"
 }
