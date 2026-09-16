@@ -205,9 +205,9 @@ export default function AdminPage() {
         const u = user as { id: string; email?: string; phone?: string }
 
         // Ping with no PIN header first. Three outcomes:
-        //   200 ok       → full admin access (no PIN configured, or PIN already carried)
-        //   403 PIN_REQUIRED / PHONE_VERIFIED → identity confirmed, PIN gate needed
-        //   403 NOT_ADMIN / other             → show Access Denied
+        //   200 ok            → full admin access (no PIN configured, or PIN already carried)
+        //   403 PIN_REQUIRED  → identity confirmed, PIN gate needed
+        //   403 NOT_ADMIN / other → show Access Denied
         const pingRes = await fetch('/api/admin/ping').catch(() => null)
         if (pingRes?.ok) {
           const body = await pingRes.json().catch(() => ({}))
@@ -217,7 +217,7 @@ export default function AdminPage() {
         } else if (pingRes?.status === 403) {
           const body = await pingRes.json().catch(() => ({}))
           setAuthUser(u)
-          if (body.code === 'PIN_REQUIRED' || body.code === 'PHONE_VERIFIED') {
+          if (body.code === 'PIN_REQUIRED') {
             // Check sessionStorage for a PIN saved from a previous verification
             const savedPin = (() => { try { return sessionStorage.getItem('admin_pin') } catch { return null } })()
             if (savedPin) {

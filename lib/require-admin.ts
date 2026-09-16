@@ -101,16 +101,20 @@ function isPrimaryPhone(phone: string): boolean {
 }
 
 export async function requireAdmin(req: Request) {
-  // ── Step 0: ADMIN_PASSWORD / ADMIN_SECRET header — password-based admin auth ─
-  // Support both names: ADMIN_SECRET (documented in .env.example) and
-  // ADMIN_PASSWORD (legacy name). ADMIN_SECRET takes priority.
+  // ── Step 0: ADMIN_SECRET / ADMIN_PASSWORD header — programmatic-only path ───
+  // Used exclusively by automated systems (e2e tests, CI scripts) that cannot
+  // carry a browser OTP session. The admin UI NEVER sends this header — its
+  // only path is Step 1 below (Supabase OTP session + PIN). Keep this path
+  // narrow: it never grants isPrimaryAdmin, and its user id is a synthetic
+  // constant (ADMIN_PASSWORD_USER_ID) so it cannot touch FK-constrained columns.
+  //
+  // NOTE: The old x-admin-phone + x-admin-pin header path has been removed.
+  // It was dead code (the UI never sent x-admin-phone) and bypassed OTP. All
+  // human admin access must go through Supabase OTP (Step 1).
   const adminPassword = process.env.ADMIN_SECRET || process.env.ADMIN_PASSWORD
   if (adminPassword) {
     const providedPw = req.headers.get('x-admin-password') ?? ''
     if (providedPw) {
-      // Brute-force guard counts FAILED attempts only (see note below).
-      // isRateLimitedAsync / recordAttemptAsync use Redis when configured,
-      // giving globally-consistent enforcement across all serverless containers.
       const clientIp = (req.headers.get('x-forwarded-for') ?? 'unknown').split(',')[0].trim()
       const key = `admin-pw:${clientIp}`
       if (await isRateLimitedAsync(key, FAILED_AUTH_LIMIT, FAILED_AUTH_WINDOW_MS)) {
@@ -120,48 +124,12 @@ export async function requireAdmin(req: Request) {
         return {
           error: null, code: null, status: 200 as const,
           user: { id: ADMIN_PASSWORD_USER_ID, email: process.env.ADMIN_EMAIL } as { id: string; email?: string; phone?: string },
-          // The shared password can't be tied to one person, so it never
-          // counts as the primary (owner-only) admin.
           isPrimaryAdmin: false,
         }
       }
       await recordAttemptAsync(key, FAILED_AUTH_WINDOW_MS)
       await new Promise(r => setTimeout(r, 1000))
       return { error: 'Forbidden', code: 'NOT_ADMIN', status: 403 as const, user: null }
-    }
-  }
-
-  // ── Step 0b: Phone + PIN header auth (two-step login from admin UI) ─────────
-  // Matches against ALL configured admin accounts (ADMIN_PHONE/ADMIN_PIN pair
-  // plus every entry in ADMIN_ACCOUNTS) — each admin has their own PIN.
-  const phonePinHeader = req.headers.get('x-admin-phone') ?? ''
-  if (phonePinHeader) {
-    const clientIp = (req.headers.get('x-forwarded-for') ?? 'unknown').split(',')[0].trim()
-    const key = `admin-phone:${clientIp}`
-    if (await isRateLimitedAsync(key, FAILED_AUTH_LIMIT, FAILED_AUTH_WINDOW_MS)) {
-      return { error: 'Too many attempts. Please wait.', code: 'PIN_RATE_LIMITED', status: 429 as const, user: null }
-    }
-    const account = adminAccounts().find(a => a.phone === normalizePhone(phonePinHeader))
-    if (!account) {
-      await recordAttemptAsync(key, FAILED_AUTH_WINDOW_MS)
-      await new Promise(r => setTimeout(r, 1000))
-      return { error: 'Invalid phone number', code: 'NOT_ADMIN', status: 403 as const, user: null }
-    }
-    // Phone matched — now check THIS account's PIN
-    const providedPin = req.headers.get('x-admin-pin') ?? ''
-    if (!providedPin) {
-      // Not a failed guess — the two-step UI asks for the PIN next. Don't penalise.
-      return { error: 'PIN required', code: 'PHONE_VERIFIED', status: 403 as const, user: null }
-    }
-    if (!timingSafeEqual(providedPin, account.pin)) {
-      await recordAttemptAsync(key, FAILED_AUTH_WINDOW_MS)
-      await new Promise(r => setTimeout(r, 500))
-      return { error: 'Incorrect PIN', code: 'PIN_REQUIRED', status: 403 as const, user: null }
-    }
-    return {
-      error: null, code: null, status: 200 as const,
-      user: { id: ADMIN_PASSWORD_USER_ID, email: process.env.ADMIN_EMAIL } as { id: string; email?: string; phone?: string },
-      isPrimaryAdmin: isPrimaryPhone(account.phone),
     }
   }
 
