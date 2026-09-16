@@ -21,7 +21,7 @@ const schema = { '@context':'https://schema.org', '@graph': [
   { '@type':'FAQPage', mainEntity:faqs.map(([q,a])=>({'@type':'Question',name:q,acceptedAnswer:{'@type':'Answer',text:a}})) },
 ] }
 
-const sections = [
+const sections: [string, string, string[]?][] = [
   ['What is mental health support?', 'Mental health support is broader than therapy. It can mean having a trusted person listen, joining a peer community, speaking with a counsellor, working with a psychologist, or receiving psychiatric care when clinically appropriate. The right level depends on what someone is experiencing and what kind of help they need.'],
   ['Peer support, counselling and clinical care are different', 'Peer support focuses on listening, connection, empathy and shared experience. Counselling and psychotherapy are professional services delivered by appropriately qualified practitioners and may involve structured therapeutic work. Psychiatry is medical care that can include diagnosis and medication. These categories should be kept distinct rather than blurred for marketing.'],
   ['When a human peer conversation may be useful', 'Sometimes the immediate need is simple: say something out loud, have another person listen, get perspective from someone who understands, or avoid spending another difficult evening alone with your thoughts. LeanOn is designed for this non-clinical use case.', ['Loneliness or feeling disconnected','Relationship, family or marriage stress','Work pressure, burnout or career uncertainty','Breakups, grief and difficult transitions','Overthinking or a difficult day','Homesickness or living away from family','Wanting someone to listen without changing an existing relationship']],
