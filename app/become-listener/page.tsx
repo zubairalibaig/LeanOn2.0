@@ -450,10 +450,11 @@ export default function BecomeListenerPage() {
       <div className="page">
         <div className="topbar"><a href="/" className="back">←</a></div>
         <div className="already-reg">
-          <div style={{fontSize:48,marginBottom:12}}>🎧</div>
-          <p>You already have a listener application on LeanOn.</p>
+          <div style={{fontSize:48,marginBottom:12}}>✅</div>
+          <p style={{fontWeight:800,fontSize:17,marginBottom:6}}>Your application was received!</p>
+          <p style={{fontSize:14,color:'#5A7A8A',marginBottom:16}}>We got your listener application and our team is reviewing it. You&apos;ll hear from us within 24–48 hours on the phone number you registered with.</p>
           <a href="/become-listener/status">
-            <button className="btn">View your application status →</button>
+            <button className="btn">Check application status →</button>
           </a>
           <a href="/dashboard">
             <button className="btn-ghost" style={{marginTop:10}}>Go to dashboard</button>
