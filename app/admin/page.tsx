@@ -26,6 +26,8 @@ type ListenerRow = {
   user_id: string; bio?: string; specialty_tags?: string[]; rate_per_min?: number; rating?: number; total_sessions?: number
   is_active: boolean; is_approved: boolean; is_available: boolean; is_verified?: boolean; is_suspended?: boolean; created_at: string
   last_sign_in_at?: string | null
+  // Pending selfie awaiting admin review (uploaded by an already-approved listener)
+  pending_avatar_url?: string | null
   // Summed from listener_earnings by /api/admin/users. earned_total is
   // everything the ledger credits them; earned_settled is the payable subset.
   earned_total?: number; earned_settled?: number
@@ -1615,6 +1617,22 @@ export default function AdminPage() {
                                     <div className="action-row">
                                       <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'approve_listener')}>
                                         {busy === `approve_listener:${l.user_id}` ? 'Approving…' : 'Re-approve'}
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
+                                {l.is_approved && l.pending_avatar_url && (
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 4 }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                      <span style={{ background: '#fff3cd', color: '#856404', border: '1px solid #ffc107', borderRadius: 4, fontSize: 10, fontWeight: 800, padding: '2px 6px', textTransform: 'uppercase' }}>Pending selfie</span>
+                                      <a href={l.pending_avatar_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: 'var(--teal)', fontWeight: 700 }}>View</a>
+                                    </div>
+                                    <div className="action-row">
+                                      <button className="btn btn-green" style={{ fontSize: 11 }} disabled={busy !== null} onClick={() => userAction(l.user_id, 'approve_selfie')}>
+                                        {busy === `approve_selfie:${l.user_id}` ? '…' : 'Approve photo'}
+                                      </button>
+                                      <button className="btn btn-red" style={{ fontSize: 11 }} disabled={busy !== null} onClick={() => userAction(l.user_id, 'reject_selfie', 'Photo not suitable')}>
+                                        {busy === `reject_selfie:${l.user_id}` ? '…' : 'Reject photo'}
                                       </button>
                                     </div>
                                   </div>

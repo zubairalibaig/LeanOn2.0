@@ -69,6 +69,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `Rate must be between ₹${MIN_LISTENER_RATE} and ₹${MAX_LISTENER_RATE} per minute.` }, { status: 400 })
     if (tags.length === 0)
       return NextResponse.json({ error: 'Please select at least one topic.' }, { status: 400 })
+    // Selfie is mandatory — no application proceeds without a verified,
+    // caller-owned avatar URL. This is the server-side gate for the
+    // camera-only selfie requirement enforced by SelfieCapture in the UI.
+    if (!avatarUrl)
+      return NextResponse.json({ error: 'A selfie photo is required to apply as a listener.' }, { status: 400 })
     if (!/^\d{9,18}$/.test(bank))
       return NextResponse.json({ error: 'Please enter a valid bank account number.' }, { status: 400 })
     if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc))
@@ -104,11 +109,6 @@ export async function POST(req: NextRequest) {
     if (userErr) {
       if (userDebug) logger.error('listener apply: ensureUserRow debug', { userId: user.id, debug: userDebug })
       return NextResponse.json({ error: userErr }, { status: 500 })
-    }
-
-    // Save avatar URL to users row (best-effort — profile can function without it)
-    if (avatarUrl) {
-      await admin.from('users').update({ avatar_url: avatarUrl }).eq('id', user.id).then(() => {}, () => {})
     }
 
     // 2. listener profile — is_approved intentionally omitted: DB default
@@ -200,6 +200,15 @@ export async function POST(req: NextRequest) {
     if (appErr) {
       logger.error('listener apply: application upsert failed', { userId: user.id, error: appErr.message, code: appErr.code })
       return NextResponse.json({ error: 'Could not save your application.' }, { status: 500 })
+    }
+
+    // 4. Persist avatar — runs only after all DB writes succeed so a storage
+    //    failure never leaves an approved listener with no photo. avatarUrl is
+    //    guaranteed non-null here (validated and required above).
+    const { error: avatarErr } = await admin.from('users').update({ avatar_url: avatarUrl }).eq('id', user.id)
+    if (avatarErr) {
+      logger.error('listener apply: avatar_url save failed', { userId: user.id, error: avatarErr.message })
+      return NextResponse.json({ error: 'Could not save your selfie. Please try again.' }, { status: 500 })
     }
 
     return NextResponse.json({ success: true })

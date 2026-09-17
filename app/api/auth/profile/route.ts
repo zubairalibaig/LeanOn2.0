@@ -157,6 +157,8 @@ export async function PATCH(req: NextRequest) {
       updates.name = name
     }
 
+    // Validated avatar URL (used below — may route to pending for approved listeners)
+    let validatedAvatarUrl: string | null = null
     if (typeof body?.avatar_url === 'string') {
       const url = body.avatar_url.trim()
       // Require: this project's Supabase Storage, avatars bucket, caller's own path.
@@ -166,21 +168,65 @@ export async function PATCH(req: NextRequest) {
       if (!url.split('?')[0].startsWith(ownAvatarPrefix)) {
         return NextResponse.json({ error: 'Invalid avatar URL' }, { status: 400 })
       }
-      updates.avatar_url = url
+      validatedAvatarUrl = url
     }
 
-    if (Object.keys(updates).length === 0) {
+    if (Object.keys(updates).length === 0 && !validatedAvatarUrl) {
       return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
     }
 
     const admin = createAdminClient()
-    const { error: updateErr } = await admin.from('users').update(updates).eq('id', user.id)
-    if (updateErr) {
-      logger.error('profile PATCH error:', { error: updateErr.message })
-      return NextResponse.json({ error: 'Failed to update profile. Please try again.' }, { status: 500 })
+
+    if (validatedAvatarUrl) {
+      // Approved listeners: selfie changes go to pending_avatar_url for admin
+      // review before replacing the public photo. Seekers and unapproved
+      // applicants update avatar_url directly (no review needed).
+      const { data: lp } = await admin
+        .from('listener_profiles')
+        .select('is_approved')
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+      if (lp?.is_approved === true) {
+        // Write to pending — do not touch users.avatar_url until admin approves.
+        const { error: pendingErr } = await admin
+          .from('listener_profiles')
+          .update({ pending_avatar_url: validatedAvatarUrl })
+          .eq('user_id', user.id)
+        if (pendingErr) {
+          // Column may not exist yet (migration not applied) — fall back to direct write
+          // so existing users are not broken while the migration is pending.
+          if (pendingErr.message?.includes('pending_avatar_url')) {
+            updates.avatar_url = validatedAvatarUrl
+          } else {
+            logger.error('profile PATCH: pending_avatar_url write failed', { error: pendingErr.message })
+            return NextResponse.json({ error: 'Failed to update profile. Please try again.' }, { status: 500 })
+          }
+        } else {
+          // Notify admin (best-effort)
+          await admin.from('notifications').insert({
+            user_id: user.id,
+            type: 'system',
+            title: 'Selfie update pending review',
+            body: 'Your new selfie is under review. Your current photo remains public until approved.',
+            action_url: '/dashboard',
+          }).then(() => {}, () => {})
+        }
+      } else {
+        updates.avatar_url = validatedAvatarUrl
+      }
     }
 
-    return NextResponse.json({ success: true })
+    if (Object.keys(updates).length > 0) {
+      const { error: updateErr } = await admin.from('users').update(updates).eq('id', user.id)
+      if (updateErr) {
+        logger.error('profile PATCH error:', { error: updateErr.message })
+        return NextResponse.json({ error: 'Failed to update profile. Please try again.' }, { status: 500 })
+      }
+    }
+
+    const pendingQueued = validatedAvatarUrl && updates.avatar_url !== validatedAvatarUrl
+    return NextResponse.json({ success: true, pending_review: pendingQueued ?? false })
   } catch (err) {
     logger.error('profile PATCH error:', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json({ error: 'An unexpected error occurred.' }, { status: 500 })

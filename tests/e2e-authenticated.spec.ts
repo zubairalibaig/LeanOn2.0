@@ -102,12 +102,19 @@ test.describe('Listener: apply → admin approves → public profile live', () =
     const userId = await authUserId(context)
 
     // 1. Submit the application server-side (same route the form posts to).
+    // avatar_url is now mandatory — construct a valid-format URL for the test user.
+    // The path must match `{supabaseUrl}/storage/v1/object/public/avatars/{userId}.*`
+    // (URL ownership validation). The file doesn't need to physically exist in
+    // storage for the API to accept the application in test environments.
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
+    const testAvatarUrl = `${supabaseUrl}/storage/v1/object/public/avatars/${userId}.jpg`
     const apply = await page.request.post('/api/listener/apply', {
       data: {
         name: 'E2E Listener', phone: tenDigits(LISTENER_PHONE),
         bio: 'Automated end-to-end test listener profile, here to listen with care.',
         tags: ['general'], langs: ['english'], rate: 5,
         bank: '123456789012', ifsc: 'HDFC0001234', upi: 'e2e@upi',
+        avatar_url: testAvatarUrl,
       },
     })
     expect(apply.ok(), `apply failed: ${await apply.text()}`).toBeTruthy()
@@ -133,6 +140,75 @@ test.describe('Listener: apply → admin approves → public profile live', () =
     await expect(page.getByText('Listener not found')).toHaveCount(0)
     // Booking bar shows the free-trial option.
     await expect(page.getByText('FREE')).toBeVisible()
+  })
+})
+
+// ────────────────────────────────────────────────────────────────────────
+test.describe('Listener apply — selfie security', () => {
+  test.skip(!LISTENER_PHONE || !LISTENER_OTP, 'TEST_LISTENER_PHONE / TEST_LISTENER_OTP not set')
+
+  test('missing avatar_url returns 400', async ({ page, context }) => {
+    await login(page, LISTENER_PHONE, LISTENER_OTP, { listenerMode: true })
+    const res = await page.request.post('/api/listener/apply', {
+      data: {
+        name: 'No Selfie Test', phone: tenDigits(LISTENER_PHONE),
+        bio: 'Test bio that is long enough to pass validation checks here.',
+        tags: ['general'], langs: ['english'], rate: 5,
+        bank: '123456789012', ifsc: 'HDFC0001234',
+        // avatar_url intentionally omitted
+      },
+    })
+    expect(res.status(), 'no selfie must be 400').toBe(400)
+    const body = await res.json()
+    expect(body.error, 'error message must mention selfie').toMatch(/selfie/i)
+  })
+
+  test('cross-user avatar_url returns 400', async ({ page, context }) => {
+    await login(page, LISTENER_PHONE, LISTENER_OTP, { listenerMode: true })
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
+    // Use a different user's ID in the avatar path — must be rejected.
+    const crossUserUrl = `${supabaseUrl}/storage/v1/object/public/avatars/00000000-0000-0000-0000-000000000000.jpg`
+    const res = await page.request.post('/api/listener/apply', {
+      data: {
+        name: 'Cross User Test', phone: tenDigits(LISTENER_PHONE),
+        bio: 'Test bio that is long enough to pass validation checks here.',
+        tags: ['general'], langs: ['english'], rate: 5,
+        bank: '123456789012', ifsc: 'HDFC0001234',
+        avatar_url: crossUserUrl,
+      },
+    })
+    expect(res.status(), 'cross-user avatar must be 400').toBe(400)
+  })
+
+  test('arbitrary URL as avatar_url returns 400', async ({ page, context }) => {
+    await login(page, LISTENER_PHONE, LISTENER_OTP, { listenerMode: true })
+    const res = await page.request.post('/api/listener/apply', {
+      data: {
+        name: 'Arbitrary URL Test', phone: tenDigits(LISTENER_PHONE),
+        bio: 'Test bio that is long enough to pass validation checks here.',
+        tags: ['general'], langs: ['english'], rate: 5,
+        bank: '123456789012', ifsc: 'HDFC0001234',
+        avatar_url: 'https://example.com/notmyimage.jpg',
+      },
+    })
+    expect(res.status(), 'arbitrary URL must be 400').toBe(400)
+  })
+
+  test('valid own avatar_url is accepted', async ({ page, context }) => {
+    await login(page, LISTENER_PHONE, LISTENER_OTP, { listenerMode: true })
+    const userId = await authUserId(context)
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
+    const ownAvatarUrl = `${supabaseUrl}/storage/v1/object/public/avatars/${userId}.jpg`
+    const res = await page.request.post('/api/listener/apply', {
+      data: {
+        name: 'Valid Selfie Test', phone: tenDigits(LISTENER_PHONE),
+        bio: 'Test bio that is long enough to pass validation checks here.',
+        tags: ['general'], langs: ['english'], rate: 5,
+        bank: '123456789012', ifsc: 'HDFC0001234',
+        avatar_url: ownAvatarUrl,
+      },
+    })
+    expect(res.ok(), `valid own avatar must succeed: ${await res.text()}`).toBeTruthy()
   })
 })
 

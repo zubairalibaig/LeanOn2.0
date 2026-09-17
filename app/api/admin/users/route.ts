@@ -95,12 +95,12 @@ export async function GET(req: NextRequest) {
       // from listener_applications below).
       const selectWithVerified = `
         user_id, bio, specialty_tags, rate_per_min, rating, total_sessions,
-        is_active, is_approved, is_available, is_verified, is_suspended, created_at,
+        is_active, is_approved, is_available, is_verified, is_suspended, created_at, pending_avatar_url,
         users!inner(id, name, email, phone, avatar_url, created_at, is_active, is_suspended, wallet_balance)
       `
       const selectWithoutVerified = `
         user_id, bio, specialty_tags, rate_per_min, rating, total_sessions,
-        is_active, is_approved, is_available, is_suspended, created_at,
+        is_active, is_approved, is_available, is_suspended, created_at, pending_avatar_url,
         users!inner(id, name, email, phone, avatar_url, created_at, is_active, is_suspended, wallet_balance)
       `
 
@@ -286,7 +286,7 @@ export async function PATCH(req: NextRequest) {
   const { userId, action, notes, name } = body
   if (!userId || !UUID_RE.test(userId)) return NextResponse.json({ error: 'Invalid userId' }, { status: 400 })
 
-  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'suspend_listener', 'unsuspend_listener', 'approve_listener', 'reject_listener', 'rename', 'update_bank_details']
+  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'suspend_listener', 'unsuspend_listener', 'approve_listener', 'reject_listener', 'approve_selfie', 'reject_selfie', 'rename', 'update_bank_details']
   if (!action || !validActions.includes(action)) return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
 
   const sb = createAdminClient()
@@ -294,14 +294,36 @@ export async function PATCH(req: NextRequest) {
   try {
     switch (action) {
       case 'approve_listener': {
+        // Fetch pending_avatar_url so we can promote it atomically with approval.
+        const { data: lpCurrent } = await sb
+          .from('listener_profiles')
+          .select('pending_avatar_url')
+          .eq('user_id', userId)
+          .maybeSingle()
+        const pendingAvatar = lpCurrent?.pending_avatar_url ?? null
+
         // listener_profiles is the authoritative approval gate — must succeed.
+        const lpUpdate: Record<string, unknown> = { is_approved: true, is_active: true }
+        if (pendingAvatar) lpUpdate.pending_avatar_url = null // clear after promoting
         const { error: lpErr } = await sb.from('listener_profiles')
-          .update({ is_approved: true, is_active: true })
+          .update(lpUpdate)
           .eq('user_id', userId)
         if (lpErr) {
           logger.error('approve_listener: listener_profiles update failed', { userId, error: lpErr.message })
           return NextResponse.json({ error: `Failed to approve listener: ${lpErr.message}` }, { status: 500 })
         }
+
+        // Promote pending selfie to public avatar atomically with approval.
+        if (pendingAvatar) {
+          const { error: avErr } = await sb.from('users')
+            .update({ avatar_url: pendingAvatar })
+            .eq('id', userId)
+          if (avErr) {
+            logger.warn('approve_listener: pending_avatar_url promotion failed', { userId, error: avErr.message })
+            // Not fatal — profile is approved; admin can recheck photo in UI.
+          }
+        }
+
         // Sync application status so the pending filter removes this listener.
         const { error: laErr } = await sb.from('listener_applications')
           .update({ status: 'approved' })
@@ -321,8 +343,11 @@ export async function PATCH(req: NextRequest) {
       }
 
       case 'reject_listener': {
+        // Clear pending_avatar_url on rejection — the pending selfie is discarded.
+        // The existing avatar_url (if any) is deliberately NOT touched so the
+        // listener retains their current photo if they reapply.
         const { error: lpErr } = await sb.from('listener_profiles')
-          .update({ is_approved: false, is_active: false })
+          .update({ is_approved: false, is_active: false, pending_avatar_url: null })
           .eq('user_id', userId)
         if (lpErr) {
           logger.error('reject_listener: listener_profiles update failed', { userId, error: lpErr.message })
@@ -348,6 +373,57 @@ export async function PATCH(req: NextRequest) {
           title: 'Application update',
           body: notes || 'Your listener application needs revision. Please contact support for details.',
           action_url: '/become-listener/status',
+        }).then(() => {}, () => {})
+        break
+      }
+
+      case 'approve_selfie': {
+        // Promote pending_avatar_url → users.avatar_url for an already-approved listener.
+        const { data: lpSelfie } = await sb
+          .from('listener_profiles')
+          .select('pending_avatar_url')
+          .eq('user_id', userId)
+          .maybeSingle()
+        const pendingSelfie = lpSelfie?.pending_avatar_url
+        if (!pendingSelfie) {
+          return NextResponse.json({ error: 'No pending selfie to approve' }, { status: 400 })
+        }
+        const { error: avErr } = await sb.from('users')
+          .update({ avatar_url: pendingSelfie })
+          .eq('id', userId)
+        if (avErr) {
+          logger.error('approve_selfie: users avatar_url update failed', { userId, error: avErr.message })
+          return NextResponse.json({ error: `Failed to approve selfie: ${avErr.message}` }, { status: 500 })
+        }
+        await sb.from('listener_profiles')
+          .update({ pending_avatar_url: null })
+          .eq('user_id', userId)
+          .then(() => {}, () => {})
+        await sb.from('notifications').insert({
+          user_id: userId,
+          type: 'verification_update',
+          title: 'Selfie approved',
+          body: 'Your new profile photo is now live.',
+          action_url: '/dashboard',
+        }).then(() => {}, () => {})
+        break
+      }
+
+      case 'reject_selfie': {
+        // Discard pending selfie — existing avatar_url remains public.
+        const { error: lpErr } = await sb.from('listener_profiles')
+          .update({ pending_avatar_url: null })
+          .eq('user_id', userId)
+        if (lpErr) {
+          logger.error('reject_selfie: listener_profiles update failed', { userId, error: lpErr.message })
+          return NextResponse.json({ error: `Failed to reject selfie: ${lpErr.message}` }, { status: 500 })
+        }
+        await sb.from('notifications').insert({
+          user_id: userId,
+          type: 'verification_update',
+          title: 'Selfie update declined',
+          body: notes || 'Your new selfie could not be approved. Your current profile photo remains active.',
+          action_url: '/dashboard',
         }).then(() => {}, () => {})
         break
       }
