@@ -134,10 +134,10 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
                   <span style={{ fontWeight: 800 }}>Android (Chrome):</span> Tap the lock icon in the address bar → Site settings → Camera → Allow.
                 </div>
                 <div style={{ marginBottom: 4 }}>
-                  <span style={{ fontWeight: 800 }}>iPhone (Safari):</span> Go to Settings → Safari → Camera → Allow.
+                  <span style={{ fontWeight: 800 }}>iPhone (Safari):</span> Go to Settings → Apps → Safari → Camera → Allow. If that doesn&apos;t work: Settings → Privacy &amp; Security → Camera → make sure Safari is on.
                 </div>
                 <div>
-                  <span style={{ fontWeight: 800 }}>iPhone (Chrome):</span> Go to Settings → Chrome → Camera → turn on.
+                  <span style={{ fontWeight: 800 }}>iPhone (Chrome):</span> Go to Settings → Chrome → Camera → Allow.
                 </div>
               </div>
             </>
