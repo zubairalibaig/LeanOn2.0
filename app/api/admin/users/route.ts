@@ -86,6 +86,14 @@ export async function GET(req: NextRequest) {
         if (userIdFilter.length === 0) {
           return NextResponse.json({ items: [], total: 0, page, type: 'listener' })
         }
+      } else if (userStatus === 'rejected') {
+        const { data: rejectedApps } = await sb.from('listener_applications')
+          .select('user_id')
+          .eq('status', 'rejected')
+        userIdFilter = (rejectedApps ?? []).map((a: { user_id: string }) => a.user_id)
+        if (userIdFilter.length === 0) {
+          return NextResponse.json({ items: [], total: 0, page, type: 'listener' })
+        }
       }
 
       // Try with is_verified first (added by migration 008/014).

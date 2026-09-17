@@ -1331,7 +1331,7 @@ export default function AdminPage() {
               <span className="count-badge">{listenersTotal}</span>
             </div>
             <div className="filter-row">
-              {(['all', 'pending', 'active', 'suspended'] as const).map(s => (
+              {(['all', 'pending', 'active', 'suspended', 'rejected'] as const).map(s => (
                 <button
                   key={s}
                   className={`filter-btn${listenersStatus === s ? ' active' : ''}`}
