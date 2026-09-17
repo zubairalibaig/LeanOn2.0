@@ -31,16 +31,38 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
   useEffect(() => () => { stopStream(stream) }, [stream, stopStream])
 
   // If none of the readiness signals fires within 6 s of the modal
-  // opening, show a recoverable "camera couldn't start" message rather
-  // than leaving the user stuck on "Starting camera…" indefinitely.
+  // opening, show a recoverable "camera couldn't start" message.
   useEffect(() => {
     if (!open || videoReady) { setCamStuck(false); return }
     const t = setTimeout(() => setCamStuck(true), 6000)
     return () => clearTimeout(t)
   }, [open, videoReady])
 
+  // Secondary fallback: wire stream to video when both are available.
+  // The primary path calls play() directly in openCamera (within the
+  // user-gesture async continuation for iOS Safari). This effect catches
+  // the rare case where videoRef wasn't reachable at that moment.
+  useEffect(() => {
+    const video = videoRef.current
+    if (!open || !stream || !video) return
+    if (video.srcObject !== stream) {
+      video.srcObject = stream
+      video.play()
+        .then(() => setVideoReady(true))
+        .catch(() => {
+          // Autoplay blocked — onPlaying/onLoadedMetadata still fire once
+          // the stream delivers its first frame.
+        })
+    }
+  }, [open, stream])
+
   const openCamera = useCallback(async () => {
+    // Reset stuck state so a previous failure doesn't leave the video
+    // element hidden and videoRef.current unreachable on retry.
     setCamError(null)
+    setCamStuck(false)
+    setVideoReady(false)
+
     if (!navigator?.mediaDevices?.getUserMedia) {
       setCamError('Your browser does not support camera access. Try Chrome or Safari.')
       return
@@ -49,23 +71,23 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
       const s = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 720 } },
       })
-      // Attach stream and call play() immediately — still within the user-gesture
-      // async continuation. On iOS Safari, play() only accepts the autoplay token
-      // in the same synchronous/microtask chain as the triggering gesture. Waiting
-      // for a React useEffect (post-render) loses the token, causing play() to
-      // reject with NotAllowedError and leaving the camera permanently stuck on
-      // "Starting camera…". The modal div is always rendered (CSS display:none
-      // when closed) so videoRef.current is available here without a re-render.
-      setVideoReady(false)
+
+      // Primary play path: call play() immediately while still in the
+      // user-gesture async continuation. iOS Safari invalidates the
+      // autoplay token after any cross-task yield (e.g. React re-render),
+      // so we must attach and play before calling setState.
+      // The modal div is always in the DOM (CSS display, not conditional
+      // mount) so videoRef.current is available here without a re-render.
       if (videoRef.current) {
         videoRef.current.srcObject = s
         videoRef.current.play()
           .then(() => setVideoReady(true))
           .catch(() => {
-            // Autoplay rejected — onLoadedMetadata / onCanPlay / onPlaying
-            // will still fire once the stream delivers its first frame.
+            // Token expired or autoplay blocked — the useEffect fallback
+            // above will retry when open+stream state commits.
           })
       }
+
       setStream(s)
       setOpen(true)
     } catch (e) {
@@ -110,6 +132,8 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
       stopStream(stream)
       setStream(null)
       setOpen(false)
+      setCamStuck(false)
+      setVideoReady(false)
       onCapture(new File([blob], 'selfie.jpg', { type: 'image/jpeg' }))
     }, 'image/jpeg', 0.92)
   }, [stream, stopStream, onCapture, videoReady])
@@ -118,9 +142,10 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
     stopStream(stream)
     setStream(null)
     setOpen(false)
+    // Reset stuck + ready so the next openCamera attempt starts clean
+    // and the video element (always in DOM) is not left in stuck-recovery state.
+    setCamStuck(false)
     setVideoReady(false)
-    // Clear srcObject so the stopped track doesn't leave a stale frame visible
-    // the next time the modal backdrop becomes visible before a new stream starts.
     if (videoRef.current) videoRef.current.srcObject = null
   }, [stream, stopStream])
 
@@ -184,10 +209,10 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
       )}
 
       {/* ── Camera modal ─────────────────────────────────────────────────
-          Always rendered (not conditionally mounted) so videoRef.current
-          is available in openCamera() before any React re-render fires.
-          This is the iOS Safari autoplay fix: play() must be called in
-          the same gesture async-continuation, not in a useEffect.
+          Always rendered (CSS display, not conditional mount) so videoRef.current
+          is non-null in openCamera() without waiting for a React re-render.
+          The <video> element is also always in the DOM — even during the
+          stuck-recovery view — so videoRef is never null between retries.
       ──────────────────────────────────────────────────────────────────── */}
       <div style={{
         position: 'fixed', inset: 0, zIndex: 9999,
@@ -207,8 +232,39 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
             >✕</button>
           </div>
 
+          {/* Live camera feed — ALWAYS in DOM so videoRef is never null.
+              Hidden via CSS when the stuck-recovery message is shown. */}
+          <div style={{
+            position: 'relative', borderRadius: 16, overflow: 'hidden',
+            background: '#111', aspectRatio: '1',
+            display: camStuck && !videoReady ? 'none' : 'block',
+          }}>
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              onLoadedMetadata={() => setVideoReady(true)}
+              onCanPlay={() => setVideoReady(true)}
+              onPlaying={() => setVideoReady(true)}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scaleX(-1)', display: 'block' }}
+            />
+            {/* Face oval guide */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              pointerEvents: 'none',
+            }}>
+              <div style={{
+                width: '60%', height: '75%',
+                border: '2px solid rgba(255,255,255,0.45)',
+                borderRadius: '50%',
+              }} />
+            </div>
+          </div>
+
+          {/* Stuck recovery — shown when camera couldn't start after 6 s */}
           {camStuck && !videoReady ? (
-            /* ── Stuck recovery ─────────────────────────────────────── */
             <div style={{ textAlign: 'center', padding: '32px 16px' }}>
               <div style={{ fontSize: 36, marginBottom: 12 }}>📷</div>
               <div style={{ color: 'white', fontWeight: 800, fontSize: 15, marginBottom: 8 }}>
@@ -227,37 +283,9 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
             </div>
           ) : (
             <>
-              {/* Live camera feed — mirrored so it feels like a selfie camera */}
-              <div style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', background: '#111', aspectRatio: '1' }}>
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  onLoadedMetadata={() => setVideoReady(true)}
-                  onCanPlay={() => setVideoReady(true)}
-                  onPlaying={() => setVideoReady(true)}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scaleX(-1)', display: 'block' }}
-                />
-                {/* Face oval guide */}
-                <div style={{
-                  position: 'absolute', inset: 0,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  pointerEvents: 'none',
-                }}>
-                  <div style={{
-                    width: '60%', height: '75%',
-                    border: '2px solid rgba(255,255,255,0.45)',
-                    borderRadius: '50%',
-                  }} />
-                </div>
-              </div>
-
               <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12, textAlign: 'center', margin: '10px 0 18px', fontWeight: 600 }}>
                 Centre your face in the oval · good lighting helps
               </p>
-
-              {/* Capture button */}
               <button
                 type="button"
                 onClick={capture}
