@@ -897,11 +897,14 @@ export default function AdminPage() {
                               <input
                                 className="reject-input"
                                 style={{ width: 130, marginBottom: 0 }}
-                                placeholder="Reason (opt)"
+                                placeholder="Reason (required)"
                                 value={rejectNotes[l.user_id] || ''}
                                 onChange={e => setRejectNotes(prev => ({ ...prev, [l.user_id]: e.target.value }))}
                               />
-                              <button className="btn btn-red" disabled={busy !== null} onClick={() => userAction(l.user_id, 'reject_listener', rejectNotes[l.user_id])}>
+                              <button className="btn btn-orange" disabled={busy !== null || !rejectNotes[l.user_id]?.trim()} onClick={() => userAction(l.user_id, 'request_resubmission', rejectNotes[l.user_id])} title="Ask them to fix and resubmit">
+                                {busy === `request_resubmission:${l.user_id}` ? '…' : 'Request Fix'}
+                              </button>
+                              <button className="btn btn-red" disabled={busy !== null} onClick={() => { if (confirm('Permanently reject this application? They will NOT be able to resubmit.')) userAction(l.user_id, 'reject_listener', rejectNotes[l.user_id]) }} title="Permanently reject — cannot resubmit">
                                 {busy === `reject_listener:${l.user_id}` ? '…' : 'Reject'}
                               </button>
                             </div>
@@ -1593,15 +1596,18 @@ export default function AdminPage() {
                                     <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'approve_listener')}>
                                       {busy === `approve_listener:${l.user_id}` ? 'Approving…' : 'Approve'}
                                     </button>
-                                    <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+                                    <div style={{ display: 'flex', gap: 4, alignItems: 'center', flexWrap: 'wrap' }}>
                                       <input
                                         className="reject-input"
                                         style={{ width: 120, marginBottom: 0 }}
-                                        placeholder="Reason (opt)"
+                                        placeholder="Reason (required)"
                                         value={rejectNotes[l.user_id] || ''}
                                         onChange={e => setRejectNotes(prev => ({ ...prev, [l.user_id]: e.target.value }))}
                                       />
-                                      <button className="btn btn-red" disabled={busy !== null} onClick={() => userAction(l.user_id, 'reject_listener', rejectNotes[l.user_id])}>
+                                      <button className="btn btn-orange" disabled={busy !== null || !rejectNotes[l.user_id]?.trim()} onClick={() => userAction(l.user_id, 'request_resubmission', rejectNotes[l.user_id])} title="Ask them to fix and resubmit">
+                                        {busy === `request_resubmission:${l.user_id}` ? '…' : 'Request Fix'}
+                                      </button>
+                                      <button className="btn btn-red" disabled={busy !== null} onClick={() => { if (confirm('Permanently reject this application? They will NOT be able to resubmit.')) userAction(l.user_id, 'reject_listener', rejectNotes[l.user_id]) }} title="Permanently reject — cannot resubmit">
                                         {busy === `reject_listener:${l.user_id}` ? '…' : 'Reject'}
                                       </button>
                                     </div>

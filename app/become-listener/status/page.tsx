@@ -91,7 +91,7 @@ export default function ListenerStatusPage() {
     rejected: {
       icon: '😔',
       title: 'Application Not Approved',
-      desc: 'Unfortunately your application wasn\'t approved at this time. Please review the notes below and consider resubmitting.',
+      desc: 'Unfortunately your application was not approved at this time. Please review the notes from our team below.',
     },
     needs_resubmission: {
       icon: '📝',
@@ -138,8 +138,16 @@ export default function ListenerStatusPage() {
           {status === 'approved' && (
             <a href="/dashboard"><button className="btn">Complete your profile →</button></a>
           )}
-          {(status === 'rejected' || status === 'needs_resubmission') && (
+          {status === 'needs_resubmission' && (
             <a href="/become-listener"><button className="btn">Resubmit application →</button></a>
+          )}
+          {status === 'rejected' && (
+            <div style={{marginBottom:16}}>
+              <a href="/contact"><button className="btn">Contact support →</button></a>
+              <p style={{fontSize:12,color:'var(--gray)',marginTop:10,fontWeight:600}}>
+                If you believe this is an error, please reach out and we&apos;ll look into it.
+              </p>
+            </div>
           )}
           {status === 'pending' && (
             <div style={{fontSize:13,color:'var(--gray)',fontWeight:600}}>

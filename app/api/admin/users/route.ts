@@ -294,7 +294,7 @@ export async function PATCH(req: NextRequest) {
   const { userId, action, notes, name } = body
   if (!userId || !UUID_RE.test(userId)) return NextResponse.json({ error: 'Invalid userId' }, { status: 400 })
 
-  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'suspend_listener', 'unsuspend_listener', 'approve_listener', 'reject_listener', 'approve_selfie', 'reject_selfie', 'rename', 'update_bank_details']
+  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'suspend_listener', 'unsuspend_listener', 'approve_listener', 'reject_listener', 'request_resubmission', 'approve_selfie', 'reject_selfie', 'rename', 'update_bank_details']
   if (!action || !validActions.includes(action)) return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
 
   const sb = createAdminClient()
@@ -378,8 +378,36 @@ export async function PATCH(req: NextRequest) {
         await sb.from('notifications').insert({
           user_id: userId,
           type: 'verification_update',
-          title: 'Application update',
-          body: notes || 'Your listener application needs revision. Please contact support for details.',
+          title: 'Application not approved',
+          body: notes
+            ? `Your listener application was not approved. Reason: ${notes}`
+            : 'Your listener application was not approved at this time. Please contact support if you have questions.',
+          action_url: '/become-listener/status',
+        }).then(() => {}, () => {})
+        break
+      }
+
+      case 'request_resubmission': {
+        const { error: lpErr } = await sb.from('listener_profiles')
+          .update({ is_approved: false, is_active: false, pending_avatar_url: null })
+          .eq('user_id', userId)
+        if (lpErr) {
+          logger.error('request_resubmission: listener_profiles update failed', { userId, error: lpErr.message })
+          return NextResponse.json({ error: `Failed to update listener: ${lpErr.message}` }, { status: 500 })
+        }
+        const { error: laErr } = await sb.from('listener_applications')
+          .update({ status: 'needs_resubmission', ...(notes ? { admin_notes: notes } : {}) })
+          .eq('user_id', userId)
+        if (laErr) {
+          logger.warn('request_resubmission: listener_applications update failed', { userId, error: laErr.message })
+        }
+        await sb.from('notifications').insert({
+          user_id: userId,
+          type: 'verification_update',
+          title: 'Action needed on your application',
+          body: notes
+            ? `Please fix the following and resubmit your application: ${notes}`
+            : 'Your listener application needs a correction. Please review the feedback and resubmit.',
           action_url: '/become-listener/status',
         }).then(() => {}, () => {})
         break

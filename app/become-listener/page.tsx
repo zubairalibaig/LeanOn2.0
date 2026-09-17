@@ -187,6 +187,8 @@ export default function BecomeListenerPage() {
   const [name, setName]   = useState('')
   const [guardChecked, setGuardChecked] = useState(false)
   const [alreadyRegistered, setAlreadyRegistered] = useState(false)
+  const [permanentlyRejected, setPermanentlyRejected] = useState(false)
+  const [rejectedNotes, setRejectedNotes] = useState<string | null>(null)
   const [phone, setPhone] = useState('')
   const [bio, setBio]     = useState('')
   const [tags, setTags]   = useState<string[]>([])
@@ -242,10 +244,16 @@ export default function BecomeListenerPage() {
 
       const [{ data: existing }, { data: app }] = await Promise.all([
         sb.from('listener_profiles').select('id, is_approved').eq('user_id', user.id).maybeSingle(),
-        sb.from('listener_applications').select('status').eq('user_id', user.id).maybeSingle(),
+        sb.from('listener_applications').select('status, admin_notes').eq('user_id', user.id).maybeSingle(),
       ])
-      const canResubmit = app?.status === 'rejected' || app?.status === 'needs_resubmission'
-      if (existing && !canResubmit) {
+      // Only needs_resubmission allows re-entering the form.
+      // rejected = permanently closed; they see a closed-loop screen, not the form.
+      const canResubmit = app?.status === 'needs_resubmission'
+      if (app?.status === 'rejected') {
+        setPermanentlyRejected(true)
+        setRejectedNotes((app.admin_notes as string | null) || null)
+        setAlreadyRegistered(true)
+      } else if (existing && !canResubmit) {
         setAlreadyRegistered(true)
       }
       setGuardChecked(true)
@@ -443,22 +451,49 @@ export default function BecomeListenerPage() {
     </>
   )
 
-  // guardChecked resolved: show "already registered" if applicable.
+  // guardChecked resolved: show "already registered" or "permanently rejected" screen.
   if (guardChecked && alreadyRegistered) return (
     <>
       <style>{S}</style>
       <div className="page">
         <div className="topbar"><a href="/" className="back">←</a></div>
         <div className="already-reg">
-          <div style={{fontSize:48,marginBottom:12}}>✅</div>
-          <p style={{fontWeight:800,fontSize:17,marginBottom:6}}>Your application was received!</p>
-          <p style={{fontSize:14,color:'#5A7A8A',marginBottom:16}}>We got your listener application and our team is reviewing it. You&apos;ll hear from us within 24–48 hours on the phone number you registered with.</p>
-          <a href="/become-listener/status">
-            <button className="btn">Check application status →</button>
-          </a>
-          <a href="/dashboard">
-            <button className="btn-ghost" style={{marginTop:10}}>Go to dashboard</button>
-          </a>
+          {permanentlyRejected ? (
+            <>
+              <div style={{fontSize:48,marginBottom:12}}>😔</div>
+              <p style={{fontWeight:800,fontSize:17,marginBottom:6}}>Application not approved</p>
+              <p style={{fontSize:14,color:'#5A7A8A',marginBottom:16}}>
+                Unfortunately your listener application was not approved at this time.
+              </p>
+              {rejectedNotes && (
+                <div style={{background:'#F0F8FC',border:'1.5px solid #D5EEF6',borderRadius:14,padding:'14px 16px',textAlign:'left',marginBottom:16}}>
+                  <div style={{fontSize:11,fontWeight:800,color:'#1A8FA0',textTransform:'uppercase',letterSpacing:'.06em',marginBottom:6}}>Reason</div>
+                  <div style={{fontSize:14,color:'#0F4867',lineHeight:1.6,fontWeight:500}}>{rejectedNotes}</div>
+                </div>
+              )}
+              <p style={{fontSize:13,color:'#5A7A8A',marginBottom:16}}>
+                If you believe this is an error, please contact us and we&apos;ll look into it.
+              </p>
+              <a href="/contact">
+                <button className="btn">Contact support →</button>
+              </a>
+              <a href="/dashboard">
+                <button className="btn-ghost" style={{marginTop:10}}>Go to dashboard</button>
+              </a>
+            </>
+          ) : (
+            <>
+              <div style={{fontSize:48,marginBottom:12}}>✅</div>
+              <p style={{fontWeight:800,fontSize:17,marginBottom:6}}>Your application was received!</p>
+              <p style={{fontSize:14,color:'#5A7A8A',marginBottom:16}}>We got your listener application and our team is reviewing it. You&apos;ll hear from us within 24–48 hours on the phone number you registered with.</p>
+              <a href="/become-listener/status">
+                <button className="btn">Check application status →</button>
+              </a>
+              <a href="/dashboard">
+                <button className="btn-ghost" style={{marginTop:10}}>Go to dashboard</button>
+              </a>
+            </>
+          )}
         </div>
       </div>
     </>
