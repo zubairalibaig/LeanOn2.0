@@ -70,7 +70,7 @@ export function settleSession(s: SettlementInput): Settlement {
   //   The seeker paid a flat NRI price; the listener earns only their configured
   //   rate. LeanOn keeps the difference (NRI margin). rawShare is capped at the
   //   available hold (amountHeld − platformFee) as a safety net.
-  const maxRawShare = s.listenerRatePerMin
+  const maxRawShare = s.listenerRatePerMin != null
     ? s.listenerRatePerMin * billedMins
     : Infinity
 

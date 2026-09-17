@@ -96,14 +96,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'listener_offline', message: 'This listener is currently offline.' }, { status: 400 })
     }
 
-    // Block paid sessions if listener already has an active paid session
+    // Block paid sessions if listener already has any active session (free trial or paid)
     if (!effectivelyFree) {
       const { data: activeSessions } = await sb
         .from('sessions')
         .select('id')
         .eq('listener_id', listenerId)
         .in('status', ['active', 'pending'])
-        .eq('is_free_trial', false)
         .limit(1)
       if (activeSessions && activeSessions.length > 0) {
         return NextResponse.json({ error: 'listener_busy', message: 'This listener is in a session right now. Please try again shortly.' }, { status: 409 })
@@ -237,6 +236,11 @@ export async function PATCH(req: NextRequest) {
     const userSb = createServerSupabaseClient()
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+
+    // 20 PATCH calls per minute per user — prevents session-complete/rating-update amplification
+    if (!checkRateLimit(`session-patch:${user.id}`, 20, 60_000)) {
+      return NextResponse.json({ error: 'Too many requests. Please wait.' }, { status: 429 })
+    }
 
     const sb = createAdminClient()
 
@@ -378,16 +382,19 @@ export async function PATCH(req: NextRequest) {
       action_url: '/browse',
     }).then(() => {}, () => {})
 
-    const { data: lp } = await sb
-      .from('listener_profiles')
-      .select('total_sessions')
-      .eq('user_id', session.listener_id)
-      .single()
-
-    await sb.from('listener_profiles').update({
-      total_sessions: (lp?.total_sessions || 0) + 1,
-      is_in_session: false,
-    }).eq('user_id', session.listener_id)
+    // Use increment RPC to avoid read-then-write race on total_sessions counter.
+    // is_in_session is safe to set directly (idempotent).
+    await Promise.all([
+      sb.rpc('increment_listener_sessions', { p_listener_id: session.listener_id })
+        .then(({ error: e }) => {
+          if (e) {
+            // RPC missing (pre-migration) — fall back to non-atomic read+write (minor race acceptable)
+            return sb.from('listener_profiles').select('total_sessions').eq('user_id', session.listener_id).single()
+              .then(({ data: lp2 }) => sb.from('listener_profiles').update({ total_sessions: (lp2?.total_sessions ?? 0) + 1 }).eq('user_id', session.listener_id))
+          }
+        }),
+      sb.from('listener_profiles').update({ is_in_session: false }).eq('user_id', session.listener_id),
+    ])
 
     // Update rating average when session has a rating
     if (rating) await updateListenerRating(sb, session.listener_id)

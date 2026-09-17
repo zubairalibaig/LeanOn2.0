@@ -69,9 +69,10 @@ export default function ListenerStatusPage() {
         } else if (app?.status === 'needs_resubmission') {
           setStatus('needs_resubmission')
           setNotes((app.admin_notes as string | null) || null)
-        } else if (!app && !profile) {
-          // No application ever submitted — redirect to the form instead of
-          // showing a misleading "under review" message.
+        } else if (!app) {
+          // No application row at all — redirect to the form.
+          // Covers both the "never applied" case and legacy profiles with no
+          // corresponding application row (would otherwise show "Under Review" forever).
           router.replace('/become-listener')
           return
         } else {

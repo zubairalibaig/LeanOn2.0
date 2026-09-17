@@ -57,7 +57,8 @@ export async function GET() {
       // Used by listener profile page for NRI vs India price display.
       account_country: data?.account_country ?? null,
     })
-  } catch {
+  } catch (err) {
+    logger.error('profile GET error', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json({ name: null, role: null, wallet_balance: null })
   }
 }

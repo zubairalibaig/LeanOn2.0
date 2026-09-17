@@ -86,6 +86,13 @@ export async function PUT(req: NextRequest) {
     let grossPaid = 0
     try {
       const order = await rzp.orders.fetch(razorpay_order_id)
+      // SECURITY: verify this order was created for the authenticated caller — prevents
+      // User B from using User A's razorpay_order_id to credit their own wallet.
+      const orderUserId = (order.notes as Record<string, string> | undefined)?.userId
+      if (orderUserId && orderUserId !== user.id) {
+        logger.error('Wallet PUT: order belongs to different user — rejecting', { orderUserId, callerId: user.id })
+        return NextResponse.json({ error: 'Payment order does not belong to this account' }, { status: 403 })
+      }
       grossPaid = Math.round(Number(order.amount) / 100)
       const noteAmount = parseInt(String((order.notes as Record<string, string> | undefined)?.amount ?? ''), 10)
       if (Number.isInteger(noteAmount) && noteAmount >= MIN_RECHARGE && noteAmount <= MAX_RECHARGE) {
