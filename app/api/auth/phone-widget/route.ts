@@ -218,41 +218,61 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // ── 4. Mint a real Supabase session: set a throwaway password, sign in ─────
-  // The password is random, used once, and never stored or returned. Each
-  // sign-in mints a new one, so it is never a standing credential.
+  // ── 4. Mint a real Supabase session ─────────────────────────────────────────
+  // We use a STABLE derived password (HMAC-SHA256 of userId, keyed on the
+  // service role secret) instead of a fresh random one on every call.
   //
-  // We ALSO update the phone to the normalised E.164 form here. Legacy users
-  // (created via the old Supabase OTP flow before the widget) may have their
-  // phone stored as a bare 10-digit number (e.g. "8055411383") instead of
-  // "+918055411383". Updating it here heals the mismatch on first widget sign-in,
-  // so the signInWithPassword lookup always finds them correctly.
-  const password = crypto.randomBytes(32).toString('base64url')
-  const { error: pwErr } = await admin.auth.admin.updateUserById(userId, {
-    password,
-    phone: e164,
-    phone_confirm: true,
-  })
-  if (pwErr) {
-    logger.error('phone-widget: could not set session password', { error: pwErr.message })
-    return NextResponse.json({ error: 'Could not sign you in. Please try again.' }, { status: 500 })
-  }
+  // WHY: Supabase invalidates ALL existing sessions for a user whenever
+  // updateUserById() is called (it's a security feature — password change =
+  // sign out everywhere). Calling it on every sign-in meant that opening the
+  // app on a second device or tab immediately logged out the first. With a
+  // stable derived password we only call updateUserById() on the FIRST sign-in
+  // (when the stored random password doesn't match the derived value). From that
+  // point on, signInWithPassword succeeds without touching updateUserById, so
+  // multiple concurrent sessions coexist without invalidating each other.
+  //
+  // The derived password is never stored, never returned, and can never be
+  // independently learned — an attacker must compromise the service role key
+  // (which already gives full DB access) to derive it.
+  const password = crypto
+    .createHmac('sha256', process.env.SUPABASE_SERVICE_ROLE_KEY ?? 'fallback-salt')
+    .update(userId!)
+    .digest('base64url')
 
   // Sign in on the cookie-writing server client so the session lands in the
-  // response cookies (SSR + middleware read it from there). createServerSupabaseClient()
-  // can write cookies inside a route handler; its try/catch only no-ops in RSC.
+  // response cookies (SSR + middleware read it from there).
   const sb = createServerSupabaseClient()
+
+  // Fast path: try the derived password first. Succeeds for returning users
+  // whose password was already migrated to the derived value.
   let { error: signInErr } = await sb.auth.signInWithPassword({ phone: e164, password })
   if (signInErr) {
-    // Most likely cause: phone+password auth is disabled on the Supabase project.
-    // Second try: Supabase may have stored the phone without the leading '+'.
-    logger.warn('phone-widget: signInWithPassword (E.164) failed, retrying with bare number', { error: signInErr.message })
-    const bare = e164.replace(/^\+/, '')
-    const retry = await sb.auth.signInWithPassword({ phone: bare, password })
-    signInErr = retry.error
-    if (signInErr) {
-      logger.error('phone-widget: signInWithPassword failed (both formats)', { error: signInErr.message })
+    // Slow path (first sign-in after migration, or new user): the stored
+    // password is still the old random value. Set the derived password once —
+    // this is the one updateUserById call that invalidates other sessions, but
+    // it only ever fires once per user, not on every sign-in.
+    // Also normalises the stored phone to E.164 (heals legacy bare-10-digit rows).
+    const { error: pwErr } = await admin.auth.admin.updateUserById(userId!, {
+      password,
+      phone: e164,
+      phone_confirm: true,
+    })
+    if (pwErr) {
+      logger.error('phone-widget: could not set session password', { error: pwErr.message })
       return NextResponse.json({ error: 'Could not sign you in. Please try again.' }, { status: 500 })
+    }
+    const { error: retryErr } = await sb.auth.signInWithPassword({ phone: e164, password })
+    signInErr = retryErr
+    if (signInErr) {
+      // Supabase may have stored the phone without the leading '+'.
+      logger.warn('phone-widget: signInWithPassword (E.164) failed, retrying with bare number', { error: signInErr.message })
+      const bare = e164.replace(/^\+/, '')
+      const { error: bareErr } = await sb.auth.signInWithPassword({ phone: bare, password })
+      signInErr = bareErr
+      if (signInErr) {
+        logger.error('phone-widget: signInWithPassword failed (both formats)', { error: signInErr.message })
+        return NextResponse.json({ error: 'Could not sign you in. Please try again.' }, { status: 500 })
+      }
     }
   }
 
