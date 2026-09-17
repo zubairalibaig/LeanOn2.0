@@ -552,7 +552,7 @@ export default function BecomeListenerPage() {
               <div className="earn-item"><div className="amount">{Math.round((1 - LISTENER_SERVICE_FEE_RATE) * 100)}%</div><div className="label">of your rate you keep</div></div>
             </div>
             {SHOW_LISTENER_GROWTH_NOTICE && (
-              <div style={{marginTop:16,background:'rgba(255,153,51,0.08)',border:'1.5px solid rgba(255,153,51,0.25)',borderRadius:12,padding:'12px 14px',fontSize:13,color:'#7A5200',lineHeight:1.6,fontWeight:500}}>
+              <div style={{marginTop:16,background:'rgba(255,153,51,0.13)',border:'1.5px solid rgba(255,153,51,0.35)',borderRadius:12,padding:'12px 14px',fontSize:13,color:'rgba(255,220,140,0.95)',lineHeight:1.6,fontWeight:500}}>
                 <strong style={{fontWeight:800}}>Honest note:</strong> LeanOn is a growing platform. How much you earn depends entirely on how many seekers are using LeanOn when you&apos;re online. Early listeners focus on building their profile and first few ratings — volume grows as the platform does. We don&apos;t promise a specific income.
               </div>
             )}

@@ -1633,11 +1633,13 @@ export default function AdminPage() {
                                     <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'approve_listener')}>
                                       {busy === `approve_listener:${l.user_id}` ? 'Approving…' : 'Approve'}
                                     </button>
-                                    <div style={{ display: 'flex', gap: 4, alignItems: 'center', flexWrap: 'wrap' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'flex-start' }}>
+                                      <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--gray)' }}>Type reason, then click Request Fix or Reject:</div>
+                                      <div style={{ display: 'flex', gap: 4, alignItems: 'center', flexWrap: 'wrap' }}>
                                       <input
                                         className="reject-input"
-                                        style={{ width: 120, marginBottom: 0 }}
-                                        placeholder="Reason (required)"
+                                        style={{ width: 160, marginBottom: 0 }}
+                                        placeholder="e.g. blurry selfie, invalid IFSC…"
                                         value={rejectNotesListeners[l.user_id] || ''}
                                         onChange={e => setRejectNotesListeners(prev => ({ ...prev, [l.user_id]: e.target.value }))}
                                       />
@@ -1655,6 +1657,7 @@ export default function AdminPage() {
                                           {busy === `reject_listener:${l.user_id}` ? '…' : 'Reject'}
                                         </button>
                                       )}
+                                      </div>
                                     </div>
                                   </div>
                                 )}
@@ -1665,16 +1668,16 @@ export default function AdminPage() {
                                         Note: {l.application.admin_notes}
                                       </div>
                                     )}
-                                    <div className="action-row" style={{ flexWrap: 'wrap' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                                       <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'approve_listener')}>
                                         {busy === `approve_listener:${l.user_id}` ? 'Approving…' : 'Re-approve'}
                                       </button>
-                                      {/* Allow resubmission — changes rejected → needs_resubmission
-                                          so the applicant can fix and resubmit without full approval. */}
+                                      <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--gray)' }}>Type reason, then allow resubmission:</div>
+                                      <div style={{ display: 'flex', gap: 4, alignItems: 'center', flexWrap: 'wrap' }}>
                                       <input
                                         className="reject-input"
-                                        style={{ width: 120, marginBottom: 0 }}
-                                        placeholder="Reason (required)"
+                                        style={{ width: 160, marginBottom: 0 }}
+                                        placeholder="e.g. blurry selfie, invalid IFSC…"
                                         value={rejectNotesListeners[l.user_id] || ''}
                                         onChange={e => setRejectNotesListeners(prev => ({ ...prev, [l.user_id]: e.target.value }))}
                                       />
@@ -1687,6 +1690,7 @@ export default function AdminPage() {
                                       >
                                         {busy === `request_resubmission:${l.user_id}` ? '…' : 'Allow Resubmit'}
                                       </button>
+                                      </div>
                                     </div>
                                   </div>
                                 )}
