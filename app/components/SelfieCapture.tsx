@@ -33,7 +33,17 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
     if (open && stream && videoRef.current) {
       setVideoReady(false)
       videoRef.current.srcObject = stream
-      videoRef.current.play().catch(() => {})
+      // play() is belt-and-suspenders alongside the autoPlay attribute.
+      // On resolution we mark ready immediately rather than waiting for
+      // onCanPlay, which on some browsers fires before srcObject is set
+      // or not at all when autoplay is suppressed.
+      videoRef.current.play()
+        .then(() => { setVideoReady(true) })
+        .catch(() => {
+          // Autoplay blocked (some browser policies). The onPlaying /
+          // onLoadedMetadata handlers below still fire once the user
+          // interacts, so we don't treat this as fatal.
+        })
     }
   }, [open, stream])
 
@@ -171,7 +181,9 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
                 autoPlay
                 playsInline
                 muted
+                onLoadedMetadata={() => setVideoReady(true)}
                 onCanPlay={() => setVideoReady(true)}
+                onPlaying={() => setVideoReady(true)}
                 style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scaleX(-1)', display: 'block' }}
               />
               {/* Face oval guide */}
