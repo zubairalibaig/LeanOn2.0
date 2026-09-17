@@ -10,14 +10,16 @@ interface Props {
 
 // Selfie-only photo capture using the device camera (getUserMedia).
 // Works on both mobile and desktop — never opens a file picker.
-// The live preview is mirrored so users see themselves as in a mirror;
-// the captured image is also mirrored to match that expectation.
+// The live preview is mirrored (CSS scaleX(-1)) so users see themselves
+// as in a mirror; the captured canvas is NOT mirrored so stored images
+// have correct orientation (text/logos on clothing read correctly).
 export default function SelfieCapture({ onCapture, preview, loading, hasError }: Props) {
   const [open, setOpen]         = useState(false)
   const [stream, setStream]     = useState<MediaStream | null>(null)
   const [camError, setCamError] = useState<string | null>(null)
   const [busy, setBusy]         = useState(false)
   const [videoReady, setVideoReady] = useState(false)
+  const [camStuck, setCamStuck] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
 
   // Stop all camera tracks — call before closing the modal
@@ -27,6 +29,15 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
 
   // Always stop the stream when the component unmounts
   useEffect(() => () => { stopStream(stream) }, [stream, stopStream])
+
+  // If none of the readiness signals fires within 6 s of the modal
+  // opening, show a recoverable "camera couldn't start" message rather
+  // than leaving the user stuck on "Starting camera…" indefinitely.
+  useEffect(() => {
+    if (!open || videoReady) { setCamStuck(false); return }
+    const t = setTimeout(() => setCamStuck(true), 6000)
+    return () => clearTimeout(t)
+  }, [open, videoReady])
 
   // Wire the stream to the <video> element once the modal is open
   useEffect(() => {
@@ -65,6 +76,8 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
         setCamError('permission_denied')
       } else if (name === 'NotFoundError' || name === 'DevicesNotFoundError') {
         setCamError('No camera found on this device.')
+      } else if (name === 'NotReadableError' || name === 'AbortError') {
+        setCamError('Camera is in use by another app or browser tab. Close it and try again.')
       } else {
         setCamError('Could not start camera. Please try again.')
       }
@@ -103,9 +116,12 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
   return (
     <>
       {/* ── Trigger ──────────────────────────────────────────────────── */}
-      <div
+      <button
+        type="button"
         onClick={openCamera}
         style={{
+          display: 'block',
+          width: '100%',
           border: `2px dashed ${hasError ? '#FF3B30' : '#B0D4E8'}`,
           borderRadius: 14,
           padding: '18px 12px 14px',
@@ -114,6 +130,7 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
           background: hasError ? 'rgba(255,59,48,0.04)' : 'rgba(240,248,252,0.7)',
           transition: 'border-color .15s',
           userSelect: 'none',
+          fontFamily: 'inherit',
         }}
       >
         {preview ? (
@@ -131,7 +148,7 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
         <div style={{ fontSize: 11, color: '#5A7A8A', fontWeight: 600, marginTop: 3 }}>
           Uses your camera · no file upload
         </div>
-      </div>
+      </button>
 
       {/* ── Camera permission error ───────────────────────────────────── */}
       {camError && (
@@ -174,50 +191,73 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
               >✕</button>
             </div>
 
-            {/* Live camera feed — mirrored so it feels like a selfie camera */}
-            <div style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', background: '#111', aspectRatio: '1' }}>
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                onLoadedMetadata={() => setVideoReady(true)}
-                onCanPlay={() => setVideoReady(true)}
-                onPlaying={() => setVideoReady(true)}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scaleX(-1)', display: 'block' }}
-              />
-              {/* Face oval guide */}
-              <div style={{
-                position: 'absolute', inset: 0,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                pointerEvents: 'none',
-              }}>
-                <div style={{
-                  width: '60%', height: '75%',
-                  border: '2px solid rgba(255,255,255,0.45)',
-                  borderRadius: '50%',
-                }} />
+            {camStuck && !videoReady ? (
+              /* ── Stuck recovery ─────────────────────────────────────── */
+              <div style={{ textAlign: 'center', padding: '32px 16px' }}>
+                <div style={{ fontSize: 36, marginBottom: 12 }}>📷</div>
+                <div style={{ color: 'white', fontWeight: 800, fontSize: 15, marginBottom: 8 }}>
+                  Camera couldn&apos;t start
+                </div>
+                <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: 13, fontWeight: 600, lineHeight: 1.6, marginBottom: 20 }}>
+                  Close any other app or browser tab using your camera, then try again.
+                </div>
+                <button
+                  type="button"
+                  onClick={close}
+                  style={{ background: '#1A8FA0', color: 'white', border: 'none', borderRadius: 50, padding: '13px 32px', fontWeight: 800, fontSize: 15, fontFamily: 'inherit', cursor: 'pointer' }}
+                >
+                  Try again
+                </button>
               </div>
-            </div>
+            ) : (
+              <>
+                {/* Live camera feed — mirrored so it feels like a selfie camera */}
+                <div style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', background: '#111', aspectRatio: '1' }}>
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    onLoadedMetadata={() => setVideoReady(true)}
+                    onCanPlay={() => setVideoReady(true)}
+                    onPlaying={() => setVideoReady(true)}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scaleX(-1)', display: 'block' }}
+                  />
+                  {/* Face oval guide */}
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    pointerEvents: 'none',
+                  }}>
+                    <div style={{
+                      width: '60%', height: '75%',
+                      border: '2px solid rgba(255,255,255,0.45)',
+                      borderRadius: '50%',
+                    }} />
+                  </div>
+                </div>
 
-            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12, textAlign: 'center', margin: '10px 0 18px', fontWeight: 600 }}>
-              Centre your face in the oval · good lighting helps
-            </p>
+                <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12, textAlign: 'center', margin: '10px 0 18px', fontWeight: 600 }}>
+                  Centre your face in the oval · good lighting helps
+                </p>
 
-            {/* Capture button */}
-            <button
-              onClick={capture}
-              disabled={busy || !videoReady}
-              style={{
-                width: '100%', padding: '16px', borderRadius: 50,
-                background: (busy || !videoReady) ? 'rgba(26,143,160,0.5)' : '#1A8FA0',
-                color: 'white', border: 'none', cursor: (busy || !videoReady) ? 'default' : 'pointer',
-                fontWeight: 800, fontSize: 16, fontFamily: 'inherit',
-                transition: 'background .15s',
-              }}
-            >
-              {busy ? 'Capturing…' : !videoReady ? 'Starting camera…' : '📸 Take Photo'}
-            </button>
+                {/* Capture button */}
+                <button
+                  type="button"
+                  onClick={capture}
+                  disabled={busy || !videoReady}
+                  style={{
+                    width: '100%', padding: '16px', borderRadius: 50,
+                    background: (busy || !videoReady) ? 'rgba(26,143,160,0.5)' : '#1A8FA0',
+                    color: 'white', border: 'none', cursor: (busy || !videoReady) ? 'default' : 'pointer',
+                    fontWeight: 800, fontSize: 16, fontFamily: 'inherit',
+                    transition: 'background .15s',
+                  }}
+                >
+                  {busy ? 'Capturing…' : !videoReady ? 'Starting camera…' : '📸 Take Photo'}
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
