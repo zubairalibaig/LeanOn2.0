@@ -290,7 +290,10 @@ export default function AdminPage() {
   // Pending approvals surfaced on Overview — the KPI alone gave admins no
   // path to act, which made approvals look impossible to do.
   const [pendingApprovals, setPendingApprovals] = useState<ListenerRow[]>([])
-  const [rejectNotes, setRejectNotes] = useState<Record<string, string>>({})
+  // Separate reject-note inputs per context so a reason typed in Overview
+  // never pre-fills the Listeners tab input for the same user (Bug: shared state).
+  const [rejectNotesOverview, setRejectNotesOverview] = useState<Record<string, string>>({})
+  const [rejectNotesListeners, setRejectNotesListeners] = useState<Record<string, string>>({})
 
   // ── Table sorting ──────────────────────────────────────────────────────────
   // "Joined" (created_at) sorts SERVER-side so it orders across every page.
@@ -629,9 +632,12 @@ export default function AdminPage() {
     setBusy(null)
     if (res.ok) {
       showToast(`Action "${action}" completed`)
-      // Clear the typed rejection reason for this user so it doesn't pre-fill
-      // on their next review (e.g. after they resubmit and come back as pending).
-      setRejectNotes(prev => { const n = { ...prev }; delete n[userId]; return n })
+      // Clear the typed rejection reason and any stale ban-confirm state for
+      // this user so they don't pre-fill or re-render on next review cycle.
+      setRejectNotesOverview(prev => { const n = { ...prev }; delete n[userId]; return n })
+      setRejectNotesListeners(prev => { const n = { ...prev }; delete n[userId]; return n })
+      setConfirmBanId(null)
+      setConfirmBanListenerId(null)
       if (tab === 'users') loadUsers()
       if (tab === 'listeners') loadListeners()
       if (tab === 'overview') loadPendingApprovals()
@@ -854,24 +860,28 @@ export default function AdminPage() {
                         return (
                           <div key={l.user_id} className="kpi-card" style={{ border: '2px solid var(--orange)', display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'flex-start', justifyContent: 'space-between' }}>
                             {/* Photo — click to open full size for verification */}
+                            {/* Prefer pending_avatar_url (the selfie submitted with this application)
+                                over users.avatar_url (could be an older approved photo). */}
+                            {(() => { const photoUrl = l.pending_avatar_url || u?.avatar_url || null; return (
                             <a
-                              href={u?.avatar_url || undefined}
+                              href={photoUrl || undefined}
                               target="_blank"
                               rel="noopener noreferrer"
-                              title={u?.avatar_url ? 'Open full-size photo' : 'No photo uploaded'}
+                              title={photoUrl ? 'Open full-size photo' : 'No photo uploaded'}
                               style={{
                                 width: 72, height: 72, borderRadius: 12, flexShrink: 0,
                                 background: 'var(--light)', border: '1.5px solid var(--border)',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 overflow: 'hidden', fontSize: 11, color: 'var(--gray)', fontWeight: 700,
-                                cursor: u?.avatar_url ? 'zoom-in' : 'default', textDecoration: 'none',
+                                cursor: photoUrl ? 'zoom-in' : 'default', textDecoration: 'none',
                               }}
                             >
-                              {u?.avatar_url
+                              {photoUrl
                                 // eslint-disable-next-line @next/next/no-img-element
-                                ? <img src={u.avatar_url} alt={`${u?.name || 'Listener'} profile photo`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ? <img src={photoUrl} alt={`${u?.name || 'Listener'} profile photo`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                 : 'No photo'}
                             </a>
+                            )})()}
                             <div style={{ minWidth: 180, flex: 1 }}>
                               <div style={{ fontWeight: 800 }}>{u?.name || '—'}</div>
                               <div style={{ fontSize: 12, color: 'var(--gray)' }}>
@@ -901,13 +911,13 @@ export default function AdminPage() {
                                 className="reject-input"
                                 style={{ width: 130, marginBottom: 0 }}
                                 placeholder="Reason (required)"
-                                value={rejectNotes[l.user_id] || ''}
-                                onChange={e => setRejectNotes(prev => ({ ...prev, [l.user_id]: e.target.value }))}
+                                value={rejectNotesOverview[l.user_id] || ''}
+                                onChange={e => setRejectNotesOverview(prev => ({ ...prev, [l.user_id]: e.target.value }))}
                               />
-                              <button className="btn btn-orange" disabled={busy !== null || !rejectNotes[l.user_id]?.trim()} onClick={() => userAction(l.user_id, 'request_resubmission', rejectNotes[l.user_id])} title="Ask them to fix and resubmit">
+                              <button className="btn btn-orange" disabled={busy !== null || !rejectNotesOverview[l.user_id]?.trim()} onClick={() => userAction(l.user_id, 'request_resubmission', rejectNotesOverview[l.user_id])} title="Ask them to fix and resubmit">
                                 {busy === `request_resubmission:${l.user_id}` ? '…' : 'Request Fix'}
                               </button>
-                              <button className="btn btn-red" disabled={busy !== null} onClick={() => { if (confirm('Permanently reject this application? They will NOT be able to resubmit.')) userAction(l.user_id, 'reject_listener', rejectNotes[l.user_id]) }} title="Permanently reject — cannot resubmit">
+                              <button className="btn btn-red" disabled={busy !== null} onClick={() => { if (confirm('Permanently reject this application? They will NOT be able to resubmit.')) userAction(l.user_id, 'reject_listener', rejectNotesOverview[l.user_id]) }} title="Permanently reject — cannot resubmit">
                                 {busy === `reject_listener:${l.user_id}` ? '…' : 'Reject'}
                               </button>
                             </div>
@@ -1607,13 +1617,13 @@ export default function AdminPage() {
                                         className="reject-input"
                                         style={{ width: 120, marginBottom: 0 }}
                                         placeholder="Reason (required)"
-                                        value={rejectNotes[l.user_id] || ''}
-                                        onChange={e => setRejectNotes(prev => ({ ...prev, [l.user_id]: e.target.value }))}
+                                        value={rejectNotesListeners[l.user_id] || ''}
+                                        onChange={e => setRejectNotesListeners(prev => ({ ...prev, [l.user_id]: e.target.value }))}
                                       />
-                                      <button className="btn btn-orange" disabled={busy !== null || !rejectNotes[l.user_id]?.trim()} onClick={() => userAction(l.user_id, 'request_resubmission', rejectNotes[l.user_id])} title="Ask them to fix and resubmit">
+                                      <button className="btn btn-orange" disabled={busy !== null || !rejectNotesListeners[l.user_id]?.trim()} onClick={() => userAction(l.user_id, 'request_resubmission', rejectNotesListeners[l.user_id])} title="Ask them to fix and resubmit">
                                         {busy === `request_resubmission:${l.user_id}` ? '…' : 'Request Fix'}
                                       </button>
-                                      <button className="btn btn-red" disabled={busy !== null} onClick={() => { if (confirm('Permanently reject this application? They will NOT be able to resubmit.')) userAction(l.user_id, 'reject_listener', rejectNotes[l.user_id]) }} title="Permanently reject — cannot resubmit">
+                                      <button className="btn btn-red" disabled={busy !== null} onClick={() => { if (confirm('Permanently reject this application? They will NOT be able to resubmit.')) userAction(l.user_id, 'reject_listener', rejectNotesListeners[l.user_id]) }} title="Permanently reject — cannot resubmit">
                                         {busy === `reject_listener:${l.user_id}` ? '…' : 'Reject'}
                                       </button>
                                     </div>

@@ -36,8 +36,12 @@ export default function ListenerStatusPage() {
   const [status, setStatus] = useState<string | null>(null)
   const [notes, setNotes] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
+  const [retryCount, setRetryCount] = useState(0)
 
   useEffect(() => {
+    setLoading(true)
+    setLoadError(false)
     async function load() {
       try {
         const { data: { user } } = await sb.auth.getUser()
@@ -65,17 +69,24 @@ export default function ListenerStatusPage() {
         } else if (app?.status === 'needs_resubmission') {
           setStatus('needs_resubmission')
           setNotes((app.admin_notes as string | null) || null)
+        } else if (!app && !profile) {
+          // No application ever submitted — redirect to the form instead of
+          // showing a misleading "under review" message.
+          router.replace('/become-listener')
+          return
         } else {
           setStatus('pending')
         }
       } catch {
-        setStatus('pending')
+        // Surface a real error instead of silently showing "pending" — a DB/
+        // network failure would otherwise mislead rejected/approved applicants.
+        setLoadError(true)
       } finally {
         setLoading(false)
       }
     }
     load()
-  }, [])
+  }, [retryCount]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const statusConfig: Record<string, { icon: string; title: string; desc: string }> = {
     pending: {
@@ -106,6 +117,24 @@ export default function ListenerStatusPage() {
     <>
       <style>{S}</style>
       <div className="page"><div style={{textAlign:'center',padding:'60px 0',color:'var(--gray)'}}>Loading…</div></div>
+    </>
+  )
+
+  if (loadError) return (
+    <>
+      <style>{S}</style>
+      <div className="page">
+        <div className="topbar">
+          <button className="back" onClick={() => router.push('/')}>←</button>
+          <h1>Application Status</h1>
+        </div>
+        <div className="card">
+          <div className="status-icon">⚠️</div>
+          <div className="status-title">Something went wrong</div>
+          <div className="status-desc">We couldn&apos;t load your application status. Please check your connection and try again.</div>
+          <button className="btn" onClick={() => setRetryCount(c => c + 1)}>Retry</button>
+        </div>
+      </div>
     </>
   )
 
@@ -151,7 +180,7 @@ export default function ListenerStatusPage() {
           )}
           {status === 'pending' && (
             <div style={{fontSize:13,color:'var(--gray)',fontWeight:600}}>
-              Check back in a few hours or wait for our email notification.
+              Check back in a few hours — we&apos;ll notify you on your dashboard when there&apos;s an update.
             </div>
           )}
         </div>
@@ -159,7 +188,7 @@ export default function ListenerStatusPage() {
         <div className="steps">
           {[
             { label: 'Application submitted', done: true },
-            { label: 'Background check in progress', done: status !== 'pending' },
+            { label: 'Background check in progress', done: status === 'approved' || status === 'needs_resubmission' },
             { label: 'Profile review', done: status === 'approved' },
             { label: 'Start earning as a listener', done: status === 'approved' },
           ].map((step, i) => (

@@ -127,23 +127,15 @@ export async function POST(req: NextRequest) {
       profileRow.birth_year  = birthYear
       profileRow.birth_month = birthMonth
     }
-    // account_holder_name added by migration 055. Set when supplied; graceful
-    // skip below if the column doesn't exist yet.
-    if (accountHolderName) {
-      profileRow.account_holder_name = accountHolderName
-    }
+    // account_holder_name belongs only in listener_applications (KYC/payment data).
+    // Writing it to listener_profiles created a second copy that diverged whenever
+    // the admin used update_bank_details (which only touches listener_applications).
     let profileErr = (await admin.from('listener_profiles').upsert(profileRow, { onConflict: 'user_id' })).error
     if (profileErr && (profileErr.message?.includes('birth_year') || profileErr.message?.includes('birth_month'))) {
       // Migration 049 not applied yet — save the rest of the profile so
       // applications keep working; age is captured once the column exists.
       delete profileRow.birth_year
       delete profileRow.birth_month
-      profileErr = (await admin.from('listener_profiles').upsert(profileRow, { onConflict: 'user_id' })).error
-    }
-    if (profileErr && profileErr.message?.includes('account_holder_name')) {
-      // Migration 055 not applied yet — retry without it; the application row
-      // still captures the field, so KYC is not lost.
-      delete profileRow.account_holder_name
       profileErr = (await admin.from('listener_profiles').upsert(profileRow, { onConflict: 'user_id' })).error
     }
     if (profileErr) {
@@ -169,19 +161,30 @@ export async function POST(req: NextRequest) {
       .select('status')
       .eq('user_id', user.id)
       .maybeSingle()
-    const status = !existingApp || ['rejected', 'needs_resubmission'].includes(existingApp.status)
+
+    // Permanently rejected applicants are blocked server-side — the UI also
+    // blocks them, but a crafted direct POST would otherwise bypass it.
+    if (existingApp?.status === 'rejected') {
+      return NextResponse.json({ error: 'Your application has been permanently closed. Please contact support if you believe this is an error.' }, { status: 403 })
+    }
+
+    const status = !existingApp || existingApp.status === 'needs_resubmission'
       ? 'pending'
       : existingApp.status
 
     const appRow: Record<string, unknown> = {
       user_id:             user.id,
       name,
-      phone:               formPhone || sessionPhone,
+      // Always use the OTP-verified session phone — never the unverified form body value.
+      phone:               sessionPhone,
       account_holder_name: accountHolderName || null,
       bank_account:        bank,
       ifsc_code:           ifsc,
       upi_id:              upi || null,
       status,
+      // Clear any prior admin_notes so the reviewing admin isn't misled by stale
+      // "fix your IFSC" feedback after the applicant has already corrected it.
+      admin_notes:         null,
     }
     // Aadhaar (admin-only KYC). aadhaar_last4 predates this work; aadhaar (full)
     // is added by migration 047. Only set them when the applicant supplied a

@@ -399,8 +399,10 @@ export async function PATCH(req: NextRequest) {
           logger.error('request_resubmission: listener_profiles update failed', { userId, error: lpErr.message })
           return NextResponse.json({ error: `Failed to update listener: ${lpErr.message}` }, { status: 500 })
         }
+        // Always write admin_notes (even to null) so stale notes from a prior rejection
+        // never persist alongside a new resubmission request.
         const { error: laErr } = await sb.from('listener_applications')
-          .update({ status: 'needs_resubmission', ...(notes ? { admin_notes: notes } : {}) })
+          .update({ status: 'needs_resubmission', admin_notes: notes || null })
           .eq('user_id', userId)
         if (laErr) {
           logger.warn('request_resubmission: listener_applications update failed', { userId, error: laErr.message })
@@ -519,9 +521,13 @@ export async function PATCH(req: NextRequest) {
           logger.error('unsuspend: users update failed', { userId, error: uErr.message })
           return NextResponse.json({ error: `Failed to unsuspend user: ${uErr.message}` }, { status: 500 })
         }
-        // For listeners: restore is_active but preserve is_approved (admin must re-approve if needed).
+        // For listeners: only restore is_active if already approved — an unapproved
+        // applicant who was suspended must not become active just by being unsuspended.
+        const { data: lpUnsuspend } = await sb.from('listener_profiles')
+          .select('is_approved').eq('user_id', userId).maybeSingle()
+        const wasApprovedUnsuspend = lpUnsuspend?.is_approved === true
         await sb.from('listener_profiles')
-          .update({ is_active: true, is_suspended: false })
+          .update({ is_active: wasApprovedUnsuspend, is_suspended: false })
           .eq('user_id', userId)
           .then(() => {}, () => {})
         break
@@ -600,8 +606,9 @@ export async function PATCH(req: NextRequest) {
         const ifsc       = typeof body.ifsc_code           === 'string' ? body.ifsc_code.trim().toUpperCase() : null
         const upi        = typeof body.upi_id              === 'string' ? body.upi_id.trim() : null
         if (holderName !== null) updates.account_holder_name = holderName || null
-        if (bankAcc    !== null) updates.bank_account        = bankAcc
-        if (ifsc       !== null) updates.ifsc_code           = ifsc
+        if (bankAcc    !== null && bankAcc !== '') updates.bank_account = bankAcc
+        else if (bankAcc === '') { /* ignore empty string — don't wipe valid account number */ }
+        if (ifsc       !== null && ifsc !== '') updates.ifsc_code = ifsc
         if (upi        !== null) updates.upi_id              = upi || null
         if (Object.keys(updates).length === 0) {
           return NextResponse.json({ error: 'No fields to update' }, { status: 400 })

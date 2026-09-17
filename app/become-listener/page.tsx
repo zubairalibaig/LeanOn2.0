@@ -141,7 +141,7 @@ function validateBio(v: string): string {
 }
 function validateRate(v: string): string {
   const n = parseInt(v)
-  if (isNaN(n) || n < 1) return 'Please enter a rate of at least ₹1 per minute'
+  if (isNaN(n) || n < MIN_LISTENER_RATE) return `Please enter a rate of at least ₹${MIN_LISTENER_RATE} per minute`
   if (n > MAX_LISTENER_RATE) return `Rate can be at most ₹${MAX_LISTENER_RATE} per minute`
   return ''
 }
@@ -242,19 +242,31 @@ export default function BecomeListenerPage() {
       // Pre-fill the phone they logged in with. No in-form OTP needed.
       setPhone(user.phone.replace(/\D/g, '').slice(-10))
 
-      const [{ data: existing }, { data: app }] = await Promise.all([
+      const [{ data: existing }, { data: app }, { data: userRow }] = await Promise.all([
         sb.from('listener_profiles').select('id, is_approved').eq('user_id', user.id).maybeSingle(),
         sb.from('listener_applications').select('status, admin_notes').eq('user_id', user.id).maybeSingle(),
+        sb.from('users').select('avatar_url').eq('id', user.id).maybeSingle(),
       ])
       // Only needs_resubmission allows re-entering the form.
       // rejected = permanently closed; they see a closed-loop screen, not the form.
+      // approved = already live; show a "you're approved" screen, not "under review".
       const canResubmit = app?.status === 'needs_resubmission'
       if (app?.status === 'rejected') {
         setPermanentlyRejected(true)
         setRejectedNotes((app.admin_notes as string | null) || null)
         setAlreadyRegistered(true)
+      } else if (existing?.is_approved) {
+        // Already approved — redirect to dashboard instead of showing "under review"
+        router.replace('/dashboard')
+        return
       } else if (existing && !canResubmit) {
         setAlreadyRegistered(true)
+      }
+      // Bug 11: on resubmission pre-populate avatarUrl from the existing users row
+      // so applicants who only need to fix bank details don't have to re-photograph.
+      if (canResubmit && userRow?.avatar_url) {
+        setAvatarUrl(userRow.avatar_url as string)
+        setAvatarPreview(userRow.avatar_url as string)
       }
       setGuardChecked(true)
     }).catch(() => {
