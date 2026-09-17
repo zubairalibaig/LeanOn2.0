@@ -212,6 +212,7 @@ export default function BecomeListenerPage() {
   const [avatarPreview, setAvatarPreview] = useState<string>('')
   const [avatarUrl, setAvatarUrl] = useState<string>('')
   const [avatarUploading, setAvatarUploading] = useState(false)
+  const [selfieProcessing, setSelfieProcessing] = useState(false)
 
   // Phone verification now happens ONCE at sign-in via the MSG91 widget on /auth.
   // The in-form OTP flow (signInWithOtp / verifyOtp) is permanently dead —
@@ -309,7 +310,7 @@ export default function BecomeListenerPage() {
     // Phone is verified at sign-in time — no in-form OTP check needed.
     const be = validateBio(bio); if (be) errs.push(be)
     if (tags.length === 0) errs.push('Please select at least one topic')
-    if (!avatarFile && !avatarUrl) errs.push('Please upload a profile photo')
+    if (!avatarFile && !avatarUrl) errs.push('Please take a selfie')
     return errs
   }
 
@@ -334,7 +335,7 @@ export default function BecomeListenerPage() {
       const pe = validatePhone(phone); if (pe) fe.phone = pe
       const be = validateBio(bio); if (be) fe.bio = be
       if (tags.length === 0) fe.tags = 'Please select at least one topic'
-      if (!avatarFile && !avatarUrl) fe.avatar = 'Please upload a profile photo'
+      if (!avatarFile && !avatarUrl) fe.avatar = 'Please take a selfie'
       setFieldErrors(fe)
       setShaking(true)
       setTimeout(() => setShaking(false), 500)
@@ -630,6 +631,7 @@ export default function BecomeListenerPage() {
               hasError={!!fieldErrors.avatar}
               onCapture={async (file) => {
                 if (file.size > MAX_INPUT_BYTES) { setFieldErrors(f => ({...f, avatar:'Photo must be under 20 MB'})); return }
+                setSelfieProcessing(true)
                 try {
                   const shrunk = await compressImage(file, AVATAR_OPTS)
                   setAvatarFile(shrunk)
@@ -640,6 +642,8 @@ export default function BecomeListenerPage() {
                   if (fieldErrors.avatar) setFieldErrors(f => ({...f, avatar:''}))
                 } catch {
                   setFieldErrors(f => ({...f, avatar:'Could not process photo. Please try again.'}))
+                } finally {
+                  setSelfieProcessing(false)
                 }
               }}
             />
@@ -677,8 +681,8 @@ export default function BecomeListenerPage() {
               </ul>
             </div>
 
-            <button className="btn" onClick={tryNextFromStep1} disabled={avatarUploading}>
-              {avatarUploading ? <span className="spin">⟳</span> : 'Next: Payment details →'}
+            <button className="btn" onClick={tryNextFromStep1} disabled={avatarUploading || selfieProcessing}>
+              {(avatarUploading || selfieProcessing) ? <span className="spin">⟳</span> : 'Next: Payment details →'}
             </button>
           </div>
         )}
