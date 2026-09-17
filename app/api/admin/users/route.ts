@@ -63,10 +63,12 @@ export async function GET(req: NextRequest) {
       // which can be ambiguous for new applicants whose is_active defaults to TRUE).
       let userIdFilter: string[] | null = null
       if (userStatus === 'pending') {
-        // Source 1: applications explicitly awaiting or needing admin action
+        // Source 1: applications explicitly awaiting admin review.
+        // needs_resubmission is excluded — the ball is in the applicant's court;
+        // showing them in the pending queue implies the admin still needs to act.
         const { data: pendingApps } = await sb.from('listener_applications')
           .select('user_id')
-          .in('status', ['pending', 'needs_resubmission'])
+          .eq('status', 'pending')
         const idSet = new Set(pendingApps?.map((a: { user_id: string }) => a.user_id) ?? [])
 
         // Source 2: unapproved profiles with NO application row at all (recovery
@@ -91,6 +93,14 @@ export async function GET(req: NextRequest) {
           .select('user_id')
           .eq('status', 'rejected')
         userIdFilter = (rejectedApps ?? []).map((a: { user_id: string }) => a.user_id)
+        if (userIdFilter.length === 0) {
+          return NextResponse.json({ items: [], total: 0, page, type: 'listener' })
+        }
+      } else if (userStatus === 'needs_resubmission') {
+        const { data: fixApps } = await sb.from('listener_applications')
+          .select('user_id')
+          .eq('status', 'needs_resubmission')
+        userIdFilter = (fixApps ?? []).map((a: { user_id: string }) => a.user_id)
         if (userIdFilter.length === 0) {
           return NextResponse.json({ items: [], total: 0, page, type: 'listener' })
         }

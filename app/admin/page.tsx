@@ -629,6 +629,9 @@ export default function AdminPage() {
     setBusy(null)
     if (res.ok) {
       showToast(`Action "${action}" completed`)
+      // Clear the typed rejection reason for this user so it doesn't pre-fill
+      // on their next review (e.g. after they resubmit and come back as pending).
+      setRejectNotes(prev => { const n = { ...prev }; delete n[userId]; return n })
       if (tab === 'users') loadUsers()
       if (tab === 'listeners') loadListeners()
       if (tab === 'overview') loadPendingApprovals()
@@ -1334,13 +1337,13 @@ export default function AdminPage() {
               <span className="count-badge">{listenersTotal}</span>
             </div>
             <div className="filter-row">
-              {(['all', 'pending', 'active', 'suspended', 'rejected'] as const).map(s => (
+              {(['all', 'pending', 'needs_resubmission', 'active', 'suspended', 'rejected'] as const).map(s => (
                 <button
                   key={s}
                   className={`filter-btn${listenersStatus === s ? ' active' : ''}`}
                   onClick={() => { setListenersStatus(s); setListenersPage(0); loadListeners(0, s, listenersJoinedDir, listenersSortBy, listenersSearch) }}
                 >
-                  {s === 'pending' ? 'Pending Approval' : s.charAt(0).toUpperCase() + s.slice(1)}
+                  {s === 'pending' ? 'Pending Approval' : s === 'needs_resubmission' ? 'Needs Fix' : s.charAt(0).toUpperCase() + s.slice(1)}
                 </button>
               ))}
               <input
@@ -1432,8 +1435,9 @@ export default function AdminPage() {
                       {sortByLastLogin(listeners, listenersLoginDir).map(l => {
                         const u = l.users
                         const appStatus = l.application?.status ?? null
-                        const isPending = !l.is_approved && (appStatus === 'pending' || appStatus === null)
+                        const isPending = !l.is_approved && (appStatus === 'pending' || appStatus === 'needs_resubmission' || appStatus === null)
                         const isRejected = !l.is_approved && appStatus === 'rejected'
+                        const isNeedsResubmission = !l.is_approved && appStatus === 'needs_resubmission'
                         // Detect if this listener is the currently logged-in admin
                         const isSelf = !!(authUser && (
                           (authUser.phone && u?.phone && authUser.phone.replace(/\D/g, '').slice(-10) === u.phone.replace(/\D/g, '').slice(-10)) ||
@@ -1579,7 +1583,9 @@ export default function AdminPage() {
                               })()}
                             </td>
                             <td>
-                              {isPending
+                              {isNeedsResubmission
+                                ? <span className="badge badge-orange" style={{ background: '#fff3cd', color: '#856404' }}>Needs Fix</span>
+                                : isPending
                                 ? <span className="badge badge-orange">Pending Approval</span>
                                 : isRejected
                                   ? <span className="badge badge-red">Rejected</span>
