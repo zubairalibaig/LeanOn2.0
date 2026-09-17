@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Please enter a valid bank account number.' }, { status: 400 })
     if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc))
       return NextResponse.json({ error: 'Please enter a valid IFSC code.' }, { status: 400 })
-    if (upi && !/^[\w.\-]{2,}@[a-zA-Z]{2,}$/.test(upi))
+    if (upi && !/^[\w.\-]{2,}@[\w]{2,}$/.test(upi))
       return NextResponse.json({ error: 'Please enter a valid UPI ID.' }, { status: 400 })
     if (aadhaar && !/^\d{12}$/.test(aadhaar))
       return NextResponse.json({ error: 'Please enter a valid 12-digit Aadhaar number.' }, { status: 400 })
@@ -127,12 +127,23 @@ export async function POST(req: NextRequest) {
       profileRow.birth_year  = birthYear
       profileRow.birth_month = birthMonth
     }
+    // account_holder_name added by migration 055. Set when supplied; graceful
+    // skip below if the column doesn't exist yet.
+    if (accountHolderName) {
+      profileRow.account_holder_name = accountHolderName
+    }
     let profileErr = (await admin.from('listener_profiles').upsert(profileRow, { onConflict: 'user_id' })).error
     if (profileErr && (profileErr.message?.includes('birth_year') || profileErr.message?.includes('birth_month'))) {
       // Migration 049 not applied yet — save the rest of the profile so
       // applications keep working; age is captured once the column exists.
       delete profileRow.birth_year
       delete profileRow.birth_month
+      profileErr = (await admin.from('listener_profiles').upsert(profileRow, { onConflict: 'user_id' })).error
+    }
+    if (profileErr && profileErr.message?.includes('account_holder_name')) {
+      // Migration 055 not applied yet — retry without it; the application row
+      // still captures the field, so KYC is not lost.
+      delete profileRow.account_holder_name
       profileErr = (await admin.from('listener_profiles').upsert(profileRow, { onConflict: 'user_id' })).error
     }
     if (profileErr) {

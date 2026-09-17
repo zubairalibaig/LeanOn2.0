@@ -122,7 +122,10 @@ const S = `
 function validateName(v: string): string {
   if (!v || v.trim().length < 2) return 'Please enter your full name (2–60 characters)'
   if (v.trim().length > 60) return 'Please enter your full name (2–60 characters)'
-  if (!/^[a-zA-Z\s\-]+$/.test(v.trim())) return 'Name can only contain letters, spaces, and hyphens'
+  // Allow: Latin letters, common accented chars, Devanagari (Hindi/Marathi),
+  // Tamil, Telugu, Kannada, Malayalam, Bengali, spaces, hyphens, dots
+  // (e.g. "A.P.J. Singh", "Md. Irfan"), and apostrophes (e.g. "O'Brien").
+  if (!/^[a-zA-ZÀ-ɏऀ-ൿ\s\-.']+$/.test(v.trim())) return "Name can only contain letters, spaces, hyphens, dots, and apostrophes"
   return ''
 }
 function validatePhone(v: string): string {
@@ -152,9 +155,9 @@ function validateIFSC(v: string): string {
   return ''
 }
 function validateUPI(v: string): string {
-  // UPI IDs: at least 3 chars before @, at least 4 chars after (e.g. @okaxis)
-  const parts = v.split('@')
-  if (parts.length !== 2 || parts[0].length < 3 || parts[1].length < 4) return 'Enter a valid UPI ID (e.g. yourname@okaxis)'
+  // Local-part: 2+ alphanumeric/dot/hyphen/underscore chars
+  // VPA suffix: 2+ alphanumeric chars (e.g. @okaxis, @ybl, @paytm1, @okhdfcbank)
+  if (!/^[\w.\-]{2,}@[\w]{2,}$/.test(v)) return 'Enter a valid UPI ID (e.g. yourname@okaxis)'
   return ''
 }
 function validateAadhaar(v: string): string {
@@ -227,8 +230,15 @@ export default function BecomeListenerPage() {
         router.replace('/auth?mode=listener&redirect=/become-listener')
         return
       }
+      // If the auth user has no verified phone (pre-widget accounts or admin-
+      // created test users), the phone field would be blank and disabled with
+      // no way to type in it — a permanent dead end. Send them to re-verify.
+      if (!user.phone) {
+        router.replace('/auth?mode=listener&redirect=/become-listener')
+        return
+      }
       // Pre-fill the phone they logged in with. No in-form OTP needed.
-      if (user.phone) setPhone(user.phone.replace(/\D/g, '').slice(-10))
+      setPhone(user.phone.replace(/\D/g, '').slice(-10))
 
       const [{ data: existing }, { data: app }] = await Promise.all([
         sb.from('listener_profiles').select('id, is_approved').eq('user_id', user.id).maybeSingle(),
