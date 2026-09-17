@@ -52,7 +52,7 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
     } catch (e) {
       const name = (e as Error).name
       if (name === 'NotAllowedError' || name === 'PermissionDeniedError') {
-        setCamError('Camera access denied. Click the camera icon in your browser address bar and allow access, then try again.')
+        setCamError('permission_denied')
       } else if (name === 'NotFoundError' || name === 'DevicesNotFoundError') {
         setCamError('No camera found on this device.')
       } else {
@@ -125,8 +125,23 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
 
       {/* ── Camera permission error ───────────────────────────────────── */}
       {camError && (
-        <div style={{ marginTop: 8, background: 'rgba(255,59,48,0.07)', border: '1px solid rgba(255,59,48,0.25)', borderRadius: 8, padding: '9px 12px', fontSize: 12, color: '#C0392B', fontWeight: 600, lineHeight: 1.5 }}>
-          {camError}
+        <div style={{ marginTop: 8, background: 'rgba(255,59,48,0.07)', border: '1px solid rgba(255,59,48,0.25)', borderRadius: 8, padding: '9px 12px', fontSize: 12, color: '#C0392B', fontWeight: 600, lineHeight: 1.6 }}>
+          {camError === 'permission_denied' ? (
+            <>
+              <div style={{ marginBottom: 6 }}>📷 Camera access was blocked. Follow the steps for your device, then tap &ldquo;Take a selfie&rdquo; again:</div>
+              <div style={{ paddingLeft: 4 }}>
+                <div style={{ marginBottom: 4 }}>
+                  <span style={{ fontWeight: 800 }}>Android (Chrome):</span> Tap the lock icon in the address bar → Site settings → Camera → Allow.
+                </div>
+                <div style={{ marginBottom: 4 }}>
+                  <span style={{ fontWeight: 800 }}>iPhone (Safari):</span> Go to Settings → Safari → Camera → Allow.
+                </div>
+                <div>
+                  <span style={{ fontWeight: 800 }}>iPhone (Chrome):</span> Go to Settings → Chrome → Camera → turn on.
+                </div>
+              </div>
+            </>
+          ) : camError}
         </div>
       )}
 
