@@ -14,12 +14,16 @@ interface Props {
 // as in a mirror; the captured canvas is NOT mirrored so stored images
 // have correct orientation (text/logos on clothing read correctly).
 export default function SelfieCapture({ onCapture, preview, loading, hasError }: Props) {
-  const [open, setOpen]         = useState(false)
-  const [stream, setStream]     = useState<MediaStream | null>(null)
-  const [camError, setCamError] = useState<string | null>(null)
-  const [busy, setBusy]         = useState(false)
-  const [videoReady, setVideoReady] = useState(false)
-  const [camStuck, setCamStuck] = useState(false)
+  const [open, setOpen]               = useState(false)
+  const [stream, setStream]           = useState<MediaStream | null>(null)
+  const [camError, setCamError]       = useState<string | null>(null)
+  const [busy, setBusy]               = useState(false)
+  const [videoReady, setVideoReady]   = useState(false)
+  const [camStuck, setCamStuck]       = useState(false)
+  // Tracks the async gap between button press and getUserMedia resolution.
+  // Uses a ref for synchronous double-start prevention; state drives the UI.
+  const [cameraStarting, setCameraStarting] = useState(false)
+  const cameraStartingRef = useRef(false)
   const videoRef = useRef<HTMLVideoElement>(null)
 
   // Stop all camera tracks — call before closing the modal
@@ -39,69 +43,81 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
   }, [open, videoReady])
 
   // Secondary fallback: wire stream to video when both are available.
-  // The primary path calls play() directly in openCamera (within the
-  // user-gesture async continuation for iOS Safari). This effect catches
-  // two cases:
-  //   1. videoRef wasn't reachable in openCamera (stream not yet attached)
-  //   2. The primary play() was silently rejected because the video element
-  //      was inside a display:none container (the outer modal) when play()
-  //      was called — some Android Chrome builds block autoplay on hidden
-  //      elements. Once setOpen(true) makes the modal visible and this
-  //      effect re-runs, video.paused will be true and we retry play().
   useEffect(() => {
     const video = videoRef.current
     if (!open || !stream || !video) return
     if (video.srcObject !== stream) {
       video.srcObject = stream
     }
-    // Retry play() whenever the modal becomes visible and the video is still
-    // paused — covers both the hidden-element rejection and the rare case
-    // where srcObject was just attached for the first time.
     if (video.paused) {
       video.play()
         .then(() => setVideoReady(true))
-        .catch(() => {
-          // Still blocked — onPlaying/onLoadedMetadata fire once the stream
-          // delivers its first frame (browser's own autoplay logic takes over).
-        })
+        .catch(() => {})
     }
   }, [open, stream])
 
   const openCamera = useCallback(async () => {
-    // Reset stuck state so a previous failure doesn't leave the video
-    // element hidden and videoRef.current unreachable on retry.
+    // Synchronous ref guard prevents double-start from rapid taps
+    if (cameraStartingRef.current) return
+    cameraStartingRef.current = true
+    setCameraStarting(true)
+
     setCamError(null)
     setCamStuck(false)
     setVideoReady(false)
 
     if (!navigator?.mediaDevices?.getUserMedia) {
       setCamError('Your browser does not support camera access. Try Chrome or Safari.')
+      cameraStartingRef.current = false
+      setCameraStarting(false)
       return
     }
+
+    // Timeout the getUserMedia() call itself — browsers are allowed to leave
+    // the permission prompt unresolved indefinitely. Without this, the UI
+    // appears frozen with no feedback if the user ignores the prompt.
+    let timedOut = false
+    const timeoutId = setTimeout(() => {
+      timedOut = true
+      cameraStartingRef.current = false
+      setCameraStarting(false)
+      setCamError('Camera permission request timed out. Please try again and allow camera access when the browser asks.')
+    }, 15000)
+
     try {
       const s = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 720 } },
       })
 
+      clearTimeout(timeoutId)
+
+      if (timedOut) {
+        // getUserMedia resolved after we already timed out — stop the tracks
+        // and return; the error message is already shown.
+        s.getTracks().forEach(t => t.stop())
+        return
+      }
+
       // Primary play path: call play() immediately while still in the
       // user-gesture async continuation. iOS Safari invalidates the
       // autoplay token after any cross-task yield (e.g. React re-render),
       // so we must attach and play before calling setState.
-      // The modal div is always in the DOM (CSS display, not conditional
-      // mount) so videoRef.current is available here without a re-render.
       if (videoRef.current) {
         videoRef.current.srcObject = s
         videoRef.current.play()
           .then(() => setVideoReady(true))
-          .catch(() => {
-            // Token expired or autoplay blocked — the useEffect fallback
-            // above will retry when open+stream state commits.
-          })
+          .catch(() => {})
       }
 
       setStream(s)
       setOpen(true)
+      cameraStartingRef.current = false
+      setCameraStarting(false)
     } catch (e) {
+      clearTimeout(timeoutId)
+      cameraStartingRef.current = false
+      setCameraStarting(false)
+      if (timedOut) return
       const name = (e as Error).name
       if (name === 'NotAllowedError' || name === 'PermissionDeniedError') {
         setCamError('permission_denied')
@@ -135,8 +151,6 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
     canvas.toBlob(blob => {
       setBusy(false)
       if (!blob) {
-        // toBlob can return null on low-memory devices or when the JPEG encoder
-        // fails. Surface a clear error rather than silently re-enabling the button.
         setCamError('Could not capture photo. Try closing other browser tabs, then tap Try again.')
         return
       }
@@ -153,12 +167,12 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
     stopStream(stream)
     setStream(null)
     setOpen(false)
-    // Reset stuck + ready so the next openCamera attempt starts clean
-    // and the video element (always in DOM) is not left in stuck-recovery state.
     setCamStuck(false)
     setVideoReady(false)
     if (videoRef.current) videoRef.current.srcObject = null
   }, [stream, stopStream])
+
+  const isDisabled = loading || cameraStarting
 
   return (
     <>
@@ -166,7 +180,7 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
       <button
         type="button"
         onClick={openCamera}
-        disabled={loading}
+        disabled={isDisabled}
         style={{
           display: 'block',
           width: '100%',
@@ -174,12 +188,12 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
           borderRadius: 14,
           padding: '18px 12px 14px',
           textAlign: 'center',
-          cursor: loading ? 'default' : 'pointer',
+          cursor: isDisabled ? 'default' : 'pointer',
           background: hasError ? 'rgba(255,59,48,0.04)' : 'rgba(240,248,252,0.7)',
           transition: 'border-color .15s',
           userSelect: 'none',
           fontFamily: 'inherit',
-          opacity: loading ? 0.7 : 1,
+          opacity: isDisabled ? 0.7 : 1,
         }}
       >
         {preview ? (
@@ -192,10 +206,10 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
           <div style={{ fontSize: 40, marginBottom: 6 }}>🤳</div>
         )}
         <div style={{ fontSize: 14, fontWeight: 700, color: '#0F4867' }}>
-          {loading ? 'Uploading…' : preview ? 'Retake selfie' : 'Take a selfie'}
+          {loading ? 'Uploading…' : cameraStarting ? 'Opening camera…' : preview ? 'Retake selfie' : 'Take a selfie'}
         </div>
         <div style={{ fontSize: 11, color: '#5A7A8A', fontWeight: 600, marginTop: 3 }}>
-          Uses your camera · no file upload
+          {cameraStarting ? 'Allow camera access when prompted' : 'Uses your camera · no file upload'}
         </div>
       </button>
 
@@ -227,8 +241,6 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
       {/* ── Camera modal ─────────────────────────────────────────────────
           Always rendered (CSS display, not conditional mount) so videoRef.current
           is non-null in openCamera() without waiting for a React re-render.
-          The <video> element is also always in the DOM — even during the
-          stuck-recovery view — so videoRef is never null between retries.
       ──────────────────────────────────────────────────────────────────── */}
       <div style={{
         position: 'fixed', inset: 0, zIndex: 9999,
@@ -248,8 +260,7 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
             >✕</button>
           </div>
 
-          {/* Live camera feed — ALWAYS in DOM so videoRef is never null.
-              Hidden via CSS when the stuck-recovery message is shown. */}
+          {/* Live camera feed — ALWAYS in DOM so videoRef is never null. */}
           <div style={{
             position: 'relative', borderRadius: 16, overflow: 'hidden',
             background: '#111', aspectRatio: '1',

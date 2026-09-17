@@ -225,17 +225,16 @@ export async function POST(req: NextRequest) {
       .select('is_approved').eq('user_id', user.id).maybeSingle()
 
     if (lpForAvatar?.is_approved) {
-      // Approved listener resubmitting — queue selfie for admin approval, don't go live immediately
+      // Approved listener resubmitting — queue selfie for admin approval, don't go live immediately.
+      // Never fall back to writing avatar_url directly: that would bypass the review mechanism
+      // and publish an unreviewed photo. If pending_avatar_url doesn't exist in the live DB
+      // (pre-migration), fail hard so the issue is surfaced rather than silently bypassed.
       const { error: pendingErr } = await admin.from('listener_profiles')
         .update({ pending_avatar_url: avatarUrl })
         .eq('user_id', user.id)
-      if (pendingErr && !pendingErr.message?.includes('pending_avatar_url')) {
-        // Column missing (pre-migration) — fall back to direct write rather than blocking the submission
-        const { error: avatarFallbackErr } = await admin.from('users').update({ avatar_url: avatarUrl }).eq('id', user.id)
-        if (avatarFallbackErr) {
-          logger.error('listener apply: avatar_url fallback write failed', { userId: user.id, error: avatarFallbackErr.message })
-          return NextResponse.json({ error: 'Could not save your selfie. Please try again.' }, { status: 500 })
-        }
+      if (pendingErr) {
+        logger.error('listener apply: pending_avatar_url write failed', { userId: user.id, error: pendingErr.message, code: pendingErr.code })
+        return NextResponse.json({ error: 'Could not save your selfie for review. Please try again.' }, { status: 500 })
       }
     } else {
       const { error: avatarErr } = await admin.from('users').update({ avatar_url: avatarUrl }).eq('id', user.id)
