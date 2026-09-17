@@ -91,7 +91,7 @@ export default function ListenerStatusPage() {
     rejected: {
       icon: '😔',
       title: 'Application Not Approved',
-      desc: 'Unfortunately your application was not approved at this time. Please review the notes from our team below.',
+      desc: 'Unfortunately your application was not approved at this time.',
     },
     needs_resubmission: {
       icon: '📝',
@@ -125,7 +125,7 @@ export default function ListenerStatusPage() {
 
           {notes && (
             <div className="notes-box">
-              <div className="notes-label">Notes from our team</div>
+              <div className="notes-label">{status === 'rejected' ? 'Reason' : 'Notes from our team'}</div>
               <div className="notes-text">{notes}</div>
             </div>
           )}

@@ -361,19 +361,13 @@ export async function PATCH(req: NextRequest) {
           logger.error('reject_listener: listener_profiles update failed', { userId, error: lpErr.message })
           return NextResponse.json({ error: `Failed to reject listener: ${lpErr.message}` }, { status: 500 })
         }
-        // Update status — critical so listener leaves the pending queue.
+        // Update status + always write admin_notes (even to null) so stale notes
+        // from a prior "Request Fix" action never persist into a new rejection.
         const { error: laErr } = await sb.from('listener_applications')
-          .update({ status: 'rejected' })
+          .update({ status: 'rejected', admin_notes: notes || null })
           .eq('user_id', userId)
         if (laErr) {
           logger.warn('reject_listener: listener_applications status update failed', { userId, error: laErr.message })
-        }
-        // Best-effort: store rejection notes (requires migration 029).
-        if (notes) {
-          await sb.from('listener_applications')
-            .update({ admin_notes: notes })
-            .eq('user_id', userId)
-            .then(() => {}, () => {})
         }
         await sb.from('notifications').insert({
           user_id: userId,
