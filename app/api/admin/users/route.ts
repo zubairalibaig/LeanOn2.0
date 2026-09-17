@@ -523,8 +523,12 @@ export async function PATCH(req: NextRequest) {
         }
         // For listeners: only restore is_active if already approved — an unapproved
         // applicant who was suspended must not become active just by being unsuspended.
-        const { data: lpUnsuspend } = await sb.from('listener_profiles')
+        const { data: lpUnsuspend, error: lpUnsuspendErr } = await sb.from('listener_profiles')
           .select('is_approved').eq('user_id', userId).maybeSingle()
+        if (lpUnsuspendErr) {
+          logger.error('unsuspend: is_approved read failed — aborting listener profile update to avoid data corruption', { userId, error: lpUnsuspendErr.message })
+          return NextResponse.json({ error: `Failed to read listener profile: ${lpUnsuspendErr.message}` }, { status: 500 })
+        }
         const wasApprovedUnsuspend = lpUnsuspend?.is_approved === true
         await sb.from('listener_profiles')
           .update({ is_active: wasApprovedUnsuspend, is_suspended: false })
@@ -549,8 +553,12 @@ export async function PATCH(req: NextRequest) {
       case 'unsuspend_listener': {
         // Restores listener activity only when already approved — unsuspending a
         // rejected applicant must not put them online (they need re-approval first).
-        const { data: lp } = await sb.from('listener_profiles')
+        const { data: lp, error: lpReadErr } = await sb.from('listener_profiles')
           .select('is_approved').eq('user_id', userId).maybeSingle()
+        if (lpReadErr) {
+          logger.error('unsuspend_listener: is_approved read failed — aborting to avoid data corruption', { userId, error: lpReadErr.message })
+          return NextResponse.json({ error: `Failed to read listener profile: ${lpReadErr.message}` }, { status: 500 })
+        }
         const wasApproved = lp?.is_approved === true
         const { error: lpErr } = await sb.from('listener_profiles')
           .update({ is_suspended: false, is_active: wasApproved, is_available: false })
@@ -572,7 +580,9 @@ export async function PATCH(req: NextRequest) {
       }
 
       case 'activate': {
-        const { error: uErr } = await sb.from('users').update({ is_active: true }).eq('id', userId)
+        // Also clear is_suspended — a suspended user's is_suspended=true would otherwise
+        // create the impossible {is_active:true, is_suspended:true} state.
+        const { error: uErr } = await sb.from('users').update({ is_active: true, is_suspended: false }).eq('id', userId)
         if (uErr) {
           logger.error('activate: users update failed', { userId, error: uErr.message })
           return NextResponse.json({ error: `Failed to activate user: ${uErr.message}` }, { status: 500 })
@@ -637,10 +647,13 @@ export async function PATCH(req: NextRequest) {
             name: listenerUser?.name ?? '',
             phone: listenerUser?.phone ?? null,
             status: 'approved',
+            // Explicitly include account_holder_name — defaults to null when not in updates.
+            account_holder_name: updates.account_holder_name ?? null,
             ...updates,
           }
           let baErr = (await sb.from('listener_applications').insert(insertRow)).error
-          if (baErr?.message?.includes('account_holder_name')) {
+          if (baErr?.message?.includes('column') && baErr.message?.includes('account_holder_name')) {
+            // Column does not exist yet (pre-migration) — retry without it
             delete insertRow.account_holder_name
             baErr = (await sb.from('listener_applications').insert(insertRow)).error
           }

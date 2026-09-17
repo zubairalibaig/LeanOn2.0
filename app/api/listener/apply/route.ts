@@ -200,13 +200,11 @@ export async function POST(req: NextRequest) {
       // quotes the missing column as 'aadhaar', distinct from 'aadhaar_last4'.
       delete appRow.aadhaar
       appErr = (await admin.from('listener_applications').upsert(appRow, { onConflict: 'user_id' })).error
-    }
-    if (appErr?.message?.includes('upi_id')) {
+    } else if (appErr?.message?.includes('upi_id')) {
       // upi_id column not yet in DB (pre-migration 022) — retry without it
       delete appRow.upi_id
       appErr = (await admin.from('listener_applications').upsert(appRow, { onConflict: 'user_id' })).error
-    }
-    if (appErr?.message?.includes('account_holder_name')) {
+    } else if (appErr?.message?.includes('account_holder_name')) {
       // account_holder_name column not yet in DB (pre-migration 055) — retry without it
       delete appRow.account_holder_name
       appErr = (await admin.from('listener_applications').upsert(appRow, { onConflict: 'user_id' })).error

@@ -274,6 +274,7 @@ export default function BecomeListenerPage() {
       // with no session. (A broken session shown as a form produced the dead
       // in-form OTP button that users saw after the DLT migration.)
       router.replace('/auth?mode=listener&redirect=/become-listener')
+      setGuardChecked(true)
     })
   }, [])
 

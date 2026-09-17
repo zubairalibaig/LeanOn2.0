@@ -359,9 +359,11 @@ export default function AdminPage() {
   const [refunds, setRefunds] = useState<RefundRow[]>([])
   const [rzpxEnabled, setRzpxEnabled] = useState(false)
   const [payoutsLoading, setPayoutsLoading] = useState(false)
-  // Inline confirm state for destructive ban action (window.confirm blocked in mobile)
+  // Inline confirm state for destructive actions (window.confirm blocked in mobile PWA/iOS)
   const [confirmBanId, setConfirmBanId] = useState<string | null>(null)
   const [confirmBanListenerId, setConfirmBanListenerId] = useState<string | null>(null)
+  const [confirmRejectOverviewId, setConfirmRejectOverviewId] = useState<string | null>(null)
+  const [confirmRejectListenersId, setConfirmRejectListenersId] = useState<string | null>(null)
   // Inline name-edit state (shared for both users and listeners tables)
   const [editingNameId, setEditingNameId] = useState<string | null>(null)
   const [editingNameValue, setEditingNameValue] = useState('')
@@ -917,9 +919,17 @@ export default function AdminPage() {
                               <button className="btn btn-orange" disabled={busy !== null || !rejectNotesOverview[l.user_id]?.trim()} onClick={() => userAction(l.user_id, 'request_resubmission', rejectNotesOverview[l.user_id])} title="Ask them to fix and resubmit">
                                 {busy === `request_resubmission:${l.user_id}` ? '…' : 'Request Fix'}
                               </button>
-                              <button className="btn btn-red" disabled={busy !== null} onClick={() => { if (confirm('Permanently reject this application? They will NOT be able to resubmit.')) userAction(l.user_id, 'reject_listener', rejectNotesOverview[l.user_id]) }} title="Permanently reject — cannot resubmit">
-                                {busy === `reject_listener:${l.user_id}` ? '…' : 'Reject'}
-                              </button>
+                              {confirmRejectOverviewId === l.user_id ? (
+                                <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
+                                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--red)' }}>Permanently reject?</span>
+                                  <button className="btn btn-red" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => { setConfirmRejectOverviewId(null); userAction(l.user_id, 'reject_listener', rejectNotesOverview[l.user_id]) }}>Yes, reject</button>
+                                  <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setConfirmRejectOverviewId(null)}>Cancel</button>
+                                </span>
+                              ) : (
+                                <button className="btn btn-red" disabled={busy !== null} onClick={() => setConfirmRejectOverviewId(l.user_id)} title="Permanently reject — cannot resubmit">
+                                  {busy === `reject_listener:${l.user_id}` ? '…' : 'Reject'}
+                                </button>
+                              )}
                             </div>
                           </div>
                         )
@@ -1623,9 +1633,17 @@ export default function AdminPage() {
                                       <button className="btn btn-orange" disabled={busy !== null || !rejectNotesListeners[l.user_id]?.trim()} onClick={() => userAction(l.user_id, 'request_resubmission', rejectNotesListeners[l.user_id])} title="Ask them to fix and resubmit">
                                         {busy === `request_resubmission:${l.user_id}` ? '…' : 'Request Fix'}
                                       </button>
-                                      <button className="btn btn-red" disabled={busy !== null} onClick={() => { if (confirm('Permanently reject this application? They will NOT be able to resubmit.')) userAction(l.user_id, 'reject_listener', rejectNotesListeners[l.user_id]) }} title="Permanently reject — cannot resubmit">
-                                        {busy === `reject_listener:${l.user_id}` ? '…' : 'Reject'}
-                                      </button>
+                                      {confirmRejectListenersId === l.user_id ? (
+                                        <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
+                                          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--red)' }}>Permanently reject?</span>
+                                          <button className="btn btn-red" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => { setConfirmRejectListenersId(null); userAction(l.user_id, 'reject_listener', rejectNotesListeners[l.user_id]) }}>Yes, reject</button>
+                                          <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setConfirmRejectListenersId(null)}>Cancel</button>
+                                        </span>
+                                      ) : (
+                                        <button className="btn btn-red" disabled={busy !== null} onClick={() => setConfirmRejectListenersId(l.user_id)} title="Permanently reject — cannot resubmit">
+                                          {busy === `reject_listener:${l.user_id}` ? '…' : 'Reject'}
+                                        </button>
+                                      )}
                                     </div>
                                   </div>
                                 )}
@@ -1722,9 +1740,9 @@ export default function AdminPage() {
                 </div>
                 {listenersTotal > PAGE_SIZE && (
                   <div className="pagination">
-                    <button className="btn btn-gray" disabled={listenersPage === 0} onClick={() => { const p = listenersPage - 1; setListenersPage(p); loadListeners(p, listenersStatus) }}>← Prev</button>
+                    <button className="btn btn-gray" disabled={listenersPage === 0} onClick={() => { const p = listenersPage - 1; setListenersPage(p); loadListeners(p, listenersStatus, listenersJoinedDir, listenersSortBy, listenersSearch) }}>← Prev</button>
                     <span>{listenersPage * PAGE_SIZE + 1}–{Math.min((listenersPage + 1) * PAGE_SIZE, listenersTotal)} of {listenersTotal}</span>
-                    <button className="btn btn-gray" disabled={(listenersPage + 1) * PAGE_SIZE >= listenersTotal} onClick={() => { const p = listenersPage + 1; setListenersPage(p); loadListeners(p, listenersStatus) }}>Next →</button>
+                    <button className="btn btn-gray" disabled={(listenersPage + 1) * PAGE_SIZE >= listenersTotal} onClick={() => { const p = listenersPage + 1; setListenersPage(p); loadListeners(p, listenersStatus, listenersJoinedDir, listenersSortBy, listenersSearch) }}>Next →</button>
                   </div>
                 )}
               </>
