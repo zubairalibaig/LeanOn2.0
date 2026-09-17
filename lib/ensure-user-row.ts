@@ -33,15 +33,27 @@ export async function ensureUserRow(
   const row: Record<string, unknown> = { id }
   if (name) row.name = name
   if (phone) row.phone = phone
-  // Only write account_country on first set (non-null). Never overwrite an
-  // existing country — the user may have changed countries since signup.
-  if (accountCountry) row.account_country = accountCountry
+  // account_country is set separately after the upsert (below) using a
+  // WHERE account_country IS NULL guard, so it never overwrites an existing
+  // value — the user may have moved countries since signup and we keep the
+  // original selection. Do NOT include it in the upsert payload.
 
   const fmt = (e: { code?: string; message: string; details?: string; hint?: string }) =>
     `[${e.code ?? 'no-code'}] ${e.message}${e.details ? ' | ' + e.details : ''}${e.hint ? ' | hint: ' + e.hint : ''}`
 
   let { error } = await admin.from('users').upsert(row, { onConflict: 'id' })
-  if (!error) return { error: null, debug: null }
+  if (!error) {
+    // First-time-only country write: only sets account_country when the column
+    // is currently NULL — never overwrites an existing value.
+    if (accountCountry) {
+      await admin.from('users')
+        .update({ account_country: accountCountry })
+        .eq('id', id)
+        .is('account_country', null)
+        .then(() => {}, (e) => logger.warn('ensureUserRow: account_country update failed', { error: String(e) }))
+    }
+    return { error: null, debug: null }
+  }
 
   const phoneConflict = error.code === '23505' && /users_phone_key/.test(error.message + (error.details ?? ''))
   if (phoneConflict && phone) {

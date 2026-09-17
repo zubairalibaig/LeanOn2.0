@@ -85,13 +85,23 @@ export async function PUT(req: NextRequest) {
     let verifiedAmount: number
     let grossPaid = 0
     try {
-      const order = await rzp.orders.fetch(razorpay_order_id)
+      // Fetch order AND payment in parallel — both are needed for full verification.
+      const [order, payment] = await Promise.all([
+        rzp.orders.fetch(razorpay_order_id),
+        rzp.payments.fetch(razorpay_payment_id),
+      ])
       // SECURITY: verify this order was created for the authenticated caller — prevents
       // User B from using User A's razorpay_order_id to credit their own wallet.
       const orderUserId = (order.notes as Record<string, string> | undefined)?.userId
       if (orderUserId && orderUserId !== user.id) {
         logger.error('Wallet PUT: order belongs to different user — rejecting', { orderUserId, callerId: user.id })
         return NextResponse.json({ error: 'Payment order does not belong to this account' }, { status: 403 })
+      }
+      // SECURITY: verify payment was actually captured — prevents crediting wallet for
+      // authorized-but-not-captured (e.g. card declined after authorization) payments.
+      if ((payment as { status?: string }).status !== 'captured') {
+        logger.error('Wallet PUT: payment not captured', { paymentId: razorpay_payment_id, paymentStatus: (payment as { status?: string }).status })
+        return NextResponse.json({ error: 'Payment was not completed. Please try again or contact support.' }, { status: 400 })
       }
       grossPaid = Math.round(Number(order.amount) / 100)
       const noteAmount = parseInt(String((order.notes as Record<string, string> | undefined)?.amount ?? ''), 10)

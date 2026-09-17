@@ -161,7 +161,21 @@ export default function NotificationsBell() {
                 <a
                   key={n.id}
                   href={safeUrl || undefined}
-                  onClick={(e) => { e.preventDefault(); setOpen(false); if (safeUrl) router.push(safeUrl) }}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setOpen(false)
+                    // Mark this notification read on click
+                    if (!n.is_read) {
+                      setNotifs(prev => prev.map(x => x.id === n.id ? { ...x, is_read: true } : x))
+                      setUnread(c => Math.max(0, c - 1))
+                      fetch('/api/notifications', {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ids: [n.id] }),
+                      }).catch(() => {})
+                    }
+                    if (safeUrl) router.push(safeUrl)
+                  }}
                   style={{
                     display: 'block', padding: '12px 16px',
                     borderBottom: '1px solid #EFF6FA',

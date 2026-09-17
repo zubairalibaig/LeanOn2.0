@@ -903,7 +903,9 @@ function SessionContent() {
     function handleVisibilityChange() {
       if (document.visibilityState === 'visible' && !cancelled && agoraRef.current) {
         const state: string = agoraRef.current.client.connectionState
-        if (state === 'DISCONNECTED' || state === 'DISCONNECTING') {
+        // DISCONNECTING = intentional client.leave() (session ended) — do not reconnect.
+        // Only reconnect on DISCONNECTED (unexpected drop while tab was hidden).
+        if (state === 'DISCONNECTED') {
           reconnectAttempts = 0
           joinVoiceCall()
         }

@@ -25,15 +25,21 @@ export async function POST(req: NextRequest) {
 
     const sb = createAdminClient()
 
-    // Verify caller is a participant
+    // Verify caller is a participant in an active session
     const { data: session } = await sb
       .from('sessions')
-      .select('seeker_id, listener_id, crisis_flagged')
+      .select('seeker_id, listener_id, crisis_flagged, status')
       .eq('id', sessionId)
       .single()
 
     if (!session || (session.seeker_id !== user.id && session.listener_id !== user.id)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+    }
+
+    // Only flag sessions that are currently active — notifying a listener about
+    // an already-ended session is misleading and triggers a spurious notification.
+    if (session.status !== 'active') {
+      return NextResponse.json({ error: 'Session is not active' }, { status: 400 })
     }
 
     if (session.crisis_flagged) {

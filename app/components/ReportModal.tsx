@@ -22,6 +22,7 @@ export default function ReportModal({ targetUserId, targetName, sessionId, onClo
   const [details,   setDetails]   = useState('')
   const [loading,   setLoading]   = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState('')
   const firstBtn = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
@@ -42,6 +43,7 @@ export default function ReportModal({ targetUserId, targetName, sessionId, onClo
   async function submit() {
     if (!reason || !details.trim() || details.trim().length < 10) return
     setLoading(true)
+    setSubmitError('')
     try {
       const res = await fetch('/api/report', {
         method:  'POST',
@@ -56,7 +58,12 @@ export default function ReportModal({ targetUserId, targetName, sessionId, onClo
       if (res.ok) {
         setSubmitted(true)
         setTimeout(onClose, 2500)
+      } else {
+        const json = await res.json().catch(() => ({}))
+        setSubmitError(json.error || 'Could not submit report. Please try again.')
       }
+    } catch {
+      setSubmitError('Something went wrong. Please check your connection and try again.')
     } finally {
       setLoading(false)
     }
@@ -147,6 +154,11 @@ export default function ReportModal({ targetUserId, targetName, sessionId, onClo
               </div>
             </div>
 
+            {submitError && (
+              <div style={{ background: '#FFF0EF', color: '#FF3B30', padding: '10px 14px', borderRadius: 10, fontSize: 13, fontWeight: 600, marginBottom: 12 }}>
+                {submitError}
+              </div>
+            )}
             <button
               onClick={submit}
               disabled={loading || !reason || details.trim().length < 10}

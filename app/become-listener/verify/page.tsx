@@ -99,6 +99,15 @@ export default function VerifyPage() {
         hashString(idNumber),
       ])
 
+      if (selfie && !selfieUrl) {
+        setError('Failed to upload selfie. Please check your connection and try again.')
+        return
+      }
+      if (idDoc && !idDocUrl) {
+        setError('Failed to upload ID document. Please check your connection and try again.')
+        return
+      }
+
       const res = await fetch('/api/listener/verify', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -113,6 +122,11 @@ export default function VerifyPage() {
 
       if (!res.ok) {
         const json = await res.json()
+        if (res.status === 409 && json.alreadyVerified) {
+          // Already verified — go straight to the success screen
+          setStep(4)
+          return
+        }
         setError(json.error || 'Submission failed. Please try again.')
         return
       }

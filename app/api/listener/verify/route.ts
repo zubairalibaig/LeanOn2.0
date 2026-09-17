@@ -37,6 +37,14 @@ export async function POST(req: NextRequest) {
 
     const sb = createAdminClient()
 
+    // An already-approved verification must not be overwritten — the listener
+    // is verified; a resubmission would lose their approved status until admin re-reviews.
+    const { data: existing } = await sb.from('listener_verifications')
+      .select('status').eq('listener_id', user.id).maybeSingle()
+    if (existing?.status === 'approved') {
+      return NextResponse.json({ error: 'Your identity is already verified.', alreadyVerified: true }, { status: 409 })
+    }
+
     const { error } = await sb.from('listener_verifications').upsert({
       listener_id:    user.id,
       full_name:      full_name.trim().slice(0, 120),

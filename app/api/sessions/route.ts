@@ -338,8 +338,15 @@ export async function PATCH(req: NextRequest) {
       })
 
       if (creditErr) {
-        logger.error('credit_wallet RPC failed — manual reconciliation needed:', {
-          sessionId, listenerId: session.listener_id, amount: listenerEarning,
+        // Credit failed — session is already 'completed' (ended_at stamped) so we can't
+        // reverse it. Log with all context needed for manual reconciliation.
+        // RECONCILIATION: search logs for 'credit_wallet RPC failed' + sessionId to find unpaid sessions.
+        logger.error('credit_wallet RPC failed — RECONCILIATION NEEDED — listener unpaid:', {
+          sessionId,
+          listenerId:     session.listener_id,
+          amount:         listenerEarning,
+          serviceFeeLost: listenerServiceFee,
+          error:          creditErr.message,
         })
       } else {
         await sb.from('wallet_transactions').insert({

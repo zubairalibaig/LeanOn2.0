@@ -50,7 +50,8 @@ export async function POST(req: NextRequest) {
 
     const sb = createAdminClient()
 
-    // If sessionId provided — verify caller is a participant
+    // If sessionId provided — verify caller is a participant, and that
+    // reportedUserId (when given) is the OTHER participant in that session.
     if (sessionId) {
       const { data: session } = await sb
         .from('sessions')
@@ -59,6 +60,12 @@ export async function POST(req: NextRequest) {
         .single()
       if (!session || (session.seeker_id !== user.id && session.listener_id !== user.id)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+      }
+      if (reportedUserId) {
+        const otherParticipant = session.seeker_id === user.id ? session.listener_id : session.seeker_id
+        if (reportedUserId !== otherParticipant) {
+          return NextResponse.json({ error: 'Reported user is not a participant in this session' }, { status: 403 })
+        }
       }
     }
 

@@ -217,10 +217,32 @@ export async function POST(req: NextRequest) {
     // 4. Persist avatar — runs only after all DB writes succeed so a storage
     //    failure never leaves an approved listener with no photo. avatarUrl is
     //    guaranteed non-null here (validated and required above).
-    const { error: avatarErr } = await admin.from('users').update({ avatar_url: avatarUrl }).eq('id', user.id)
-    if (avatarErr) {
-      logger.error('listener apply: avatar_url save failed', { userId: user.id, error: avatarErr.message })
-      return NextResponse.json({ error: 'Could not save your selfie. Please try again.' }, { status: 500 })
+    //
+    // Approved listeners: selfie goes to pending_avatar_url for admin review
+    // (same logic as profile PATCH) so a re-submitted photo is never auto-published.
+    // Everyone else (new applicants, needs_resubmission): write directly to users.avatar_url.
+    const { data: lpForAvatar } = await admin.from('listener_profiles')
+      .select('is_approved').eq('user_id', user.id).maybeSingle()
+
+    if (lpForAvatar?.is_approved) {
+      // Approved listener resubmitting — queue selfie for admin approval, don't go live immediately
+      const { error: pendingErr } = await admin.from('listener_profiles')
+        .update({ pending_avatar_url: avatarUrl })
+        .eq('user_id', user.id)
+      if (pendingErr && !pendingErr.message?.includes('pending_avatar_url')) {
+        // Column missing (pre-migration) — fall back to direct write rather than blocking the submission
+        const { error: avatarFallbackErr } = await admin.from('users').update({ avatar_url: avatarUrl }).eq('id', user.id)
+        if (avatarFallbackErr) {
+          logger.error('listener apply: avatar_url fallback write failed', { userId: user.id, error: avatarFallbackErr.message })
+          return NextResponse.json({ error: 'Could not save your selfie. Please try again.' }, { status: 500 })
+        }
+      }
+    } else {
+      const { error: avatarErr } = await admin.from('users').update({ avatar_url: avatarUrl }).eq('id', user.id)
+      if (avatarErr) {
+        logger.error('listener apply: avatar_url save failed', { userId: user.id, error: avatarErr.message })
+        return NextResponse.json({ error: 'Could not save your selfie. Please try again.' }, { status: 500 })
+      }
     }
 
     return NextResponse.json({ success: true })

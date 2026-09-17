@@ -35,7 +35,11 @@ export async function POST(req: NextRequest) {
 
     if (!verification) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
+    // Idempotency guard — prevent double-processing (duplicate notifications / badge flicker)
     const newStatus = action === 'approve' ? 'approved' : 'rejected'
+    if (verification.status === newStatus) {
+      return NextResponse.json({ ok: true, alreadyProcessed: true })
+    }
 
     const { error: vErr } = await sb.from('listener_verifications').update({
       status:      newStatus,
