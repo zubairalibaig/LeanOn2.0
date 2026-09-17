@@ -313,19 +313,26 @@ export async function PATCH(req: NextRequest) {
     switch (action) {
       case 'approve_listener': {
         // Fetch pending_avatar_url so we can promote it atomically with approval.
+        // If the column doesn't exist yet in production, treat as no pending avatar.
         const { data: lpCurrent } = await sb
           .from('listener_profiles')
           .select('pending_avatar_url')
           .eq('user_id', userId)
           .maybeSingle()
-        const pendingAvatar = lpCurrent?.pending_avatar_url ?? null
+        const pendingAvatar = (lpCurrent as Record<string, unknown> | null)?.pending_avatar_url as string | null ?? null
 
         // listener_profiles is the authoritative approval gate — must succeed.
+        // Only include pending_avatar_url: null when there's a value to clear,
+        // avoiding a column-missing error when the migration hasn't run yet.
         const lpUpdate: Record<string, unknown> = { is_approved: true, is_active: true }
         if (pendingAvatar) lpUpdate.pending_avatar_url = null // clear after promoting
-        const { error: lpErr } = await sb.from('listener_profiles')
-          .update(lpUpdate)
-          .eq('user_id', userId)
+        let lpErr = (await sb.from('listener_profiles').update(lpUpdate).eq('user_id', userId)).error
+        if (lpErr?.message?.includes('pending_avatar_url')) {
+          // Column not yet in production — approve without touching it
+          lpErr = (await sb.from('listener_profiles')
+            .update({ is_approved: true, is_active: true })
+            .eq('user_id', userId)).error
+        }
         if (lpErr) {
           logger.error('approve_listener: listener_profiles update failed', { userId, error: lpErr.message })
           return NextResponse.json({ error: `Failed to approve listener: ${lpErr.message}` }, { status: 500 })
@@ -365,9 +372,15 @@ export async function PATCH(req: NextRequest) {
         // Clear pending_avatar_url on rejection — the pending selfie is discarded.
         // The existing avatar_url (if any) is deliberately NOT touched so the
         // listener retains their current photo if they reapply.
-        const { error: lpErr } = await sb.from('listener_profiles')
+        // Degrade gracefully if pending_avatar_url column doesn't exist yet.
+        let lpErr = (await sb.from('listener_profiles')
           .update({ is_approved: false, is_active: false, pending_avatar_url: null })
-          .eq('user_id', userId)
+          .eq('user_id', userId)).error
+        if (lpErr?.message?.includes('pending_avatar_url')) {
+          lpErr = (await sb.from('listener_profiles')
+            .update({ is_approved: false, is_active: false })
+            .eq('user_id', userId)).error
+        }
         if (lpErr) {
           logger.error('reject_listener: listener_profiles update failed', { userId, error: lpErr.message })
           return NextResponse.json({ error: `Failed to reject listener: ${lpErr.message}` }, { status: 500 })
@@ -394,9 +407,17 @@ export async function PATCH(req: NextRequest) {
       }
 
       case 'request_resubmission': {
-        const { error: lpErr } = await sb.from('listener_profiles')
+        // Try with pending_avatar_url first; if the column doesn't exist yet
+        // in production (schema drift), retry without it — clearing the
+        // approval/active flags is what matters for the resubmission flow.
+        let lpErr = (await sb.from('listener_profiles')
           .update({ is_approved: false, is_active: false, pending_avatar_url: null })
-          .eq('user_id', userId)
+          .eq('user_id', userId)).error
+        if (lpErr?.message?.includes('pending_avatar_url')) {
+          lpErr = (await sb.from('listener_profiles')
+            .update({ is_approved: false, is_active: false })
+            .eq('user_id', userId)).error
+        }
         if (lpErr) {
           logger.error('request_resubmission: listener_profiles update failed', { userId, error: lpErr.message })
           return NextResponse.json({ error: `Failed to update listener: ${lpErr.message}` }, { status: 500 })
