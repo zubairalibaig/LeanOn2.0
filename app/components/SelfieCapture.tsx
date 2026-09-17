@@ -41,17 +41,28 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
   // Secondary fallback: wire stream to video when both are available.
   // The primary path calls play() directly in openCamera (within the
   // user-gesture async continuation for iOS Safari). This effect catches
-  // the rare case where videoRef wasn't reachable at that moment.
+  // two cases:
+  //   1. videoRef wasn't reachable in openCamera (stream not yet attached)
+  //   2. The primary play() was silently rejected because the video element
+  //      was inside a display:none container (the outer modal) when play()
+  //      was called — some Android Chrome builds block autoplay on hidden
+  //      elements. Once setOpen(true) makes the modal visible and this
+  //      effect re-runs, video.paused will be true and we retry play().
   useEffect(() => {
     const video = videoRef.current
     if (!open || !stream || !video) return
     if (video.srcObject !== stream) {
       video.srcObject = stream
+    }
+    // Retry play() whenever the modal becomes visible and the video is still
+    // paused — covers both the hidden-element rejection and the rare case
+    // where srcObject was just attached for the first time.
+    if (video.paused) {
       video.play()
         .then(() => setVideoReady(true))
         .catch(() => {
-          // Autoplay blocked — onPlaying/onLoadedMetadata still fire once
-          // the stream delivers its first frame.
+          // Still blocked — onPlaying/onLoadedMetadata fire once the stream
+          // delivers its first frame (browser's own autoplay logic takes over).
         })
     }
   }, [open, stream])
@@ -191,7 +202,10 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
         <div style={{ marginTop: 8, background: 'rgba(255,59,48,0.07)', border: '1px solid rgba(255,59,48,0.25)', borderRadius: 8, padding: '9px 12px', fontSize: 12, color: '#C0392B', fontWeight: 600, lineHeight: 1.6 }}>
           {camError === 'permission_denied' ? (
             <>
-              <div style={{ marginBottom: 6 }}>📷 Camera access was blocked. Follow the steps for your device, then tap &ldquo;Take a selfie&rdquo; again:</div>
+              <div style={{ marginBottom: 6 }}>📷 Camera access was blocked.</div>
+              <div style={{ marginBottom: 8, background: 'rgba(255,59,48,0.06)', borderRadius: 6, padding: '7px 10px', fontSize: 12 }}>
+                <span style={{ fontWeight: 800 }}>Opened from WhatsApp or Instagram?</span> Those apps block the camera. Tap the three-dot menu → &ldquo;Open in Chrome&rdquo; (Android) or &ldquo;Open in Safari&rdquo; (iPhone), then come back.
+              </div>
               <div style={{ paddingLeft: 4 }}>
                 <div style={{ marginBottom: 4 }}>
                   <span style={{ fontWeight: 800 }}>Android (Chrome):</span> Tap the lock icon in the address bar → Site settings → Camera → Allow.
