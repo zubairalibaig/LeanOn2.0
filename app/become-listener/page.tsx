@@ -319,14 +319,27 @@ export default function BecomeListenerPage() {
         // Derive extension from MIME type — never trust the user-controlled filename
         const ext = extForType(avatarFile.type)
         const path = `${user.id}.${ext}`
-        const { error: upErr } = await sb.storage.from('avatars').upload(path, avatarFile, { upsert: true, contentType: avatarFile.type })
+        // Race the upload against a 30-second timeout. Mobile browsers on weak
+        // connections can stall indefinitely on storage.upload() if the TCP
+        // connection hangs without closing, locking the button forever.
+        const UPLOAD_TIMEOUT_MS = 30_000
+        const uploadTimeout = new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('upload_timeout')), UPLOAD_TIMEOUT_MS)
+        )
+        const { error: upErr } = await Promise.race([
+          sb.storage.from('avatars').upload(path, avatarFile, { upsert: true, contentType: avatarFile.type }),
+          uploadTimeout,
+        ])
         if (upErr) { setFieldErrors(f => ({...f, avatar: 'Photo upload failed. Please try again.'})); setAvatarUploading(false); return }
         const { data: { publicUrl } } = sb.storage.from('avatars').getPublicUrl(path)
         // Version the URL so a re-upload to the same path is not served stale
         // from the CDN — matches what /profile and /dashboard already do.
         setAvatarUrl(`${publicUrl}?t=${Date.now()}`)
-      } catch {
-        setFieldErrors(f => ({...f, avatar: 'Photo upload failed. Please try again.'}))
+      } catch (e) {
+        const msg = e instanceof Error && e.message === 'upload_timeout'
+          ? 'Photo upload timed out. Please check your connection and try again.'
+          : 'Photo upload failed. Please try again.'
+        setFieldErrors(f => ({...f, avatar: msg}))
         setAvatarUploading(false)
         return
       }
@@ -558,13 +571,17 @@ export default function BecomeListenerPage() {
               hasError={!!fieldErrors.avatar}
               onCapture={async (file) => {
                 if (file.size > MAX_INPUT_BYTES) { setFieldErrors(f => ({...f, avatar:'Photo must be under 20 MB'})); return }
-                const shrunk = await compressImage(file, AVATAR_OPTS)
-                setAvatarFile(shrunk)
-                setAvatarUrl('')
-                const reader = new FileReader()
-                reader.onload = ev => setAvatarPreview(ev.target?.result as string)
-                reader.readAsDataURL(shrunk)
-                if (fieldErrors.avatar) setFieldErrors(f => ({...f, avatar:''}))
+                try {
+                  const shrunk = await compressImage(file, AVATAR_OPTS)
+                  setAvatarFile(shrunk)
+                  setAvatarUrl('')
+                  const reader = new FileReader()
+                  reader.onload = ev => setAvatarPreview(ev.target?.result as string)
+                  reader.readAsDataURL(shrunk)
+                  if (fieldErrors.avatar) setFieldErrors(f => ({...f, avatar:''}))
+                } catch {
+                  setFieldErrors(f => ({...f, avatar:'Could not process photo. Please try again.'}))
+                }
               }}
             />
             {fieldErrors.avatar && <span className="field-err">{fieldErrors.avatar}</span>}

@@ -69,6 +69,7 @@ export default function ProfilePage() {
   const [isListener, setIsListener] = useState(false)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
+  const [avatarUploadMsg, setAvatarUploadMsg] = useState<{ type: 'error' | 'info'; text: string } | null>(null)
   const [editingName, setEditingName] = useState(false)
   const [nameInput, setNameInput] = useState('')
   const [saving, setSaving] = useState(false)
@@ -110,13 +111,21 @@ export default function ProfilePage() {
 
   async function doAvatarUpload(file: File) {
     if (!userId) return
-    if (file.size > MAX_INPUT_BYTES) { alert('Photo must be under 20 MB'); return }
+    if (file.size > MAX_INPUT_BYTES) { setAvatarUploadMsg({ type: 'error', text: 'Photo must be under 20 MB.' }); return }
+    setAvatarUploadMsg(null)
     setUploadingAvatar(true)
     try {
       const upload = await compressImage(file, AVATAR_OPTS)
       const ext = extForType(upload.type)
       const path = `${userId}.${ext}`
-      const { error: upErr } = await supabase.storage.from('avatars').upload(path, upload, { upsert: true, contentType: upload.type })
+      const UPLOAD_TIMEOUT_MS = 30_000
+      const uploadTimeout = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('upload_timeout')), UPLOAD_TIMEOUT_MS)
+      )
+      const { error: upErr } = await Promise.race([
+        supabase.storage.from('avatars').upload(path, upload, { upsert: true, contentType: upload.type }),
+        uploadTimeout,
+      ])
       if (upErr) throw upErr
       const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path)
       const url = `${publicUrl}?t=${Date.now()}`
@@ -125,11 +134,18 @@ export default function ProfilePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ avatar_url: url }),
       })
-      if (!res.ok) throw new Error((await res.json()).error || 'DB write failed')
-      setAvatarUrl(url)
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(json.error || 'DB write failed')
+      if (json.pending_review) {
+        setAvatarUploadMsg({ type: 'info', text: 'Your new selfie is under review. Your current photo stays live until an admin approves it.' })
+      } else {
+        setAvatarUrl(url)
+      }
     } catch (err) {
-      console.error('Avatar upload error:', err)
-      alert('Upload failed. Make sure the avatars storage bucket exists in Supabase.')
+      const msg = err instanceof Error && err.message === 'upload_timeout'
+        ? 'Upload timed out. Please check your connection and try again.'
+        : 'Photo upload failed. Please try again.'
+      setAvatarUploadMsg({ type: 'error', text: msg })
     } finally {
       setUploadingAvatar(false)
     }
@@ -213,6 +229,17 @@ export default function ProfilePage() {
                   {uploadingAvatar ? 'Uploading...' : avatarUrl ? 'Change photo' : '+ Add photo'}
                 </span>
               </label>
+            )}
+            {avatarUploadMsg && (
+              <div style={{
+                marginTop: 8, fontSize: 12, fontWeight: 600, lineHeight: 1.5,
+                padding: '8px 12px', borderRadius: 8, maxWidth: 280, textAlign: 'center',
+                background: avatarUploadMsg.type === 'error' ? 'rgba(255,59,48,0.07)' : 'rgba(26,143,160,0.07)',
+                border: `1px solid ${avatarUploadMsg.type === 'error' ? 'rgba(255,59,48,0.25)' : 'rgba(26,143,160,0.25)'}`,
+                color: avatarUploadMsg.type === 'error' ? '#C0392B' : '#0F4867',
+              }}>
+                {avatarUploadMsg.text}
+              </div>
             )}
             {editingName ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>

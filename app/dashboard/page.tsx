@@ -223,6 +223,7 @@ export default function DashboardPage() {
   const [editRate, setEditRate]       = useState('')
   const [editAvatar, setEditAvatar]   = useState<string | null>(null)
   const [uploadingAv, setUploadingAv] = useState(false)
+  const [avatarUploadMsg, setAvatarUploadMsg] = useState<{ type: 'error' | 'info'; text: string } | null>(null)
   const [savingEdit, setSavingEdit]   = useState(false)
   const [deactivating, setDeactivating] = useState(false)
   const [showDeactivateConfirm, setShowDeactivateConfirm] = useState(false)
@@ -690,13 +691,21 @@ export default function DashboardPage() {
 
   async function uploadAvatar(file: File) {
     if (!user) return
-    if (file.size > MAX_INPUT_BYTES) { alert('Photo must be under 20 MB'); return }
+    if (file.size > MAX_INPUT_BYTES) { setAvatarUploadMsg({ type: 'error', text: 'Photo must be under 20 MB.' }); return }
+    setAvatarUploadMsg(null)
     setUploadingAv(true)
     try {
       const upload = await compressImage(file, AVATAR_OPTS)
       const ext = extForType(upload.type)
       const path = `${user.id}.${ext}`
-      const { error: upErr } = await sb.storage.from('avatars').upload(path, upload, { upsert: true, contentType: upload.type })
+      const UPLOAD_TIMEOUT_MS = 30_000
+      const uploadTimeout = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('upload_timeout')), UPLOAD_TIMEOUT_MS)
+      )
+      const { error: upErr } = await Promise.race([
+        sb.storage.from('avatars').upload(path, upload, { upsert: true, contentType: upload.type }),
+        uploadTimeout,
+      ])
       if (upErr) throw upErr
       const { data: { publicUrl } } = sb.storage.from('avatars').getPublicUrl(path)
       const url = `${publicUrl}?t=${Date.now()}`
@@ -706,10 +715,18 @@ export default function DashboardPage() {
         body: JSON.stringify({ avatar_url: url }),
       })
       if (!res.ok) throw new Error('profile update failed')
-      setEditAvatar(url)
+      const json = await res.json().catch(() => ({}))
+      if (json.pending_review) {
+        // Approved listener: new selfie goes to admin review, not live yet.
+        setAvatarUploadMsg({ type: 'info', text: 'Your new selfie is under review. Your current photo stays live until an admin approves it.' })
+      } else {
+        setEditAvatar(url)
+      }
     } catch (err) {
-      console.error('Avatar upload error:', err)
-      alert('Upload failed. Make sure the avatars storage bucket exists in Supabase.')
+      const msg = err instanceof Error && err.message === 'upload_timeout'
+        ? 'Upload timed out. Please check your connection and try again.'
+        : 'Photo upload failed. Please try again.'
+      setAvatarUploadMsg({ type: 'error', text: msg })
     } finally {
       setUploadingAv(false)
     }
@@ -927,6 +944,18 @@ export default function DashboardPage() {
                 loading={uploadingAv}
                 onCapture={uploadAvatar}
               />
+              {avatarUploadMsg && (
+                <div style={{
+                  marginTop: 8, fontSize: 12, fontWeight: 600, lineHeight: 1.5,
+                  padding: '8px 12px', borderRadius: 8,
+                  background: avatarUploadMsg.type === 'error' ? 'rgba(255,59,48,0.07)' : 'rgba(26,143,160,0.07)',
+                  border: `1px solid ${avatarUploadMsg.type === 'error' ? 'rgba(255,59,48,0.25)' : 'rgba(26,143,160,0.25)'}`,
+                  color: avatarUploadMsg.type === 'error' ? '#C0392B' : '#0F4867',
+                  width: '100%', textAlign: 'center',
+                }}>
+                  {avatarUploadMsg.text}
+                </div>
+              )}
             </div>
 
             {/* Bio */}
