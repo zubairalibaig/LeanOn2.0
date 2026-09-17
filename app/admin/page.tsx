@@ -367,6 +367,15 @@ export default function AdminPage() {
   // Inline name-edit state (shared for both users and listeners tables)
   const [editingNameId, setEditingNameId] = useState<string | null>(null)
   const [editingNameValue, setEditingNameValue] = useState('')
+  // Inline bank-details edit (replaces window.prompt, blocked on mobile PWA)
+  const [editingBankId, setEditingBankId] = useState<string | null>(null)
+  const [bankEditValues, setBankEditValues] = useState({ bank: '', ifsc: '', upi: '', holderName: '' })
+  // Inline payout account-holder-name edit
+  const [editingPayoutHolderNameId, setEditingPayoutHolderNameId] = useState<string | null>(null)
+  const [payoutHolderNameValue, setPayoutHolderNameValue] = useState('')
+  // Inline payout reject confirm + reason
+  const [confirmRejectPayoutId, setConfirmRejectPayoutId] = useState<string | null>(null)
+  const [rejectPayoutReason, setRejectPayoutReason] = useState('')
 
   // Verifications
   const [verifs, setVerifs] = useState<VerificationRow[]>([])
@@ -640,6 +649,8 @@ export default function AdminPage() {
       setRejectNotesListeners(prev => { const n = { ...prev }; delete n[userId]; return n })
       setConfirmBanId(null)
       setConfirmBanListenerId(null)
+      setConfirmRejectOverviewId(null)
+      setConfirmRejectListenersId(null)
       if (tab === 'users') loadUsers()
       if (tab === 'listeners') loadListeners()
       if (tab === 'overview') loadPendingApprovals()
@@ -1654,9 +1665,27 @@ export default function AdminPage() {
                                         Note: {l.application.admin_notes}
                                       </div>
                                     )}
-                                    <div className="action-row">
+                                    <div className="action-row" style={{ flexWrap: 'wrap' }}>
                                       <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'approve_listener')}>
                                         {busy === `approve_listener:${l.user_id}` ? 'Approving…' : 'Re-approve'}
+                                      </button>
+                                      {/* Allow resubmission — changes rejected → needs_resubmission
+                                          so the applicant can fix and resubmit without full approval. */}
+                                      <input
+                                        className="reject-input"
+                                        style={{ width: 120, marginBottom: 0 }}
+                                        placeholder="Reason (required)"
+                                        value={rejectNotesListeners[l.user_id] || ''}
+                                        onChange={e => setRejectNotesListeners(prev => ({ ...prev, [l.user_id]: e.target.value }))}
+                                      />
+                                      <button
+                                        className="btn btn-orange"
+                                        style={{ fontSize: 11 }}
+                                        disabled={busy !== null || !rejectNotesListeners[l.user_id]?.trim()}
+                                        title="Give this applicant another chance to fix and resubmit"
+                                        onClick={() => userAction(l.user_id, 'request_resubmission', rejectNotesListeners[l.user_id])}
+                                      >
+                                        {busy === `request_resubmission:${l.user_id}` ? '…' : 'Allow Resubmit'}
                                       </button>
                                     </div>
                                   </div>
@@ -1677,33 +1706,43 @@ export default function AdminPage() {
                                     </div>
                                   </div>
                                 )}
-                                {l.application === null && l.is_approved && (
-                                  <div className="action-row">
-                                    <button
-                                      className="btn btn-teal"
-                                      style={{ fontSize: 11 }}
-                                      disabled={busy !== null}
-                                      onClick={() => {
-                                        const bank = window.prompt(`Bank account number for ${u?.name || 'this listener'}:`)
-                                        if (!bank?.trim()) return
-                                        const ifsc = window.prompt('IFSC code:')
-                                        if (!ifsc?.trim()) return
-                                        const upi = window.prompt('UPI ID (optional — press Cancel to skip):')
-                                        const payload: Record<string, string | null> = {
-                                          userId: l.user_id, action: 'update_bank_details',
-                                          bank_account: bank.trim(), ifsc_code: ifsc.trim(),
-                                        }
-                                        if (upi?.trim()) payload.upi_id = upi.trim()
-                                        fetch('/api/admin/users', {
-                                          method: 'PATCH',
-                                          headers: { 'Content-Type': 'application/json', ...adminHeaders() },
-                                          body: JSON.stringify(payload),
-                                        }).then(r => r.json()).then(j => {
-                                          if (j.ok) { showToast('Payout details saved'); loadListeners() }
-                                          else showToast(j.error || 'Failed to save')
+                                {/* Show payout details edit for any listener — approved or not.
+                                    Rejected/pending applicants often need corrected bank info. */}
+                                {(l.application !== null || l.is_approved) && (
+                                  <div>
+                                    {editingBankId === l.user_id ? (
+                                      <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 2 }}>
+                                        <input className="search-input" style={{ width: '100%', padding: '4px 8px', fontSize: 12 }} placeholder="Account holder name" value={bankEditValues.holderName} onChange={e => setBankEditValues(v => ({ ...v, holderName: e.target.value }))} />
+                                        <input className="search-input" style={{ width: '100%', padding: '4px 8px', fontSize: 12 }} placeholder="Bank account number *" value={bankEditValues.bank} onChange={e => setBankEditValues(v => ({ ...v, bank: e.target.value }))} />
+                                        <input className="search-input" style={{ width: '100%', padding: '4px 8px', fontSize: 12 }} placeholder="IFSC code *" value={bankEditValues.ifsc} onChange={e => setBankEditValues(v => ({ ...v, ifsc: e.target.value.toUpperCase() }))} />
+                                        <input className="search-input" style={{ width: '100%', padding: '4px 8px', fontSize: 12 }} placeholder="UPI ID (optional)" value={bankEditValues.upi} onChange={e => setBankEditValues(v => ({ ...v, upi: e.target.value }))} />
+                                        <div style={{ display: 'flex', gap: 4 }}>
+                                          <button className="btn btn-teal" style={{ fontSize: 11, padding: '4px 8px' }} disabled={busy !== null || (!bankEditValues.bank.trim() && !bankEditValues.ifsc.trim() && !bankEditValues.holderName.trim() && !bankEditValues.upi.trim())} onClick={() => {
+                                            setEditingBankId(null)
+                                            const payload: Record<string, string | null> = { userId: l.user_id, action: 'update_bank_details' }
+                                            if (bankEditValues.holderName.trim()) payload.account_holder_name = bankEditValues.holderName.trim()
+                                            if (bankEditValues.bank.trim()) payload.bank_account = bankEditValues.bank.trim()
+                                            if (bankEditValues.ifsc.trim()) payload.ifsc_code = bankEditValues.ifsc.trim()
+                                            if (bankEditValues.upi !== '') payload.upi_id = bankEditValues.upi.trim() || null
+                                            fetch('/api/admin/users', { method: 'PATCH', headers: { 'Content-Type': 'application/json', ...adminHeaders() }, body: JSON.stringify(payload) })
+                                              .then(r => r.json()).then(j => { if (j.ok) { showToast('Payout details saved'); loadListeners() } else showToast(j.error || 'Failed to save') })
+                                          }}>Save</button>
+                                          <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setEditingBankId(null)}>Cancel</button>
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <button className="btn btn-teal" style={{ fontSize: 11 }} disabled={busy !== null} onClick={() => {
+                                        setBankEditValues({
+                                          holderName: (l.application as { account_holder_name?: string } | null)?.account_holder_name || '',
+                                          bank: l.application?.bank_account || '',
+                                          ifsc: l.application?.ifsc_code || '',
+                                          upi: l.application?.upi_id || '',
                                         })
-                                      }}
-                                    >Enter Payout Details</button>
+                                        setEditingBankId(l.user_id)
+                                      }}>
+                                        {l.application !== null ? 'Edit Payout Details' : 'Enter Payout Details'}
+                                      </button>
+                                    )}
                                   </div>
                                 )}
                                 <div className="action-row">
@@ -2243,15 +2282,24 @@ export default function AdminPage() {
                     ) : (
                       <div style={{ fontSize: 13, fontWeight: 700, color: '#7A5C00', background: '#FFF8F0', border: '1px solid #FFD9A0', borderRadius: 8, padding: '4px 10px', display: 'flex', alignItems: 'center', gap: 6 }}>
                         ⚠️ Account holder name missing
-                        <button
-                          style={{ fontSize: 11, fontWeight: 800, color: 'var(--teal)', background: 'transparent', border: '1px solid var(--teal)', borderRadius: 6, padding: '1px 8px', cursor: 'pointer' }}
-                          onClick={() => {
-                            const n = window.prompt(`Enter bank account holder name for ${p.users?.name || 'this listener'} (${p.users?.phone || ''}):\n\nThis should match the name on their bank account exactly.`)
-                            if (!n?.trim()) return
-                            fetch('/api/admin/users', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: p.user_id, action: 'update_bank_details', account_holder_name: n.trim() }) })
-                              .then(r => r.json()).then(j => { if (j.ok) { setPayouts(prev => prev.map(x => x.id === p.id ? { ...x, bank: { ...x.bank, account_holder_name: n.trim() } } : x)); setToast('Account holder name saved.') } else { setToast(j.error || 'Failed to save') } })
-                          }}
-                        >+ Add name</button>
+                        {editingPayoutHolderNameId === p.id ? (
+                          <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
+                            <input className="search-input" style={{ minWidth: 160, padding: '3px 8px', fontSize: 12 }} placeholder="Legal name on bank account" value={payoutHolderNameValue} onChange={e => setPayoutHolderNameValue(e.target.value)} autoFocus />
+                            <button style={{ fontSize: 11, fontWeight: 800, color: 'white', background: 'var(--teal)', border: 'none', borderRadius: 6, padding: '3px 10px', cursor: 'pointer' }} disabled={!payoutHolderNameValue.trim()} onClick={() => {
+                              const n = payoutHolderNameValue.trim()
+                              setEditingPayoutHolderNameId(null)
+                              setPayoutHolderNameValue('')
+                              fetch('/api/admin/users', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: p.user_id, action: 'update_bank_details', account_holder_name: n }) })
+                                .then(r => r.json()).then(j => { if (j.ok) { setPayouts(prev => prev.map(x => x.id === p.id ? { ...x, bank: { ...x.bank, account_holder_name: n } } : x)); setToast('Saved.') } else setToast(j.error || 'Failed') })
+                            }}>Save</button>
+                            <button style={{ fontSize: 11, fontWeight: 800, color: 'var(--gray)', background: 'transparent', border: '1px solid var(--border)', borderRadius: 6, padding: '3px 8px', cursor: 'pointer' }} onClick={() => { setEditingPayoutHolderNameId(null); setPayoutHolderNameValue('') }}>Cancel</button>
+                          </span>
+                        ) : (
+                          <button
+                            style={{ fontSize: 11, fontWeight: 800, color: 'var(--teal)', background: 'transparent', border: '1px solid var(--teal)', borderRadius: 6, padding: '1px 8px', cursor: 'pointer' }}
+                            onClick={() => { setPayoutHolderNameValue(''); setEditingPayoutHolderNameId(p.id) }}
+                          >+ Add name</button>
+                        )}
                       </div>
                     )}
                   </div>
@@ -2306,17 +2354,23 @@ export default function AdminPage() {
                   <button className="btn btn-teal" disabled={busy !== null} onClick={() => adminAction('complete_payout', p.id, rzpxEnabled && p.upi_id ? `₹${p.amount} sent via RazorpayX` : `Marked ₹${p.amount} payout complete`)}>
                     {busy === `complete_payout:${p.id}` ? 'Sending…' : rzpxEnabled && p.upi_id ? '⚡ Pay via UPI' : 'Mark Paid'}
                   </button>
-                  <button
-                    className="btn btn-red"
-                    disabled={busy !== null}
-                    onClick={() => {
-                      const reason = window.prompt('Rejection reason (shown to the listener). Their held balance will be returned:')
-                      if (reason === null) return
-                      adminAction('reject_payout', p.id, `Rejected ₹${p.amount} payout — balance returned`, reason || undefined)
-                    }}
-                  >
-                    {busy === `reject_payout:${p.id}` ? 'Saving…' : 'Reject'}
-                  </button>
+                  {confirmRejectPayoutId === p.id ? (
+                    <span style={{ display: 'inline-flex', flexDirection: 'column', gap: 4, alignItems: 'flex-end' }}>
+                      <input className="search-input" style={{ minWidth: 180, padding: '3px 8px', fontSize: 12 }} placeholder="Reason (shown to listener)" value={rejectPayoutReason} onChange={e => setRejectPayoutReason(e.target.value)} autoFocus />
+                      <span style={{ display: 'inline-flex', gap: 4 }}>
+                        <button className="btn btn-red" style={{ fontSize: 11, padding: '4px 8px' }} disabled={busy !== null} onClick={() => { const r = rejectPayoutReason; setConfirmRejectPayoutId(null); setRejectPayoutReason(''); adminAction('reject_payout', p.id, `Rejected ₹${p.amount} payout — balance returned`, r || undefined) }}>Confirm Reject</button>
+                        <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => { setConfirmRejectPayoutId(null); setRejectPayoutReason('') }}>Cancel</button>
+                      </span>
+                    </span>
+                  ) : (
+                    <button
+                      className="btn btn-red"
+                      disabled={busy !== null}
+                      onClick={() => { setRejectPayoutReason(''); setConfirmRejectPayoutId(p.id) }}
+                    >
+                      {busy === `reject_payout:${p.id}` ? 'Saving…' : 'Reject'}
+                    </button>
+                  )}
                   </div>
                 </div>
               </div>

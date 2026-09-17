@@ -342,9 +342,10 @@ export async function PATCH(req: NextRequest) {
           }
         }
 
-        // Sync application status so the pending filter removes this listener.
+        // Sync application status and clear stale admin_notes so the pending filter
+        // removes this listener and old rejection reasons don't confuse future reviews.
         const { error: laErr } = await sb.from('listener_applications')
-          .update({ status: 'approved' })
+          .update({ status: 'approved', admin_notes: null })
           .eq('user_id', userId)
         if (laErr) {
           logger.warn('approve_listener: listener_applications sync failed (listener IS approved)', { userId, error: laErr.message })
@@ -371,13 +372,14 @@ export async function PATCH(req: NextRequest) {
           logger.error('reject_listener: listener_profiles update failed', { userId, error: lpErr.message })
           return NextResponse.json({ error: `Failed to reject listener: ${lpErr.message}` }, { status: 500 })
         }
-        // Update status + always write admin_notes (even to null) so stale notes
+        // Upsert status + always write admin_notes (even to null) so stale notes
         // from a prior "Request Fix" action never persist into a new rejection.
+        // Upsert (not UPDATE) handles legacy profiles that have no application row —
+        // a plain UPDATE would silently skip and leave them visible in the pending queue.
         const { error: laErr } = await sb.from('listener_applications')
-          .update({ status: 'rejected', admin_notes: notes || null })
-          .eq('user_id', userId)
+          .upsert({ user_id: userId, status: 'rejected', admin_notes: notes || null }, { onConflict: 'user_id' })
         if (laErr) {
-          logger.warn('reject_listener: listener_applications status update failed', { userId, error: laErr.message })
+          logger.warn('reject_listener: listener_applications upsert failed', { userId, error: laErr.message })
         }
         await sb.from('notifications').insert({
           user_id: userId,
@@ -399,13 +401,13 @@ export async function PATCH(req: NextRequest) {
           logger.error('request_resubmission: listener_profiles update failed', { userId, error: lpErr.message })
           return NextResponse.json({ error: `Failed to update listener: ${lpErr.message}` }, { status: 500 })
         }
-        // Always write admin_notes (even to null) so stale notes from a prior rejection
+        // Upsert (not UPDATE) handles legacy profiles with no application row.
+        // Always write admin_notes (even to null) so stale rejection notes
         // never persist alongside a new resubmission request.
         const { error: laErr } = await sb.from('listener_applications')
-          .update({ status: 'needs_resubmission', admin_notes: notes || null })
-          .eq('user_id', userId)
+          .upsert({ user_id: userId, status: 'needs_resubmission', admin_notes: notes || null }, { onConflict: 'user_id' })
         if (laErr) {
-          logger.warn('request_resubmission: listener_applications update failed', { userId, error: laErr.message })
+          logger.warn('request_resubmission: listener_applications upsert failed', { userId, error: laErr.message })
         }
         await sb.from('notifications').insert({
           user_id: userId,

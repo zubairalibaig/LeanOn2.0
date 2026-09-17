@@ -344,7 +344,7 @@ export async function PATCH(req: NextRequest) {
           type:        'credit',
           description: 'Session earnings',
           session_id:  sessionId,
-        })
+        }).then(() => {}, (e) => logger.error('listener wallet_transactions insert failed', { sessionId, error: e }))
 
         // Track earnings in listener_earnings for dashboard.
         // platform_fee = gross − refund − net = LeanOn's actual take (₹10 flat
