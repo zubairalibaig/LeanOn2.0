@@ -627,7 +627,7 @@ export default function BecomeListenerPage() {
             <label className="lbl">Profile photo — selfie required</label>
             <SelfieCapture
               preview={avatarPreview || null}
-              loading={avatarUploading}
+              loading={avatarUploading || selfieProcessing}
               hasError={!!fieldErrors.avatar}
               onCapture={async (file) => {
                 if (file.size > MAX_INPUT_BYTES) { setFieldErrors(f => ({...f, avatar:'Photo must be under 20 MB'})); return }

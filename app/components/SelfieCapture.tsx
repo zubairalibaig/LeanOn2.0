@@ -166,6 +166,7 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
       <button
         type="button"
         onClick={openCamera}
+        disabled={loading}
         style={{
           display: 'block',
           width: '100%',
@@ -173,11 +174,12 @@ export default function SelfieCapture({ onCapture, preview, loading, hasError }:
           borderRadius: 14,
           padding: '18px 12px 14px',
           textAlign: 'center',
-          cursor: 'pointer',
+          cursor: loading ? 'default' : 'pointer',
           background: hasError ? 'rgba(255,59,48,0.04)' : 'rgba(240,248,252,0.7)',
           transition: 'border-color .15s',
           userSelect: 'none',
           fontFamily: 'inherit',
+          opacity: loading ? 0.7 : 1,
         }}
       >
         {preview ? (
