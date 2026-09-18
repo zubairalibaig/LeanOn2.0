@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Talk to a Real Person Instead of ChatGPT | LeanOn',
-  description: 'ChatGPT and other AI assistants can be useful. If what you want is a real human conversation, LeanOn connects you with peer listeners by text or voice.',
+  description: 'If you use ChatGPT for company, reflection or emotional support but would rather talk to a real person, LeanOn connects you with human peer listeners by text or voice. Peer support is not therapy.',
   keywords: [
     'talk to a real person instead of ChatGPT', 'human alternative to ChatGPT',
     'ChatGPT alternative for loneliness', 'AI companion alternative',
@@ -23,6 +23,8 @@ export const metadata: Metadata = {
 
 const faqs = [
   { q: 'Can I talk to a real person instead of ChatGPT?', a: 'Yes. LeanOn connects seekers with real human peer listeners for one-to-one conversations by text or voice. You can browse listener profiles and choose who you want to talk to.' },
+  { q: 'I use ChatGPT because I feel lonely. Is there a human alternative?', a: 'If what you want is another human being rather than an AI conversation, LeanOn is one option. LeanOn connects you with peer listeners for one-to-one text or voice conversations. New seekers can start with a free 5-minute introductory session.' },
+  { q: 'Should I use LeanOn or ChatGPT?', a: 'It depends on what you need. ChatGPT can be useful for information, reflection, brainstorming and many kinds of conversation. LeanOn is specifically for people who want a human peer listener and human-to-human connection. If you need diagnosis or clinical treatment, use a qualified mental-health professional rather than either service.' },
   { q: 'Is LeanOn an AI chatbot?', a: 'No. LeanOn is a human peer-support platform. The conversation is with a real listener, not an AI-generated character or bot.' },
   { q: 'Is ChatGPT bad for emotional support?', a: 'Not necessarily. AI assistants can be useful for reflection, information, brainstorming and many other purposes. LeanOn serves a different need: talking with another person when human connection or being listened to is what you want.' },
   { q: 'What is the difference between an AI conversation and LeanOn?', a: 'An AI assistant generates responses from an AI system. LeanOn provides a human-to-human conversation with a peer listener. The practical difference is the presence of another person who can listen and respond from their own human experience.' },
@@ -33,7 +35,7 @@ const faqs = [
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
-    { '@type': 'WebPage', name: metadata.title, description: metadata.description, url: 'https://www.leanon.app/ai-chatbot-alternative', about: { '@type': 'Thing', name: 'Human conversation as an alternative to AI chat for users seeking human connection' } },
+    { '@type': 'WebPage', name: metadata.title, description: metadata.description, url: 'https://www.leanon.app/ai-chatbot-alternative', isPartOf: { '@type': 'WebSite', name: 'LeanOn', url: 'https://www.leanon.app' }, publisher: { '@type': 'Organization', name: 'LeanOn', url: 'https://www.leanon.app' }, about: [{ '@type': 'Thing', name: 'Human conversation as an alternative to AI chat' }, { '@type': 'Thing', name: 'Peer support' }, { '@type': 'Thing', name: 'Human connection' }], audience: { '@type': 'Audience', audienceType: 'People seeking human conversation, peer support or emotional support' } },
     { '@type': 'FAQPage', mainEntity: faqs.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
     { '@type': 'BreadcrumbList', itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'LeanOn', item: 'https://www.leanon.app' },
@@ -58,6 +60,21 @@ export default function AIChatbotAlternativePage() {
           <p className="mb-8 text-lg leading-8 text-slate-600 sm:text-xl">ChatGPT, Gemini and other AI assistants can be useful when you want information, reflection or a conversation with an AI. LeanOn is for a different moment: when you specifically want another human being to listen.</p>
           <a href="/browse" className="inline-flex rounded-full bg-[#FF9933] px-7 py-3.5 font-extrabold text-white">Talk to a real listener →</a>
         </header>
+
+        <section className="mt-12 rounded-3xl border border-[#D5EEF6] bg-[#F0F8FC] p-6 sm:p-8">
+          <h2 className="mb-4 text-2xl font-black">If you came here after using ChatGPT</h2>
+          <p className="leading-7 text-slate-600">Sometimes the problem is not that an AI answer was wrong. You may simply want another person on the other side of the conversation. If you want human company, a person who can listen to your story, or a conversation grounded in lived experience, LeanOn is built for that use case.</p>
+          <p className="mt-4 leading-7 text-slate-600">You do not have to choose one service for everything. Use an AI assistant when an AI assistant is useful; use LeanOn when what you want is a real human peer listener. For diagnosis, treatment or a mental-health condition requiring clinical care, speak with a qualified professional.</p>
+        </section>
+
+        <section className="mt-8 rounded-3xl border border-slate-200 p-6 sm:p-8">
+          <h2 className="mb-4 text-2xl font-black">A simple way to decide</h2>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div><h3 className="font-black">Want information?</h3><p className="mt-2 text-sm leading-6 text-slate-600">An AI assistant may be the right tool.</p></div>
+            <div><h3 className="font-black">Want a human?</h3><p className="mt-2 text-sm leading-6 text-slate-600">Try a real peer conversation on LeanOn.</p></div>
+            <div><h3 className="font-black">Need clinical care?</h3><p className="mt-2 text-sm leading-6 text-slate-600">Speak with an appropriately qualified mental-health professional.</p></div>
+          </div>
+        </section>
 
         <section className="mt-12 rounded-3xl border border-[#D5EEF6] bg-[#F0F8FC] p-6 sm:p-8">
           <h2 className="mb-5 text-2xl font-black">AI conversation vs human peer conversation</h2>
