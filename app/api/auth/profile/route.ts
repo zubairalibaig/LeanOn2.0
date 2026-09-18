@@ -205,21 +205,22 @@ export async function PATCH(req: NextRequest) {
       // applicants update avatar_url directly (no review needed).
 
       if (lp?.is_approved === true) {
-        // Write to pending — do not touch users.avatar_url until admin approves.
+        // Write pending selfie + take listener offline until admin approves.
+        // is_available = false prevents new session requests while the photo is unreviewed.
         const { error: pendingErr } = await admin
           .from('listener_profiles')
-          .update({ pending_avatar_url: validatedAvatarUrl })
+          .update({ pending_avatar_url: validatedAvatarUrl, is_available: false })
           .eq('user_id', user.id)
         if (pendingErr) {
           logger.error('profile PATCH: pending_avatar_url write failed', { error: pendingErr.message })
           return NextResponse.json({ error: 'Failed to update profile. Please try again.' }, { status: 500 })
         } else {
-          // Notify admin (best-effort)
+          // Notify listener their photo is under review and they're offline.
           await admin.from('notifications').insert({
             user_id: user.id,
             type: 'system',
-            title: 'Selfie update pending review',
-            body: 'Your new selfie is under review. Your current photo remains public until approved.',
+            title: 'Selfie under review — you\'re temporarily offline',
+            body: 'Your new selfie is being reviewed. You\'ll be able to go online again once it\'s approved.',
             action_url: '/dashboard',
           }).then(() => {}, () => {})
         }

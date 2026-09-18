@@ -229,8 +229,9 @@ export async function POST(req: NextRequest) {
       // Never fall back to writing avatar_url directly: that would bypass the review mechanism
       // and publish an unreviewed photo. If pending_avatar_url doesn't exist in the live DB
       // (pre-migration), fail hard so the issue is surfaced rather than silently bypassed.
+      // Queue selfie for review + take offline until approved.
       const { error: pendingErr } = await admin.from('listener_profiles')
-        .update({ pending_avatar_url: avatarUrl })
+        .update({ pending_avatar_url: avatarUrl, is_available: false })
         .eq('user_id', user.id)
       if (pendingErr) {
         logger.error('listener apply: pending_avatar_url write failed', { userId: user.id, error: pendingErr.message, code: pendingErr.code })
