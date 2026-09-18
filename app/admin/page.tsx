@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase'
 
 type KPIs = {
   users: { total: number; active: number; inactive: number; newToday: number; newThisMonth: number }
-  listeners: { total: number; active: number; pending: number; online: number; newToday?: number; newThisMonth?: number }
+  listeners: { total: number; active: number; pending: number; online: number; newToday?: number; newThisMonth?: number; needsResubmission?: number; pendingSelfie?: number }
   sessions: {
     total: number; today: number; thisMonth: number; active: number; avgDurationMins: number
     freeTrial: number; freeTrialToday?: number; freeTrialThisMonth?: number
@@ -990,6 +990,26 @@ export default function AdminPage() {
                     <div className="kpi-value" style={{ color: kpis.listeners.pending > 0 ? 'var(--orange)' : undefined }}>{fmt(kpis.listeners.pending)}</div>
                     {kpis.listeners.pending > 0 && <div className="kpi-sub" style={{ color: 'var(--orange)' }}>tap to review →</div>}
                   </div>
+                  <div
+                    className="kpi-card"
+                    style={{ border: (kpis.listeners.needsResubmission ?? 0) > 0 ? '2px solid var(--orange)' : undefined, cursor: 'pointer' }}
+                    title="View listeners who need to fix their application"
+                    onClick={() => { setListenersStatus('needs_resubmission'); setListenersPage(0); setTab('listeners') }}
+                  >
+                    <div className="kpi-label">Needs Fix</div>
+                    <div className="kpi-value" style={{ color: (kpis.listeners.needsResubmission ?? 0) > 0 ? 'var(--orange)' : undefined }}>{fmt(kpis.listeners.needsResubmission ?? 0)}</div>
+                    {(kpis.listeners.needsResubmission ?? 0) > 0 && <div className="kpi-sub" style={{ color: 'var(--orange)' }}>tap to review →</div>}
+                  </div>
+                  <div
+                    className="kpi-card"
+                    style={{ border: (kpis.listeners.pendingSelfie ?? 0) > 0 ? '2px solid #d4a017' : undefined, cursor: 'pointer' }}
+                    title="Approved listeners who uploaded a new selfie awaiting review"
+                    onClick={() => { setListenersStatus('pending_selfie'); setListenersPage(0); setTab('listeners') }}
+                  >
+                    <div className="kpi-label">Pending Selfie</div>
+                    <div className="kpi-value" style={{ color: (kpis.listeners.pendingSelfie ?? 0) > 0 ? '#d4a017' : undefined }}>{fmt(kpis.listeners.pendingSelfie ?? 0)}</div>
+                    {(kpis.listeners.pendingSelfie ?? 0) > 0 && <div className="kpi-sub" style={{ color: '#d4a017' }}>tap to review →</div>}
+                  </div>
                   <div className="kpi-card">
                     <div className="kpi-label">Online Now</div>
                     <div className="kpi-value" style={{ color: 'var(--green)' }}>{fmt(kpis.listeners.online)}</div>
@@ -1368,13 +1388,13 @@ export default function AdminPage() {
               <span className="count-badge">{listenersTotal}</span>
             </div>
             <div className="filter-row">
-              {(['all', 'pending', 'needs_resubmission', 'active', 'suspended', 'rejected'] as const).map(s => (
+              {(['all', 'pending', 'needs_resubmission', 'pending_selfie', 'active', 'suspended', 'rejected'] as const).map(s => (
                 <button
                   key={s}
                   className={`filter-btn${listenersStatus === s ? ' active' : ''}`}
                   onClick={() => { setListenersStatus(s); setListenersPage(0); loadListeners(0, s, listenersJoinedDir, listenersSortBy, listenersSearch) }}
                 >
-                  {s === 'pending' ? 'Pending Approval' : s === 'needs_resubmission' ? 'Needs Fix' : s.charAt(0).toUpperCase() + s.slice(1)}
+                  {s === 'pending' ? 'Pending Approval' : s === 'needs_resubmission' ? 'Needs Fix' : s === 'pending_selfie' ? 'Pending Selfie' : s.charAt(0).toUpperCase() + s.slice(1)}
                 </button>
               ))}
               <input

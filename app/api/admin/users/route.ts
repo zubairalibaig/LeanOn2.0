@@ -104,6 +104,15 @@ export async function GET(req: NextRequest) {
         if (userIdFilter.length === 0) {
           return NextResponse.json({ items: [], total: 0, page, type: 'listener' })
         }
+      } else if (userStatus === 'pending_selfie') {
+        const { data: selfieProfiles } = await sb.from('listener_profiles')
+          .select('user_id')
+          .eq('is_approved', true)
+          .not('pending_avatar_url', 'is', null)
+        userIdFilter = (selfieProfiles ?? []).map((p: { user_id: string }) => p.user_id)
+        if (userIdFilter.length === 0) {
+          return NextResponse.json({ items: [], total: 0, page, type: 'listener' })
+        }
       }
 
       // Try with is_verified first (added by migration 008/014).

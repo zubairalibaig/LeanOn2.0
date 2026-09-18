@@ -18,8 +18,12 @@ export async function GET(req: NextRequest) {
   try {
     const sb = createAdminClient()
     const now = new Date()
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString()
-    const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+    // Use IST (UTC+5:30) for day/month boundaries so "today" matches midnight IST,
+    // not midnight UTC (which would make "today" start at 5:30am IST — wrong for India).
+    const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000
+    const nowIST = new Date(now.getTime() + IST_OFFSET_MS)
+    const today = new Date(Date.UTC(nowIST.getUTCFullYear(), nowIST.getUTCMonth(), nowIST.getUTCDate())).toISOString()
+    const thisMonth = new Date(Date.UTC(nowIST.getUTCFullYear(), nowIST.getUTCMonth(), 1)).toISOString()
     const last30Days = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString()
 
     // Use Promise.allSettled so a missing/errored table doesn't crash the whole response.
@@ -34,7 +38,8 @@ export async function GET(req: NextRequest) {
       // Listener KPIs
       sb.from('listener_profiles').select('id', { count: 'exact', head: true }),
       sb.from('listener_profiles').select('id', { count: 'exact', head: true }).eq('is_active', true).eq('is_approved', true),
-      sb.from('listener_applications').select('user_id', { count: 'exact', head: true }).in('status', ['pending', 'needs_resubmission']),
+      // index 6: only true "pending" (awaiting first admin review)
+      sb.from('listener_applications').select('user_id', { count: 'exact', head: true }).eq('status', 'pending'),
       sb.from('listener_profiles').select('id', { count: 'exact', head: true }).eq('is_available', true),
 
       // Session KPIs — use created_at for today/thisMonth (started_at is NULL
@@ -109,6 +114,13 @@ export async function GET(req: NextRequest) {
       // credited to their wallet, which is already tracked via listener_earnings.
       // Including it in the seeker figure double-counts the unrequested earnings.
       sb.from('listener_profiles').select('user_id').eq('is_approved', true),
+
+      // index 35: listeners who need to resubmit (admin sent "request fix")
+      sb.from('listener_applications').select('user_id', { count: 'exact', head: true }).eq('status', 'needs_resubmission'),
+
+      // index 36: approved listeners with a pending selfie awaiting review
+      sb.from('listener_profiles').select('user_id', { count: 'exact', head: true })
+        .eq('is_approved', true).not('pending_avatar_url', 'is', null),
     ])
 
     // Extract values safely — failed queries return zero/null defaults
@@ -152,8 +164,10 @@ export async function GET(req: NextRequest) {
     const paidThisMonth       = extract<{ id: string }>(30)
     const newListenersToday   = extract<{ id: string }>(31)
     const newListenersMonth   = extract<{ id: string }>(32)
-    const allClaimedPayouts     = extract<{ amount: number }>(33)
-    const approvedListenerRows  = extract<{ user_id: string }>(34)
+    const allClaimedPayouts      = extract<{ amount: number }>(33)
+    const approvedListenerRows   = extract<{ user_id: string }>(34)
+    const needsResubmission      = extract<{ user_id: string }>(35)
+    const pendingSelfieReview    = extract<{ user_id: string }>(36)
 
     // Build a set of approved-listener user IDs so we can strip their wallet
     // balances from the seeker liability figure. Their earnings are already
@@ -201,6 +215,8 @@ export async function GET(req: NextRequest) {
         total: totalListeners.count ?? 0,
         active: activeListeners.count ?? 0,
         pending: pendingListeners.count ?? 0,
+        needsResubmission: needsResubmission.count ?? 0,
+        pendingSelfie: pendingSelfieReview.count ?? 0,
         online: onlineListeners.count ?? 0,
         newToday: newListenersToday.count ?? 0,
         newThisMonth: newListenersMonth.count ?? 0,
