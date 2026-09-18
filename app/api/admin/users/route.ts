@@ -485,8 +485,9 @@ export async function PATCH(req: NextRequest) {
 
       case 'reject_selfie': {
         // Discard pending selfie — existing avatar_url remains public.
+        // Restore is_available so the listener can go back online with their old photo.
         const { error: lpErr } = await sb.from('listener_profiles')
-          .update({ pending_avatar_url: null })
+          .update({ pending_avatar_url: null, is_available: true })
           .eq('user_id', userId)
         if (lpErr) {
           logger.error('reject_selfie: listener_profiles update failed', { userId, error: lpErr.message })
@@ -495,8 +496,8 @@ export async function PATCH(req: NextRequest) {
         await sb.from('notifications').insert({
           user_id: userId,
           type: 'verification_update',
-          title: 'Selfie update declined',
-          body: notes || 'Your new selfie could not be approved. Your current profile photo remains active.',
+          title: 'Selfie update declined — you\'re back online',
+          body: notes || 'Your new selfie could not be approved. Your previous profile photo is still active and you\'ve been restored online.',
           action_url: '/dashboard',
         }).then(() => {}, () => {})
         break

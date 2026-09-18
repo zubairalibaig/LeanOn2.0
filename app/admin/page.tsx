@@ -938,7 +938,7 @@ export default function AdminPage() {
                                 </span>
                               ) : (
                                 <button className="btn btn-red" disabled={busy !== null} onClick={() => setConfirmRejectOverviewId(l.user_id)} title="Permanently reject — cannot resubmit">
-                                  {busy === `reject_listener:${l.user_id}` ? '…' : 'Reject'}
+                                  {busy === `reject_listener:${l.user_id}` ? '…' : 'Permanently Reject'}
                                 </button>
                               )}
                             </div>
@@ -1674,7 +1674,7 @@ export default function AdminPage() {
                                         </span>
                                       ) : (
                                         <button className="btn btn-red" disabled={busy !== null} onClick={() => setConfirmRejectListenersId(l.user_id)} title="Permanently reject — cannot resubmit">
-                                          {busy === `reject_listener:${l.user_id}` ? '…' : 'Reject'}
+                                          {busy === `reject_listener:${l.user_id}` ? '…' : 'Permanently Reject'}
                                         </button>
                                       )}
                                       </div>
