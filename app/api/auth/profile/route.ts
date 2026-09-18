@@ -13,7 +13,12 @@ export async function GET() {
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ name: null, role: null, wallet_balance: null })
     const admin = createAdminClient()
-    let { data } = await admin.from('users').select('name, role, wallet_balance, avatar_url, phone, created_at, account_country').eq('id', user.id).maybeSingle()
+    const [usersRes, lpRes] = await Promise.all([
+      admin.from('users').select('name, role, wallet_balance, avatar_url, phone, created_at, account_country').eq('id', user.id).maybeSingle(),
+      admin.from('listener_profiles').select('is_approved').eq('user_id', user.id).maybeSingle(),
+    ])
+    let { data } = usersRes
+    const isApprovedListener = lpRes.data?.is_approved === true
     const phone = data?.phone ?? (user.phone ? '+' + user.phone.replace(/^\+/, '') : null)
 
     // BACKSTOP: an OTP-verified user with no public.users row.
@@ -56,6 +61,9 @@ export async function GET() {
       // ISO country code from phone-prefix selection at signup (e.g. 'IN', 'US', 'GB').
       // Used by listener profile page for NRI vs India price display.
       account_country: data?.account_country ?? null,
+      // True when the user is an approved listener — name editing is locked.
+      // Derived server-side via admin client so RLS cannot hide it.
+      is_approved_listener: isApprovedListener,
     })
   } catch (err) {
     logger.error('profile GET error', { error: err instanceof Error ? err.message : String(err) })

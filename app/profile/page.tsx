@@ -90,7 +90,7 @@ export default function ProfilePage() {
         const [profileRes, sessionsRes, listenerRes] = await Promise.all([
           fetch('/api/auth/profile').then(r => r.ok ? r.json() : null).catch(() => null),
           supabase.from('sessions').select('id', { count: 'exact', head: true }).eq('seeker_id', user.id).eq('status', 'completed'),
-          supabase.from('listener_profiles').select('id, is_approved').eq('user_id', user.id).maybeSingle(),
+          supabase.from('listener_profiles').select('id').eq('user_id', user.id).maybeSingle(),
         ])
 
         if (profileRes) {
@@ -103,7 +103,9 @@ export default function ProfilePage() {
         }
         setSessionCount(sessionsRes.count || 0)
         setIsListener(!!listenerRes.data)
-        setIsApprovedListener(listenerRes.data?.is_approved === true)
+        // Use the server-returned flag (admin client, bypasses RLS) so the
+        // pencil is hidden reliably even if the browser query hits an RLS gap.
+        setIsApprovedListener(profileRes?.is_approved_listener === true)
       } finally {
         setLoading(false)
       }
