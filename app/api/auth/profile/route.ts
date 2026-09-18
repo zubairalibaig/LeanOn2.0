@@ -150,12 +150,9 @@ export async function PATCH(req: NextRequest) {
     const body = await req.json().catch(() => ({}))
     const updates: Record<string, string> = {}
 
-    if (typeof body?.name === 'string') {
-      const name = body.name.trim()
-      if (name.length < 2 || name.length > 80) {
-        return NextResponse.json({ error: 'Name must be 2–80 characters.' }, { status: 400 })
-      }
-      updates.name = name
+    const nameChange = typeof body?.name === 'string' ? body.name.trim() : null
+    if (nameChange !== null && (nameChange.length < 2 || nameChange.length > 80)) {
+      return NextResponse.json({ error: 'Name must be 2–80 characters.' }, { status: 400 })
     }
 
     // Validated avatar URL (used below — may route to pending for approved listeners)
@@ -172,21 +169,32 @@ export async function PATCH(req: NextRequest) {
       validatedAvatarUrl = url
     }
 
-    if (Object.keys(updates).length === 0 && !validatedAvatarUrl) {
+    if (nameChange === null && !validatedAvatarUrl) {
       return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
     }
 
     const admin = createAdminClient()
 
+    // Single listener_profiles lookup covers both the name-lock check and the
+    // avatar routing decision — one DB round-trip instead of two.
+    const { data: lp } = await admin
+      .from('listener_profiles')
+      .select('is_approved')
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    if (nameChange !== null) {
+      // Approved listeners cannot change their display name — it was verified at onboarding.
+      if (lp?.is_approved === true) {
+        return NextResponse.json({ error: 'Approved listeners cannot change their display name. Contact support if this needs updating.' }, { status: 403 })
+      }
+      updates.name = nameChange
+    }
+
     if (validatedAvatarUrl) {
       // Approved listeners: selfie changes go to pending_avatar_url for admin
       // review before replacing the public photo. Seekers and unapproved
       // applicants update avatar_url directly (no review needed).
-      const { data: lp } = await admin
-        .from('listener_profiles')
-        .select('is_approved')
-        .eq('user_id', user.id)
-        .maybeSingle()
 
       if (lp?.is_approved === true) {
         // Write to pending — do not touch users.avatar_url until admin approves.
@@ -195,14 +203,8 @@ export async function PATCH(req: NextRequest) {
           .update({ pending_avatar_url: validatedAvatarUrl })
           .eq('user_id', user.id)
         if (pendingErr) {
-          // Column may not exist yet (migration not applied) — fall back to direct write
-          // so existing users are not broken while the migration is pending.
-          if (pendingErr.message?.includes('pending_avatar_url')) {
-            updates.avatar_url = validatedAvatarUrl
-          } else {
-            logger.error('profile PATCH: pending_avatar_url write failed', { error: pendingErr.message })
-            return NextResponse.json({ error: 'Failed to update profile. Please try again.' }, { status: 500 })
-          }
+          logger.error('profile PATCH: pending_avatar_url write failed', { error: pendingErr.message })
+          return NextResponse.json({ error: 'Failed to update profile. Please try again.' }, { status: 500 })
         } else {
           // Notify admin (best-effort)
           await admin.from('notifications').insert({

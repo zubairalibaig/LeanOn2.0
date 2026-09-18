@@ -67,6 +67,7 @@ export default function ProfilePage() {
   const [createdAt, setCreatedAt] = useState('')
   const [sessionCount, setSessionCount] = useState(0)
   const [isListener, setIsListener] = useState(false)
+  const [isApprovedListener, setIsApprovedListener] = useState(false)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const [avatarUploadMsg, setAvatarUploadMsg] = useState<{ type: 'error' | 'info'; text: string } | null>(null)
@@ -89,7 +90,7 @@ export default function ProfilePage() {
         const [profileRes, sessionsRes, listenerRes] = await Promise.all([
           fetch('/api/auth/profile').then(r => r.ok ? r.json() : null).catch(() => null),
           supabase.from('sessions').select('id', { count: 'exact', head: true }).eq('seeker_id', user.id).eq('status', 'completed'),
-          supabase.from('listener_profiles').select('id').eq('user_id', user.id).maybeSingle(),
+          supabase.from('listener_profiles').select('id, is_approved').eq('user_id', user.id).maybeSingle(),
         ])
 
         if (profileRes) {
@@ -102,6 +103,7 @@ export default function ProfilePage() {
         }
         setSessionCount(sessionsRes.count || 0)
         setIsListener(!!listenerRes.data)
+        setIsApprovedListener(listenerRes.data?.is_approved === true)
       } finally {
         setLoading(false)
       }
@@ -257,7 +259,9 @@ export default function ProfilePage() {
             ) : (
               <div className="name-row">
                 <span className="name-display">{name || 'Your Name'}</span>
-                <button className="pencil-btn" onClick={() => { setNameInput(name); setEditingName(true) }}>✏️</button>
+                {!isApprovedListener && (
+                  <button className="pencil-btn" onClick={() => { setNameInput(name); setEditingName(true) }}>✏️</button>
+                )}
               </div>
             )}
             {phone && <div className="phone">📱 {phone}</div>}
