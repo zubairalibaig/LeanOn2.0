@@ -189,6 +189,7 @@ export default function BecomeListenerPage() {
   const [alreadyRegistered, setAlreadyRegistered] = useState(false)
   const [permanentlyRejected, setPermanentlyRejected] = useState(false)
   const [rejectedNotes, setRejectedNotes] = useState<string | null>(null)
+  const [resubmissionNotes, setResubmissionNotes] = useState<string | null>(null)
   const [phone, setPhone] = useState('')
   const [bio, setBio]     = useState('')
   const [tags, setTags]   = useState<string[]>([])
@@ -263,11 +264,14 @@ export default function BecomeListenerPage() {
       } else if (existing && !canResubmit) {
         setAlreadyRegistered(true)
       }
-      // Bug 11: on resubmission pre-populate avatarUrl from the existing users row
+      // On resubmission: surface the admin's feedback and pre-populate avatar
       // so applicants who only need to fix bank details don't have to re-photograph.
-      if (canResubmit && userRow?.avatar_url) {
-        setAvatarUrl(userRow.avatar_url as string)
-        setAvatarPreview(userRow.avatar_url as string)
+      if (canResubmit) {
+        if (app?.admin_notes) setResubmissionNotes(app.admin_notes as string)
+        if (userRow?.avatar_url) {
+          setAvatarUrl(userRow.avatar_url as string)
+          setAvatarPreview(userRow.avatar_url as string)
+        }
       }
       setGuardChecked(true)
     }).catch(() => {
@@ -434,6 +438,16 @@ export default function BecomeListenerPage() {
       })
       if (!res.ok) {
         const json = await res.json().catch(() => ({}))
+        // 403 means the application was permanently rejected server-side.
+        // Show the closed-screen instead of an inline error so the user has
+        // a clear call-to-action (contact support) rather than a confusing
+        // "try again" message on a form they can never resubmit.
+        if (res.status === 403) {
+          setPermanentlyRejected(true)
+          setRejectedNotes(json.adminNotes || null)
+          setAlreadyRegistered(true)
+          return
+        }
         const msg = json.error || `Submission failed (HTTP ${res.status}).`
         setError(`${msg} Please try again or contact support.`)
         return
@@ -556,6 +570,16 @@ export default function BecomeListenerPage() {
                 <strong style={{fontWeight:800}}>Honest note:</strong> LeanOn is a growing platform. How much you earn depends entirely on how many seekers are using LeanOn when you&apos;re online. Early listeners focus on building their profile and first few ratings — volume grows as the platform does. We don&apos;t promise a specific income.
               </div>
             )}
+          </div>
+        )}
+
+        {resubmissionNotes && (
+          <div style={{margin:'0 0 20px',background:'#FFF8E6',border:'2px solid #F5A623',borderRadius:14,padding:'14px 16px'}}>
+            <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:6}}>
+              <span style={{fontSize:18}}>✏️</span>
+              <span style={{fontWeight:800,fontSize:14,color:'#7A4500'}}>Action needed — please fix and resubmit</span>
+            </div>
+            <div style={{fontSize:14,color:'#5A3300',lineHeight:1.6,fontWeight:500}}>{resubmissionNotes}</div>
           </div>
         )}
 
