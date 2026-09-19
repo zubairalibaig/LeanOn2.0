@@ -11,6 +11,8 @@ export const metadata: Metadata = {
     'talk to a human instead of AI', 'real person to talk to online',
     'human emotional support online', 'peer support online',
     'someone to talk to instead of AI', 'real human listener online',
+    'real person instead of AI', 'AI companion vs human', 'talk to human online',
+    'I\'ve been talking to ChatGPT and feel lonely', 'ChatGPT loneliness human support',
   ],
   alternates: { canonical: 'https://www.leanon.app/ai-chatbot-alternative' },
   openGraph: {
@@ -68,6 +70,12 @@ export default function AIChatbotAlternativePage() {
         </section>
 
         <section className="mt-8 rounded-3xl border border-slate-200 p-6 sm:p-8">
+          <h2 className="mb-4 text-2xl font-black">If you have been talking to ChatGPT and still feel lonely</h2>
+          <p className="leading-7 text-slate-600">You may have started using ChatGPT because you needed somewhere to put your thoughts. That can be useful. But if the thing you are missing is another human being, an AI companion and a human peer conversation are different options.</p>
+          <p className="mt-4 leading-7 text-slate-600">If you are searching for a real person instead of AI, want to talk to a human online, or simply want someone to listen, LeanOn connects you with peer listeners for one-to-one text or voice conversations.</p>
+        </section>
+
+        <section className="mt-8 rounded-3xl border border-slate-200 p-6 sm:p-8">
           <h2 className="mb-4 text-2xl font-black">A simple way to decide</h2>
           <div className="grid gap-4 sm:grid-cols-3">
             <div><h3 className="font-black">Want information?</h3><p className="mt-2 text-sm leading-6 text-slate-600">An AI assistant may be the right tool.</p></div>
@@ -101,6 +109,11 @@ export default function AIChatbotAlternativePage() {
           <h2 className="mb-3 text-2xl font-black">LeanOn is not a replacement for AI — or therapy.</h2>
           <p className="leading-7 text-white/85">AI can be useful. Professional mental-health care can be important. LeanOn occupies a different space: paid, one-to-one peer conversations with real people for everyday emotional support and human connection.</p>
           <a href="/browse" className="mt-6 inline-flex rounded-full bg-[#FF9933] px-7 py-3.5 font-extrabold text-white">Find someone to talk to →</a>
+          <div className="mt-6 flex flex-wrap gap-3 text-sm font-bold">
+            <a href="/talk-to-someone-online" className="rounded-full border border-white/30 px-4 py-2">Someone to talk to right now</a>
+            <a href="/peer-support" className="rounded-full border border-white/30 px-4 py-2">What is peer support?</a>
+            <a href="/alternatives-to-therapy-india" className="rounded-full border border-white/30 px-4 py-2">Therapy vs peer support</a>
+          </div>
         </section>
 
         <section className="mt-10"><h2 className="mb-4 text-2xl font-black">Questions people ask</h2><div className="divide-y divide-slate-200 rounded-2xl border border-slate-200 px-5">{faqs.map(faq => <details key={faq.q} className="py-4"><summary className="cursor-pointer font-extrabold">{faq.q}</summary><p className="pt-3 leading-7 text-slate-600">{faq.a}</p></details>)}</div></section>
