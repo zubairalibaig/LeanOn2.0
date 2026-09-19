@@ -39,9 +39,27 @@ h1{font-size:clamp(26px,5vw,38px);font-weight:900;line-height:1.15;margin-bottom
 .btn{background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;padding:14px 32px;border-radius:50px;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(255,153,51,.35);}
 `
 
+const trustSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': 'https://www.leanon.app/trust#webpage',
+  name: 'LeanOn Trust & Safety',
+  url: 'https://www.leanon.app/trust',
+  description: metadata.description,
+  isPartOf: { '@id': 'https://www.leanon.app/#website' },
+  about: [
+    { '@type': 'Thing', name: 'Peer support safety' },
+    { '@type': 'Thing', name: 'Listener verification' },
+    { '@type': 'Thing', name: 'Privacy' },
+    { '@type': 'Thing', name: 'Crisis escalation' }
+  ],
+  mainEntity: { '@id': 'https://www.leanon.app/#organization' }
+}
+
 export default function TrustPage() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(trustSchema) }} />
       <style>{S}</style>
       <nav>
         <a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a>
