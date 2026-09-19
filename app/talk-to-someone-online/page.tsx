@@ -5,7 +5,7 @@ export const dynamic = 'force-static'
 export const metadata: Metadata = {
   title: 'Talk to Someone Online Right Now | Real Person, Not AI | LeanOn',
   description: 'When you need a real person to listen — not an AI, not a bot, not a therapist. LeanOn peer listeners are available now, no appointment needed.',
-  keywords: ['talk to someone online', 'someone to talk to', 'need to talk to someone', 'talk to real person online', 'real person to talk to online', 'not ai someone to talk to'],
+  keywords: ['talk to someone online', 'someone to talk to', 'someone to chat with', 'friendly chat online', 'talk to someone right now', 'I have no one to talk to', 'need someone to listen', 'want someone to talk to but don\'t need therapy', 'anonymous person to talk to', 'need to talk to someone', 'talk to real person online', 'real person to talk to online', 'not ai someone to talk to'],
   alternates: { canonical: 'https://www.leanon.app/talk-to-someone-online' },
   openGraph: { title: 'Talk to Someone Online Right Now | Real Person, Not AI | LeanOn', description: 'When you need a real person to listen — not an AI, not a bot, not a therapist. LeanOn peer listeners are available now, no appointment needed.', url: 'https://www.leanon.app/talk-to-someone-online', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
 }
@@ -88,7 +88,7 @@ export default function TalkToSomeoneOnlinePage() {
         <div className="section">
           <h2>You Have Already Tried Talking to AI. You Know It Is Not the Same.</h2>
           <p>At some point most people have typed their problems into ChatGPT or another AI. And it is impressive &mdash; it says things that sound right, it reflects back, it validates. But something is missing. The response feels hollow, like a very articulate mirror. Because an AI generates what someone who understood you would say. It does not actually know what it feels like.</p>
-          <p>A real person who has been through something similar &mdash; not someone performing empathy but someone who genuinely knows &mdash; is different. The difference is not subtle. Most people who have tried both describe AI support as strangely lonelier than not talking to anyone at all.</p>
+          <p>A real person offers a different kind of conversation: another human being is actually receiving what you say and can respond from their own experience. If you have been using AI because you have no one to talk to, you may simply be looking for human company rather than another generated response.</p>
           <p>LeanOn listeners are real people. They have applied, been screened, and trained. They are online right now. And the first 5 minutes cost nothing.</p>
         </div>
         <div className="section">
@@ -137,6 +137,8 @@ export default function TalkToSomeoneOnlinePage() {
           <a href="/loneliness-support-online">Loneliness support &rarr;</a>
           <a href="/ai-chatbot-alternative">AI chatbot alternative &rarr;</a>
           <a href="/chat-with-real-person">Chat with real person &rarr;</a>
+          <a href="/peer-support">Peer support &rarr;</a>
+          <a href="/alternatives-to-therapy-india">Therapy vs peer support &rarr;</a>
         </div></div>
         <div className="crisis"><strong>In a crisis?</strong> NIMHANS: 080-46110007 &nbsp;&middot;&nbsp; Tele-MANAS: 14416 &nbsp;&middot;&nbsp; Both free, 24/7.</div>
       </div>
