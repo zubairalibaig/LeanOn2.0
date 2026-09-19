@@ -77,6 +77,12 @@ export default function AIChatbotAlternativePage() {
           </div>
         </section>
 
+        <section className="mt-8 rounded-3xl border border-slate-200 p-6 sm:p-8">
+          <h2 className="mb-4 text-2xl font-black">If you have been talking to ChatGPT and still feel lonely</h2>
+          <p className="leading-7 text-slate-600">You may have started using ChatGPT because you needed somewhere to put your thoughts. That can be useful. But if the thing you are missing is another human being, an AI companion and a human peer conversation are different options.</p>
+          <p className="mt-4 leading-7 text-slate-600">If you are searching for a real person instead of AI, want to talk to a human online, or simply want someone to listen, LeanOn connects you with peer listeners for one-to-one text or voice conversations.</p>
+        </section>
+
         <section className="mt-8 grid gap-6 md:grid-cols-2">
           <article className="rounded-3xl border border-slate-200 p-6"><h2 className="mb-3 text-xl font-black">AI may be useful when…</h2><ul className="space-y-3 text-slate-600"><li>• You want information or explanations.</li><li>• You want to brainstorm or reflect in writing.</li><li>• You want an always-available AI conversation.</li></ul></article>
           <article className="rounded-3xl border border-slate-200 p-6"><h2 className="mb-3 text-xl font-black">A human conversation may fit when…</h2><ul className="space-y-3 text-slate-600"><li>• You specifically want another person.</li><li>• You want to talk through a difficult day with someone who listens.</li><li>• You want human connection rather than another AI-generated response.</li></ul></article>
@@ -86,6 +92,11 @@ export default function AIChatbotAlternativePage() {
           <h2 className="mb-3 text-2xl font-black">LeanOn is not a replacement for AI — or therapy.</h2>
           <p className="leading-7 text-white/85">AI can be useful. Professional mental-health care can be important. LeanOn occupies a different space: paid, one-to-one peer conversations with real people for everyday emotional support and human connection.</p>
           <a href="/browse" className="mt-6 inline-flex rounded-full bg-[#FF9933] px-7 py-3.5 font-extrabold text-white">Find someone to talk to →</a>
+          <div className="mt-6 flex flex-wrap gap-3 text-sm font-bold">
+            <a href="/talk-to-someone-online" className="rounded-full border border-white/30 px-4 py-2">Someone to talk to right now</a>
+            <a href="/peer-support" className="rounded-full border border-white/30 px-4 py-2">What is peer support?</a>
+            <a href="/alternatives-to-therapy-india" className="rounded-full border border-white/30 px-4 py-2">Therapy vs peer support</a>
+          </div>
         </section>
 
         <section className="mt-10"><h2 className="mb-4 text-2xl font-black">Questions people ask</h2><div className="divide-y divide-slate-200 rounded-2xl border border-slate-200 px-5">{faqs.map(faq => <details key={faq.q} className="py-4"><summary className="cursor-pointer font-extrabold">{faq.q}</summary><p className="pt-3 leading-7 text-slate-600">{faq.a}</p></details>)}</div></section>
