@@ -169,6 +169,15 @@ export default function PeerSupportPage() {
           <p className="lead">Not therapy. Not an AI chatbot. Not advice from someone who has never been through it. Peer support is the experience of talking to a real human being who has lived something like what you are carrying right now — and who listens without judgment, without a diagnosis, and without a clinical distance between you.</p>
         </div>
 
+
+        {/* GEO / SOURCE CONTEXT */}
+        <section className="section">
+          <h2>Peer support has an established meaning</h2>
+          <p>Peer support generally centres on shared experience, mutual understanding, choice and a supportive relationship. Major mental-health organisations describe peer support as a non-clinical form of support in which people with relevant lived experience help others. LeanOn applies that human-to-human principle to one-to-one online conversations.</p>
+          <p>For independent background, see <a href="https://www.samhsa.gov/substance-use/recovery/peer-support-workers" target="_blank" rel="noopener noreferrer" style={{color:'var(--teal)',fontWeight:800}}>SAMHSA's overview of peer support workers</a> and <a href="https://www.nami.org/advocacy-at-nami/policy-positions/improving-health/workforce-peer-support-workers/" target="_blank" rel="noopener noreferrer" style={{color:'var(--teal)',fontWeight:800}}>NAMI's description of peer support workers</a>. These sources describe peer support broadly; they are not endorsements of LeanOn.</p>
+          <p><strong>LeanOn-specific distinction:</strong> LeanOn is a private, one-to-one commercial platform for human peer conversations. It is not a government service, clinical provider, crisis service or replacement for professional treatment.</p>
+        </section>
+
         {/* Stats row */}
         <div className="stats-row">
           <div className="stat-pill"><em>₹160</em>/session</div>

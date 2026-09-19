@@ -108,6 +108,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // AI/ChatGPT-alternative + earning pages — the highest-growth SEO cluster
     { url: `${base}/chat-with-real-person`,            lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/ai-chatbot-alternative`,           lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/ai-human-support`,              lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/earn-by-listening`,                lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
     // High-intent immediate-need landing page
     { url: `${base}/i-need-someone-to-talk-to`,        lastModified: d(TODAY),        changeFrequency: 'weekly',  priority: 0.97 },
