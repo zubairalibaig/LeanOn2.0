@@ -11,6 +11,8 @@ export const metadata: Metadata = {
     'talk to a human instead of AI', 'real person to talk to online',
     'human emotional support online', 'peer support online',
     'someone to talk to instead of AI', 'real human listener online',
+    'real person instead of AI', 'AI companion vs human', 'talk to human online',
+    'I\'ve been talking to ChatGPT and feel lonely', 'ChatGPT loneliness human support',
   ],
   alternates: { canonical: 'https://www.leanon.app/ai-chatbot-alternative' },
   openGraph: {
