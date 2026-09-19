@@ -1,103 +1,149 @@
 import type { Metadata } from 'next'
 
+export const dynamic = 'force-static'
+
 export const metadata: Metadata = {
-  title: 'Affordable Alternatives to Therapy in India | LeanOn',
-  description: 'Explore affordable alternatives to therapy in India: peer support, helplines, journaling, meditation apps. LeanOn provides the most human connection at the lowest cost.',
-  keywords: ['alternatives to therapy india', 'affordable mental health india', 'peer support instead of therapy india', 'cheap therapy alternative india'],
+  title: 'Therapy vs Peer Support: Do I Need Therapy or Someone to Talk To? | LeanOn',
+  description: 'Not sure whether you need therapy or simply someone to talk to? Learn the difference between therapy, counselling, peer support and everyday emotional support, and where LeanOn fits.',
+  keywords: [
+    'do I need therapy or someone to talk to',
+    'therapy vs peer support',
+    'counselling vs peer support',
+    'someone to talk to instead of therapy',
+    'affordable alternative to therapy',
+    'what if I don\'t want therapy but need support',
+    'peer support instead of therapy india',
+    'everyday emotional support',
+  ],
   alternates: { canonical: 'https://www.leanon.app/alternatives-to-therapy-india' },
+  openGraph: {
+    title: 'Therapy vs Peer Support: Do I Need Therapy or Someone to Talk To? | LeanOn',
+    description: 'A practical guide to the difference between clinical care and everyday human support. LeanOn is peer support, not therapy.',
+    url: 'https://www.leanon.app/alternatives-to-therapy-india',
+    siteName: 'LeanOn',
+    type: 'article',
+  },
 }
 
-const S = `
-  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-  :root{--navy:#0F4867;--teal:#1A8FA0;--orange:#FF9933;--gray:#5A7A8A;--border:#D5EEF6;--light:#F0F8FC;}
-  body{font-family:'Nunito',sans-serif;color:var(--navy);background:radial-gradient(ellipse 90% 55% at 0% 0%,#C2E4F2 0%,#DAEEF8 22%,#FFFFFF 58%) fixed;}
-  a{text-decoration:none;color:inherit;}
-  nav{padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;max-width:700px;margin:0 auto;}
-  .page{max-width:680px;margin:0 auto;padding:16px 24px 80px;}
-  h1{font-size:clamp(26px,5vw,40px);font-weight:900;line-height:1.2;margin-bottom:16px;}
-  .lead{font-size:16px;color:var(--gray);line-height:1.75;margin-bottom:32px;}
-  .alt-list{display:flex;flex-direction:column;gap:14px;margin-bottom:32px;}
-  .alt-item{background:white;border:1.5px solid var(--border);border-radius:18px;padding:20px;display:flex;gap:14px;align-items:flex-start;}
-  .alt-item.featured{border-color:var(--teal);background:rgba(26,143,160,0.04);}
-  .alt-icon{font-size:32px;flex-shrink:0;}
-  .alt-title{font-size:16px;font-weight:800;color:var(--navy);margin-bottom:4px;}
-  .alt-item.featured .alt-title{color:var(--teal);}
-  .alt-desc{font-size:14px;color:var(--gray);line-height:1.65;}
-  .alt-price{font-size:12px;font-weight:800;color:var(--orange);margin-top:4px;}
-  .disclaimer{background:#FFF8F0;border:1.5px solid #FFD9A0;border-radius:14px;padding:14px 16px;margin-bottom:24px;font-size:13px;color:#7A5C00;font-weight:600;line-height:1.6;}
-  .cta{text-align:center;background:var(--navy);border-radius:24px;padding:32px;color:white;}
-  .cta h2{font-size:22px;font-weight:900;margin-bottom:10px;}
-  .cta p{font-size:14px;opacity:.8;margin-bottom:20px;}
-  .btn{background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;padding:14px 32px;border-radius:50px;border:none;cursor:pointer;}
-`
+const faqs = [
+  ['Do I need therapy or someone to talk to?', 'It depends on what you are looking for. If you want diagnosis, assessment or treatment for a mental-health condition, speak with a qualified mental-health professional. If you mainly want a human conversation, someone to listen, or support with everyday loneliness, stress, relationships or a difficult week, peer support may be an option.'],
+  ['What is the difference between therapy and peer support?', 'Therapy is clinical care delivered by a qualified professional and can involve assessment, diagnosis and treatment. Peer support is non-clinical support from someone with relevant lived experience who is trained to listen and support without diagnosing or treating.'],
+  ['Is counselling the same as peer support?', 'No. Counselling may refer to professional mental-health support provided by a qualified counsellor. Peer support is non-clinical and based on lived experience, listening and mutual understanding.'],
+  ['Can I talk to someone instead of therapy?', 'If what you need is ordinary human connection or a place to talk through everyday emotional stress, you can choose peer support. But peer support should not be used as a substitute for professional care when you need clinical assessment or treatment.'],
+  ['What if I do not want therapy but need support?', 'You can explore non-clinical options such as talking with trusted people, peer support, community groups or other forms of emotional support. LeanOn is one peer-support option for people who want a private conversation with a real person.'],
+  ['Is peer support an affordable alternative to therapy?', 'Peer support can cost less than many private therapy sessions, but it is not an equivalent service. It provides a different kind of support: human conversation and lived experience rather than clinical assessment or treatment.'],
+]
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      name: metadata.title,
+      description: metadata.description,
+      url: 'https://www.leanon.app/alternatives-to-therapy-india',
+      isPartOf: { '@type': 'WebSite', name: 'LeanOn', url: 'https://www.leanon.app' },
+      about: [
+        { '@type': 'Thing', name: 'Therapy' },
+        { '@type': 'Thing', name: 'Peer support' },
+        { '@type': 'Thing', name: 'Everyday emotional support' },
+      ],
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: faqs.map(([q, a]) => ({
+        '@type': 'Question',
+        name: q,
+        acceptedAnswer: { '@type': 'Answer', text: a },
+      })),
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'LeanOn', item: 'https://www.leanon.app' },
+        { '@type': 'ListItem', position: 2, name: 'Therapy vs Peer Support', item: 'https://www.leanon.app/alternatives-to-therapy-india' },
+      ],
+    },
+  ],
+}
+
+const options = [
+  ['Therapy / clinical care', 'Qualified mental-health professionals can assess, diagnose and treat mental-health conditions. This is the appropriate path when you need clinical care.', 'Clinical care'],
+  ['Peer support', 'A trained peer listener offers a private conversation based on lived experience. It is non-clinical and does not diagnose or treat.', 'Human conversation'],
+  ['Trusted people', 'Friends, family or community can provide familiar support when you have people you feel safe talking to.', 'Personal connection'],
+  ['Self-guided support', 'Journaling, reflection, exercise, sleep routines and other self-guided practices can complement support, depending on your situation.', 'Self-directed'],
+]
 
 export default function AlternativesToTherapyPage() {
   return (
-    <>
-      <style>{S}</style>
-      <nav>
-        <a href="/"><img src="/logo.png" alt="LeanOn" style={{height:48}} /></a>
-        <a href="/auth"><button className="btn" style={{fontSize:13,padding:'8px 20px'}}>Try now</button></a>
-      </nav>
-      <div className="page">
-        <a href="/" style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:14,fontWeight:700,color:'var(--gray)',marginBottom:28}}>← Back</a>
-        <h1>Affordable Alternatives to Therapy in India</h1>
-        <p className="lead">Professional therapy is out of reach for most Indians — ₹1,500–₹5,000 per session, limited availability, and significant wait times. Here are the real alternatives, and what each is best for.</p>
+    <main className="min-h-screen bg-white text-[#0F4867]">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <div className="mx-auto max-w-4xl px-5 py-8 sm:px-8 sm:py-12">
+        <nav className="mb-10 flex items-center justify-between" aria-label="Primary">
+          <a href="/" className="text-2xl font-black tracking-tight">Lean<span className="text-[#1A8FA0]">On</span></a>
+          <a href="/browse" className="rounded-full bg-[#1A8FA0] px-5 py-2.5 text-sm font-extrabold text-white">Browse listeners</a>
+        </nav>
 
-        <div className="disclaimer">
-          This page compares emotional support options, not clinical treatment. For diagnosed mental health conditions, please consult a licensed professional. LeanOn is peer support — not therapy.
-        </div>
+        <header className="max-w-3xl">
+          <p className="mb-4 text-sm font-extrabold uppercase tracking-widest text-[#1A8FA0]">Therapy · Counselling · Peer Support</p>
+          <h1 className="mb-6 text-4xl font-black leading-tight sm:text-6xl">Do I need therapy — or do I just need someone to talk to?</h1>
+          <p className="mb-8 text-lg leading-8 text-slate-600 sm:text-xl">Those are different needs. This guide explains the boundary between professional mental-health care and non-clinical human support, so you can understand where peer support fits.</p>
+        </header>
 
-        <div className="alt-list">
-          <div className="alt-item featured">
-            <div className="alt-icon">🤝</div>
-            <div>
-              <div className="alt-title">LeanOn peer support ★ Best for emotional connection</div>
-              <div className="alt-desc">Real humans with lived experience. Instant access, 24/7, anonymous. Best for loneliness, stress, grief, burnout, anxiety, and processing difficult feelings. The most human-to-human connection outside of professional therapy.</div>
-              <div className="alt-price">From ₹160 for 15 minutes</div>
-            </div>
+        <section className="mt-8 rounded-3xl border border-[#D5EEF6] bg-[#F0F8FC] p-6 sm:p-8">
+          <h2 className="mb-4 text-2xl font-black">The simple distinction</h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="rounded-2xl bg-white p-5"><h3 className="font-black">You may be looking for clinical care when…</h3><p className="mt-2 text-sm leading-6 text-slate-600">You want assessment, diagnosis, treatment, medication-related care, or help managing a mental-health condition. A qualified professional is the appropriate source.</p></div>
+            <div className="rounded-2xl bg-white p-5"><h3 className="font-black">You may be looking for peer support when…</h3><p className="mt-2 text-sm leading-6 text-slate-600">You mainly want someone to listen, a private place to talk, human connection, or support with everyday loneliness, relationship stress, work pressure or a difficult period.</p></div>
           </div>
-          <div className="alt-item">
-            <div className="alt-icon">📞</div>
-            <div>
-              <div className="alt-title">Government helplines — best for crisis</div>
-              <div className="alt-desc">NIMHANS (080-46110007) and Tele-MANAS (14416) are free 24/7 government helplines. Best for acute crisis situations. Less suited for ongoing emotional support or non-crisis conversations.</div>
-              <div className="alt-price">Free</div>
-            </div>
-          </div>
-          <div className="alt-item">
-            <div className="alt-icon">📓</div>
-            <div>
-              <div className="alt-title">Journaling — best for self-reflection</div>
-              <div className="alt-desc">Writing out your thoughts has real mental health benefits. Best for processing emotions privately at your own pace. Does not provide human connection or feedback — can feel isolating for people who need to be heard by another person.</div>
-              <div className="alt-price">Free</div>
-            </div>
-          </div>
-          <div className="alt-item">
-            <div className="alt-icon">🧘</div>
-            <div>
-              <div className="alt-title">Meditation apps — best for daily stress management</div>
-              <div className="alt-desc">Apps like Headspace or Calm help with daily stress, sleep, and focus. Not designed for emotional processing or human connection. Complement peer support well but don't replace it.</div>
-              <div className="alt-price">₹300–₹800/month subscription</div>
-            </div>
-          </div>
-          <div className="alt-item">
-            <div className="alt-icon">👨‍⚕️</div>
-            <div>
-              <div className="alt-title">Professional therapy — best for clinical conditions</div>
-              <div className="alt-desc">Licensed therapists and psychiatrists are essential for diagnosed conditions, trauma processing, and medication management. The gold standard for clinical care — but expensive and hard to access across most of India.</div>
-              <div className="alt-price">₹1,500–₹5,000 per session</div>
-            </div>
-          </div>
-        </div>
+        </section>
 
-        <div className="cta">
-          <h2>Start with peer support</h2>
-          <p>LeanOn is the most human, most affordable option for day-to-day emotional support.</p>
-          <a href="/browse"><button className="btn">Try now →</button></a>
-        </div>
+        <section className="mt-8 rounded-3xl border border-slate-200 p-6 sm:p-8">
+          <h2 className="mb-5 text-2xl font-black">Therapy, counselling, peer support and other options</h2>
+          <div className="grid gap-4">
+            {options.map(([name, desc, label]) => (
+              <article key={name} className="rounded-2xl border border-slate-200 p-5">
+                <div className="text-xs font-extrabold uppercase tracking-widest text-[#1A8FA0]">{label}</div>
+                <h3 className="mt-1 text-lg font-black">{name}</h3>
+                <p className="mt-2 leading-7 text-slate-600">{desc}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-8 rounded-3xl bg-[#0F4867] p-7 text-white sm:p-9">
+          <h2 className="mb-4 text-2xl font-black">What if you do not want therapy but need support?</h2>
+          <p className="leading-7 text-white/85">You can want support without wanting therapy. Peer support is one non-clinical option: you talk with a trained person who brings lived experience rather than providing diagnosis or treatment. LeanOn provides this kind of one-to-one conversation by text or voice.</p>
+          <a href="/browse" className="mt-6 inline-flex rounded-full bg-[#FF9933] px-7 py-3.5 font-extrabold text-white">Browse peer listeners →</a>
+        </section>
+
+        <section className="mt-8 rounded-3xl border border-slate-200 p-6 sm:p-8">
+          <h2 className="mb-4 text-2xl font-black">A practical decision guide</h2>
+          <div className="space-y-4 text-slate-600">
+            <p><strong className="text-[#0F4867]">“I want someone to listen.”</strong> Consider peer support or a trusted person.</p>
+            <p><strong className="text-[#0F4867]">“I want help understanding or treating a mental-health condition.”</strong> Speak with a qualified professional.</p>
+            <p><strong className="text-[#0F4867]">“I am not sure.”</strong> A qualified professional can help you assess what kind of care or support fits your situation.</p>
+          </div>
+        </section>
+
+        <section className="mt-8">
+          <h2 className="mb-4 text-2xl font-black">Questions people ask</h2>
+          <div className="divide-y divide-slate-200 rounded-2xl border border-slate-200 px-5">
+            {faqs.map(([q, a]) => <details key={q} className="py-4"><summary className="cursor-pointer font-extrabold">{q}</summary><p className="pt-3 leading-7 text-slate-600">{a}</p></details>)}
+          </div>
+        </section>
+
+        <section className="mt-8 rounded-3xl border border-slate-200 p-6 sm:p-8">
+          <h2 className="mb-4 text-xl font-black">Continue exploring</h2>
+          <div className="flex flex-wrap gap-3 text-sm font-bold">
+            <a href="/peer-support" className="rounded-full bg-[#F0F8FC] px-4 py-2">What is peer support?</a>
+            <a href="/talk-to-someone-online" className="rounded-full bg-[#F0F8FC] px-4 py-2">Talk to someone right now</a>
+            <a href="/ai-chatbot-alternative" className="rounded-full bg-[#F0F8FC] px-4 py-2">Human alternative to ChatGPT</a>
+          </div>
+        </section>
+
+        <p className="mt-10 text-xs leading-6 text-slate-500">LeanOn provides peer support and human connection, not therapy, counselling, diagnosis or clinical treatment. If you are in immediate danger or experiencing a mental-health emergency, contact an appropriate local emergency or crisis service.</p>
       </div>
-    </>
+    </main>
   )
 }
