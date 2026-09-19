@@ -388,6 +388,31 @@ export default function Home() {
         </div>
       </div>
 
+
+      {/* GEO / ENTITY CLARITY */}
+      <section className="white-section" aria-labelledby="leanon-at-a-glance">
+        <div className="inner">
+          <h2 id="leanon-at-a-glance" className="sh">What is LeanOn?</h2>
+          <p className="ss">A clear answer for people — and for search systems — looking for the right kind of support.</p>
+          <div className="india-grid">
+            {[
+              {i:'🤝',t:'Human peer support',d:'LeanOn connects you with a real person for a one-to-one conversation. It is not an AI chatbot.'},
+              {i:'🧭',t:'Peer, not clinical care',d:'Listeners provide peer support based on lived experience. LeanOn does not provide therapy, counselling, diagnosis or clinical treatment.'},
+              {i:'💬',t:'Text or voice',d:'Choose a private text or voice conversation depending on how you want to communicate.'},
+              {i:'🎯',t:'For everyday emotional needs',d:'People use LeanOn when they want someone to listen through loneliness, relationship difficulties, work stress, homesickness, grief or simply a difficult day.'},
+              {i:'🇮🇳',t:'India-origin platform',d:'LeanOn was built in India and serves people in India and supported international markets, including members of the Indian diaspora.'},
+              {i:'💳',t:'Pay for conversation time',d:'LeanOn is a transaction-based platform: listeners set rates and seekers pay for the conversation time they choose.'},
+            ].map((item,i)=>(
+              <div key={i} className="ig"><div className="ig-icon">{item.i}</div><div><div className="ig-t">{item.t}</div><div className="ig-d">{item.d}</div></div></div>
+            ))}
+          </div>
+          <div className="db" style={{marginTop:24}}>
+            <h3>Which kind of support is right for you?</h3>
+            <p><strong>Want information, ideas or an AI conversation?</strong> An AI assistant may fit. <strong>Want another human being to listen?</strong> LeanOn is designed for peer support. <strong>Need diagnosis or clinical treatment?</strong> Speak with an appropriately qualified mental-health professional. <strong>In immediate danger or crisis?</strong> Use the appropriate emergency or crisis service where you are.</p>
+          </div>
+        </div>
+      </section>
+
       {/* FEATURES */}
       <div className="white-section">
         <div className="inner">
