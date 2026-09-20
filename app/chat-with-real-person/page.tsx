@@ -168,7 +168,7 @@ export default function ChatWithRealPersonPage() {
         {/* What makes a human different */}
         <div className="section">
           <h2>What Makes a Real Human Different?</h2>
-          <p>Millions of people in India have tried sharing their feelings with AI chatbots. And many of them end up here — because something essential was missing. Here is what that something is.</p>
+          <p>Some people use AI for emotional conversations and later decide they want human-to-human support. LeanOn is designed for that distinct need. Here is what that something is.</p>
         </div>
 
         <div className="cards-grid">
@@ -176,12 +176,12 @@ export default function ChatWithRealPersonPage() {
             {
               icon: '🧠',
               title: 'Lived Experience vs Trained Data',
-              body: 'AI learned from text scraped off the internet. Our listeners have actually lived through loneliness, heartbreak, burnout, and anxiety. They know the feeling — not just the words for it.',
+              body: 'AI systems are trained on large collections of data and generate responses from learned patterns. Our listeners have actually lived through loneliness, heartbreak, burnout, and anxiety. They know the feeling — not just the words for it.',
             },
             {
               icon: '💛',
               title: 'Emotional Presence vs Pattern Matching',
-              body: 'When you go quiet, a human listener feels that silence and holds space for it. AI fills silence with the statistically most likely next sentence. That difference is everything.',
+              body: 'When you go quiet, a human listener feels that silence and holds space for it. A human listener can respond as a person in the conversation; an AI system generates a response from learned patterns. The experiences are different.',
             },
             {
               icon: '🔁',
