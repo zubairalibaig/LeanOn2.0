@@ -48,7 +48,7 @@ const faqSchema = {
       name: 'Why should I talk to a real person instead of a chatbot like ChatGPT?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'AI can give information but it cannot truly understand how you feel. A real person can notice the emotion behind your words, sit with silence, and respond in a way that makes you feel genuinely heard. For emotional support, nothing replaces a real human.',
+        text: 'AI can provide information and conversation, while a human peer can respond as another person with their own lived experience. LeanOn is designed for people who want that human-to-human conversation.',
       },
     },
     {
@@ -56,7 +56,7 @@ const faqSchema = {
       name: 'How much does it cost to talk to a real person on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Your first 5 minutes are free, every session. After that, sessions start at ₹15 for 15 minutes depending on the listener. Much more affordable than professional therapy.',
+        text: 'Your first 5 minutes are free, every session. After that, 15-minute paid sessions start at ₹160 depending on the listener. Much more affordable than professional therapy.',
       },
     },
     {
@@ -256,7 +256,7 @@ export default function TalkToRealPersonPage() {
           </div>
           <div className="faq-item">
             <h3>How much does it cost to talk on LeanOn?</h3>
-            <p>Your first 5 minutes are free, every session. After that, sessions start at ₹15 for 15 minutes
+            <p>Your first 5 minutes are free, every session. After that, 15-minute paid sessions start at ₹160
               depending on the listener — much more affordable than professional therapy.</p>
           </div>
           <div className="faq-item">
