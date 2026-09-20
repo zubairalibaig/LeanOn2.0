@@ -56,6 +56,7 @@ import { post as itBurnoutPost } from '../posts/it-burnout-india-how-to-cope'
 import { post as nriMentalHealthPost } from '../posts/nri-mental-health-india-guide'
 import { post as relationshipCounsellingVsPeerPost } from '../posts/relationship-counselling-vs-peer-support-india'
 import { post as angerManagementPost } from '../posts/how-to-find-anger-management-support-india'
+import { post as paidFriendPost } from '../posts/paid-friend-vs-peer-support-india'
 
 export const dynamic = 'force-static'
 
@@ -76,7 +77,7 @@ const allPosts = [
   bestPeerAppsPost, peerCounsellingGuidePost, mentalHealthCostPost,
   bestMentalHealthApps2026Post, itBurnoutPost, nriMentalHealthPost,
   relationshipCounsellingVsPeerPost, angerManagementPost,
-  morningFightPost, ventingRelationshipPost, talkWorkdayPost,
+  morningFightPost, ventingRelationshipPost, talkWorkdayPost, paidFriendPost,
 ]
 
 function getPost(slug: string) {

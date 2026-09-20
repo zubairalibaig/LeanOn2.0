@@ -69,6 +69,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/blog/therapy-cost-india`,                          lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/blog/why-people-call-astrologers-to-talk`,         lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/blog/what-it-means-to-have-someone-to-lean-on`,    lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/blog/paid-friend-vs-peer-support-india`, lastModified: d('2026-09-12'), changeFrequency: 'monthly', priority: 0.9 },
     // Brand + authority pages
     { url: `${base}/leanon`,                           lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/emotional-support`,                lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.9 },
