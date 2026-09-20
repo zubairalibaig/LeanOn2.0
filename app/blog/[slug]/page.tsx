@@ -77,7 +77,7 @@ const allPosts = [
   bestPeerAppsPost, peerCounsellingGuidePost, mentalHealthCostPost,
   bestMentalHealthApps2026Post, itBurnoutPost, nriMentalHealthPost,
   relationshipCounsellingVsPeerPost, angerManagementPost,
-  morningFightPost, ventingRelationshipPost, talkWorkdayPost,
+  morningFightPost, ventingRelationshipPost, talkWorkdayPost, paidFriendPost,
 ]
 
 function getPost(slug: string) {
