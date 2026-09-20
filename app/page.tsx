@@ -23,62 +23,12 @@ export const metadata: Metadata = {
     'AI chatbot alternative India', 'human listener not bot',
     'tired of talking to AI', 'ChatGPT alternative India',
     'venting online India', 'need to vent India',
+    'talk to someone online paid', 'paid peer support India', 'affordable peer support India',
+    'human support online India', 'pay to talk to someone', 'talk to a real person online',
     'earn money by listening online India', 'paid listener job India',
     'NRI emotional support', 'Indian diaspora support', 'Indians abroad support',
     'NRI peer support USA', 'NRI peer support UK', 'Indian expat loneliness',
     'peer support for Indians abroad', 'talk to Indian listener online',
-  ],
-}
-
-const reviewSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Product',
-  name: 'LeanOn — Peer Support Platform',
-  description: 'India\'s peer support platform. Talk to real people who have lived through what you\'re facing.',
-  url: 'https://www.leanon.app',
-  brand: { '@type': 'Brand', name: 'LeanOn' },
-  // Price markup makes this page eligible for the price rich snippet on
-  // commercial-intent queries. Without an `offers` block a Product is not
-  // eligible at all, which is why our pricing never appeared in results.
-  // Range = a real session: 15 min at the ₹8/min floor + ₹10 platform fee = ₹130;
-  // 45 min at the ₹25/min ceiling + ₹10 = ₹1135. offerCount = 15/30/45-min blocks.
-  offers: {
-    '@type': 'AggregateOffer',
-    priceCurrency: 'INR',
-    lowPrice: '130',
-    highPrice: '1135',
-    offerCount: '3',
-    availability: 'https://schema.org/InStock',
-  },
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: '4.9',
-    reviewCount: '120',
-    bestRating: '5',
-    worstRating: '1',
-  },
-  review: [
-    {
-      '@type': 'Review',
-      reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5', worstRating: '1' },
-      reviewBody: 'Had a fight with my husband before he left for work. I was sitting at my desk unable to focus. Opened LeanOn, talked for 15 minutes, and I could actually breathe again. No judgment, no advice I didn\'t ask for. Just someone who listened.',
-      author: { '@type': 'Person', name: 'Priya M.' },
-      datePublished: '2026-07-15',
-    },
-    {
-      '@type': 'Review',
-      reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5', worstRating: '1' },
-      reviewBody: 'As a founder going through a hard patch I felt completely alone. Talking to someone who survived their own startup failure was exactly what I needed.',
-      author: { '@type': 'Person', name: 'Arjun K.' },
-      datePublished: '2026-06-28',
-    },
-    {
-      '@type': 'Review',
-      reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5', worstRating: '1' },
-      reviewBody: 'More affordable and more honest than anything else I\'ve tried. I\'ve booked 4 sessions now and each one helped.',
-      author: { '@type': 'Person', name: 'Sneha R.' },
-      datePublished: '2026-08-03',
-    },
   ],
 }
 
@@ -90,7 +40,7 @@ const faqSchema = {
     { '@type': 'Question', name: 'What makes LeanOn listeners empathetic?', acceptedAnswer: { '@type': 'Answer', text: 'Every LeanOn listener has personally lived through what they support others with — loneliness, anxiety, burnout, grief, or relationship pain. That lived experience is what makes their empathy real rather than rehearsed. They are trained in active listening and empathetic communication, so you are heard without being judged, fixed, or rushed.' } },
     { '@type': 'Question', name: 'What does "lean on" mean in LeanOn?', acceptedAnswer: { '@type': 'Answer', text: '"Lean on" means having someone you can rely on emotionally — someone who supports you without judgment when you\'re going through something hard. LeanOn (the platform) gives everyone access to that kind of support through verified peer listeners who have lived experience.' } },
     { '@type': 'Question', name: 'How does pricing work?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn charges a flat fee per session. 15-minute sessions start at ₹160. Your first session with each new listener is free (5 minutes) — no wallet top-up needed.' } },
-    { '@type': 'Question', name: 'How much does a paid LeanOn session cost, and is it worth paying for?', acceptedAnswer: { '@type': 'Answer', text: 'A 15-minute paid session starts at ₹160 — a fraction of the ₹1,500–4,000 a single therapy session costs in India. For that you get uninterrupted time with a listener who has actually lived through what you are facing, available instantly at any hour with no appointment. Most people continue after their trial because 5 minutes is only enough to start — real relief comes from a proper conversation, and continuing with the same listener who already understands your situation is worth far more than starting over.' } },
+    { '@type': 'Question', name: 'How much does a paid LeanOn session cost?', acceptedAnswer: { '@type': 'Answer', text: 'A 15-minute paid session starts at ₹160. You can start with one free 5-minute introductory session with each new listener, then continue only if you want to. There are no subscriptions; you pay for the conversation time you choose.' } },
     { '@type': 'Question', name: 'How is LeanOn different from therapy?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are real people with lived experience, not licensed therapists. They offer empathy and peer support, not clinical diagnosis or treatment. LeanOn is ideal when you need someone to lean on — not a diagnosis.' } },
     { '@type': 'Question', name: 'Is LeanOn related to the song "Lean On" by Major Lazer?', acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn (one word, at leanon.app) is an Indian peer emotional support platform where you talk to verified human listeners. It has no connection to the 2015 song "Lean On" by Major Lazer and DJ Snake. The name comes from the phrase "someone to lean on" — having a person you can rely on emotionally.' } },
     { '@type': 'Question', name: 'Is LeanOn confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. All sessions are private and confidential. LeanOn never shares your personal information or conversation content with anyone.' } },
@@ -146,7 +96,6 @@ export default function Home() {
       <AuthRedirect />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewSchema) }} />
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -347,7 +296,7 @@ export default function Home() {
           <a href="/auth" className="btn-primary">Start your 5-min chat</a>
           <a href="/browse" className="btn-outline">Browse peer listeners</a>
         </div>
-        <p className="hero-note">No appointment needed · Anonymous · Affordable from ₹160</p>
+        <p className="hero-note">No appointment needed · Anonymous · Paid sessions from ₹160</p>
       </section>
 
       {/* TOPICS */}
