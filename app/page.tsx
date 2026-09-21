@@ -530,6 +530,23 @@ export default function Home() {
         </div>
       </div>
 
+
+      {/* READY-TO-TALK INTENT HUB — routes high-volume homepage traffic into seeker pages */}
+      <div className="white-section">
+        <div className="inner">
+          <div className="al">Not sure where to start?</div>
+          <h2 className="at">Start with the situation you&apos;re actually in.</h2>
+          <div className="topic-grid">
+            <a className="tc" href="/talk-to-a-real-person-online"><div className="tc-ico">🧑</div><div className="tc-body"><div className="tc-label">I want a real person</div><div className="tc-sub">Talk to a human online</div></div></a>
+            <a className="tc" href="/someone-to-talk-to-when-lonely"><div className="tc-ico">💙</div><div className="tc-body"><div className="tc-label">I feel lonely</div><div className="tc-sub">Find someone to talk to</div></div></a>
+            <a className="tc" href="/need-someone-to-talk-to-but-dont-need-therapy"><div className="tc-ico">💬</div><div className="tc-body"><div className="tc-label">I need support, not therapy</div><div className="tc-sub">Understand peer support</div></div></a>
+            <a className="tc" href="/talk-to-someone-after-relationship-fight"><div className="tc-ico">❤️</div><div className="tc-body"><div className="tc-label">I had a relationship fight</div><div className="tc-sub">Talk it through privately</div></div></a>
+            <a className="tc" href="/talk-to-human-instead-of-chatgpt"><div className="tc-ico">🤝</div><div className="tc-body"><div className="tc-label">I want a human, not AI</div><div className="tc-sub">Human conversation vs AI</div></div></a>
+            <a className="tc" href="/indian-emotional-support-abroad"><div className="tc-ico">🌍</div><div className="tc-body"><div className="tc-label">I&apos;m Indian and live abroad</div><div className="tc-sub">Diaspora peer support</div></div></a>
+          </div>
+        </div>
+      </div>
+
       {/* BREATHE — a quiet pause before the final ask */}
       <div className="breathe">
         <div className="breathe-card">
@@ -625,7 +642,7 @@ export default function Home() {
               discoverable for anyone genuinely looking, with no earnings hook
               competing against the seeker funnel above. */}
           <div className="fli" style={{marginTop:4,fontSize:12,opacity:0.75}}>
-            <a href="/become-listener">Become a listener</a>
+            
           </div>
           <p className="fcp">© 2026 LeanOn (Lean On) · leanon.app · Peer support platform · Made in India 🇮🇳</p>
         </div>
