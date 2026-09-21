@@ -1793,14 +1793,15 @@ export default function AdminPage() {
                                   </div>
                                 )}
                                 <div className="action-row">
-                                  {!isPending && !isRejected && (
-                                    l.is_suspended || !l.is_active
-                                      ? <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'unsuspend_listener')}>
-                                          {busy === `unsuspend_listener:${l.user_id}` ? '…' : 'Unsuspend'}
-                                        </button>
-                                      : <button className="btn btn-orange" disabled={busy !== null} onClick={() => userAction(l.user_id, 'suspend_listener')}>
-                                          {busy === `suspend_listener:${l.user_id}` ? '…' : 'Suspend listener'}
-                                        </button>
+                                  {!isPending && !isRejected && l.is_suspended && (
+                                    <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'unsuspend_listener')}>
+                                      {busy === `unsuspend_listener:${l.user_id}` ? '…' : 'Unsuspend'}
+                                    </button>
+                                  )}
+                                  {!isPending && !isRejected && l.is_active && !l.is_suspended && (
+                                    <button className="btn btn-orange" disabled={busy !== null} onClick={() => userAction(l.user_id, 'suspend_listener')}>
+                                      {busy === `suspend_listener:${l.user_id}` ? '…' : 'Suspend listener'}
+                                    </button>
                                   )}
                                   {/* Ban — permanent. Hidden when already suspended. Requires confirmation. */}
                                   {!isPending && !isRejected && !l.is_suspended && (confirmBanListenerId === l.user_id ? (
