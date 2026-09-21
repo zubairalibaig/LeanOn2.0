@@ -401,6 +401,23 @@ export default function Home() {
         </div>
       </div>
 
+      {/* INDIAN DIASPORA */}
+      <section className="white-section" aria-labelledby="indians-abroad">
+        <div className="inner">
+          <p className="al">For Indians abroad</p>
+          <h2 id="indians-abroad" className="at">Far from India. <span className="o">Still someone to talk to.</span></h2>
+          <div className="ab">
+            <p>Living abroad can make some conversations harder — homesickness, family expectations, marriage or relationship pressure, work stress, immigration uncertainty, or simply having a difficult day when you do not want to call home.</p>
+            <p>LeanOn gives Indians and South Asians abroad a private one-to-one conversation with a real peer listener. Start with one free 5-minute introduction, then continue with paid text or voice time only if you want to.</p>
+          </div>
+          <div className="city-row" style={{marginTop:20}}>
+            {['USA','UK','Canada','Australia','UAE','Singapore'].map(c=>(
+              <a key={c} href={c==='USA'?'/usa':c==='UK'?'/uk':c==='Canada'?'/canada':c==='Australia'?'/australia':c==='UAE'?'/uae':'/singapore'} className="city-chip">🇮🇳 Indians in {c} →</a>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* HOW IT WORKS */}
       <div className="how">
         <div className="hi">
