@@ -231,14 +231,53 @@ export default function BecomeListenerPage() {
   // it is always true by the time the form is visible.
   const [otpVerified] = useState(true)
 
+  // Shared auth guard — checks session, loads existing application state,
+  // and either shows the form or redirects. Called from both the useEffect
+  // (returning visitors who already agreed) and the landing Continue button.
+  async function runAuthGuard() {
+    try {
+      const { data: { user } } = await sb.auth.getUser()
+      if (!user || !user.phone) {
+        router.replace('/auth?mode=listener&redirect=/become-listener')
+        return
+      }
+      setPhone(user.phone.replace(/\D/g, '').slice(-10))
+
+      const [{ data: existing }, { data: app }, { data: userRow }] = await Promise.all([
+        sb.from('listener_profiles').select('id, is_approved').eq('user_id', user.id).maybeSingle(),
+        sb.from('listener_applications').select('status, admin_notes').eq('user_id', user.id).maybeSingle(),
+        sb.from('users').select('avatar_url').eq('id', user.id).maybeSingle(),
+      ])
+      const canResubmit = app?.status === 'needs_resubmission'
+      if (app?.status === 'rejected') {
+        setPermanentlyRejected(true)
+        setRejectedNotes((app.admin_notes as string | null) || null)
+        setAlreadyRegistered(true)
+      } else if (existing?.is_approved) {
+        router.replace('/dashboard')
+        return
+      } else if (existing && !canResubmit) {
+        setAlreadyRegistered(true)
+      }
+      if (canResubmit) {
+        if (app?.admin_notes) setResubmissionNotes(app.admin_notes as string)
+        if (userRow?.avatar_url) {
+          setAvatarUrl(userRow.avatar_url as string)
+          setAvatarPreview(userRow.avatar_url as string)
+        }
+      }
+      setGuardChecked(true)
+    } catch {
+      router.replace('/auth?mode=listener&redirect=/become-listener')
+      setGuardChecked(true)
+    }
+  }
+
   // Guard: check if already registered. Rejected / needs_resubmission
   // applicants must NOT be blocked — the status page sends them here to
   // resubmit, so blocking on the mere existence of a listener_profiles row
   // would make resubmission a dead end.
   useEffect(() => {
-    // New onboarding flow: show the landing/agreement page to unauthenticated
-    // visitors (or those who haven't agreed yet). Already-agreed visitors
-    // (returning from /auth redirect) skip straight to the form.
     if (SHOW_NEW_LISTENER_ONBOARDING) {
       let agreed = false
       try { agreed = sessionStorage.getItem('leanon_listener_agreed') === '1' } catch { /* private mode */ }
@@ -248,61 +287,7 @@ export default function BecomeListenerPage() {
         return
       }
     }
-
-    sb.auth.getUser().then(async ({ data: { user } }) => {
-      if (!user) {
-        // Not signed in — gate behind /auth. The phone widget there is the only
-        // working verification path.
-        router.replace('/auth?mode=listener&redirect=/become-listener')
-        return
-      }
-      // If the auth user has no verified phone (pre-widget accounts or admin-
-      // created test users), the phone field would be blank and disabled with
-      // no way to type in it — a permanent dead end. Send them to re-verify.
-      if (!user.phone) {
-        router.replace('/auth?mode=listener&redirect=/become-listener')
-        return
-      }
-      // Pre-fill the phone they logged in with. No in-form OTP needed.
-      setPhone(user.phone.replace(/\D/g, '').slice(-10))
-
-      const [{ data: existing }, { data: app }, { data: userRow }] = await Promise.all([
-        sb.from('listener_profiles').select('id, is_approved').eq('user_id', user.id).maybeSingle(),
-        sb.from('listener_applications').select('status, admin_notes').eq('user_id', user.id).maybeSingle(),
-        sb.from('users').select('avatar_url').eq('id', user.id).maybeSingle(),
-      ])
-      // Only needs_resubmission allows re-entering the form.
-      // rejected = permanently closed; they see a closed-loop screen, not the form.
-      // approved = already live; show a "you're approved" screen, not "under review".
-      const canResubmit = app?.status === 'needs_resubmission'
-      if (app?.status === 'rejected') {
-        setPermanentlyRejected(true)
-        setRejectedNotes((app.admin_notes as string | null) || null)
-        setAlreadyRegistered(true)
-      } else if (existing?.is_approved) {
-        // Already approved — redirect to dashboard instead of showing "under review"
-        router.replace('/dashboard')
-        return
-      } else if (existing && !canResubmit) {
-        setAlreadyRegistered(true)
-      }
-      // On resubmission: surface the admin's feedback and pre-populate avatar
-      // so applicants who only need to fix bank details don't have to re-photograph.
-      if (canResubmit) {
-        if (app?.admin_notes) setResubmissionNotes(app.admin_notes as string)
-        if (userRow?.avatar_url) {
-          setAvatarUrl(userRow.avatar_url as string)
-          setAvatarPreview(userRow.avatar_url as string)
-        }
-      }
-      setGuardChecked(true)
-    }).catch(() => {
-      // Auth error / network issue — send to /auth rather than showing the form
-      // with no session. (A broken session shown as a form produced the dead
-      // in-form OTP button that users saw after the DLT migration.)
-      router.replace('/auth?mode=listener&redirect=/become-listener')
-      setGuardChecked(true)
-    })
+    runAuthGuard()
   }, [])
 
   // Use raw input for the live preview — validation blocks invalid values on submit.
@@ -609,41 +594,7 @@ export default function BecomeListenerPage() {
             try { sessionStorage.setItem('leanon_listener_agreed', '1') } catch { /* private mode */ }
             setShowLanding(false)
             setGuardChecked(false)
-            // Trigger the auth guard now
-            sb.auth.getUser().then(async ({ data: { user } }) => {
-              if (!user || !user.phone) {
-                router.replace('/auth?mode=listener&redirect=/become-listener')
-                return
-              }
-              setPhone(user.phone.replace(/\D/g, '').slice(-10))
-              const [{ data: existing }, { data: app }, { data: userRow }] = await Promise.all([
-                sb.from('listener_profiles').select('id, is_approved').eq('user_id', user.id).maybeSingle(),
-                sb.from('listener_applications').select('status, admin_notes').eq('user_id', user.id).maybeSingle(),
-                sb.from('users').select('avatar_url').eq('id', user.id).maybeSingle(),
-              ])
-              const canResubmit = app?.status === 'needs_resubmission'
-              if (app?.status === 'rejected') {
-                setPermanentlyRejected(true)
-                setRejectedNotes((app.admin_notes as string | null) || null)
-                setAlreadyRegistered(true)
-              } else if (existing?.is_approved) {
-                router.replace('/dashboard')
-                return
-              } else if (existing && !canResubmit) {
-                setAlreadyRegistered(true)
-              }
-              if (canResubmit) {
-                if (app?.admin_notes) setResubmissionNotes(app.admin_notes as string)
-                if (userRow?.avatar_url) {
-                  setAvatarUrl(userRow.avatar_url as string)
-                  setAvatarPreview(userRow.avatar_url as string)
-                }
-              }
-              setGuardChecked(true)
-            }).catch(() => {
-              router.replace('/auth?mode=listener&redirect=/become-listener')
-              setGuardChecked(true)
-            })
+            runAuthGuard()
           }}
         >
           I agree — Continue to apply →
@@ -940,8 +891,8 @@ export default function BecomeListenerPage() {
               </ul>
             </div>
 
-            <button className="btn" onClick={tryNextFromStep1} disabled={avatarUploading || selfieProcessing}>
-              {(avatarUploading || selfieProcessing) ? <span className="spin">⟳</span> : 'Next: Payment details →'}
+            <button className="btn" onClick={tryNextFromStep1} disabled={avatarUploading || selfieProcessing || galleryUploading}>
+              {(avatarUploading || selfieProcessing || galleryUploading) ? <span className="spin">⟳</span> : 'Next: Payment details →'}
             </button>
           </div>
         )}

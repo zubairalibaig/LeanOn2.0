@@ -13,13 +13,25 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
 
   const admin = createAdminClient()
 
-  const { data: lp, error } = await admin
+  let { data: lp, error } = await admin
     .from('listener_profiles')
     .select('user_id, bio, specialty_tags, languages_spoken, rate_per_min, rating, total_sessions, is_available, is_approved, is_active, is_verified, is_in_session, profile_photos, users!inner(name, avatar_url)')
     .eq('user_id', id)
     .eq('is_approved', true)
     .eq('is_active', true)
     .maybeSingle()
+
+  if (error?.message?.includes('profile_photos')) {
+    // Migration 058 not applied yet — retry without the column so profile
+    // pages keep working during the deploy-before-migration window.
+    ;({ data: lp, error } = await admin
+      .from('listener_profiles')
+      .select('user_id, bio, specialty_tags, languages_spoken, rate_per_min, rating, total_sessions, is_available, is_approved, is_active, is_verified, is_in_session, users!inner(name, avatar_url)')
+      .eq('user_id', id)
+      .eq('is_approved', true)
+      .eq('is_active', true)
+      .maybeSingle())
+  }
 
   if (error) {
     return NextResponse.json({ error: 'Failed to load profile' }, { status: 500 })
