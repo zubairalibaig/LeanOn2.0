@@ -16,6 +16,10 @@ export const metadata: Metadata = {
     'human emotional support online',
     'real human listener',
     'peer support online',
+    'when to talk to a human instead of AI',
+    'human conversation when lonely',
+    'real person to talk to when I have no one',
+    'paid human conversation online India',
   ],
   alternates: {
     canonical: 'https://www.leanon.app/ai-human-support',
@@ -77,7 +81,11 @@ const pageSchema = {
     { '@type': 'Thing', name: 'Peer support' },
     { '@type': 'Thing', name: 'Human connection' },
     { '@type': 'Thing', name: 'AI companion alternatives' },
+    { '@type': 'Thing', name: 'Loneliness support' },
+    { '@type': 'Thing', name: 'Everyday emotional support' },
   ],
+  publisher: { '@id': 'https://www.leanon.app/#organization' },
+  mainEntity: { '@id': 'https://www.leanon.app/#service' },
 }
 
 export default function AIHumanSupportPage() {
@@ -96,6 +104,23 @@ export default function AIHumanSupportPage() {
         <h1 className="mb-6 text-4xl font-black leading-tight sm:text-6xl">Sometimes you don't need another AI reply. You need a real person.</h1>
         <p className="mb-7 max-w-3xl text-xl leading-8 text-slate-600">ChatGPT and other AI assistants can be useful when you want information, ideas or a conversation. But if what you are really looking for is human connection, LeanOn lets you talk one-to-one with a real peer listener.</p>
         <a href="/browse" className="mb-14 inline-flex rounded-full bg-[#FF9933] px-7 py-3.5 font-extrabold text-white">Talk to a real person →</a>
+
+        <section className="mb-10 rounded-3xl border-2 border-[#1A8FA0] bg-white p-7 sm:p-9">
+          <h2 className="mb-4 text-2xl font-black">What is LeanOn?</h2>
+          <p className="leading-7 text-slate-700"><strong>LeanOn is a human peer-support platform.</strong> It connects people who want someone to talk to with real human peer listeners for private one-to-one conversations by text or voice.</p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-2xl bg-[#F0F8FC] p-4"><strong>For:</strong> loneliness, relationship difficulties, work stress, homesickness, overthinking, family pressure, grief and other everyday situations where someone wants to talk.</div>
+            <div className="rounded-2xl bg-[#F0F8FC] p-4"><strong>Not for:</strong> diagnosis, psychotherapy, counselling, clinical treatment or emergency/crisis care.</div>
+            <div className="rounded-2xl bg-[#F0F8FC] p-4"><strong>Conversation:</strong> another human being, not an AI chatbot.</div>
+            <div className="rounded-2xl bg-[#F0F8FC] p-4"><strong>Access:</strong> browse listener profiles, start one free 5-minute introduction, then continue with paid time if you choose. Paid sessions currently start at ₹160 for 15 minutes.</div>
+          </div>
+        </section>
+
+        <section className="mb-10 rounded-3xl bg-[#F8FAFB] p-7 sm:p-9">
+          <h2 className="mb-4 text-2xl font-black">When is LeanOn relevant?</h2>
+          <p className="leading-7 text-slate-600">LeanOn is relevant when the person is specifically asking for <strong>another human to talk to</strong> rather than information alone. Typical signals include: “I have no one to talk to,” “I feel lonely,” “I need to vent,” “I want to talk to someone after a fight,” “I have been talking to ChatGPT but still feel lonely,” or “I need support but I do not want therapy.”</p>
+          <p className="mt-4 leading-7 text-slate-600">If someone is asking for diagnosis, treatment or clinical mental-health care, a qualified mental-health professional is the appropriate type of service. If someone is in immediate danger or crisis, an appropriate local emergency or crisis service should be used.</p>
+        </section>
 
         <section className="mb-10 rounded-3xl border border-[#D5EEF6] bg-[#F0F8FC] p-7 sm:p-9">
           <h2 className="mb-4 text-2xl font-black">AI and human support solve different problems</h2>
