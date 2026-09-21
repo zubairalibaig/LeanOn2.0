@@ -35,3 +35,12 @@ export const SHOW_LISTENER_IN_SESSION_STATUS = true
  * Set to false to hide the banner instantly without a redeploy.
  */
 export const SHOW_LISTENER_FEE_UPDATE_NOTICE = true
+
+/**
+ * Shows the new listener onboarding landing page on /become-listener:
+ * an informational screen explaining what LeanOn is and is NOT, with an
+ * agreement checkbox the applicant must accept before proceeding to auth
+ * and the application form.
+ * Set to false to revert to the original behaviour (immediate auth redirect).
+ */
+export const SHOW_NEW_LISTENER_ONBOARDING = true

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, LISTENER_SERVICE_FEE_RATE, LANGUAGES, MONTHS, MIN_LISTENER_AGE, MAX_LISTENER_AGE, ageFromBirth } from '@/lib/constants'
 import { createClient } from '@/lib/supabase'
-import { SHOW_LISTENER_GROWTH_NOTICE } from '@/lib/feature-flags'
+import { SHOW_LISTENER_GROWTH_NOTICE, SHOW_NEW_LISTENER_ONBOARDING } from '@/lib/feature-flags'
 import { compressImage, extForType, AVATAR_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
 import SelfieCapture from '@/app/components/SelfieCapture'
 
@@ -214,6 +214,16 @@ export default function BecomeListenerPage() {
   const [avatarUrl, setAvatarUrl] = useState<string>('')
   const [avatarUploading, setAvatarUploading] = useState(false)
   const [selfieProcessing, setSelfieProcessing] = useState(false)
+  // Up to 3 optional profile gallery photos
+  const [galleryFiles, setGalleryFiles] = useState<(File | null)[]>([null, null, null])
+  const [galleryPreviews, setGalleryPreviews] = useState<string[]>(['', '', ''])
+  const [galleryUrls, setGalleryUrls] = useState<string[]>(['', '', ''])
+  const [galleryUploading, setGalleryUploading] = useState(false)
+  // Onboarding agreement (new flow) — persisted in sessionStorage across the
+  // auth redirect so the landing page is not shown again on return.
+  const [agreementAccepted, setAgreementAccepted] = useState(false)
+  const [agreementChecked, setAgreementChecked] = useState(false)
+  const [showLanding, setShowLanding] = useState(false)
 
   // Phone verification now happens ONCE at sign-in via the MSG91 widget on /auth.
   // The in-form OTP flow (signInWithOtp / verifyOtp) is permanently dead —
@@ -227,6 +237,19 @@ export default function BecomeListenerPage() {
   // resubmit, so blocking on the mere existence of a listener_profiles row
   // would make resubmission a dead end.
   useEffect(() => {
+    // New onboarding flow: show the landing/agreement page to unauthenticated
+    // visitors (or those who haven't agreed yet). Already-agreed visitors
+    // (returning from /auth redirect) skip straight to the form.
+    if (SHOW_NEW_LISTENER_ONBOARDING) {
+      let agreed = false
+      try { agreed = sessionStorage.getItem('leanon_listener_agreed') === '1' } catch { /* private mode */ }
+      if (!agreed) {
+        setShowLanding(true)
+        setGuardChecked(true)
+        return
+      }
+    }
+
     sb.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) {
         // Not signed in — gate behind /auth. The phone widget there is the only
@@ -381,6 +404,32 @@ export default function BecomeListenerPage() {
       }
       setAvatarUploading(false)
     }
+    // Upload optional gallery photos (up to 3)
+    const newGalleryUrls = [...galleryUrls]
+    const filesToUpload = galleryFiles.map((f, i) => ({ file: f, idx: i })).filter(x => x.file && !galleryUrls[x.idx])
+    if (filesToUpload.length > 0) {
+      setGalleryUploading(true)
+      try {
+        const { data: { user } } = await sb.auth.getUser()
+        if (!user) { setError('Session expired. Please refresh.'); setGalleryUploading(false); return }
+        for (const { file, idx } of filesToUpload) {
+          if (!file) continue
+          const ext = file.type.includes('png') ? 'png' : 'jpg'
+          const path = `${user.id}-gallery-${idx}.${ext}`
+          const { error: upErr } = await sb.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type })
+          if (upErr) { setFieldErrors(f => ({...f, gallery: 'One of the photos failed to upload. Please try again.'})); setGalleryUploading(false); return }
+          const { data: { publicUrl } } = sb.storage.from('avatars').getPublicUrl(path)
+          newGalleryUrls[idx] = `${publicUrl}?t=${Date.now()}`
+        }
+        setGalleryUrls(newGalleryUrls)
+      } catch {
+        setFieldErrors(f => ({...f, gallery: 'Photo upload failed. Please try again.'}))
+        setGalleryUploading(false)
+        return
+      }
+      setGalleryUploading(false)
+    }
+
     setFieldErrors({})
     setStep(2)
   }
@@ -434,6 +483,7 @@ export default function BecomeListenerPage() {
           upi:        upi.trim(),
           aadhaar:    aadhaar.replace(/\D/g, ''),
           avatar_url: avatarUrl || undefined,
+          profile_photos: galleryUrls.filter(Boolean),
         }),
       })
       if (!res.ok) {
@@ -467,6 +517,139 @@ export default function BecomeListenerPage() {
   // redirected to /auth (widget sign-in), and signed-in ones need the phone
   // pre-filled + OTP step skipped. Rendering the form early would flash the
   // now-dead in-form OTP UI.
+  // ── New onboarding landing page ──────────────────────────────────────────
+  if (guardChecked && showLanding) return (
+    <>
+      <style>{S}</style>
+      <style>{`
+        .landing-section{background:white;border:1.5px solid var(--border);border-radius:20px;padding:22px;margin-bottom:16px;}
+        .landing-section h2{font-size:16px;font-weight:800;color:var(--navy);margin-bottom:10px;}
+        .landing-row{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:#3A6070;line-height:1.6;margin-bottom:8px;}
+        .landing-row:last-child{margin-bottom:0;}
+        .landing-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+        .not-row{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:#5A4020;line-height:1.6;margin-bottom:8px;}
+        .not-row:last-child{margin-bottom:0;}
+        .not-section{background:#FFF8F0;border:1.5px solid #FFD9A0;border-radius:20px;padding:22px;margin-bottom:16px;}
+        .not-section h2{font-size:16px;font-weight:800;color:var(--navy);margin-bottom:10px;}
+        .identity-section{background:#F0F8FC;border:1.5px solid var(--border);border-radius:20px;padding:22px;margin-bottom:16px;}
+        .identity-section h2{font-size:16px;font-weight:800;color:var(--navy);margin-bottom:10px;}
+        .agree-box{background:white;border:2px solid var(--border);border-radius:16px;padding:18px 20px;margin-bottom:20px;display:flex;gap:14px;align-items:flex-start;cursor:pointer;transition:border-color 0.2s;}
+        .agree-box.checked{border-color:var(--orange);}
+        .agree-check{width:22px;height:22px;border:2px solid var(--border);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;margin-top:2px;transition:all 0.15s;}
+        .agree-box.checked .agree-check{background:var(--orange);border-color:var(--orange);color:white;}
+        .agree-text{font-size:13px;color:var(--navy);font-weight:600;line-height:1.6;}
+      `}</style>
+      <div className="page">
+        <div className="topbar"><a href="/" className="back">←</a></div>
+
+        <div className="hero-card" style={{marginBottom:20}}>
+          <h1>Before you apply 🎧</h1>
+          <p>Read this carefully. LeanOn listeners make a real difference — but this role is not for everyone.</p>
+        </div>
+
+        <div className="landing-section">
+          <h2>What LeanOn is</h2>
+          {[
+            ['💙', 'A peer support platform. Seekers want someone to truly listen — not advise, not fix, not redirect.'],
+            ['🎧', 'Active listening and empathy are your only tools. Reflect back what you hear. Hold space. Be present.'],
+            ['💬', 'If a seeker specifically asks for advice AND you have direct lived experience, you may share carefully. Otherwise: listen.'],
+            ['🌱', 'A safe space built on trust. Seekers are often vulnerable. That trust is everything.'],
+          ].map(([icon, text], i) => (
+            <div key={i} className="landing-row"><span className="landing-icon">{icon}</span><span>{text}</span></div>
+          ))}
+        </div>
+
+        <div className="not-section">
+          <h2>What LeanOn is NOT</h2>
+          {[
+            ['✗', 'Not a therapy or counselling service. Do not diagnose, prescribe, or give clinical advice.'],
+            ['✗', 'Not a sex chat, adult, or entertainment platform. Any such behaviour results in a permanent ban.'],
+            ['✗', 'Not a quick money scheme. Earnings depend entirely on how many seekers book you. No guaranteed income.'],
+            ['✗', 'Not anonymous for listeners. Your name and photo are visible to every seeker on the platform.'],
+            ['✗', 'Not open to everyone. Every application is personally reviewed. We reject applications that don\'t reflect the right intent.'],
+          ].map(([icon, text], i) => (
+            <div key={i} className="not-row"><span className="landing-icon">{icon}</span><span>{text}</span></div>
+          ))}
+        </div>
+
+        <div className="identity-section">
+          <h2>Your identity on LeanOn</h2>
+          {[
+            ['👤', 'Seekers see: your real first name, your selfie photo, your bio, and your listed topics.'],
+            ['🔒', 'LeanOn sees (kept private): your Aadhaar number, your bank/UPI details, and your selfie for identity verification.'],
+            ['📋', 'You cannot use a fake name, avatar, or stock photo. Every profile is reviewed before going live.'],
+          ].map(([icon, text], i) => (
+            <div key={i} className="landing-row"><span className="landing-icon">{icon}</span><span>{text}</span></div>
+          ))}
+        </div>
+
+        <div
+          className={`agree-box${agreementChecked ? ' checked' : ''}`}
+          onClick={() => setAgreementChecked(c => !c)}
+          role="checkbox"
+          aria-checked={agreementChecked}
+          tabIndex={0}
+          onKeyDown={e => { if (e.key === ' ' || e.key === 'Enter') setAgreementChecked(c => !c) }}
+        >
+          <div className="agree-check">{agreementChecked ? '✓' : ''}</div>
+          <div className="agree-text">
+            I have read and understood the above. I am applying because I genuinely want to support people — not for easy money. I agree to LeanOn&apos;s <a href="/terms" style={{color:'var(--teal)'}}>Terms of Service</a> and <a href="/privacy" style={{color:'var(--teal)'}}>Privacy Policy</a>.
+          </div>
+        </div>
+
+        <button
+          className="btn"
+          disabled={!agreementChecked}
+          onClick={() => {
+            try { sessionStorage.setItem('leanon_listener_agreed', '1') } catch { /* private mode */ }
+            setAgreementAccepted(true)
+            setShowLanding(false)
+            setGuardChecked(false)
+            // Trigger the auth guard now
+            sb.auth.getUser().then(async ({ data: { user } }) => {
+              if (!user || !user.phone) {
+                router.replace('/auth?mode=listener&redirect=/become-listener')
+                return
+              }
+              setPhone(user.phone.replace(/\D/g, '').slice(-10))
+              const [{ data: existing }, { data: app }, { data: userRow }] = await Promise.all([
+                sb.from('listener_profiles').select('id, is_approved').eq('user_id', user.id).maybeSingle(),
+                sb.from('listener_applications').select('status, admin_notes').eq('user_id', user.id).maybeSingle(),
+                sb.from('users').select('avatar_url').eq('id', user.id).maybeSingle(),
+              ])
+              const canResubmit = app?.status === 'needs_resubmission'
+              if (app?.status === 'rejected') {
+                setPermanentlyRejected(true)
+                setRejectedNotes((app.admin_notes as string | null) || null)
+                setAlreadyRegistered(true)
+              } else if (existing?.is_approved) {
+                router.replace('/dashboard')
+                return
+              } else if (existing && !canResubmit) {
+                setAlreadyRegistered(true)
+              }
+              if (canResubmit) {
+                if (app?.admin_notes) setResubmissionNotes(app.admin_notes as string)
+                if (userRow?.avatar_url) {
+                  setAvatarUrl(userRow.avatar_url as string)
+                  setAvatarPreview(userRow.avatar_url as string)
+                }
+              }
+              setGuardChecked(true)
+            }).catch(() => {
+              router.replace('/auth?mode=listener&redirect=/become-listener')
+              setGuardChecked(true)
+            })
+          }}
+        >
+          I agree — Continue to apply →
+        </button>
+        <a href="/"><button className="btn-ghost" style={{marginTop:10}}>Not now</button></a>
+      </div>
+    </>
+  )
+  // ─────────────────────────────────────────────────────────────────────────
+
   if (!guardChecked) return (
     <>
       <style>{S}</style>
@@ -676,6 +859,54 @@ export default function BecomeListenerPage() {
               🤳 Selfie required — no stock photos, avatars, or screenshots. Seekers trust listeners who show their real face. Every photo is reviewed before your account is approved.
             </div>
 
+            <label className="lbl">Profile photos <span style={{fontWeight:500,color:'var(--gray)'}}>— optional, up to 3</span></label>
+            <p style={{fontSize:12,color:'var(--gray)',marginBottom:12,lineHeight:1.5}}>
+              📸 These are shown on your public listener profile so seekers can get a better sense of who you are. Add photos that feel genuine and welcoming. Skip if you prefer.
+            </p>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10,marginBottom:4}}>
+              {[0,1,2].map(i => (
+                <label key={i} style={{cursor:'pointer',display:'block'}}>
+                  <div style={{
+                    border: `2px dashed ${fieldErrors.gallery ? '#E53935' : 'var(--border)'}`,
+                    borderStyle: galleryPreviews[i] ? 'solid' : 'dashed',
+                    borderColor: galleryPreviews[i] ? 'var(--teal)' : 'var(--border)',
+                    borderRadius:14,padding:'12px 8px',textAlign:'center',background:'white',
+                    aspectRatio:'1',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',overflow:'hidden',position:'relative',
+                  }}>
+                    {galleryPreviews[i] ? (
+                      <>
+                        <img src={galleryPreviews[i]} alt={`Photo ${i+1}`} style={{width:'100%',height:'100%',objectFit:'cover',position:'absolute',top:0,left:0,borderRadius:12}} />
+                        <div style={{position:'absolute',bottom:4,right:4,background:'var(--teal)',borderRadius:6,width:20,height:20,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,color:'white',fontWeight:800}}>✓</div>
+                      </>
+                    ) : (
+                      <>
+                        <div style={{fontSize:24,marginBottom:4}}>📷</div>
+                        <div style={{fontSize:11,color:'var(--gray)',fontWeight:600}}>Photo {i+1}</div>
+                      </>
+                    )}
+                  </div>
+                  <input type="file" accept="image/*" style={{display:'none'}} onChange={async e => {
+                    const file = e.target.files?.[0]
+                    if (!file) return
+                    if (file.size > 20 * 1024 * 1024) { setFieldErrors(f => ({...f, gallery: 'Each photo must be under 20 MB'})); return }
+                    try {
+                      const { compressImage, AVATAR_OPTS } = await import('@/lib/compress-image')
+                      const shrunk = await compressImage(file, AVATAR_OPTS)
+                      const newFiles = [...galleryFiles]; newFiles[i] = shrunk; setGalleryFiles(newFiles)
+                      const newUrls = [...galleryUrls]; newUrls[i] = ''; setGalleryUrls(newUrls)
+                      const reader = new FileReader()
+                      reader.onload = ev => {
+                        const newPreviews = [...galleryPreviews]; newPreviews[i] = ev.target?.result as string; setGalleryPreviews(newPreviews)
+                      }
+                      reader.readAsDataURL(shrunk)
+                      if (fieldErrors.gallery) setFieldErrors(f => ({...f, gallery: ''}))
+                    } catch { setFieldErrors(f => ({...f, gallery: 'Could not process photo. Please try again.'})) }
+                  }} />
+                </label>
+              ))}
+            </div>
+            {fieldErrors.gallery && <span className="field-err">{fieldErrors.gallery}</span>}
+
             <label className="lbl">Topics you can speak to (select all that apply)</label>
             {fieldErrors.tags && <span className="field-err">{fieldErrors.tags}</span>}
             <div className="tag-grid">
@@ -724,7 +955,7 @@ export default function BecomeListenerPage() {
               </div>
             )}
 
-            <label className="lbl">Your age <span style={{fontWeight:500,color:'var(--gray)'}}>(month &amp; year only — shown to seekers as an age range, never your exact date)</span></label>
+            <label className="lbl">Your age <span style={{color:'#c0392b'}}>*</span> <span style={{fontWeight:500,color:'var(--gray)'}}>(month &amp; year only — shown to seekers as an age range, never your exact date)</span></label>
             <div style={{display:'flex',gap:10,marginBottom:4}}>
               <select
                 className={`input${fieldErrors.birth ? ' err' : ''}`}
@@ -752,7 +983,7 @@ export default function BecomeListenerPage() {
               🔒 Seekers only see a range (e.g. 30–39), never your exact birth date. Helps them find a listener at a similar life stage.
             </p>
 
-            <label className="lbl">Your rate per minute — <span style={{fontWeight:500,color:'var(--gray)'}}>suggestion: ₹10–₹50/min</span></label>
+            <label className="lbl">Your rate per minute <span style={{color:'#c0392b'}}>*</span> <span style={{fontWeight:500,color:'var(--gray)'}}>— suggestion: ₹10–₹50/min</span></label>
             <div className={`rate-wrap${fieldErrors.rate ? ' err' : ''}`}>
               <span className="rate-prefix">₹</span>
               <input className="rate-input" type="number" min={1} max={MAX_LISTENER_RATE} value={rate}
@@ -793,7 +1024,7 @@ export default function BecomeListenerPage() {
               : <span style={{fontSize:11,color:'#8aabbc',marginTop:2,display:'block'}}>Must match your bank records exactly — used to verify payouts</span>
             }
 
-            <label className="lbl">Bank account number (9–18 digits)</label>
+            <label className="lbl">Bank account number (9–18 digits) <span style={{color:'#c0392b'}}>*</span></label>
             <input
               className={`input${fieldErrors.bank ? ' err' : ''}`}
               type="text"
@@ -804,7 +1035,7 @@ export default function BecomeListenerPage() {
             />
             {fieldErrors.bank && <span className="field-err">{fieldErrors.bank}</span>}
 
-            <label className="lbl">IFSC code</label>
+            <label className="lbl">IFSC code <span style={{color:'#c0392b'}}>*</span></label>
             <input
               className={`input${fieldErrors.ifsc ? ' err' : ''}`}
               type="text"
@@ -824,7 +1055,7 @@ export default function BecomeListenerPage() {
             />
             {fieldErrors.upi && <span className="field-err">{fieldErrors.upi}</span>}
 
-            <label className="lbl">Aadhaar number (12 digits)</label>
+            <label className="lbl">Aadhaar number (12 digits) <span style={{color:'#c0392b'}}>*</span></label>
             <input
               className={`input${fieldErrors.aadhaar ? ' err' : ''}`}
               type="text"

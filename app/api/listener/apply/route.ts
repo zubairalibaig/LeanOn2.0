@@ -55,6 +55,12 @@ export async function POST(req: NextRequest) {
     }
     const birthYear  = posIntOrNull(body?.birthYear)
     const birthMonth = posIntOrNull(body?.birthMonth)
+    const supabaseStoragePrefix = `${supabaseUrl}/storage/v1/object/public/avatars/${user.id}`
+    const rawProfilePhotos = Array.isArray(body?.profile_photos) ? body.profile_photos : []
+    const profilePhotos: string[] = rawProfilePhotos
+      .filter((u: unknown) => typeof u === 'string' && (u as string).split('?')[0].startsWith(supabaseStoragePrefix))
+      .slice(0, 3)
+
     const tags  = Array.isArray(body?.tags)  ? body.tags.filter((t: unknown) => typeof t === 'string').slice(0, 10)  : []
     const langIds = new Set(LANGUAGES.map(l => l.id as string))
     const langs = Array.isArray(body?.langs)
@@ -120,6 +126,7 @@ export async function POST(req: NextRequest) {
       languages_spoken: langs.length > 0 ? langs : ['english'],
       rate_per_min:     Math.round(rate),
       is_available:     false,
+      profile_photos:   profilePhotos.length > 0 ? profilePhotos : [],
     }
     // birth_year / birth_month added by migration 049. Only set when supplied,
     // and never wipe an existing value on a resubmission that omits it.

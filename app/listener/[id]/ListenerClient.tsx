@@ -21,6 +21,7 @@ type ListenerProfile = {
   specialty_tags: string[]
   languages_spoken: string[]
   avatar_url?: string
+  profile_photos?: string[]
 }
 
 type Review = {
@@ -317,6 +318,15 @@ export default function ListenerClient({ id }: { id: string }) {
             })}
           </div>
           <p className="bio">{listener.bio}</p>
+          {(listener.profile_photos ?? []).filter(Boolean).length > 0 && (
+            <div style={{display:'grid',gridTemplateColumns:`repeat(${Math.min((listener.profile_photos!).filter(Boolean).length, 3)},1fr)`,gap:8,marginTop:12}}>
+              {(listener.profile_photos!).filter(Boolean).map((url, i) => (
+                <div key={i} style={{borderRadius:12,overflow:'hidden',aspectRatio:'1',background:'#f0f8fc'}}>
+                  <img src={url} alt="" style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}} loading="lazy" />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {reviews.length > 0 && (
