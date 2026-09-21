@@ -1769,6 +1769,29 @@ export default function AdminPage() {
                                     )}
                                   </div>
                                 )}
+                                {/* Send inactive (non-pending, non-rejected) listeners back to "Needs Fix" */}
+                                {!isPending && !isRejected && !l.is_active && !l.is_suspended && (
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 4 }}>
+                                    <div style={{ display: 'flex', gap: 4, alignItems: 'center', flexWrap: 'wrap' }}>
+                                      <input
+                                        className="reject-input"
+                                        style={{ width: 160, marginBottom: 0 }}
+                                        placeholder="e.g. blurry selfie, fix bank…"
+                                        value={rejectNotesListeners[l.user_id] || ''}
+                                        onChange={e => setRejectNotesListeners(prev => ({ ...prev, [l.user_id]: e.target.value }))}
+                                      />
+                                      <button
+                                        className="btn btn-orange"
+                                        style={{ fontSize: 11 }}
+                                        disabled={busy !== null || !rejectNotesListeners[l.user_id]?.trim()}
+                                        title="Move to Needs Fix so they can resubmit"
+                                        onClick={() => userAction(l.user_id, 'request_resubmission', rejectNotesListeners[l.user_id])}
+                                      >
+                                        {busy === `request_resubmission:${l.user_id}` ? '…' : 'Send to Needs Fix'}
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
                                 <div className="action-row">
                                   {!isPending && !isRejected && (
                                     l.is_suspended || !l.is_active
