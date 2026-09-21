@@ -64,6 +64,7 @@ export async function GET(req: NextRequest) {
     // Build the list query. Factored so we can retry with a smaller select if
     // the birth_* columns aren't present yet (migration 049 not applied) — this
     // keeps browse alive during the deploy-before-migration window.
+    let hasPendingAvatarCol = true
     const buildQuery = (selectStr: string) => {
       let q = sb
         .from('listener_profiles')
@@ -71,7 +72,8 @@ export async function GET(req: NextRequest) {
         .eq('is_approved', true)
         .or('is_active.eq.true,is_active.is.null')
         .eq('is_suspended', false)
-        .not('users.phone', 'is', null)
+      if (hasPendingAvatarCol) q = q.is('pending_avatar_url', null)
+      q = q.not('users.phone', 'is', null)
         .order('is_available', { ascending: false })
         // Recency of being online decides WHICH rows survive the limit(50) among
         // offline listeners, so a dormant-but-high-rated profile can no longer
@@ -106,6 +108,21 @@ export async function GET(req: NextRequest) {
       ;({ data, error } = await buildQuery(SELECT_WITH_AGE.replace(', is_in_session', '')))
       if (error && (error.message?.includes('birth_year') || error.message?.includes('birth_month'))) {
         ;({ data, error } = await buildQuery(SELECT_BASE))
+      }
+    }
+
+    // If pending_avatar_url column not present yet, retry entire chain without it
+    if (error && error.message?.includes('pending_avatar_url')) {
+      hasPendingAvatarCol = false
+      ;({ data, error } = await buildQuery(SELECT_WITH_AGE))
+      if (error && (error.message?.includes('birth_year') || error.message?.includes('birth_month'))) {
+        ;({ data, error } = await buildQuery(SELECT_WITH_IN_SESSION))
+      }
+      if (error && error.message?.includes('is_in_session')) {
+        ;({ data, error } = await buildQuery(SELECT_WITH_AGE.replace(', is_in_session', '')))
+        if (error && (error.message?.includes('birth_year') || error.message?.includes('birth_month'))) {
+          ;({ data, error } = await buildQuery(SELECT_BASE))
+        }
       }
     }
 

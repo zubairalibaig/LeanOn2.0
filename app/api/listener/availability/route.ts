@@ -30,7 +30,7 @@ export async function PATCH(req: NextRequest) {
     const sb = createAdminClient()
     const { data: lp } = await sb
       .from('listener_profiles')
-      .select('is_available, is_approved, is_active, is_suspended')
+      .select('is_available, is_approved, is_active, is_suspended, pending_avatar_url')
       .eq('user_id', user.id)
       .single()
 
@@ -38,6 +38,7 @@ export async function PATCH(req: NextRequest) {
     if (!lp.is_approved) return NextResponse.json({ error: 'Your application is still under review' }, { status: 403 })
     if (lp.is_suspended) return NextResponse.json({ error: 'Your listener account is suspended' }, { status: 403 })
     if (lp.is_active === false) return NextResponse.json({ error: 'Your listener profile is deactivated' }, { status: 403 })
+    if ((lp as Record<string, unknown>).pending_avatar_url) return NextResponse.json({ error: 'Your new profile photo is under review. You can go online once it is approved.' }, { status: 403 })
 
     // Explicit intent from the client; fall back to a flip only if none was sent.
     const goingOnline = desired !== null ? desired : !lp.is_available
