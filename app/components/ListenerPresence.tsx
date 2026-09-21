@@ -166,7 +166,7 @@ export default function ListenerPresence() {
       .subscribe()
 
     check()
-    const iv = setInterval(check, 20_000)
+    const iv = setInterval(check, 30_000)
     const onVis = () => { if (document.visibilityState === 'visible') check() }
     document.addEventListener('visibilitychange', onVis)
 
@@ -224,7 +224,7 @@ export default function ListenerPresence() {
     }
 
     ping() // immediate — covers "just reopened the app" without waiting up to 60s
-    const iv = setInterval(ping, 60_000)
+    const iv = setInterval(ping, 90_000)
 
     // Mobile browsers throttle timers while backgrounded — an immediate ping
     // on foregrounding avoids waiting for the next 60s tick to notice.

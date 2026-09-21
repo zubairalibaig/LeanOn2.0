@@ -435,7 +435,7 @@ function BrowseContent() {
     // background bought nothing at all.
     const iv = setInterval(() => {
       if (document.visibilityState === 'visible') refresh()
-    }, 60_000)
+    }, 120_000)
 
     // BroadcastChannel — receives immediate notification when another tab on the
     // same origin (e.g. /dashboard) toggles availability. Without this, the browse
