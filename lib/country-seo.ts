@@ -98,7 +98,7 @@ export const COUNTRY_SEO: CountrySeoData[] = [
       { q: 'Can I talk about homesickness?', a: 'Yes. Homesickness, family distance, cultural adjustment and relationships are common reasons someone may want a peer conversation.' },
       { q: 'What if I only want someone to listen?', a: 'That is exactly what peer support is designed for. You can tell the listener at the start that you want to be heard rather than given advice.' },
     ],
-    searchTerms: ['Indian peer support Australia', 'Indian emotional support Australia', 'Indian someone to talk to Australia', 'South Asian peer support Australia', 'Indian loneliness Australia'],
+    searchTerms: ["Indian peer support Australia","Indian emotional support Australia","Indian someone to talk to Australia","paid peer support Indians Australia","online emotional support Indians Australia","Indian homesickness Australia"],
   },
   {
     slug: 'uae', country: 'United Arab Emirates', regionCode: 'AE', audience: 'Indian and South Asian people living in the UAE',
@@ -114,7 +114,7 @@ export const COUNTRY_SEO: CountrySeoData[] = [
       { q: 'What can I talk about?', a: 'Work pressure, relationships, homesickness, family expectations, loneliness, cultural adjustment and ordinary life problems are all valid peer-support topics.' },
       { q: 'Can I use text instead of voice?', a: 'Yes. Text is useful when you want a quieter, more private conversation. Voice is available when you prefer speaking.' },
     ],
-    searchTerms: ['Indian peer support UAE', 'Indian emotional support Dubai', 'Indian someone to talk to UAE', 'South Asian peer support Dubai', 'Indian loneliness UAE'],
+    searchTerms: ["Indian peer support UAE","Indian emotional support UAE","Indian someone to talk to UAE","paid peer support Indians UAE","online emotional support Indians UAE","Indian expat loneliness UAE"],
   },
   {
     slug: 'singapore', country: 'Singapore', regionCode: 'SG', audience: 'Indian and South Asian people living in Singapore',
@@ -130,7 +130,7 @@ export const COUNTRY_SEO: CountrySeoData[] = [
       { q: 'Can I talk about work stress?', a: 'Yes. Work and career pressure are appropriate topics for a peer-support conversation, as are relationships, homesickness and loneliness.' },
       { q: 'Is this a professional mental health service?', a: 'No. LeanOn is peer support. It does not provide therapy, diagnosis or clinical treatment.' },
     ],
-    searchTerms: ['Indian peer support Singapore', 'Indian emotional support Singapore', 'Indian someone to talk to Singapore', 'South Asian peer support Singapore', 'Indian loneliness Singapore'],
+    searchTerms: ["Indian peer support Singapore","Indian emotional support Singapore","Indian someone to talk to Singapore","paid peer support Indians Singapore","online emotional support Indians Singapore","Indian expat loneliness Singapore"],
   },
   {
     slug: 'malaysia', country: 'Malaysia', regionCode: 'MY', audience: 'Indian and South Asian people living in Malaysia',
@@ -146,7 +146,7 @@ export const COUNTRY_SEO: CountrySeoData[] = [
       { q: 'What is a peer listener?', a: 'A peer listener is a real person who offers human support informed by lived experience. They are not a therapist or medical professional.' },
       { q: 'Can I try before paying?', a: 'Yes. New seekers receive one free 5-minute introductory session to help them decide whether the listener feels like a good fit.' },
     ],
-    searchTerms: ['Indian peer support Malaysia', 'Indian emotional support Malaysia', 'Indian someone to talk to Malaysia', 'South Asian peer support Malaysia', 'Indian loneliness Malaysia'],
+    searchTerms: ["Indian peer support Malaysia","Indian emotional support Malaysia","Indian someone to talk to Malaysia","paid peer support Indians Malaysia","online emotional support Indians Malaysia","Indian expat loneliness Malaysia"],
   },
   {
     slug: 'kuwait', country: 'Kuwait', regionCode: 'KW', audience: 'Indian and South Asian people living in Kuwait',
@@ -162,7 +162,7 @@ export const COUNTRY_SEO: CountrySeoData[] = [
       { q: 'Can I talk about work pressure?', a: 'Yes. Work, relocation, relationships, family and loneliness are all suitable topics for a peer-support conversation.' },
       { q: 'Is LeanOn a counselling service?', a: 'No. LeanOn is peer support and human connection, not counselling, therapy or clinical treatment.' },
     ],
-    searchTerms: ['Indian peer support Kuwait', 'Indian emotional support Kuwait', 'Indian someone to talk to Kuwait', 'South Asian peer support Kuwait', 'Indian loneliness Kuwait'],
+    searchTerms: ["Indian peer support Kuwait","Indian emotional support Kuwait","Indian someone to talk to Kuwait","paid peer support Indians Kuwait","online emotional support Indians Kuwait","Indian expat loneliness Kuwait"],
   },
   {
     slug: 'oman', country: 'Oman', regionCode: 'OM', audience: 'Indian and South Asian people living in Oman',
@@ -178,7 +178,7 @@ export const COUNTRY_SEO: CountrySeoData[] = [
       { q: 'Can I talk about homesickness and family back in India?', a: 'Yes. Homesickness, family distance, relationships, work pressure and cultural adjustment are appropriate peer-support topics.' },
       { q: 'Is LeanOn therapy?', a: 'No. LeanOn provides peer support and human connection, not therapy, counselling, diagnosis or clinical treatment.' },
     ],
-    searchTerms: ['Indian peer support Oman', 'Indian emotional support Oman', 'Indian someone to talk to Oman', 'South Asian peer support Oman', 'Indian loneliness Oman'],
+    searchTerms: ["Indian peer support Oman","Indian emotional support Oman","Indian someone to talk to Oman","paid peer support Indians Oman","online emotional support Indians Oman","Indian expat loneliness Oman"],
   },
 ]
 
