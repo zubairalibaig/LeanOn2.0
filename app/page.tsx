@@ -1,34 +1,28 @@
 import type { Metadata } from 'next'
 export const metadata: Metadata = {
-  title: 'LeanOn — Peer Emotional Support India | Talk to Someone Now',
-  description: 'Had a fight. Need to vent. Going through something. Talk to a real peer listener — anonymous, no appointment. Indians in India, USA, UK, Canada & beyond. Not AI. Not a bot. A real person.',
+  title: 'LeanOn — Talk to a Real Person Online | Peer Support India & NRI Support',
+  description: 'Need someone to talk to? LeanOn connects Indians in India and Indians abroad with real people for private one-to-one peer support by text or voice. Start with a free 5-minute introduction.',
   alternates: { canonical: 'https://www.leanon.app', languages: { 'en-IN': 'https://www.leanon.app', 'en-US': 'https://www.leanon.app', 'en-GB': 'https://www.leanon.app' } },
   keywords: [
-    'leanon', 'lean on', 'LeanOn', 'lean on app', 'leanon app India',
-    'someone to lean on', 'peer support India', 'mental health India',
-    'talk to someone India', 'emotional support India',
-    'anonymous emotional support India', 'peer listener app India',
-    'emotional support chat India',
-    'anxiety help India', 'loneliness app India', 'burnout support', 'grief support India',
-    'someone to talk to', 'mental health chat', 'online emotional support',
-    'online listener India', 'peer support India',
-    'empathy', 'empathetic listener', 'empathy app India', 'peer counselling India',
-    'compassionate listener India', 'active listening India',
-    'affordable online counselling India', 'cheaper than therapy India',
-    'book a listening session India', 'online emotional support session India',
+    'leanon', 'lean on', 'LeanOn', 'lean on app',
+    'someone to talk to', 'talk to someone online', 'talk to a real person online',
+    'real person to talk to India', 'someone to talk to India',
+    'peer support India', 'peer emotional support India', 'paid peer support India',
+    'emotional support India', 'online emotional support India',
+    'anonymous emotional support India', 'private emotional support India',
     'talk to someone right now', 'no one to talk to', 'someone to listen to me',
-    'need to vent about relationship India', 'talk after a fight India',
-    'relationship fight support India', 'online counselling cost India',
-    'chat with real person online India', 'talk to real human not AI',
-    'AI chatbot alternative India', 'human listener not bot',
+    'need to vent India', 'relationship support India', 'work stress support India',
+    'loneliness support India', 'grief support India', 'family pressure support India',
+    'AI chatbot alternative India', 'talk to real human not AI',
     'tired of talking to AI', 'ChatGPT alternative India',
-    'venting online India', 'need to vent India',
-    'talk to someone online paid', 'paid peer support India', 'affordable peer support India',
-    'human support online India', 'pay to talk to someone', 'talk to a real person online',
-    'earn money by listening online India', 'paid listener job India',
-    'NRI emotional support', 'Indian diaspora support', 'Indians abroad support',
-    'NRI peer support USA', 'NRI peer support UK', 'Indian expat loneliness',
+    'paid support online India', 'affordable peer support India',
+    '15 minute peer support India', 'online peer support cost India',
+    'NRI emotional support', 'Indian diaspora emotional support',
+    'Indian NRI someone to talk to', 'Indian expat loneliness',
     'peer support for Indians abroad', 'talk to Indian listener online',
+    'Indian emotional support USA', 'Indian emotional support UK',
+    'Indian emotional support Canada', 'Indian emotional support Australia',
+    'Indian emotional support UAE', 'Indian homesickness support',
   ],
 }
 
@@ -44,12 +38,12 @@ const faqSchema = {
     { '@type': 'Question', name: 'How is LeanOn different from therapy?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are real people with lived experience, not licensed therapists. They offer empathy and peer support, not clinical diagnosis or treatment. LeanOn is ideal when you need someone to lean on — not a diagnosis.' } },
     { '@type': 'Question', name: 'Is LeanOn related to the song "Lean On" by Major Lazer?', acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn (one word, at leanon.app) is an Indian peer emotional support platform where you talk to verified human listeners. It has no connection to the 2015 song "Lean On" by Major Lazer and DJ Snake. The name comes from the phrase "someone to lean on" — having a person you can rely on emotionally.' } },
     { '@type': 'Question', name: 'Is LeanOn confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. All sessions are private and confidential. LeanOn never shares your personal information or conversation content with anyone.' } },
-    { '@type': 'Question', name: 'How do I become a listener on LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'Apply at leanon.app/become-listener. Share your lived experience and complete a brief verification. Listeners are approved before they can take sessions.' } },
+    { '@type': 'Question', name: 'How do I start a paid LeanOn session?', acceptedAnswer: { '@type': 'Answer', text: 'Browse listener profiles, choose someone who feels relevant, and start with the free 5-minute introduction. If you want to continue, the paid session price is shown before you start.' } },
     { '@type': 'Question', name: 'Which cities does LeanOn serve?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is available across all of India — Bengaluru, Mumbai, Delhi, Chennai, Hyderabad, Pune, Kolkata, Jaipur, Ahmedabad, and everywhere else. It is fully online — accessible from anywhere.' } },
     { '@type': 'Question', name: 'What topics can I talk about on LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'Listeners on LeanOn specialise in loneliness, work stress, career confusion, relationships, grief and loss, student pressure, startup journey, breakups, anxiety, and more. If you just need someone to lean on with no specific topic, that\'s fine too.' } },
     { '@type': 'Question', name: 'Is LeanOn an AI or are the listeners real people?', acceptedAnswer: { '@type': 'Answer', text: 'Every listener on LeanOn is a real, verified human being — no bots, no AI-generated responses, no scripts. Listeners apply to join, go through background verification, and complete active listening training before their first session. When you talk to someone on LeanOn, there is a real person on the other side of the conversation.' } },
     { '@type': 'Question', name: 'Can ChatGPT or AI chatbots replace talking to a real person?', acceptedAnswer: { '@type': 'Answer', text: 'AI chatbots can provide information and be a starting point, but they have a fundamental limitation: they have never felt lonely, heartbroken, or anxious. Their responses are predictions, not empathy. A LeanOn peer listener has personally lived through what you are facing — their support comes from genuine shared experience, not pattern-matching. For real emotional relief, that difference is everything.' } },
-    { '@type': 'Question', name: 'Can I earn money as a peer listener on LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. If you have lived experience with loneliness, burnout, anxiety, grief, relationships, or similar challenges, you can apply to become a listener and earn ₹300–₹800 per hour helping others through what you have already overcome. You set your own rate, hours, and topics. Apply at leanon.app/become-listener.' } },
+    { '@type': 'Question', name: 'Can Indians living abroad use LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn has dedicated support for Indians and South Asians living abroad, including the USA, UK, Canada, Australia, UAE and other countries. You can talk privately with a real peer listener by text or voice.' } },
   ],
 }
 const orgSchema = {
@@ -406,6 +400,23 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* INDIAN DIASPORA */}
+      <section className="white-section" aria-labelledby="indians-abroad">
+        <div className="inner">
+          <p className="al">For Indians abroad</p>
+          <h2 id="indians-abroad" className="at">Far from India. <span className="o">Still someone to talk to.</span></h2>
+          <div className="ab">
+            <p>Living abroad can make some conversations harder — homesickness, family expectations, marriage or relationship pressure, work stress, immigration uncertainty, or simply having a difficult day when you do not want to call home.</p>
+            <p>LeanOn gives Indians and South Asians abroad a private one-to-one conversation with a real peer listener. Start with one free 5-minute introduction, then continue with paid text or voice time only if you want to.</p>
+          </div>
+          <div className="city-row" style={{marginTop:20}}>
+            {['USA','UK','Canada','Australia','UAE','Singapore'].map(c=>(
+              <a key={c} href={c==='USA'?'/usa':c==='UK'?'/uk':c==='Canada'?'/canada':c==='Australia'?'/australia':c==='UAE'?'/uae':'/singapore'} className="city-chip">🇮🇳 Indians in {c} →</a>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* HOW IT WORKS */}
       <div className="how">

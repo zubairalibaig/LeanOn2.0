@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 
-const PRIVATE = ['/api/', '/session/', '/dashboard/', '/wallet/', '/admin/', '/profile/', '/sessions/', '/auth']
+const PRIVATE = ['/api/', '/session/', '/dashboard/', '/wallet/', '/admin/', '/profile/', '/sessions/', '/auth', '/become-listener']
 const AI_CRAWLERS = ['GPTBot','OAI-SearchBot','ChatGPT-User','ClaudeBot','Claude-Web','anthropic-ai','Google-Extended','Googlebot','Bingbot','msnbot','BingPreview','PerplexityBot','Perplexity-User','Applebot-Extended','Applebot','Amazonbot','meta-externalagent','DuckAssistBot','cohere-ai','YouBot','CCBot','Bytespider','Diffbot','ia_archiver']
 
 export default function robots(): MetadataRoute.Robots {

@@ -15,7 +15,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: base,                                       lastModified: d(TODAY),        changeFrequency: 'daily',   priority: 1.0 },
     { url: `${base}/browse`,                           lastModified: d(TODAY),        changeFrequency: 'hourly',  priority: 0.95 },
     { url: `${base}/about`,                            lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${base}/become-listener`,                  lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/contact`,                          lastModified: d('2026-01-01'), changeFrequency: 'yearly',  priority: 0.5 },
     { url: `${base}/faq`,                              lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/glossary`,                         lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.7 },
@@ -77,7 +76,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/leanon-app-mental-health`,         lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/anonymous-peer-support`,           lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/need-someone-to-talk-to-india`,    lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
-    { url: `${base}/get-paid-to-chat-india`,           lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.8 },
     // High-commercial-intent seeker pages (Round 4). Priority 0.95 — these are
     // the pages that reach people ready to PAY, which is the current bottleneck.
     { url: `${base}/online-counselling-india-cost`,    lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
@@ -110,7 +108,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/chat-with-real-person`,            lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/ai-chatbot-alternative`,           lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/ai-human-support`,              lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
-    { url: `${base}/earn-by-listening`,                lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
     // High-intent immediate-need landing page
     { url: `${base}/i-need-someone-to-talk-to`,        lastModified: d(TODAY),        changeFrequency: 'weekly',  priority: 0.97 },
     // New support topic pages
@@ -122,7 +119,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/support/feeling-lost`,             lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
     // Blog: AI vs human + earning posts
     { url: `${base}/blog/chatgpt-vs-human-listener`,   lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${base}/blog/earn-money-listening-online-india`, lastModified: d(TODAY),  changeFrequency: 'monthly', priority: 0.9 },
     // Blog: ChatGPT-user + high-intent emotional queries
     { url: `${base}/blog/is-chatgpt-good-for-mental-health`, lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.92 },
     { url: `${base}/blog/feel-empty-inside-india`,     lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.9 },

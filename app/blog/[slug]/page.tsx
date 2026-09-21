@@ -95,6 +95,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     title: `${post.title} | LeanOn Blog`,
     description: post.description,
     alternates: { canonical: `https://www.leanon.app/blog/${post.slug}` },
+    robots: post.slug === 'earn-money-listening-online-india' ? { index: false, follow: true } : undefined,
     openGraph: {
       title: post.title,
       description: post.description,
