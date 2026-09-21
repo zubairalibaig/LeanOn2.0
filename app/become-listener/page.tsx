@@ -221,7 +221,6 @@ export default function BecomeListenerPage() {
   const [galleryUploading, setGalleryUploading] = useState(false)
   // Onboarding agreement (new flow) — persisted in sessionStorage across the
   // auth redirect so the landing page is not shown again on return.
-  const [agreementAccepted, setAgreementAccepted] = useState(false)
   const [agreementChecked, setAgreementChecked] = useState(false)
   const [showLanding, setShowLanding] = useState(false)
 
@@ -414,9 +413,15 @@ export default function BecomeListenerPage() {
         if (!user) { setError('Session expired. Please refresh.'); setGalleryUploading(false); return }
         for (const { file, idx } of filesToUpload) {
           if (!file) continue
-          const ext = file.type.includes('png') ? 'png' : 'jpg'
+          const ext = extForType(file.type)
           const path = `${user.id}-gallery-${idx}.${ext}`
-          const { error: upErr } = await sb.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type })
+          const uploadTimeout = new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error('upload_timeout')), 30_000)
+          )
+          const { error: upErr } = await Promise.race([
+            sb.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type }),
+            uploadTimeout,
+          ])
           if (upErr) { setFieldErrors(f => ({...f, gallery: 'One of the photos failed to upload. Please try again.'})); setGalleryUploading(false); return }
           const { data: { publicUrl } } = sb.storage.from('avatars').getPublicUrl(path)
           newGalleryUrls[idx] = `${publicUrl}?t=${Date.now()}`
@@ -602,7 +607,6 @@ export default function BecomeListenerPage() {
           disabled={!agreementChecked}
           onClick={() => {
             try { sessionStorage.setItem('leanon_listener_agreed', '1') } catch { /* private mode */ }
-            setAgreementAccepted(true)
             setShowLanding(false)
             setGuardChecked(false)
             // Trigger the auth guard now

@@ -55,10 +55,10 @@ export async function POST(req: NextRequest) {
     }
     const birthYear  = posIntOrNull(body?.birthYear)
     const birthMonth = posIntOrNull(body?.birthMonth)
-    const supabaseStoragePrefix = `${supabaseUrl}/storage/v1/object/public/avatars/${user.id}`
+    const galleryStoragePrefix = `${supabaseUrl}/storage/v1/object/public/avatars/${user.id}-gallery-`
     const rawProfilePhotos = Array.isArray(body?.profile_photos) ? body.profile_photos : []
     const profilePhotos: string[] = rawProfilePhotos
-      .filter((u: unknown) => typeof u === 'string' && (u as string).split('?')[0].startsWith(supabaseStoragePrefix))
+      .filter((u: unknown) => typeof u === 'string' && (u as string).split('?')[0].startsWith(galleryStoragePrefix))
       .slice(0, 3)
 
     const tags  = Array.isArray(body?.tags)  ? body.tags.filter((t: unknown) => typeof t === 'string').slice(0, 10)  : []
@@ -126,8 +126,10 @@ export async function POST(req: NextRequest) {
       languages_spoken: langs.length > 0 ? langs : ['english'],
       rate_per_min:     Math.round(rate),
       is_available:     false,
-      profile_photos:   profilePhotos.length > 0 ? profilePhotos : [],
     }
+    // profile_photos added by migration 058. Only set when supplied so a missing
+    // column (pre-migration) doesn't fail every submission — same pattern as birth_year.
+    if (profilePhotos.length > 0) profileRow.profile_photos = profilePhotos
     // birth_year / birth_month added by migration 049. Only set when supplied,
     // and never wipe an existing value on a resubmission that omits it.
     if (birthYear !== null && birthMonth !== null) {
@@ -138,6 +140,12 @@ export async function POST(req: NextRequest) {
     // Writing it to listener_profiles created a second copy that diverged whenever
     // the admin used update_bank_details (which only touches listener_applications).
     let profileErr = (await admin.from('listener_profiles').upsert(profileRow, { onConflict: 'user_id' })).error
+    if (profileErr && profileErr.message?.includes('profile_photos')) {
+      // Migration 058 not applied yet — drop the column and retry so existing
+      // applications keep working until the migration runs.
+      delete profileRow.profile_photos
+      profileErr = (await admin.from('listener_profiles').upsert(profileRow, { onConflict: 'user_id' })).error
+    }
     if (profileErr && (profileErr.message?.includes('birth_year') || profileErr.message?.includes('birth_month'))) {
       // Migration 049 not applied yet — save the rest of the profile so
       // applications keep working; age is captured once the column exists.
