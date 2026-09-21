@@ -491,5 +491,94 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/someone-to-talk-to-when-lonely`, lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.98 },
     { url: `${base}/talk-to-human-instead-of-chatgpt`, lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.98 },
     { url: `${base}/indian-emotional-support-abroad`, lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.98 },
+
+    // Competitor alternative: GetCompanion
+    { url: `${base}/getcompanion-alternative`,        lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.97 },
+
+    // Previously missing pages — country hub pages
+    { url: `${base}/india`,                           lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/usa`,                             lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/uk`,                              lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/canada`,                          lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/australia`,                       lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/uae`,                             lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/oman`,                            lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/kuwait`,                          lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/singapore`,                       lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/malaysia`,                        lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+
+    // Listener/earning pages
+    { url: `${base}/active-listening`,                lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/become-listener`,                 lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/earn-by-listening`,               lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/get-paid-to-chat-india`,          lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+
+    // AI alternative pages missing from sitemap
+    { url: `${base}/ai-companion-alternative`,        lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/ai-chatbot-alternative-australia`, lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/ai-chatbot-alternative-canada`,   lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/ai-chatbot-alternative-kuwait`,   lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/ai-chatbot-alternative-oman`,     lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/ai-chatbot-alternative-usa`,      lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+
+    // SEO authority pages
+    { url: `${base}/empathy`,                         lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/human-connection`,                lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/mental-health-support`,           lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/peer-support-vs-counselling`,     lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/peer-support-vs-therapy`,         lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.95 },
+
+    // NRI deep-topic pages
+    { url: `${base}/nri-arranged-marriage-pressure`,  lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-breakup`,                     lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-burnout`,                     lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-dating-canada`,               lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-divorce`,                     lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-emotional-support`,           lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-grief`,                       lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-h1b-visa-stress`,             lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-intercultural-marriage`,      lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-loneliness-australia`,        lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-lonely`,                      lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-long-distance-india`,         lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-marriage-problems`,           lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-married-life-abroad`,         lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-parents-india`,               lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-peer-listener`,               lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-peer-support-online`,         lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-relationship-advice`,         lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-second-generation`,           lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-social-anxiety`,              lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-spouse-support`,              lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-student-support`,             lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/nri-workplace-stress`,            lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/talk-to-nri-online`,              lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/indians-feeling-lonely-abroad`,   lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+
+    // Regional language NRI pages
+    { url: `${base}/bengali-nri-support`,             lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/gujarati-nri-support`,            lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/kannada-nri-support`,             lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/malayali-nri-support`,            lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/marathi-nri-support`,             lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/tamil-nri-support`,               lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/telugu-nri-support`,              lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+
+    // NRI student pages
+    { url: `${base}/indian-student-canada`,           lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${base}/indian-student-uk`,               lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.93 },
+
+    // International city pages missing from sitemap
+    { url: `${base}/indians-in-austin`,               lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/indians-in-calgary`,              lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/indians-in-columbus`,             lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/indians-in-denver`,               lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/indians-in-edmonton`,             lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/indians-in-london`,               lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/indians-in-los-angeles`,          lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/indians-in-manchester`,           lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/indians-in-minneapolis`,          lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/indians-in-san-jose`,             lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/indians-in-washington-dc`,        lastModified: d(TODAY), changeFrequency: 'monthly', priority: 0.9 },
   ]
 }

@@ -34,6 +34,10 @@ const faqs = [
         q: 'What topics can I talk about?',
         a: 'Listeners on LeanOn specialise in loneliness, work stress, career confusion, relationships, grief and loss, student pressure, startup journey, breakups, anxiety, and general emotional support. If you just need someone to lean on with no specific topic, that\'s perfectly fine too.',
       },
+      {
+        q: 'How is LeanOn different from companionship apps like GetCompanion?',
+        a: 'Companionship apps connect you with trained companions for pleasant conversation and activities. LeanOn connects you with peer listeners who have personally lived through the same challenge you are facing — loneliness, burnout, a breakup, grief. The empathy comes from shared experience, not just training. LeanOn is also fully online (text and voice), available across India and 10 countries, with a free 5-minute trial.',
+      },
     ],
   },
   {
