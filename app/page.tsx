@@ -30,7 +30,7 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
-    { '@type': 'Question', name: 'What is LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is a peer support platform built on empathy — someone to lean on anytime you need it. You talk to real people in India who have lived through what you\'re facing: loneliness, burnout, anxiety, grief, relationships, and more. Every listener brings genuine empathy from lived experience, not a script. It is not therapy, but real human connection available 24/7.' } },
+    { '@type': 'Question', name: 'What is LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is a peer support platform built on empathy — someone to lean on anytime you need it. You talk to real people in India who have lived through what you\'re facing: loneliness, burnout, anxiety, grief, relationships, and more. Every listener brings genuine empathy from lived experience, not a script. It is not therapy, but real human connection through one-to-one peer conversations.' } },
     { '@type': 'Question', name: 'What makes LeanOn listeners empathetic?', acceptedAnswer: { '@type': 'Answer', text: 'Every LeanOn listener has personally lived through what they support others with — loneliness, anxiety, burnout, grief, or relationship pain. That lived experience is what makes their empathy real rather than rehearsed. They are trained in active listening and empathetic communication, so you are heard without being judged, fixed, or rushed.' } },
     { '@type': 'Question', name: 'What does "lean on" mean in LeanOn?', acceptedAnswer: { '@type': 'Answer', text: '"Lean on" means having someone you can rely on emotionally — someone who supports you without judgment when you\'re going through something hard. LeanOn (the platform) gives everyone access to that kind of support through verified peer listeners who have lived experience.' } },
     { '@type': 'Question', name: 'How does pricing work?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn charges a flat fee per session. 15-minute sessions start at ₹160. Your first session with each new listener is free (5 minutes) — no wallet top-up needed.' } },
@@ -42,7 +42,7 @@ const faqSchema = {
     { '@type': 'Question', name: 'Which cities does LeanOn serve?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is available across all of India — Bengaluru, Mumbai, Delhi, Chennai, Hyderabad, Pune, Kolkata, Jaipur, Ahmedabad, and everywhere else. It is fully online — accessible from anywhere.' } },
     { '@type': 'Question', name: 'What topics can I talk about on LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'Listeners on LeanOn specialise in loneliness, work stress, career confusion, relationships, grief and loss, student pressure, startup journey, breakups, anxiety, and more. If you just need someone to lean on with no specific topic, that\'s fine too.' } },
     { '@type': 'Question', name: 'Is LeanOn an AI or are the listeners real people?', acceptedAnswer: { '@type': 'Answer', text: 'Every listener on LeanOn is a real, verified human being — no bots, no AI-generated responses, no scripts. Listeners apply to join, go through background verification, and complete active listening training before their first session. When you talk to someone on LeanOn, there is a real person on the other side of the conversation.' } },
-    { '@type': 'Question', name: 'Can ChatGPT or AI chatbots replace talking to a real person?', acceptedAnswer: { '@type': 'Answer', text: 'AI chatbots can provide information and be a starting point, but they have a fundamental limitation: they have never felt lonely, heartbroken, or anxious. Their responses are predictions, not empathy. A LeanOn peer listener has personally lived through what you are facing — their support comes from genuine shared experience, not pattern-matching. For real emotional relief, that difference is everything.' } },
+    { '@type': 'Question', name: 'Can ChatGPT or AI chatbots replace talking to a real person?', acceptedAnswer: { '@type': 'Answer', text: 'AI assistants can be useful for information, reflection and conversation. LeanOn serves a different need: talking with another human being. A peer listener can bring their own lived experience and respond as a person in a two-way conversation.' } },
     { '@type': 'Question', name: 'Can Indians living abroad use LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn has dedicated support for Indians and South Asians living abroad, including the USA, UK, Canada, Australia, UAE and other countries. You can talk privately with a real peer listener by text or voice.' } },
   ],
 }
@@ -513,20 +513,36 @@ export default function Home() {
         <div className="faq-section">
           <h2>Frequently asked questions</h2>
           {[
-            { q: 'What is LeanOn?', a: 'LeanOn is a peer support platform built on empathy — you talk to real people who have lived through what you\'re facing: loneliness, burnout, anxiety, grief, relationships, and more. It\'s not therapy, but real human connection available 24/7 across India.' },
+            { q: 'What is LeanOn?', a: 'LeanOn is a peer support platform built on empathy — you talk to real people who have lived through what you\'re facing: loneliness, burnout, anxiety, grief, relationships, and more. It\'s not therapy, but real human connection through one-to-one peer conversations.' },
             { q: 'What makes LeanOn listeners empathetic?', a: 'Every listener has personally lived through what they support others with. That lived experience is what makes their empathy real, not rehearsed — you\'re heard without being judged, fixed, or rushed.' },
             { q: 'How does pricing work?', a: 'LeanOn charges a flat fee per session. 15-minute sessions start at ₹160. Your first session with each new listener is free (5 minutes) — no wallet top-up needed. After that, sessions cost ₹8–25 per minute depending on the listener, billed in 15-minute slots.' },
-            { q: 'How much is a paid session, and is it worth it?', a: 'A 15-minute paid session starts at ₹160 — a fraction of the ₹1,500–4,000 a therapy session costs in India. Five minutes is only enough to start; real relief comes from a proper conversation with someone who has lived what you are facing. Continuing with the same listener who already understands you is worth far more than starting over.' },
+            { q: 'How much is a paid session, and is it worth it?', a: 'A 15-minute paid session starts at ₹160. You can start with the free 5-minute introduction and decide whether you want to continue. LeanOn is a peer-support service, not a therapy substitute.' },
             { q: 'How is this different from therapy or counselling?', a: 'Listeners on LeanOn are real people with lived experience, not licensed therapists. They offer empathy and peer counselling, not clinical diagnosis. LeanOn is ideal when you need someone who truly gets it — not a diagnosis.' },
-            { q: 'Is my conversation private?', a: 'Yes. All sessions are private and end-to-end. LeanOn never shares your personal details or conversation content.' },
-            { q: 'Can I become a listener?', a: 'Yes. If you\'ve been through something difficult and want to support others going through the same thing, you can apply at leanon.app/become-listener. Listeners are verified before they can take sessions.' },
-            { q: 'Is LeanOn related to the song "Lean On"?', a: 'No. LeanOn (one word, at leanon.app) is an Indian peer emotional support platform — no connection to the Major Lazer song. The name comes from the phrase "someone to lean on": having a person you can rely on emotionally, anytime you need it.' },
+            { q: 'Is my conversation private?', a: 'Yes. Sessions are intended to be private. See LeanOn's Privacy and Trust pages for the specific information practices that apply.' },
+                    { q: 'Is LeanOn related to the song "Lean On"?', a: 'No. LeanOn (one word, at leanon.app) is an Indian peer emotional support platform — no connection to the Major Lazer song. The name comes from the phrase "someone to lean on": having a person you can rely on emotionally, anytime you need it.' },
           ].map((f,i) => (
             <div key={i} className="faq-item">
               <div className="faq-q">{f.q}</div>
               <div className="faq-a">{f.a}</div>
             </div>
           ))}
+        </div>
+      </div>
+
+
+      {/* READY-TO-TALK INTENT HUB — routes high-volume homepage traffic into seeker pages */}
+      <div className="white-section">
+        <div className="inner">
+          <div className="al">Not sure where to start?</div>
+          <h2 className="at">Start with the situation you&apos;re actually in.</h2>
+          <div className="topic-grid">
+            <a className="tc" href="/talk-to-a-real-person-online"><div className="tc-ico">🧑</div><div className="tc-body"><div className="tc-label">I want a real person</div><div className="tc-sub">Talk to a human online</div></div></a>
+            <a className="tc" href="/someone-to-talk-to-when-lonely"><div className="tc-ico">💙</div><div className="tc-body"><div className="tc-label">I feel lonely</div><div className="tc-sub">Find someone to talk to</div></div></a>
+            <a className="tc" href="/need-someone-to-talk-to-but-dont-need-therapy"><div className="tc-ico">💬</div><div className="tc-body"><div className="tc-label">I need support, not therapy</div><div className="tc-sub">Understand peer support</div></div></a>
+            <a className="tc" href="/talk-to-someone-after-relationship-fight"><div className="tc-ico">❤️</div><div className="tc-body"><div className="tc-label">I had a relationship fight</div><div className="tc-sub">Talk it through privately</div></div></a>
+            <a className="tc" href="/talk-to-human-instead-of-chatgpt"><div className="tc-ico">🤝</div><div className="tc-body"><div className="tc-label">I want a human, not AI</div><div className="tc-sub">Human conversation vs AI</div></div></a>
+            <a className="tc" href="/indian-emotional-support-abroad"><div className="tc-ico">🌍</div><div className="tc-body"><div className="tc-label">I&apos;m Indian and live abroad</div><div className="tc-sub">Diaspora peer support</div></div></a>
+          </div>
         </div>
       </div>
 
@@ -625,7 +641,7 @@ export default function Home() {
               discoverable for anyone genuinely looking, with no earnings hook
               competing against the seeker funnel above. */}
           <div className="fli" style={{marginTop:4,fontSize:12,opacity:0.75}}>
-            <a href="/become-listener">Become a listener</a>
+            
           </div>
           <p className="fcp">© 2026 LeanOn (Lean On) · leanon.app · Peer support platform · Made in India 🇮🇳</p>
         </div>
