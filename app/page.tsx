@@ -513,14 +513,13 @@ export default function Home() {
         <div className="faq-section">
           <h2>Frequently asked questions</h2>
           {[
-            { q: 'What is LeanOn?', a: 'LeanOn is a peer support platform built on empathy — you talk to real people who have lived through what you\'re facing: loneliness, burnout, anxiety, grief, relationships, and more. It\'s not therapy, but real human connection available 24/7 across India.' },
+            { q: 'What is LeanOn?', a: 'LeanOn is a peer support platform built on empathy — you talk to real people who have lived through what you\'re facing: loneliness, burnout, anxiety, grief, relationships, and more. It\'s not therapy, but real human connection through one-to-one peer conversations.' },
             { q: 'What makes LeanOn listeners empathetic?', a: 'Every listener has personally lived through what they support others with. That lived experience is what makes their empathy real, not rehearsed — you\'re heard without being judged, fixed, or rushed.' },
             { q: 'How does pricing work?', a: 'LeanOn charges a flat fee per session. 15-minute sessions start at ₹160. Your first session with each new listener is free (5 minutes) — no wallet top-up needed. After that, sessions cost ₹8–25 per minute depending on the listener, billed in 15-minute slots.' },
             { q: 'How much is a paid session, and is it worth it?', a: 'A 15-minute paid session starts at ₹160. You can start with the free 5-minute introduction and decide whether you want to continue. LeanOn is a peer-support service, not a therapy substitute.' },
             { q: 'How is this different from therapy or counselling?', a: 'Listeners on LeanOn are real people with lived experience, not licensed therapists. They offer empathy and peer counselling, not clinical diagnosis. LeanOn is ideal when you need someone who truly gets it — not a diagnosis.' },
             { q: 'Is my conversation private?', a: 'Yes. Sessions are intended to be private. See LeanOn's Privacy and Trust pages for the specific information practices that apply.' },
-            { q: 'Can I become a listener?', a: 'Yes. If you\'ve been through something difficult and want to support others going through the same thing, you can apply at leanon.app/become-listener. Listeners are verified before they can take sessions.' },
-            { q: 'Is LeanOn related to the song "Lean On"?', a: 'No. LeanOn (one word, at leanon.app) is an Indian peer emotional support platform — no connection to the Major Lazer song. The name comes from the phrase "someone to lean on": having a person you can rely on emotionally, anytime you need it.' },
+                    { q: 'Is LeanOn related to the song "Lean On"?', a: 'No. LeanOn (one word, at leanon.app) is an Indian peer emotional support platform — no connection to the Major Lazer song. The name comes from the phrase "someone to lean on": having a person you can rely on emotionally, anytime you need it.' },
           ].map((f,i) => (
             <div key={i} className="faq-item">
               <div className="faq-q">{f.q}</div>
