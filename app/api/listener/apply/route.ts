@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     }
     const birthYear  = posIntOrNull(body?.birthYear)
     const birthMonth = posIntOrNull(body?.birthMonth)
-    const galleryStoragePrefix = `${supabaseUrl}/storage/v1/object/public/avatars/${user.id}-gallery-`
+    const galleryStoragePrefix = `${supabaseUrl}/storage/v1/object/public/avatars/${user.id}.gallery-`
     const rawProfilePhotos = Array.isArray(body?.profile_photos) ? body.profile_photos : []
     const profilePhotos: string[] = rawProfilePhotos
       .filter((u: unknown) => typeof u === 'string' && (u as string).split('?')[0].startsWith(galleryStoragePrefix))

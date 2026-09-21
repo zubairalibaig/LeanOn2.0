@@ -399,7 +399,7 @@ export default function BecomeListenerPage() {
         for (const { file, idx } of filesToUpload) {
           if (!file) continue
           const ext = extForType(file.type)
-          const path = `${user.id}-gallery-${idx}.${ext}`
+          const path = `${user.id}.gallery-${idx}.${ext}`
           const uploadTimeout = new Promise<never>((_, reject) =>
             setTimeout(() => reject(new Error('upload_timeout')), 30_000)
           )
