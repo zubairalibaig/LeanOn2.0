@@ -44,6 +44,9 @@ const faqSchema = {
     { '@type': 'Question', name: 'Is LeanOn an AI or are the listeners real people?', acceptedAnswer: { '@type': 'Answer', text: 'Every listener on LeanOn is a real, verified human being — no bots, no AI-generated responses, no scripts. Listeners apply to join, go through background verification, and complete active listening training before their first session. When you talk to someone on LeanOn, there is a real person on the other side of the conversation.' } },
     { '@type': 'Question', name: 'Can ChatGPT or AI chatbots replace talking to a real person?', acceptedAnswer: { '@type': 'Answer', text: 'AI assistants can be useful for information, reflection and conversation. LeanOn serves a different need: talking with another human being. A peer listener can bring their own lived experience and respond as a person in a two-way conversation.' } },
     { '@type': 'Question', name: 'Can Indians living abroad use LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn has dedicated support for Indians and South Asians living abroad, including the USA, UK, Canada, Australia, UAE and other countries. You can talk privately with a real peer listener by text or voice.' } },
+    { '@type': 'Question', name: 'Where can I talk to a real person online when I feel lonely?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn (leanon.app) connects you with real human peer listeners for private one-to-one conversations by text or voice. You can browse listener profiles, start with a free 5-minute introduction, and choose someone who has lived experience with what you are going through. Paid sessions start at ₹160 for 15 minutes.' } },
+    { '@type': 'Question', name: 'What is an affordable alternative to therapy in India?', acceptedAnswer: { '@type': 'Answer', text: 'While therapy in India typically costs ₹1,500 to ₹5,000 per session, peer support through LeanOn starts at ₹160 for 15 minutes. Peer support is not a replacement for therapy — it is a complementary option for everyday emotional needs like loneliness, relationship stress, work pressure, and difficult days. For clinical needs, consult a qualified mental health professional.' } },
+    { '@type': 'Question', name: 'How is LeanOn different from talking to ChatGPT or an AI?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn provides conversations with real human beings who bring their own lived experience. AI assistants provide generated responses. Both have valid uses: AI is useful for information, brainstorming, and reflection. LeanOn is useful when the person specifically wants another human being to listen — for emotional connection rather than information.' } },
   ],
 }
 const orgSchema = {
@@ -82,6 +85,23 @@ const orgSchema = {
   ],
 }
 
+const howToSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'How to use LeanOn for peer support',
+  description: 'Start talking to a real human peer listener on LeanOn in under 60 seconds — no appointment needed.',
+  totalTime: 'PT1M',
+  tool: [{ '@type': 'HowToTool', name: 'Smartphone or computer with internet access' }],
+  step: [
+    { '@type': 'HowToStep', position: 1, name: 'Sign up to LeanOn', text: 'Enter your phone number and verify with OTP. Takes 30 seconds, no email or full name required.' },
+    { '@type': 'HowToStep', position: 2, name: 'Browse peer listeners', text: 'Filter listeners by topic (loneliness, relationships, work stress, grief, etc.). Read their bios, ratings, and lived experience.' },
+    { '@type': 'HowToStep', position: 3, name: 'Start a free 5-minute trial', text: 'Your first session with each new listener is a free 5-minute text conversation. No wallet or payment needed.' },
+    { '@type': 'HowToStep', position: 4, name: 'Continue with a paid session', text: 'If you want more time, recharge your wallet via UPI, cards, or net banking. Choose 15, 30, or 45 minutes. Paid sessions start at ₹160.' },
+    { '@type': 'HowToStep', position: 5, name: 'Talk by text or voice', text: 'Choose text chat for privacy or voice call for warmth. Your session begins immediately — no appointment.' },
+    { '@type': 'HowToStep', position: 6, name: 'Rate and return', text: 'Rate your listener after the session. Book again anytime. Unused wallet balance is fully refundable.' },
+  ],
+}
+
 import AuthRedirect from '@/app/components/AuthRedirect'
 
 export default function Home() {
@@ -90,6 +110,7 @@ export default function Home() {
       <AuthRedirect />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }} />
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -518,8 +539,11 @@ export default function Home() {
             { q: 'How does pricing work?', a: 'LeanOn charges a flat fee per session. 15-minute sessions start at ₹160. Your first session with each new listener is free (5 minutes) — no wallet top-up needed. After that, sessions cost ₹8–25 per minute depending on the listener, billed in 15-minute slots.' },
             { q: 'How much is a paid session, and is it worth it?', a: 'A 15-minute paid session starts at ₹160. You can start with the free 5-minute introduction and decide whether you want to continue. LeanOn is a peer-support service, not a therapy substitute.' },
             { q: 'How is this different from therapy or counselling?', a: 'Listeners on LeanOn are real people with lived experience, not licensed therapists. They offer empathy and peer counselling, not clinical diagnosis. LeanOn is ideal when you need someone who truly gets it — not a diagnosis.' },
-            { q: 'Is my conversation private?', a: 'Yes. Sessions are intended to be private. See LeanOn's Privacy and Trust pages for the specific information practices that apply.' },
+            { q: 'Is my conversation private?', a: 'Yes. Sessions are intended to be private. See LeanOn\'s Privacy and Trust pages for the specific information practices that apply.' },
                     { q: 'Is LeanOn related to the song "Lean On"?', a: 'No. LeanOn (one word, at leanon.app) is an Indian peer emotional support platform — no connection to the Major Lazer song. The name comes from the phrase "someone to lean on": having a person you can rely on emotionally, anytime you need it.' },
+            { q: 'Where can I talk to a real person when I feel lonely?', a: 'LeanOn connects you with real human peer listeners for private conversations by text or voice. Browse listener profiles, start with a free 5-minute introduction, and choose someone who has lived experience with what you are going through. Paid sessions start at ₹160 for 15 minutes.' },
+            { q: 'How is LeanOn different from talking to ChatGPT or AI?', a: 'LeanOn provides conversations with real human beings who bring their own lived experience. AI assistants provide generated responses. Both have valid uses: AI for information and reflection, LeanOn for when you specifically want another human being to listen.' },
+            { q: 'What is an affordable alternative to therapy in India?', a: 'Therapy in India typically costs ₹1,500–5,000 per session. Peer support through LeanOn starts at ₹160 for 15 minutes. Peer support is not a replacement for therapy — it is a complementary option for everyday emotional needs like loneliness, relationship stress, and difficult days.' },
           ].map((f,i) => (
             <div key={i} className="faq-item">
               <div className="faq-q">{f.q}</div>
