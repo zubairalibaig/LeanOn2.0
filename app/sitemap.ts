@@ -484,5 +484,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/usa-vent-real-person`,                lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.97 },
     { url: `${base}/uk-talk-to-real-person-support`,      lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.97 },
     { url: `${base}/uk-vent-real-person`,                 lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.97 },
+    // Ready-to-talk conversion landing pages — intentionally small, high-intent cluster
+    { url: `${base}/talk-to-a-real-person-online`, lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.98 },
+    { url: `${base}/need-someone-to-talk-to-but-dont-need-therapy`, lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.98 },
+    { url: `${base}/talk-to-someone-after-relationship-fight`, lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.97 },
+    { url: `${base}/someone-to-talk-to-when-lonely`, lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.98 },
+    { url: `${base}/talk-to-human-instead-of-chatgpt`, lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.98 },
+    { url: `${base}/indian-emotional-support-abroad`, lastModified: d(TODAY), changeFrequency: 'weekly', priority: 0.98 },
   ]
 }
