@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   description: 'Earn ₹8–25 per minute providing real emotional support to people in India. LeanOn is a vetted peer support platform — not a random chat app. Apply to become a listener.',
   alternates: { canonical: 'https://www.leanon.app/get-paid-to-chat-india' },
   keywords: ['get paid to chat India', 'peer listener India', 'emotional support work from home India', 'become a peer counsellor India', 'earn money helping people India'],
+  robots: { index: false, follow: true },
 }
 
 const jsonLd = {
