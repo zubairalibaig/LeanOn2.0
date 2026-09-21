@@ -34,7 +34,7 @@ export const COUNTRY_SEO: CountrySeoData[] = [
       { q: 'Is the first session free?', a: 'New seekers get one free 5-minute introductory session. It is designed to help you find out whether a listener feels like the right fit.' },
       { q: 'What can I talk about?', a: 'Anything within the scope of peer support: loneliness, relationships, work stress, grief, family pressure, overthinking, or simply needing someone to hear you out.' },
     ],
-    searchTerms: ['peer support India', 'someone to talk to India', 'talk to someone online India', 'emotional support India', 'real person to talk to India'],
+        searchTerms: ['peer support India', 'someone to talk to India', 'talk to someone online India', 'emotional support India', 'real person to talk to India', 'paid peer support India', 'affordable peer support India', 'online emotional support session India', 'talk to a real person online India'],
   },
   {
     slug: 'usa', country: 'United States', regionCode: 'US', audience: 'Indian and South Asian people living in the United States',
@@ -50,7 +50,7 @@ export const COUNTRY_SEO: CountrySeoData[] = [
       { q: 'Can I talk about life in the USA?', a: 'Yes. Work, relationships, homesickness, family expectations, cultural differences and everyday loneliness are all reasonable topics for a peer-support conversation.' },
       { q: 'Do I need to be in crisis?', a: 'No. LeanOn is for everyday emotional weight and human connection. It is not a crisis service or a substitute for professional care.' },
     ],
-    searchTerms: ['Indian peer support USA', 'Indian emotional support USA', 'Indian someone to talk to USA', 'South Asian peer support USA', 'talk to someone Indian abroad'],
+        searchTerms: ['Indian peer support USA', 'Indian emotional support USA', 'Indian someone to talk to USA', 'South Asian peer support USA', 'talk to someone Indian abroad', 'paid peer support Indians USA', 'online emotional support Indians USA', 'real person to talk to Indian abroad'],
   },
   {
     slug: 'uk', country: 'United Kingdom', regionCode: 'GB', audience: 'Indian and South Asian people living in the UK',
@@ -66,7 +66,7 @@ export const COUNTRY_SEO: CountrySeoData[] = [
       { q: 'Can I talk privately?', a: 'LeanOn is designed around a private one-to-one session. You can choose text when you do not want people nearby to hear a voice conversation.' },
       { q: 'Is LeanOn therapy?', a: 'No. LeanOn is peer support, not therapy, counselling or clinical treatment. For a clinical need, use an appropriately qualified professional or local emergency/crisis service.' },
     ],
-    searchTerms: ['Indian peer support UK', 'Indian emotional support UK', 'Indian someone to talk to UK', 'South Asian peer support UK', 'lonely Indian in UK'],
+        searchTerms: ['Indian peer support UK', 'Indian emotional support UK', 'Indian someone to talk to UK', 'South Asian peer support UK', 'lonely Indian in UK', 'paid peer support Indians UK', 'online emotional support Indians UK', 'real person to talk to Indian abroad'],
   },
   {
     slug: 'canada', country: 'Canada', regionCode: 'CA', audience: 'Indian and South Asian people living in Canada',
@@ -82,7 +82,7 @@ export const COUNTRY_SEO: CountrySeoData[] = [
       { q: 'What topics are appropriate?', a: 'Loneliness, relationships, homesickness, family pressure, work or study stress and other everyday emotional concerns are appropriate for peer support.' },
       { q: 'Do I have to share my real-life details?', a: 'No. Share only what you are comfortable sharing. LeanOn is designed to let a conversation start without requiring you to tell your whole story.' },
     ],
-    searchTerms: ['Indian peer support Canada', 'Indian emotional support Canada', 'Indian someone to talk to Canada', 'South Asian peer support Canada', 'Indian loneliness Canada'],
+        searchTerms: ['Indian peer support Canada', 'Indian emotional support Canada', 'Indian someone to talk to Canada', 'South Asian peer support Canada', 'Indian loneliness Canada', 'paid peer support Indians Canada', 'online emotional support Indians Canada', 'real person to talk to Indian abroad'],
   },
   {
     slug: 'australia', country: 'Australia', regionCode: 'AU', audience: 'Indian and South Asian people living in Australia',
