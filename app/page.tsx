@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 export const metadata: Metadata = {
-  title: 'LeanOn — Peer Emotional Support India | Talk to Someone Now',
+  title: 'LeanOn — Talk to a Real Person Online | Peer Support India & NRI Support',
   description: 'Need someone to talk to? LeanOn connects Indians in India and Indians abroad with real people for private one-to-one peer support by text or voice. Start with a free 5-minute introduction.',
   alternates: { canonical: 'https://www.leanon.app', languages: { 'en-IN': 'https://www.leanon.app', 'en-US': 'https://www.leanon.app', 'en-GB': 'https://www.leanon.app' } },
   keywords: [
