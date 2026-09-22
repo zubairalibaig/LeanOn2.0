@@ -24,9 +24,11 @@ export type CompressOptions = {
   quality: number
 }
 
-/** Avatars render at 48px (browse) and ~96px (profile headers). 256 covers
- *  2x retina at the largest use with room to spare. */
-export const AVATAR_OPTS: CompressOptions = { maxDim: 256, quality: 0.82 }
+/** Avatars render at 72px (browse) and ~96px (profile headers). 512 covers
+ *  2x retina at the profile size with room to spare, and produces noticeably
+ *  sharper photos on browse cards than the old 256. WebP keeps file sizes
+ *  comparable despite the higher resolution. */
+export const AVATAR_OPTS: CompressOptions = { maxDim: 512, quality: 0.82 }
 
 /** KYC selfie / ID document. Must stay legible enough for an admin to read a
  *  12-digit Aadhaar number, so this is deliberately conservative — 1600px on

@@ -278,22 +278,25 @@ a{text-decoration:none;color:inherit;}
 @media(min-width:960px){.list{grid-template-columns:1fr 1fr 1fr;}}
 .card{background:white;border:1.5px solid var(--border);border-radius:20px;padding:18px;cursor:pointer;transition:all .2s;box-shadow:0 1px 4px rgba(15,72,103,.04);}
 .card:hover{border-color:var(--teal);box-shadow:0 4px 20px rgba(15,72,103,.08);transform:translateY(-2px);}
-.card-top{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;}
-.av{width:48px;height:48px;border-radius:16px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:white;flex-shrink:0;position:relative;overflow:hidden;}
-.av img{width:100%;height:100%;object-fit:cover;border-radius:16px;}
-.dot{position:absolute;bottom:-2px;right:-2px;width:12px;height:12px;border-radius:50%;border:2px solid white;}
+.card-top{display:flex;gap:14px;align-items:center;margin-bottom:12px;}
+.av{width:72px;height:72px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;color:white;flex-shrink:0;position:relative;overflow:hidden;}
+.av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.dot{position:absolute;bottom:1px;right:1px;width:14px;height:14px;border-radius:50%;border:2.5px solid white;}
 .dot.on{background:#34C759;}.dot.off{background:#C7C7CC;}.dot.busy{background:var(--orange);}
 .meta{flex:1;min-width:0;}
-.name{font-size:15px;font-weight:800;color:var(--navy);margin-bottom:3px;}
+.name{font-size:16px;font-weight:900;color:var(--navy);margin-bottom:1px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.card-tagline{font-size:13px;font-weight:600;color:var(--gray);margin-bottom:4px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;}
 .stats{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--gray);font-weight:600;}
 .rate{font-size:15px;font-weight:900;color:var(--navy);flex-shrink:0;}
 .rate span{font-size:11px;font-weight:500;color:var(--gray);}
-.bio{font-size:13px;color:#4A6B7E;line-height:1.6;margin-bottom:12px;font-weight:500;}
+.bio{font-size:13px;color:#4A6B7E;line-height:1.6;margin-bottom:12px;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
 .tag-badge{background:rgba(26,143,160,.1);color:var(--navy);font-size:11px;font-weight:700;padding:4px 10px;border-radius:50px;}
 .verified-chip{background:#E6F6FF;color:#0F4867;font-size:10px;font-weight:800;padding:3px 7px;border-radius:50px;border:1.5px solid #B8D9F0;}
-.btns{display:flex;gap:8px;align-items:center;}
-.btn-chat{flex:1;color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:11px;border-radius:12px;border:none;cursor:pointer;transition:all .2s;}
+.card-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.card-price-avail{display:flex;flex-direction:column;align-items:flex-start;gap:2px;flex-shrink:0;}
+.btns{flex:1;display:flex;gap:8px;align-items:center;justify-content:flex-end;}
+.btn-chat{color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:11px 18px;border-radius:12px;border:none;cursor:pointer;transition:all .2s;white-space:nowrap;}
 .btn-chat.avail{background:#34C759;box-shadow:0 2px 10px rgba(52,199,89,.3);}
 .btn-chat.avail:hover{background:#28a745;}
 .btn-chat.busy{background:var(--orange);cursor:not-allowed;opacity:.85;}
@@ -835,41 +838,37 @@ function BrowseContent() {
               💙 Need immediate support? <a href="/faq" style={{color:'var(--teal)'}}>See crisis resources →</a>
             </p>
           </div>
-        ) : visible.map(l => (
+        ) : visible.map(l => {
+          const statusClass = SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session ? 'busy' : l.is_available ? 'on' : 'off'
+          const statusLabel = SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session ? '● In session' : l.is_available ? '● Online' : '● Offline'
+          const bioFirstLine = l.bio ? l.bio.split(/[.\n]/).filter(Boolean)[0]?.trim() : ''
+          return (
           <div key={l.id} className="card" onClick={()=>router.push(`/listener/${l.user_id}`)}>
             <div className="card-top">
               <div className="av">
                 {l.avatar_url
-                  ? <Avatar src={l.avatar_url} alt={l.name} size={96} />
+                  ? <Avatar src={l.avatar_url} alt={l.name} size={160} />
                   : ini(l.name)}
-                <div className={`dot ${SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session ? 'busy' : l.is_available ? 'on' : 'off'}`}/>
+                <div className={`dot ${statusClass}`}/>
               </div>
               <div className="meta">
                 <div className="name">
-                  {l.name}{l.is_verified && <>&nbsp;<span className="verified-chip">✓ Verified</span></>}
+                  {l.name}
+                  {l.is_verified && <span className="verified-chip">✓ Verified</span>}
                 </div>
+                {bioFirstLine && <div className="card-tagline">{bioFirstLine}</div>}
                 <div className="stats">
                   {l.rating > 0 && <span>⭐ {(+l.rating).toFixed(1)}</span>}
-                  {l.total_sessions > 0 && <span>🗣️ {l.total_sessions} sessions</span>}
+                  {l.total_sessions > 0 && <span>{l.total_sessions} sessions</span>}
+                  <span className={`avail-label ${statusClass}`}>{statusLabel}</span>
                 </div>
-              </div>
-              <div style={{textAlign:'right',flexShrink:0}}>
-                <div className="rate">₹{l.rate_per_min}<span>/min</span></div>
-                <div className={`avail-label ${SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session ? 'busy' : l.is_available ? 'on' : 'off'}`}>
-                  {SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session ? '● In session' : l.is_available ? '● Online' : '● Offline'}
-                </div>
-                {/* Last-online hint — only for offline listeners; an online tile
-                    already says "● Online". Hidden entirely once a listener has
-                    been away long enough that the label would only signal
-                    dormancy (see lastOnlineLabel). */}
                 {!l.is_available && !l.is_in_session && lastOnlineLabel(l) && (
-                  <div style={{fontSize:11,fontWeight:600,color:'var(--gray)',marginTop:2,whiteSpace:'nowrap'}}>
+                  <div style={{fontSize:11,fontWeight:600,color:'var(--gray)',marginTop:1}}>
                     {lastOnlineLabel(l)}
                   </div>
                 )}
               </div>
             </div>
-            <p className="bio">{l.bio}</p>
             <div className="tags">
               {(l.specialty_tags||[]).slice(0,3).map((t) => {
                 const info = tagInfo(t)
@@ -880,30 +879,33 @@ function BrowseContent() {
                 return <span key={lid} className="tag-badge" style={{background:'rgba(255,153,51,.1)',color:'#7A4A00'}}>🌐 {info?.label||lid}</span>
               })}
             </div>
-            <div className="btns">
-              {SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session ? (
-                // Listener is currently in a session — show disabled button, no voice icon
-                <button className="btn-chat busy" onClick={e => e.stopPropagation()}>
-                  🔴 In session — back soon
-                </button>
-              ) : (
-                <>
+            <div className="card-bottom">
+              <div className="card-price-avail">
+                <div className="rate">₹{l.rate_per_min}<span>/min</span></div>
+                {l.is_available && !(SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session) && (
+                  <div style={{fontSize:11,color:'#5A7A8A',fontWeight:600}}>
+                    ₹{Math.round(l.rate_per_min*15)+PLATFORM_FEE} for 15 min
+                  </div>
+                )}
+              </div>
+              <div className="btns">
+                {SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session ? (
+                  <button className="btn-chat busy" onClick={e => e.stopPropagation()}>
+                    In session
+                  </button>
+                ) : (
                   <button
                     className={`btn-chat ${l.is_available ? 'avail' : 'offline'}`}
                     onClick={e=>{e.stopPropagation(); if(l.is_available) router.push(`/listener/${l.user_id}`)}}
                   >
-                    {l.is_available ? '🎁 Try free · 5 min' : '💬 Currently offline'}
+                    {l.is_available ? '🎁 Try free · 5 min' : 'View profile'}
                   </button>
-                </>
-              )}
-            </div>
-            {l.is_available && !(SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session) && (
-              <div style={{fontSize:11,color:'#5A7A8A',fontWeight:600,textAlign:'center',marginTop:4}}>
-                or ₹{Math.round(l.rate_per_min*15)+PLATFORM_FEE} for 15 min paid session
+                )}
               </div>
-            )}
+            </div>
           </div>
-        ))}
+          )
+        })}
       </div>
 
     </>
