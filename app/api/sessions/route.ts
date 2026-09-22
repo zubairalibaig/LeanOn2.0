@@ -441,11 +441,14 @@ export async function PATCH(req: NextRequest) {
 }
 
 async function updateListenerRating(sb: ReturnType<typeof createAdminClient>, listenerId: string) {
+  // Exclude free-trial sessions — trial seekers have no financial stake and
+  // disproportionately leave 1-star rage taps that don't reflect listener quality.
   const { data: rows } = await sb
     .from('sessions')
     .select('seeker_rating')
     .eq('listener_id', listenerId)
     .not('seeker_rating', 'is', null)
+    .or('is_free_trial.eq.false,is_free_trial.is.null')
 
   if (!rows || rows.length === 0) return
 

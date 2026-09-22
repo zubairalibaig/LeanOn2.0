@@ -154,6 +154,7 @@ export default function ListenerClient({ id }: { id: string }) {
     client.from('sessions')
       .select('seeker_rating, seeker_review, created_at, users!seeker_id(name)')
       .eq('listener_id', id).eq('status', 'completed').not('seeker_rating', 'is', null)
+      .or('is_free_trial.eq.false,is_free_trial.is.null')
       .order('created_at', {ascending:false}).limit(10)
       .then(({data}) => { if (data) setReviews(data as unknown as Review[]) })
 
