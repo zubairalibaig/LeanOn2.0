@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'LeanOn — Talk to a Real Person Online | Peer Support India & NRI Support',
-  description: 'Need someone to talk to? LeanOn connects Indians in India and Indians abroad with real people for private one-to-one peer support by text or voice. Start with a free 5-minute introduction.',
+  description: 'Need someone to talk to? LeanOn connects Indians in India and Indians abroad with real people for private one-to-one peer support by text or voice. Start free, then paid conversations from ₹160 for 15 minutes.',
   alternates: { canonical: 'https://www.leanon.app', languages: { 'en-IN': 'https://www.leanon.app', 'en-US': 'https://www.leanon.app', 'en-GB': 'https://www.leanon.app' } },
   keywords: [
     'leanon', 'lean on', 'LeanOn', 'lean on app',
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     'loneliness support India', 'grief support India', 'family pressure support India',
     'AI chatbot alternative India', 'talk to real human not AI',
     'tired of talking to AI', 'ChatGPT alternative India',
-    'paid support online India', 'affordable peer support India',
+    'paid support online India', 'paid human conversation India', 'pay to talk to someone India', 'affordable peer support India',
     '15 minute peer support India', 'online peer support cost India',
     'NRI emotional support', 'Indian diaspora emotional support',
     'Indian NRI someone to talk to', 'Indian expat loneliness',
@@ -60,7 +60,7 @@ const orgSchema = {
       alternateName: ['Lean On', 'leanon'],
       url: 'https://www.leanon.app',
       logo: { '@type': 'ImageObject', url: 'https://www.leanon.app/logo.png', width: 512, height: 512 },
-      description: "India-origin peer support platform serving Indians worldwide. Talk to trained peer listeners. Available 24/7, no appointment needed.",
+      description: "India-origin peer support platform connecting people with real human peer listeners for private one-to-one conversations by text or voice. Not therapy or clinical care.",
       areaServed: [
         { '@type': 'Country', name: 'India' },
         { '@type': 'Country', name: 'United States' },
@@ -539,7 +539,7 @@ export default function Home() {
             { q: 'What makes LeanOn listeners empathetic?', a: 'Every listener has personally lived through what they support others with. That lived experience is what makes their empathy real, not rehearsed — you\'re heard without being judged, fixed, or rushed.' },
             { q: 'How does pricing work?', a: 'LeanOn charges a flat fee per session. 15-minute sessions start at ₹160. Your first session with each new listener is free (5 minutes) — no wallet top-up needed. After that, sessions cost ₹8–25 per minute depending on the listener, billed in 15-minute slots.' },
             { q: 'How much is a paid session, and is it worth it?', a: 'A 15-minute paid session starts at ₹160. You can start with the free 5-minute introduction and decide whether you want to continue. LeanOn is a peer-support service, not a therapy substitute.' },
-            { q: 'How is this different from therapy or counselling?', a: 'Listeners on LeanOn are real people with lived experience, not licensed therapists. They offer empathy and peer counselling, not clinical diagnosis. LeanOn is ideal when you need someone who truly gets it — not a diagnosis.' },
+            { q: 'How is this different from therapy or counselling?', a: 'Listeners on LeanOn are real people with lived experience, not licensed therapists. They offer peer support, not clinical diagnosis or treatment. LeanOn is for people who want human conversation and everyday emotional support.' },
             { q: 'Is my conversation private?', a: 'Yes. Sessions are intended to be private. See LeanOn\'s Privacy and Trust pages for the specific information practices that apply.' },
                     { q: 'Is LeanOn related to the song "Lean On"?', a: 'No. LeanOn (one word, at leanon.app) is an Indian peer emotional support platform — no connection to the Major Lazer song. The name comes from the phrase "someone to lean on": having a person you can rely on emotionally, anytime you need it.' },
             { q: 'Where can I talk to a real person when I feel lonely?', a: 'LeanOn connects you with real human peer listeners for private conversations by text or voice. Browse listener profiles, start with a free 5-minute introduction, and choose someone who has lived experience with what you are going through. Paid sessions start at ₹160 for 15 minutes.' },
@@ -624,7 +624,7 @@ export default function Home() {
             <a href="/support/long-distance-relationship">Long-distance relationship</a>
           </div>
           <div className="fli" style={{marginTop:4,fontSize:12,opacity:0.75}}>
-            <a href="/talk-to-someone-right-now">Talk to someone right now</a>
+            <a href="/talk-to-someone-online">Talk to someone online</a>
             <a href="/someone-to-lean-on">Someone to lean on</a>
             <a href="/daily-check-in">Daily check-in — how do you feel today?</a>
             <a href="/talk-to-someone-not-astrologer">Not a prediction — just someone to talk to</a>
