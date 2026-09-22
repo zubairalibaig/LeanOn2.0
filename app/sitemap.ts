@@ -105,6 +105,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/jaipur`,                           lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/ahmedabad`,                        lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.8 },
     // AI/ChatGPT-alternative + earning pages — the highest-growth SEO cluster
+    { url: `${base}/human-companionship-online-india`,      lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/chat-with-real-person`,            lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/ai-chatbot-alternative`,           lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/ai-human-support`,              lastModified: d(TODAY),        changeFrequency: 'monthly', priority: 0.95 },

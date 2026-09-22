@@ -9,6 +9,9 @@ const data: ReadyToTalkLandingData = {
     "talk to a real person online",
     "Talk to a Real Person Online",
     "peer support",
+    "paid human conversation India",
+    "pay to talk to someone",
+    "affordable human support India",
     "someone to talk to",
     "talk to a real person online"
   ],
