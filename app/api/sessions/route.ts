@@ -220,7 +220,7 @@ export async function POST(req: NextRequest) {
 // SECURITY: auth required — admin client required for wallet deduction, must bypass RLS for atomic operation
 export async function PATCH(req: NextRequest) {
   try {
-    const { sessionId, rating } = await req.json()
+    const { sessionId, rating, review } = await req.json()
 
     // Validate sessionId is a proper UUID before using it in any DB query
     if (!sessionId || !UUID_RE.test(sessionId)) {
@@ -232,6 +232,8 @@ export async function PATCH(req: NextRequest) {
         return NextResponse.json({ error: 'Rating must be an integer from 1 to 5' }, { status: 400 })
       }
     }
+    // Validate review text when provided — max 500 chars, must accompany a rating
+    const sanitizedReview = typeof review === 'string' ? review.trim().slice(0, 500) : undefined
 
     const userSb = createServerSupabaseClient()
     const { data: { user } } = await userSb.auth.getUser()
@@ -275,8 +277,8 @@ export async function PATCH(req: NextRequest) {
       .update({
         status:   'completed',
         ended_at: new Date().toISOString(),
-        // SECURITY: only seeker may write their rating of the listener
-        ...(rating && user.id === session.seeker_id ? { seeker_rating: rating } : {}),
+        // SECURITY: only seeker may write their rating/review of the listener
+        ...(rating && user.id === session.seeker_id ? { seeker_rating: rating, ...(sanitizedReview ? { seeker_review: sanitizedReview } : {}) } : {}),
       })
       .eq('id', sessionId)
       .eq('status', 'active')
@@ -285,9 +287,9 @@ export async function PATCH(req: NextRequest) {
       .single()
 
     if (!completed) {
-      // Already completed — only seeker can update rating
+      // Already completed — only seeker can update rating/review
       if (rating && user.id === session.seeker_id) {
-        await sb.from('sessions').update({ seeker_rating: rating })
+        await sb.from('sessions').update({ seeker_rating: rating, ...(sanitizedReview ? { seeker_review: sanitizedReview } : {}) })
           .eq('id', sessionId).eq('seeker_id', user.id)
         // Recalculate rating average even on late updates
         await updateListenerRating(sb, session.listener_id)

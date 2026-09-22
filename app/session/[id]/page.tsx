@@ -92,6 +92,9 @@ body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:an
 .stars{display:flex;gap:8px;justify-content:center;margin-bottom:28px;}
 .star{font-size:36px;background:none;border:none;cursor:pointer;filter:grayscale(1);opacity:.3;}
 .star.lit{filter:none;opacity:1;}
+.review-input{width:100%;max-width:340px;min-height:60px;border:1.5px solid var(--border);border-radius:14px;padding:12px 16px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:500;color:var(--navy);resize:vertical;outline:none;margin-bottom:20px;}
+.review-input:focus{border-color:var(--teal);}
+.review-input::placeholder{color:#8AAAB8;font-weight:500;}
 .btn-done{background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;padding:16px 40px;border-radius:50px;border:none;cursor:pointer;}
 .back-confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
 .back-confirm-card{background:white;border-radius:20px;padding:24px;max-width:340px;width:100%;text-align:center;}
@@ -205,6 +208,7 @@ function SessionContent() {
   const [secs, setSecs]       = useState(durationMins * 60)
   const [ended, setEnded]     = useState(false)
   const [rating, setRating]   = useState(0)
+  const [reviewText, setReviewText] = useState('')
   const [userId, setUserId]   = useState<string | null>(null)
   const [connected, setConnected] = useState(false)
   // Resolved from DB so name survives page refresh
@@ -1063,7 +1067,7 @@ function SessionContent() {
       await fetch('/api/sessions', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId, rating: rating || undefined }),
+        body: JSON.stringify({ sessionId, rating: rating || undefined, review: reviewText.trim() || undefined }),
       }).catch(() => {})
     }
     router.push(userId === listenerId ? '/dashboard' : '/browse')
@@ -1164,11 +1168,22 @@ function SessionContent() {
               ? 'Thank you for supporting someone today. 💙'
               : 'How are you feeling? Rate your session to help others find the right listener.'}</p>
             {userId !== listenerId && !voiceFailed && (
+            <>
             <div className="stars">
               {[1,2,3,4,5].map(s => (
                 <button key={s} className={`star${rating >= s ? ' lit' : ''}`} onClick={() => setRating(s)}>★</button>
               ))}
             </div>
+            {rating > 0 && (
+              <textarea
+                className="review-input"
+                placeholder="Share what was helpful (optional)"
+                value={reviewText}
+                onChange={e => setReviewText(e.target.value.slice(0, 500))}
+                maxLength={500}
+              />
+            )}
+            </>
             )}
             <button className="btn-done" onClick={finishSession}>
               {voiceFailed

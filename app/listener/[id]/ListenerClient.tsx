@@ -27,6 +27,7 @@ type ListenerProfile = {
 type Review = {
   seeker_rating: number
   seeker_review: string | null
+  created_at: string
   users: { name: string } | null
 }
 
@@ -69,7 +70,9 @@ a{text-decoration:none;color:inherit;}
 .sec-title{font-size:16px;font-weight:800;color:var(--navy);margin-bottom:14px;}
 .reviews{display:flex;flex-direction:column;gap:10px;}
 .review{background:white;border:1.5px solid var(--border);border-radius:16px;padding:16px;}
-.review-stars{font-size:13px;color:var(--orange);margin-bottom:6px;}
+.review-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.review-stars{font-size:13px;color:var(--orange);}
+.review-date{font-size:11px;color:#8AAAB8;font-weight:600;}
 .review-text{font-size:13px;color:#3A5A6E;font-weight:500;line-height:1.55;margin-bottom:8px;}
 .review-name{font-size:12px;color:var(--gray);font-weight:700;}
 .book-bar{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:white;border-top:1px solid var(--border);padding:16px 20px;box-shadow:0 -4px 24px rgba(15,72,103,.1);}
@@ -149,9 +152,9 @@ export default function ListenerClient({ id }: { id: string }) {
       .catch(() => setNotFound(true))
 
     client.from('sessions')
-      .select('seeker_rating, seeker_review, users!seeker_id(name)')
+      .select('seeker_rating, seeker_review, created_at, users!seeker_id(name)')
       .eq('listener_id', id).eq('status', 'completed').not('seeker_rating', 'is', null)
-      .order('created_at', {ascending:false}).limit(5)
+      .order('created_at', {ascending:false}).limit(10)
       .then(({data}) => { if (data) setReviews(data as unknown as Review[]) })
 
     client.auth.getUser().then(async ({data:{user}}) => {
@@ -333,13 +336,21 @@ export default function ListenerClient({ id }: { id: string }) {
           <div className="reviews-section">
             <div className="sec-title">What others say</div>
             <div className="reviews">
-              {reviews.map((r,i) => (
+              {reviews.map((r,i) => {
+                const name = r.users?.name || 'Anonymous'
+                const masked = name.length <= 2 ? name[0] + '***' : name[0] + '***' + name[name.length - 1]
+                const date = r.created_at ? new Date(r.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : ''
+                return (
                 <div key={i} className="review">
-                  <div className="review-stars">{'★'.repeat(r.seeker_rating)}</div>
+                  <div className="review-top">
+                    <div className="review-stars">{'★'.repeat(r.seeker_rating)}{'☆'.repeat(5 - r.seeker_rating)}</div>
+                    {date && <span className="review-date">{date}</span>}
+                  </div>
                   {r.seeker_review && <p className="review-text">"{r.seeker_review}"</p>}
-                  <span className="review-name">— {r.users?.name || 'Anonymous'}</span>
+                  <span className="review-name">— {masked}</span>
                 </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         )}
