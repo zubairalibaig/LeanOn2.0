@@ -35,9 +35,10 @@ export async function PATCH() {
 // Scrub PII from all tables for a given user, preserving structural/financial records.
 // Phone becomes "DELETE" + last 5 digits for audit trail.
 async function scrubUserData(admin: ReturnType<typeof createAdminClient>, userId: string) {
-  // Fetch current phone for the audit-trail stub
-  const { data: userRow } = await admin.from('users').select('phone').eq('id', userId).single()
+  // Fetch current phone + avatar BEFORE scrubbing (avatar_url is nulled in step 1)
+  const { data: userRow } = await admin.from('users').select('phone, avatar_url').eq('id', userId).single()
   const phone = (userRow?.phone as string) || ''
+  const savedAvatarUrl = (userRow?.avatar_url as string) || null
   const phoneSuffix = phone.replace(/\D/g, '').slice(-5)
   const scrubPhone = phoneSuffix ? `DELETE${phoneSuffix}` : 'DELETED'
 
@@ -106,15 +107,14 @@ async function scrubUserData(admin: ReturnType<typeof createAdminClient>, userId
   await admin.from('listener_verifications').delete().eq('listener_id', userId)
     .then(() => {}, () => {})
 
-  // Delete avatar from storage if it exists
-  const { data: avatarRow } = await admin.from('users').select('avatar_url').eq('id', userId).maybeSingle()
-  if (avatarRow?.avatar_url) storageFilesToDelete.push(avatarRow.avatar_url as string)
+  // Add avatar (fetched before step 1 nulled it)
+  if (savedAvatarUrl) storageFilesToDelete.push(savedAvatarUrl)
 
   // Clean up Supabase Storage files (selfies, ID docs, avatars)
   for (const url of storageFilesToDelete) {
     try {
-      // Extract bucket and path from Supabase storage URL
-      const match = (url as string).match(/\/storage\/v1\/object\/public\/([^/]+)\/(.+?)(?:\?|$)/)
+      // Extract bucket and path from Supabase storage URL (public, sign, or authenticated)
+      const match = (url as string).match(/\/storage\/v1\/object\/(?:public|sign|authenticated)\/([^/]+)\/(.+?)(?:\?|$)/)
       if (match) {
         await admin.storage.from(match[1]).remove([decodeURIComponent(match[2])])
       }
