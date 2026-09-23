@@ -364,6 +364,9 @@ export default function AdminPage() {
   // Inline confirm state for destructive actions (window.confirm blocked in mobile PWA/iOS)
   const [confirmBanId, setConfirmBanId] = useState<string | null>(null)
   const [confirmBanListenerId, setConfirmBanListenerId] = useState<string | null>(null)
+  const [confirmDeleteUserId, setConfirmDeleteUserId] = useState<string | null>(null)
+  const [deleteConfirmInput, setDeleteConfirmInput] = useState('')
+  const [deletingUser, setDeletingUser] = useState(false)
   const [confirmRejectOverviewId, setConfirmRejectOverviewId] = useState<string | null>(null)
   const [confirmRejectListenersId, setConfirmRejectListenersId] = useState<string | null>(null)
   // Inline name-edit state (shared for both users and listeners tables)
@@ -661,6 +664,27 @@ export default function AdminPage() {
     } else {
       const err = await res.json()
       showToast(`Error: ${err.error || 'Something went wrong'}`)
+    }
+  }
+
+  async function adminDeleteAccount(userId: string) {
+    setDeletingUser(true)
+    const res = await fetch('/api/account', {
+      method: 'DELETE',
+      headers: adminHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ userId }),
+    })
+    setDeletingUser(false)
+    setConfirmDeleteUserId(null)
+    setDeleteConfirmInput('')
+    if (res.ok) {
+      showToast('Account permanently deleted — all PII scrubbed')
+      if (tab === 'users') loadUsers()
+      if (tab === 'listeners') loadListeners()
+      loadKPIs()
+    } else {
+      const err = await res.json().catch(() => ({}))
+      showToast(`Error: ${err.error || 'Deletion failed'}`)
     }
   }
 
@@ -1380,6 +1404,7 @@ export default function AdminPage() {
                               ) : (
                                 <button className="btn btn-red" disabled={busy !== null} onClick={() => setConfirmBanId(u.id)}>Ban</button>
                               ))}
+                              <button className="btn btn-red" style={{ fontSize: 11, opacity: 0.7 }} disabled={busy !== null} onClick={() => { setDeleteConfirmInput(''); setConfirmDeleteUserId(u.id) }}>Delete Account</button>
                             </div>
                           </td>
                         </tr>
@@ -1832,6 +1857,9 @@ export default function AdminPage() {
                                   ) : (
                                     !l.is_suspended && <button className="btn btn-red" disabled={busy !== null} onClick={() => setConfirmBanListenerId(l.user_id)}>Ban</button>
                                   ))}
+                                  <button className="btn btn-red" style={{ fontSize: 11, opacity: 0.7 }} disabled={busy !== null} onClick={() => { setDeleteConfirmInput(''); setConfirmDeleteUserId(l.user_id) }}>
+                                    Delete Account
+                                  </button>
                                   <a href={`/listener/${l.user_id}`} target="_blank" rel="noopener" className="btn btn-gray" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
                                     View Profile
                                   </a>
@@ -2652,6 +2680,47 @@ export default function AdminPage() {
       </div>
 
       {toast && <div className="toast">{toast}</div>}
+
+      {/* Delete Account confirmation modal */}
+      {confirmDeleteUserId && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: 20 }}>
+          <div style={{ background: 'white', borderRadius: 20, padding: '28px 24px', maxWidth: 400, width: '100%', textAlign: 'center' }}>
+            <div style={{ fontSize: 36, marginBottom: 12 }}>⚠️</div>
+            <h3 style={{ fontSize: 18, fontWeight: 800, color: '#B71C1C', marginBottom: 8 }}>Permanently delete this account?</h3>
+            <p style={{ fontSize: 13, color: '#5A7A8A', fontWeight: 600, lineHeight: 1.6, marginBottom: 6 }}>
+              All personal data (name, phone, bank details, aadhaar, selfie, ID docs) will be permanently erased. Phone number will be replaced with a DELETE + last 5 digits stub for audit trail. Sessions and financial records stay but are anonymized.
+            </p>
+            <p style={{ fontSize: 12, color: '#B71C1C', fontWeight: 700, marginBottom: 16 }}>
+              This cannot be undone.
+            </p>
+            <p style={{ fontSize: 13, fontWeight: 700, color: '#0F4867', marginBottom: 10 }}>
+              Type <strong>DELETE</strong> to confirm
+            </p>
+            <input
+              style={{ width: '100%', padding: '10px 14px', border: '2px solid #D5EEF6', borderRadius: 10, fontSize: 16, fontWeight: 700, textAlign: 'center', fontFamily: "'Nunito', sans-serif", letterSpacing: 2 }}
+              value={deleteConfirmInput}
+              onChange={e => setDeleteConfirmInput(e.target.value.toUpperCase())}
+              placeholder="DELETE"
+              autoFocus
+            />
+            <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
+              <button
+                style={{ flex: 1, padding: '12px 0', background: deleteConfirmInput === 'DELETE' ? '#B71C1C' : '#ccc', color: 'white', border: 'none', borderRadius: 12, fontSize: 14, fontWeight: 800, cursor: deleteConfirmInput === 'DELETE' ? 'pointer' : 'not-allowed', fontFamily: "'Nunito', sans-serif" }}
+                onClick={() => adminDeleteAccount(confirmDeleteUserId)}
+                disabled={deletingUser || deleteConfirmInput !== 'DELETE'}
+              >
+                {deletingUser ? 'Deleting...' : 'Permanently delete'}
+              </button>
+              <button
+                style={{ flex: 1, padding: '12px 0', background: 'white', color: '#0F4867', border: '2px solid #D5EEF6', borderRadius: 12, fontSize: 14, fontWeight: 800, cursor: 'pointer', fontFamily: "'Nunito', sans-serif" }}
+                onClick={() => { setConfirmDeleteUserId(null); setDeleteConfirmInput('') }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

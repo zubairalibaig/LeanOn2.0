@@ -76,6 +76,7 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [deleteInput, setDeleteInput] = useState('')
 
   useEffect(() => {
     async function loadProfile() {
@@ -308,20 +309,43 @@ export default function ProfilePage() {
             Sign out
           </button>
 
-          <button className="delete-btn" onClick={() => setShowDeleteConfirm(true)}>
+          <button className="delete-btn" onClick={() => { setDeleteInput(''); setShowDeleteConfirm(true) }}>
             Delete account
           </button>
 
           {showDeleteConfirm && (
-            <div className="confirm-box">
-              <p>Are you sure you want to delete your account? Your data will be deactivated. This cannot be undone.</p>
-              <div className="confirm-actions">
-                <button className="confirm-yes" onClick={handleDeleteAccount} disabled={deleting}>
-                  {deleting ? 'Deleting...' : 'Yes, delete'}
-                </button>
-                <button className="confirm-no" onClick={() => setShowDeleteConfirm(false)}>
-                  Cancel
-                </button>
+            <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: 20 }}>
+              <div style={{ background: 'white', borderRadius: 20, padding: '28px 24px', maxWidth: 380, width: '100%', textAlign: 'center' }}>
+                <div style={{ fontSize: 36, marginBottom: 12 }}>⚠️</div>
+                <h3 style={{ fontSize: 18, fontWeight: 800, color: '#B71C1C', marginBottom: 8 }}>Delete your account?</h3>
+                <p style={{ fontSize: 13, color: '#5A7A8A', fontWeight: 600, lineHeight: 1.6, marginBottom: 16 }}>
+                  This is permanent and cannot be undone. Your name, phone number, profile, and all personal data will be permanently erased. Session history will be anonymized.
+                </p>
+                <p style={{ fontSize: 13, fontWeight: 700, color: '#0F4867', marginBottom: 10 }}>
+                  Type <strong>DELETE</strong> to confirm
+                </p>
+                <input
+                  style={{ width: '100%', padding: '10px 14px', border: '2px solid #D5EEF6', borderRadius: 10, fontSize: 16, fontWeight: 700, textAlign: 'center', fontFamily: 'Nunito, sans-serif', letterSpacing: 2 }}
+                  value={deleteInput}
+                  onChange={e => setDeleteInput(e.target.value.toUpperCase())}
+                  placeholder="DELETE"
+                  autoFocus
+                />
+                <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
+                  <button
+                    style={{ flex: 1, padding: '12px 0', background: deleteInput === 'DELETE' ? '#B71C1C' : '#ccc', color: 'white', border: 'none', borderRadius: 12, fontSize: 14, fontWeight: 800, cursor: deleteInput === 'DELETE' ? 'pointer' : 'not-allowed', fontFamily: 'Nunito, sans-serif' }}
+                    onClick={handleDeleteAccount}
+                    disabled={deleting || deleteInput !== 'DELETE'}
+                  >
+                    {deleting ? 'Deleting...' : 'Permanently delete'}
+                  </button>
+                  <button
+                    style={{ flex: 1, padding: '12px 0', background: 'white', color: '#0F4867', border: '2px solid #D5EEF6', borderRadius: 12, fontSize: 14, fontWeight: 800, cursor: 'pointer', fontFamily: 'Nunito, sans-serif' }}
+                    onClick={() => setShowDeleteConfirm(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
           )}

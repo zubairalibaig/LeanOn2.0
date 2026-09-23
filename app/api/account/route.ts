@@ -32,34 +32,118 @@ export async function PATCH() {
   }
 }
 
-// POST — soft-delete (deactivate) the authenticated user's account
+// Scrub PII from all tables for a given user, preserving structural/financial records.
+// Phone becomes "DELETE" + last 5 digits for audit trail.
+async function scrubUserData(admin: ReturnType<typeof createAdminClient>, userId: string) {
+  // Fetch current phone for the audit-trail stub
+  const { data: userRow } = await admin.from('users').select('phone').eq('id', userId).single()
+  const phone = (userRow?.phone as string) || ''
+  const phoneSuffix = phone.replace(/\D/g, '').slice(-5)
+  const scrubPhone = phoneSuffix ? `DELETE${phoneSuffix}` : 'DELETED'
+
+  // 1. Scrub users table — name, email, avatar gone; phone becomes DELETExxxxx
+  await admin.from('users').update({
+    name: 'Deleted User',
+    email: null,
+    phone: scrubPhone,
+    avatar_url: null,
+    is_active: false,
+    is_suspended: true,
+    fcm_token: null,
+  }).eq('id', userId)
+
+  // 2. Scrub listener_profiles — hide from all discovery, wipe bio
+  await admin.from('listener_profiles').update({
+    is_active: false,
+    is_approved: false,
+    is_available: false,
+    is_suspended: true,
+    bio: null,
+  }).eq('user_id', userId)
+
+  // 3. Scrub listener_applications — wipe all PII (bank, aadhaar, phone, name, UPI)
+  await admin.from('listener_applications').update({
+    name: 'Deleted User',
+    phone: scrubPhone,
+    aadhaar_last4: null,
+    bank_account: null,
+    ifsc_code: null,
+    upi_id: null,
+    account_holder_name: null,
+    status: 'deleted',
+  }).eq('user_id', userId)
+    .then(() => {}, () => {}) // table row may not exist
+
+  // Also try to clear full aadhaar if column exists (migration 047)
+  await admin.from('listener_applications').update({ aadhaar: null } as Record<string, null>)
+    .eq('user_id', userId)
+    .then(() => {}, () => {})
+
+  // 4. Scrub listener_verifications — delete rows (selfie, ID docs)
+  await admin.from('listener_verifications').delete().eq('listener_id', userId)
+    .then(() => {}, () => {})
+
+  // 5. Scrub payout_requests — null out UPI but keep amounts/dates for audit
+  await admin.from('payout_requests').update({ upi_id: null })
+    .eq('user_id', userId)
+    .then(() => {}, () => {})
+
+  // 6. Delete notifications — no audit value
+  await admin.from('notifications').delete().eq('user_id', userId)
+    .then(() => {}, () => {})
+
+  // 7. Sign out globally
+  await admin.auth.admin.signOut(userId, 'global')
+    .then(() => {}, (e) => logger.warn('scrubUserData: global signOut failed', { userId, error: String(e) }))
+
+  // 8. Delete auth.users entry — prevents login
+  await admin.auth.admin.deleteUser(userId)
+    .then(() => {}, (e) => logger.warn('scrubUserData: auth.deleteUser failed', { userId, error: String(e) }))
+
+  logger.info('Account permanently deleted (PII scrubbed)', { userId, scrubPhone })
+}
+
+// POST — permanent account deletion (PII scrub + auth removal)
 export async function POST() {
   try {
     const userSb = createServerSupabaseClient()
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
-    // Destructive, signs the user out globally — throttle hard.
     if (!checkRateLimit(`account-delete:${user.id}`, 3, 60_000)) {
       return NextResponse.json({ error: 'Too many requests. Please wait a moment.' }, { status: 429 })
     }
 
     const admin = createAdminClient()
-
-    // Mark user inactive
-    await admin.from('users').update({ is_active: false }).eq('id', user.id)
-
-    // If they are a listener, also deactivate and take offline
-    await admin.from('listener_profiles')
-      .update({ is_active: false, is_available: false })
-      .eq('user_id', user.id)
-
-    // Sign out all sessions via Admin API
-    await admin.auth.admin.signOut(user.id, 'global')
+    await scrubUserData(admin, user.id)
 
     return NextResponse.json({ success: true })
   } catch (err) {
-    logger.error('Account deactivation error:', { error: err instanceof Error ? err.message : String(err) })
-    return NextResponse.json({ error: 'Failed to deactivate account' }, { status: 500 })
+    logger.error('Account deletion error:', { error: err instanceof Error ? err.message : String(err) })
+    return NextResponse.json({ error: 'Failed to delete account' }, { status: 500 })
+  }
+}
+
+// DELETE — admin-initiated account deletion (requires admin auth via header)
+export async function DELETE(req: Request) {
+  try {
+    const { requireAdmin } = await import('@/lib/require-admin')
+    const { error, status } = await requireAdmin(req as never)
+    if (error) return NextResponse.json({ error }, { status })
+
+    let body: { userId?: string }
+    try { body = await req.json() } catch { return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 }) }
+    const { userId } = body
+    if (!userId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)) {
+      return NextResponse.json({ error: 'Invalid userId' }, { status: 400 })
+    }
+
+    const admin = createAdminClient()
+    await scrubUserData(admin, userId)
+
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    logger.error('Admin account deletion error:', { error: err instanceof Error ? err.message : String(err) })
+    return NextResponse.json({ error: 'Failed to delete account' }, { status: 500 })
   }
 }

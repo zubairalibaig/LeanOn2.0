@@ -227,6 +227,7 @@ export default function DashboardPage() {
   const [savingEdit, setSavingEdit]   = useState(false)
   const [deactivating, setDeactivating] = useState(false)
   const [showDeactivateConfirm, setShowDeactivateConfirm] = useState(false)
+  const [deleteInput, setDeleteInput] = useState('')
 
   useEffect(() => { loadData() }, [])
 
@@ -667,13 +668,13 @@ export default function DashboardPage() {
     showToast(`Payout request submitted! ₹${body.amount} will be transferred within 3 business days.`, 'success')
   }
 
-  async function deactivateListenerProfile() {
+  async function deleteAccount() {
     setDeactivating(true)
-    const res = await fetch('/api/account', { method: 'PATCH' })
+    const res = await fetch('/api/account', { method: 'POST' })
     setDeactivating(false)
     if (res.ok) {
-      showToast('Listener profile deactivated. Contact support to reactivate.', 'info')
-      router.push('/browse')
+      await sb.auth.signOut()
+      router.push('/')
     } else {
       showToast('Something went wrong. Please try again.', 'error')
     }
@@ -1166,22 +1167,44 @@ export default function DashboardPage() {
               showToast('Profile link copied!', 'success')
             }}>🔗 Share profile</button>
           </div>
-          {showDeactivateConfirm ? (
-            <div style={{background:'#FFF5F5',border:'1.5px solid #FFCDD2',borderRadius:12,padding:'14px 16px',marginTop:10}}>
-              <p style={{fontSize:13,color:'#7A2020',fontWeight:700,marginBottom:12}}>This will remove you from search and stop incoming sessions. Your account stays active.</p>
-              <div style={{display:'flex',gap:8}}>
-                <button className="btn-deactivate" style={{flex:1,marginTop:0}} onClick={deactivateListenerProfile} disabled={deactivating}>
-                  {deactivating ? '⟳ Deactivating...' : 'Yes, deactivate'}
-                </button>
-                <button style={{flex:1,padding:10,background:'white',border:'1.5px solid var(--border)',borderRadius:10,fontFamily:'Nunito,sans-serif',fontWeight:700,fontSize:12,cursor:'pointer',color:'var(--navy)'}} onClick={() => setShowDeactivateConfirm(false)}>
-                  Cancel
-                </button>
+          <button className="btn-deactivate" onClick={() => { setDeleteInput(''); setShowDeactivateConfirm(true) }} disabled={deactivating}>
+            ⚠️ Delete account
+          </button>
+          {showDeactivateConfirm && (
+            <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: 20 }}>
+              <div style={{ background: 'white', borderRadius: 20, padding: '28px 24px', maxWidth: 380, width: '100%', textAlign: 'center' }}>
+                <div style={{ fontSize: 36, marginBottom: 12 }}>⚠️</div>
+                <h3 style={{ fontSize: 18, fontWeight: 800, color: '#B71C1C', marginBottom: 8 }}>Delete your account?</h3>
+                <p style={{ fontSize: 13, color: '#5A7A8A', fontWeight: 600, lineHeight: 1.6, marginBottom: 16 }}>
+                  This is permanent and cannot be undone. Your name, phone number, bank details, profile, and all personal data will be permanently erased. Your listener profile will be removed from LeanOn.
+                </p>
+                <p style={{ fontSize: 13, fontWeight: 700, color: '#0F4867', marginBottom: 10 }}>
+                  Type <strong>DELETE</strong> to confirm
+                </p>
+                <input
+                  style={{ width: '100%', padding: '10px 14px', border: '2px solid #D5EEF6', borderRadius: 10, fontSize: 16, fontWeight: 700, textAlign: 'center', fontFamily: 'Nunito, sans-serif', letterSpacing: 2 }}
+                  value={deleteInput}
+                  onChange={e => setDeleteInput(e.target.value.toUpperCase())}
+                  placeholder="DELETE"
+                  autoFocus
+                />
+                <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
+                  <button
+                    style={{ flex: 1, padding: '12px 0', background: deleteInput === 'DELETE' ? '#B71C1C' : '#ccc', color: 'white', border: 'none', borderRadius: 12, fontSize: 14, fontWeight: 800, cursor: deleteInput === 'DELETE' ? 'pointer' : 'not-allowed', fontFamily: 'Nunito, sans-serif' }}
+                    onClick={deleteAccount}
+                    disabled={deactivating || deleteInput !== 'DELETE'}
+                  >
+                    {deactivating ? 'Deleting...' : 'Permanently delete'}
+                  </button>
+                  <button
+                    style={{ flex: 1, padding: '12px 0', background: 'white', color: '#0F4867', border: '2px solid #D5EEF6', borderRadius: 12, fontSize: 14, fontWeight: 800, cursor: 'pointer', fontFamily: 'Nunito, sans-serif' }}
+                    onClick={() => setShowDeactivateConfirm(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
-          ) : (
-            <button className="btn-deactivate" onClick={() => setShowDeactivateConfirm(true)} disabled={deactivating}>
-              ⚠️ Deactivate listener profile
-            </button>
           )}
         </div>
 

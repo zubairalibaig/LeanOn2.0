@@ -23,6 +23,8 @@ async function fetchProfile(id: string) {
       .from('listener_profiles')
       .select('bio, rating, total_sessions, specialty_tags, is_verified, users!inner(name)')
       .eq('user_id', id)
+      .eq('is_approved', true)
+      .eq('is_active', true)
       .single()
     return data
   } catch {
