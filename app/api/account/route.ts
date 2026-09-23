@@ -35,12 +35,22 @@ export async function PATCH() {
 // Scrub PII from all tables for a given user, preserving structural/financial records.
 // Phone becomes "DELETE" + last 5 digits for audit trail.
 async function scrubUserData(admin: ReturnType<typeof createAdminClient>, userId: string) {
+  // Block deletion if the user has an active or pending session
+  const { count: activeSessions } = await admin.from('sessions')
+    .select('id', { count: 'exact', head: true })
+    .or(`seeker_id.eq.${userId},listener_id.eq.${userId}`)
+    .in('status', ['active', 'pending'])
+  if (activeSessions && activeSessions > 0) {
+    throw new Error('ACTIVE_SESSION')
+  }
+
   // Fetch current phone + avatar BEFORE scrubbing (avatar_url is nulled in step 1)
   const { data: userRow } = await admin.from('users').select('phone, avatar_url').eq('id', userId).single()
   const phone = (userRow?.phone as string) || ''
   const savedAvatarUrl = (userRow?.avatar_url as string) || null
-  const phoneSuffix = phone.replace(/\D/g, '').slice(-5)
-  const scrubPhone = phoneSuffix ? `DELETE${phoneSuffix}` : 'DELETED'
+  // Use full phone digits (not just last 5) to avoid UNIQUE constraint collisions
+  const phoneDigits = phone.replace(/\D/g, '')
+  const scrubPhone = phoneDigits ? `DELETE${phoneDigits}` : `DELETED_${userId.slice(0, 8)}`
 
   // 1. Scrub users table — name, email, avatar gone; phone becomes DELETExxxxx
   await admin.from('users').update({
@@ -168,7 +178,11 @@ export async function POST() {
 
     return NextResponse.json({ success: true })
   } catch (err) {
-    logger.error('Account deletion error:', { error: err instanceof Error ? err.message : String(err) })
+    const msg = err instanceof Error ? err.message : String(err)
+    if (msg === 'ACTIVE_SESSION') {
+      return NextResponse.json({ error: 'You have an active session. Please end it before deleting your account.' }, { status: 409 })
+    }
+    logger.error('Account deletion error:', { error: msg })
     return NextResponse.json({ error: 'Failed to delete account' }, { status: 500 })
   }
 }
@@ -192,7 +206,11 @@ export async function DELETE(req: Request) {
 
     return NextResponse.json({ success: true })
   } catch (err) {
-    logger.error('Admin account deletion error:', { error: err instanceof Error ? err.message : String(err) })
+    const msg = err instanceof Error ? err.message : String(err)
+    if (msg === 'ACTIVE_SESSION') {
+      return NextResponse.json({ error: 'User has an active session. End it before deleting.' }, { status: 409 })
+    }
+    logger.error('Admin account deletion error:', { error: msg })
     return NextResponse.json({ error: 'Failed to delete account' }, { status: 500 })
   }
 }

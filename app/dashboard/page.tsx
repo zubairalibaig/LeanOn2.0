@@ -676,7 +676,9 @@ export default function DashboardPage() {
       await sb.auth.signOut()
       router.push('/')
     } else {
-      showToast('Something went wrong. Please try again.', 'error')
+      const body = await res.json().catch(() => ({}))
+      showToast(body.error || 'Something went wrong. Please try again.', 'error')
+      setShowDeactivateConfirm(false)
     }
   }
 

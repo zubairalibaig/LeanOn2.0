@@ -190,6 +190,7 @@ export default function ProfilePage() {
       const body = await res.json().catch(() => ({}))
       alert(body.error || 'Account deletion failed. Please try again or contact support.')
       setDeleting(false)
+      setShowDeleteConfirm(false)
       return
     }
     await supabase.auth.signOut()
@@ -318,9 +319,14 @@ export default function ProfilePage() {
               <div style={{ background: 'white', borderRadius: 20, padding: '28px 24px', maxWidth: 380, width: '100%', textAlign: 'center' }}>
                 <div style={{ fontSize: 36, marginBottom: 12 }}>⚠️</div>
                 <h3 style={{ fontSize: 18, fontWeight: 800, color: '#B71C1C', marginBottom: 8 }}>Delete your account?</h3>
-                <p style={{ fontSize: 13, color: '#5A7A8A', fontWeight: 600, lineHeight: 1.6, marginBottom: 16 }}>
+                <p style={{ fontSize: 13, color: '#5A7A8A', fontWeight: 600, lineHeight: 1.6, marginBottom: walletBalance > 0 ? 8 : 16 }}>
                   This is permanent and cannot be undone. Your name, phone number, profile, and all personal data will be permanently erased. Session history will be anonymized.
                 </p>
+                {walletBalance > 0 && (
+                  <p style={{ fontSize: 13, fontWeight: 700, color: '#B71C1C', background: '#FFF5F5', border: '1px solid #FFCDD2', borderRadius: 8, padding: '8px 12px', marginBottom: 16 }}>
+                    You have ₹{walletBalance} in your wallet. This balance will be forfeited and cannot be recovered after deletion.
+                  </p>
+                )}
                 <p style={{ fontSize: 13, fontWeight: 700, color: '#0F4867', marginBottom: 10 }}>
                   Type <strong>DELETE</strong> to confirm
                 </p>

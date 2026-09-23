@@ -1404,7 +1404,11 @@ export default function AdminPage() {
                               ) : (
                                 <button className="btn btn-red" disabled={busy !== null} onClick={() => setConfirmBanId(u.id)}>Ban</button>
                               ))}
-                              <button className="btn btn-red" style={{ fontSize: 11, opacity: 0.7 }} disabled={busy !== null} onClick={() => { setDeleteConfirmInput(''); setConfirmDeleteUserId(u.id) }}>Delete Account</button>
+                              {u.phone?.startsWith('DELETE') ? (
+                                <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--red)', opacity: 0.6 }}>Account deleted</span>
+                              ) : (
+                                <button className="btn btn-red" style={{ fontSize: 11, opacity: 0.7 }} disabled={busy !== null} onClick={() => { setDeleteConfirmInput(''); setConfirmDeleteUserId(u.id) }}>Delete Account</button>
+                              )}
                             </div>
                           </td>
                         </tr>
@@ -1857,9 +1861,13 @@ export default function AdminPage() {
                                   ) : (
                                     !l.is_suspended && <button className="btn btn-red" disabled={busy !== null} onClick={() => setConfirmBanListenerId(l.user_id)}>Ban</button>
                                   ))}
-                                  <button className="btn btn-red" style={{ fontSize: 11, opacity: 0.7 }} disabled={busy !== null} onClick={() => { setDeleteConfirmInput(''); setConfirmDeleteUserId(l.user_id) }}>
-                                    Delete Account
-                                  </button>
+                                  {l.users?.phone?.startsWith('DELETE') ? (
+                                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--red)', opacity: 0.6 }}>Account deleted</span>
+                                  ) : (
+                                    <button className="btn btn-red" style={{ fontSize: 11, opacity: 0.7 }} disabled={busy !== null} onClick={() => { setDeleteConfirmInput(''); setConfirmDeleteUserId(l.user_id) }}>
+                                      Delete Account
+                                    </button>
+                                  )}
                                   <a href={`/listener/${l.user_id}`} target="_blank" rel="noopener" className="btn btn-gray" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
                                     View Profile
                                   </a>
