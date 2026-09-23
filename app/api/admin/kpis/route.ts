@@ -121,6 +121,12 @@ export async function GET(req: NextRequest) {
       // index 36: approved listeners with a pending selfie awaiting review
       sb.from('listener_profiles').select('user_id', { count: 'exact', head: true })
         .eq('is_approved', true).not('pending_avatar_url', 'is', null),
+
+      // index 37: unique users who recharged (distinct user_id from wallet recharges)
+      sb.from('wallet_transactions').select('user_id').eq('type', 'credit').ilike('description', '%recharge%'),
+
+      // index 38: unique seekers who booked at least one session
+      sb.from('sessions').select('seeker_id'),
     ])
 
     // Extract values safely — failed queries return zero/null defaults
@@ -168,6 +174,8 @@ export async function GET(req: NextRequest) {
     const approvedListenerRows   = extract<{ user_id: string }>(34)
     const needsResubmission      = extract<{ user_id: string }>(35)
     const pendingSelfieReview    = extract<{ user_id: string }>(36)
+    const rechargeUsers          = extract<{ user_id: string }>(37)
+    const sessionSeekers         = extract<{ seeker_id: string }>(38)
 
     // Build a set of approved-listener user IDs so we can strip their wallet
     // balances from the seeker liability figure. Their earnings are already
@@ -239,6 +247,8 @@ export async function GET(req: NextRequest) {
         thisMonthRupees: sum(revenueThisMonth.data),
         todayRupees: sum(revenueToday.data),
         listenerEarningsRupees: sum(totalEarnings.data, 'net_amount'),
+        uniqueRechargers: new Set((rechargeUsers.data ?? []).map(r => r.user_id)).size,
+        uniqueSessionSeekers: new Set((sessionSeekers.data ?? []).map(r => r.seeker_id)).size,
       },
       // LeanOn's own income — the flat fee kept per paid session. This is the
       // only figure on this page that is genuinely yours: recharges are

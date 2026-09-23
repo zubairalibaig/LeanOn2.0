@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
     .order('created_at', { ascending: false })
     .range(lpPage * PAGE_SIZE, lpPage * PAGE_SIZE + PAGE_SIZE - 1)
 
-  const [pendingListenersRes, { data: pendingPayouts, count: prCount }, { data: refundRequests }] = await Promise.all([
+  const [pendingListenersRes, { data: pendingPayouts, count: prCount }, { data: refundRequests }, { data: completedPayoutsRaw }] = await Promise.all([
     lpQuery(true).then(r => (r.error && r.error.message.includes("'aadhaar'") ? lpQuery(false) : r)),
 
     // NO users embed here: payout_requests has TWO FKs to users (user_id and
@@ -69,6 +69,14 @@ export async function GET(req: NextRequest) {
       .select(`id, amount, reason, status, created_at, razorpay_payment_id, users ( name, email )`)
       .eq('status', 'pending')
       .order('created_at', { ascending: false })
+      .limit(50),
+
+    // Completed payouts — past payments the admin has marked paid
+    admin
+      .from('payout_requests')
+      .select('id, user_id, amount, upi_id, status, created_at, processed_at')
+      .eq('status', 'completed')
+      .order('processed_at', { ascending: false })
       .limit(50),
   ])
 
@@ -102,6 +110,26 @@ export async function GET(req: NextRequest) {
     payoutsOut = rows.map(r => ({ ...r, users: userMap[r.user_id] ?? null, bank: appMap[r.user_id] ?? null }))
   }
 
+  // Enrich completed payouts with listener name + phone
+  type CompletedPayoutOut = {
+    id: string; user_id: string; amount: number; upi_id: string | null
+    status: string; created_at: string; processed_at: string | null
+    name: string | null; phone: string | null
+  }
+  let completedPayouts: CompletedPayoutOut[] = []
+  {
+    const rows = (completedPayoutsRaw ?? []) as Array<{ id: string; user_id: string; amount: number; upi_id: string | null; status: string; created_at: string; processed_at: string | null }>
+    const ids = Array.from(new Set(rows.map(r => r.user_id)))
+    const nameMap: Record<string, { name: string | null; phone: string | null }> = {}
+    if (ids.length > 0) {
+      const { data: uRows } = await admin.from('users').select('id, name, phone').in('id', ids)
+      for (const u of uRows ?? []) {
+        nameMap[u.id as string] = { name: u.name ?? null, phone: u.phone ?? null }
+      }
+    }
+    completedPayouts = rows.map(r => ({ ...r, name: nameMap[r.user_id]?.name ?? null, phone: nameMap[r.user_id]?.phone ?? null }))
+  }
+
   return NextResponse.json({
     pendingListeners: pendingListenersRes.data || [],
     lpTotal: pendingListenersRes.count ?? 0,
@@ -110,6 +138,7 @@ export async function GET(req: NextRequest) {
     prTotal: prCount ?? 0,
     prPage,
     refundRequests: refundRequests || [],
+    completedPayouts,
     // Drives the admin UI banner: automated RazorpayX transfer vs manual UPI.
     razorpayxEnabled: razorpayxEnabled(),
   })

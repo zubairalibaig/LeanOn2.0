@@ -12,7 +12,7 @@ type KPIs = {
     freeTrial: number; freeTrialToday?: number; freeTrialThisMonth?: number
     paid: number; paidToday?: number; paidThisMonth?: number
   }
-  revenue: { totalRechargedRupees: number; thisMonthRupees: number; todayRupees: number; listenerEarningsRupees: number }
+  revenue: { totalRechargedRupees: number; thisMonthRupees: number; todayRupees: number; listenerEarningsRupees: number; uniqueRechargers?: number; uniqueSessionSeekers?: number }
   // Optional: absent if an older API build is still deployed, so the UI must guard.
   walletLiability?: { totalRupees: number; usersWithBalance: number; listenerEarningsUnrequestedRupees?: number }
   platformEarnings?: { allTimeRupees: number; thisMonthRupees: number; todayRupees: number; paidSessions: number }
@@ -69,6 +69,7 @@ type PayoutRow = {
   bank?: { upi_id?: string | null; bank_account?: string | null; ifsc_code?: string | null; account_holder_name?: string | null } | null
 }
 type RefundRow  = { id: string; amount: number; reason?: string; status: string; created_at: string; razorpay_payment_id?: string | null; users: { name?: string; email?: string } | null }
+type CompletedPayoutRow = { id: string; user_id: string; amount: number; upi_id?: string | null; status: string; created_at: string; processed_at: string | null; name: string | null; phone: string | null }
 
 type Tab = 'overview' | 'users' | 'listeners' | 'sessions' | 'reports' | 'payouts' | 'verifications' | 'quality'
 
@@ -356,6 +357,7 @@ export default function AdminPage() {
 
   // Payouts + Refunds
   const [payouts, setPayouts] = useState<PayoutRow[]>([])
+  const [completedPayouts, setCompletedPayouts] = useState<CompletedPayoutRow[]>([])
   const [refunds, setRefunds] = useState<RefundRow[]>([])
   const [rzpxEnabled, setRzpxEnabled] = useState(false)
   const [payoutsLoading, setPayoutsLoading] = useState(false)
@@ -553,6 +555,7 @@ export default function AdminPage() {
     if (res?.ok) {
       const json = await res.json()
       setPayouts(json.pendingPayouts ?? [])
+      setCompletedPayouts(json.completedPayouts ?? [])
       setRefunds(json.refundRequests ?? [])
       setRzpxEnabled(json.razorpayxEnabled === true)
     } else {
@@ -1169,6 +1172,22 @@ export default function AdminPage() {
                       </div>
                     </div>
                   </>
+                )}
+
+                {/* ── CONVERSION TRACKING — Recharges → Sessions ── */}
+                {(kpis.revenue.uniqueRechargers != null || kpis.revenue.uniqueSessionSeekers != null) && (
+                  <div className="kpi-grid" style={{ marginBottom: 20 }}>
+                    <div className="kpi-card">
+                      <div className="kpi-label">Unique Recharges</div>
+                      <div className="kpi-value" style={{ fontSize: 22 }}>{fmt(kpis.revenue.uniqueRechargers ?? 0)}</div>
+                      <div className="kpi-sub">Seekers who topped up wallet</div>
+                    </div>
+                    <div className="kpi-card">
+                      <div className="kpi-label">Unique Seekers (booked)</div>
+                      <div className="kpi-value" style={{ fontSize: 22 }}>{fmt(kpis.revenue.uniqueSessionSeekers ?? 0)}</div>
+                      <div className="kpi-sub">Seekers who started a session</div>
+                    </div>
+                  </div>
                 )}
 
                 {/* ── PAYOUTS / REPORTS alerts ── */}
@@ -2469,6 +2488,40 @@ export default function AdminPage() {
                 </div>
               </div>
             ))}
+          </>
+        )}
+
+        {/* ─── COMPLETED PAYOUTS (inside payouts tab) ──────────────────────── */}
+        {tab === 'payouts' && completedPayouts.length > 0 && (
+          <>
+            <div className="section-title" style={{ marginTop: 28 }}>
+              Past Payments
+              <span className="count-badge">{completedPayouts.length}</span>
+            </div>
+            <div style={{ background: 'white', border: '1.5px solid var(--border)', borderRadius: 16, overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                <thead>
+                  <tr style={{ background: 'var(--light)' }}>
+                    <th style={{ padding: '10px 14px', textAlign: 'left', fontWeight: 800, color: 'var(--navy)', fontSize: 11 }}>Name</th>
+                    <th style={{ padding: '10px 14px', textAlign: 'left', fontWeight: 800, color: 'var(--navy)', fontSize: 11 }}>Phone</th>
+                    <th style={{ padding: '10px 14px', textAlign: 'right', fontWeight: 800, color: 'var(--navy)', fontSize: 11 }}>Amount</th>
+                    <th style={{ padding: '10px 14px', textAlign: 'left', fontWeight: 800, color: 'var(--navy)', fontSize: 11 }}>Requested</th>
+                    <th style={{ padding: '10px 14px', textAlign: 'left', fontWeight: 800, color: 'var(--navy)', fontSize: 11 }}>Paid</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {completedPayouts.map(cp => (
+                    <tr key={cp.id} style={{ borderTop: '1px solid var(--border)' }}>
+                      <td style={{ padding: '10px 14px', fontWeight: 700, color: 'var(--navy)' }}>{cp.name || '—'}</td>
+                      <td style={{ padding: '10px 14px', color: 'var(--gray)', fontWeight: 600, fontFamily: 'monospace', fontSize: 12 }}>{cp.phone || '—'}</td>
+                      <td style={{ padding: '10px 14px', textAlign: 'right', fontWeight: 800, color: 'var(--navy)' }}>₹{fmt(cp.amount)}</td>
+                      <td style={{ padding: '10px 14px', color: 'var(--gray)', fontWeight: 600, fontSize: 12 }}>{fmtDateTime(cp.created_at)}</td>
+                      <td style={{ padding: '10px 14px', color: 'var(--green)', fontWeight: 700, fontSize: 12 }}>{fmtDateTime(cp.processed_at)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </>
         )}
 
