@@ -680,6 +680,20 @@ export async function PATCH(req: NextRequest) {
             logger.error('update_bank_details: update failed', { userId, error: baErr.message })
             return NextResponse.json({ error: `Failed to update bank details: ${baErr.message}` }, { status: 500 })
           }
+          // Sync corrected UPI/bank to any pending payout request so the admin
+          // doesn't accidentally pay out to the old (wrong) details.
+          if (updates.upi_id !== undefined || updates.bank_account || updates.ifsc_code) {
+            const payoutUpdate: Record<string, string | null> = {}
+            if (updates.upi_id !== undefined) payoutUpdate.upi_id = updates.upi_id
+            else if (updates.bank_account && updates.ifsc_code) {
+              payoutUpdate.upi_id = `bank:${updates.ifsc_code}/${updates.bank_account}`
+            }
+            if (Object.keys(payoutUpdate).length > 0) {
+              await sb.from('payout_requests').update(payoutUpdate)
+                .eq('user_id', userId).eq('status', 'pending')
+                .then(({ error: e }) => { if (e) logger.warn('update_bank_details: payout_requests sync failed', { userId, error: e.message }) })
+            }
+          }
         } else {
           // No application row — listener applied during the broken period. Create one.
           // bank_account and ifsc_code are required by the DB; abort if not supplied.

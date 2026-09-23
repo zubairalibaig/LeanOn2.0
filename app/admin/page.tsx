@@ -1749,7 +1749,7 @@ export default function AdminPage() {
                                             if (bankEditValues.ifsc.trim()) payload.ifsc_code = bankEditValues.ifsc.trim()
                                             if (bankEditValues.upi !== '') payload.upi_id = bankEditValues.upi.trim() || null
                                             fetch('/api/admin/users', { method: 'PATCH', headers: { 'Content-Type': 'application/json', ...adminHeaders() }, body: JSON.stringify(payload) })
-                                              .then(r => r.json()).then(j => { if (j.ok) { showToast('Payout details saved'); loadListeners() } else showToast(j.error || 'Failed to save') })
+                                              .then(r => r.json()).then(j => { if (j.ok) { showToast('Payout details saved'); loadListeners(); loadPayouts() } else showToast(j.error || 'Failed to save') })
                                           }}>Save</button>
                                           <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setEditingBankId(null)}>Cancel</button>
                                         </div>
