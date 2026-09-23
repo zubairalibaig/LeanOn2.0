@@ -25,7 +25,7 @@ async function fetchProfile(id: string) {
       .eq('user_id', id)
       .eq('is_approved', true)
       .eq('is_active', true)
-      .single()
+      .maybeSingle()
     return data
   } catch {
     return null

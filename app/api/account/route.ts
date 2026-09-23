@@ -62,7 +62,9 @@ async function scrubUserData(admin: ReturnType<typeof createAdminClient>, userId
   }).eq('user_id', userId)
 
   // 3. Scrub listener_applications — wipe all PII (bank, aadhaar, phone, name, UPI)
-  await admin.from('listener_applications').update({
+  // Use 'rejected' status (valid CHECK constraint value) — 'deleted' is not allowed.
+  // account_holder_name may not exist yet (pre-migration) — try with, fall back without.
+  let laErr = (await admin.from('listener_applications').update({
     name: 'Deleted User',
     phone: scrubPhone,
     aadhaar_last4: null,
@@ -70,20 +72,67 @@ async function scrubUserData(admin: ReturnType<typeof createAdminClient>, userId
     ifsc_code: null,
     upi_id: null,
     account_holder_name: null,
-    status: 'deleted',
-  }).eq('user_id', userId)
-    .then(() => {}, () => {}) // table row may not exist
+    status: 'rejected',
+    admin_notes: 'Account deleted by user/admin',
+  }).eq('user_id', userId)).error
+  if (laErr?.message?.includes('account_holder_name')) {
+    // Column doesn't exist yet — retry without it
+    await admin.from('listener_applications').update({
+      name: 'Deleted User',
+      phone: scrubPhone,
+      aadhaar_last4: null,
+      bank_account: null,
+      ifsc_code: null,
+      upi_id: null,
+      status: 'rejected',
+      admin_notes: 'Account deleted by user/admin',
+    }).eq('user_id', userId)
+      .then(() => {}, () => {})
+  }
 
   // Also try to clear full aadhaar if column exists (migration 047)
   await admin.from('listener_applications').update({ aadhaar: null } as Record<string, null>)
     .eq('user_id', userId)
     .then(() => {}, () => {})
 
-  // 4. Scrub listener_verifications — delete rows (selfie, ID docs)
+  // 4. Scrub listener_verifications — fetch storage URLs first, then delete rows
+  const { data: verRows } = await admin.from('listener_verifications')
+    .select('selfie_url, id_doc_url').eq('listener_id', userId)
+  const storageFilesToDelete: string[] = []
+  for (const v of verRows ?? []) {
+    if (v.selfie_url) storageFilesToDelete.push(v.selfie_url as string)
+    if (v.id_doc_url) storageFilesToDelete.push(v.id_doc_url as string)
+  }
   await admin.from('listener_verifications').delete().eq('listener_id', userId)
     .then(() => {}, () => {})
 
-  // 5. Scrub payout_requests — null out UPI but keep amounts/dates for audit
+  // Delete avatar from storage if it exists
+  const { data: avatarRow } = await admin.from('users').select('avatar_url').eq('id', userId).maybeSingle()
+  if (avatarRow?.avatar_url) storageFilesToDelete.push(avatarRow.avatar_url as string)
+
+  // Clean up Supabase Storage files (selfies, ID docs, avatars)
+  for (const url of storageFilesToDelete) {
+    try {
+      // Extract bucket and path from Supabase storage URL
+      const match = (url as string).match(/\/storage\/v1\/object\/public\/([^/]+)\/(.+?)(?:\?|$)/)
+      if (match) {
+        await admin.storage.from(match[1]).remove([decodeURIComponent(match[2])])
+      }
+    } catch { /* best-effort cleanup */ }
+  }
+
+  // 5. Handle pending payout requests — reject and return balance before scrub
+  const { data: pendingPayouts } = await admin.from('payout_requests')
+    .select('id, amount').eq('user_id', userId).eq('status', 'pending')
+  for (const pp of pendingPayouts ?? []) {
+    await admin.from('payout_requests')
+      .update({ status: 'rejected', admin_notes: 'Account deleted — balance returned' })
+      .eq('id', pp.id)
+    await admin.rpc('credit_wallet', { p_user_id: userId, p_amount: pp.amount })
+      .then(() => {}, (e) => logger.warn('scrubUserData: credit_wallet failed for pending payout', { userId, payoutId: pp.id, error: String(e) }))
+  }
+
+  // Scrub UPI from all payout requests (pending already rejected above, but also historical)
   await admin.from('payout_requests').update({ upi_id: null })
     .eq('user_id', userId)
     .then(() => {}, () => {})
