@@ -2381,8 +2381,8 @@ export default function AdminPage() {
                       ? p.upi_id.slice(5) // "IFSC/ACCOUNT"
                       : null
                     const [markerIfsc, markerAcct] = bankMarker ? bankMarker.split('/') : [null, null]
-                    const acct = markerAcct ?? p.bank?.bank_account ?? null
-                    const ifsc = markerIfsc ?? p.bank?.ifsc_code ?? null
+                    const acct = p.bank?.bank_account ?? markerAcct ?? null
+                    const ifsc = p.bank?.ifsc_code ?? markerIfsc ?? null
                     const pill: React.CSSProperties = { userSelect: 'all', background: '#F0F8FC', padding: '2px 8px', borderRadius: 6 }
                     return (
                       <>

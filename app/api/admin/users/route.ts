@@ -684,9 +684,15 @@ export async function PATCH(req: NextRequest) {
           // doesn't accidentally pay out to the old (wrong) details.
           if (updates.upi_id !== undefined || updates.bank_account || updates.ifsc_code) {
             const payoutUpdate: Record<string, string | null> = {}
-            if (updates.upi_id !== undefined) payoutUpdate.upi_id = updates.upi_id
-            else if (updates.bank_account && updates.ifsc_code) {
-              payoutUpdate.upi_id = `bank:${updates.ifsc_code}/${updates.bank_account}`
+            if (updates.upi_id !== undefined) {
+              payoutUpdate.upi_id = updates.upi_id
+            } else {
+              // Partial bank update: fetch current values so the marker stays complete
+              const { data: freshApp } = await sb.from('listener_applications')
+                .select('bank_account, ifsc_code').eq('user_id', userId).maybeSingle()
+              const ba = updates.bank_account ?? (freshApp as Record<string, string | null> | null)?.bank_account
+              const ic = updates.ifsc_code ?? (freshApp as Record<string, string | null> | null)?.ifsc_code
+              if (ba && ic) payoutUpdate.upi_id = `bank:${ic}/${ba}`
             }
             if (Object.keys(payoutUpdate).length > 0) {
               await sb.from('payout_requests').update(payoutUpdate)
