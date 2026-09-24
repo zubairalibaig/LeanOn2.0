@@ -93,7 +93,7 @@ export default function AIChatbotAlternativePage() {
           <p className="leading-7 text-white/85">AI can be useful. Professional mental-health care can be important. LeanOn occupies a different space: paid, one-to-one peer conversations with real people for everyday emotional support and human connection.</p>
           <a href="/browse" className="mt-6 inline-flex rounded-full bg-[#FF9933] px-7 py-3.5 font-extrabold text-white">Find someone to talk to →</a>
           <div className="mt-6 flex flex-wrap gap-3 text-sm font-bold">
-            <a href="/talk-to-someone-online" className="rounded-full border border-white/30 px-4 py-2">Someone to talk to right now</a>
+            <a href="/support/someone-to-talk-to" className="rounded-full border border-white/30 px-4 py-2">Someone to talk to right now</a>
             <a href="/peer-support" className="rounded-full border border-white/30 px-4 py-2">What is peer support?</a>
             <a href="/alternatives-to-therapy-india" className="rounded-full border border-white/30 px-4 py-2">Therapy vs peer support</a>
           </div>

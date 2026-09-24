@@ -11,13 +11,13 @@ export const metadata: Metadata = {
     'feeling isolated india', 'midnight loneliness india', '3am loneliness india',
   ],
   alternates: {
-    canonical: 'https://www.leanon.app/loneliness-support-india',
-    languages: { 'en-IN': 'https://www.leanon.app/loneliness-support-india' },
+    canonical: 'https://www.leanon.app/support/loneliness',
+    languages: { 'en-IN': 'https://www.leanon.app/support/loneliness' },
   },
   openGraph: {
     title: 'Loneliness Support in India — Talk to Someone, Anytime',
     description: 'Loneliness is everywhere in modern India. LeanOn peer listeners are available 24/7 — day or night, whenever the quiet gets too loud.',
-    url: 'https://www.leanon.app/loneliness-support-india',
+    url: 'https://www.leanon.app/support/loneliness',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -75,7 +75,7 @@ const breadcrumbSchema = {
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Loneliness Support India', item: 'https://www.leanon.app/loneliness-support-india' },
+    { '@type': 'ListItem', position: 2, name: 'Loneliness Support India', item: 'https://www.leanon.app/support/loneliness' },
   ],
 }
 

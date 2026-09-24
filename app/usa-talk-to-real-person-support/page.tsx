@@ -323,7 +323,7 @@ export default function USATalkToRealPersonPage() {
         </div>
 
         <div className="related">
-          <a href="/talk-to-real-person-not-ai">Human vs AI support →</a>
+          <a href="/talk-to-human-instead-of-chatgpt">Human vs AI support →</a>
           <a href="/usa-loneliness">Loneliness in America →</a>
           <a href="/usa-nri-support">NRI support in the US →</a>
           <a href="/vent-to-a-real-person-online">Vent to a real person →</a>

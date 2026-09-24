@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
+// Near-duplicate pages merged into the version Google indexes (2026-09-24).
+const SEO_REDIRECTS = require('./lib/seo-redirects.json')
+
 const nextConfig = {
   // Disabled: reactStrictMode causes double-mount in dev
   // which creates duplicate WebSocket subscriptions and confuses testing
@@ -76,6 +79,10 @@ const nextConfig = {
         headers: [{ key: 'Cache-Control', value: 'public, max-age=3600, stale-while-revalidate=600' }],
       },
     ]
+  },
+
+  async redirects() {
+    return Object.entries(SEO_REDIRECTS).map(([source, destination]) => ({ source, destination, permanent: true }))
   },
 
   webpack: (config) => {

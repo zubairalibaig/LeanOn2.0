@@ -10,11 +10,11 @@ export const metadata: Metadata = {
     'let it out india', 'no one to confide in india', 'too personal to share india',
     'emotional release india', 'private problem india',
   ],
-  alternates: { canonical: 'https://www.leanon.app/get-it-off-your-chest-india', languages: { 'en-IN': 'https://www.leanon.app/get-it-off-your-chest-india' } },
+  alternates: { canonical: 'https://www.leanon.app/blog/getting-it-off-your-chest', languages: { 'en-IN': 'https://www.leanon.app/blog/getting-it-off-your-chest' } },
   openGraph: {
     title: 'Get It Off Your Chest India — Say What\'s Been Building Up | LeanOn',
     description: 'That thing you\'ve been carrying. The thing you haven\'t told anyone. Say it to someone real — anonymous, no judgment, from ₹160.',
-    url: 'https://www.leanon.app/get-it-off-your-chest-india',
+    url: 'https://www.leanon.app/blog/getting-it-off-your-chest',
     siteName: 'LeanOn',
     type: 'article',
     images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn — Get It Off Your Chest India' }],
@@ -58,7 +58,7 @@ const breadcrumbSchema = {
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Get It Off Your Chest India', item: 'https://www.leanon.app/get-it-off-your-chest-india' },
+    { '@type': 'ListItem', position: 2, name: 'Get It Off Your Chest India', item: 'https://www.leanon.app/blog/getting-it-off-your-chest' },
   ],
 }
 
@@ -184,7 +184,7 @@ export default function GetItOffYourChestIndiaPage() {
           <h2>You Might Also Find This Helpful</h2>
           <div className="related">
             <a href="/cant-tell-anyone-india">Can&apos;t tell anyone &rarr;</a>
-            <a href="/rant-online-india">Rant online &rarr;</a>
+            <a href="/vent-to-someone-online">Rant online &rarr;</a>
             <a href="/stranger-friend-india">Talk to a stranger &rarr;</a>
             <a href="/empathy-india">Empathy India &rarr;</a>
             <a href="/talk-therapy-india">Talk therapy &rarr;</a>

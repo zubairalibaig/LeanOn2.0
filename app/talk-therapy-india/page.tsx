@@ -182,9 +182,9 @@ export default function TalkTherapyIndiaPage() {
           <div className="related">
             <a href="/walk-in-counselling-india">Walk-in counselling &rarr;</a>
             <a href="/empathy-india">Empathy India &rarr;</a>
-            <a href="/paid-counselling-india">Paid counselling &rarr;</a>
-            <a href="/rant-online-india">Rant online &rarr;</a>
-            <a href="/get-it-off-your-chest-india">Get it off your chest &rarr;</a>
+            <a href="/online-counselling-india-cost">Paid counselling &rarr;</a>
+            <a href="/vent-to-someone-online">Rant online &rarr;</a>
+            <a href="/blog/getting-it-off-your-chest">Get it off your chest &rarr;</a>
           </div>
         </div>
       </div>

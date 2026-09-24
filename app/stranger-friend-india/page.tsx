@@ -191,8 +191,8 @@ export default function StrangerFriendIndiaPage() {
           <h2>You Might Also Find This Helpful</h2>
           <div className="related">
             <a href="/cant-tell-anyone-india">Can&apos;t tell anyone &rarr;</a>
-            <a href="/rant-online-india">Rant online &rarr;</a>
-            <a href="/get-it-off-your-chest-india">Get it off your chest &rarr;</a>
+            <a href="/vent-to-someone-online">Rant online &rarr;</a>
+            <a href="/blog/getting-it-off-your-chest">Get it off your chest &rarr;</a>
             <a href="/online-friend-india">Online friend India &rarr;</a>
             <a href="/paid-friend-india">Paid friend India &rarr;</a>
           </div>

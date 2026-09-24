@@ -329,7 +329,7 @@ export default function GetCompanionAlternativePage() {
         </div>
 
         <div className="related">
-          <a href="/loneliness-support-india">Loneliness support India &rarr;</a>
+          <a href="/support/loneliness">Loneliness support India &rarr;</a>
           <a href="/peer-support-online-india">Peer support online India &rarr;</a>
           <a href="/ai-chatbot-alternative">AI chatbot alternative &rarr;</a>
           <a href="/alternatives-to-therapy-india">Alternatives to therapy &rarr;</a>

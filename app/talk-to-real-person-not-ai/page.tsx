@@ -12,12 +12,12 @@ export const metadata: Metadata = {
     'real human listener online',
   ],
   alternates: {
-    canonical: 'https://www.leanon.app/talk-to-real-person-not-ai',
+    canonical: 'https://www.leanon.app/talk-to-human-instead-of-chatgpt',
   },
   openGraph: {
     title: 'Talk to a Real Person, Not an AI | LeanOn',
     description: 'AI predicts words. Humans understand feelings. LeanOn connects you with real peer listeners — people with lived experience — available 24/7.',
-    url: 'https://www.leanon.app/talk-to-real-person-not-ai',
+    url: 'https://www.leanon.app/talk-to-human-instead-of-chatgpt',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -102,7 +102,7 @@ const breadcrumbSchema = {
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Talk to a Real Person, Not an AI', item: 'https://www.leanon.app/talk-to-real-person-not-ai' },
+    { '@type': 'ListItem', position: 2, name: 'Talk to a Real Person, Not an AI', item: 'https://www.leanon.app/talk-to-human-instead-of-chatgpt' },
   ],
 }
 
@@ -306,7 +306,7 @@ export default function TalkToRealPersonPage() {
         </div>
 
         <div className="related">
-          <a href="/loneliness-support-india">Loneliness support →</a>
+          <a href="/support/loneliness">Loneliness support →</a>
           <a href="/vent-to-a-real-person-online">Vent to a real person →</a>
           <a href="/i-need-someone-to-talk-to">I need someone to talk to →</a>
           <a href="/feeling-lonely-in-india">Feeling lonely in India →</a>

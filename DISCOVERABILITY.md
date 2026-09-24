@@ -61,6 +61,30 @@ only 3 genuine paying seekers in 2 months, plus 2 who paid for "friendship". Mor
 - **Sitemap `lastmod`** now uses the real date content changed. Before, every URL got the deploy
   date, which teaches Google to ignore lastmod.
 
+### Search Console data (3 months to 2026-09-21), added the same day
+- **Almost all clicks are brand searches.** "leanon", "leanon app" and "lean on app" account for
+  865 of the query clicks, and the homepage for 1,413 of about 1,800 page clicks. Non-brand
+  searches brought roughly 30 clicks in 3 months. People who find LeanOn already knew the name;
+  the SEO content is not yet bringing new seekers.
+- **Impressions without clicks usually mean page 2 or lower**, not bad titles:
+  - `/blog/what-does-lean-on-mean`: 9,951 impressions, 17 clicks (dictionary searches, no buying intent).
+  - `/faq`: 1,559 impressions. `/blog/loneliness-at-night`: 1,204. `/someone-to-lean-on`: 1,131.
+  - `/support/someone-to-talk-to`: 805 impressions, 33 clicks (the best non-brand page).
+  - `/blog/therapy-cost-india` (625) and `/online-counselling-india-cost` (426): the only pages
+    with buying intent ("therapy cost in india", "therapist fees"). Improving and linking to
+    these two is the priority.
+- **Indexing:** 286 indexed; 103 "crawled – currently not indexed"; 67 "discovered – currently not
+  indexed". Google read the Sep 12–16 batch and declined most NRI city pages and many
+  near-duplicate topic pages. Several pages were competing for the same search.
+- **Duplicate hosts:** `leanon.app/*`, `http://leanon.app/` and `therapy.leanon.app` were indexed
+  next to www. `middleware.ts` now sends page requests on those hosts to www (308); `/api/` is
+  left alone for webhooks.
+- **Merged 9 duplicates** into the version Google already indexes (308 redirects in
+  `lib/seo-redirects.json`, internal links updated, left out of the sitemap).
+- **Queries like "is this site genuine", "pricing structure" and "how much will be in india" come
+  from Google's AI answers.** People ask about price and trust, which `/pricing` now answers.
+  Follow-ups such as "how do we get paid" and "10k per month" show listener intent in the same place.
+
 ### The plan for paying users (in order)
 1. **No new keyword pages for 60 days.** Improve the roughly 30 pages that already get impressions
    (GSC → Performance → Pages, last 3 months) and leave the rest alone.

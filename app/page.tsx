@@ -629,7 +629,7 @@ export default function Home() {
             <a href="/support/long-distance-relationship">Long-distance relationship</a>
           </div>
           <div className="fli" style={{marginTop:4,fontSize:12,opacity:0.75}}>
-            <a href="/talk-to-someone-online">Talk to someone online</a>
+            <a href="/support/someone-to-talk-to">Talk to someone online</a>
             <a href="/someone-to-lean-on">Someone to lean on</a>
             <a href="/daily-check-in">Daily check-in — how do you feel today?</a>
             <a href="/talk-to-someone-not-astrologer">Not a prediction — just someone to talk to</a>

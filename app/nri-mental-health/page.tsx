@@ -195,7 +195,7 @@ export default function NriMentalHealthPage() {
           <div className="related">
             <a href="/browse" className="related-link">Browse Listeners</a>
             <a href="/peer-support" className="related-link">What Is Peer Support</a>
-            <a href="/loneliness-support-india" className="related-link">Loneliness Support</a>
+            <a href="/support/loneliness" className="related-link">Loneliness Support</a>
             <a href="/support/arranged-marriage-stress" className="related-link">Arranged Marriage Stress</a>
             <a href="/blog/nri-mental-health-india-guide" className="related-link">NRI Mental Health Guide</a>
             <a href="/men-mental-health-india" className="related-link">Men&apos;s Mental Health</a>

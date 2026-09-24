@@ -321,9 +321,9 @@ export default function EmotionalSupportWithoutAIPage() {
         </div>
 
         <div className="related">
-          <a href="/talk-to-real-person-not-ai">Real person vs AI →</a>
+          <a href="/talk-to-human-instead-of-chatgpt">Real person vs AI →</a>
           <a href="/vent-to-a-real-person-online">Vent to a real person →</a>
-          <a href="/loneliness-support-india">Loneliness support →</a>
+          <a href="/support/loneliness">Loneliness support →</a>
           <a href="/i-need-someone-to-talk-to">I need someone to talk to →</a>
         </div>
 

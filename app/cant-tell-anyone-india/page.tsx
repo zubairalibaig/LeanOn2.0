@@ -159,9 +159,9 @@ export default function CantTellAnyoneIndiaPage() {
         <div className="section">
           <h2>You Might Also Find This Helpful</h2>
           <div className="related">
-            <a href="/get-it-off-your-chest-india">Get it off your chest &rarr;</a>
+            <a href="/blog/getting-it-off-your-chest">Get it off your chest &rarr;</a>
             <a href="/stranger-friend-india">Talk to a stranger &rarr;</a>
-            <a href="/rant-online-india">Rant online &rarr;</a>
+            <a href="/vent-to-someone-online">Rant online &rarr;</a>
             <a href="/empathy-india">Empathy India &rarr;</a>
             <a href="/someone-who-gets-it-india">Someone who gets it &rarr;</a>
           </div>

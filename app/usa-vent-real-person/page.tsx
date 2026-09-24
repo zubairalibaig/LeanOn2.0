@@ -308,7 +308,7 @@ export default function USAVentRealPersonPage() {
 
         <div className="related">
           <a href="/usa-talk-to-real-person-support">Talk to a real person — US →</a>
-          <a href="/talk-to-real-person-not-ai">Human vs AI support →</a>
+          <a href="/talk-to-human-instead-of-chatgpt">Human vs AI support →</a>
           <a href="/emotional-support-without-ai">Emotional support without AI →</a>
           <a href="/vent-to-a-real-person-online">Vent to a real person →</a>
         </div>

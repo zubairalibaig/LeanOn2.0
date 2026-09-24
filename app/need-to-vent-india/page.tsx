@@ -87,9 +87,9 @@ export default function NeedToVentIndiaPage() {
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>Let it out. Someone is listening.</h2><p>Anonymous peer support. No advice unless you want it. From ₹160. First 5 minutes free.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related"><a href="/bad-day-india">Bad day India &rarr;</a>
-            <a href="/emotional-support-india">Emotional support India &rarr;</a>
+            <a href="/support/emotional-support">Emotional support India &rarr;</a>
             <a href="/talk-to-someone-free-india">Free session trial &rarr;</a>
-            <a href="/rant-online-india">Rant online India &rarr;</a>
+            <a href="/vent-to-someone-online">Rant online India &rarr;</a>
             <a href="/empathy-india">Empathy India &rarr;</a></div></div>
       </div>
     </>

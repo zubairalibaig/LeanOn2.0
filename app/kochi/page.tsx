@@ -221,7 +221,7 @@ export default function KochiPage() {
           <h2>Related Support Topics</h2>
           <div className="related">
             <a href="/nri-mental-health" className="related-link">NRI Mental Health</a>
-            <a href="/loneliness-support-india" className="related-link">Loneliness Support</a>
+            <a href="/support/loneliness" className="related-link">Loneliness Support</a>
             <a href="/relationship-counselling-india" className="related-link">Relationship Support</a>
             <a href="/browse" className="related-link">Browse All Listeners</a>
             <a href="/bengaluru" className="related-link">Peer Support Bengaluru</a>

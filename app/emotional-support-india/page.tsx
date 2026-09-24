@@ -6,8 +6,8 @@ export const metadata: Metadata = {
   title: 'Emotional Support India — Real People, Real Understanding | LeanOn',
   description: 'Sometimes you need emotional support, not solutions. Trained peer listeners in India. Anonymous, from ₹160.',
   keywords: ['emotional support India', 'emotional support online India', 'need emotional support India', 'where to get emotional support India', 'emotional support person India'],
-  alternates: { canonical: 'https://www.leanon.app/emotional-support-india', languages: { 'en-IN': 'https://www.leanon.app/emotional-support-india' } },
-  openGraph: { title: 'Emotional Support India — Real People, Real Understanding | LeanOn', description: 'Sometimes you need emotional support, not solutions. Trained peer listeners in India. Anonymous, from ₹160.', url: 'https://www.leanon.app/emotional-support-india', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
+  alternates: { canonical: 'https://www.leanon.app/support/emotional-support', languages: { 'en-IN': 'https://www.leanon.app/support/emotional-support' } },
+  openGraph: { title: 'Emotional Support India — Real People, Real Understanding | LeanOn', description: 'Sometimes you need emotional support, not solutions. Trained peer listeners in India. Anonymous, from ₹160.', url: 'https://www.leanon.app/support/emotional-support', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
 }
 
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
@@ -19,7 +19,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'Emotional Support India', item: 'https://www.leanon.app/emotional-support-india' },
+  { '@type': 'ListItem', position: 2, name: 'Emotional Support India', item: 'https://www.leanon.app/support/emotional-support' },
 ] }
 
 const S = `

@@ -6,11 +6,11 @@ export const metadata: Metadata = {
   title: 'Paid Counselling India — Affordable, Anonymous & Online | LeanOn',
   description: 'Paid online counselling in India from ₹160 per session. Talk to a trained peer listener — anonymous, judgment-free, available now.',
   keywords: ['paid counselling india', 'affordable counselling india', 'low cost counselling india', 'mental health counselling india', 'talk to counsellor online india', 'emotional counselling india'],
-  alternates: { canonical: 'https://www.leanon.app/paid-counselling-india', languages: { 'en-IN': 'https://www.leanon.app/paid-counselling-india' } },
+  alternates: { canonical: 'https://www.leanon.app/online-counselling-india-cost', languages: { 'en-IN': 'https://www.leanon.app/online-counselling-india-cost' } },
   openGraph: {
     title: 'Paid Counselling India — Affordable, Anonymous & Online | LeanOn',
     description: 'Paid online counselling in India from ₹160 per session. Talk to a trained peer listener — anonymous, judgment-free, available now.',
-    url: 'https://www.leanon.app/paid-counselling-india',
+    url: 'https://www.leanon.app/online-counselling-india-cost',
     siteName: 'LeanOn',
     type: 'website',
   },
@@ -68,7 +68,7 @@ const breadcrumbSchema = {
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Paid Counselling India', item: 'https://www.leanon.app/paid-counselling-india' },
+    { '@type': 'ListItem', position: 2, name: 'Paid Counselling India', item: 'https://www.leanon.app/online-counselling-india-cost' },
   ],
 }
 

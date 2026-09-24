@@ -100,7 +100,7 @@ export default function IndiansInUkPage() {
           <a href="/nri-support">NRI support &rarr;</a>
           <a href="/nri-mental-health">NRI mental health &rarr;</a>
           <a href="/indian-diaspora-support">Indian diaspora support &rarr;</a>
-          <a href="/loneliness-support-india">Loneliness support &rarr;</a>
+          <a href="/support/loneliness">Loneliness support &rarr;</a>
         </div></div>
         <div className="crisis"><strong>In a crisis?</strong> NIMHANS: 080-46110007 &nbsp;&middot;&nbsp; Tele-MANAS: 14416 &nbsp;&middot;&nbsp; Both free, 24/7.</div>
       </div>

@@ -100,7 +100,7 @@ export default function DesiSupportUsaPage() {
           <a href="/nri-support">NRI support &rarr;</a>
           <a href="/nri-mental-health">NRI mental health &rarr;</a>
           <a href="/indian-diaspora-support">Indian diaspora support &rarr;</a>
-          <a href="/talk-to-someone-online">Talk to someone online &rarr;</a>
+          <a href="/support/someone-to-talk-to">Talk to someone online &rarr;</a>
         </div></div>
         <div className="crisis"><strong>In a crisis?</strong> NIMHANS: 080-46110007 &nbsp;&middot;&nbsp; Tele-MANAS: 14416 &nbsp;&middot;&nbsp; Both free, 24/7.</div>
       </div>

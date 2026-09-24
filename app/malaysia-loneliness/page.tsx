@@ -260,7 +260,7 @@ export default function MalaysiaLonelinessPage() {
           <a href="/malaysia-rant">Need to rant Malaysia →</a>
           <a href="/malaysia-relationship-advice">Relationship support Malaysia →</a>
           <a href="/singapore-loneliness">Loneliness support Singapore →</a>
-          <a href="/loneliness-support-india">Loneliness support India →</a>
+          <a href="/support/loneliness">Loneliness support India →</a>
         </div>
 
         <div className="disclaimer">

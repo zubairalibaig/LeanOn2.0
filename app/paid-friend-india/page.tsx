@@ -210,7 +210,7 @@ export default function PaidFriendIndiaPage() {
             <a href="/stranger-friend-india">Talk to a stranger &rarr;</a>
             <a href="/someone-who-gets-it-india">Someone who gets it &rarr;</a>
             <a href="/empathy-india">Empathy India &rarr;</a>
-            <a href="/rant-online-india">Rant online &rarr;</a>
+            <a href="/vent-to-someone-online">Rant online &rarr;</a>
           </div>
         </div>
       </div>

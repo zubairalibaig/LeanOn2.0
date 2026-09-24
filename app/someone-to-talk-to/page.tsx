@@ -106,7 +106,7 @@ export default function SomeoneToTalkToPage() {
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>Someone is online right now, ready to listen.</h2><p>Real person. No judgment. No reason required. First 5 minutes free.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
-          <a href="/talk-to-someone-online">Talk to someone online &rarr;</a>
+          <a href="/support/someone-to-talk-to">Talk to someone online &rarr;</a>
           <a href="/online-emotional-support">Online emotional support &rarr;</a>
           <a href="/loneliness-support-online">Loneliness support &rarr;</a>
           <a href="/i-need-someone-to-talk-to">I need someone to talk to &rarr;</a>

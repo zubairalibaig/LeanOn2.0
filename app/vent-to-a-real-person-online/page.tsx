@@ -280,8 +280,8 @@ export default function VentToRealPersonPage() {
         </div>
 
         <div className="related">
-          <a href="/talk-to-real-person-not-ai">Real person vs AI →</a>
-          <a href="/loneliness-support-india">Loneliness support →</a>
+          <a href="/talk-to-human-instead-of-chatgpt">Real person vs AI →</a>
+          <a href="/support/loneliness">Loneliness support →</a>
           <a href="/i-need-someone-to-talk-to">I need someone to talk to →</a>
           <a href="/emotional-support-without-ai">Emotional support →</a>
         </div>

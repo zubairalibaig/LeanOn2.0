@@ -165,7 +165,7 @@ export default function SingleParentIndiaPage() {
             <a href="/divorce-support-india">Divorce support &rarr;</a>
             <a href="/cant-tell-anyone-india">Can&apos;t tell anyone &rarr;</a>
             <a href="/empathy-india">Empathy India &rarr;</a>
-            <a href="/get-it-off-your-chest-india">Get it off your chest &rarr;</a>
+            <a href="/blog/getting-it-off-your-chest">Get it off your chest &rarr;</a>
           </div>
         </div>
       </div>

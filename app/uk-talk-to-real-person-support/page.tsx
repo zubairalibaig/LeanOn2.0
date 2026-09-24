@@ -325,7 +325,7 @@ export default function UKTalkToRealPersonPage() {
         <div className="related">
           <a href="/uk-loneliness">Loneliness in the UK →</a>
           <a href="/uk-nri-support">NRI support in the UK →</a>
-          <a href="/talk-to-real-person-not-ai">Human vs AI support →</a>
+          <a href="/talk-to-human-instead-of-chatgpt">Human vs AI support →</a>
           <a href="/vent-to-a-real-person-online">Vent to a real person →</a>
         </div>
 

@@ -148,8 +148,18 @@ async function refreshSessionIfLoggedIn(req: NextRequest): Promise<NextResponse>
   return res
 }
 
+// Hosts that must 308 to www. Google indexed leanon.app/* and therapy.leanon.app
+// alongside www (duplicate pages splitting clicks). Pages only: /api/ is left
+// alone so webhooks and payment callbacks pointed at these hosts keep working.
+const REDIRECT_TO_WWW = new Set(['leanon.app', 'therapy.leanon.app'])
+
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl
+
+  const host = (req.headers.get('host') ?? '').toLowerCase().split(':')[0]
+  if (REDIRECT_TO_WWW.has(host) && !pathname.startsWith('/api/') && (req.method === 'GET' || req.method === 'HEAD')) {
+    return NextResponse.redirect(`https://www.leanon.app${pathname}${search}`, 308)
+  }
 
   // 1. Never intercept public prefixes (API, Next.js internals, static files)
   if (PUBLIC_PREFIXES.some(p => pathname.startsWith(p))) {

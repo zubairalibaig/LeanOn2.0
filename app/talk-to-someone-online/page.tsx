@@ -6,8 +6,8 @@ export const metadata: Metadata = {
   title: 'Talk to Someone Online Right Now | Real Person, Not AI | LeanOn',
   description: 'When you need a real person to listen — not an AI, not a bot, not a therapist. LeanOn peer listeners are available now, no appointment needed.',
   keywords: ['talk to someone online', 'someone to talk to', 'someone to chat with', 'friendly chat online', 'talk to someone right now', 'I have no one to talk to', 'need someone to listen', 'want someone to talk to but don\'t need therapy', 'anonymous person to talk to', 'need to talk to someone', 'talk to real person online', 'real person to talk to online', 'not ai someone to talk to'],
-  alternates: { canonical: 'https://www.leanon.app/talk-to-someone-online' },
-  openGraph: { title: 'Talk to Someone Online Right Now | Real Person, Not AI | LeanOn', description: 'When you need a real person to listen — not an AI, not a bot, not a therapist. LeanOn peer listeners are available now, no appointment needed.', url: 'https://www.leanon.app/talk-to-someone-online', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
+  alternates: { canonical: 'https://www.leanon.app/support/someone-to-talk-to' },
+  openGraph: { title: 'Talk to Someone Online Right Now | Real Person, Not AI | LeanOn', description: 'When you need a real person to listen — not an AI, not a bot, not a therapist. LeanOn peer listeners are available now, no appointment needed.', url: 'https://www.leanon.app/support/someone-to-talk-to', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
 }
 
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
@@ -20,7 +20,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'Talk to Someone Online Right Now', item: 'https://www.leanon.app/talk-to-someone-online' },
+  { '@type': 'ListItem', position: 2, name: 'Talk to Someone Online Right Now', item: 'https://www.leanon.app/support/someone-to-talk-to' },
 ] }
 
 const S = `

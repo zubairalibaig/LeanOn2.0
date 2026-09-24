@@ -214,7 +214,7 @@ export default function EmpathyIndiaPage() {
             <a href="/empathy-friend-india">Empathy friend India &rarr;</a>
             <a href="/paid-friend-india">Paid friend India &rarr;</a>
             <a href="/someone-who-gets-it-india">Someone who gets it &rarr;</a>
-            <a href="/rant-online-india">Rant online India &rarr;</a>
+            <a href="/vent-to-someone-online">Rant online India &rarr;</a>
             <a href="/talk-therapy-india">Talk therapy India &rarr;</a>
           </div>
         </div>

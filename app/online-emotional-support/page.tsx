@@ -113,7 +113,7 @@ export default function OnlineEmotionalSupportPage() {
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>Real emotional support, right now.</h2><p>No AI. No appointment. No judgment. A real person with lived experience, available now. First 5 minutes free.</p><a href="/browse" className="btn-cta">Start talking &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
-          <a href="/talk-to-someone-online">Talk to someone online &rarr;</a>
+          <a href="/support/someone-to-talk-to">Talk to someone online &rarr;</a>
           <a href="/someone-to-talk-to">Need someone to talk to &rarr;</a>
           <a href="/loneliness-support-online">Loneliness support &rarr;</a>
           <a href="/peer-support">Peer support &rarr;</a>

@@ -11,11 +11,11 @@ export const metadata: Metadata = {
     'no one to rant to india', 'emotional release india', 'verbal processing india',
     'let it out india',
   ],
-  alternates: { canonical: 'https://www.leanon.app/rant-online-india', languages: { 'en-IN': 'https://www.leanon.app/rant-online-india' } },
+  alternates: { canonical: 'https://www.leanon.app/vent-to-someone-online', languages: { 'en-IN': 'https://www.leanon.app/vent-to-someone-online' } },
   openGraph: {
     title: 'Rant Online India — Say It Without Anyone Judging You | LeanOn',
     description: 'Need to rant — really rant — without someone telling you to calm down or look on the bright side? Real peer listener in India. Anonymous. From ₹160.',
-    url: 'https://www.leanon.app/rant-online-india',
+    url: 'https://www.leanon.app/vent-to-someone-online',
     siteName: 'LeanOn',
     type: 'article',
     images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn — Rant Online India' }],
@@ -59,7 +59,7 @@ const breadcrumbSchema = {
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Rant Online India', item: 'https://www.leanon.app/rant-online-india' },
+    { '@type': 'ListItem', position: 2, name: 'Rant Online India', item: 'https://www.leanon.app/vent-to-someone-online' },
   ],
 }
 
@@ -191,7 +191,7 @@ export default function RantOnlineIndiaPage() {
         <div className="section">
           <h2>You Might Also Find This Helpful</h2>
           <div className="related">
-            <a href="/get-it-off-your-chest-india">Get it off your chest &rarr;</a>
+            <a href="/blog/getting-it-off-your-chest">Get it off your chest &rarr;</a>
             <a href="/cant-tell-anyone-india">Can&apos;t tell anyone &rarr;</a>
             <a href="/just-had-a-fight">Just had a fight &rarr;</a>
             <a href="/vent-about-relationship-india">Vent about relationship &rarr;</a>

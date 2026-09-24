@@ -88,7 +88,7 @@ export default function TalkToSomeoneFreeIndiaPage() {
         </div>
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>Try it. First 5 minutes free, always.</h2><p>Real peer listener. No subscription. From ₹160 if you continue.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
-        <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related"><a href="/emotional-support-india">Emotional support India &rarr;</a>
+        <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related"><a href="/support/emotional-support">Emotional support India &rarr;</a>
             <a href="/need-to-vent-india">Need to vent &rarr;</a>
             <a href="/bad-day-india">Bad day India &rarr;</a>
             <a href="/empathy-india">Empathy India &rarr;</a>

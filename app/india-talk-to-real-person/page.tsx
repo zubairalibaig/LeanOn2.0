@@ -325,8 +325,8 @@ export default function IndiaTalkToRealPersonPage() {
         </div>
 
         <div className="related">
-          <a href="/loneliness-support-india">Loneliness support India →</a>
-          <a href="/talk-to-real-person-not-ai">Talk to a real person, not AI →</a>
+          <a href="/support/loneliness">Loneliness support India →</a>
+          <a href="/talk-to-human-instead-of-chatgpt">Talk to a real person, not AI →</a>
           <a href="/vent-to-a-real-person-online">Vent to a real person online →</a>
           <a href="/emotional-support-without-ai">Emotional support without AI →</a>
         </div>

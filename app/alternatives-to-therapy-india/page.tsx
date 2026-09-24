@@ -137,7 +137,7 @@ export default function AlternativesToTherapyPage() {
           <h2 className="mb-4 text-xl font-black">Continue exploring</h2>
           <div className="flex flex-wrap gap-3 text-sm font-bold">
             <a href="/peer-support" className="rounded-full bg-[#F0F8FC] px-4 py-2">What is peer support?</a>
-            <a href="/talk-to-someone-online" className="rounded-full bg-[#F0F8FC] px-4 py-2">Talk to someone right now</a>
+            <a href="/support/someone-to-talk-to" className="rounded-full bg-[#F0F8FC] px-4 py-2">Talk to someone right now</a>
             <a href="/ai-chatbot-alternative" className="rounded-full bg-[#F0F8FC] px-4 py-2">Human alternative to ChatGPT</a>
           </div>
         </section>

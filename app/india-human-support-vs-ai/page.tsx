@@ -12,13 +12,13 @@ export const metadata: Metadata = {
     'LeanOn vs AI chatbot', 'real emotional support India', 'peer support not AI India',
   ],
   alternates: {
-    canonical: 'https://www.leanon.app/india-human-support-vs-ai',
-    languages: { 'en-IN': 'https://www.leanon.app/india-human-support-vs-ai' },
+    canonical: 'https://www.leanon.app/talk-to-human-instead-of-chatgpt',
+    languages: { 'en-IN': 'https://www.leanon.app/talk-to-human-instead-of-chatgpt' },
   },
   openGraph: {
     title: 'Why Real Human Support Beats AI in India | LeanOn',
     description: 'LeanOn connects Indians with real peer listeners — humans with lived experience of Indian life — not AI chatbots. First 5 minutes free.',
-    url: 'https://www.leanon.app/india-human-support-vs-ai',
+    url: 'https://www.leanon.app/talk-to-human-instead-of-chatgpt',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -108,7 +108,7 @@ const breadcrumbSchema = {
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Human Support vs AI India', item: 'https://www.leanon.app/india-human-support-vs-ai' },
+    { '@type': 'ListItem', position: 2, name: 'Human Support vs AI India', item: 'https://www.leanon.app/talk-to-human-instead-of-chatgpt' },
   ],
 }
 
@@ -329,9 +329,9 @@ export default function IndiaHumanSupportVsAIPage() {
 
         <div className="related">
           <a href="/india-talk-to-real-person">Talk to a real person India →</a>
-          <a href="/talk-to-real-person-not-ai">Real person, not AI →</a>
+          <a href="/talk-to-human-instead-of-chatgpt">Real person, not AI →</a>
           <a href="/emotional-support-without-ai">Emotional support without AI →</a>
-          <a href="/loneliness-support-india">Loneliness support India →</a>
+          <a href="/support/loneliness">Loneliness support India →</a>
         </div>
 
         <div className="disclaimer">

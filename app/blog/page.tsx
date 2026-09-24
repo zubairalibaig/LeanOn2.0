@@ -46,7 +46,6 @@ import { post as astrotalkExpensivePost } from './posts/astrotalk-expensive-alte
 import { post as talkRealPersonPost } from './posts/talk-to-real-person-not-astrologer'
 import { post as bestPeerAppsPost } from './posts/best-peer-support-apps-india-2026'
 import { post as peerCounsellingGuidePost } from './posts/peer-counselling-india-guide'
-import { post as mentalHealthCostPost } from './posts/mental-health-support-cost-india'
 import { post as morningFightPost } from './posts/morning-fight-with-partner-india'
 import { post as ventingRelationshipPost } from './posts/venting-relationship-india'
 import { post as talkWorkdayPost } from './posts/talk-to-someone-workday-india'
@@ -68,7 +67,7 @@ const allPosts = [
   claudeGeminiPost, aiChatbotNriPost,
   empathyMeaningPost, paidFriendPost, quarterLifePost, tarotAstrologyPost,
   housewifeGuidePost, divorceRecoveryPost, strangerConvPost, rantVsVentPost,
-  bestPeerAppsPost, peerCounsellingGuidePost, mentalHealthCostPost,
+  bestPeerAppsPost, peerCounsellingGuidePost,
   astrotalkExpensivePost, talkRealPersonPost,
   menLonelinessPost, fearOfMarriagePost, adultingLonelinessPost,
   marriedButLonelyPost, workingMothersPost, momBurnoutSignsPost,

@@ -155,7 +155,7 @@ export default function InterfaithRelationshipIndiaPage() {
             <a href="/relationship-counselling-india">Relationship counselling &rarr;</a>
             <a href="/cant-tell-anyone-india">Can&apos;t tell anyone &rarr;</a>
             <a href="/someone-who-gets-it-india">Someone who gets it &rarr;</a>
-            <a href="/rant-online-india">Rant online &rarr;</a>
+            <a href="/vent-to-someone-online">Rant online &rarr;</a>
           </div>
         </div>
       </div>

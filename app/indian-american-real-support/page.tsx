@@ -331,7 +331,7 @@ export default function IndianAmericanRealSupportPage() {
         <div className="related">
           <a href="/india-talk-to-real-person">Talk to a real person India →</a>
           <a href="/desi-usa-support">Desi support in the USA →</a>
-          <a href="/talk-to-real-person-not-ai">Real person, not AI →</a>
+          <a href="/talk-to-human-instead-of-chatgpt">Real person, not AI →</a>
           <a href="/usa-nri-support">NRI support USA →</a>
         </div>
 

@@ -127,9 +127,9 @@ export default function LonelinessSupportOnlinePage() {
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/someone-to-talk-to">Someone to talk to &rarr;</a>
           <a href="/online-emotional-support">Online emotional support &rarr;</a>
-          <a href="/talk-to-someone-online">Talk to someone online &rarr;</a>
+          <a href="/support/someone-to-talk-to">Talk to someone online &rarr;</a>
           <a href="/support/loneliness">Loneliness support India &rarr;</a>
-          <a href="/loneliness-support-india">Loneliness India &rarr;</a>
+          <a href="/support/loneliness">Loneliness India &rarr;</a>
         </div></div>
         <div className="crisis"><strong>In a crisis?</strong> NIMHANS: 080-46110007 &nbsp;&middot;&nbsp; Tele-MANAS: 14416 &nbsp;&middot;&nbsp; Both free, 24/7.</div>
       </div>

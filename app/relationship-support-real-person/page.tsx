@@ -263,7 +263,7 @@ export default function RelationshipSupportPage() {
         </div>
 
         <div className="related">
-          <a href="/talk-to-real-person-not-ai">Real person vs AI →</a>
+          <a href="/talk-to-human-instead-of-chatgpt">Real person vs AI →</a>
           <a href="/vent-to-a-real-person-online">Vent to someone →</a>
           <a href="/relationship-advice-online-india">Relationship advice India →</a>
           <a href="/emotional-support-without-ai">Emotional support →</a>

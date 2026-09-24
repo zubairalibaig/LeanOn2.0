@@ -2,6 +2,7 @@ import { MetadataRoute } from 'next'
 import { RESOURCES } from '@/lib/resources-data'
 import { FEELINGS } from '@/lib/feelings-data'
 import { NOINDEX_PATHS } from '@/lib/seo-noindex'
+import SEO_REDIRECTS from '@/lib/seo-redirects.json'
 
 export const dynamic = 'force-static'
 
@@ -196,7 +197,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/astrotalk-alternative`,            lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/relationship-advice-online-india`, lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/talk-to-real-person-online-india`, lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.95 },
-    { url: `${base}/loneliness-support-india`,         lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/support/loneliness`,         lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/alternatives-to-therapy-india`,    lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/feeling-lonely-in-india`,          lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/our-story`,                        lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.8 },
@@ -232,9 +233,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Round 8: peer support keyword cluster blog posts
     { url: `${base}/blog/best-peer-support-apps-india-2026`,   lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/blog/peer-counselling-india-guide`,         lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.95 },
-    { url: `${base}/blog/mental-health-support-cost-india`,     lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${base}/blog/therapy-cost-india`,     lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.95 },
     // Round 9: 15 landing pages — paid counselling, app comparisons, topic clusters, city pages
-    { url: `${base}/paid-counselling-india`,            lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/online-counselling-india-cost`,            lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/relationship-counselling-india`,    lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/betterhelp-alternative-india`,      lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/innerhour-alternative`,             lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.97 },
@@ -272,8 +273,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/online-friend-india`,             lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/stranger-friend-india`,           lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/someone-who-gets-it-india`,       lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.97 },
-    { url: `${base}/rant-online-india`,               lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.97 },
-    { url: `${base}/get-it-off-your-chest-india`,     lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/vent-to-someone-online`,               lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/blog/getting-it-off-your-chest`,     lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/tarot-alternative-india`,         lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/astroyogi-alternative`,           lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/talk-therapy-india`,              lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.97 },
@@ -348,7 +349,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/sasural-problems-india`,                   lastModified: d('2026-09-13'), changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/bad-day-india`,                            lastModified: d('2026-09-13'), changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/need-to-vent-india`,                       lastModified: d('2026-09-13'), changeFrequency: 'monthly', priority: 0.97 },
-    { url: `${base}/emotional-support-india`,                  lastModified: d('2026-09-13'), changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/support/emotional-support`,                  lastModified: d('2026-09-13'), changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/talk-to-someone-free-india`,               lastModified: d('2026-09-13'), changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/working-woman-stress-india`,               lastModified: d('2026-09-13'), changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/new-mom-india`,                            lastModified: d('2026-09-13'), changeFrequency: 'monthly', priority: 0.97 },
@@ -358,7 +359,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Round 13: NRI, diaspora, and global emotional support pages (2026-09-13)
     { url: `${base}/nri-support`,                lastModified: d('2026-09-13'), changeFrequency: 'weekly',  priority: 0.95 },
     { url: `${base}/indian-diaspora-support`,    lastModified: d('2026-09-13'), changeFrequency: 'weekly',  priority: 0.95 },
-    { url: `${base}/talk-to-someone-online`,     lastModified: d('2026-09-13'), changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${base}/support/someone-to-talk-to`,     lastModified: d('2026-09-13'), changeFrequency: 'weekly',  priority: 0.95 },
     { url: `${base}/online-emotional-support`,   lastModified: d('2026-09-13'), changeFrequency: 'weekly',  priority: 0.95 },
     { url: `${base}/loneliness-support-online`,  lastModified: d('2026-09-13'), changeFrequency: 'weekly',  priority: 0.95 },
     { url: `${base}/someone-to-talk-to`,         lastModified: d('2026-09-13'), changeFrequency: 'weekly',  priority: 0.95 },
@@ -479,13 +480,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/ai-chatbot-alternative-singapore`,lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.95 },
     { url: `${base}/ai-chatbot-alternative-malaysia`, lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.95 },
     // Round 21b: Real human vs AI — core AEO pages (2026-09-15)
-    { url: `${base}/talk-to-real-person-not-ai`,          lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.98 },
+    { url: `${base}/talk-to-human-instead-of-chatgpt`,          lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.98 },
     { url: `${base}/vent-to-a-real-person-online`,        lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.97 },
     { url: `${base}/relationship-support-real-person`,    lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.97 },
     { url: `${base}/emotional-support-without-ai`,        lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.97 },
     { url: `${base}/india-talk-to-real-person`,           lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.97 },
     { url: `${base}/india-vent-to-real-person`,           lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.97 },
-    { url: `${base}/india-human-support-vs-ai`,           lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.97 },
+    { url: `${base}/talk-to-human-instead-of-chatgpt`,           lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.97 },
     { url: `${base}/indian-american-real-support`,        lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.96 },
     { url: `${base}/usa-talk-to-real-person-support`,     lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.97 },
     { url: `${base}/usa-vent-real-person`,                lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.97 },
@@ -588,12 +589,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/indians-in-san-jose`,             lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/indians-in-washington-dc`,        lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.9 },
   ]
-  // One entry per URL, and never list a page that is marked noindex
+  // One entry per URL, and never list a page that is noindexed or redirected
   // (GSC flags "Submitted URL marked noindex" otherwise).
   const seen = new Set<string>()
   return entries.filter(e => {
     const path = e.url.slice(base.length) || '/'
-    if (seen.has(e.url) || NOINDEX_PATHS.has(path)) return false
+    if (seen.has(e.url) || NOINDEX_PATHS.has(path) || path in SEO_REDIRECTS) return false
     seen.add(e.url)
     return true
   })

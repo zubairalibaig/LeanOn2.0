@@ -99,7 +99,7 @@ export default function TalkToSomeoneHindiPage() {
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-support">NRI support &rarr;</a>
           <a href="/indian-diaspora-support">Indian diaspora support &rarr;</a>
-          <a href="/talk-to-someone-online">Talk to someone online &rarr;</a>
+          <a href="/support/someone-to-talk-to">Talk to someone online &rarr;</a>
           <a href="/someone-to-talk-to">Someone to talk to &rarr;</a>
         </div></div>
         <div className="crisis"><strong>In a crisis?</strong> NIMHANS: 080-46110007 &nbsp;&middot;&nbsp; Tele-MANAS: 14416 &nbsp;&middot;&nbsp; Both free, 24/7.</div>

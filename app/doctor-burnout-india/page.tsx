@@ -173,7 +173,7 @@ export default function DoctorBurnoutIndiaPage() {
           <div className="related">
             <a href="/work-stress-india">Work stress India &rarr;</a>
             <a href="/cant-tell-anyone-india">Can&apos;t tell anyone &rarr;</a>
-            <a href="/get-it-off-your-chest-india">Get it off your chest &rarr;</a>
+            <a href="/blog/getting-it-off-your-chest">Get it off your chest &rarr;</a>
             <a href="/empathy-india">Empathy India &rarr;</a>
             <a href="/talk-therapy-india">Talk therapy &rarr;</a>
           </div>

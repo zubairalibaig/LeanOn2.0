@@ -206,7 +206,7 @@ export default function OnlineSupportGroupIndiaPage() {
             <a href="/peer-support" className="related-link">What Is Peer Support</a>
             <a href="/peer-support-online-india" className="related-link">Peer Support Online</a>
             <a href="/empathy-friend-india" className="related-link">Empathy Friend India</a>
-            <a href="/loneliness-support-india" className="related-link">Loneliness Support</a>
+            <a href="/support/loneliness" className="related-link">Loneliness Support</a>
             <a href="/online-emotional-support-india" className="related-link">Online Emotional Support</a>
           </div>
         </div>

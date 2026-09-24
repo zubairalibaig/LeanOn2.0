@@ -242,7 +242,7 @@ export default function DubaiLonelinessPage() {
           <a href="/uae-relationship-advice">Relationship support UAE →</a>
           <a href="/middle-east-loneliness">Middle East loneliness →</a>
           <a href="/middle-east-rant">Need to rant? →</a>
-          <a href="/loneliness-support-india">Loneliness support India →</a>
+          <a href="/support/loneliness">Loneliness support India →</a>
         </div>
 
         <div className="disclaimer">
