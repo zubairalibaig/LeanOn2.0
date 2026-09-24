@@ -4,7 +4,7 @@
 -- Listeners with the dashboard open see it instantly via the realtime bell.
 INSERT INTO public.notifications (user_id, type, title, body, action_url)
 SELECT lp.user_id, 'pricing_update_2026_09', 'Voice calls now earn you more — and an update on how you earn',
-       'Seekers can now choose text chat or a voice call, and voice is always priced ₹5/min above your text rate. From 24 Sep 2026, you keep 60% of every session; LeanOn''s 40% service fee covers finding seekers for you, secure payments, verification, safety and support. Sessions you''ve already completed aren''t affected. You set your own price — now is a good time to review it.',
+       'Seekers can now choose text chat or a voice call, and voice is always priced ₹5/min above your text rate. From 24 Sep 2026, you keep 60% of your rate on every paid session; LeanOn''s 40% service fee supports the work of bringing seekers to LeanOn, secure payments, verification, safety and support. Sessions you''ve already completed aren''t affected. You set your own price — now is a good time to review it.',
        '/dashboard?edit=pricing'
 FROM public.listener_profiles lp
 JOIN public.users u ON u.id = lp.user_id

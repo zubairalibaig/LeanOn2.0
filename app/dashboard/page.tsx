@@ -1048,7 +1048,7 @@ export default function DashboardPage() {
                     <br/>15 min → you earn {earn(15)}
                     <br/>30 min → you earn {earn(30)}
                     <br/>45 min → you earn {earn(45)}
-                    <br/><span style={{fontSize:11,opacity:0.85}}>You keep {Math.round((1 - LISTENER_SERVICE_FEE_RATE)*100)}% of every session — LeanOn&apos;s {Math.round(LISTENER_SERVICE_FEE_RATE*100)}% service fee covers finding seekers, payments, safety and support.</span>
+                    <br/><span style={{fontSize:11,opacity:0.85}}>You keep {Math.round((1 - LISTENER_SERVICE_FEE_RATE)*100)}% of your rate on every paid session — LeanOn&apos;s {Math.round(LISTENER_SERVICE_FEE_RATE*100)}% service fee supports bringing seekers to LeanOn, payments, safety and support.</span>
                   </div>
                 )
               })()}
@@ -1154,9 +1154,9 @@ export default function DashboardPage() {
                   or a voice call, and voice is always priced ₹{VOICE_RATE_PREMIUM}/min above your text rate — automatically.
                 </div>}
                 <div>
-                  <strong style={{color:'var(--navy)'}}>🤝 You keep {Math.round((1 - LISTENER_SERVICE_FEE_RATE) * 100)}% of every session.</strong> From
-                  24 Sep 2026, LeanOn&apos;s service fee is {Math.round(LISTENER_SERVICE_FEE_RATE * 100)}%. It covers the work around your
-                  conversations — finding seekers for you, secure payments and payouts, verification, safety and support — so you can focus
+                  <strong style={{color:'var(--navy)'}}>🤝 You keep {Math.round((1 - LISTENER_SERVICE_FEE_RATE) * 100)}% of your rate on every paid session.</strong> From
+                  24 Sep 2026, LeanOn&apos;s service fee is {Math.round(LISTENER_SERVICE_FEE_RATE * 100)}%. It supports the work around your
+                  conversations — bringing seekers to LeanOn, secure payments and payouts, verification, safety and support — so you can focus
                   on listening. Sessions you&apos;ve already completed aren&apos;t affected.
                 </div>
                 <div>

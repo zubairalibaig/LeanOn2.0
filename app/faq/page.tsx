@@ -108,11 +108,11 @@ const faqs = [
       },
       {
         q: 'How much do listeners earn?',
-        a: 'You set your own text rate — typically ₹8 to ₹25 per minute — and voice calls are automatically priced ₹5/min higher, so every voice minute earns you more. You keep 60% of every session; LeanOn\'s 40% service fee covers everything around the conversation (see below). The flat ₹10 seekers pay is separate and never comes out of your earnings.',
+        a: 'You set your own text rate — typically ₹8 to ₹25 per minute — and voice calls are automatically priced ₹5/min higher, so every voice minute earns you more. You keep 60% of your rate on every paid session; LeanOn\'s 40% service fee supports everything around the conversation (see below). The flat ₹10 seekers pay is separate and never comes out of your earnings.',
       },
       {
         q: 'What is the LeanOn service fee?',
-        a: 'It\'s 40% of session earnings, deducted automatically when a session settles — nothing for you to calculate or pay. It pays for the work that happens around your conversations so you can focus on listening: bringing seekers to LeanOn and to your profile, secure payments, refunds and payouts, listener verification and safety tools, and support when something goes wrong. What seekers pay is unaffected, and your dashboard shows exactly what you take home, in rupees, before you set your price.',
+        a: 'It\'s 40% of session earnings, deducted automatically when a session settles — nothing for you to calculate or pay. It supports the work that happens around your conversations so you can focus on listening: bringing seekers to LeanOn, secure payments, refunds and payouts, listener verification and safety tools, and support when something goes wrong. What seekers pay is unaffected, and your dashboard shows exactly what you take home, in rupees, before you set your price.',
       },
       {
         q: 'Do I need professional qualifications to be a listener?',
@@ -124,7 +124,7 @@ const faqs = [
       },
       {
         q: 'Is there a guaranteed minimum income?',
-        a: 'No. Earnings are variable and depend on session volume, which is tied to seeker traffic on LeanOn. We don\'t promise a specific income. What we do promise: your price is entirely yours to set, and you keep 60% of every session — that percentage doesn\'t change with volume.',
+        a: 'No. Earnings are variable and depend on session volume, which is tied to seeker traffic on LeanOn. We don\'t promise a specific income. What we do promise: your price is entirely yours to set, and you keep 60% of your rate on every paid session — that percentage doesn\'t change with volume.',
       },
     ],
   },

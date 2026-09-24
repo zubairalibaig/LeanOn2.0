@@ -706,11 +706,11 @@ export default function BecomeListenerPage() {
         {step === 1 && (
           <div className="hero-card">
             <h1>Earn by listening 🎧</h1>
-            <p>You set your price, and you keep {Math.round((1 - LISTENER_SERVICE_FEE_RATE) * 100)}% of every session. LeanOn&apos;s {Math.round(LISTENER_SERVICE_FEE_RATE * 100)}% service fee covers finding seekers for you, secure payments, verification, safety and support — so you can focus on listening.</p>
+            <p>You set your price, and you keep {Math.round((1 - LISTENER_SERVICE_FEE_RATE) * 100)}% of your rate on every paid session. LeanOn&apos;s {Math.round(LISTENER_SERVICE_FEE_RATE * 100)}% service fee supports the work of bringing seekers to LeanOn, secure payments, verification, safety and support — so you can focus on listening.</p>
             <div className="earn-row">
               <div className="earn-item"><div className="amount">₹{MIN_LISTENER_RATE}+</div><div className="label">per minute (you choose)</div></div>
               <div className="earn-item"><div className="amount">₹9K+</div><div className="label">per month possible</div></div>
-              <div className="earn-item"><div className="amount">{Math.round((1 - LISTENER_SERVICE_FEE_RATE) * 100)}%</div><div className="label">of every session you keep</div></div>
+              <div className="earn-item"><div className="amount">{Math.round((1 - LISTENER_SERVICE_FEE_RATE) * 100)}%</div><div className="label">of your rate you keep on paid sessions</div></div>
             </div>
             {SHOW_LISTENER_GROWTH_NOTICE && (
               <div style={{marginTop:16,background:'rgba(255,153,51,0.13)',border:'1.5px solid rgba(255,153,51,0.35)',borderRadius:12,padding:'12px 14px',fontSize:13,color:'rgba(255,220,140,0.95)',lineHeight:1.6,fontWeight:500}}>
@@ -989,7 +989,7 @@ export default function BecomeListenerPage() {
             </div>
             )}
             {fieldErrors.rate && <span className="field-err">{fieldErrors.rate}</span>}
-            <p style={{fontSize:12,color:'var(--gray)',marginBottom:12,fontWeight:500}}>You keep {Math.round((1 - LISTENER_SERVICE_FEE_RATE) * 100)}% of every session. New listeners often start at ₹10–₹15 and raise it as they build reviews.</p>
+            <p style={{fontSize:12,color:'var(--gray)',marginBottom:12,fontWeight:500}}>You keep {Math.round((1 - LISTENER_SERVICE_FEE_RATE) * 100)}% of your rate on every paid session. New listeners often start at ₹10–₹15 and raise it as they build reviews.</p>
 
             <div style={{background:'#F0F8FC',borderRadius:12,padding:'10px 14px',marginBottom:12,fontSize:13,color:'#0F4867',fontWeight:600}}>
               📅 Sessions are booked in <strong>15, 30, or 45 minute slots</strong>. No open-ended calls — clean start and end times for both sides.

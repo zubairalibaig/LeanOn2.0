@@ -1,18 +1,29 @@
 export const PLATFORM_FEE       = 10   // flat ₹10 per session added on top of listener rate (paid by seeker) — unchanged by the service fee below
-// LeanOn's service fee on listener earnings: 15% from 2026-09-14, 40% from
-// 2026-09-24. Deducted from the listener's share at settlement
-// (lib/session-billing.ts) — the seeker's charge (amountHeld) and the flat
-// PLATFORM_FEE above are completely unaffected; the seeker never sees or pays
-// this. settleSession() runs once per session at its own completion, so
-// already-completed sessions are never recalculated under a new rate.
+// LeanOn's service fee on listener earnings, deducted from the listener's
+// share at settlement (lib/session-billing.ts). The seeker's charge
+// (amountHeld) and the flat PLATFORM_FEE above are completely unaffected.
+//
+// RULE: a session's fee rate is LOCKED when the session starts (started_at),
+// looked up in this schedule — not whatever rate is deployed at settlement.
+// So a session that starts under one rate and settles after a change keeps
+// its original rate, and re-running settlement later gives the same answer.
+// To change the rate: ADD a new entry at the top with the go-live time (UTC)
+// — never edit or delete past entries. Newest first.
 // NOTE: user-facing copy that states hard-coded numbers must be updated
 // alongside it — see the surface list in CLAUDE.md.
-export const LISTENER_SERVICE_FEE_RATE = 0.40
-// For admin display only: the rate a session settled at, by its end time.
-// Switch time = the 40% deploy (commit b90fc5a pushed 05:12 UTC; ±a few min).
-const SERVICE_FEE_40_FROM = Date.parse('2026-09-24T05:15:00Z')
-export const serviceFeeRateAt = (endedAt?: string | null) =>
-  endedAt && Date.parse(endedAt) < SERVICE_FEE_40_FROM ? 0.15 : LISTENER_SERVICE_FEE_RATE
+const SERVICE_FEE_SCHEDULE: ReadonlyArray<{ from: number; rate: number }> = [
+  { from: Date.parse('2026-09-24T05:15:00Z'), rate: 0.40 }, // 40% deploy (commit b90fc5a, pushed 05:12 UTC)
+  { from: Date.parse('2026-09-14T13:20:00Z'), rate: 0.15 }, // 15% deploy (pushed 13:18 UTC)
+  { from: -Infinity,                          rate: 0    },
+]
+// The rate for sessions starting now.
+export const LISTENER_SERVICE_FEE_RATE = SERVICE_FEE_SCHEDULE[0].rate
+// Rate in force at `at` (a session's started_at). Missing/invalid → current rate.
+export function serviceFeeRateAt(at?: string | null): number {
+  const t = at ? Date.parse(at) : NaN
+  if (!Number.isFinite(t)) return LISTENER_SERVICE_FEE_RATE
+  return (SERVICE_FEE_SCHEDULE.find(e => t >= e.from) ?? SERVICE_FEE_SCHEDULE[SERVICE_FEE_SCHEDULE.length - 1]).rate
+}
 // Razorpay gateway commission (2%) + 18% GST on the fee — borne by the seeker
 // at recharge time. The wallet is credited the selected tier; the gross charge
 // includes this fee.

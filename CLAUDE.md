@@ -79,8 +79,18 @@
   `app/faq/page.tsx`, `app/get-paid-to-chat-india/page.tsx`, `app/terms/page.tsx`,
   `app/earn-by-listening/page.tsx`, `lib/listener-announcements.ts`,
   `public/llms-full.txt`, `app/press/page.tsx`, `app/blog/posts/therapy-cost-india.ts`.
-  Admin's per-session breakdown uses `serviceFeeRateAt(ended_at)` so older
-  15%-era sessions still display correctly.
+  **The rate is LOCKED at session start:** `settleSession()` uses
+  `serviceFeeRateAt(started_at)` from the dated `SERVICE_FEE_SCHEDULE` in
+  `lib/constants.ts` (0% → 15% on 2026-09-14 → 40% on 2026-09-24), never the
+  rate deployed at settlement time. To change the rate, ADD a dated entry at the
+  top of that schedule — never edit or remove past entries. Admin breakdowns use
+  the same lookup.
+- **`listener_earnings.platform_fee` ≠ `sessions.platform_fee`.** On the session
+  it is only the seeker's flat ₹10. On the earnings row it is LeanOn's TOTAL take
+  for that session (₹10 + listener service fee + any NRI margin, ± pro-rata
+  rounding). Never `SUM(listener_earnings.platform_fee)` as "seeker fees" — use
+  `sessions.platform_fee` for that, and `listener_earnings.service_fee` (migration
+  057) for the listener service fee alone.
 - Text/voice pricing (2026-09-24): only the TEXT rate is stored
   (`listener_profiles.rate_per_min`); voice = text + `VOICE_RATE_PREMIUM` (₹5/min),
   via `sessionRatePerMin()` in `lib/constants.ts`. `/api/sessions` POST stores the

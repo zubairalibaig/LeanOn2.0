@@ -69,7 +69,7 @@ export default function GetPaidToChatIndia() {
 
         <div className="earn-card">
           <div><div className="earn-num">₹8–25</div><div className="earn-label">Per minute earned</div></div>
-          <div><div className="earn-num">60%</div><div className="earn-label">Of every session you keep</div></div>
+          <div><div className="earn-num">60%</div><div className="earn-label">Of your rate you keep on paid sessions</div></div>
           <div><div className="earn-num">Vetted</div><div className="earn-label">Application reviewed</div></div>
         </div>
 
@@ -129,7 +129,7 @@ export default function GetPaidToChatIndia() {
         <div className="section">
           <h2>Earnings</h2>
           <p>At ₹10/min, a 30-minute text chat earns you ₹180 and a 30-minute voice call (priced ₹5/min higher) earns ₹270. Three text sessions a day is ~₹540 — roughly ₹16,000/month, around your existing schedule. Experienced listeners charge ₹20–25/min, taking home ₹360+ per 30-minute session.</p>
-          <p>Payouts are processed via UPI within 3 business days. You keep 60% of every session; LeanOn&apos;s 40% service fee covers finding seekers, secure payments, verification, safety and support.</p>
+          <p>Payouts are processed via UPI within 3 business days. You keep 60% of your rate on every paid session; LeanOn&apos;s 40% service fee supports the work of bringing seekers to LeanOn, secure payments, verification, safety and support.</p>
         </div>
 
         <div className="cta-box">

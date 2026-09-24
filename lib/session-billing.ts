@@ -14,15 +14,15 @@
 // Sessions under 60 seconds are treated as accidental starts: full refund
 // to the seeker (including the platform fee), nothing to the listener.
 //
-// LISTENER SERVICE FEE: LeanOn takes LISTENER_SERVICE_FEE_RATE (40% since
-// 2026-09-24, lib/constants.ts) out of the listener's share at settlement. This is
+// LISTENER SERVICE FEE: LeanOn takes the rate in force when the session
+// STARTED (serviceFeeRateAt, lib/constants.ts) out of the listener's share. This is
 // entirely separate from PLATFORM_FEE (the seeker's flat ₹10) — the seeker's
 // amountHeld and refundAmount math below are completely unaffected by this
 // fee; the seeker never sees or pays it. The fee applies only to the
 // listener's rawShare (full or pro-rated), so an early-exit session is
 // charged the fee on the minutes actually earned, not the booked amount.
 
-import { LISTENER_SERVICE_FEE_RATE, VOICE_PRICING_ENABLED, VOICE_PRICING_FROM, VOICE_RATE_PREMIUM, sessionRatePerMin } from './constants'
+import { LISTENER_SERVICE_FEE_RATE, VOICE_PRICING_ENABLED, VOICE_PRICING_FROM, VOICE_RATE_PREMIUM, serviceFeeRateAt, sessionRatePerMin } from './constants'
 
 export type SettlementInput = {
   startedAt: string | null   // sessions.started_at (null → treat as 0s used)
@@ -83,7 +83,8 @@ export function settleSession(s: SettlementInput): Settlement {
 
   // Fee computed first, earning is the remainder — guarantees
   // listenerEarning + listenerServiceFee === rawShare exactly (no rounding leak).
-  const listenerServiceFee = Math.round(rawShare * LISTENER_SERVICE_FEE_RATE)
+  // Fee rate is locked at the session's start (see SERVICE_FEE_SCHEDULE).
+  const listenerServiceFee = Math.round(rawShare * serviceFeeRateAt(s.startedAt ?? s.endedAt))
   const listenerEarning = rawShare - listenerServiceFee
 
   const refundAmount = billedMins >= s.bookedMins

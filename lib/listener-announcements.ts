@@ -18,7 +18,7 @@ export const PRICING_NOTICE = {
     (VOICE_PRICING_ENABLED
       ? `Seekers can now choose text chat or a voice call, and voice is always priced ₹${VOICE_RATE_PREMIUM}/min above your text rate. `
       : '') +
-    `From 24 Sep 2026, you keep ${KEEP}% of every session; LeanOn's ${FEE}% service fee covers finding seekers for you, secure payments, ` +
+    `From 24 Sep 2026, you keep ${KEEP}% of your rate on every paid session; LeanOn's ${FEE}% service fee supports the work of bringing seekers to LeanOn, secure payments, ` +
     `verification, safety and support. Sessions you've already completed aren't affected. You set your own price — now is a good time to review it.`,
   action_url: '/dashboard?edit=pricing',
 } as const

@@ -2035,8 +2035,8 @@ export default function AdminPage() {
                                     s.listener_rate_per_min * s.duration_mins < s.amount_held - platformFee
 
                                   // For NRI sessions: break out the service fee from the NRI margin, using
-                                  // the rate in force when the session settled (15% before 2026-09-24, 40% after).
-                                  const feeRate = serviceFeeRateAt(s.ended_at)
+                                  // the rate locked when the session started (same rule as settleSession).
+                                  const feeRate = serviceFeeRateAt(s.started_at ?? s.ended_at)
                                   const listenerRawShare = isNri ? Math.round(listenerNet / (1 - feeRate)) : 0
                                   const nriSvcFee   = isNri ? Math.round(listenerRawShare * feeRate) : 0
                                   const nriMargin   = isNri ? leanOnExtra - nriSvcFee : 0
@@ -2092,12 +2092,13 @@ export default function AdminPage() {
                                   const rawShare   = isNriActive
                                     ? s.listener_rate_per_min! * s.duration_mins
                                     : s.amount_held - platformFee
-                                  const serviceFee = Math.round(rawShare * LISTENER_SERVICE_FEE_RATE)
+                                  const activeFeeRate = serviceFeeRateAt(s.started_at)
+                                  const serviceFee = Math.round(rawShare * activeFeeRate)
                                   const listenerNet  = rawShare - serviceFee
                                   const nriMargin  = isNriActive ? (s.amount_held - platformFee - rawShare) : 0
                                   const platformTotal = platformFee + serviceFee + nriMargin
                                   return (
-                                    <span title={`Seeker held ₹${s.amount_held} · Projected listener ₹${listenerNet} (${Math.round(LISTENER_SERVICE_FEE_RATE * 100)}% svc fee ₹${serviceFee})${isNriActive ? ` · NRI margin ₹${nriMargin}` : ''} · LeanOn ~₹${platformTotal}`}>
+                                    <span title={`Seeker held ₹${s.amount_held} · Projected listener ₹${listenerNet} (${Math.round(activeFeeRate * 100)}% svc fee ₹${serviceFee})${isNriActive ? ` · NRI margin ₹${nriMargin}` : ''} · LeanOn ~₹${platformTotal}`}>
                                       ~₹{listenerNet}
                                       <span style={{ fontSize: 10, color: 'var(--green)', marginLeft: 3 }}>+₹{platformTotal}</span>
                                     </span>
@@ -2232,7 +2233,7 @@ export default function AdminPage() {
                       const isNri = !!transcriptSession.listener_rate_per_min &&
                         transcriptSession.listener_rate_per_min * transcriptSession.duration_mins < transcriptSession.amount_held - pFee
                       if (isNri) {
-                        const feeRate = serviceFeeRateAt(transcriptSession.ended_at)
+                        const feeRate = serviceFeeRateAt(transcriptSession.started_at ?? transcriptSession.ended_at)
                         const rawShare = Math.round(listenerNet / (1 - feeRate))
                         const nriSvcFee = Math.round(rawShare * feeRate)
                         const nriMargin = extra - nriSvcFee
