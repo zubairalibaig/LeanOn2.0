@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase'
 import { showToast } from '@/lib/toast'
 import { registerPushNotifications } from '@/lib/firebase-client'
 import { REQUEST_RESPONSE_WINDOW_SECS } from '@/lib/constants'
+import { estimateListenerTakeHome } from '@/lib/session-billing'
 
 // ── Global listener presence layer ───────────────────────────────────────────
 //
@@ -44,6 +45,7 @@ type Incoming = {
   duration_mins: number
   session_type: string
   amount_held: number
+  platform_fee?: number | null
   seeker_id: string
 }
 
@@ -54,6 +56,7 @@ export default function ListenerPresence() {
 
   const [userId, setUserId]       = useState<string | null>(null)
   const [isListener, setIsListener] = useState(false)
+  const [textRate, setTextRate] = useState<number | null>(null)
   const [available, setAvailable] = useState<boolean | null>(null)
   const [incoming, setIncoming]   = useState<Incoming | null>(null)
   const [busy, setBusy]           = useState(false)
@@ -75,12 +78,13 @@ export default function ListenerPresence() {
       setUserId(user.id)
       const { data: lp } = await sb
         .from('listener_profiles')
-        .select('is_approved, is_available, is_suspended, is_active')
+        .select('is_approved, is_available, is_suspended, is_active, rate_per_min')
         .eq('user_id', user.id)
         .maybeSingle()
       if (cancelled || !lp) return
       const active = lp.is_approved && !lp.is_suspended && lp.is_active !== false
       setIsListener(!!active)
+      setTextRate(lp.rate_per_min != null ? Number(lp.rate_per_min) : null)
       if (active) setAvailable(!!lp.is_available)
     }).catch(() => {})
     return () => { cancelled = true }
@@ -142,7 +146,7 @@ export default function ListenerPresence() {
       if (cancelled || incomingIdRef.current) return
       const { data } = await sb
         .from('sessions')
-        .select('id, duration_mins, session_type, amount_held, seeker_id, created_at, status')
+        .select('id, duration_mins, session_type, amount_held, platform_fee, seeker_id, created_at, status')
         .eq('listener_id', userId)
         .eq('status', 'pending')
         .order('created_at', { ascending: false })
@@ -288,7 +292,7 @@ export default function ListenerPresence() {
           <div style={{ fontSize:15, fontWeight:900, marginBottom:2 }}>🔔 New session request</div>
           <div style={{ fontSize:12.5, opacity:.85, marginBottom:12 }}>
             {incoming.duration_mins} min · {incoming.session_type}
-            {incoming.amount_held ? ` · ₹${incoming.amount_held}` : ' · free trial'}
+            {incoming.amount_held ? ` · you earn ₹${estimateListenerTakeHome(incoming, textRate)}` : ' · free trial'}
           </div>
           <div style={{ display:'flex', gap:8 }}>
             <button

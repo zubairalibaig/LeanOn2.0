@@ -6,6 +6,7 @@ import { createBrowserClient } from '@supabase/ssr'
 import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE, LISTENER_SERVICE_FEE_RATE, REQUEST_RESPONSE_WINDOW_SECS, VOICE_PRICING_ENABLED, VOICE_RATE_PREMIUM } from '@/lib/constants'
 import { SHOW_LISTENER_GROWTH_NOTICE, SHOW_LISTENER_PRICING_UPDATE_NOTICE } from '@/lib/feature-flags'
 import { PRICING_NOTICE } from '@/lib/listener-announcements'
+import { estimateListenerTakeHome } from '@/lib/session-billing'
 import { showToast } from '@/lib/toast'
 import { registerPushNotifications } from '@/lib/firebase-client'
 import { compressImage, extForType, AVATAR_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
@@ -175,7 +176,7 @@ type DashSession = {
   users?: { name?: string } | null
 }
 type IncomingSession = {
-  id: string; duration_mins: number; session_type: string; amount_held: number; seeker_id: string
+  id: string; duration_mins: number; session_type: string; amount_held: number; platform_fee?: number | null; seeker_id: string
 }
 
 // Opens the edit-profile panel when the URL carries ?edit=pricing (the pricing
@@ -446,7 +447,7 @@ export default function DashboardPage() {
     if (incomingIdRef.current) return // already showing one
     const { data } = await sb
       .from('sessions')
-      .select('id, duration_mins, session_type, amount_held, seeker_id, created_at, status')
+      .select('id, duration_mins, session_type, amount_held, platform_fee, seeker_id, created_at, status')
       .eq('listener_id', listenerId)
       .eq('status', 'pending')
       .order('created_at', { ascending: false })
@@ -881,8 +882,10 @@ export default function DashboardPage() {
                 <div className="modal-detail-value" style={{ textTransform: 'capitalize' }}>{incomingSession.session_type ?? '—'}</div>
               </div>
               <div className="modal-detail-item">
-                <div className="modal-detail-label">Amount</div>
-                <div className="modal-detail-value">₹{incomingSession.amount_held ?? '—'}</div>
+                <div className="modal-detail-label">You earn</div>
+                <div className="modal-detail-value">
+                  {incomingSession.amount_held ? `₹${estimateListenerTakeHome(incomingSession, profile?.rate_per_min)}` : 'Free trial'}
+                </div>
               </div>
             </div>
             <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>

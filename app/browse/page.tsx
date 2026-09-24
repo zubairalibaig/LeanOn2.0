@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { LANGUAGES, PLATFORM_FEE, AGE_RANGES, ageRangeId, VOICE_PRICING_ENABLED, sessionRatePerMin } from '@/lib/constants'
 import { SHOW_LISTENER_IN_SESSION_STATUS } from '@/lib/feature-flags'
+import { estimateListenerTakeHome } from '@/lib/session-billing'
 import { showToast } from '@/lib/toast'
 import Avatar from '@/app/components/Avatar'
 
@@ -357,12 +358,13 @@ function BrowseContent() {
   const [sortBy, setSortBy]     = useState<SortId>('best')
   const [joiningToast, setJoiningToast] = useState(false)
   const [myUserId, setMyUserId] = useState<string | null>(null)
+  const [myTextRate, setMyTextRate] = useState<number | null>(null)
   const [query, setQuery]     = useState('')
   const [listeners, setListeners] = useState<Listener[]>([])
   const [loading, setLoading] = useState(true)
   const [balance, setBalance] = useState<number|null>(null)
   const [incomingSession, setIncomingSession] = useState<{
-    id: string; duration_mins: number; session_type: string; amount_held: number
+    id: string; duration_mins: number; session_type: string; amount_held: number; platform_fee?: number | null
   } | null>(null)
   const channelRef = useRef<ReturnType<typeof client.channel> | null>(null)
   const listenerGridRef = useRef<HTMLDivElement | null>(null)
@@ -540,8 +542,9 @@ function BrowseContent() {
 
       // Only subscribe to incoming sessions if user is an approved listener — avoids
       // wasteful realtime connections for regular seekers
-      const { data: lp } = await client.from('listener_profiles').select('is_approved').eq('user_id', user.id).maybeSingle()
+      const { data: lp } = await client.from('listener_profiles').select('is_approved, rate_per_min').eq('user_id', user.id).maybeSingle()
       if (lp?.is_approved) {
+        setMyTextRate(lp.rate_per_min != null ? Number(lp.rate_per_min) : null)
         if (channelRef.current) client.removeChannel(channelRef.current)
         const channel = client.channel(`browse-incoming-${user.id}`)
           .on('postgres_changes', {
@@ -550,7 +553,7 @@ function BrowseContent() {
             table: 'sessions',
             filter: `listener_id=eq.${user.id}`,
           }, (payload) => {
-            setIncomingSession(payload.new as { id: string; duration_mins: number; session_type: string; amount_held: number })
+            setIncomingSession(payload.new as { id: string; duration_mins: number; session_type: string; amount_held: number; platform_fee?: number | null })
           })
           .subscribe()
         channelRef.current = channel
@@ -637,7 +640,7 @@ function BrowseContent() {
             <div className="session-toast-text">New session request!</div>
             <div className="session-toast-sub">
               {incomingSession.duration_mins ? `${incomingSession.duration_mins} min` : ''}{' '}
-              {incomingSession.session_type ?? ''}{incomingSession.amount_held ? ` · ₹${incomingSession.amount_held}` : ''}
+              {incomingSession.session_type ?? ''}{incomingSession.amount_held ? ` · you earn ₹${estimateListenerTakeHome(incomingSession, myTextRate)}` : ' · free trial'}
             </div>
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>

@@ -9,8 +9,8 @@ export const PLATFORM_FEE       = 10   // flat ₹10 per session added on top of
 // alongside it — see the surface list in CLAUDE.md.
 export const LISTENER_SERVICE_FEE_RATE = 0.40
 // For admin display only: the rate a session settled at, by its end time.
-// The switch time is the deploy day (approximate within that day).
-const SERVICE_FEE_40_FROM = Date.parse('2026-09-24T00:00:00+05:30')
+// Switch time = the 40% deploy (commit b90fc5a pushed 05:12 UTC; ±a few min).
+const SERVICE_FEE_40_FROM = Date.parse('2026-09-24T05:15:00Z')
 export const serviceFeeRateAt = (endedAt?: string | null) =>
   endedAt && Date.parse(endedAt) < SERVICE_FEE_40_FROM ? 0.15 : LISTENER_SERVICE_FEE_RATE
 // Razorpay gateway commission (2%) + 18% GST on the fee — borne by the seeker

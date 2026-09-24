@@ -22,7 +22,7 @@
 // listener's rawShare (full or pro-rated), so an early-exit session is
 // charged the fee on the minutes actually earned, not the booked amount.
 
-import { LISTENER_SERVICE_FEE_RATE } from './constants'
+import { LISTENER_SERVICE_FEE_RATE, sessionRatePerMin } from './constants'
 
 export type SettlementInput = {
   startedAt: string | null   // sessions.started_at (null → treat as 0s used)
@@ -91,4 +91,19 @@ export function settleSession(s: SettlementInput): Settlement {
     : Math.max(0, s.amountHeld - rawShare - (s.platformFee ?? 0))
 
   return { billedMins, listenerEarning, refundAmount, listenerServiceFee }
+}
+
+// What the listener takes home if a booked session runs its full length —
+// same math as settleSession(). Shown on incoming requests instead of the
+// seeker's total. `textRate` is the listener's own rate_per_min; it caps the
+// share for NRI sessions (whose amount_held is a flat price).
+export function estimateListenerTakeHome(
+  s: { amount_held: number; platform_fee?: number | null; duration_mins: number; session_type: string },
+  textRate?: number | null,
+): number {
+  let raw = Math.max(0, s.amount_held - (s.platform_fee ?? 0))
+  if (textRate != null) {
+    raw = Math.min(raw, sessionRatePerMin(Number(textRate), s.session_type === 'voice' ? 'voice' : 'text') * s.duration_mins)
+  }
+  return raw - Math.round(raw * LISTENER_SERVICE_FEE_RATE)
 }
