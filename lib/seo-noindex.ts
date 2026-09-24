@@ -18,6 +18,11 @@ export const NOINDEX_PATHS = new Set<string>([
   '/getcompanion-alternative',
   '/anonymous-chat-india',
   '/get-paid-to-chat-india',
+  // Listener recruitment: ChatGPT recommended these to people asking about
+  // side income / online work (every recent sign-up said so). Seekers only.
+  '/earn-by-listening',
+  '/become-listener',
+  '/blog/earn-money-listening-online-india',
   '/talk-to-someone-free-india',
   '/ai-chatbot-alternative-usa', '/ai-chatbot-alternative-canada', '/ai-chatbot-alternative-uk',
   '/ai-chatbot-alternative-uae', '/ai-chatbot-alternative-singapore', '/ai-chatbot-alternative-malaysia',
@@ -25,3 +30,8 @@ export const NOINDEX_PATHS = new Set<string>([
 ])
 
 export const NOINDEX_ROBOTS = { index: false, follow: true } as const
+
+// AI assistants (ChatGPT, Perplexity, Claude…) may not fetch these at all, so they
+// can't be quoted as a way to earn money. Search engines still crawl them to see
+// the noindex. Keep in sync with the recruitment entries above.
+export const AI_BLOCKED_PATHS = ['/earn-by-listening', '/become-listener', '/get-paid-to-chat-india', '/blog/earn-money-listening-online-india']

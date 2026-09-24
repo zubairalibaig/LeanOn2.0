@@ -72,6 +72,18 @@
   selfie path: `docs/SELFIE_STORAGE.md`** — rotating `SUPABASE_SERVICE_ROLE_KEY`
   without first pinning `SELFIE_PATH_SECRET` orphans every stored selfie.
 
+## SEO / AI-assistant rules (2026-09-24)
+
+- **Never publish listener-earnings or "side income" content on indexable or AI-crawlable pages.**
+  ChatGPT turned the old `/earn-by-listening` page into a flood of income-seeking listener sign-ups.
+  Recruitment pages are listed in `lib/seo-noindex.ts` (`NOINDEX_PATHS` + `AI_BLOCKED_PATHS`,
+  used by `app/robots.ts`); a new recruitment page must be added to both.
+- Prices in copy must match `/pricing`, which reads `lib/constants.ts` / `lib/geo-pricing.ts`.
+  Overseas pages quote US$10/15/20, never ₹160. Only ONE free 5-minute session per account.
+- Near-duplicate pages are merged via `lib/seo-redirects.json` (308). Don't mass-generate
+  templated keyword pages; Google declined most of the last batch.
+- After deploying public-page changes, run `node scripts/indexnow.mjs` (Bing → ChatGPT search).
+
 ## Business invariants
 
 - Platform fee: **flat ₹10 per paid session** (`PLATFORM_FEE`), paid by the

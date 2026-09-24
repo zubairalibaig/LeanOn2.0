@@ -6,6 +6,59 @@ Budget: most of this is free; total cost if you do everything paid is under ₹1
 
 ---
 
+## 🤖 ChatGPT: send seekers, not side-income hunters (2026-09-24)
+
+**What happened:** every recent listener sign-up said they found LeanOn through ChatGPT while
+asking about side income or online work. ChatGPT search is built largely on **Bing's index**
+plus OpenAI's own crawlers. It was citing `/earn-by-listening` ("Earn ₹300–₹800/hour… side
+income… make money chatting online") and the other recruitment pages.
+
+**What changed in code:**
+- `/earn-by-listening`, `/become-listener`, `/get-paid-to-chat-india` and the "earn money
+  listening" blog post:
+  - are `noindex` and out of the sitemap;
+  - are **disallowed for AI crawlers** (GPTBot, OAI-SearchBot, ChatGPT-User, PerplexityBot, Claude and others) in `app/robots.ts`;
+  - are still crawlable by Google and Bing, so those two can see the noindex and drop them.
+
+  The pages still work for anyone who follows a link from the site footer or the app.
+- `/earn-by-listening` no longer advertises an hourly income.
+- `llms.txt` / `llms-full.txt`:
+  - listener earnings sections removed;
+  - a new rule: LeanOn is not a job, side income or work-from-home opportunity.
+- IndexNow: key file in `public/`, and `scripts/indexnow.mjs` tells Bing (and so ChatGPT search)
+  about changed pages within hours.
+
+**Do after every deploy that changes public pages:**
+- [ ] `node scripts/indexnow.mjs` (run it once now, after this deploy is live). It should print
+      `HTTP 200/202 accepted`.
+
+**Do once:**
+- [ ] Bing Webmaster Tools: verify leanon.app, submit `https://www.leanon.app/sitemap.xml`, and
+      use URL Inspection → "Request removal" (Block URLs) for `/earn-by-listening` and
+      `/get-paid-to-chat-india` so they drop out of Bing, and therefore ChatGPT, quickly.
+- [ ] GA4 → Reports → Acquisition → Traffic acquisition → filter *Session source* =
+      `chatgpt.com` → add *Landing page*. ChatGPT tags its links `utm_source=chatgpt.com`,
+      so this shows which pages ChatGPT sends people to. Check it weekly; it should move from
+      `/become-listener` to `/`, `/pricing` and topic pages.
+
+**How ChatGPT picks what to recommend (so seekers get it):**
+- It usually answers emotional messages ("I feel lonely") itself and gives helplines. It searches
+  the web when someone asks for **options**, for example "apps to talk to a real person in India",
+  "cheaper alternative to therapy in India", "talk to someone in Hindi from Dubai" or
+  "YourDOST / Amaha / 7 Cups alternatives". Those are the queries to win.
+- For those it quotes pages that state facts plainly (price, who it's for, how it works) and
+  brands that **other sites** mention: Reddit threads, Quora answers, "best apps" roundups,
+  AlternativeTo and Product Hunt. One honest founder post in r/NRI or r/dubai and five good Quora
+  answers will do more for ChatGPT than any new page on leanon.app.
+- **Every mention should say what LeanOn is for the seeker** ("talk to a real person, US$10 for
+  15 minutes abroad, first session free"). Never mention listener earnings anywhere public.
+  One "earn money" mention is enough for ChatGPT to file LeanOn under income again.
+- Check monthly in ChatGPT (logged out, search on): "apps to talk to a real person in India",
+  "affordable alternative to therapy India", "talk to someone in Hindi UK", "how to earn money
+  online from home India". Success is LeanOn showing up in the first three and **not** the last.
+
+---
+
 ## ⭐ Priority now (2026-09-24): off-site GEO for PAYING users
 
 The code side of SEO is saturated (414 pages). What AI assistants cite is **other websites

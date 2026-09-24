@@ -1,28 +1,21 @@
 import type { Metadata } from 'next'
+import { NOINDEX_ROBOTS } from '@/lib/seo-noindex'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Earn Money by Listening to People Online in India | LeanOn',
-  description: 'Turn your empathy into income. Earn ₹300–₹800/hour as a peer listener on LeanOn. Work from home, set your own hours. No degree needed — lived experience is enough.',
-  keywords: [
-    'earn money by listening online India', 'paid listener job India',
-    'get paid to listen to people India', 'earn from talking online India',
-    'work from home listener India', 'side income listener India',
-    'make money chatting online India', 'earn money empathy India',
-    'online listener job India', 'paid peer listener India',
-    'earn from home without investment India', 'listening job from home India',
-    'how to earn by helping people online India', 'emotional support job India',
-    'listener income India',
-  ],
-  alternates: { canonical: 'https://www.leanon.app/earn-by-listening', languages: { 'en-IN': 'https://www.leanon.app/earn-by-listening' } },
+  // Kept out of search and AI assistants (lib/seo-noindex.ts, app/robots.ts):
+  // ChatGPT was sending "side income" searchers here, flooding listener sign-ups.
+  robots: NOINDEX_ROBOTS,
+  title: 'Becoming a LeanOn Peer Listener — What It Involves | LeanOn',
+  description: 'What being a LeanOn peer listener involves: screening, identity verification, the 40% service fee, and why this is not a job or a guaranteed income.',
+  alternates: { canonical: 'https://www.leanon.app/earn-by-listening' },
   openGraph: {
-    title: 'Earn Money by Listening to People Online in India | LeanOn',
-    description: 'Turn your empathy into income. Earn ₹300–₹800/hour as a peer listener on LeanOn. Work from home, set your own hours.',
+    title: 'Becoming a LeanOn Peer Listener — What It Involves | LeanOn',
+    description: 'Screening, identity verification and the 40% service fee. Not a job or a guaranteed income.',
     url: 'https://www.leanon.app/earn-by-listening',
     siteName: 'LeanOn',
     type: 'article',
-    images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn — Earn by Listening' }],
   },
 }
 
