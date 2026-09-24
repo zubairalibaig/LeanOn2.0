@@ -96,7 +96,7 @@ export async function GET(req: NextRequest) {
         }).then(() => {}, () => {})
 
         // platform_fee = gross − refund − net = LeanOn's actual take
-        // (₹10 flat + 15% service fee + any NRI margin). listener_gross and
+        // (₹10 flat + listener service fee + any NRI margin). listener_gross and
         // service_fee are stored directly for accurate per-session dashboard display.
         const listenerGross = Math.round(listenerEarning + listenerServiceFee)
         const { error: earningsErr } = await sb.from('listener_earnings').insert({

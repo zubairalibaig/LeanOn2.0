@@ -1,14 +1,18 @@
 export const PLATFORM_FEE       = 10   // flat ₹10 per session added on top of listener rate (paid by seeker) — unchanged by the service fee below
-// LeanOn's service fee on listener earnings (2026-09-14). Deducted from the
-// listener's share at settlement (lib/session-billing.ts) — the seeker's
-// charge (amountHeld) and the flat PLATFORM_FEE above are completely
-// unaffected; the seeker never sees or pays this. Applies to sessions that
-// go active on or after the deploy date — settleSession() only ever runs
-// once per session at its own completion, so already-completed sessions are
-// never recalculated under the new rate.
-// NOTE: any user-facing copy stating this number must be updated alongside
-// it (app/become-listener/page.tsx, app/faq/page.tsx, dashboard earnings copy).
-export const LISTENER_SERVICE_FEE_RATE = 0.15
+// LeanOn's service fee on listener earnings: 15% from 2026-09-14, 40% from
+// 2026-09-24. Deducted from the listener's share at settlement
+// (lib/session-billing.ts) — the seeker's charge (amountHeld) and the flat
+// PLATFORM_FEE above are completely unaffected; the seeker never sees or pays
+// this. settleSession() runs once per session at its own completion, so
+// already-completed sessions are never recalculated under a new rate.
+// NOTE: user-facing copy that states hard-coded numbers must be updated
+// alongside it — see the surface list in CLAUDE.md.
+export const LISTENER_SERVICE_FEE_RATE = 0.40
+// For admin display only: the rate a session settled at, by its end time.
+// The switch time is the deploy day (approximate within that day).
+const SERVICE_FEE_40_FROM = Date.parse('2026-09-24T00:00:00+05:30')
+export const serviceFeeRateAt = (endedAt?: string | null) =>
+  endedAt && Date.parse(endedAt) < SERVICE_FEE_40_FROM ? 0.15 : LISTENER_SERVICE_FEE_RATE
 // Razorpay gateway commission (2%) + 18% GST on the fee — borne by the seeker
 // at recharge time. The wallet is credited the selected tier; the gross charge
 // includes this fee.

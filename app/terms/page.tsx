@@ -68,7 +68,7 @@ export default function TermsPage() {
           <li>Unused wallet balance is refundable subject to the current refund process and applicable payment rules</li>
           <li>Completed sessions are generally non-refundable unless a safety, billing, or platform error requires an adjustment</li>
           <li>Any platform fee and applicable taxes are shown before a paid session is started</li>
-          <li>LeanOn applies a 15% service fee on listener earnings, deducted at session settlement; the listener's net settlement is shown in the applicable listener terms or dashboard</li>
+          <li>From 24 September 2026, LeanOn applies a 40% service fee on listener earnings (previously 15%), deducted at session settlement; sessions completed before that date are unaffected. The listener's net settlement is shown in the listener dashboard</li>
           <li>Prices and currency presentation may vary by market and are determined by the checkout experience</li>
         </ul>
 

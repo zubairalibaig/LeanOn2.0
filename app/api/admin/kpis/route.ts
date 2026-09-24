@@ -86,7 +86,7 @@ export async function GET(req: NextRequest) {
       sb.from('users').select('id, wallet_balance'),
 
       // PLATFORM EARNINGS — LeanOn's actual income: the flat ₹10 seeker fee
-      // PLUS the 15% listener service fee (both captured in
+      // PLUS the listener service fee (both captured in
       // listener_earnings.platform_fee since the 2026-09-14 deploy).
       // For sessions settled before that deploy, platform_fee in
       // listener_earnings is just ₹10 (the old billing), so old data is
@@ -191,7 +191,7 @@ export async function GET(req: NextRequest) {
     )
 
     // Platform earnings: sum listener_earnings.platform_fee (= ₹10 seeker fee
-    // + 15% service fee for sessions after 2026-09-14; just ₹10 for older rows).
+    // + listener service fee (15% from 2026-09-14, 40% from 2026-09-24); just ₹10 for older rows).
     // Accidental-start full-refund rows have platform_fee = 0 → skipped.
     // Bucketed by listener_earnings.created_at (set at settlement time ≈ session end).
     const platformFee = { allTime: 0, thisMonth: 0, today: 0, sessions: 0 }

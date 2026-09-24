@@ -133,7 +133,7 @@ export async function POST(req: Request) {
           session_id: session.id,
         })
         // Insert earnings record. platform_fee = gross − refund − net =
-        // LeanOn's actual take (₹10 flat + 15% service fee + any NRI margin).
+        // LeanOn's actual take (₹10 flat + listener service fee + any NRI margin).
         // listener_gross and service_fee stored directly for accurate dashboard display.
         const listenerGross = Math.round(earning + listenerServiceFee)
         const { error: earningsErr } = await sb.from('listener_earnings').insert({

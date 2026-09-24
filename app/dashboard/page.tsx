@@ -1,10 +1,11 @@
 'use client'
 export const dynamic = 'force-dynamic'
-import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect, useRef, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE, LISTENER_SERVICE_FEE_RATE, REQUEST_RESPONSE_WINDOW_SECS, VOICE_PRICING_ENABLED, VOICE_RATE_PREMIUM } from '@/lib/constants'
-import { SHOW_LISTENER_GROWTH_NOTICE, SHOW_LISTENER_FEE_UPDATE_NOTICE } from '@/lib/feature-flags'
+import { SHOW_LISTENER_GROWTH_NOTICE, SHOW_LISTENER_PRICING_UPDATE_NOTICE } from '@/lib/feature-flags'
+import { PRICING_NOTICE } from '@/lib/listener-announcements'
 import { showToast } from '@/lib/toast'
 import { registerPushNotifications } from '@/lib/firebase-client'
 import { compressImage, extForType, AVATAR_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
@@ -177,6 +178,21 @@ type IncomingSession = {
   id: string; duration_mins: number; session_type: string; amount_held: number; seeker_id: string
 }
 
+// Opens the edit-profile panel when the URL carries ?edit=pricing (the pricing
+// notification's link) — also when already on /dashboard, since the bell
+// navigates client-side without remounting the page.
+function EditPricingParam({ ready, onOpen }: { ready: boolean; onOpen: () => void }) {
+  const params = useSearchParams()
+  const router = useRouter()
+  const wantsEdit = params.get('edit') === 'pricing'
+  useEffect(() => {
+    if (!ready || !wantsEdit) return
+    onOpen()
+    router.replace('/dashboard')
+  }, [ready, wantsEdit])
+  return null
+}
+
 export default function DashboardPage() {
   const router = useRouter()
   const [profile, setProfile]     = useState<DashProfile | null>(null)
@@ -189,11 +205,7 @@ export default function DashboardPage() {
   const [incomingSession, setIncomingSession] = useState<IncomingSession | null>(null)
   const [respondingIncoming, setRespondingIncoming] = useState(false)
   const [missedSessions, setMissedSessions] = useState<Array<{ id: string; created_at: string; duration_mins: number; session_type: string }>>([])
-  // Fee-update banner — shown once to listeners who have completed at least
-  // one PAID session, announcing the 15% listener service fee. Dismissal is
-  // per-device (localStorage); a durable in-app notification is also written
-  // once per listener so the announcement survives even if this banner or
-  // its localStorage flag is cleared.
+  // One-time banner announcing text/voice pricing + the service fee update.
   const [showFeeNotice, setShowFeeNotice] = useState(false)
   // session_id -> authoritative net_amount from listener_earnings, used to
   // render "Recent sessions" correctly now that amount_held - platform_fee
@@ -504,32 +516,14 @@ export default function DashboardPage() {
 
     if (recent) setSessions(recent as any)
 
-    // Fee-update banner — only for listeners with at least one completed PAID
-    // session (amount_held > 0; free trials are 0). Checked here (not a
-    // separate effect) so it reuses the `recent` fetch above with no extra query.
-    if (SHOW_LISTENER_FEE_UPDATE_NOTICE && recent?.some(s => ((s as any).amount_held || 0) > 0)) {
+    // One-time pricing/service-fee announcement for every listener. Dismissal
+    // is per-device; the in-app notification (written server-side, idempotent)
+    // keeps it reachable from the bell on any device.
+    if (SHOW_LISTENER_PRICING_UPDATE_NOTICE) {
       let dismissed = false
-      try { dismissed = localStorage.getItem('leanon_fee_notice_dismissed') === '1' } catch { /* ignore */ }
+      try { dismissed = localStorage.getItem(PRICING_NOTICE.storageKey) === '1' } catch { /* ignore */ }
       if (!dismissed) setShowFeeNotice(true)
-
-      // Durable in-app notification — written once per listener regardless of
-      // the banner's dismiss state, so the announcement survives across
-      // devices. Guarded by checking for an existing row first (RLS scopes
-      // both to the listener's own rows, so this is safe from the client).
-      sb.from('notifications')
-        .select('id', { count: 'exact', head: true })
-        .eq('user_id', u.id)
-        .eq('type', 'fee_update')
-        .then(({ count }) => {
-          if (count) return
-          sb.from('notifications').insert({
-            user_id: u.id,
-            type: 'fee_update',
-            title: 'A new LeanOn service fee for listeners',
-            body: `Starting now, LeanOn applies a ${Math.round(LISTENER_SERVICE_FEE_RATE * 100)}% service fee on listener earnings — the same way we've always kept a small fee from seekers. This helps us bring you more people to talk to and keep improving LeanOn. Your rate is unchanged, and every session you've already completed is unaffected.`,
-            action_url: '/faq',
-          }).then(() => {}, () => {})
-        }, () => {})
+      fetch('/api/listener/announcement', { method: 'POST' }).catch(() => {})
     }
 
     // Missed requests — pending sessions that were cancelled (declined/timed out)
@@ -547,7 +541,7 @@ export default function DashboardPage() {
 
     // Authoritative earnings come from the listener_earnings ledger (net_amount),
     // which already accounts for pro-rated partial sessions AND (2026-09-14) the
-    // 15% listener service fee. Deriving earnings from amount_held - platform_fee
+    // listener service fee. Deriving earnings from amount_held - platform_fee
     // overstates them — that's true for partial sessions as before, and now also
     // for every new full session, since sessions.platform_fee only ever holds
     // the seeker's flat ₹10 and never the service fee. session_id here builds a
@@ -1045,7 +1039,7 @@ export default function DashboardPage() {
                     <br/>15 min → you earn {earn(15)}
                     <br/>30 min → you earn {earn(30)}
                     <br/>45 min → you earn {earn(45)}
-                    <br/><span style={{fontSize:11,opacity:0.85}}>LeanOn deducts {Math.round(LISTENER_SERVICE_FEE_RATE*100)}% of your earnings as a service fee.</span>
+                    <br/><span style={{fontSize:11,opacity:0.85}}>You keep {Math.round((1 - LISTENER_SERVICE_FEE_RATE)*100)}% of every session — LeanOn&apos;s {Math.round(LISTENER_SERVICE_FEE_RATE*100)}% service fee covers finding seekers, payments, safety and support.</span>
                   </div>
                 )
               })()}
@@ -1112,6 +1106,57 @@ export default function DashboardPage() {
             <a href="/become-listener/status" style={{color:'#0F4867',textDecoration:'underline'}}>Check status →</a>
           </div>
         )}
+
+        <Suspense fallback={null}><EditPricingParam ready={!!profile} onOpen={openEdit} /></Suspense>
+
+        {showFeeNotice && (() => {
+          const text  = Number(profile.rate_per_min) || 0
+          const voice = text + VOICE_RATE_PREMIUM
+          const takeHome = (perMin: number, mins: number) => {
+            const g = perMin * mins
+            return g - Math.round(g * LISTENER_SERVICE_FEE_RATE)
+          }
+          const dismiss = () => {
+            setShowFeeNotice(false)
+            try { localStorage.setItem(PRICING_NOTICE.storageKey, '1') } catch { /* ignore */ }
+          }
+          return (
+            <div role="region" aria-label="Pricing update" style={{marginBottom:20,background:'linear-gradient(135deg,#F0F8FC,#FFF8F0)',border:'1.5px solid var(--border)',borderRadius:18,padding:'18px 20px',position:'relative'}}>
+              <button onClick={dismiss} aria-label="Dismiss"
+                style={{position:'absolute',top:12,right:12,background:'transparent',border:'none',color:'var(--gray)',fontSize:20,fontWeight:900,cursor:'pointer',lineHeight:1,padding:4}}>×</button>
+              <div style={{fontSize:16,fontWeight:900,color:'var(--navy)',marginBottom:12,paddingRight:24}}>
+                📣 Two updates to how you earn on LeanOn
+              </div>
+              <div style={{fontSize:13,color:'#3A6070',lineHeight:1.65,fontWeight:500,display:'grid',gap:10}}>
+                <div>
+                  <strong style={{color:'var(--navy)'}}>📞 Voice calls now earn you more.</strong> Seekers can now pick text chat
+                  or a voice call, and voice is always priced ₹{VOICE_RATE_PREMIUM}/min above your text rate — automatically.
+                </div>
+                <div>
+                  <strong style={{color:'var(--navy)'}}>🤝 You keep {Math.round((1 - LISTENER_SERVICE_FEE_RATE) * 100)}% of every session.</strong> From
+                  24 Sep 2026, LeanOn&apos;s service fee is {Math.round(LISTENER_SERVICE_FEE_RATE * 100)}%. It covers the work around your
+                  conversations — finding seekers for you, secure payments and payouts, verification, safety and support — so you can focus
+                  on listening. Sessions you&apos;ve already completed aren&apos;t affected.
+                </div>
+                <div>
+                  <strong style={{color:'var(--navy)'}}>✏️ You set your price.</strong> At your current rate (💬 ₹{text} · 📞 ₹{voice} /min),
+                  a 30-min voice call takes home <strong style={{color:'var(--navy)'}}>₹{takeHome(voice, 30)}</strong> and a 30-min text chat
+                  <strong style={{color:'var(--navy)'}}> ₹{takeHome(text, 30)}</strong>. Now is a good time to review your price.
+                </div>
+              </div>
+              <div style={{display:'flex',gap:10,marginTop:14,flexWrap:'wrap'}}>
+                <button onClick={() => { dismiss(); openEdit() }}
+                  style={{background:'var(--navy)',color:'white',border:'none',borderRadius:50,padding:'10px 18px',fontFamily:"'Nunito',sans-serif",fontWeight:800,fontSize:13,cursor:'pointer'}}>
+                  Review my pricing →
+                </button>
+                <button onClick={dismiss}
+                  style={{background:'white',color:'var(--navy)',border:'1.5px solid var(--border)',borderRadius:50,padding:'10px 18px',fontFamily:"'Nunito',sans-serif",fontWeight:700,fontSize:13,cursor:'pointer'}}>
+                  Got it
+                </button>
+              </div>
+            </div>
+          )
+        })()}
 
         <div className="stats-grid">
           <div className="stat-card accent">
@@ -1304,36 +1349,13 @@ export default function DashboardPage() {
           <span style={{ fontSize:20 }}>💬</span>
         </button>
 
-        {showFeeNotice && (
-          <div style={{marginBottom:20,background:'var(--light)',border:'1.5px solid var(--border)',borderRadius:18,padding:'18px 20px',position:'relative'}}>
-            <button
-              onClick={() => {
-                setShowFeeNotice(false)
-                try { localStorage.setItem('leanon_fee_notice_dismissed', '1') } catch { /* ignore */ }
-              }}
-              aria-label="Dismiss"
-              style={{position:'absolute',top:14,right:14,background:'transparent',border:'none',color:'var(--gray)',fontSize:18,fontWeight:900,cursor:'pointer',lineHeight:1,padding:4}}
-            >×</button>
-            <div style={{fontSize:15,fontWeight:900,color:'var(--navy)',marginBottom:8,paddingRight:24}}>
-              A new LeanOn service fee for listeners
-            </div>
-            <div style={{fontSize:13,color:'#3A6070',lineHeight:1.7,fontWeight:500,marginBottom:10}}>
-              Starting now, LeanOn applies a <strong>{Math.round(LISTENER_SERVICE_FEE_RATE * 100)}% service fee</strong> on
-              listener earnings — the same way we&apos;ve always kept a small fee from seekers. It helps us bring you more
-              people to talk to, keep payments secure, and keep improving LeanOn. Your rate is unchanged — you still set
-              what you charge per minute, and every session you&apos;ve already completed is unaffected.
-            </div>
-            <a href="/faq" style={{fontSize:13,fontWeight:800,color:'var(--teal)'}}>Read more in the FAQ →</a>
-          </div>
-        )}
-
         {sessions.length > 0 && (
           <>
             <div className="section-title">Recent sessions</div>
             <div className="session-list">
               {sessions.map((s, i) => {
                 // Prefer the authoritative listener_earnings.net_amount (accounts
-                // for the 15% service fee + pro-ration); fall back to the old
+                // for the service fee + pro-ration); fall back to the old
                 // approximation only for rows with no ledger entry yet (a very
                 // old session predating the ledger, or the write briefly failing).
                 const earned = sessionEarnings.has(s.id)

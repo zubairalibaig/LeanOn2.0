@@ -24,17 +24,14 @@ export const SHOW_LISTENER_GROWTH_NOTICE = true
 export const SHOW_LISTENER_IN_SESSION_STATUS = true
 
 /**
- * Shows a one-time dashboard banner to listeners who have at least one
- * completed PAID session (amount_held > 0), announcing the 15% listener
- * service fee (lib/constants.ts LISTENER_SERVICE_FEE_RATE, effective
- * 2026-09-14). Dismissal is stored in localStorage per-device
- * (leanon_fee_notice_dismissed) — matches the existing dismissible-banner
- * pattern (leanon_nudge_dismissed). A durable in-app notification is also
- * inserted once per listener (type 'fee_update') so it survives across
- * devices even if this flag or the banner is later removed.
- * Set to false to hide the banner instantly without a redeploy.
+ * One-time dashboard banner for ALL listeners announcing text/voice pricing
+ * and the service fee update (2026-09-24), with a "Review my pricing" button
+ * that opens the edit-profile panel. Dismissal is per-device (localStorage,
+ * PRICING_NOTICE.storageKey in lib/listener-announcements.ts); an in-app
+ * notification is also written server-side once per listener.
+ * Set to false to hide the banner (and stop writing the notification).
  */
-export const SHOW_LISTENER_FEE_UPDATE_NOTICE = true
+export const SHOW_LISTENER_PRICING_UPDATE_NOTICE = true
 
 /**
  * Shows the new listener onboarding landing page on /become-listener:

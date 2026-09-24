@@ -96,7 +96,7 @@ const howToSchema = {
   step: [
     { '@type': 'HowToStep', position: 1, name: 'Sign up to LeanOn', text: 'Enter your phone number and verify with OTP. Takes 30 seconds, no email or full name required.' },
     { '@type': 'HowToStep', position: 2, name: 'Browse peer listeners', text: 'Filter listeners by topic (loneliness, relationships, work stress, grief, etc.). Read their bios, ratings, and lived experience.' },
-    { '@type': 'HowToStep', position: 3, name: 'Start a free 5-minute trial', text: 'Your first session with each new listener is a free 5-minute text conversation. No wallet or payment needed.' },
+    { '@type': 'HowToStep', position: 3, name: 'Start a free 5-minute trial', text: 'Your first session with each new listener is a free 5-minute text or voice conversation. No wallet or payment needed.' },
     { '@type': 'HowToStep', position: 4, name: 'Continue with a paid session', text: 'If you want more time, recharge your wallet via UPI, cards, or net banking. Choose 15, 30, or 45 minutes. Paid sessions start at ₹160.' },
     { '@type': 'HowToStep', position: 5, name: 'Talk by text or voice', text: 'Choose text chat for privacy or voice call for warmth. Your session begins immediately — no appointment.' },
     { '@type': 'HowToStep', position: 6, name: 'Rate and return', text: 'Rate your listener after the session. Book again anytime. Unused wallet balance is fully refundable.' },
@@ -465,7 +465,7 @@ export default function Home() {
       </div>
 
       {/* PRICING — seeker pays listener's rate + flat ₹10 (PLATFORM_FEE). Listener
-          side of the ledger (15% LISTENER_SERVICE_FEE_RATE) is not this page's
+          side of the ledger (LISTENER_SERVICE_FEE_RATE) is not this page's
           concern — never claim "100% to listener" here, it's no longer true. */}
       <div className="inner">
         <h2 className="sh">Simple, honest pricing</h2>
@@ -479,7 +479,7 @@ export default function Home() {
             not to over-advertise it in marketing copy. */}
         <div className="pc">
           {[
-            {l:'Trial session',d:'5 minutes · Text only · No wallet needed · Free once per listener',p:'₹0',b:'Trial',feat:false},
+            {l:'Trial session',d:'5 minutes · Text or voice · No wallet needed · Free once per listener',p:'₹0',b:'Trial',feat:false},
             {l:'Quick chat',d:`15 minutes · One-on-one · Text${voiceFrom(15, 160)}`,p:'₹160',b:'',feat:false},
             {l:'Deep dive',d:`30 minutes · One-on-one · Text${voiceFrom(30, 310)}`,p:'₹310',b:'Most popular',feat:true},
           ].map((item,i)=>(

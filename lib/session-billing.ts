@@ -14,8 +14,8 @@
 // Sessions under 60 seconds are treated as accidental starts: full refund
 // to the seeker (including the platform fee), nothing to the listener.
 //
-// LISTENER SERVICE FEE (2026-09-14): LeanOn now takes LISTENER_SERVICE_FEE_RATE
-// (15%, lib/constants.ts) out of the listener's share at settlement. This is
+// LISTENER SERVICE FEE: LeanOn takes LISTENER_SERVICE_FEE_RATE (40% since
+// 2026-09-24, lib/constants.ts) out of the listener's share at settlement. This is
 // entirely separate from PLATFORM_FEE (the seeker's flat ₹10) — the seeker's
 // amountHeld and refundAmount math below are completely unaffected by this
 // fee; the seeker never sees or pays it. The fee applies only to the
@@ -44,7 +44,7 @@ export type Settlement = {
   billedMins: number         // minutes actually billed (0..bookedMins)
   listenerEarning: number    // credit to listener wallet (after the service fee)
   refundAmount: number       // refund to seeker wallet — unaffected by the service fee
-  listenerServiceFee: number // LeanOn's 15% cut of the listener's share (ledger only)
+  listenerServiceFee: number // LeanOn's service fee on the listener's share (ledger only)
 }
 
 export function settleSession(s: SettlementInput): Settlement {

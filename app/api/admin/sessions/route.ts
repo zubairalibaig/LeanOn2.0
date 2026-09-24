@@ -75,7 +75,7 @@ export async function GET(req: NextRequest) {
     if (qErr) throw qErr
 
     // Attach listener_earnings data so the admin UI can show the accurate
-    // LeanOn earning per session (₹10 seeker fee + 15% service fee) and the
+    // LeanOn earning per session (₹10 seeker fee + listener service fee) and the
     // precise listener net_amount, rather than re-computing from raw columns.
     // Old sessions (no earnings row or platform_fee = ₹10 only) return null for
     // listener_service_fee so the UI falls back to the legacy display.

@@ -128,7 +128,7 @@ export async function POST(req: NextRequest) {
 
     // NRI pricing (Phase 2): if the seeker signed up with a non-India country,
     // bill at the flat INR equivalent of the USD price. The listener still earns
-    // their configured rate × billed_mins × 85% — LeanOn keeps the NRI margin.
+    // their configured rate × billed_mins minus the service fee — LeanOn keeps the NRI margin.
     // We read account_country from the DB (never from the request body) so a
     // crafted request cannot claim India status to avoid NRI pricing.
     let isNriSession = false
@@ -365,7 +365,7 @@ export async function PATCH(req: NextRequest) {
 
         // Track earnings in listener_earnings for dashboard.
         // platform_fee = gross − refund − net = LeanOn's actual take (₹10 flat
-        // + 15% service fee + any NRI margin). listener_gross and service_fee
+        // + listener service fee + any NRI margin). listener_gross and service_fee
         // are stored directly from settleSession() so the dashboard can show
         // exact per-session breakdown without deriving from platform_fee.
         const listenerGross = Math.round(listenerEarning + listenerServiceFee)

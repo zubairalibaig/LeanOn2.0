@@ -23,12 +23,12 @@ The name "LeanOn" (one word) comes from the phrase "someone to lean on" — havi
 7. Rate the listener after the session. Book again anytime. Unused wallet balance is fully refundable.
 
 ### For listeners (people who provide support)
-Listeners apply through a verification process that includes identity verification and a selfie. Approved listeners set their own rate per minute, write a bio, select specialty topics, and choose their availability. Listeners earn per session with a 15% service fee deducted.
+Listeners apply through a verification process that includes identity verification and a selfie. Approved listeners set their own rate per minute, write a bio, select specialty topics, and choose their availability. Listeners earn per session and keep 60%; a 40% service fee is deducted.
 
 ## Pricing and fees
 
 ### Seeker pricing
-- **Trial session**: 5 minutes, free (once per new listener, text only).
+- **Trial session**: 5 minutes, free (once per new listener, text or voice).
 - **15-minute session**: from ₹160 (approximately $2 USD).
 - **30-minute session**: from ₹310.
 - **45-minute session**: from ₹460.
@@ -36,8 +36,8 @@ Listeners apply through a verification process that includes identity verificati
 - No subscriptions, no lock-in, no hidden charges. Unused wallet balance is refundable anytime.
 
 ### Listener earnings
-- Listeners set their own per-minute rate.
-- A 15% service fee is deducted from listener earnings at settlement.
+- Listeners set their own per-minute text rate; voice calls are priced ₹5/min above it.
+- A 40% service fee is deducted from listener earnings at settlement (listeners keep 60%).
 - Payout is via UPI.
 
 ## What makes LeanOn different
