@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
+import Razorpay from 'razorpay'
 import { createAdminClient } from '@/lib/supabase-server'
 import { grossRechargeAmount } from '@/lib/constants'
 
@@ -44,8 +45,22 @@ export async function POST(req: NextRequest) {
       // userId + credit amount were stored in order notes during POST /api/wallet.
       // The gross charge includes the gateway fee (paid by the seeker, not credited)
       // — credit the tier amount from notes; fall back to gross for legacy orders.
-      const userId = payment.notes?.userId as string | undefined
-      const noteAmount = parseInt(String(payment.notes?.amount ?? ''), 10)
+      // userId/amount are set on the ORDER by POST /api/wallet. Razorpay does not
+      // always copy order notes onto the payment, so fall back to fetching the
+      // order — otherwise a payer who closes the app before the in-page verify
+      // call (the only other credit path) is never credited.
+      let notes = (payment.notes ?? {}) as Record<string, string>
+      if (!notes.userId && orderId) {
+        try {
+          const rzp = new Razorpay({ key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!, key_secret: process.env.RAZORPAY_KEY_SECRET! })
+          const order = await rzp.orders.fetch(orderId)
+          notes = { ...((order.notes ?? {}) as Record<string, string>), ...notes }
+        } catch (e) {
+          logger.error('Webhook: could not fetch order notes', { orderId, error: e instanceof Error ? e.message : String(e) })
+        }
+      }
+      const userId = notes.userId as string | undefined
+      const noteAmount = parseInt(String(notes.amount ?? ''), 10)
       // Use note amount if it's a valid recharge value; fall back to gross for legacy orders
       const amountRs = (Number.isInteger(noteAmount) && noteAmount >= MIN_RECHARGE && noteAmount <= MAX_RECHARGE)
         ? noteAmount : grossRs

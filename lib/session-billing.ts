@@ -61,25 +61,23 @@ export function settleSession(s: SettlementInput): Settlement {
 
   const billedMins = Math.min(s.bookedMins, Math.ceil(actualSecs / 60))
 
-  // rawShare = the listener's pre-fee earnings for the billed minutes.
+  // pool = what the seeker paid for the conversation itself (excl. the ₹10 fee).
+  // The seeker is charged pro-rata of THEIR price for the minutes used, and
+  // refunded the rest. The listener's share comes out of the charged part:
   //
-  // India sessions: rawShare = amount_held − platform_fee (pro-rated for early exit).
-  //   This is unchanged — the listener earns the full booked rate.
+  // India: listenerRatePerMin × booked == pool, so the listener gets all of it.
+  // NRI (flat price, listenerRatePerMin set): the listener earns their own rate
+  //   × billed minutes; LeanOn keeps the rest of the charged part (NRI margin).
   //
-  // NRI sessions (listenerRatePerMin set): listener_rate_per_min × billedMins.
-  //   The seeker paid a flat NRI price; the listener earns only their configured
-  //   rate. LeanOn keeps the difference (NRI margin). rawShare is capped at the
-  //   available hold (amountHeld − platformFee) as a safety net.
+  // (Before 2026-09-24 the NRI refund was computed as held − listener share,
+  // which handed the whole NRI margin back on ANY early exit: an NRI ending
+  // at 13:59 of a US$10 / 15-min session paid ~₹150 instead of ~₹784.)
+  const pool = Math.max(0, s.amountHeld - (s.platformFee ?? 0))
+  const charged = billedMins >= s.bookedMins ? pool : Math.floor(pool * billedMins / s.bookedMins)
   const maxRawShare = s.listenerRatePerMin != null
     ? s.listenerRatePerMin * billedMins
     : Infinity
-
-  const rawShare = Math.min(
-    billedMins >= s.bookedMins
-      ? s.amountHeld - (s.platformFee ?? 0)
-      : Math.floor((s.amountHeld - (s.platformFee ?? 0)) * billedMins / s.bookedMins),
-    maxRawShare,
-  )
+  const rawShare = Math.min(charged, maxRawShare)
 
   // Fee computed first, earning is the remainder — guarantees
   // listenerEarning + listenerServiceFee === rawShare exactly (no rounding leak).
@@ -87,9 +85,7 @@ export function settleSession(s: SettlementInput): Settlement {
   const listenerServiceFee = Math.round(rawShare * serviceFeeRateAt(s.startedAt ?? s.endedAt))
   const listenerEarning = rawShare - listenerServiceFee
 
-  const refundAmount = billedMins >= s.bookedMins
-    ? 0
-    : Math.max(0, s.amountHeld - rawShare - (s.platformFee ?? 0))
+  const refundAmount = pool - charged
 
   return { billedMins, listenerEarning, refundAmount, listenerServiceFee }
 }
@@ -130,4 +126,25 @@ export function voiceSwitchRefund(s: {
   const usedMins = Math.floor(Math.max(0, nowMs - startMs) / 60_000)
   const remaining = Math.max(0, s.duration_mins - usedMins)
   return VOICE_RATE_PREMIUM * remaining
+}
+
+// When did an ABANDONED session (nobody pressed "End") really end? Both apps
+// heartbeat every 30s (sessions.seeker_last_seen / listener_last_seen). The
+// conversation stopped when the first person left, so bill up to the earlier
+// of the two last-seen times plus one heartbeat of grace, never past `now`.
+// If only one side ever heartbeated, use that side; if neither did (older app
+// build), fall back to `now` — the previous behaviour (full booked time).
+export function abandonedSessionEnd(
+  s: { seeker_last_seen?: string | null; listener_last_seen?: string | null; started_at?: string | null },
+  nowIso: string,
+): string {
+  const seen = [s.seeker_last_seen, s.listener_last_seen]
+    .map(t => (t ? Date.parse(t) : NaN))
+    .filter(Number.isFinite) as number[]
+  if (seen.length === 0) return nowIso
+  const GRACE_MS = 60_000
+  const startMs = s.started_at ? Date.parse(s.started_at) : NaN
+  let endMs = Math.min(...seen) + GRACE_MS
+  if (Number.isFinite(startMs)) endMs = Math.max(endMs, startMs)
+  return new Date(Math.min(endMs, Date.parse(nowIso))).toISOString()
 }

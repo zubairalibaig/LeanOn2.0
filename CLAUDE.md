@@ -131,6 +131,13 @@
   the seeker the voice premium for unused minutes by LOWERING `amount_held`; every
   settlement path (PATCH, cleanup, expire) must therefore bill from the row returned
   by its own conditional UPDATE — never an earlier read — or the premium is paid twice.
+- **Settlement money movement lives in ONE place: `lib/settlement-ledger.ts applySettlement()`**
+  (used by PATCH, cleanup, expire). Ledger rows are written only after the wallet credit
+  succeeds. Seekers are charged pro-rata of THEIR price for minutes used (NRI included);
+  the listener's share comes out of that. Abandoned sessions (nobody pressed End) bill
+  up to the earlier participant's last heartbeat (`abandonedSessionEnd()`), not the cron time.
+- **Payouts pay earnings only:** for a listener who also recharged, `/api/payout` caps the
+  payout at settled earnings − earlier payout requests; deposits stay refundable.
 - Session durations: 5 (free trial) / 15 / 30 / 45 minutes. The free trial may be text OR voice.
 - Crisis helplines: ONLY NIMHANS (080-46110007) and Tele-MANAS (14416).
   Never add iCall, Vandrevala, SNEHI, or any other number.

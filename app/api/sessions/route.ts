@@ -5,6 +5,7 @@ import { PLATFORM_FEE, FREE_SESSION_MINS, MAX_FREE_TRIALS, SESSION_DURATIONS, se
 import { isNriCountry, NRI_INR_EQUIV } from '@/lib/geo-pricing'
 import { isUnlimitedTestPhone } from '@/lib/test-users'
 import { settleSession } from '@/lib/session-billing'
+import { applySettlement } from '@/lib/settlement-ledger'
 import { notifySessionComplete } from '@/lib/notify'
 import { logger } from '@/lib/logger'
 import { sendPushNotification } from '@/lib/firebase-admin'
@@ -346,72 +347,13 @@ export async function PATCH(req: NextRequest) {
       listenerRatePerMin: (completed.listener_rate_per_min as number | null) ?? undefined,
     })
 
-    // Issue refund to seeker if applicable
-    if (refundAmount > 0 && !completed.is_free_trial) {
-      const { error: refundErr } = await sb.rpc('credit_wallet', { p_user_id: session.seeker_id, p_amount: refundAmount })
-      if (refundErr) {
-        logger.error('Refund credit_wallet failed — manual reconciliation needed:', {
-          sessionId, seekerId: session.seeker_id, refundAmount, refundErr,
-        })
-      } else {
-        await sb.from('wallet_transactions').insert({
-          user_id: session.seeker_id,
-          amount: refundAmount,
-          type: 'refund',
-          description: billedMins < 1 ? 'Session refund (ended < 1 min)' : `Session refund (${billedMins}/${bookedMins} min used)`,
-          session_id: sessionId,
-        }).then(() => {}, (e) => logger.error('refund wallet_transactions insert failed', { sessionId, error: e }))
-      }
-    }
-
-    if (listenerEarning > 0 && !completed.is_free_trial) {
-      const { error: creditErr } = await sb.rpc('credit_wallet', {
-        p_user_id: session.listener_id,
-        p_amount:  listenerEarning,
-      })
-
-      if (creditErr) {
-        // Credit failed — session is already 'completed' (ended_at stamped) so we can't
-        // reverse it. Log with all context needed for manual reconciliation.
-        // RECONCILIATION: search logs for 'credit_wallet RPC failed' + sessionId to find unpaid sessions.
-        logger.error('credit_wallet RPC failed — RECONCILIATION NEEDED — listener unpaid:', {
-          sessionId,
-          listenerId:     session.listener_id,
-          amount:         listenerEarning,
-          serviceFeeLost: listenerServiceFee,
-          error:          creditErr.message,
-        })
-      } else {
-        await sb.from('wallet_transactions').insert({
-          user_id:     session.listener_id,
-          amount:      listenerEarning,
-          type:        'credit',
-          description: 'Session earnings',
-          session_id:  sessionId,
-        }).then(() => {}, (e) => logger.error('listener wallet_transactions insert failed', { sessionId, error: e }))
-
-        // Track earnings in listener_earnings for dashboard.
-        // platform_fee = gross − refund − net = LeanOn's actual take (₹10 flat
-        // + listener service fee + any NRI margin). listener_gross and service_fee
-        // are stored directly from settleSession() so the dashboard can show
-        // exact per-session breakdown without deriving from platform_fee.
-        const listenerGross = Math.round(listenerEarning + listenerServiceFee)
-        const { error: earningsErr } = await sb.from('listener_earnings').insert({
-          listener_id:   session.listener_id,
-          session_id:    sessionId,
-          gross_amount:  Math.round(Number(completed.amount_held)),
-          platform_fee:  Math.round(Number(completed.amount_held)) - Math.round(refundAmount) - Math.round(listenerEarning),
-          net_amount:    Math.round(listenerEarning),
-          listener_gross: listenerGross,
-          service_fee:   Math.round(listenerServiceFee),
-          status:        'settled',
-        })
-        // 23505 = unique_violation — already recorded, not an error worth logging
-        if (earningsErr && earningsErr.code !== '23505') {
-          logger.error('listener_earnings insert failed (earnings ledger gap):', { sessionId, error: earningsErr.message })
-        }
-      }
-    }
+    // Money movement (refund, listener credit, ledger rows) — shared with the
+    // cleanup and expire crons so the three paths can't drift apart.
+    await applySettlement(sb, {
+      sessionId, seekerId: session.seeker_id, listenerId: session.listener_id,
+      amountHeld: Number(completed.amount_held), isFreeTrial: completed.is_free_trial,
+      settlement: { billedMins, listenerEarning, refundAmount, listenerServiceFee }, bookedMins, source: 'ended',
+    })
 
     // Follow-up notification for seeker
     await sb.from('notifications').insert({

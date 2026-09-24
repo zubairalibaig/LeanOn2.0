@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient, createServerSupabaseClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
-import { settleSession } from '@/lib/session-billing'
+import { settleSession, abandonedSessionEnd } from '@/lib/session-billing'
+import { applySettlement } from '@/lib/settlement-ledger'
 
 // GET — expire abandoned sessions
 // Sessions where status='active' AND started_at < now() - (duration_mins + 10 minutes)
@@ -57,7 +58,8 @@ export async function GET(req: NextRequest) {
       const allowedMs = (session.duration_mins + 10) * 60_000
       if (now - startedAt < allowedMs) continue
 
-      const endedAt = new Date().toISOString()
+      // Nobody pressed "End": bill up to when the first person actually left.
+      const endedAt = abandonedSessionEnd(session, new Date().toISOString())
 
       // Optimistic lock
       const { data: completed } = await sb
@@ -71,8 +73,9 @@ export async function GET(req: NextRequest) {
       if (!completed) continue
       expiredCount++
 
-      // Shared settlement math (lib/session-billing.ts). This path only fires
-      // when a session overran by 10+ minutes, so it settles as a full session.
+      // Shared settlement math (lib/session-billing.ts). Fires when a session is
+      // still 'active' 10+ minutes past its booked end; bills up to the last
+      // heartbeat of whoever left first (see abandonedSessionEnd).
       const bookedMins = completed.duration_mins as number
       const { billedMins, listenerEarning, refundAmount, listenerServiceFee } = settleSession({
         startedAt:          (completed.started_at as string | null) ?? null,
@@ -84,47 +87,11 @@ export async function GET(req: NextRequest) {
         listenerRatePerMin: (completed.listener_rate_per_min as number | null) ?? undefined,
       })
 
-      if (listenerEarning > 0 && !completed.is_free_trial) {
-        await sb.rpc('credit_wallet', { p_user_id: session.listener_id, p_amount: listenerEarning })
-          .then(() => {}, () => {})
-        await sb.from('wallet_transactions').insert({
-          user_id: session.listener_id,
-          amount: listenerEarning,
-          type: 'credit',
-          description: 'Session earnings (auto-expired, pro-rated)',
-          session_id: session.id,
-        }).then(() => {}, () => {})
-
-        // platform_fee = gross − refund − net = LeanOn's actual take
-        // (₹10 flat + listener service fee + any NRI margin). listener_gross and
-        // service_fee are stored directly for accurate per-session dashboard display.
-        const listenerGross = Math.round(listenerEarning + listenerServiceFee)
-        const { error: earningsErr } = await sb.from('listener_earnings').insert({
-          listener_id:    session.listener_id,
-          session_id:     session.id,
-          gross_amount:   Math.round(completed.amount_held),
-          platform_fee:   Math.round(completed.amount_held) - Math.round(refundAmount) - Math.round(listenerEarning),
-          net_amount:     Math.round(listenerEarning),
-          listener_gross: listenerGross,
-          service_fee:    Math.round(listenerServiceFee),
-          status:         'settled',
-        })
-        if (earningsErr && earningsErr.code !== '23505') {
-          logger.error('expire: listener_earnings insert failed (earnings ledger gap):', { sessionId: session.id, error: earningsErr.message })
-        }
-      }
-
-      if (refundAmount > 0) {
-        await sb.rpc('credit_wallet', { p_user_id: session.seeker_id, p_amount: refundAmount })
-          .then(() => {}, () => {})
-        await sb.from('wallet_transactions').insert({
-          user_id: session.seeker_id,
-          amount: refundAmount,
-          type: 'refund',
-          description: 'Session refund (auto-expired)',
-          session_id: session.id,
-        }).then(() => {}, () => {})
-      }
+      await applySettlement(sb, {
+        sessionId: session.id, seekerId: session.seeker_id, listenerId: session.listener_id,
+        amountHeld: Number(completed.amount_held), isFreeTrial: completed.is_free_trial as boolean,
+        settlement: { billedMins, listenerEarning, refundAmount, listenerServiceFee }, bookedMins, source: 'auto-expired',
+      })
 
       // Increment total_sessions on listener profile and clear in-session flag
       const { data: lp } = await sb.from('listener_profiles')

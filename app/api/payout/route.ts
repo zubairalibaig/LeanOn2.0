@@ -66,8 +66,37 @@ export async function POST(req: NextRequest) {
     .eq('id', user.id)
     .single()
 
-  const amount = userData?.wallet_balance ?? 0
-  if (!amount || amount <= 0) {
+  const walletBalance = Number(userData?.wallet_balance ?? 0)
+  if (!walletBalance || walletBalance <= 0) {
+    return NextResponse.json({ error: 'No balance to withdraw' }, { status: 400 })
+  }
+
+  // Payouts pay out EARNINGS only. A listener who also recharged as a seeker
+  // has card/UPI deposits in the same wallet; paying those out by UPI would turn
+  // the payout into an unrefunded cash-out of customer deposits. For such users
+  // cap the payout at settled earnings minus payouts already requested; the
+  // rest stays in the wallet (spendable, or refundable via the wallet page).
+  let amount = walletBalance
+  const { count: rechargeCount } = await sb.from('wallet_transactions')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id).eq('type', 'credit').ilike('description', '%recharge%')
+  if ((rechargeCount ?? 0) > 0) {
+    const [{ data: earned }, { data: claimed }] = await Promise.all([
+      sb.from('listener_earnings').select('net_amount').eq('listener_id', user.id).eq('status', 'settled'),
+      sb.from('payout_requests').select('amount').eq('user_id', user.id).neq('status', 'rejected'),
+    ])
+    const earnedTotal  = (earned ?? []).reduce((t, r) => t + Number(r.net_amount ?? 0), 0)
+    const claimedTotal = (claimed ?? []).reduce((t, r) => t + Number(r.amount ?? 0), 0)
+    amount = Math.min(walletBalance, Math.max(0, earnedTotal - claimedTotal))
+    if (amount <= 0) {
+      return NextResponse.json({
+        error: 'Your wallet balance is from recharges, not session earnings, so it can\'t be paid out. You can spend it on sessions or request a refund from the Wallet page.',
+        code: 'RECHARGE_NOT_PAYABLE',
+      }, { status: 400 })
+    }
+  }
+  amount = Math.floor(amount)
+  if (amount <= 0) {
     return NextResponse.json({ error: 'No balance to withdraw' }, { status: 400 })
   }
 
@@ -96,7 +125,7 @@ export async function POST(req: NextRequest) {
   // Soft-hold: deduct the wallet immediately so the balance can't be spent (or
   // double-requested) while the payout is pending. Credited back if the admin
   // rejects it. The admin "Mark Paid" step then does NOT deduct again.
-  const holdAmount = Math.round(amount)
+  const holdAmount = amount
   const { error: holdErr } = await sb.rpc('deduct_wallet', { p_user_id: user.id, p_amount: holdAmount })
   if (holdErr) {
     logger.error('Payout hold (deduct_wallet) failed:', { error: holdErr.message })

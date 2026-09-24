@@ -4,6 +4,7 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 import { requireAdmin, ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS } from '@/lib/require-admin'
 import { settleSession } from '@/lib/session-billing'
+import { recordEarnings } from '@/lib/settlement-ledger'
 
 // POST /api/admin/sessions/rerun-settlement
 // Re-runs the listener-credit step for a completed session where the
@@ -68,7 +69,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Calculate what the listener should earn (same math as the settlement path)
-    const { listenerEarning } = settleSession({
+    const settlement = settleSession({
       startedAt:   session.started_at ?? null,
       endedAt:     session.ended_at ?? new Date().toISOString(),
       bookedMins:  session.duration_mins as number,
@@ -77,6 +78,7 @@ export async function POST(req: NextRequest) {
       isFreeTrial: session.is_free_trial as boolean,
       listenerRatePerMin: (session.listener_rate_per_min as number | null) ?? undefined,
     })
+    const { listenerEarning } = settlement
 
     if (listenerEarning <= 0) {
       // Sessions under 60 seconds are "accidental starts": billing rules give full refund
@@ -109,15 +111,10 @@ export async function POST(req: NextRequest) {
       session_id:  sessionId,
     }).then(() => {}, (e: Error) => logger.error('rerun-settlement: wallet_transactions insert failed', { sessionId, error: e.message }))
 
-    // Upsert listener_earnings (use ON CONFLICT in case partial success previously created a row)
-    await sb.from('listener_earnings').upsert({
-      listener_id:  session.listener_id,
-      session_id:   sessionId,
-      gross_amount: Math.round(session.amount_held as number),
-      platform_fee: Math.round((session.platform_fee as number | null) ?? 0),
-      net_amount:   Math.round(listenerEarning),
-      status:       'settled',
-    }, { onConflict: 'session_id' }).then(() => {}, (e: Error) => logger.error('rerun-settlement: listener_earnings upsert failed', { sessionId, error: e.message }))
+    // Earnings ledger: same row shape as normal settlement — platform_fee is
+    // LeanOn's TOTAL take (₹10 + service fee + NRI margin), not just the ₹10,
+    // so revenue figures stay right after a re-run. Upsert corrects a bad row.
+    await recordEarnings(sb, { sessionId, listenerId: session.listener_id, amountHeld: Number(session.amount_held), settlement, mode: 'upsert' })
 
     logger.info('rerun-settlement: success', { sessionId, listenerId: session.listener_id, listenerEarning, adminId: user!.id })
 

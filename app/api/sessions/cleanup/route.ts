@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
-import { settleSession } from '@/lib/session-billing'
+import { settleSession, abandonedSessionEnd } from '@/lib/session-billing'
+import { applySettlement } from '@/lib/settlement-ledger'
 import { REQUEST_RESPONSE_WINDOW_MS } from '@/lib/constants'
 
 // POST — clean up sessions that have been "active" past their scheduled end time.
@@ -55,7 +56,7 @@ export async function POST(req: Request) {
   // Find sessions that started more than (duration + 2 min grace) ago and are still active
   const { data: orphans, error } = await sb
     .from('sessions')
-    .select('id, seeker_id, listener_id, amount_held, platform_fee, is_free_trial, duration_mins, started_at, listener_rate_per_min')
+    .select('id, seeker_id, listener_id, amount_held, platform_fee, is_free_trial, duration_mins, started_at, listener_rate_per_min, seeker_last_seen, listener_last_seen')
     .eq('status', 'active')
     .lt('started_at', new Date(Date.now() - 2 * 60_000).toISOString()) // at least 2 min old
 
@@ -74,10 +75,12 @@ export async function POST(req: Request) {
 
   let cleaned = 0
   for (const session of expired) {
-    // Mark completed
+    // Nobody pressed "End": bill up to when the first person actually left
+    // (heartbeats), not the time this job happens to run.
+    const effectiveEnd = abandonedSessionEnd(session, new Date().toISOString())
     const { data: completed } = await sb
       .from('sessions')
-      .update({ status: 'completed', ended_at: new Date().toISOString() })
+      .update({ status: 'completed', ended_at: effectiveEnd })
       .eq('id', session.id)
       .eq('status', 'active') // optimistic lock
       .select()
@@ -99,58 +102,11 @@ export async function POST(req: Request) {
       listenerRatePerMin: (completed.listener_rate_per_min as number | null) ?? undefined,
     })
 
-    // Refund seeker for unused portion
-    if (refundAmount > 0 && !completed.is_free_trial) {
-      const { error: refundErr } = await sb.rpc('credit_wallet', { p_user_id: session.seeker_id, p_amount: refundAmount })
-      if (refundErr) {
-        logger.error('cleanup: seeker refund failed — manual reconciliation needed', { sessionId: session.id, seekerId: session.seeker_id, refundAmount })
-      } else {
-        await sb.from('wallet_transactions').insert({
-          user_id: session.seeker_id,
-          amount: refundAmount,
-          type: 'refund',
-          description: `Session refund (auto-closed, ${billedMins}/${bookedMins} min used)`,
-          session_id: session.id,
-        }).then(() => {}, (e) => logger.error('cleanup: seeker refund tx insert failed:', { sessionId: session.id, error: String(e) }))
-      }
-    }
-
-    if (earning > 0 && !completed.is_free_trial) {
-      const { error: creditErr } = await sb.rpc('credit_wallet', {
-        p_user_id: session.listener_id,
-        p_amount: earning,
-      })
-      if (creditErr) {
-        logger.error('cleanup: credit_wallet failed — manual reconciliation needed', {
-          sessionId: session.id, listenerId: session.listener_id, earning,
-        })
-      } else {
-        await sb.from('wallet_transactions').insert({
-          user_id: session.listener_id,
-          amount: earning,
-          type: 'credit',
-          description: `Session earnings (auto-closed, ${billedMins}/${bookedMins} min)`,
-          session_id: session.id,
-        })
-        // Insert earnings record. platform_fee = gross − refund − net =
-        // LeanOn's actual take (₹10 flat + listener service fee + any NRI margin).
-        // listener_gross and service_fee stored directly for accurate dashboard display.
-        const listenerGross = Math.round(earning + listenerServiceFee)
-        const { error: earningsErr } = await sb.from('listener_earnings').insert({
-          listener_id:    session.listener_id,
-          session_id:     session.id,
-          gross_amount:   Math.round(completed.amount_held as number),
-          platform_fee:   Math.round(completed.amount_held as number) - Math.round(refundAmount) - Math.round(earning),
-          net_amount:     Math.round(earning),
-          listener_gross: listenerGross,
-          service_fee:    Math.round(listenerServiceFee),
-          status:         'settled',
-        })
-        if (earningsErr && earningsErr.code !== '23505') {
-          logger.error('cleanup: listener_earnings insert failed (earnings ledger gap):', { sessionId: session.id, error: earningsErr.message })
-        }
-      }
-    }
+    await applySettlement(sb, {
+      sessionId: session.id, seekerId: session.seeker_id, listenerId: session.listener_id,
+      amountHeld: Number(completed.amount_held), isFreeTrial: completed.is_free_trial as boolean,
+      settlement: { billedMins, listenerEarning: earning, refundAmount, listenerServiceFee }, bookedMins, source: 'auto-closed',
+    })
 
     // Increment listener total_sessions and clear in-session flag
     const { data: lp } = await sb.from('listener_profiles')
