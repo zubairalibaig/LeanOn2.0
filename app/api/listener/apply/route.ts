@@ -105,7 +105,10 @@ export async function POST(req: NextRequest) {
 
     // Private verification selfie (camera-only) — stored via /api/listener/selfie,
     // never public. The admin compares it with the display photo.
-    if (!(await hasSelfie(admin, user.id)))
+    const selfieOnFile = await hasSelfie(admin, user.id)
+    if (selfieOnFile === null)
+      return NextResponse.json({ error: 'We could not check your selfie right now (code: selfie_check_failed). Please try again in a minute.' }, { status: 503 })
+    if (!selfieOnFile)
       return NextResponse.json({ error: 'Please take your verification selfie before submitting.' }, { status: 400 })
 
     // 1. users row first — listener_profiles/applications FK to users(id)

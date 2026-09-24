@@ -17,10 +17,17 @@ export function selfiePath(userId: string): string {
 
 type Admin = ReturnType<typeof createAdminClient>
 
-export async function hasSelfie(admin: Admin, userId: string): Promise<boolean> {
+// true/false = checked; null = storage couldn't be queried (bucket missing,
+// permissions) — callers must NOT tell the user "take a selfie" in that case.
+export async function hasSelfie(admin: Admin, userId: string): Promise<boolean | null> {
   const name = selfiePath(userId).slice('selfies/'.length)
   const { data, error } = await admin.storage.from(SELFIE_BUCKET).list('selfies', { search: name, limit: 5 })
-  return !error && (data ?? []).some(f => f.name === name)
+  if (error) {
+    if (/bucket not found/i.test(error.message)) return false // nothing can be on file yet
+    console.error('[selfie-storage] list failed', { userId, error: error.message })
+    return null
+  }
+  return (data ?? []).some(f => f.name === name)
 }
 
 // Signed URLs (10 min) keyed by user id; users without a selfie are omitted.

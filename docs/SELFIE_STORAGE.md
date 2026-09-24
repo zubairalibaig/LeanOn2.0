@@ -70,6 +70,7 @@ screenshot. The code tells you the cause.
 | `storage_permission` | Storage refused the service key (policy or permission) | Check the key is the **service_role** key, not the anon key |
 | `storage_upload_failed` | Any other storage error | Check the Vercel logs (below) for the exact message |
 | `server_error` | Unexpected exception in the route | Check the Vercel logs |
+| `selfie_check_failed` | On **submit**, the server couldn't list the `verifications` bucket to confirm the selfie exists (not "no selfie" — the check itself failed) | Vercel logs: search `[selfie-storage] list failed` for the storage message; usually the same fix as `storage_permission` / `service_key_invalid` |
 | `bad_type` | The photo wasn't JPEG/PNG/WebP | Usually an unusual browser; ask them to try Chrome |
 | `bad_size` | The photo was over 4 MB after compression | Rare; ask them to retake |
 | `not_authenticated` | Their login expired | Sign out and back in |
