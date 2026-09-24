@@ -8,7 +8,7 @@ import { SHOW_LISTENER_GROWTH_NOTICE, SHOW_LISTENER_PRICING_UPDATE_NOTICE } from
 import { PRICING_NOTICE } from '@/lib/listener-announcements'
 import { estimateListenerTakeHome } from '@/lib/session-billing'
 import { showToast } from '@/lib/toast'
-import { registerPushNotifications, getAlertStatus, showLocalNotification, type AlertStatus } from '@/lib/firebase-client'
+import { registerPushNotifications, getAlertStatus, showLocalNotification, closeLocalNotifications, type AlertStatus } from '@/lib/firebase-client'
 import { compressImage, extForType, MAX_INPUT_BYTES } from '@/lib/compress-image'
 import Avatar from '@/app/components/Avatar'
 import { TAGLINE_PHRASES, TAGLINE_PICK, LIVED_MIN_CHARS, LIVED_MAX_CHARS } from '@/lib/listener-onboarding'
@@ -261,6 +261,10 @@ export default function DashboardPage() {
   // before the listener tapped "Go online" can't report the OLD offline state
   // and flip the button back.
   const toggleSeqRef = useRef(0)
+  const alertTagRef = useRef<string | null>(null)
+  // null = not known yet; false = permission granted but this device could
+  // not get / save a push token, so it is NOT reachable in the background.
+  const [pushRegistered, setPushRegistered] = useState<boolean | null>(null)
   const [alertStatus, setAlertStatus] = useState<AlertStatus | null>(null)
   const [testingAlert, setTestingAlert] = useState(false)
 
@@ -289,12 +293,13 @@ export default function DashboardPage() {
     setAlertStatus(getAlertStatus())
     // Permission already granted on this device → silently (re)register so the
     // push token is current and lives on the single LeanOn service worker.
-    if (getAlertStatus() === 'granted') registerPushNotifications().catch(() => {})
+    if (getAlertStatus() === 'granted') registerPushNotifications().then(setPushRegistered, () => setPushRegistered(false))
   }, [])
 
   async function enableAlerts() {
     ensureAudioUnlocked()
     const ok = await registerPushNotifications().catch(() => false)
+    setPushRegistered(ok)
     setAlertStatus(getAlertStatus())
     if (ok) showToast('Phone alerts are on for this device.', 'success')
     else if (getAlertStatus() === 'denied') showToast('Notifications are blocked for LeanOn — allow them in your phone settings.', 'error')
@@ -304,7 +309,9 @@ export default function DashboardPage() {
   async function sendTestAlert() {
     setTestingAlert(true)
     try {
-      await registerPushNotifications().catch(() => false)
+      const ok = await registerPushNotifications().catch(() => false)
+      setPushRegistered(ok)
+      if (!ok) { showToast('This device could not register for alerts. Tap "Try again" on the alerts card.', 'error'); return }
       const res = await fetch('/api/push/test', { method: 'POST' }).catch(() => null)
       const d = await res?.json().catch(() => ({})) ?? {}
       if (d.ok) showToast('Test alert sent. Switch to another app — it should arrive within a few seconds.', 'success')
@@ -434,6 +441,7 @@ export default function DashboardPage() {
     // `new Notification()` throws on Android Chrome, so this never showed on
     // phones before. Same tag as the server push for this request, so the two
     // replace each other rather than stacking.
+    alertTagRef.current = `leanon-req-${s.id}`
     if (document.visibilityState !== 'visible') {
       showLocalNotification('🔔 New session request', {
         body: `${s.duration_mins}-min ${s.session_type} session — tap to accept`,
@@ -443,6 +451,7 @@ export default function DashboardPage() {
   }
 
   function stopRequestAlert() {
+    if (alertTagRef.current) { closeLocalNotifications(alertTagRef.current); alertTagRef.current = null }
     if (ringTimerRef.current) { clearInterval(ringTimerRef.current); ringTimerRef.current = null }
     if (savedTitleRef.current !== null) { document.title = savedTitleRef.current; savedTitleRef.current = null }
   }
@@ -665,7 +674,7 @@ export default function DashboardPage() {
   }
 
   async function toggleAvailability() {
-    if (!user) return
+    if (!user || toggleSeqRef.current % 2 === 1) return // a toggle is already in flight
     toggleSeqRef.current++
     const prev = avail
     const next = !prev
@@ -676,7 +685,7 @@ export default function DashboardPage() {
       // reconfirms the token if already granted). Push reaches the listener
       // even with no LeanOn tab open — the in-tab chime alone cannot.
       ensureAudioUnlocked()
-      registerPushNotifications().catch(() => {}).finally(() => setAlertStatus(getAlertStatus()))
+      registerPushNotifications().then(ok => setPushRegistered(ok), () => setPushRegistered(false)).finally(() => setAlertStatus(getAlertStatus()))
     }
     setAvail(next) // optimistic
     // Send explicit intent (not a flip) so the server sets exactly what the
@@ -1223,8 +1232,8 @@ export default function DashboardPage() {
             LeanOn in the background. Before, a missing/blocked permission failed
             silently and listeners only found out by missing requests. */}
         {profile.is_approved !== false && alertStatus && alertStatus !== 'not_configured' && (
-          <div style={{background: alertStatus === 'granted' ? '#F0FFF4' : '#FFF8EC', border: `1.5px solid ${alertStatus === 'granted' ? '#B7EBC6' : '#FFD9A0'}`, borderRadius:14, padding:'12px 14px', marginBottom:18, fontSize:12.5, lineHeight:1.55, color:'#27394A'}}>
-            {alertStatus === 'granted' ? (
+          <div style={{background: alertStatus === 'granted' && pushRegistered !== false ? '#F0FFF4' : '#FFF8EC', border: `1.5px solid ${alertStatus === 'granted' && pushRegistered !== false ? '#B7EBC6' : '#FFD9A0'}`, borderRadius:14, padding:'12px 14px', marginBottom:18, fontSize:12.5, lineHeight:1.55, color:'#27394A'}}>
+            {alertStatus === 'granted' && pushRegistered !== false ? (
               <>
                 <div style={{fontWeight:800, color:'#276749', marginBottom:2}}>🔔 Phone alerts are on for this device</div>
                 <div>You can switch to other apps — you stay online for up to {AWAY_WITH_ALERTS_MINS / 60} hours and every request rings this phone. If a request goes unanswered while you&apos;re away, we set you offline so seekers aren&apos;t left waiting.</div>
@@ -1237,14 +1246,15 @@ export default function DashboardPage() {
               <>
                 <div style={{fontWeight:800, color:'#9A5B00', marginBottom:2}}>🔕 Phone alerts are off on this device</div>
                 <div style={{marginBottom:6}}>
+                  {alertStatus === 'granted' && <>Notifications are allowed, but this device couldn&apos;t register for request alerts. Check your connection and tap Try again. Until it works you go offline {STALE_HEARTBEAT_MINS} minutes after leaving LeanOn.</>}
                   {alertStatus === 'prompt' && <>Turn them on so requests reach you while you use other apps. Without alerts you&apos;re only reachable while LeanOn is open, and you go offline {STALE_HEARTBEAT_MINS} minutes after leaving it.</>}
                   {alertStatus === 'denied' && <>Notifications are blocked for LeanOn. Allow them in your phone settings (Settings → Apps → Chrome or LeanOn → Notifications), then reload this page. Until then you go offline {STALE_HEARTBEAT_MINS} minutes after leaving LeanOn.</>}
                   {alertStatus === 'ios_install' && <>On iPhone, alerts only work from the home-screen app: tap Share → Add to Home Screen, open LeanOn from there and go online. Until then keep LeanOn open while you&apos;re online.</>}
                   {alertStatus === 'unsupported' && <>This browser can&apos;t show alerts. Use Chrome on Android, or keep LeanOn open while you&apos;re online.</>}
                 </div>
-                {alertStatus === 'prompt' && (
+                {(alertStatus === 'prompt' || alertStatus === 'granted') && (
                   <button onClick={enableAlerts} style={{background:'#FF9933', color:'white', border:'none', borderRadius:50, padding:'7px 14px', fontWeight:800, fontSize:12, cursor:'pointer', fontFamily:'inherit'}}>
-                    Turn on alerts
+                    {alertStatus === 'granted' ? 'Try again' : 'Turn on alerts'}
                   </button>
                 )}
               </>

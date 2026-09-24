@@ -37,7 +37,7 @@ Read this before changing `ListenerPresence.tsx`, the dashboard's toggle,
   | Last heartbeat | Push device? | Result |
   |---|---|---|
   | under 15 min | any | online |
-  | 15 min – 4 h | yes (`push_tokens` or `users.fcm_token`) | online ("away mode") |
+  | 15 min – 4 h | yes: a `push_tokens` row seen in the last 3 days | online ("away mode") |
   | 15 min – 4 h | no | offline |
   | over 4 h, or never | any | offline |
 
@@ -48,6 +48,16 @@ Read this before changing `ListenerPresence.tsx`, the dashboard's toggle,
   - their previous request also timed out.
 
   This is what keeps away mode from bringing back "ghost online" listeners.
+
+  Only a request that expired just now counts. Requests that sat pending for
+  hours and are found later by cleanup don't. "In a row" also means within 2
+  hours.
+
+  A seeker's `reason:'timeout'` only counts once the full 3 minutes have
+  passed. Otherwise a seeker could book, "time out" early, and knock a listener
+  offline for free.
+
+  The miss is recorded after the seeker's refund, never before it.
 
 ## Bugs fixed on 2026-09-24 (why alerts were being missed)
 
@@ -89,6 +99,37 @@ Read this before changing `ListenerPresence.tsx`, the dashboard's toggle,
    - Fix: it's added, but it only takes effect in the next app build.
 9. **The request popup rang forever** on non-dashboard pages after the seeker
    gave up. It now clears when the request is no longer pending.
+
+## Peer review follow-ups (2026-09-25)
+
+Server side:
+- "Away mode" counts only push devices that registered in the last 3 days. The
+  app re-registers on every open, which refreshes `last_seen_at`.
+- Hours-old requests no longer set anyone offline.
+- An early timeout from a seeker no longer counts as a miss.
+- The refund now happens before `recordMissedRequest` in accept and cleanup.
+- The final "set offline" re-checks the heartbeat.
+
+Client side:
+- Tapping a notification focuses first, then navigates, and prefers a window
+  already on `/dashboard`.
+- The alerts card shows "on" only when this device actually registered a
+  token. Otherwise it offers **Try again**.
+- Registration can't hang if the service worker never activates (10-second
+  limit).
+- The token is re-posted on every open, so a shared phone moves to the account
+  signed in now, even after a logout without a reload.
+- Request notifications close when the request is answered or expires.
+- Double taps on the toggle are ignored.
+- The popup layer ignores heartbeat answers that were already in flight when
+  the dashboard toggled.
+
+Known and accepted:
+- A seeker who gives up early (before 3 minutes) isn't counted as a miss, so an
+  away listener whose alerts silently fail stays online until a request fully
+  times out, or for up to 4 hours.
+- The test alert says "sent" if any of the listener's devices accepted it, not
+  necessarily this one.
 
 ## Owner checklist
 

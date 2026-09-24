@@ -32,11 +32,21 @@ export const firebaseConfigured = Boolean(
   FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId && FIREBASE_CONFIG.appId && VAPID_KEY
 )
 
-// Module-level guards: avoid registering twice in the same tab (e.g. the
-// explicit "Go online" tap and a silent background refresh firing close
-// together) and avoid re-POSTing an unchanged token every time.
+// Module-level guard: avoid registering twice at once in the same tab (e.g. the
+// explicit "Go online" tap and a silent background refresh firing together).
+// The token is re-POSTed on every call on purpose: that POST is what moves a
+// shared device to the account signed in NOW (a logout doesn't reload the
+// tab), and it refreshes push_tokens.last_seen_at, which "away mode" relies on.
 let inFlight: Promise<boolean> | null = null
-let lastRegisteredToken: string | null = null
+
+// Resolves false if the service worker never activates, so a failed install
+// can't leave every later registration (and the test-alert button) hanging.
+function readyWithin(ms: number): Promise<ServiceWorkerRegistration | null> {
+  return Promise.race([
+    navigator.serviceWorker.ready,
+    new Promise<null>(res => setTimeout(() => res(null), ms)),
+  ])
+}
 
 /**
  * Request notification permission (if not already decided) and register this
@@ -82,7 +92,8 @@ async function doRegister(): Promise<boolean> {
     // different script at scope "/" (the old /firebase-messaging-sw.js) made
     // the two replace each other and silently dropped the push handler.
     await navigator.serviceWorker.register('/sw.js')
-    const registration = await navigator.serviceWorker.ready
+    const registration = await readyWithin(10_000)
+    if (!registration) return false
 
     const app = getApps().length ? getApp() : initializeApp(FIREBASE_CONFIG)
     const messaging = getMessaging(app)
@@ -92,14 +103,11 @@ async function doRegister(): Promise<boolean> {
     })
     if (!token) return false
 
-    if (token === lastRegisteredToken) return true // unchanged — nothing to send
-
     const res = await fetch('/api/push/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ fcm_token: token }),
     })
-    if (res.ok) lastRegisteredToken = token
     return res.ok
   } catch {
     // Any failure here (permission denied at the OS level, network error,
@@ -166,4 +174,15 @@ export async function showLocalNotification(title: string, opts: { body: string;
     const n = new Notification(title, { body: opts.body, tag: opts.tag, icon: '/icon-192.png' })
     n.onclick = () => { window.focus(); n.close() }
   } catch { /* unsupported — the in-page ring still plays */ }
+}
+
+// Close the notification for a request once it's accepted, declined, cancelled
+// or expired, so a stale one can't send the listener to an empty dashboard.
+export async function closeLocalNotifications(tag: string) {
+  try {
+    if (typeof window === 'undefined' || !('serviceWorker' in navigator)) return
+    const reg = await navigator.serviceWorker.getRegistration('/')
+    const ns = reg ? await reg.getNotifications({ tag }) : []
+    ns.forEach(n => n.close())
+  } catch { /* ignore */ }
 }

@@ -138,7 +138,6 @@ export async function POST(req: Request) {
       .single()
 
     if (!cancelled) continue
-    await recordMissedRequest(sb, { listenerId: s.listener_id as string, sessionId: s.id as string })
 
     // Refund held amount back to seeker
     if ((s.amount_held as number) > 0) {
@@ -169,6 +168,9 @@ export async function POST(req: Request) {
     } else {
       staleCancelled++
     }
+    // After the refund. Only acts on requests that expired just now — cleanup
+    // mostly finds hours-old ones, which say nothing about the listener today.
+    await recordMissedRequest(sb, { listenerId: s.listener_id as string, sessionId: s.id as string })
   }
 
   logger.info('Session cleanup complete', {

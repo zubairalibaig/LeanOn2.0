@@ -38,15 +38,22 @@ export async function getPushTokens(sb: Sb, userId: string): Promise<string[]> {
   return tokens.slice(0, MAX_DEVICES)
 }
 
-// Which of these users can be reached by push at all (has at least one token).
+// Which of these users can probably be reached by push: a device token that
+// was re-confirmed recently. The app re-registers its token on every open
+// (lib/firebase-client.ts), so a token not seen for REACHABLE_WITHIN_DAYS
+// belongs to a device the listener no longer uses. Decides "away mode" in
+// lib/listener-presence.ts. (users.fcm_token alone doesn't count — every such
+// token was copied into push_tokens by migration 061.)
+const REACHABLE_WITHIN_DAYS = 3
+
 export async function pushReachableUserIds(sb: Sb, userIds: string[]): Promise<Set<string>> {
   const reachable = new Set<string>()
   if (userIds.length === 0) return reachable
-  const { data: rows, error } = await sb.from('push_tokens').select('user_id').in('user_id', userIds)
-  if (error && !isMissingTable(error)) logger.warn('push: reachability read failed', { error: error.message })
+  const since = new Date(Date.now() - REACHABLE_WITHIN_DAYS * 24 * 60 * 60_000).toISOString()
+  const { data: rows, error } = await sb.from('push_tokens').select('user_id')
+    .in('user_id', userIds).gte('last_seen_at', since)
+  if (error) logger.warn('push: reachability read failed', { error: error.message })
   for (const r of (rows ?? []) as { user_id: string }[]) reachable.add(r.user_id)
-  const { data: users } = await sb.from('users').select('id').in('id', userIds).not('fcm_token', 'is', null)
-  for (const u of (users ?? []) as { id: string }[]) reachable.add(u.id)
   return reachable
 }
 

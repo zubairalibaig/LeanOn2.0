@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { showToast } from '@/lib/toast'
-import { registerPushNotifications, showLocalNotification } from '@/lib/firebase-client'
+import { registerPushNotifications, showLocalNotification, closeLocalNotifications } from '@/lib/firebase-client'
 import { REQUEST_RESPONSE_WINDOW_SECS } from '@/lib/constants'
 import { estimateListenerTakeHome } from '@/lib/session-billing'
 
@@ -117,6 +117,7 @@ export default function ListenerPresence() {
   }
 
   const clearIncoming = useCallback(() => {
+    if (incomingIdRef.current) closeLocalNotifications(`leanon-req-${incomingIdRef.current}`)
     incomingIdRef.current = null
     setIncoming(null)
     if (ringTimerRef.current) { clearInterval(ringTimerRef.current); ringTimerRef.current = null }
@@ -277,7 +278,11 @@ export default function ListenerPresence() {
       bc = new BroadcastChannel('leanon-availability')
       bc.onmessage = (e) => {
         const m = e.data as { user_id?: string; is_available?: boolean }
-        if (m?.user_id === userId && typeof m.is_available === 'boolean') setAvailable(m.is_available)
+        if (m?.user_id === userId && typeof m.is_available === 'boolean') {
+          // Invalidate any heartbeat answer already in flight (it predates this toggle).
+          toggleSeqRef.current += 2
+          setAvailable(m.is_available)
+        }
       }
     } catch { /* unsupported */ }
     return () => { try { bc?.close() } catch { /* ignore */ } }

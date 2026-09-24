@@ -96,7 +96,6 @@ async function expireSession(
     .select('id')
     .maybeSingle()
   if (!cancelled) return
-  await recordMissedRequest(sb, { listenerId: session.listener_id, sessionId })
 
   const held = Number(session.amount_held) || 0
   if (held > 0 && !session.is_free_trial) {
@@ -110,4 +109,6 @@ async function expireSession(
       logger.error('accept/expire: refund failed', { sessionId, error: error.message })
     }
   }
+  // After the refund — see recordMissedRequest.
+  await recordMissedRequest(sb, { listenerId: session.listener_id, sessionId })
 }

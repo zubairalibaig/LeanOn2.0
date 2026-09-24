@@ -1,7 +1,7 @@
 import type { createAdminClient } from '@/lib/supabase-server'
 import { pushReachableUserIds, sendPushToUser } from '@/lib/push'
 import { logger } from '@/lib/logger'
-import { STALE_HEARTBEAT_MINS, AWAY_WITH_ALERTS_MINS } from '@/lib/constants'
+import { STALE_HEARTBEAT_MINS, AWAY_WITH_ALERTS_MINS, REQUEST_RESPONSE_WINDOW_MS } from '@/lib/constants'
 
 type Sb = ReturnType<typeof createAdminClient>
 
@@ -75,11 +75,25 @@ export async function sweepStaleListeners(sb: Sb): Promise<void> {
 
 // A request to this listener expired unanswered (cancel_reason 'timed_out').
 // Take them offline if they were away (no heartbeat for 15+ min — the phone
-// alert didn't bring them back), or if their previous request also went
-// unanswered. Seekers should not keep booking someone who isn't there.
+// alert didn't bring them back), or if their previous request, within the last
+// two hours, also went unanswered. Seekers should not keep booking someone who
+// isn't there.
+//
+// Only for a request that expired JUST NOW: the "away" test reads the
+// listener's heartbeat today, so it says nothing about a request that sat
+// pending for hours (cleanup finds those, e.g. when the seeker closed the tab).
+// Call it AFTER the seeker's refund — it is slower (reads + a push) and must
+// never stand between a cancelled request and its refund.
+const MISS_FRESH_MS = REQUEST_RESPONSE_WINDOW_MS + 2 * 60_000
+const PREVIOUS_MISS_WITHIN_MS = 2 * 60 * 60_000
+
 export async function recordMissedRequest(sb: Sb, args: { listenerId: string; sessionId: string }): Promise<void> {
   const { listenerId, sessionId } = args
   try {
+    const { data: missed } = await sb.from('sessions').select('created_at').eq('id', sessionId).maybeSingle()
+    const createdAt = (missed as { created_at?: string } | null)?.created_at
+    if (!createdAt || Date.now() - new Date(createdAt).getTime() > MISS_FRESH_MS) return
+
     const { data: lp } = await sb.from('listener_profiles')
       .select('is_available, last_heartbeat_at')
       .eq('user_id', listenerId)
@@ -87,35 +101,33 @@ export async function recordMissedRequest(sb: Sb, args: { listenerId: string; se
     const row = lp as { is_available?: boolean; last_heartbeat_at?: string | null } | null
     if (!row?.is_available) return
 
-    const hb = row.last_heartbeat_at ? new Date(row.last_heartbeat_at).getTime() : NaN
-    const away = !Number.isFinite(hb) || Date.now() - hb > STALE_HEARTBEAT_MINS * 60_000
+    const staleCutoff = new Date(Date.now() - STALE_HEARTBEAT_MINS * 60_000).toISOString()
+    const away = !row.last_heartbeat_at || row.last_heartbeat_at < staleCutoff
 
     let secondInARow = false
     if (!away) {
-      const { data: missed } = await sb.from('sessions').select('created_at').eq('id', sessionId).maybeSingle()
-      const createdAt = (missed as { created_at?: string } | null)?.created_at
-      if (createdAt) {
-        const { data: prev } = await sb.from('sessions')
-          .select('status, cancel_reason')
-          .eq('listener_id', listenerId)
-          .neq('id', sessionId)
-          .lt('created_at', createdAt)
-          .order('created_at', { ascending: false })
-          .limit(1)
-        const p = (prev as { status: string; cancel_reason: string | null }[] | null)?.[0]
-        secondInARow = p?.status === 'cancelled' && p.cancel_reason === 'timed_out'
-      }
+      const { data: prev } = await sb.from('sessions')
+        .select('status, cancel_reason')
+        .eq('listener_id', listenerId)
+        .neq('id', sessionId)
+        .lt('created_at', createdAt)
+        .gte('created_at', new Date(new Date(createdAt).getTime() - PREVIOUS_MISS_WITHIN_MS).toISOString())
+        .order('created_at', { ascending: false })
+        .limit(1)
+      const p = (prev as { status: string; cancel_reason: string | null }[] | null)?.[0]
+      secondInARow = p?.status === 'cancelled' && p.cancel_reason === 'timed_out'
     }
     if (!away && !secondInARow) return
 
-    const { data: flipped } = await sb.from('listener_profiles')
+    // For "away", re-check the heartbeat in the UPDATE itself: a listener who
+    // tapped the alert and came back a moment ago keeps their online status.
+    let flip = sb.from('listener_profiles')
       .update({ is_available: false })
       .eq('user_id', listenerId)
       .eq('is_available', true)
-      .select('user_id')
-      .maybeSingle()
+    if (away) flip = row.last_heartbeat_at ? flip.lt('last_heartbeat_at', staleCutoff) : flip.is('last_heartbeat_at', null)
+    const { data: flipped } = await flip.select('user_id').maybeSingle()
     if (!flipped) return
-
     const body = away
       ? 'A seeker requested a session while LeanOn was in the background and it went unanswered, so we set you offline. Go online again when you’re ready.'
       : 'Two requests in a row went unanswered, so we set you offline. Go online again when you’re ready.'

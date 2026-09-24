@@ -96,18 +96,21 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close()
   const target = new URL((event.notification.data && event.notification.data.url) || '/dashboard', self.location.origin).href
   event.waitUntil((async () => {
-    const list = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
-    for (const c of list) {
-      if (c.url.indexOf(self.location.origin) !== 0) continue
-      // Navigate first, then focus, each on its own: if one is refused by the
-      // browser the other still gets the listener to the request.
+    const list = (await self.clients.matchAll({ type: 'window', includeUncontrolled: true }))
+      .filter((c) => c.url.indexOf(self.location.origin) === 0)
+    // Prefer a window already on the target page, then any LeanOn window.
+    const c = list.find((w) => w.url === target) || list[0]
+    if (c) {
+      // Focus FIRST: the browser only allows focus for a few seconds after the
+      // tap, and navigate() waits for the new page to load — on a slow phone
+      // connection that took long enough for focus to be refused.
       let client = c
+      try { if ('focus' in c) client = (await c.focus()) || c } catch { /* focus refused */ }
       // Never pull someone out of a live conversation — just bring it forward.
       const inSession = new URL(c.url).pathname.indexOf('/session/') === 0
-      if (!inSession && c.url !== target && 'navigate' in c) {
-        try { client = (await c.navigate(target)) || c } catch { /* uncontrolled window */ }
+      if (!inSession && c.url !== target && 'navigate' in client) {
+        try { await client.navigate(target) } catch { /* uncontrolled window */ }
       }
-      try { if ('focus' in client) await client.focus() } catch { /* focus refused */ }
       return
     }
     if (self.clients.openWindow) await self.clients.openWindow(target)

@@ -46,9 +46,13 @@ export async function POST(
 
   const isListener = session.listener_id === user.id
   const body = await req.json().catch(() => ({}))
-  // 30s of slack for clock skew between the device that counted down and the DB.
+  // A timeout counts against the listener (recordMissedRequest can set them
+  // offline), so a SEEKER's claim must be backed by the full window — otherwise
+  // anyone could book, "time out" early, and knock a listener offline for free.
+  // The listener's own countdown gets 30s of clock-skew slack.
   const ageMs = Date.now() - new Date(session.created_at as string).getTime()
-  const timedOut = body?.reason === 'timeout' && ageMs >= REQUEST_RESPONSE_WINDOW_MS - 30_000
+  const timedOut = body?.reason === 'timeout'
+    && ageMs >= REQUEST_RESPONSE_WINDOW_MS - (isListener ? 30_000 : 2_000)
   const cancelReason = timedOut ? 'timed_out' : isListener ? 'declined' : 'seeker_cancelled'
 
   // Atomically cancel (optimistic lock on status='pending' → refund fires once)
