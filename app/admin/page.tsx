@@ -22,6 +22,7 @@ type KPIs = {
     heldInSessionsRupees?: number; heldInSessionsCount?: number; pendingRefundsRupees?: number; pendingRefundsCount?: number
     listenersWithBalance?: number
   }
+  deletedWithBalance?: { user_id: string; name: string | null; balance: number; earned: boolean }[] | null
   walletIntegrity?: { usersChecked: number; mismatchedUsers: number; netDiffRupees: number; top: { user_id: string; name: string | null; balance: number; ledger: number; diff: number }[] } | null
   funnel?: { requested: number; completedAny: number; completedTrial: number; recharged: number; paid: number; repeatPaid: number; rechargedNotPaid: number } | null
   platformEarnings?: { allTimeRupees: number; thisMonthRupees: number; todayRupees: number; paidSessions: number }
@@ -1242,6 +1243,19 @@ export default function AdminPage() {
                           </div>
                         </div>
                         <div className="liability-amount" style={{ color: '#0d6e7e' }}>{fmtRs(kpis.walletLiability.listenerEarningsUnrequestedRupees ?? 0)}</div>
+                      </div>
+                    )}
+                    {/* Deleted accounts still holding money — they can't log in to withdraw it */}
+                    {(kpis.deletedWithBalance?.length ?? 0) > 0 && (
+                      <div className="liability-bar" style={{ borderLeftColor: '#c0392b', borderColor: '#FFB3AE', background: '#FFF5F5' }}>
+                        <div>
+                          <div className="liability-label" style={{ color: '#c0392b' }}>Deleted accounts still holding money ({kpis.deletedWithBalance!.length})</div>
+                          <div className="liability-sub">
+                            They can&apos;t log in to withdraw it. Pay them out if you can reach them, otherwise decide whether to keep it as owed.
+                            {' '}{kpis.deletedWithBalance!.map(d => `${d.name || d.user_id.slice(0, 8)}: ${fmtRs(d.balance)} (${d.earned ? 'listener earnings' : 'seeker wallet'})`).join(' · ')}
+                          </div>
+                        </div>
+                        <div className="liability-amount" style={{ color: '#c0392b' }}>{fmtRs(kpis.deletedWithBalance!.reduce((t, d) => t + d.balance, 0))}</div>
                       </div>
                     )}
                     {/* Wallet ↔ ledger check — every balance should equal its own transaction history */}

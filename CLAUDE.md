@@ -138,6 +138,14 @@
   up to the earlier participant's last heartbeat (`abandonedSessionEnd()`), not the cron time.
 - **Payouts pay earnings only:** for a listener who also recharged, `/api/payout` caps the
   payout at settled earnings − earlier payout requests; deposits stay refundable.
+- **`users.wallet_balance` can't be changed from the Supabase SQL Editor by a plain UPDATE** —
+  the `users_guard_privileged_cols` trigger (migration 025) silently keeps the old value for
+  any non-service-role write (the INSERTs in the same script still land). For a deliberate
+  manual adjustment, inside one transaction: `set local request.jwt.claims = '{"role":"service_role"}';`
+  then the UPDATE **and** a matching `wallet_transactions` row, so the admin wallet check stays clean.
+- **Deleting an account never strands money:** self-deletion is refused while there is a wallet
+  balance or a pending payout/refund; admin deletion keeps pending payouts/refunds payable, and
+  leftovers show on the admin Overview as "Deleted accounts still holding money".
 - Session durations: 5 (free trial) / 15 / 30 / 45 minutes. The free trial may be text OR voice.
 - Crisis helplines: ONLY NIMHANS (080-46110007) and Tele-MANAS (14416).
   Never add iCall, Vandrevala, SNEHI, or any other number.

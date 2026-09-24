@@ -35,7 +35,39 @@ export async function PATCH() {
 
 // Scrub PII from all tables for a given user, preserving structural/financial records.
 // Phone becomes "DELETE" + last 5 digits for audit trail.
-async function scrubUserData(admin: ReturnType<typeof createAdminClient>, userId: string) {
+// Money must never be stranded by a deletion: the person can't log in afterwards
+// and their UPI/bank details are erased, so any balance or pending payout/refund
+// becomes unreachable. (Found 2026-09-25: a deleted listener's pending payout was
+// cancelled and ₹55 of earnings returned to a wallet nobody could access.)
+//   - Self-deletion is blocked until the money is withdrawn (MONEY_OUTSTANDING).
+//   - Admin deletion proceeds but keeps pending payouts/refunds payable, and any
+//     leftover balance is listed on the admin Overview ("Deleted accounts still
+//     holding money") so it is settled on purpose.
+class MoneyOutstanding extends Error {
+  constructor(public userMessage: string) { super('MONEY_OUTSTANDING') }
+}
+
+async function assertNoMoneyOutstanding(admin: ReturnType<typeof createAdminClient>, userId: string) {
+  const [{ data: u }, { data: payouts }, { data: refunds }, { count: earned }] = await Promise.all([
+    admin.from('users').select('wallet_balance').eq('id', userId).single(),
+    admin.from('payout_requests').select('amount').eq('user_id', userId).eq('status', 'pending'),
+    admin.from('refund_requests').select('amount').eq('user_id', userId).eq('status', 'pending'),
+    admin.from('listener_earnings').select('id', { count: 'exact', head: true }).eq('listener_id', userId),
+  ])
+  const pendingPayout = (payouts ?? []).reduce((t, r) => t + Number(r.amount ?? 0), 0)
+  const pendingRefund = (refunds ?? []).reduce((t, r) => t + Number(r.amount ?? 0), 0)
+  if (pendingPayout > 0) throw new MoneyOutstanding(`Your payout of ₹${pendingPayout} is still being transferred. You can delete your account once it has arrived.`)
+  if (pendingRefund > 0) throw new MoneyOutstanding(`Your refund of ₹${pendingRefund} is still being processed. You can delete your account once it has arrived.`)
+  const balance = Number(u?.wallet_balance ?? 0)
+  if (balance >= 1) {
+    throw new MoneyOutstanding((earned ?? 0) > 0
+      ? `You still have ₹${balance} in your LeanOn wallet. Please request a payout from your dashboard first — once it has been transferred you can delete your account.`
+      : `You still have ₹${balance} in your LeanOn wallet. Please use it or request a refund from the Wallet page first — then you can delete your account.`)
+  }
+}
+
+async function scrubUserData(admin: ReturnType<typeof createAdminClient>, userId: string, opts: { byAdmin?: boolean } = {}) {
+  if (!opts.byAdmin) await assertNoMoneyOutstanding(admin, userId)
   // Block deletion if the user has an active or pending session
   const { count: activeSessions } = await admin.from('sessions')
     .select('id', { count: 'exact', head: true })
@@ -147,20 +179,12 @@ async function scrubUserData(admin: ReturnType<typeof createAdminClient>, userId
     } catch { /* best-effort cleanup */ }
   }
 
-  // 5. Handle pending payout requests — reject and return balance before scrub
-  const { data: pendingPayouts } = await admin.from('payout_requests')
-    .select('id, amount').eq('user_id', userId).eq('status', 'pending')
-  for (const pp of pendingPayouts ?? []) {
-    await admin.from('payout_requests')
-      .update({ status: 'rejected', admin_notes: 'Account deleted — balance returned' })
-      .eq('id', pp.id)
-    await admin.rpc('credit_wallet', { p_user_id: userId, p_amount: pp.amount })
-      .then(() => {}, (e) => logger.warn('scrubUserData: credit_wallet failed for pending payout', { userId, payoutId: pp.id, error: String(e) }))
-  }
-
-  // Scrub UPI from all payout requests (pending already rejected above, but also historical)
+  // 5. Pending payout/refund requests stay PENDING (admin deletion only — a
+  // self-deletion can't reach here with any) so they can still be paid. Their
+  // payout destination is kept on the pending row; historical rows are scrubbed.
   await admin.from('payout_requests').update({ upi_id: null })
     .eq('user_id', userId)
+    .neq('status', 'pending')
     .then(() => {}, () => {})
 
   // 6. Delete notifications — no audit value
@@ -194,6 +218,9 @@ export async function POST() {
 
     return NextResponse.json({ success: true })
   } catch (err) {
+    if (err instanceof MoneyOutstanding) {
+      return NextResponse.json({ error: err.userMessage, code: 'MONEY_OUTSTANDING' }, { status: 409 })
+    }
     const msg = err instanceof Error ? err.message : String(err)
     if (msg === 'ACTIVE_SESSION') {
       return NextResponse.json({ error: 'You have an active session. Please end it before deleting your account.' }, { status: 409 })
@@ -218,7 +245,7 @@ export async function DELETE(req: Request) {
     }
 
     const admin = createAdminClient()
-    await scrubUserData(admin, userId)
+    await scrubUserData(admin, userId, { byAdmin: true })
 
     return NextResponse.json({ success: true })
   } catch (err) {

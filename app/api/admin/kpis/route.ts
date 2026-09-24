@@ -150,7 +150,7 @@ export async function GET(req: NextRequest) {
     // a credit/debit happened without a ledger row, or a manual edit.
     const [allTxns, allBalances] = await Promise.all([
       safe(fetchAll<{ user_id: string; type: string; amount: number }>(c => c.from('wallet_transactions').select('user_id, type, amount').in('type', ['credit', 'debit', 'refund']).order('id'), sb)),
-      safe(fetchAll<{ id: string; name: string | null; wallet_balance: number }>(c => c.from('users').select('id, name, wallet_balance').order('id'), sb)),
+      safe(fetchAll<{ id: string; name: string | null; phone: string | null; wallet_balance: number }>(c => c.from('users').select('id, name, phone, wallet_balance').order('id'), sb)),
     ])
 
     // Extract values safely — failed queries return zero/null defaults
@@ -346,6 +346,12 @@ export async function GET(req: NextRequest) {
         listenersWithBalance: listenerWalletRows.length,
       },
       walletIntegrity,
+      // Deleted accounts (phone scrubbed to DELETE…) still holding wallet money —
+      // they can't log in to withdraw it; settle each one deliberately.
+      deletedWithBalance: allBalances
+        ? allBalances.filter(u => (u.phone ?? '').startsWith('DELETE') && Number(u.wallet_balance ?? 0) >= 1)
+            .map(u => ({ user_id: u.id, name: u.name, balance: Number(u.wallet_balance), earned: earnerIds.has(u.id) }))
+        : null,
       funnel,
       payouts: {
         pendingAmountRupees: sum(pendingPayouts.data),
