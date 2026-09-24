@@ -1,8 +1,8 @@
 'use client'
-import { useState, useEffect, useRef, RefObject } from 'react'
+import { useState, useEffect, useRef, RefObject, Fragment } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
-import { LANGUAGES, PLATFORM_FEE, AGE_RANGES, ageRangeId, VOICE_PRICING_ENABLED, sessionRatePerMin } from '@/lib/constants'
+import { LANGUAGES, PLATFORM_FEE, AGE_RANGES, ageRangeId, VOICE_PRICING_ENABLED, sessionRatePerMin, MAX_FREE_TRIALS } from '@/lib/constants'
 import { SHOW_LISTENER_IN_SESSION_STATUS } from '@/lib/feature-flags'
 import { estimateListenerTakeHome } from '@/lib/session-billing'
 import { showToast } from '@/lib/toast'
@@ -280,18 +280,25 @@ a{text-decoration:none;color:inherit;}
 .card{background:white;border:1.5px solid var(--border);border-radius:20px;padding:18px;cursor:pointer;transition:all .2s;box-shadow:0 1px 4px rgba(15,72,103,.04);}
 .card:hover{border-color:var(--teal);box-shadow:0 4px 20px rgba(15,72,103,.08);transform:translateY(-2px);}
 .card-top{display:flex;gap:14px;align-items:center;margin-bottom:12px;}
-.av{width:72px;height:72px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;color:white;flex-shrink:0;position:relative;overflow:hidden;}
+.av{width:88px;height:88px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;color:white;flex-shrink:0;position:relative;overflow:hidden;}
 .av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
 .dot{position:absolute;bottom:1px;right:1px;width:14px;height:14px;border-radius:50%;border:2.5px solid white;}
 .dot.on{background:#34C759;}.dot.off{background:#C7C7CC;}.dot.busy{background:var(--orange);}
 .meta{flex:1;min-width:0;}
 .name{font-size:16px;font-weight:900;color:var(--navy);margin-bottom:1px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 .card-tagline{font-size:13px;font-weight:600;color:var(--gray);margin-bottom:4px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;}
-.stats{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--gray);font-weight:600;}
+.stats{display:flex;align-items:center;flex-wrap:wrap;gap:2px 10px;font-size:12px;color:var(--gray);font-weight:600;}
+.stats span{white-space:nowrap;}
 .rate{font-size:15px;font-weight:900;color:var(--navy);flex-shrink:0;}
 .rate span{font-size:11px;font-weight:500;color:var(--gray);}
 .bio{font-size:13px;color:#4A6B7E;line-height:1.6;margin-bottom:12px;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.fit{font-size:12.5px;color:var(--navy);font-weight:700;line-height:1.5;margin-bottom:12px;}
+.fit span{color:var(--gray);font-weight:600;}
+.list-hdr{grid-column:1 / -1;font-size:13px;font-weight:900;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin:6px 2px -2px;display:flex;align-items:center;gap:8px;}
+.list-hdr .dot-live{width:8px;height:8px;border-radius:50%;background:#34C759;}
+.btn-filters{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:50px;font-size:12px;font-weight:800;border:1.5px solid var(--navy);background:white;color:var(--navy);cursor:pointer;margin-top:8px;font-family:'Nunito',sans-serif;}
+.btn-filters .cnt{background:var(--orange);color:white;border-radius:50px;padding:0 6px;font-size:11px;}
 .tag-badge{background:rgba(26,143,160,.1);color:var(--navy);font-size:11px;font-weight:700;padding:4px 10px;border-radius:50px;}
 .verified-chip{background:#E6F6FF;color:#0F4867;font-size:10px;font-weight:800;padding:3px 7px;border-radius:50px;border:1.5px solid #B8D9F0;}
 .card-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;}
@@ -371,6 +378,9 @@ function BrowseContent() {
   // Free-trial nudge banner — shown to users who signed up within the last 30
   // days and haven't had a single session yet. Disappears after first session.
   const [showFreeNudge, setShowFreeNudge] = useState(false)
+  // Anonymous visitors are assumed eligible; logged-in seekers are checked below.
+  const [trialAvailable, setTrialAvailable] = useState(true)
+  const [showFilters, setShowFilters] = useState(false)
 
   // Read ?topic= from URL after hydration to avoid SSR mismatch.
   //
@@ -521,6 +531,9 @@ function BrowseContent() {
       if (!user) return
       // Remember who I am so I never see (or can book) my own listener card.
       setMyUserId(user.id)
+      client.from('sessions').select('id', { count: 'exact', head: true })
+        .eq('seeker_id', user.id).eq('is_free_trial', true).eq('status', 'completed')
+        .then(({ count }) => { if ((count ?? 0) >= MAX_FREE_TRIALS) setTrialAvailable(false) })
       const {data} = await client.from('users').select('wallet_balance,created_at').eq('id',user.id).single()
       if (data) {
         setBalance(data.wallet_balance as number | null)
@@ -724,6 +737,16 @@ function BrowseContent() {
               </button>
             ))}
           </div>
+          {(() => {
+            const activeFilters = (lang !== 'all' ? 1 : 0) + (ageRange !== 'all' ? 1 : 0) + (sortBy !== 'best' ? 1 : 0)
+            return (
+              <button className="btn-filters" onClick={() => setShowFilters(v => !v)} aria-expanded={showFilters}>
+                ⚙️ Filters{activeFilters > 0 && <span className="cnt">{activeFilters}</span>} {showFilters ? '▴' : '▾'}
+              </button>
+            )
+          })()}
+          {showFilters && (
+            <>
           <div className="tag-scroll" style={{marginTop:8}}>
             <button className={`tag-pill${lang==='all'?' active':''}`} onClick={()=>setLang('all')}>
               🌐 All languages
@@ -757,6 +780,8 @@ function BrowseContent() {
               </button>
             ))}
           </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -771,7 +796,7 @@ function BrowseContent() {
                   : `${onlineNow} ${tagInfo(tag)?.label ?? tag} listeners available right now`}
               </span>
             </div>
-            <span style={{opacity:0.7,fontWeight:600,fontSize:12}}>First 5 min free</span>
+            {trialAvailable && <span style={{opacity:0.7,fontWeight:600,fontSize:12}}>First 5 min free</span>}
           </div>
         ) : (
           <div>
@@ -807,8 +832,8 @@ function BrowseContent() {
           <div className="free-nudge">
             <div className="free-nudge-icon">💙</div>
             <div className="free-nudge-text">
-              <div className="free-nudge-title">Your first session is free.</div>
-              <div className="free-nudge-sub">Pick a listener — your first conversation is completely private.</div>
+              <div className="free-nudge-title">Your first 5 minutes are free.</div>
+              <div className="free-nudge-sub">Pick someone you&apos;d feel comfortable talking to — it&apos;s private and one-to-one.</div>
             </div>
             <button
               className="free-nudge-close"
@@ -850,12 +875,20 @@ function BrowseContent() {
               💙 Need immediate support? <a href="/faq" style={{color:'var(--teal)'}}>See crisis resources →</a>
             </p>
           </div>
-        ) : visible.map(l => {
+        ) : visible.map((l, idx) => {
+          const firstOfflineIdx = visible.findIndex(x => !x.is_available)
+          const listHeader = firstOfflineIdx > 0 && idx === 0
+            ? <div className="list-hdr"><span className="dot-live" />Available now</div>
+            : firstOfflineIdx >= 0 && idx === firstOfflineIdx
+            ? <div className="list-hdr">{firstOfflineIdx > 0 ? 'More listeners' : 'No one is online right now — leave a message'}</div>
+            : null
           const statusClass = SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session ? 'busy' : l.is_available ? 'on' : 'off'
-          const statusLabel = SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session ? '● In session' : l.is_available ? '● Online' : '● Offline'
+          const statusLabel = SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session ? '● In session' : l.is_available ? '● Available now' : '● Offline'
           const bioFirstLine = l.bio ? l.bio.split(/[.\n]/).filter(Boolean)[0]?.trim() : ''
           return (
-          <div key={l.id} className="card" onClick={()=>router.push(`/listener/${l.user_id}`)}>
+          <Fragment key={l.id}>
+          {listHeader}
+          <div className="card" onClick={()=>router.push(`/listener/${l.user_id}`)}>
             <div className="card-top">
               <div className="av">
                 {l.avatar_url
@@ -871,7 +904,7 @@ function BrowseContent() {
                 {bioFirstLine && <div className="card-tagline">{bioFirstLine}</div>}
                 <div className="stats">
                   {l.rating > 0 && <span>⭐ {(+l.rating).toFixed(1)}</span>}
-                  {l.total_sessions > 0 && <span>{l.total_sessions} sessions</span>}
+                  {l.total_sessions > 0 && <span>{l.total_sessions} {l.total_sessions === 1 ? 'conversation' : 'conversations'}</span>}
                   <span className={`avail-label ${statusClass}`}>{statusLabel}</span>
                 </div>
                 {!l.is_available && !l.is_in_session && lastOnlineLabel(l) && (
@@ -881,27 +914,33 @@ function BrowseContent() {
                 )}
               </div>
             </div>
-            <div className="tags">
-              {(l.specialty_tags||[]).slice(0,3).map((t) => {
-                const info = tagInfo(t)
-                return <span key={t} className="tag-badge">{info?.icon} {info?.label||t}</span>
-              })}
-              {(l.languages_spoken||[]).slice(0,2).map((lid) => {
-                const info = LANGUAGES.find(x=>x.id===lid)
-                return <span key={lid} className="tag-badge" style={{background:'rgba(255,153,51,.1)',color:'#7A4A00'}}>🌐 {info?.label||lid}</span>
-              })}
-            </div>
+            {(() => {
+              // One calm line instead of up to five pills: what they're good for + languages.
+              const goodFor = (l.specialty_tags||[]).slice(0,2).map(t => tagInfo(t)?.label || t)
+              const langs = (l.languages_spoken||[]).slice(0,2).map(lid => {
+                const label = LANGUAGES.find(x=>x.id===lid)?.label || lid
+                return label.match(/\(([^)]+)\)/)?.[1] ?? label
+              })
+              if (!goodFor.length && !langs.length) return null
+              return (
+                <div className="fit">
+                  {goodFor.length > 0 && <>Good for <span>{goodFor.join(' · ')}</span></>}
+                  {goodFor.length > 0 && langs.length > 0 && <br/>}
+                  {langs.length > 0 && <>🌐 <span>{langs.join(' · ')}</span></>}
+                </div>
+              )
+            })()}
             {VOICE_PRICING_ENABLED ? (() => {
               const textRate  = sessionRatePerMin(Number(l.rate_per_min), 'text')
               const voiceRate = sessionRatePerMin(Number(l.rate_per_min), 'voice')
               const inSession = SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session
               if (l.is_available && !inSession) return (
                 <div>
-                  <div className="mode-free">🎁 First 5 min free</div>
+                  {trialAvailable && <div className="mode-free">🎁 Your first 5 minutes are free — text or voice</div>}
                   <div className="mode-btns">
-                    <button className="btn-mode text" aria-label={`Text chat, ₹${textRate} per minute`}
+                    <button className="btn-mode text" aria-label={`Text conversation, ₹${textRate} per minute`}
                       onClick={e=>{e.stopPropagation(); router.push(`/listener/${l.user_id}?type=text`)}}>
-                      <span>💬 Chat</span><small>₹{textRate}/min</small>
+                      <span>💬 Text</span><small>₹{textRate}/min</small>
                     </button>
                     <button className="btn-mode voice" aria-label={`Voice call, ₹${voiceRate} per minute`}
                       onClick={e=>{e.stopPropagation(); router.push(`/listener/${l.user_id}?type=voice`)}}>
@@ -920,7 +959,8 @@ function BrowseContent() {
                     {inSession ? (
                       <button className="btn-chat busy" onClick={e => e.stopPropagation()}>In session</button>
                     ) : (
-                      <button className="btn-chat offline" onClick={e=>e.stopPropagation()}>View profile</button>
+                      <button className="btn-chat avail" style={{background:'var(--teal)',boxShadow:'none'}}
+                        onClick={e=>{e.stopPropagation(); router.push(`/listener/${l.user_id}`)}}>✉️ Leave a message</button>
                     )}
                   </div>
                 </div>
@@ -952,6 +992,7 @@ function BrowseContent() {
             </div>
             )}
           </div>
+          </Fragment>
           )
         })}
       </div>

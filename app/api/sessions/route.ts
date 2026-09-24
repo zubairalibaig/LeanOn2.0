@@ -180,11 +180,34 @@ export async function POST(req: NextRequest) {
     // Store listener's rate on the session so settlement can correctly split
     // earnings for NRI sessions (where amount_held = flat NRI price, not rate×duration).
     // Awaited so settlement always has the correct rate before the session starts.
+    // Settlement caps the listener's share with this rate; without it an NRI
+    // session (flat-price amount_held) would pay the listener the whole flat
+    // price. So a failed write is fatal: retry once, else cancel + refund.
     if (!effectivelyFree && sessionId) {
-      const { error: rpmErr } = await sb.from('sessions')
+      const writeRate = () => sb.from('sessions')
         .update({ listener_rate_per_min: Math.round(rate) })
         .eq('id', sessionId)
-      if (rpmErr) logger.error('Session POST: listener_rate_per_min update failed', { sessionId, error: rpmErr.message })
+      let { error: rpmErr } = await writeRate()
+      if (rpmErr) ({ error: rpmErr } = await writeRate())
+      if (rpmErr) {
+        logger.error('Session POST: listener_rate_per_min update failed — cancelling session', { sessionId, error: rpmErr.message })
+        const now = new Date().toISOString()
+        const { data: cancelled } = await sb.from('sessions')
+          .update({ status: 'cancelled', ended_at: now, responded_at: now, cancel_reason: 'booking_error' })
+          .eq('id', sessionId)
+          .eq('status', 'pending')
+          .select('id')
+          .maybeSingle()
+        if (cancelled) {
+          const { error: refundErr } = await sb.rpc('credit_wallet', { p_user_id: user.id, p_amount: total })
+          if (refundErr) {
+            logger.error('Session POST: booking_error refund failed — RECONCILIATION NEEDED', { sessionId, seekerId: user.id, total, error: refundErr.message })
+          }
+        } else {
+          logger.error('Session POST: could not cancel session after rate write failure — RECONCILIATION NEEDED', { sessionId })
+        }
+        return NextResponse.json({ error: 'booking_error', message: 'We could not start this session. You have not been charged — please try again.' }, { status: 500 })
+      }
     }
 
     if (!effectivelyFree) {

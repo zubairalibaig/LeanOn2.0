@@ -100,7 +100,8 @@ export default function ListenerClient({ id }: { id: string }) {
 
   const [listener, setListener] = useState<ListenerProfile|null>(null)
   const [reviews,  setReviews]  = useState<Review[]>([])
-  const [duration, setDuration] = useState<number>(15)
+  // Default to the free 5-min trial; switched to 15 once we know the trial is used.
+  const [duration, setDuration] = useState<number>(5)
   const [type,     setType]     = useState<'text'|'voice'>('text')
   const [balance,  setBalance]  = useState<number>(0)
   const [loading,  setLoading]  = useState(false)
@@ -127,6 +128,7 @@ export default function ListenerClient({ id }: { id: string }) {
     const params = new URLSearchParams(window.location.search)
     const t = params.get('type')
     if (t === 'text' || t === 'voice') setType(t)
+    if (params.get('from') === 'trial') setDuration(15)
     if (params.get('from') === 'wallet') {
       setFromWallet(true)
       // Auto-select 15 min (not 5 min which is the free trial) since user just topped up

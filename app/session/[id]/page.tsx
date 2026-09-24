@@ -4,7 +4,8 @@ import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { showToast } from '@/lib/toast'
 import ReportModal from '@/app/components/ReportModal'
-import { SESSION_DURATIONS, MESSAGE_REACTIONS, REQUEST_RESPONSE_WINDOW_MS } from '@/lib/constants'
+import { SESSION_DURATIONS, MESSAGE_REACTIONS, REQUEST_RESPONSE_WINDOW_MS, PLATFORM_FEE, sessionRatePerMin } from '@/lib/constants'
+import { getBookingPriceDisplay } from '@/lib/geo-pricing'
 
 // ── CRITICAL FIX 1: Create client ONCE outside component
 // Previously inside component = new WebSocket on every render
@@ -254,6 +255,8 @@ function SessionContent() {
   const [showFreeTrialConversion, setShowFreeTrialConversion] = useState(true)
   // Listener availability at the moment the conversion screen shows. null = loading.
   const [listenerStillOnline, setListenerStillOnline] = useState<boolean | null>(null)
+  // Price of a 15-min continuation in the trial's mode (null until loaded)
+  const [continuePrice, setContinuePrice] = useState<string | null>(null)
 
   const channelRef      = useRef<ReturnType<typeof supabase.channel> | null>(null)
   const bottomRef       = useRef<HTMLDivElement>(null)
@@ -606,9 +609,18 @@ function SessionContent() {
   useEffect(() => {
     if (!ended || !sessionIsFreeTrial || !listenerId) return
     if (listenerStillOnline !== null) return // already fetched
-    fetch(`/api/listener/${listenerId}`)
-      .then(r => r.json())
-      .then(j => setListenerStillOnline(j.profile?.is_available === true))
+    Promise.all([
+      fetch(`/api/listener/${listenerId}`).then(r => r.json()),
+      fetch('/api/auth/profile').then(r => r.ok ? r.json() : {}).catch(() => ({})),
+    ])
+      .then(([j, me]) => {
+        setListenerStillOnline(j.profile?.is_available === true)
+        const textRate = Number(j.profile?.rate_per_min)
+        if (Number.isFinite(textRate) && textRate > 0) {
+          const inr = sessionRatePerMin(textRate, isVoice ? 'voice' : 'text') * 15 + PLATFORM_FEE
+          setContinuePrice(getBookingPriceDisplay(inr, (me as { account_country?: string }).account_country, 15).primary)
+        }
+      })
       .catch(() => setListenerStillOnline(false))
   }, [ended, sessionIsFreeTrial, listenerId, listenerStillOnline])
 
@@ -1110,7 +1122,7 @@ function SessionContent() {
       // If their balance is insufficient the listener page shows an inline top-up modal —
       // one fewer redirect than the old wallet-first flow.
       const continueUrl = listenerId
-        ? `/listener/${listenerId}?from=trial`
+        ? `/listener/${listenerId}?from=trial&type=${isVoice ? 'voice' : 'text'}`
         : '/browse'
 
       return (
@@ -1131,7 +1143,7 @@ function SessionContent() {
                 {listenerStillOnline === null
                   ? <>Want to keep talking?<br />Checking if your listener is still here…</>
                   : listenerStillOnline
-                  ? <>🟢 {resolvedListenerName} is still online.<br />Continue for ₹160 — 15 minutes, pay now.</>
+                  ? <>🟢 {resolvedListenerName} is still online.<br />Want to keep talking? Continue for 15 more minutes.</>
                   : <>Your listener has gone offline.<br />Browse other listeners and start a paid session.</>
                 }
               </p>
@@ -1142,7 +1154,9 @@ function SessionContent() {
                   </a>
                 ) : (
                   <a href={continueUrl} style={{ width: '100%' }}>
-                    <button className="btn-trial-continue">Continue talking — ₹160 for 15 min →</button>
+                    <button className="btn-trial-continue">
+                      {continuePrice ? `Continue talking — ${continuePrice} for 15 min →` : 'Continue talking →'}
+                    </button>
                   </a>
                 )}
                 <button
