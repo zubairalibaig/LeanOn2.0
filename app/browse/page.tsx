@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef, RefObject, Fragment } from 'react'
+import { useState, useEffect, useRef, RefObject } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { LANGUAGES, PLATFORM_FEE, AGE_RANGES, ageRangeId, VOICE_PRICING_ENABLED, sessionRatePerMin, MAX_FREE_TRIALS } from '@/lib/constants'
@@ -295,8 +295,6 @@ a{text-decoration:none;color:inherit;}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
 .fit{font-size:12.5px;color:var(--navy);font-weight:700;line-height:1.5;margin-bottom:12px;}
 .fit span{color:var(--gray);font-weight:600;}
-.list-hdr{grid-column:1 / -1;font-size:13px;font-weight:900;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin:6px 2px -2px;display:flex;align-items:center;gap:8px;}
-.list-hdr .dot-live{width:8px;height:8px;border-radius:50%;background:#34C759;}
 .btn-filters{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:50px;font-size:12px;font-weight:800;border:1.5px solid var(--navy);background:white;color:var(--navy);cursor:pointer;margin-top:8px;font-family:'Nunito',sans-serif;}
 .btn-filters .cnt{background:var(--orange);color:white;border-radius:50px;padding:0 6px;font-size:11px;}
 .tag-badge{background:rgba(26,143,160,.1);color:var(--navy);font-size:11px;font-weight:700;padding:4px 10px;border-radius:50px;}
@@ -875,20 +873,12 @@ function BrowseContent() {
               💙 Need immediate support? <a href="/faq" style={{color:'var(--teal)'}}>See crisis resources →</a>
             </p>
           </div>
-        ) : visible.map((l, idx) => {
-          const firstOfflineIdx = visible.findIndex(x => !x.is_available)
-          const listHeader = firstOfflineIdx > 0 && idx === 0
-            ? <div className="list-hdr"><span className="dot-live" />Available now</div>
-            : firstOfflineIdx >= 0 && idx === firstOfflineIdx
-            ? <div className="list-hdr">{firstOfflineIdx > 0 ? 'More listeners' : 'No one is online right now — leave a message'}</div>
-            : null
+        ) : visible.map(l => {
           const statusClass = SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session ? 'busy' : l.is_available ? 'on' : 'off'
           const statusLabel = SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session ? '● In session' : l.is_available ? '● Available now' : '● Offline'
           const bioFirstLine = l.bio ? l.bio.split(/[.\n]/).filter(Boolean)[0]?.trim() : ''
           return (
-          <Fragment key={l.id}>
-          {listHeader}
-          <div className="card" onClick={()=>router.push(`/listener/${l.user_id}`)}>
+          <div key={l.id} className="card" onClick={()=>router.push(`/listener/${l.user_id}`)}>
             <div className="card-top">
               <div className="av">
                 {l.avatar_url
@@ -992,7 +982,6 @@ function BrowseContent() {
             </div>
             )}
           </div>
-          </Fragment>
           )
         })}
       </div>
