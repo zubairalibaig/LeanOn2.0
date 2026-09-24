@@ -43,6 +43,13 @@ type ListenerRow = {
   users: { id: string; name?: string; email?: string; phone?: string; avatar_url?: string | null; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number }
   application?: { status: string; admin_notes: string | null; upi_id?: string | null; bank_account?: string | null; ifsc_code?: string | null; aadhaar?: string | null; aadhaar_last4?: string | null; account_holder_name?: string | null } | null
 }
+type CustomerRow = {
+  user_id: string; name: string | null; phone: string | null; joined: string | null; wallet_balance: number
+  recharged: number; recharges: number; first_recharge: string | null; last_recharge: string | null
+  other_credits: number; refunds: number; earned_as_listener: boolean
+  paid_sessions: number; voice_sessions: number; booked_value: number; distinct_listeners: number
+  last_paid_session: string | null; flags: string[]
+}
 type SessionRow = {
   id: string; seeker_id: string; listener_id: string; session_type: string; duration_mins: number
   amount_held: number; platform_fee?: number; status: string; is_free_trial: boolean; started_at: string | null; ended_at?: string | null
@@ -300,6 +307,8 @@ export default function AdminPage() {
   // Pending approvals surfaced on Overview — the KPI alone gave admins no
   // path to act, which made approvals look impossible to do.
   const [pendingApprovals, setPendingApprovals] = useState<ListenerRow[]>([])
+  const [customers, setCustomers] = useState<CustomerRow[] | null>(null)
+  const [showAllCustomers, setShowAllCustomers] = useState(false)
   // Separate reject-note inputs per context so a reason typed in Overview
   // never pre-fills the Listeners tab input for the same user (Bug: shared state).
   const [rejectNotesOverview, setRejectNotesOverview] = useState<Record<string, string>>({})
@@ -618,6 +627,10 @@ export default function AdminPage() {
   // Pending listener approvals must be actionable from Overview
   useEffect(() => {
     if (tab === 'overview' && !authChecking && authUser) loadPendingApprovals()
+    if (tab === 'overview' && !authChecking && authUser) {
+      fetch('/api/admin/customers', { headers: adminHeaders() })
+        .then(r => r.ok ? r.json() : null).then(j => { if (j?.customers) setCustomers(j.customers) }).catch(() => {})
+    }
   }, [tab, authChecking, authUser, loadPendingApprovals])
 
   useEffect(() => {
@@ -1019,6 +1032,54 @@ export default function AdminPage() {
                         <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--orange)', marginTop: 8 }}>
                           ⚠️ {f.rechargedNotPaid} {f.rechargedNotPaid === 1 ? 'person' : 'people'} recharged but never completed a paid session — worth a personal follow-up.
                         </div>
+                      )}
+                    </div>
+                  )
+                })()}
+                {/* Paying customers — everyone who recharged or completed a paid session. */}
+                {customers && customers.length > 0 && (() => {
+                  const d = (x: string | null) => x ? new Date(x).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : '—'
+                  const real = customers.filter(c => !c.flags.includes('deleted') && !c.flags.includes('also listener'))
+                  const shown = showAllCustomers ? customers : customers.slice(0, 10)
+                  const td: React.CSSProperties = { padding: '8px 10px', borderTop: '1px solid var(--border)', fontSize: 12, verticalAlign: 'top', whiteSpace: 'nowrap' }
+                  return (
+                    <div style={{ background: 'white', border: '1.5px solid var(--border)', borderRadius: 16, padding: '12px 14px', marginBottom: 14 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
+                        <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--navy)' }}>Paying customers ({customers.length})</div>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--gray)' }}>
+                          Excluding deleted accounts &amp; listeners: <strong style={{ color: 'var(--teal)' }}>{real.length}</strong> people · {fmtRs(real.reduce((t, c) => t + c.recharged, 0))} recharged · {real.reduce((t, c) => t + c.paid_sessions, 0)} paid sessions
+                        </div>
+                      </div>
+                      <div className="table-wrap" style={{ margin: 0 }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                          <thead><tr style={{ background: 'var(--light)', fontSize: 11, textAlign: 'left' }}>
+                            <th style={{ padding: '6px 10px' }}>Customer</th><th style={{ padding: '6px 10px' }}>Recharged</th><th style={{ padding: '6px 10px' }}>Paid sessions</th>
+                            <th style={{ padding: '6px 10px' }}>Booked</th><th style={{ padding: '6px 10px' }}>Balance</th><th style={{ padding: '6px 10px' }}>Last paid</th><th style={{ padding: '6px 10px' }}>Notes</th>
+                          </tr></thead>
+                          <tbody>
+                            {shown.map(c => (
+                              <tr key={c.user_id}>
+                                <td style={td}><div style={{ fontWeight: 800, color: 'var(--navy)' }}>{c.name || '—'}</div><div style={{ color: 'var(--gray)' }}>{c.phone || '—'}</div></td>
+                                <td style={td}>{c.recharges ? <>{fmtRs(c.recharged)} <span style={{ color: 'var(--gray)' }}>× {c.recharges}</span><div style={{ color: 'var(--gray)' }}>first {d(c.first_recharge)}</div></> : '—'}</td>
+                                <td style={td}>{c.paid_sessions}{c.voice_sessions ? <span style={{ color: 'var(--gray)' }}> ({c.voice_sessions} voice)</span> : null}<div style={{ color: 'var(--gray)' }}>{c.distinct_listeners} listener{c.distinct_listeners === 1 ? '' : 's'}</div></td>
+                                <td style={td}>{fmtRs(c.booked_value)}{c.refunds ? <div style={{ color: 'var(--gray)' }}>refunded {fmtRs(c.refunds)}</div> : null}</td>
+                                <td style={td}>{fmtRs(c.wallet_balance)}</td>
+                                <td style={td}>{d(c.last_paid_session)}</td>
+                                <td style={{ ...td, whiteSpace: 'normal', minWidth: 140 }}>
+                                  {c.flags.map(f => <span key={f} style={{ display: 'inline-block', margin: '0 4px 4px 0', padding: '2px 8px', borderRadius: 999, fontSize: 11, fontWeight: 800,
+                                    background: f === 'spent more than wallet inflows' || f === 'paid without recharging' ? '#FFF0EE' : '#F0F8FC',
+                                    color: f === 'spent more than wallet inflows' || f === 'paid without recharging' ? '#c0392b' : 'var(--navy)' }}>{f}</span>)}
+                                  {c.other_credits > 0 && <div style={{ color: 'var(--gray)' }}>other credits {fmtRs(c.other_credits)}{c.earned_as_listener ? ' (incl. listener earnings)' : ''}</div>}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                      {customers.length > 10 && (
+                        <button className="btn btn-gray" style={{ fontSize: 12, marginTop: 8 }} onClick={() => setShowAllCustomers(v => !v)}>
+                          {showAllCustomers ? 'Show top 10' : `Show all ${customers.length}`}
+                        </button>
                       )}
                     </div>
                   )

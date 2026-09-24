@@ -3,25 +3,11 @@ import { createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 import { requireAdmin , ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS } from '@/lib/require-admin'
+import { fetchAll } from '@/lib/fetch-all'
 
 // Never statically cache or revalidate — KPI counts (incl. online listeners)
 // must always reflect the live DB, not a cached snapshot.
 export const dynamic = 'force-dynamic'
-
-// PostgREST returns at most 1,000 rows per request (Supabase default max-rows),
-// silently. Any KPI that sums or de-duplicates rows must page through all of them.
-type Sb = ReturnType<typeof createAdminClient>
-async function fetchAll<T>(build: (sb: Sb) => { range: (a: number, b: number) => PromiseLike<{ data: unknown; error: { message: string } | null }> }, sb: Sb): Promise<T[]> {
-  const PAGE = 1000
-  const out: T[] = []
-  for (let from = 0; ; from += PAGE) {
-    const { data, error } = await build(sb).range(from, from + PAGE - 1)
-    if (error) throw new Error(error.message)
-    const rows = (data ?? []) as T[]
-    out.push(...rows)
-    if (rows.length < PAGE) return out
-  }
-}
 
 export async function GET(req: NextRequest) {
   const { error, code, status, user, isPrimaryAdmin } = await requireAdmin(req)
