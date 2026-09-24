@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     const sb = createAdminClient()
     const { data: session, error: sErr } = await sb
       .from('sessions')
-      .select('agora_channel, seeker_id, listener_id, status, started_at, duration_mins')
+      .select('agora_channel, seeker_id, listener_id, status, started_at, duration_mins, session_type')
       .eq('id', sessionId)
       .single()
 
@@ -43,6 +43,11 @@ export async function GET(req: NextRequest) {
     // Only issue tokens for active sessions — completed/cancelled sessions cannot rejoin
     if (session.status !== 'active') {
       return NextResponse.json({ error: 'Session is no longer active' }, { status: 403 })
+    }
+
+    // Voice is priced higher than text — a text booking must not get a call token.
+    if (session.session_type === 'text') {
+      return NextResponse.json({ error: 'Voice is not enabled for this session' }, { status: 403 })
     }
 
     const appId      = process.env.NEXT_PUBLIC_AGORA_APP_ID!

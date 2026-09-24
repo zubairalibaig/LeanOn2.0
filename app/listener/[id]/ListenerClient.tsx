@@ -372,7 +372,7 @@ export default function ListenerClient({ id }: { id: string }) {
             </div>
             <div style={{display:'flex',gap:10}}>
               <button onClick={()=>setShowInsufficient(false)} style={{flex:1,padding:13,background:'white',border:'1.5px solid #D5EEF6',borderRadius:12,fontFamily:'Nunito,sans-serif',fontWeight:700,cursor:'pointer'}}>Cancel</button>
-              <a href={`/wallet?return=${encodeURIComponent(`/listener/${id}?from=wallet`)}`} style={{flex:1}}>
+              <a href={`/wallet?return=${encodeURIComponent(`/listener/${id}?from=wallet&type=${type}`)}`} style={{flex:1}}>
                 <button style={{width:'100%',padding:13,background:'#FF9933',color:'white',border:'none',borderRadius:12,fontFamily:'Nunito,sans-serif',fontWeight:800,cursor:'pointer'}}>Top Up Wallet →</button>
               </a>
             </div>
