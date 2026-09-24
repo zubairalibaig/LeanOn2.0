@@ -143,6 +143,7 @@
   any non-service-role write (the INSERTs in the same script still land). For a deliberate
   manual adjustment, inside one transaction: `set local request.jwt.claims = '{"role":"service_role"}';`
   then the UPDATE **and** a matching `wallet_transactions` row, so the admin wallet check stays clean.
+  Log every manual adjustment (done and pending) in `docs/MONEY_OPERATIONS.md`.
 - **Deleting an account never strands money:** self-deletion is refused while there is a wallet
   balance or a pending payout/refund; admin deletion keeps pending payouts/refunds payable, and
   leftovers show on the admin Overview as "Deleted accounts still holding money".
