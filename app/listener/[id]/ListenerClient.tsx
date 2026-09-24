@@ -416,10 +416,10 @@ export default function ListenerClient({ id }: { id: string }) {
             <div className="type-row">
               <span className="type-row-label">Mode:</span>
               <button className={`type-btn${type==='text'?' sel':''}`} onClick={()=>setType('text')}>
-                💬 Text{VOICE_PRICING_ENABLED ? ` · ₹${sessionRatePerMin(Number(listener.rate_per_min), 'text')}/min` : ''}
+                💬 Text{VOICE_PRICING_ENABLED && !isNriCountry(accountCountry) ? ` · ₹${sessionRatePerMin(Number(listener.rate_per_min), 'text')}/min` : ''}
               </button>
               <button className={`type-btn${type==='voice'?' sel':''}`} onClick={()=>setType('voice')}>
-                📞 Voice{VOICE_PRICING_ENABLED ? ` · ₹${sessionRatePerMin(Number(listener.rate_per_min), 'voice')}/min` : ''}
+                📞 Voice{VOICE_PRICING_ENABLED && !isNriCountry(accountCountry) ? ` · ₹${sessionRatePerMin(Number(listener.rate_per_min), 'voice')}/min` : ''}
               </button>
             </div>
             <div className="book-opts">

@@ -104,6 +104,11 @@ const howToSchema = {
 }
 
 import AuthRedirect from '@/app/components/AuthRedirect'
+import { VOICE_PRICING_ENABLED, VOICE_RATE_PREMIUM } from '@/lib/constants'
+
+// Homepage price cards assume the ₹10/min base text rate.
+const voiceFrom = (mins: number, textPrice: number) =>
+  VOICE_PRICING_ENABLED ? ` · Voice from ₹${textPrice + VOICE_RATE_PREMIUM * mins}` : ' or voice'
 
 export default function Home() {
   return (
@@ -475,8 +480,8 @@ export default function Home() {
         <div className="pc">
           {[
             {l:'Trial session',d:'5 minutes · Text only · No wallet needed · Free once per listener',p:'₹0',b:'Trial',feat:false},
-            {l:'Quick chat',d:'15 minutes · One-on-one · Text or voice',p:'₹160',b:'',feat:false},
-            {l:'Deep dive',d:'30 minutes · One-on-one · Text or voice',p:'₹310',b:'Most popular',feat:true},
+            {l:'Quick chat',d:`15 minutes · One-on-one · Text${voiceFrom(15, 160)}`,p:'₹160',b:'',feat:false},
+            {l:'Deep dive',d:`30 minutes · One-on-one · Text${voiceFrom(30, 310)}`,p:'₹310',b:'Most popular',feat:true},
           ].map((item,i)=>(
             <div key={i} className={`pcard${item.feat?' feat':''}`}>
               <div><div className="pl">{item.l}</div><div className="pd">{item.d}</div>{item.b&&<div className="pb">{item.b}</div>}</div>

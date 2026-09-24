@@ -84,6 +84,7 @@ LeanOn is a **PEER SUPPORT** platform. It is not a mental health, clinical, or t
 | Element | Specification |
 |---|---|
 | Base rate | ₹10/min base; listeners set ₹8–25/min |
+| Text vs voice (2026-09-24) | Listener sets the **text** rate; **voice = text + ₹5/min** (`VOICE_RATE_PREMIUM`), always. Only the text rate is stored. The booked mode's rate is saved on the session (`listener_rate_per_min`) and settlement uses it. NRI flat prices are the same for both modes. Kill switch: `NEXT_PUBLIC_VOICE_PRICING=false`. |
 | Session blocks | Fixed only: **15 min**, **30 min**, or **45 min**. No open-ended metered calls. |
 | Free trial | **1 free 5-minute session per seeker** (one per listener). Reduced from 5 → 3 → 2 → 1 as each reduction improved paid conversion without hurting top-of-funnel. |
 | Platform fee (seeker) | **Flat ₹10 per paid session**, paid by the seeker on top of the listener's rate, shown as a separate transparent line item at checkout. Razorpay's gateway commission is also borne by the seeker. Do not over-advertise the fee — just keep the logic and checkout display honest. |
