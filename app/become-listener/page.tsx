@@ -446,14 +446,14 @@ export default function BecomeListenerPage() {
       fd.append('file', shrunk, 'selfie')
       const res = await fetch('/api/listener/selfie', { method: 'POST', body: fd })
       const json = await res.json().catch(() => ({}))
-      if (!res.ok) { setFieldErrors(f => ({...f, selfie: json.error || 'Selfie upload failed. Please try again.'})); return }
+      if (!res.ok) { setFieldErrors(f => ({...f, selfie: json.error || `Selfie upload failed (code: http_${res.status}). Please try again.`})); return }
       const reader = new FileReader()
       reader.onload = ev => setSelfiePreview(ev.target?.result as string)
       reader.readAsDataURL(shrunk)
       setSelfieDone(true)
       setFieldErrors(f => ({...f, selfie: ''}))
     } catch {
-      setFieldErrors(f => ({...f, selfie: 'Selfie upload failed. Please try again.'}))
+      setFieldErrors(f => ({...f, selfie: 'Selfie upload failed (code: network). Check your connection and try again.'}))
     } finally {
       setSelfieUploading(false)
     }
