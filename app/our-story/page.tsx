@@ -78,7 +78,7 @@ export default function OurStoryPage() {
 
         <div className="card">
           <h2>How we built LeanOn</h2>
-          <p>LeanOn launched with a simple idea: connect people who are struggling with people who have been through the same thing and found their way through. We built a rigorous listener verification process, a 4-module training program, and a platform designed for Indian privacy constraints — text-first, OTP-only, 12 languages.</p>
+          <p>LeanOn launched with a simple idea: connect people who are struggling with people who have been through the same thing and found their way through. We built a listener verification and screening process, and a platform designed for Indian privacy constraints — text-first, OTP-only, 12 languages.</p>
           <p>Every decision we make is anchored in one question: does this make it easier for someone to feel genuinely heard? From our pricing to our anonymity features to our crisis protocols — that question guides everything.</p>
         </div>
 

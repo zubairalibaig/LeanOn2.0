@@ -64,6 +64,10 @@
   taglines and the screening quiz live in `lib/listener-onboarding.ts` (shared by
   form + API). Education level/field are public; everything in
   `listener_applications.screening` is admin-only.
+  Admin "Request Fix" with **New selfie** ticked archives the current selfie
+  (`archiveSelfie()`), forcing a retake; account deletion removes all selfies.
+  There is NO listener training programme — never claim listeners "complete
+  training"; they are screened (quiz + review).
   **Debugging selfie failures and the service-role-key dependency of the
   selfie path: `docs/SELFIE_STORAGE.md`** — rotating `SUPABASE_SERVICE_ROLE_KEY`
   without first pinning `SELFIE_PATH_SECRET` orphans every stored selfie.

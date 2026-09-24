@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { selfieSignedUrls } from '@/lib/selfie-storage'
+import { selfieSignedUrls, archiveSelfie } from '@/lib/selfie-storage'
 import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
 import { requireAdmin, dbUserIdOrNull , ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS } from '@/lib/require-admin'
@@ -335,7 +335,7 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 
-  let body: { userId?: string; action?: string; notes?: string; name?: string; account_holder_name?: string; bank_account?: string; ifsc_code?: string; upi_id?: string }
+  let body: { userId?: string; action?: string; notes?: string; name?: string; account_holder_name?: string; bank_account?: string; ifsc_code?: string; upi_id?: string; retake_selfie?: boolean }
   try {
     body = await req.json()
   } catch {
@@ -343,6 +343,7 @@ export async function PATCH(req: NextRequest) {
   }
 
   const { userId, action, notes, name } = body
+  const retakeSelfie = body?.retake_selfie === true
   if (!userId || !UUID_RE.test(userId)) return NextResponse.json({ error: 'Invalid userId' }, { status: 400 })
 
   const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'suspend_listener', 'unsuspend_listener', 'approve_listener', 'reject_listener', 'request_resubmission', 'approve_selfie', 'reject_selfie', 'rename', 'update_bank_details']
@@ -463,11 +464,25 @@ export async function PATCH(req: NextRequest) {
           logger.error('request_resubmission: listener_profiles update failed', { userId, error: lpErr.message })
           return NextResponse.json({ error: `Failed to update listener: ${lpErr.message}` }, { status: 500 })
         }
+        // Identity/photo concern: move the current verification selfie aside so
+        // the resubmission can't reuse it — the applicant must take a new one.
+        if (retakeSelfie) {
+          const { error: archErr } = await archiveSelfie(sb, userId)
+          if (archErr) {
+            logger.error('request_resubmission: selfie archive failed', { userId, error: archErr })
+            return NextResponse.json({ error: `Could not reset the selfie: ${archErr}` }, { status: 500 })
+          }
+        }
         // Upsert (not UPDATE) handles legacy profiles with no application row.
         // Always write admin_notes (even to null) so stale rejection notes
         // never persist alongside a new resubmission request.
         const { error: laErr } = await sb.from('listener_applications')
-          .upsert({ user_id: userId, status: 'needs_resubmission', admin_notes: notes || null }, { onConflict: 'user_id' })
+          .upsert({
+            user_id: userId,
+            status: 'needs_resubmission',
+            // Shown on the applicant's form, so the retake requirement is visible there too.
+            admin_notes: [notes?.trim().replace(/([^.!?])$/, '$1.'), retakeSelfie ? 'Please also take a new verification selfie.' : ''].filter(Boolean).join(' ') || null,
+          }, { onConflict: 'user_id' })
         if (laErr) {
           logger.warn('request_resubmission: listener_applications upsert failed', { userId, error: laErr.message })
         }
@@ -475,9 +490,10 @@ export async function PATCH(req: NextRequest) {
           user_id: userId,
           type: 'verification_update',
           title: 'Action needed on your application',
-          body: notes
+          body: (notes
             ? `Please fix the following and resubmit your application: ${notes}`
-            : 'Your listener application needs a correction. Please review the feedback and resubmit.',
+            : 'Your listener application needs a correction. Please review the feedback and resubmit.')
+            + (retakeSelfie ? ' You will also need to take a new verification selfie.' : ''),
           action_url: '/become-listener/status',
         }).then(() => {}, () => {})
         break
@@ -531,7 +547,7 @@ export async function PATCH(req: NextRequest) {
           logger.error('reject_selfie: listener_profiles update failed', { userId, error: lpErr.message })
           return NextResponse.json({ error: `Failed to reject selfie: ${lpErr.message}` }, { status: 500 })
         }
-        const selfieNotes = notes || 'Your profile photo was not approved. Please upload a clear, well-lit selfie and resubmit.'
+        const selfieNotes = notes || 'Your display photo was not approved. Please upload a clear, well-lit photo of your face and resubmit.'
         const { error: laErr } = await sb.from('listener_applications')
           .upsert({ user_id: userId, status: 'needs_resubmission', admin_notes: selfieNotes }, { onConflict: 'user_id' })
         if (laErr) {

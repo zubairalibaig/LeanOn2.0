@@ -85,7 +85,7 @@ export default function IsLeanOnSafePage() {
         <div className="card">
           <h2>Our listener verification process</h2>
           <p>Every listener on LeanOn is a real person who has applied, shared their lived experience, and been approved by our team. We check for empathy, genuine experience, and adherence to our Code of Conduct. Listeners who violate our terms are removed immediately.</p>
-          <p>All listeners complete a 4-module training program covering active listening, boundary-setting, crisis recognition, and our referral protocols before going live on the platform.</p>
+          <p>Before going live, every applicant verifies their identity with a private camera selfie and answers screening questions on active listening, boundaries, crisis referral and our Code of Conduct. Their answers are reviewed alongside the rest of their application.</p>
         </div>
 
         <div className="crisis-box">

@@ -21,6 +21,12 @@ step 1 "Verification selfie").
 4. `/api/listener/apply` refuses the application until a selfie exists at that path.
 5. Admin sees it through a signed URL that expires after 10 minutes.
 
+**"Request Fix" with "New selfie" ticked** (admin) moves the current selfie to
+`verifications/selfies-archive/<userId>-<hash>-<timestamp>` (kept for audit, not
+deleted). The applicant then has no selfie on file and must take a new one before
+resubmitting. **Account deletion** removes the live selfie and all archived ones
+(`removeAllSelfies()`).
+
 If the `verifications` bucket doesn't exist, the route **creates it as private**
 and retries once. You'll see `created missing private bucket` in the logs.
 

@@ -685,8 +685,8 @@ export default function BecomeListenerPage() {
         <div className="identity-section">
           <h2>Your identity on LeanOn</h2>
           {[
-            ['👤', 'Seekers see: your real first name, your selfie photo, your bio, and your listed topics.'],
-            ['🔒', 'LeanOn sees (kept private): your Aadhaar number, your bank/UPI details, and your selfie for identity verification.'],
+            ['👤', 'Seekers see: your real first name, your approved display photo, your bio, your education and your listed topics.'],
+            ['🔒', 'Only LeanOn sees (kept private): your Aadhaar number, your bank/UPI details, your screening answers, and your camera selfie, which is used only to verify your identity and is never shown to seekers.'],
             ['📋', 'You cannot use a fake name, avatar, or stock photo. Every profile is reviewed before going live.'],
           ].map(([icon, text], i) => (
             <div key={i} className="landing-row"><span className="landing-icon">{icon}</span><span>{text}</span></div>
@@ -817,11 +817,11 @@ export default function BecomeListenerPage() {
 
         {step === 1 && (
           <div className="hero-card">
-            <h1>Earn by listening 🎧</h1>
-            <p>You set your price, and you keep {Math.round((1 - LISTENER_SERVICE_FEE_RATE) * 100)}% of your rate on every paid session. LeanOn&apos;s {Math.round(LISTENER_SERVICE_FEE_RATE * 100)}% service fee supports the work of bringing seekers to LeanOn, secure payments, verification, safety and support — so you can focus on listening.</p>
+            <h1>Apply to be a LeanOn listener 🎧</h1>
+            <p>Three short steps: your public profile, your background, then payment details. Every application is reviewed before anyone goes live.</p>
+            <p style={{marginTop:10}}><strong>How payment works:</strong> you earn when seekers book paid sessions with you. You set your own rate and keep {Math.round((1 - LISTENER_SERVICE_FEE_RATE) * 100)}% of it on every paid session. LeanOn&apos;s {Math.round(LISTENER_SERVICE_FEE_RATE * 100)}% service fee supports the work of bringing seekers to LeanOn, secure payments, verification, safety and support — so you can focus on listening.</p>
             <div className="earn-row">
               <div className="earn-item"><div className="amount">₹{MIN_LISTENER_RATE}+</div><div className="label">per minute (you choose)</div></div>
-              <div className="earn-item"><div className="amount">₹9K+</div><div className="label">per month possible</div></div>
               <div className="earn-item"><div className="amount">{Math.round((1 - LISTENER_SERVICE_FEE_RATE) * 100)}%</div><div className="label">of your rate you keep on paid sessions</div></div>
             </div>
             {SHOW_LISTENER_GROWTH_NOTICE && (
@@ -895,7 +895,7 @@ export default function BecomeListenerPage() {
               </div>
             )}
 
-            <label className="lbl">About me (30–400 characters — shown on your profile)</label>
+            <label className="lbl">About me as a listener <span style={{fontWeight:500,color:'var(--gray)'}}>— how would you describe yourself to someone who needs to talk? (30–400 characters, shown on your profile)</span></label>
             <textarea
               className={`input${fieldErrors.bio ? ' err' : ''}`}
               placeholder="e.g. I'm a patient listener who lets you go at your own pace. I won't judge or rush to give advice — I'll help you make sense of what you're feeling."
@@ -984,7 +984,7 @@ export default function BecomeListenerPage() {
               })}
             </div>
 
-            <label className="lbl" style={{marginTop:14}}>What I&apos;ve been through <span style={{fontWeight:500,color:'var(--gray)'}}>— shown on your profile ({LIVED_MIN_CHARS}–{LIVED_MAX_CHARS} characters)</span></label>
+            <label className="lbl" style={{marginTop:14}}>What I&apos;ve been through <span style={{fontWeight:500,color:'var(--gray)'}}>— experiences that help you understand people (shown on your profile, {LIVED_MIN_CHARS}–{LIVED_MAX_CHARS} characters)</span></label>
             <textarea
               className={`input${fieldErrors.lived ? ' err' : ''}`}
               placeholder="e.g. I moved to a new city alone at 22 and spent two years feeling invisible. I know how heavy loneliness gets, and how small steps helped me through it."
@@ -1013,14 +1013,14 @@ export default function BecomeListenerPage() {
             </div>
 
             <div className="training-box" style={{marginBottom:20}}>
-              <h3>📚 Training requirements</h3>
+              <h3>📋 What we expect from every listener</h3>
               <ul>
-                <li>All listeners complete our 4-module empathy training program before going live</li>
-                <li>Module 1: Active listening & emotional reflection</li>
-                <li>Module 2: Boundary-setting & self-care</li>
-                <li>Module 3: Crisis recognition & referral protocols</li>
-                <li>Module 4: LeanOn code of conduct</li>
+                <li>Listen actively and reflect back what you hear. Don&apos;t lecture or fix.</li>
+                <li>Keep boundaries: no off-platform contact, no flirting, and end sessions on time.</li>
+                <li>If a seeker mentions self-harm or suicide, share NIMHANS (080-46110007) or Tele-MANAS (14416) and encourage them to call.</li>
+                <li>Follow LeanOn&apos;s code of conduct. Never give medical or clinical advice.</li>
               </ul>
+              <p style={{fontSize:12,marginTop:8,opacity:0.85}}>The screening questions in the next step check these.</p>
             </div>
 
             <button className="btn" onClick={tryNextFromStep1} disabled={avatarUploading || selfieProcessing || selfieUploading}>

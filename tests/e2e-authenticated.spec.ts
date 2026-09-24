@@ -25,6 +25,7 @@
 
 import { test, expect, Page, BrowserContext } from '@playwright/test'
 import { createClient } from '@supabase/supabase-js'
+import { TAGLINE_PHRASES, TIME_SLOTS, PRIOR_EXPERIENCE, SCREENING_QUIZ, labelOf } from '../lib/listener-onboarding'
 
 const SEEKER_PHONE   = process.env.TEST_SEEKER_PHONE   ?? ''
 const SEEKER_OTP     = process.env.TEST_SEEKER_OTP     ?? ''
@@ -110,6 +111,109 @@ test.describe('Seeker: login survives navigation (middleware regression)', () =>
     // ₹200 appears in both the empty-wallet quick-buttons and the recharge
     // presets, so scope to the first match to avoid a strict-mode violation.
     await expect(page.getByText('₹200', { exact: true }).first()).toBeVisible({ timeout: 15_000 })
+  })
+})
+
+// ────────────────────────────────────────────────────────────────────────
+// The real /become-listener UI, clicked through like an applicant: intent
+// screen → step 1 (display photo from "gallery", live camera selfie, taglines,
+// lived experience, topics) → step 2 (education, screening, quiz) → step 3
+// (age, rate, bank, Aadhaar) → submit → status page. The API-level lifecycle
+// test below bypasses this form, so this is the one that catches a broken
+// button or validation in the form itself. Chromium's fake camera feeds the
+// selfie step.
+test.describe('Listener: 3-step application form in a real browser', () => {
+  test.skip(!LISTENER_PHONE || !LISTENER_OTP, 'TEST_LISTENER_PHONE / TEST_LISTENER_OTP not set')
+  test.use({
+    permissions: ['camera'],
+    launchOptions: { args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'] },
+  })
+  test.setTimeout(180_000)
+
+  test('fills and submits every step', async ({ page, context, browserName }) => {
+    test.skip(browserName !== 'chromium', 'fake camera flags are Chromium-only')
+    await login(page, LISTENER_PHONE, LISTENER_OTP, { listenerMode: true })
+    const userId = await authUserId(context)
+
+    // A previous run leaves this test user with a pending/approved application,
+    // which the form (rightly) refuses to reopen. Send it back to "needs fix"
+    // WITH "new selfie required", so the run also proves the selfie reset works.
+    if (ADMIN_PASSWORD) {
+      const reset = await page.request.patch('/api/admin/users', {
+        headers: { 'x-admin-password': ADMIN_PASSWORD },
+        data: { userId, action: 'request_resubmission', notes: 'E2E form test', retake_selfie: true },
+      })
+      expect(reset.ok(), `reset failed: ${await reset.text()}`).toBeTruthy()
+    }
+
+    await page.goto('/become-listener')
+    const agree = page.getByRole('checkbox')
+    // isVisible() doesn't wait — the intent screen renders after an auth check.
+    if (await agree.waitFor({ timeout: 15_000 }).then(() => true, () => false)) {
+      await agree.click()
+      await page.getByRole('button', { name: /I agree/ }).click()
+    }
+    await expect(page.locator('.section-title', { hasText: 'About you' })).toBeVisible({ timeout: 20_000 })
+
+    // Chips are toggles and a resubmission pre-fills them — set, don't flip.
+    const chip = (label: string) => page.getByRole('button', { name: label, exact: true })
+    const setChip = async (label: string, on: boolean) => {
+      const isOn = /\bsel\b/.test((await chip(label).getAttribute('class')) ?? '')
+      if (isOn !== on) await chip(label).click()
+    }
+
+    // ── Step 1 ──
+    await page.getByPlaceholder('Your full name').fill('Test Listener') // form allows letters only
+    await page.locator('textarea').first().fill('Automated end-to-end test listener profile, here to listen with care.')
+    const jpeg = await page.evaluate(() => {
+      const c = document.createElement('canvas'); c.width = c.height = 400
+      const x = c.getContext('2d')!; x.fillStyle = '#88aabb'; x.fillRect(0, 0, 400, 400)
+      return c.toDataURL('image/jpeg', 0.9).split(',')[1]
+    })
+    await page.locator('input[type=file]').setInputFiles({ name: 'me.jpg', mimeType: 'image/jpeg', buffer: Buffer.from(jpeg, 'base64') })
+    await expect(page.getByAltText('Your display photo')).toBeVisible()
+
+    await page.getByRole('button', { name: /Take a selfie|Retake selfie/ }).click()
+    await page.getByRole('button', { name: /Take Photo/ }).click({ timeout: 20_000 })
+    await expect(page.getByText('Selfie saved privately')).toBeVisible({ timeout: 30_000 })
+
+    for (const p of TAGLINE_PHRASES) if (!ONBOARDING.tagline_phrases.includes(p)) await setChip(p, false)
+    for (const p of ONBOARDING.tagline_phrases) await setChip(p, true)
+    await page.getByPlaceholder(/I moved to a new city/).fill(ONBOARDING.lived_experience)
+    await setChip('Loneliness 🌙', true)
+    await page.getByRole('button', { name: /Next: Your background/ }).click()
+
+    // ── Step 2 ──
+    await expect(page.locator('.section-title', { hasText: 'Your background' })).toBeVisible({ timeout: 30_000 })
+    const selects = page.locator('select')
+    await selects.nth(0).selectOption(ONBOARDING.education_level)
+    await selects.nth(1).selectOption(ONBOARDING.education_field)
+    await selects.nth(2).selectOption(ONBOARDING.occupation)
+    await selects.nth(3).selectOption(ONBOARDING.state)
+    await selects.nth(4).selectOption(ONBOARDING.hours_per_week)
+    await setChip(labelOf(TIME_SLOTS, 'evening'), true)
+    await setChip(labelOf(PRIOR_EXPERIENCE, 'informal'), true)
+    await page.getByPlaceholder(/what draws you/).fill(ONBOARDING.why)
+    await selects.nth(5).selectOption(ONBOARDING.heard_from)
+    for (const q of SCREENING_QUIZ) await page.locator(`input[name="quiz-${q.id}"]`).nth(q.correct).check()
+    await page.getByRole('button', { name: /Next: Rate/ }).click()
+
+    // ── Step 3 ──
+    await expect(page.locator('.section-title', { hasText: 'Rate & payment details' })).toBeVisible()
+    await page.getByLabel('Birth month').selectOption('6')
+    await page.getByLabel('Birth year').selectOption(String(new Date().getFullYear() - 30))
+    const textRate = page.getByLabel('Text chat rate per minute')
+    if (await textRate.count()) await textRate.fill('10')
+    else await page.locator('input.rate-input').fill('10')
+    await page.getByPlaceholder('Full name exactly as on your bank account').fill('Test Listener')
+    await page.getByPlaceholder('Enter account number').fill('123456789012')
+    await page.getByPlaceholder('e.g. SBIN0001234').fill('HDFC0001234')
+    await page.getByPlaceholder('12-digit Aadhaar').fill('234567890124')
+    await page.getByRole('button', { name: /Submit application/ }).click()
+
+    // Success screen or the status page — either proves the server accepted it.
+    await expect(page.getByText(/submitted|under review|pending/i).first()).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.error-box')).toHaveCount(0)
   })
 })
 

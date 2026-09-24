@@ -38,7 +38,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Do I need a degree or certification to become a listener on LeanOn?',
-      acceptedAnswer: { '@type': 'Answer', text: 'No degree or certification is required. What matters is lived experience — you should have personally navigated what your future seekers are going through (loneliness, burnout, anxiety, grief, relationship stress, etc.). You will complete LeanOn\'s own active listening training. This is peer support, not therapy — your qualification is your story.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'No degree or certification is required. What matters is lived experience — you should have personally navigated what your future seekers are going through (loneliness, burnout, anxiety, grief, relationship stress, etc.). You will answer screening questions on active listening, boundaries and crisis referral as part of your application. This is peer support, not therapy — your qualification is your story.' },
     },
     {
       '@type': 'Question',
@@ -190,8 +190,8 @@ export default function EarnByListeningPage() {
             <div className="step">
               <div className="step-num">2</div>
               <div className="step-content">
-                <h3>Complete Active Listening Training</h3>
-                <p>Approved applicants complete LeanOn&apos;s training before going live. This is what separates peer listeners from well-meaning amateurs.</p>
+                <h3>Screening &amp; identity check</h3>
+                <p>Every applicant answers screening questions on active listening, boundaries and crisis referral, and verifies their identity with a private selfie. Each application is reviewed before anyone goes live.</p>
               </div>
             </div>
             <div className="step">

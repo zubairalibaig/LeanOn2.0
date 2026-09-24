@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
+import { removeAllSelfies } from '@/lib/selfie-storage'
 
 // PATCH — deactivate listener profile only (keeps user account active)
 export async function PATCH() {
@@ -106,6 +107,20 @@ async function scrubUserData(admin: ReturnType<typeof createAdminClient>, userId
   await admin.from('listener_applications').update({ aadhaar: null } as Record<string, null>)
     .eq('user_id', userId)
     .then(() => {}, () => {})
+
+  // Private screening answers + public onboarding text (migration 060). Separate
+  // best-effort updates so a missing column never blocks the rest of the scrub.
+  await admin.from('listener_applications').update({ screening: null } as Record<string, null>)
+    .eq('user_id', userId)
+    .then(() => {}, () => {})
+  await admin.from('listener_profiles').update({ lived_experience: null, tagline_phrases: [] })
+    .eq('user_id', userId)
+    .then(() => {}, () => {})
+
+  // Private verification selfie (live + any archived by "request a new selfie").
+  // Its path is derived, not stored in a column, so it isn't in the URL list below.
+  await removeAllSelfies(admin, userId).catch(err =>
+    logger.error('scrubUserData: selfie removal failed', { userId, error: err instanceof Error ? err.message : String(err) }))
 
   // 4. Scrub listener_verifications — fetch storage URLs first, then delete rows
   const { data: verRows } = await admin.from('listener_verifications')

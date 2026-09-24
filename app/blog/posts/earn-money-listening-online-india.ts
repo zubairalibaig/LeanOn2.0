@@ -60,7 +60,7 @@ export const post = {
 <ol>
 <li><strong>Apply</strong> — share your lived experience, the topics you are qualified to support, and why you want to do this work. Be specific and honest. Generic applications do not pass.</li>
 <li><strong>Review</strong> — the LeanOn team reviews your application, typically within a few days.</li>
-<li><strong>Training</strong> — approved applicants complete LeanOn&apos;s active listening training before going live. This is not optional and it is not cosmetic — it is what separates peer listeners from well-meaning amateurs.</li>
+<li><strong>Screening</strong> — every applicant answers questions on active listening, boundaries and crisis referral, and verifies their identity with a private selfie. This is not optional and it is not cosmetic — it is what separates peer listeners from well-meaning amateurs.</li>
 <li><strong>Go live</strong> — set your rate, fill in your profile, set your availability, and start taking sessions.</li>
 </ol>
 

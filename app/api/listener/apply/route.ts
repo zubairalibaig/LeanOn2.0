@@ -111,6 +111,22 @@ export async function POST(req: NextRequest) {
     if (!selfieOnFile)
       return NextResponse.json({ error: 'Please take your verification selfie before submitting.' }, { status: 400 })
 
+    // Read + gate BEFORE any write, so a blocked applicant never modifies their
+    // profile. The service role bypasses the migration-031 status guard, so
+    // enforce the same rule here: only a missing or needs_resubmission
+    // application may (re)enter 'pending'; any other existing status is kept.
+    const { data: existingApp } = await admin
+      .from('listener_applications')
+      .select('status')
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    // Permanently rejected applicants are blocked server-side — the UI also
+    // blocks them, but a crafted direct POST would otherwise bypass it.
+    if (existingApp?.status === 'rejected') {
+      return NextResponse.json({ error: 'Your application has been permanently closed. Please contact support if you believe this is an error.' }, { status: 403 })
+    }
+
     // 1. users row first — listener_profiles/applications FK to users(id)
     const { error: userErr, debug: userDebug } = await ensureUserRow(admin, {
       id: user.id,
@@ -175,22 +191,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Could not save your listener profile.' }, { status: 500 })
     }
 
-    // 3. application — the service role bypasses the migration-031 status
-    //    guard, so enforce the same rule here: only a missing, rejected, or
-    //    needs_resubmission application may (re)enter 'pending'; any other
-    //    existing status is preserved.
-    const { data: existingApp } = await admin
-      .from('listener_applications')
-      .select('status')
-      .eq('user_id', user.id)
-      .maybeSingle()
-
-    // Permanently rejected applicants are blocked server-side — the UI also
-    // blocks them, but a crafted direct POST would otherwise bypass it.
-    if (existingApp?.status === 'rejected') {
-      return NextResponse.json({ error: 'Your application has been permanently closed. Please contact support if you believe this is an error.' }, { status: 403 })
-    }
-
+    // 3. application — see the status rule where existingApp is read above.
     const status = !existingApp || existingApp.status === 'needs_resubmission'
       ? 'pending'
       : existingApp.status
@@ -256,23 +257,23 @@ export async function POST(req: NextRequest) {
       .select('is_approved').eq('user_id', user.id).maybeSingle()
 
     if (lpForAvatar?.is_approved) {
-      // Approved listener resubmitting — queue selfie for admin approval, don't go live immediately.
+      // Approved listener resubmitting — queue the display photo for admin approval, don't go live immediately.
       // Never fall back to writing avatar_url directly: that would bypass the review mechanism
       // and publish an unreviewed photo. If pending_avatar_url doesn't exist in the live DB
       // (pre-migration), fail hard so the issue is surfaced rather than silently bypassed.
-      // Queue selfie for review + take offline until approved.
+      // Queue the photo for review + take offline until approved.
       const { error: pendingErr } = await admin.from('listener_profiles')
         .update({ pending_avatar_url: avatarUrl, is_available: false })
         .eq('user_id', user.id)
       if (pendingErr) {
         logger.error('listener apply: pending_avatar_url write failed', { userId: user.id, error: pendingErr.message, code: pendingErr.code })
-        return NextResponse.json({ error: 'Could not save your selfie for review. Please try again.' }, { status: 500 })
+        return NextResponse.json({ error: 'Could not save your display photo for review. Please try again.' }, { status: 500 })
       }
     } else {
       const { error: avatarErr } = await admin.from('users').update({ avatar_url: avatarUrl }).eq('id', user.id)
       if (avatarErr) {
         logger.error('listener apply: avatar_url save failed', { userId: user.id, error: avatarErr.message })
-        return NextResponse.json({ error: 'Could not save your selfie. Please try again.' }, { status: 500 })
+        return NextResponse.json({ error: 'Could not save your display photo. Please try again.' }, { status: 500 })
       }
     }
 
