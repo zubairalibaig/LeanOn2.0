@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Is it normal to feel lonely even if I have Indian friends abroad?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Having Indian friends abroad does not eliminate NRI loneliness. The loneliness is often about the absence of people who knew you before — who have history with you, who don\'t need context. It can coexist with a social life.' } },
   { '@type': 'Question', name: 'My parents think I have everything — will you judge me for being lonely?', acceptedAnswer: { '@type': 'Answer', text: 'No judgment. Peer listeners understand that having a good life abroad and feeling lonely are not incompatible. The feeling does not need to be earned by suffering. It just is, and it deserves to be heard.' } },
   { '@type': 'Question', name: 'Is the session private from my family?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are private — phone number and first name only. Nothing is shared with your family, your community, or anyone else.' } },
-  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes are free. Sessions continue from ₹160 for 15 minutes. No subscription, no commitment.' } },
+  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes are free. Sessions continue from US$10 for 15 minutes. No subscription, no commitment.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -99,7 +99,7 @@ export default function IndiansLonelyAbroadPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>The loneliness that doesn&rsquo;t need to be earned by suffering.</h2><p>Real peer listener. No judgment. Already understands the immigrant weight. First 5 minutes free, from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>The loneliness that doesn&rsquo;t need to be earned by suffering.</h2><p>Real peer listener. No judgment. Already understands the immigrant weight. First 5 minutes free, from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>
           <a href="/nri-loneliness-uk">NRI loneliness UK &rarr;</a>

@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do LeanOn listeners understand Midwest Indian isolation?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners are based in India and trained to understand the NRI experience, including the specific weight of being Indian in a smaller Midwestern city — fewer Indians around you, less cultural infrastructure, the physical distance from the coasts where larger Indian communities live, and the particular loneliness that comes with being one of very few Indians in a predominantly white environment.' } },
   { '@type': 'Question', name: 'What time zone does Columbus use for connecting?', acceptedAnswer: { '@type': 'Answer', text: 'Columbus (EST) is 10.5 hours behind IST. 8am Columbus = 6:30pm India. Before your morning commute or your OSU class, Indian listeners are available in their evening.' } },
   { '@type': 'Question', name: 'Is this private from OSU or my workplace?', acceptedAnswer: { '@type': 'Answer', text: 'Completely private. LeanOn uses phone number and first name only. Nothing is shared with Ohio State University, your employer, your Columbus community, or anyone else.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription required.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription required.' } },
   { '@type': 'Question', name: 'I\'m an OSU student feeling isolated. Is LeanOn right for me?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Many LeanOn users are Indian students at American universities who feel the gap between their Indian identity and their American student life acutely. Listeners understand the student experience — the homesickness, the academic pressure, the social awkwardness of being one of few Indians in your department or dorm.' } },
 ] }
 
@@ -91,7 +91,7 @@ export default function IndiansInColumbusPage() {
           <h2>The Midwest Indian Experience: Everything You Don&rsquo;t Say</h2>
           <p>The Indian OSU student in year two of their PhD, calling home on Sunday, telling their parents everything is fine. The Indian medical resident at Wexner who is technically excellent and emotionally depleted. The Indian software engineer in Dublin who has been in Columbus for four years, has Indian colleagues and an Indian neighbour, and still has no one they can actually talk to.</p>
           <p>The specific burden of Midwest Indian life is the absence of a critical mass of people who understand you without effort. In New Jersey or Fremont, you can find a dozen Indians in your exact situation without trying. In Columbus, you are sometimes the only Indian in the room — and when you&rsquo;re not, the social dynamics of the smaller community mean everyone knows everyone, which means the same privacy constraints as back in India.</p>
-          <p>Columbus (EST) is 10.5 hours behind IST. 8am Columbus = 6:30pm India — before your morning lecture or your hospital round, Indian listeners are available. Talk to someone who gets the Midwest Indian experience. From ₹160.</p>
+          <p>Columbus (EST) is 10.5 hours behind IST. 8am Columbus = 6:30pm India — before your morning lecture or your hospital round, Indian listeners are available. Talk to someone who gets the Midwest Indian experience. From US$10.</p>
         </div>
 
         <div className="section">
@@ -101,7 +101,7 @@ export default function IndiansInColumbusPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Buckeye State, but still needing to talk.</h2><p>Real Indian peer listener. Understands the Midwest Indian experience. Anonymous. First 5 minutes free. From ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Buckeye State, but still needing to talk.</h2><p>Real Indian peer listener. Understands the Midwest Indian experience. Anonymous. First 5 minutes free. From US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-support">NRI support &rarr;</a>
           <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>

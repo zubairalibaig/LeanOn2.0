@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Are all listeners fluent in Hindi?', acceptedAnswer: { '@type': 'Answer', text: 'Most are. Hindi is the primary language of many listeners. When booking, you can note your language preference and your listener will communicate with you in Hindi.' } },
   { '@type': 'Question', name: 'Can I mix Hindi and English (Hinglish)?', acceptedAnswer: { '@type': 'Answer', text: 'Of course. Listeners are completely comfortable with Hinglish — most conversations naturally mix both. Say what feels natural. There is no pressure to stay in one language.' } },
   { '@type': 'Question', name: 'I\'m abroad — is this available for me?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn works globally. Listeners are India-based but serve anyone with a phone number, wherever you are — UK, USA, Canada, UAE, Australia, or anywhere else Indians live and work.' } },
-  { '@type': 'Question', name: 'Is it free?', acceptedAnswer: { '@type': 'Answer', text: 'The first 5 minutes of every session are completely free. If the connection feels right, paid sessions start from ₹160 for 15 minutes. No subscription, no commitment.' } },
+  { '@type': 'Question', name: 'Is it free?', acceptedAnswer: { '@type': 'Answer', text: 'Your first 5-minute session is free. If the connection feels right, paid sessions start from ₹160 for 15 minutes. No subscription, no commitment.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [

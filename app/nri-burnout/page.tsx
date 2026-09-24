@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'I secretly wish I could go back to India. Is that normal?', acceptedAnswer: { '@type': 'Answer', text: 'Yes, and it is more common than people admit. The return fantasy — wanting to undo the move, to reclaim the life you had before — is something many NRIs carry quietly because it feels ungrateful or like a failure. Listeners understand it completely. It is not weakness. It is a human response to long-term displacement.' } },
   { '@type': 'Question', name: 'I feel guilty because my life is objectively good. Am I wrong to feel burnt out?', acceptedAnswer: { '@type': 'Answer', text: 'No. The privilege guilt that comes with NRI burnout is real and it makes the burnout harder to address, but it does not make the burnout less real. You can have a good life and still be depleted. The two are not incompatible.' } },
   { '@type': 'Question', name: 'Is this confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Your family, your employer, and your community will never know.' } },
-  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription or commitment.' } },
+  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription or commitment.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -101,7 +101,7 @@ export default function NriBurnoutPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>The dream that stopped feeling like one.</h2><p>Real peer listener. No judgment. No productivity tips. First 5 minutes free. Sessions from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>The dream that stopped feeling like one.</h2><p>Real peer listener. No judgment. No productivity tips. First 5 minutes free. Sessions from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-workplace-stress">NRI workplace stress &rarr;</a>
           <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>

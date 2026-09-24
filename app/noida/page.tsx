@@ -183,22 +183,6 @@ export default function NoidaPage() {
           </ul>
         </div>
 
-        <h2 style={{fontSize:'20px',fontWeight:800,color:'var(--navy)',marginBottom:'16px'}}>Peer Listeners from Noida</h2>
-        <div className="listeners-grid">
-          {[
-            { emoji: '💻', name: 'Arjun', tag: 'IT Burnout', bio: 'Spent 5 years in the IT sector in Noida. Know what it feels like when the work is all there is and it stops feeling like enough.' },
-            { emoji: '🌆', name: 'Priya', tag: 'Relocation Loneliness', bio: 'Moved to Noida from Lucknow at 24. Three years of high-rise living taught me the difference between being surrounded and being alone.' },
-            { emoji: '🚇', name: 'Rahul', tag: 'Work-Life Pressure', bio: 'NCR commuter, corporate sector. The grind is real. Happy to listen when you need someone who has been in it.' },
-          ].map((l, i) => (
-            <div key={i} className="listener-card">
-              <div className="listener-avatar">{l.emoji}</div>
-              <div className="listener-name">{l.name}</div>
-              <div className="listener-tag">{l.tag}</div>
-              <p className="listener-bio">{l.bio}</p>
-            </div>
-          ))}
-        </div>
-
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Gets Noida?</h2>
           <p>Browse peer listeners who understand NCR life. No appointments, no waitlists, available right now.</p>

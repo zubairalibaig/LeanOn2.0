@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand the Texas Indian experience?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are based in India and understand the NRI experience in American metros including the Texas corridor — Houston\'s energy sector, Dallas tech, Austin startups. You don\'t need to explain the context.' } },
   { '@type': 'Question', name: 'What time works to connect from Texas?', acceptedAnswer: { '@type': 'Answer', text: 'Texas (CST/CDT) is 11–11.5 hours behind IST. 7am in Houston or Dallas = 6:30pm in India. Early Texas morning aligns well with Indian evenings when listeners are active.' } },
   { '@type': 'Question', name: 'Is my session completely confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are anonymous — only a phone number and first name required. Nothing leaves the session. Your community, employer, and family won\'t know.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription required.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription required.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -90,11 +90,11 @@ export default function IndiansInTexasPage() {
           <h2>Talking Across Time Zones: Texas to India</h2>
           <p>Texas (CST/CDT) sits 11 to 11.5 hours behind IST. This creates a natural bridge. Your 7am in Houston or Dallas is 6:30pm in India — a good evening window when Indian listeners are available and winding down their day. Even 6am Texas is comfortable India evening time.</p>
           <p>If you&rsquo;re in Austin working late in the startup grind, or sitting in your Frisco house after the kids are in bed, or driving home from the Houston Medical Center — India is awake and available. LeanOn listeners don&rsquo;t require appointments. Browse who is online and start a session when the moment feels right.</p>
-          <p>The sessions are text-based, anonymous, and fully private. No one in your Texas community, your workplace, or your family back home will know. The first 5 minutes of every session are free.</p>
+          <p>The sessions are text-based, anonymous, and fully private. No one in your Texas community, your workplace, or your family back home will know. Your first 5-minute session is free.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Texas-sized life. Real support behind it.</h2><p>Real Indian peer listener. Understands the Texas NRI experience. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Texas-sized life. Real support behind it.</h2><p>Real Indian peer listener. Understands the Texas NRI experience. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/indians-in-houston">Indians in Houston &rarr;</a>
           <a href="/indians-in-dallas">Indians in Dallas &rarr;</a>

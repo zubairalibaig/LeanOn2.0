@@ -43,7 +43,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'How much does it cost?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Sessions start at ₹160 for 15 minutes. The first 5 minutes of every session are free. There is no subscription, no recurring charge. You pay for what you use when you need it.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Sessions start at ₹160 for 15 minutes. Your first 5-minute session is free. There is no subscription, no recurring charge. You pay for what you use when you need it.' },
     },
     {
       '@type': 'Question',

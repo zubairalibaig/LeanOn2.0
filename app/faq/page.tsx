@@ -49,7 +49,7 @@ const faqs = [
       },
       {
         q: 'How does pricing work?',
-        a: 'LeanOn charges a flat fee per session. 15-minute sessions start at ₹160. Your first session with each new listener is free (5 minutes) — no credit card or wallet top-up needed.',
+        a: 'LeanOn charges a flat fee per session. 15-minute sessions start at ₹160. Your first session is free (5 minutes) — no credit card or wallet top-up needed.',
       },
       {
         q: 'Do I need to book in advance?',
@@ -66,7 +66,7 @@ const faqs = [
     items: [
       {
         q: 'How much does LeanOn cost?',
-        a: 'After your trial session, sessions cost ₹8–25 per minute depending on the listener. Sessions are billed in 15-minute slots. A 15-minute session costs ₹160 — ₹150 goes to your listener and ₹10 is the flat LeanOn platform fee. A 30-minute session costs ₹310.',
+        a: 'Your first 5-minute session is free. After that, in India you pay the listener\'s own per-minute rate for 15, 30 or 45 minutes, plus a flat ₹10 platform fee — for example, 15 minutes with a ₹10/min listener costs ₹160 and 30 minutes costs ₹310. Voice calls are ₹5/min more than text. Outside India, sessions are a flat US$10 for 15 minutes, US$15 for 30 and US$20 for 45. Full details: leanon.app/pricing.',
       },
       {
         q: 'How does the wallet work?',

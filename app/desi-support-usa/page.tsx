@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Can I talk in Hindi?', acceptedAnswer: { '@type': 'Answer', text: 'Yes, many listeners are fluent in Hindi. Mention this when booking and your listener will speak Hindi or Hinglish — whichever feels natural.' } },
   { '@type': 'Question', name: 'Is it really anonymous?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sign up with just a phone number. No name, no photo, no social login. Your community in Edison or Fremont never knows. Listeners sign confidentiality agreements.' } },
   { '@type': 'Question', name: 'What are good times to call from the USA?', acceptedAnswer: { '@type': 'Answer', text: 'Morning in the USA is evening in India. 7am–noon EST is 5:30pm–10:30pm IST — ideal for listener availability. New York/New Jersey: 8am EST = 6:30pm IST. Bay Area: 8am PST = 9:30pm IST. Houston: 8am CST = 7:30pm IST.' } },
-  { '@type': 'Question', name: 'What does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Sessions from ₹160 (about $2 USD) for 15 minutes. The first 5 minutes are free — if it doesn\'t feel right, you pay nothing. No subscription.' } },
+  { '@type': 'Question', name: 'What does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Sessions from US$10 for 15 minutes. The first 5 minutes are free — if it doesn\'t feel right, you pay nothing. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -95,7 +95,7 @@ export default function DesiSupportUsaPage() {
           <p>If you have a quiet early morning before the day starts, or a Sunday morning when the apartment is still and the thoughts get loud, listeners in India are very likely to be available. No appointment. Browse who is online and start a session.</p>
         </div>
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>You don&rsquo;t have to explain the desi context.</h2><p>A real Indian peer listener who already gets it. First 5 minutes free. From ₹160 (~$2 USD).</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>You don&rsquo;t have to explain the desi context.</h2><p>A real Indian peer listener who already gets it. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-support">NRI support &rarr;</a>
           <a href="/nri-mental-health">NRI mental health &rarr;</a>

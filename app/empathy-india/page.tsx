@@ -49,7 +49,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is LeanOn cheaper than a therapist?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Significantly. A private therapist in India typically charges ₹1,500–5,000 per session. LeanOn peer sessions start at ₹160 for 15 minutes, with the first 5 minutes of every session free. LeanOn is not therapy — listeners are trained peers, not licensed professionals — but for the everyday need to be heard without judgment, it is accessible, immediate, and effective.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Significantly. A private therapist in India typically charges ₹1,500–5,000 per session. LeanOn peer sessions start at ₹160 for 15 minutes, and your first 5-minute session is free. LeanOn is not therapy — listeners are trained peers, not licensed professionals — but for the everyday need to be heard without judgment, it is accessible, immediate, and effective.' },
     },
     {
       '@type': 'Question',
@@ -204,7 +204,7 @@ export default function EmpathyIndiaPage() {
 
         <div className="cta-card">
           <h2>Find an empathetic listener today.</h2>
-          <p>Real people, trained in empathy. From ₹160. First 5 minutes free on every session.</p>
+          <p>Real people, trained in empathy. From ₹160. First 5-minute session free.</p>
           <a href="/browse" className="btn-cta">Browse listeners &rarr;</a>
         </div>
 

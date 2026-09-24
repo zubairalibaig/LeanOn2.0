@@ -119,7 +119,7 @@ export default function LonelinessSupportOnlinePage() {
         </div>
         <div className="section">
           <h2>Available Right Now. No Reason Required.</h2>
-          <p>Browse listeners who are currently online. No appointment, no form, no assessment. Start a text session immediately. The first 5 minutes of every session are free &mdash; if it does not feel right, you stop and pay nothing. If it helps, continue for as long as you need.</p>
+          <p>Browse listeners who are currently online. No appointment, no form, no assessment. Start a text session immediately. Your first 5-minute session is free &mdash; if it does not feel right, you stop and pay nothing. If it helps, continue for as long as you need.</p>
           <p>Anonymous: you sign up with a phone number and first name only. Nothing is connected to your real identity. What you share stays between you and your listener.</p>
         </div>
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>

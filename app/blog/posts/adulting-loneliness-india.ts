@@ -58,7 +58,7 @@ export const post = {
 
 <p>LeanOn peer listeners are trained to do exactly this. They are not career coaches or therapists or advice-givers. They are people who will listen — without judgment, without agenda, without making it into a problem to be fixed.</p>
 
-<p>First 5 minutes are free. Sessions from ₹85. Anonymous.</p>
+<p>First 5 minutes are free. Sessions from ₹160. Anonymous.</p>
 
 <p>If you are carrying the weight of adulting in India and need somewhere to put it — even for one conversation — there is someone available.</p>
 `,

@@ -37,7 +37,7 @@ const serviceSchema = {
   },
   offers: {
     '@type': 'Offer',
-    description: 'First 5 minutes free. Sessions from ₹20/min in India, $10 for 15 min internationally.',
+    description: 'First 5 minutes free. Sessions from ₹160 for 15 minutes in India, US$10 for 15 minutes abroad.',
   },
 }
 
@@ -241,7 +241,7 @@ export default function TalkToRealPersonPage() {
             </div>
             <div className="compare-col human">
               <h3>💙 LeanOn Real Human</h3>
-              <p>First 5 min free, then from ₹20/min — real connection that actually helps</p>
+              <p>First 5 min free, then from ₹160 for 15 minutes — real connection that actually helps</p>
             </div>
           </div>
         </div>

@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Will my family find out I talked to someone?', acceptedAnswer: { '@type': 'Answer', text: 'No. Sessions are completely private. Only your phone number and first name are used. Nothing is shared with your family, your community, or anyone else.' } },
   { '@type': 'Question', name: 'What if I just need to vent without someone trying to fix me?', acceptedAnswer: { '@type': 'Answer', text: 'That is exactly what peer listeners do. They listen. They ask questions. They do not try to fix you or give you advice you didn\'t ask for. If you just need to say it out loud to someone who won\'t judge you, that is a complete and valid reason to talk.' } },
   { '@type': 'Question', name: 'How long is a session?', acceptedAnswer: { '@type': 'Answer', text: 'Sessions come in 15, 30, and 45-minute lengths after the free first 5 minutes. You can choose based on what you need.' } },
-  { '@type': 'Question', name: 'How much does NRI emotional support cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription, no commitment.' } },
+  { '@type': 'Question', name: 'How much does NRI emotional support cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription, no commitment.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -100,7 +100,7 @@ export default function NriEmotionalSupportPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>The weight you have been carrying quietly.</h2><p>Real peer listener. Understands NRI life. No judgment. First 5 minutes free, from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>The weight you have been carrying quietly.</h2><p>Real peer listener. Understands NRI life. No judgment. First 5 minutes free, from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-support">NRI support &rarr;</a>
           <a href="/nri-mental-health">NRI mental health &rarr;</a>

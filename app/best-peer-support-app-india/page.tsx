@@ -255,7 +255,7 @@ export default function BestPeerSupportAppIndiaPage() {
             <div className="diff-card">
               <div className="diff-icon">💰</div>
               <div className="diff-title">Pay per session</div>
-              <div className="diff-desc">₹160/session. No subscriptions, no membership fees, no auto-renewals. First 5 minutes of every session are free.</div>
+              <div className="diff-desc">₹160/session. No subscriptions, no membership fees, no auto-renewals. Your first 5-minute session is free.</div>
             </div>
           </div>
         </div>

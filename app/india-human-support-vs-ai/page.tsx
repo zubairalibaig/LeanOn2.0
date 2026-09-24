@@ -291,7 +291,7 @@ export default function IndiaHumanSupportVsAIPage() {
             experience of Indian life.
           </p>
           <p>
-            Sessions start at ₹20/min. Your first 5 minutes are completely free. Listeners speak
+            Sessions start at ₹160 for 15 minutes. Your first 5 minutes are completely free. Listeners speak
             Hindi and other regional languages — filter by language when browsing.
           </p>
         </div>

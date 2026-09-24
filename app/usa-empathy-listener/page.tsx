@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'What does a session cost from the USA?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first 5 minutes free — once per listener. No subscription required.',
+        text: 'Sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first 5-minute session free. No subscription required.',
       },
     },
     {

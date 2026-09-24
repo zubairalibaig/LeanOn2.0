@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand Indian life in Florida?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are based in India and understand the NRI experience — including the Florida Indian experience of being in a fast-growing but still-forming community, new arrivals still building connections, and the specific isolation that warm weather and suburban sprawl can create.' } },
   { '@type': 'Question', name: 'What time works to connect from Florida?', acceptedAnswer: { '@type': 'Answer', text: 'Florida (EST) is 10.5 hours behind IST. 8am Florida = 6:30pm India. Early Florida mornings before work align with Indian evenings — a reliable window for finding listeners online.' } },
   { '@type': 'Question', name: 'Is this confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are fully anonymous — phone number and first name only. Nothing is shared with your community, family, or employer.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -89,11 +89,11 @@ export default function IndiansInFloridaPage() {
         <div className="section">
           <h2>When Sunshine Doesn&rsquo;t Fix the Weight</h2>
           <p>Florida is supposed to be the good life — warm weather, lower taxes, outdoor living. For many Indians who have relocated from the Northeast or Midwest, it is genuinely better in many ways. And yet the immigrant weight doesn&rsquo;t leave when you arrive in a nicer climate. The family back in India still calls. The H-1B still depends on your employer. The identity questions are still there. Children still navigate between cultures.</p>
-          <p>Florida (EST) is 10.5 hours behind IST. 8am Florida is 6:30pm India. Early mornings before the Florida workday begins — even in the sunshine, even with the palm trees outside — are Indian evenings. A real listener is available, no appointment needed. Anonymous, private, first 5 minutes free — once per listener.</p>
+          <p>Florida (EST) is 10.5 hours behind IST. 8am Florida is 6:30pm India. Early mornings before the Florida workday begins — even in the sunshine, even with the palm trees outside — are Indian evenings. A real listener is available, no appointment needed. Anonymous, private, first 5-minute session free.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Sun and real support.</h2><p>Real Indian peer listener. Understands Florida NRI life. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Sun and real support.</h2><p>Real Indian peer listener. Understands Florida NRI life. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/desi-support-usa">Desi support USA &rarr;</a>
           <a href="/nri-support">NRI support &rarr;</a>

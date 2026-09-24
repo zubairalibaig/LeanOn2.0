@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand New York Indian life?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are based in India and understand the NRI experience — including the specific intensity of New York: the pace, the cost of living pressure, the isolation of a city of millions. You don\'t need to explain the context.' } },
   { '@type': 'Question', name: 'When can I connect from New York?', acceptedAnswer: { '@type': 'Answer', text: 'New York (EST) is 10.5 hours behind IST. 8am NYC = 6:30pm India. Your morning commute on the subway — Queens to Manhattan or anywhere — is Indian evening. No appointment needed.' } },
   { '@type': 'Question', name: 'Is this private from my community in Queens or New Jersey?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Listeners are in India with no connection to the NYC or NJ Indian network. Nothing is shared with anyone.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -89,11 +89,11 @@ export default function IndiansInNewYorkPage() {
         <div className="section">
           <h2>The New York Indian Experience: Real and Unspoken</h2>
           <p>New York draws Indian professionals in finance, technology, medicine, law, and the arts. Each carries a particular weight. The finance professional in Midtown who earns extraordinarily but works hours that leave no room for a life. The doctor doing a residency at a Manhattan hospital, 80-hour weeks, far from family. The tech worker in a Brooklyn apartment who moved from the Bay Area and is still figuring out what New York means to them.</p>
-          <p>New York (EST) is 10.5 hours behind IST. 8am NYC is 6:30pm India. Your morning — whether you&rsquo;re on the 7 train from Jackson Heights or walking over the Queensboro Bridge — is India&rsquo;s evening. A real Indian listener is available, without an appointment, in the gaps the city briefly creates. Sessions are anonymous and completely private. The first 5 minutes free — once per listener.</p>
+          <p>New York (EST) is 10.5 hours behind IST. 8am NYC is 6:30pm India. Your morning — whether you&rsquo;re on the 7 train from Jackson Heights or walking over the Queensboro Bridge — is India&rsquo;s evening. A real Indian listener is available, without an appointment, in the gaps the city briefly creates. Sessions are anonymous and completely private. The first 5-minute session free.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>New York pace. Real human connection.</h2><p>Real Indian peer listener. Understands NYC Indian life. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>New York pace. Real human connection.</h2><p>Real Indian peer listener. Understands NYC Indian life. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/desi-support-usa">Desi support USA &rarr;</a>
           <a href="/indians-in-new-jersey">Indians in New Jersey &rarr;</a>

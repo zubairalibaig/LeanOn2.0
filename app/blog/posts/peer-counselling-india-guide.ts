@@ -41,7 +41,7 @@ export const post = {
 
 <p><strong>iCall (TISS):</strong> ₹200–₹500 per session. Subsidised by TISS. Staffed by trained counsellors, not peers. Requires booking.</p>
 
-<p><strong>Peer counselling on LeanOn:</strong> Around ₹160 per session. The first 5 minutes of every session are free, so you can talk to someone and decide whether it feels like the right fit before committing. There are no subscription fees and no automatic renewals. Pay per session.</p>
+<p><strong>Peer counselling on LeanOn:</strong> Around ₹160 per session. Your first 5-minute session is free, so you can talk to someone and decide whether it feels like the right fit before committing. There are no subscription fees and no automatic renewals. Pay per session.</p>
 
 <p>The cost difference is significant. ₹160 for peer support versus ₹2,500+ for a private therapy session means peer counselling is genuinely accessible to people for whom clinical therapy is not a realistic option.</p>
 

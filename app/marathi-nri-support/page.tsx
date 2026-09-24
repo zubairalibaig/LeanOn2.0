@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand Pune IT culture specifically?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. The Pune-to-abroad pipeline is well understood — the IT corridor background, the particular mix of ambition and cultural rootedness that Pune families carry. You do not have to explain the context.' } },
   { '@type': 'Question', name: 'What if the pressure is from extended family back in Maharashtra?', acceptedAnswer: { '@type': 'Answer', text: 'Extended family pressure from Maharashtra is one of the most common things Marathi NRIs talk about with listeners. The expectations, the obligations, the guilt of not being there for occasions — all of it is heard without judgment.' } },
   { '@type': 'Question', name: 'Is this confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Your Marathi community abroad and your family back in Pune or Mumbai will never know. Sessions are anonymous — phone number and first name only.' } },
-  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription needed.' } },
+  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription needed.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -100,7 +100,7 @@ export default function MarathiNriSupportPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Apla manus, apli bhashet.</h2><p>A Marathi listener who understands without explanation. First 5 minutes free. Sessions from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Apla manus, apli bhashet.</h2><p>A Marathi listener who understands without explanation. First 5 minutes free. Sessions from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-support">NRI support &rarr;</a>
           <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>

@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
+import { NOINDEX_ROBOTS } from '@/lib/seo-noindex'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
+  robots: NOINDEX_ROBOTS, // wrong-intent traffic — see lib/seo-noindex.ts
   title: 'Anonymous Chat India — Talk to a Real Person, No Name Needed | LeanOn',
   description: 'Anonymous chat with a real peer listener in India — no account name, no face, no history. Just talk. ₹160/session, first 5 min free.',
   keywords: 'anonymous chat india, anonymous chat with real person india, anonymous online chat india, talk to stranger anonymously india, anonymous peer support india, private chat india no name, anonymous emotional support india, talk anonymously online india, anonymous listener india, private anonymous chat app india',

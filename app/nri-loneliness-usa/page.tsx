@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'What does NRI loneliness in America feel like?', acceptedAnswer: { '@type': 'Answer', text: 'It often feels like a low-grade, persistent sense that something is missing. It is not always acute. It shows up at Diwali away from home, at family occasions you miss, in conversations where you feel like a stranger, in the gap between the life you show people and the life you actually feel.' } },
   { '@type': 'Question', name: 'Will a listener understand this even if I can\'t describe it clearly?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners are Indian and many have direct experience with family abroad or with dual cultural identity. You don\'t need to describe it clearly — they already know the shape of it.' } },
   { '@type': 'Question', name: 'Is this confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Nothing is shared with your family, community, or employer.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -94,7 +94,7 @@ export default function NriLonelinessUsaPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>The loneliness that doesn&rsquo;t need to be justified.</h2><p>Real Indian peer listener. Understands NRI loneliness completely. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>The loneliness that doesn&rsquo;t need to be justified.</h2><p>Real Indian peer listener. Understands NRI loneliness completely. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/desi-support-usa">Desi support USA &rarr;</a>
           <a href="/nri-support">NRI support &rarr;</a>

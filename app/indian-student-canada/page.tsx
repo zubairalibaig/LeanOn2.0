@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'I am worried about my post-study work permit. Do listeners understand that anxiety?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Canadian immigration policy, post-study work permit rules, and the anxiety of building a life on an uncertain legal foundation are well understood by listeners. You can speak about the immigration anxiety alongside the personal and emotional weight.' } },
   { '@type': 'Question', name: 'There are so many Indian students in my program that it almost creates its own pressure. Is that a real thing?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. When a program has a very high concentration of Indian students, it can create a competitive, performance-based atmosphere that differs from the supportive community you hoped for. Comparison, hierarchy, and the pressure to not appear to be struggling in front of peers — all of these are real and nameable.' } },
   { '@type': 'Question', name: 'Is this confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Your family, your university, and your Indian student community in Canada will never know.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes — roughly $2-3 CAD. No subscription required.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes-3 CAD. No subscription required.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -100,7 +100,7 @@ export default function IndianStudentCanadaPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>The Canada experience nobody puts in the prospectus.</h2><p>A peer listener who understands India, Canada, and the gap. First 5 minutes free. Sessions from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>The Canada experience nobody puts in the prospectus.</h2><p>A peer listener who understands India, Canada, and the gap. First 5 minutes free. Sessions from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-student-support">Indian student abroad &rarr;</a>
           <a href="/punjabi-support-canada">Punjabi support Canada &rarr;</a>

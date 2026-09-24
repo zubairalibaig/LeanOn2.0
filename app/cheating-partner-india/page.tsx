@@ -53,7 +53,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'How much does it cost?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Sessions start at ₹160. The first 5 minutes of every session are free — no charge, no commitment. If a session is not useful in the first 5 minutes, you stop and pay nothing. There is no subscription and no appointment needed. You can start right now.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Sessions start at ₹160. Your first 5-minute session is free — no charge, no commitment. If a session is not useful in the first 5 minutes, you stop and pay nothing. There is no subscription and no appointment needed. You can start right now.' },
     },
   ],
 }

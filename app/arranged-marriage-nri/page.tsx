@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'What if I\'m considering an arranged match but have genuine fears?', acceptedAnswer: { '@type': 'Answer', text: 'Fear before a life decision is completely normal. Talking through your fears with someone who understands the cultural context — without the pressure of family involvement — can help you get clearer about what you actually want.' } },
   { '@type': 'Question', name: 'What if I\'ve already said yes to someone my parents chose and I\'m having doubts?', acceptedAnswer: { '@type': 'Answer', text: 'Pre-wedding doubt is common and rarely talked about. The pressure to continue once the families are involved is enormous. A peer listener can hold that weight with you — not tell you what to do, but help you feel less alone while you figure it out.' } },
   { '@type': 'Question', name: 'Is this confidential from my family?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Nothing is shared with your family, your prospective match\'s family, or anyone else.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -94,7 +94,7 @@ export default function ArrangedMarriageNriPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Hear yourself before the pressure decides for you.</h2><p>Real Indian peer listener. Understands arranged marriage pressure on NRIs. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Hear yourself before the pressure decides for you.</h2><p>Real Indian peer listener. Understands arranged marriage pressure on NRIs. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-marriage-usa">NRI marriage USA &rarr;</a>
           <a href="/nri-relationship-problems">NRI relationship problems &rarr;</a>

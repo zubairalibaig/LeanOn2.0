@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do LeanOn listeners understand London\'s Indian community?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners are based in India and trained to understand the British Indian experience in depth — including London\'s fragmented Indian landscape: the Gujarati Wembley world, the Punjabi Southall culture, the Tamil East Ham community, the finance-district Indian elite, and the specific paradox of being lonely in a city with a million Indians.' } },
   { '@type': 'Question', name: 'What time can I connect from London?', acceptedAnswer: { '@type': 'Answer', text: 'London (GMT/BST) is 5.5 hours behind IST in winter and 4.5 hours in summer. 2pm in London in winter = 7:30pm India. Afternoons are a good time to connect — Indian listeners are available during their evening.' } },
   { '@type': 'Question', name: 'London\'s Indian community is huge. Why would I still feel lonely?', acceptedAnswer: { '@type': 'Answer', text: 'Scale does not equal connection. London\'s Indian community is large but fragmented — by region of origin, by class, by generation, by neighbourhood. You can be surrounded by Indians who share your heritage but not your specific experience. And the city itself — the pace, the cost, the transience — makes deep connection genuinely hard.' } },
-  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
   { '@type': 'Question', name: 'I\'ve lived in London for years but still don\'t feel I belong. Is this normal?', acceptedAnswer: { '@type': 'Answer', text: 'Very. The London Indian loneliness paradox — the sense of being surrounded by Indians and still feeling unseen — is one of the most common experiences LeanOn listeners hear about from British Indians. Belonging is not the same as presence. You can be in the most Indian city outside India and still feel invisible.' } },
 ] }
 
@@ -91,7 +91,7 @@ export default function IndiansInLondonPage() {
           <h2>The London Indian Loneliness Paradox</h2>
           <p>London is expensive, transient, and fast. The Indian finance professional in Canary Wharf who works 70-hour weeks and earns a City salary and lives alone in a zone 2 flat. The Indian NHS doctor who treats fifty patients a day and has not had a real conversation about their own life in months. The Indian family in Harrow who have the community, the samosas, the Diwali fireworks over Wembley stadium — and still feel a private loneliness they don&rsquo;t know how to name.</p>
           <p>The London Indian loneliness paradox is produced by several forces working together: the city&rsquo;s pace leaves no time for depth. The cost of living means everyone is working too hard. The fragmentation of the Indian community means the people around you may share your ethnicity but not your experience. And the British Indian expectation of stoicism — the stiff upper lip that got adopted alongside the citizenship — means emotional difficulty gets suppressed even when community exists.</p>
-          <p>London (GMT) is 5.5 hours behind IST in winter. Afternoons are a good time — Indian listeners are available in their evening. From ₹160.</p>
+          <p>London (GMT) is 5.5 hours behind IST in winter. Afternoons are a good time — Indian listeners are available in their evening. From US$10.</p>
         </div>
 
         <div className="section">
@@ -101,7 +101,7 @@ export default function IndiansInLondonPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>The most Indian city outside India. Still worth talking.</h2><p>Real Indian peer listener. Understands the British Indian London experience. Anonymous. First 5 minutes free. From ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>The most Indian city outside India. Still worth talking.</h2><p>Real Indian peer listener. Understands the British Indian London experience. Anonymous. First 5 minutes free. From US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-loneliness-uk">NRI loneliness UK &rarr;</a>
           <a href="/indians-in-uk">Indians in UK &rarr;</a>

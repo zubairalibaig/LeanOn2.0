@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'How much does a session cost in Kolkata?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'The same as everywhere in India: new users get a free 5-minute trial once per listener, and paid sessions cost ₹8–25 per minute (set by each listener) plus a flat ₹10 platform fee — a fraction of what therapy costs.',
+        text: 'The same as everywhere in India: new users get one free 5-minute first session, and paid sessions cost the per-minute rate set by the listener plus a flat ₹10 platform fee (15 minutes at ₹10/min = ₹160) — a fraction of what therapy costs.',
       },
     },
   ],
@@ -198,7 +198,7 @@ export default function KolkataPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does a session cost in Kolkata?</div>
-            <div className="faq-a">Same as everywhere in India: a free 5-minute trial once per listener, then ₹8–25 per minute (set by each listener) plus a flat ₹10 platform fee — a fraction of what therapy costs.</div>
+            <div className="faq-a">Same as everywhere in India: one free 5-minute first session, then the per-minute rate set by the listener plus a flat ₹10 platform fee (15 minutes at ₹10/min = ₹160) — a fraction of what therapy costs.</div>
           </div>
         </div>
 

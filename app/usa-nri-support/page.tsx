@@ -65,7 +65,7 @@ const faqSchema = {
       name: 'How much does a LeanOn session cost in the USA?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first 5 minutes free — once per listener — far more accessible than $200/hour therapy sessions.',
+        text: 'Sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first 5-minute session free — far more accessible than $200/hour therapy sessions.',
       },
     },
   ],
@@ -188,7 +188,7 @@ export default function UsaNriSupportPage() {
             is not just &quot;FOMO.&quot;</p>
           <p>LeanOn listeners are Indian. Many are NRIs themselves or have family abroad. You skip
             the explanations and go straight to what you actually feel. Sessions start at
-            <strong> $10 for 15 minutes</strong>, with your first 5 minutes free — once per listener.</p>
+            <strong> $10 for 15 minutes</strong>, with your first 5-minute session free.</p>
         </div>
 
         <div className="card">

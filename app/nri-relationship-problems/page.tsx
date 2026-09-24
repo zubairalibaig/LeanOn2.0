@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Is peer support the right thing when my relationship is really struggling?', acceptedAnswer: { '@type': 'Answer', text: 'Peer support is not a substitute for other kinds of help when things are serious. But it is often the first and most accessible step — being heard by someone who truly understands the cultural context, before you decide what else you need.' } },
   { '@type': 'Question', name: 'What if my problem involves my partner\'s family as much as my partner?', acceptedAnswer: { '@type': 'Answer', text: 'NRI relationship problems almost always involve families, not just couples. Listeners understand Indian family dynamics — joint family expectations, parental involvement in couples\' decisions, the weight of family honour — and won\'t need that context explained.' } },
   { '@type': 'Question', name: 'Is this confidential from my partner and family?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are completely anonymous. Only a phone number and first name. Nothing is shared with your partner, family, or community.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -94,7 +94,7 @@ export default function NriRelationshipProblemsPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Cultural context without explanation.</h2><p>Real Indian peer listener. Understands NRI relationship complexity. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Cultural context without explanation.</h2><p>Real Indian peer listener. Understands NRI relationship complexity. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-marriage-usa">NRI marriage USA &rarr;</a>
           <a href="/nri-dating-usa">NRI dating USA &rarr;</a>

@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand Seattle Indian tech worker life?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are based in India and understand the NRI tech worker experience — including the specific isolation of Seattle, the Microsoft and Amazon culture, the H-1B dependency, and the grey winters that compound everything. No explanation needed.' } },
   { '@type': 'Question', name: 'When can I connect from Seattle?', acceptedAnswer: { '@type': 'Answer', text: 'Seattle (PST/PDT) is 13.5 hours behind IST. 8am Seattle = 9:30pm India. Early mornings in Seattle align with late Indian evenings — listeners are often still available. 6am Seattle = 7:30pm India, a strong window.' } },
   { '@type': 'Question', name: 'Is this confidential from my Microsoft or Amazon colleagues?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous. Only a phone number and first name required. Nothing reaches your employer, your Bellevue or Redmond community, or family back in India.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -89,11 +89,11 @@ export default function IndiansInSeattlePage() {
         <div className="section">
           <h2>Grey Sky, Real Conversation</h2>
           <p>Seattle&rsquo;s weather is a psychological factor that is often underestimated. The overcast skies from October through May are genuinely affecting for people from sunny parts of India — Karnataka, Tamil Nadu, Andhra Pradesh, Punjab. The vitamin D deficiency is real. The seasonal weight accumulates. Combined with the isolation of a new city that doesn&rsquo;t warm up easily, and the pressure of a career that your visa depends on — it creates a specific kind of quiet overwhelm.</p>
-          <p>Seattle (PST/PDT) is 13.5 hours behind IST. 6am in Seattle is 7:30pm India — a prime window. Your early morning run by the Bellevue waterfront or your quiet coffee before the stand-up call is India&rsquo;s evening. Listeners are available, no appointment needed. Sessions are anonymous and completely private. The first 5 minutes free — once per listener.</p>
+          <p>Seattle (PST/PDT) is 13.5 hours behind IST. 6am in Seattle is 7:30pm India — a prime window. Your early morning run by the Bellevue waterfront or your quiet coffee before the stand-up call is India&rsquo;s evening. Listeners are available, no appointment needed. Sessions are anonymous and completely private. The first 5-minute session free.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Someone warm, when Seattle is grey.</h2><p>Real Indian peer listener. Understands Seattle NRI life. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Someone warm, when Seattle is grey.</h2><p>Real Indian peer listener. Understands Seattle NRI life. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/desi-support-usa">Desi support USA &rarr;</a>
           <a href="/nri-support">NRI support &rarr;</a>

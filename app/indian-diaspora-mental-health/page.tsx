@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'What makes LeanOn different for Indian diaspora users?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are Indian, based in India, and understand the diaspora experience from the inside. You do not need to explain your family dynamics, your cultural pressures, what it means to be an NRI, or what "log kya kahenge" means. The cultural framework is already there. Sessions are anonymous, affordable, and accessible from any timezone.' } },
   { '@type': 'Question', name: 'Is this available for Indians in all countries?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn is accessible worldwide. Indian diaspora users in the USA, UK, Canada, Australia, the Gulf, Singapore, and anywhere else can connect with Indian peer listeners in India.' } },
   { '@type': 'Question', name: 'Do I need to be in a crisis to use LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'No. Peer support is not only for crises. It is for the daily weight — loneliness, identity questions, relationship pressure, family stress, the quiet accumulation of immigrant life. Most LeanOn users are not in crisis. They just need someone real to talk to.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'The first 5 minutes of every session are free. Sessions start from ₹160 for 15 minutes. No subscription, no commitment.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first 5-minute session is free. Sessions start from US$10 for 15 minutes. No subscription, no commitment.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -90,12 +90,12 @@ export default function IndianDiasporaMentalHealthPage() {
         <div className="section">
           <h2>What LeanOn Offers the Indian Diaspora</h2>
           <p>LeanOn offers real Indian peer listeners — people from India, trained in active listening, who understand the cultural context of diaspora life from the inside. You do not need to explain what a rishta is, or what it means when your parents say &ldquo;we sacrificed everything for you,&rdquo; or why you feel guilty for being successful and lonely simultaneously. The cultural framework is already in place.</p>
-          <p>Sessions are text-based, anonymous, and accessible from anywhere in the world. LeanOn listeners are in India (IST), which creates natural time zone overlaps for Indian diaspora in America, the UK, Canada, and the Gulf. The first 5 minutes of every session are free. Sessions start from ₹160 for 15 minutes. No subscription, no commitment. You can talk on a Tuesday morning before work, or a Sunday night after everyone is asleep, or any other moment when the weight needs somewhere to go.</p>
+          <p>Sessions are text-based, anonymous, and accessible from anywhere in the world. LeanOn listeners are in India (IST), which creates natural time zone overlaps for Indian diaspora in America, the UK, Canada, and the Gulf. Your first 5-minute session is free. Sessions start from US$10 for 15 minutes. No subscription, no commitment. You can talk on a Tuesday morning before work, or a Sunday night after everyone is asleep, or any other moment when the weight needs somewhere to go.</p>
           <p>The Indian diaspora deserves emotional health support that actually understands them. LeanOn was built to provide exactly that.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Finally — support that understands the context.</h2><p>Real Indian peer listener. No cultural explanation needed. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Finally — support that understands the context.</h2><p>Real Indian peer listener. No cultural explanation needed. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-support">NRI support &rarr;</a>
           <a href="/indian-diaspora-support">Indian diaspora support &rarr;</a>

@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'I was passed over for a promotion and I think it is partly because I am Indian. Can listeners understand this?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. This is one of the most common and most painful NRI work experiences — working harder than your peers, delivering more, and still being passed over for leadership while less-qualified colleagues advance. Listeners understand the complexity of naming race in the workplace, and the specific helplessness of not being able to address it directly.' } },
   { '@type': 'Question', name: 'I feel I cannot leave my job because of my H1B. Do listeners get this?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. The H1B employer tether — staying in a toxic job because leaving would jeopardise your visa, your family\'s status, and your green card timeline — is a specific kind of trapped that listeners understand well. You can talk about it honestly.' } },
   { '@type': 'Question', name: 'Is this confidential from my employer?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Your employer, your HR department, and your colleagues will never know. Nothing leaves the session.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -99,7 +99,7 @@ export default function NriWorkplaceStressPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>The immigrant work weight deserves to be heard.</h2><p>No performance, no justification. Just a real listener who gets it. First 5 minutes free. Sessions from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>The immigrant work weight deserves to be heard.</h2><p>No performance, no justification. Just a real listener who gets it. First 5 minutes free. Sessions from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-burnout">NRI burnout &rarr;</a>
           <a href="/nri-h1b-visa-stress">H1B visa stress &rarr;</a>

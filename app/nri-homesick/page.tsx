@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Is it normal to still miss India after years abroad?', acceptedAnswer: { '@type': 'Answer', text: 'Completely normal. Homesickness for India doesn\'t follow a neat timeline. People who have been abroad for 10 or 20 years still feel it at particular moments — a smell, a festival, a family occasion, a song. The duration of absence doesn\'t make the feeling smaller.' } },
   { '@type': 'Question', name: 'What do people miss most about India?', acceptedAnswer: { '@type': 'Answer', text: 'Different things for different people: the food, the chaos, the extended family, the way people talk, the festivals, the ease of being in a place where you are the default, the everyday things that are invisible until they are gone. Listeners at LeanOn understand all of this without needing it catalogued.' } },
   { '@type': 'Question', name: 'Will talking to someone help with homesickness?', acceptedAnswer: { '@type': 'Answer', text: 'Being heard by someone who truly understands often helps. Not because the homesickness disappears, but because carrying it alone is harder than carrying it with someone who gets it. LeanOn listeners are in India — they are from the place you miss.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -89,11 +89,11 @@ export default function NriHomesickPage() {
         <div className="section">
           <h2>The Guilt That Comes with Homesickness</h2>
           <p>One of the hardest parts of NRI homesickness is the guilt that comes with it. You chose to come here. You were given the opportunity. Your parents sacrificed. To tell them you are homesick feels ungrateful — and it would worry them. So the homesickness goes underground, carried quietly, felt but not named.</p>
-          <p>A real Indian peer listener at LeanOn can receive this without the guilt. They will not tell you that you should be grateful, or that it gets easier, or that you will adjust. They will simply hear what you are missing and why it hurts. Sometimes that is enough. Sessions are anonymous, private, and the first 5 minutes free — once per listener.</p>
+          <p>A real Indian peer listener at LeanOn can receive this without the guilt. They will not tell you that you should be grateful, or that it gets easier, or that you will adjust. They will simply hear what you are missing and why it hurts. Sometimes that is enough. Sessions are anonymous, private, and the first 5-minute session free.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Someone from home, to hear you miss it.</h2><p>Real Indian peer listener. In India. Understands what you miss. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Someone from home, to hear you miss it.</h2><p>Real Indian peer listener. In India. Understands what you miss. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-support">NRI support &rarr;</a>
           <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>

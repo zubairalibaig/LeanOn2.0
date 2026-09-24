@@ -27,7 +27,7 @@ export const post = {
 
 <p><strong>What it is:</strong> A peer support platform connecting people with trained peer listeners — real humans who have lived experience in the emotional area they support people through. Every LeanOn listener has personally been through something relevant to the conversations they take. They are trained in active listening and supportive conversation. They are not licensed therapists.</p>
 
-<p><strong>Cost:</strong> Around ₹160/session. The first 5 minutes of every session are free, so you can get a sense of whether the connection feels right before committing.</p>
+<p><strong>Cost:</strong> Around ₹160/session. Your first 5-minute session is free, so you can get a sense of whether the connection feels right before committing.</p>
 
 <p><strong>Pros:</strong> Real humans, not AI. Fully anonymous — first name only, no last name, no photo. Available 24/7 without an appointment. Pay per session, no subscription trap. The lived-experience angle is the most meaningful differentiator: when someone says "I've been through something like that," they mean it.</p>
 

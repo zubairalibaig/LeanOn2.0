@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do I need my partner\'s permission to talk to a listener?', acceptedAnswer: { '@type': 'Answer', text: 'No. Sessions are individual and private. You do not need your partner\'s knowledge or permission. Many people find that having their own space to process helps them show up better in their marriage.' } },
   { '@type': 'Question', name: 'What if my partner and I both want to talk separately?', acceptedAnswer: { '@type': 'Answer', text: 'Each person can have their own session with a listener. Sessions are private between you and the listener you choose.' } },
   { '@type': 'Question', name: 'Are listeners available at different times, given time zones?', acceptedAnswer: { '@type': 'Answer', text: 'Listeners are available across different times of day. Browse the available listeners to find someone who is online when you need to talk.' } },
-  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes are free. Sessions continue from ₹160 for 15 minutes. No subscription, no commitment.' } },
+  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes are free. Sessions continue from US$10 for 15 minutes. No subscription, no commitment.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -98,7 +98,7 @@ export default function NriMarriedLifeAbroadPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>The heaviness that doesn&rsquo;t show on the outside.</h2><p>Real peer listener. Understands NRI married life from the inside. First 5 minutes free, from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>The heaviness that doesn&rsquo;t show on the outside.</h2><p>Real peer listener. Understands NRI married life from the inside. First 5 minutes free, from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-marriage-usa">NRI marriage USA &rarr;</a>
           <a href="/nri-marriage-uk">NRI marriage UK &rarr;</a>

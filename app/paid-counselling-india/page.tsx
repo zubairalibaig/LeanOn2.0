@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'How does LeanOn pricing work?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn is pay-per-session — no monthly subscription, no automatic renewal. Sessions start at ₹160. The first 5 minutes of every session are free, so you can try a listener before committing. You recharge your wallet and use it when you need it.',
+        text: 'LeanOn is pay-per-session — no monthly subscription, no automatic renewal. Sessions start at ₹160. Your first 5-minute session is free, so you can try a listener before committing. You recharge your wallet and use it when you need it.',
       },
     },
     {
@@ -214,7 +214,7 @@ export default function PaidCounsellingIndiaPage() {
             <li><strong>Fully anonymous</strong> — first name only, no photo, no social account required</li>
             <li><strong>No waitlist</strong> — browse available listeners and start in minutes</li>
             <li><strong>Pay as you go</strong> — recharge when you want, use when you need it</li>
-            <li><strong>First 5 minutes free</strong> on every session — try before you commit</li>
+            <li><strong>Your first 5-minute session is free</strong> — try before you commit</li>
           </ul>
         </div>
 
@@ -248,7 +248,7 @@ export default function PaidCounsellingIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How does LeanOn pricing work?</div>
-            <div className="faq-a">LeanOn is pay-per-session — no monthly subscription, no automatic renewal. Sessions start at ₹160. The first 5 minutes of every session are free. You recharge your wallet and use it when you need it.</div>
+            <div className="faq-a">LeanOn is pay-per-session — no monthly subscription, no automatic renewal. Sessions start at ₹160. Your first 5-minute session is free. You recharge your wallet and use it when you need it.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is ₹160 really the full cost?</div>

@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Can I talk to someone who understands Houston\'s Indian community specifically?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are based in India and are familiar with the NRI experience including the Houston and Texas context — the tech corridors, the Sugar Land and Katy communities, the pressure of immigrant life in America. You don\'t need to explain the background.' } },
   { '@type': 'Question', name: 'What time does it work to call from Houston?', acceptedAnswer: { '@type': 'Answer', text: 'Houston (CST) is 11.5 hours behind IST. 8am Houston = 7:30pm India. This means your early morning before work aligns with Indian evenings — a good window when many listeners are available.' } },
   { '@type': 'Question', name: 'Is this confidential — no one in my community will know?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are completely anonymous. You sign up with only a phone number and first name. Nothing is shared with anyone in your community, your employer, or family back in India.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'The first 5 minutes of every session are free. Paid sessions start from ₹160 for 15 minutes. There is no subscription, no commitment.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first 5-minute session is free. Paid sessions start from US$10 for 15 minutes. There is no subscription, no commitment.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -94,7 +94,7 @@ export default function IndiansInHoustonPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>You don&rsquo;t have to carry it alone.</h2><p>Real Indian peer listener. Understands the Houston NRI experience. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>You don&rsquo;t have to carry it alone.</h2><p>Real Indian peer listener. Understands the Houston NRI experience. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/indians-in-texas">Indians in Texas &rarr;</a>
           <a href="/nri-support">NRI support &rarr;</a>

@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand what Indian life in Chicago is like?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are based in India and understand the NRI experience in American Midwest metros. The Chicago Indian experience — the Schaumburg and Naperville communities, the Midwest winters, the community dynamics — doesn\'t need explaining. They already know.' } },
   { '@type': 'Question', name: 'When can I connect from Chicago?', acceptedAnswer: { '@type': 'Answer', text: 'Chicago (CST) is 11.5 hours behind IST. 8am Chicago = 7:30pm India. Your early morning before the commute is Indian evening — a reliable window for finding a listener. No appointment needed.' } },
   { '@type': 'Question', name: 'Is this private from my Schaumburg or Naperville community?', acceptedAnswer: { '@type': 'Answer', text: 'Completely private. Sessions are anonymous — phone number and first name only. Listeners are in India, with no connection to the Chicago Indian network. Nothing is shared with anyone.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -93,7 +93,7 @@ export default function IndiansInChicagoPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Warm community. Real conversation.</h2><p>Real Indian peer listener. Understands Chicago NRI life. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Warm community. Real conversation.</h2><p>Real Indian peer listener. Understands Chicago NRI life. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/desi-support-usa">Desi support USA &rarr;</a>
           <a href="/nri-support">NRI support &rarr;</a>

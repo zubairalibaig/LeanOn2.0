@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do LeanOn listeners understand the Manchester Indian experience?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners are based in India and trained to understand the NRI experience, including the British Indian context — the north-south divide within the British Indian community, the Rusholme and Bolton communities, the specific dynamics of being Indian in a northern English city with its own distinct culture.' } },
   { '@type': 'Question', name: 'What time can I connect from Manchester?', acceptedAnswer: { '@type': 'Answer', text: 'Manchester (GMT/BST) is 5.5 hours behind IST in winter and 4.5 hours behind in summer. 2pm Manchester in winter = 7:30pm India. Afternoons or early evenings are good times to connect.' } },
   { '@type': 'Question', name: 'Is this different from talking to my family or British Indian friends?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners are outside your Manchester social circle entirely. They don\'t know your family, your community, or your workplace. You can say what you actually feel without worrying about word getting back to anyone.' } },
-  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription required.' } },
+  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription required.' } },
   { '@type': 'Question', name: 'I feel caught between the British Indian community and British mainstream culture. Can listeners understand this?', acceptedAnswer: { '@type': 'Answer', text: 'This is one of the core experiences LeanOn was built for. The in-between identity of the British Indian — not fully belonging to either world, navigating both with exhausting fluency — is something listeners understand and can hold without judgment.' } },
 ] }
 
@@ -91,7 +91,7 @@ export default function IndiansInManchesterPage() {
           <h2>The North-South Divide Within the British Indian Community</h2>
           <p>The British Indian community has its own internal geography. London is the centre of gravity — the Bollywood screenings in Leicester Square, the Diwali celebrations at Trafalgar Square, the sheer density of Indian life in Wembley and Southall. Manchester Indians are aware of this, and many feel the pull. The Indian professional in Manchester who regularly takes the train to London for the weekend not just for work but for the relief of being in a denser Indian world.</p>
           <p>The north-south divide affects more than geography. It affects the kinds of Indian careers that exist in each city, the communities that formed, the class composition of the British Indian population in each region. Manchester&rsquo;s Indian community has more diversity in its origins — not just the Gujarati and Punjabi patterns of London, but Bangladeshi and Pakistani and Indian communities layered over each other in the northern mill towns. Navigating this is its own form of complexity.</p>
-          <p>Manchester (GMT) is 5.5 hours behind IST in winter. 2pm in Manchester = 7:30pm in India. Afternoons are a good time to connect. From ₹160.</p>
+          <p>Manchester (GMT) is 5.5 hours behind IST in winter. 2pm in Manchester = 7:30pm in India. Afternoons are a good time to connect. From US$10.</p>
         </div>
 
         <div className="section">
@@ -101,7 +101,7 @@ export default function IndiansInManchesterPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Northern England, Indian roots. Talk to someone who holds both.</h2><p>Real Indian peer listener. Understands the British Indian experience in the North. Anonymous. First 5 minutes free. From ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Northern England, Indian roots. Talk to someone who holds both.</h2><p>Real Indian peer listener. Understands the British Indian experience in the North. Anonymous. First 5 minutes free. From US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-loneliness-uk">NRI loneliness UK &rarr;</a>
           <a href="/indians-in-uk">Indians in UK &rarr;</a>

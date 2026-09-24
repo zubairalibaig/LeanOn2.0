@@ -31,7 +31,7 @@ export default function CountrySeoPage({ data }: { data: CountrySeoData }) {
           <ol className="space-y-4 text-white/90">
             <li><span className="mr-2 font-black text-[#FF9933]">1.</span>Browse listener profiles and look for relevant lived experience, topics and availability.</li>
             <li><span className="mr-2 font-black text-[#FF9933]">2.</span>Start one free 5-minute introductory session with a new listener.</li>
-            <li><span className="mr-2 font-black text-[#FF9933]">3.</span>If you want to continue, paid session pricing is shown before you start. Paid sessions currently start at ₹160 for 15 minutes.</li>
+            <li><span className="mr-2 font-black text-[#FF9933]">3.</span>If you want to continue, paid session pricing is shown before you start. Paid sessions currently start at {data.slug === 'india' ? '₹160' : 'US$10'} for 15 minutes.</li>
             <li><span className="mr-2 font-black text-[#FF9933]">4.</span>Choose text or voice and continue only if the conversation feels useful.</li>
           </ol>
           <a href="/browse" className="mt-7 inline-flex rounded-full bg-[#FF9933] px-6 py-3 font-extrabold text-white">Browse listeners →</a>

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
+import { NOINDEX_ROBOTS } from '@/lib/seo-noindex'
 
 export const metadata: Metadata = {
+  robots: NOINDEX_ROBOTS, // wrong-intent traffic — see lib/seo-noindex.ts
   title: 'Human Companionship Online India — Talk to a Real Person | LeanOn',
   description: 'Looking for human companionship online in India? Talk privately with a real peer listener on LeanOn by text or voice. Start with a free 5-minute introduction; paid sessions start at ₹160 for 15 minutes.',
   alternates: { canonical: 'https://www.leanon.app/human-companionship-online-india' },

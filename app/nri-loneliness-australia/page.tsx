@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Will a listener understand the Australian context?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are Indian and understand the NRI experience broadly. You do not need to explain the immigrant context from scratch. The Australian specifics — the distance, the community dynamics, the student-to-PR pathway — will make sense to them even if they are not based in Australia.' } },
   { '@type': 'Question', name: 'I am on a student visa — is this relevant for me too?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. The loneliness and isolation of being a student abroad is a distinct and very real experience. The visa stress of the student-to-PR pathway, the loneliness of being far from family, the financial pressure — all of this is part of the Indian-in-Australia experience and can be talked about.' } },
   { '@type': 'Question', name: 'Is this confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are private — phone number and first name only. Nothing goes to your family, your community, or anyone else.' } },
-  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes are free. Sessions continue from ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes are free. Sessions continue from US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -95,11 +95,11 @@ export default function NriLonelinessAustraliaPage() {
 
         <div className="section">
           <h2>LeanOn for Indians in Australia</h2>
-          <p>A peer listener who already understands the immigrant experience. You do not need to explain why you are lonely in Australia or justify it against the visible success of being there. First 5 minutes free, sessions from ₹160. Private, anonymous. Available when the time zones make it hard to talk to anyone in India.</p>
+          <p>A peer listener who already understands the immigrant experience. You do not need to explain why you are lonely in Australia or justify it against the visible success of being there. First 5 minutes free, sessions from US$10. Private, anonymous. Available when the time zones make it hard to talk to anyone in India.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Far from home in every direction.</h2><p>Real peer listener. Understands Indian immigrant loneliness. First 5 minutes free, from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Far from home in every direction.</h2><p>Real peer listener. Understands Indian immigrant loneliness. First 5 minutes free, from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>
           <a href="/nri-loneliness-uk">NRI loneliness UK &rarr;</a>

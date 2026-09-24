@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { NOINDEX_ROBOTS } from '@/lib/seo-noindex'
 
 export type AICountryData = {
   slug: string
@@ -24,6 +25,8 @@ export const AI_COUNTRIES: Record<string, AICountryData> = {
 
 export function buildAICountryMetadata(data: AICountryData): Metadata {
   return {
+    // Near-identical across countries — kept out of the index (lib/seo-noindex.ts).
+    robots: NOINDEX_ROBOTS,
     title: `ChatGPT Alternative for Indians in ${data.country} — Talk to a Real Person | LeanOn`,
     description: `Want a real person instead of an AI conversation in ${data.country}? LeanOn connects Indians and South Asians with real peer listeners by text or voice.`,
     keywords: data.keywords,

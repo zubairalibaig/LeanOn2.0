@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand Bengaluru culture specifically?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. The Bengaluru IT culture — the cosmopolitan city identity, the particular mix of Kannada pride and global ambition — is something listeners understand well. You do not have to explain why losing the Bengaluru identity abroad is its own kind of grief.' } },
   { '@type': 'Question', name: 'I feel invisible in South Indian NRI groups because nobody knows Kannada. Is that a real thing?', acceptedAnswer: { '@type': 'Answer', text: 'It is very real. Kannadigas abroad often get lumped into a generic South Indian identity, and the specific Kannada language and culture gets erased. That erasure is a real loss. A listener who understands Kannada culture will hear it as such.' } },
   { '@type': 'Question', name: 'Is this confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Your Kannada community abroad and your family in Karnataka will never know. Sessions use only your phone number and first name.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription required.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription required.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -100,7 +100,7 @@ export default function KannadaNriSupportPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Kannadiganu Kannadige listener.</h2><p>Your culture, seen and heard without explanation. First 5 minutes free. Sessions from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Kannadiganu Kannadige listener.</h2><p>Your culture, seen and heard without explanation. First 5 minutes free. Sessions from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-support">NRI support &rarr;</a>
           <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>

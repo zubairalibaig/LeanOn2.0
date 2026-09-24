@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'My parents call every day to check on my grades. I cannot talk to them honestly. Is this for me?', acceptedAnswer: { '@type': 'Answer', text: 'Absolutely. The dynamic where your parents are your primary support but also your primary source of pressure — and where honest communication becomes impossible as a result — is one of the most common things Indian students abroad talk about with listeners. You can say things here you cannot say on those calls.' } },
   { '@type': 'Question', name: 'I am struggling to make friends across cultural gaps. Is that something listeners understand?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Making genuine friendships when you come from a different cultural background, when social scripts are different, when the reference points do not overlap — this is a specific, real form of isolation. Listeners understand it from the inside.' } },
   { '@type': 'Question', name: 'Is this confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Your family, your university, and your Indian student community will never know. Sessions are anonymous — phone number and first name only.' } },
-  { '@type': 'Question', name: 'How much does it cost? I am on a student budget.', acceptedAnswer: { '@type': 'Answer', text: 'The first 5 minutes of every session are free. Sessions from ₹160 for 15 minutes — roughly $2-3 USD. No subscription or ongoing commitment.' } },
+  { '@type': 'Question', name: 'How much does it cost? I am on a student budget.', acceptedAnswer: { '@type': 'Answer', text: 'Your first 5-minute session is free. Sessions from US$10 for 15 minutes-3 USD. No subscription or ongoing commitment.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -100,7 +100,7 @@ export default function NriStudentSupportPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>The loneliness nobody warned you about deserves to be heard.</h2><p>Real peer listener. Student-friendly pricing. First 5 minutes free. Sessions from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>The loneliness nobody warned you about deserves to be heard.</h2><p>Real peer listener. Student-friendly pricing. First 5 minutes free. Sessions from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/indian-student-uk">Indian student UK &rarr;</a>
           <a href="/indian-student-canada">Indian student Canada &rarr;</a>

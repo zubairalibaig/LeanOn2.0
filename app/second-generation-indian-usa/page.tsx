@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Will a listener in India understand the American-raised Indian experience?', acceptedAnswer: { '@type': 'Answer', text: 'Surprisingly well. Indian listeners have extensive experience with NRI families, with siblings who grew up abroad, and with the specific identity tensions of growing up between cultures. The ABCD experience is well-known in India — the cultural shorthand exists.' } },
   { '@type': 'Question', name: 'What if my problem is my relationship with my Indian parents?', acceptedAnswer: { '@type': 'Answer', text: 'That is one of the most common second-generation Indian-American experiences people bring to LeanOn — the weight of parental expectations, the guilt of growing into someone different, the love and the friction. A listener will hear it without taking sides.' } },
   { '@type': 'Question', name: 'Is this confidential from my parents?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Nothing is shared with your family or anyone else.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -94,7 +94,7 @@ export default function SecondGenerationIndianUsaPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Both worlds understood. No explanation needed.</h2><p>Real Indian peer listener. Gets the second-gen Indian-American experience. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Both worlds understood. No explanation needed.</h2><p>Real Indian peer listener. Gets the second-gen Indian-American experience. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-dating-usa">NRI dating USA &rarr;</a>
           <a href="/desi-support-usa">Desi support USA &rarr;</a>

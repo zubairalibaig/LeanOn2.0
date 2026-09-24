@@ -65,7 +65,7 @@ const faqSchema = {
       name: 'What does a session cost for NRIs in the USA?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first 5 minutes free — once per listener. Much more accessible than formal therapy.',
+        text: 'Sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first 5-minute session free. Much more accessible than formal therapy.',
       },
     },
   ],

@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Online Counseling India — Affordable Emotional Support Without a Therapist | LeanOn',
-  description: 'Looking for online counseling in India? LeanOn connects you with peer listeners for ₹99–₹299 — trained, confidential, available now. No appointment, no therapist fees.',
+  description: 'Looking for online counseling in India? LeanOn connects you with peer listeners from ₹160 per 15-minute session — trained, confidential, available now. No appointment, no therapist fees.',
   keywords: [
     'online counseling India', 'online counselling India', 'affordable online counseling India',
     'emotional support online India', 'talk to someone online India', 'online therapy India cheap',
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Online Counseling India — Affordable Emotional Support Without a Therapist | LeanOn',
-    description: 'Looking for online counseling in India? LeanOn connects you with peer listeners for ₹99–₹299 — trained, confidential, available now. No appointment, no therapist fees.',
+    description: 'Looking for online counseling in India? LeanOn connects you with peer listeners from ₹160 per 15-minute session — trained, confidential, available now. No appointment, no therapist fees.',
     url: 'https://www.leanon.app/online-counseling-india',
     siteName: 'LeanOn',
     type: 'article',

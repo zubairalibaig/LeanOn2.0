@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
+import { NOINDEX_ROBOTS } from '@/lib/seo-noindex'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
+  robots: NOINDEX_ROBOTS, // wrong-intent traffic — see lib/seo-noindex.ts
   title: 'Talk to a Friendly Stranger in India — Someone Outside Your Circle | LeanOn',
   description: 'Sometimes a stranger is easier to talk to than anyone you know. Anonymous, judgment-free, real conversations in India from ₹160.',
   keywords: [

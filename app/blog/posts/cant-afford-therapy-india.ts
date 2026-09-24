@@ -42,7 +42,7 @@ export const post = {
 <li>Crisis intervention (crisis helplines exist for that)</li>
 </ul>
 
-<p>On LeanOn, a 15-minute session starts at ₹99. A 30-minute session is ₹199–₹299 depending on the listener. The first 5 minutes of any session are free, so you can see if the connection feels right before committing.</p>
+<p>On LeanOn, the price depends on the listener's per-minute rate: 15 minutes with a ₹10/min listener costs ₹160, and 30 minutes costs ₹310. Your first 5-minute session is free, so you can see if the connection feels right before committing.</p>
 
 <h2>Journaling: Useful for Some Things, Not Others</h2>
 

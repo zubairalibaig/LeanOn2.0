@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand the visa anxiety around divorce?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. The specific fear of what happens to your immigration status if the marriage ends — dependent visa, joint sponsorship, H4 expiry — is something listeners understand. You do not have to explain why that anxiety layers onto the emotional grief. They already know the shape of it.' } },
   { '@type': 'Question', name: 'Will this be confidential from my community?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Your Indian diaspora community, your family in India, and your spouse will never know you spoke to anyone. Confidentiality is absolute.' } },
   { '@type': 'Question', name: 'What about the shame of telling parents in India?', acceptedAnswer: { '@type': 'Answer', text: 'This is one of the most common and most painful parts of NRI separation — the dread of the conversation with parents in India, the anticipated disappointment, the community fallout back home. Listeners understand this weight completely and will hold it with you without judgment.' } },
-  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No commitment, no subscription.' } },
+  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No commitment, no subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -100,7 +100,7 @@ export default function NriDivorcePage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>The human weight of NRI separation deserves to be heard.</h2><p>No legal advice. No judgment. Just a real listener who understands. First 5 minutes free. Sessions from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>The human weight of NRI separation deserves to be heard.</h2><p>No legal advice. No judgment. Just a real listener who understands. First 5 minutes free. Sessions from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-support">NRI support &rarr;</a>
           <a href="/nri-marriage-uk">NRI marriage UK &rarr;</a>

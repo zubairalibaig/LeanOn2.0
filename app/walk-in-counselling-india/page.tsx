@@ -166,7 +166,7 @@ export default function WalkInCounsellingIndiaPage() {
               <div className="step-num">2</div>
               <div className="step-body">
                 <h3>Select</h3>
-                <p>Choose someone whose background resonates. First 5 minutes of every session are free.</p>
+                <p>Choose someone whose background resonates. Your first 5-minute session is free.</p>
               </div>
             </div>
             <div className="step">

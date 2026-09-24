@@ -44,7 +44,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'How much does it cost?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Sessions start at ₹160 for 15 minutes. The first 5 minutes of every session are free. Compare this with private therapy in India, which typically costs ₹1,500–5,000 per session.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Sessions start at ₹160 for 15 minutes. Your first 5-minute session is free. Compare this with private therapy in India, which typically costs ₹1,500–5,000 per session.' },
     },
     {
       '@type': 'Question',

@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand the West Bengal vs Bangladesh distinction?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. The Bengali diaspora spans both West Bengal and Bangladesh and carries different cultural weights. Listeners understand this without needing it explained — the specific experiences of Bong NRIs versus Bangladeshi NRIs are different and both are heard.' } },
   { '@type': 'Question', name: 'I feel a specific intellectual loneliness abroad. Can listeners understand that?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. The Bengali intellectual tradition is something listeners understand — the specific frustration of being in an environment where your cultural reference points do not land, where the conversation is always a translation. That is a real and nameable form of loneliness.' } },
   { '@type': 'Question', name: 'Is this confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Your Bengali community and your family will never know. Sessions are anonymous — phone number and first name only. Nothing is shared beyond the session.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription required.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription required.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -100,7 +100,7 @@ export default function BengaliNriSupportPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Amar kotha, amar moto keu shunuk.</h2><p>A Bengali listener who gets the weight without the translation. First 5 minutes free. Sessions from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Amar kotha, amar moto keu shunuk.</h2><p>A Bengali listener who gets the weight without the translation. First 5 minutes free. Sessions from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-support">NRI support &rarr;</a>
           <a href="/indians-in-uk">Indians in UK &rarr;</a>

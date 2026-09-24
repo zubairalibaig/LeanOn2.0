@@ -183,22 +183,6 @@ export default function GurgaonPage() {
           </ul>
         </div>
 
-        <h2 style={{fontSize:'20px',fontWeight:800,color:'var(--navy)',marginBottom:'16px'}}>Peer Listeners from Gurgaon</h2>
-        <div className="listeners-grid">
-          {[
-            { emoji: '🏢', name: 'Vivek', tag: 'Corporate Burnout', bio: 'Six years in BFSI in DLF Cyber City. I know what it looks like when the resume is great and the person writing it is not.' },
-            { emoji: '🚀', name: 'Ananya', tag: 'Startup Stress', bio: 'Early-stage startup, two funding rounds, one failure. I understand the specific loneliness of building something in Gurgaon.' },
-            { emoji: '🌙', name: 'Sameer', tag: 'Weekend Loneliness', bio: 'Relocated here three years ago. Still figuring out weekends. Happy to sit with you in the in-between.' },
-          ].map((l, i) => (
-            <div key={i} className="listener-card">
-              <div className="listener-avatar">{l.emoji}</div>
-              <div className="listener-name">{l.name}</div>
-              <div className="listener-tag">{l.tag}</div>
-              <p className="listener-bio">{l.bio}</p>
-            </div>
-          ))}
-        </div>
-
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Gets Gurgaon?</h2>
           <p>Browse peer listeners who understand the pressures of India&apos;s corporate capital. No appointments, no waitlists, available right now.</p>

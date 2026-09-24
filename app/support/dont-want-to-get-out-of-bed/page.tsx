@@ -56,7 +56,7 @@ const faqSchema = {
       name: 'Is LeanOn peer support or therapy?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn is peer support — not therapy. Our listeners are trained real people with lived experience, available 24/7 from ₹99. They listen without judgment. For clinical treatment, a therapist or psychiatrist is the right path. For being heard and feeling less alone right now, LeanOn is here.',
+        text: 'LeanOn is peer support — not therapy. Our listeners are trained real people with lived experience, available 24/7 from ₹160. They listen without judgment. For clinical treatment, a therapist or psychiatrist is the right path. For being heard and feeling less alone right now, LeanOn is here.',
       },
     },
     {
@@ -234,7 +234,7 @@ export default function DontWantToGetOutOfBedPage() {
           to go through the motions, to feel like you are the only one carrying this particular weight.
         </p>
         <p>
-          Sessions start from ₹99 for 15 minutes. The first 5 minutes of any session are free.
+          Sessions start from ₹160 for 15 minutes. Your first 5-minute session is free.
           No appointment. No waiting room. No explaining yourself to a stranger who holds a clipboard.
         </p>
 
@@ -250,7 +250,7 @@ export default function DontWantToGetOutOfBedPage() {
 
         <div className="cta-card">
           <h2>You Do Not Have to Carry This Morning Alone</h2>
-          <p>Talk to a real person who understands. No appointment. No judgment. Available now, from ₹99.</p>
+          <p>Talk to a real person who understands. No appointment. No judgment. Available now, from ₹160.</p>
           <div className="cta-btns">
             <a href="/browse?topic=general"><button className="btn-primary">You don't have to explain yourself — first 5 min free →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works</button></a>

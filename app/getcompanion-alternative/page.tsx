@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
+import { NOINDEX_ROBOTS } from '@/lib/seo-noindex'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
+  robots: NOINDEX_ROBOTS, // wrong-intent traffic — see lib/seo-noindex.ts
   title: 'GetCompanion Alternative — LeanOn | Peer Support Without the Middleman',
   description: 'GetCompanion charges for companionship. LeanOn connects you with real peer listeners who have lived through what you\'re facing — ₹160/session, free 5-min trial, no "Happiness Executive" label.',
   keywords: [

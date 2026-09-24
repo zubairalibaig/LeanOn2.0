@@ -60,7 +60,7 @@ export const post = {
 
 <p>A peer listener on LeanOn is not a friend, a therapist, or an advice-giver. They are someone trained to simply listen — to hold what you say without judgment, without agenda, without making it about something else. For men who have never had a conversation where they said what is actually going on, it tends to be more significant than they expected.</p>
 
-<p>First 5 minutes are free. Sessions from ₹85. Anonymous.</p>
+<p>First 5 minutes are free. Sessions from ₹160. Anonymous.</p>
 
 <p>If you are carrying something — the job pressure, the loneliness, the marriage question, the weight of appearing fine — there is someone available to hear it.</p>
 `,

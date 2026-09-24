@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
+import { NOINDEX_ROBOTS } from '@/lib/seo-noindex'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
+  robots: NOINDEX_ROBOTS, // wrong-intent traffic — see lib/seo-noindex.ts
   title: 'Online Friend India — Real Connection, No Strings | LeanOn',
   description: 'Looking for someone to connect with online in India — not a therapist, not a stranger, just someone real to talk to. LeanOn peer listeners, from ₹160.',
   keywords: [
@@ -43,7 +45,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is there a free option?',
-      acceptedAnswer: { '@type': 'Answer', text: 'The first 5 minutes of every session are free. If you decide to continue, sessions start at ₹160 for 15 minutes. There is no subscription and no automatic charge beyond what you select.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Your first 5-minute session is free. If you decide to continue, sessions start at ₹160 for 15 minutes. There is no subscription and no automatic charge beyond what you select.' },
     },
     {
       '@type': 'Question',
@@ -151,7 +153,7 @@ export default function OnlineFriendIndiaPage() {
         <div className="section">
           <h2>How to Find the Right Listener for You</h2>
           <p>Browse listener profiles at <a href="/browse" style={{color:'var(--teal)',fontWeight:700}}>leanon.app/browse</a>. Each profile shows the listener&apos;s background, what they have lived through, and what topics they can support. If you are going through something specific &mdash; career confusion, relationship difficulty, loneliness after a move &mdash; look for someone who has navigated something similar.</p>
-          <p>The first 5 minutes of every session are free. Use them to assess the connection. If it feels right, continue. If not, there is no penalty for ending the session and trying someone else.</p>
+          <p>Your first 5-minute session is free. Use them to assess the connection. If it feels right, continue. If not, there is no penalty for ending the session and trying someone else.</p>
         </div>
 
         <div className="section">

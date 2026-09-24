@@ -226,7 +226,7 @@ export default function MentalHealthSupportIndiaPage() {
               <div className="step-num">2</div>
               <div className="step-text">
                 <div className="step-title">Start with 5 minutes free</div>
-                <div className="step-desc">Every session starts with a free trial. Talk, get a sense of the connection, and decide whether to continue. No commitment until you choose.</div>
+                <div className="step-desc">Your first session is a free 5-minute trial. Talk, get a sense of the connection, and decide whether to continue. No commitment until you choose.</div>
               </div>
             </div>
             <div className="step">

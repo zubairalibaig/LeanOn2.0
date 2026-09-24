@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Are you a mediator or couples support service?', acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn is peer listening — one person talking to one listener. It is not mediation, not couples sessions, not professional relationship support. It is a space for you to think through what you are experiencing with someone who understands the NRI context.' } },
   { '@type': 'Question', name: 'Is my conversation confidential from my spouse?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. What you say in a session stays between you and the listener. Nothing is shared with anyone, including a partner who might also use LeanOn separately.' } },
   { '@type': 'Question', name: 'Can I talk in Hindi or other Indian languages?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Many listeners are comfortable in Hindi and other Indian languages. Check individual listener profiles.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -100,7 +100,7 @@ export default function NriMarriageProblemsPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>The weight that NRI marriages carry in silence.</h2><p>Real peer listener. Understands the full NRI picture. First 5 minutes free, from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>The weight that NRI marriages carry in silence.</h2><p>Real peer listener. Understands the full NRI picture. First 5 minutes free, from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-marriage-usa">NRI marriage USA &rarr;</a>
           <a href="/nri-marriage-uk">NRI marriage UK &rarr;</a>

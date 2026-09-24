@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Can I talk in Telugu?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Several LeanOn listeners speak Telugu. When browsing, you can find Telugu-speaking listeners and mention your language preference at the beginning of your session.' } },
   { '@type': 'Question', name: 'Do you have listeners from both Andhra Pradesh and Telangana?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Listeners come from different Telugu-speaking regions and understand the cultural distinctions — whether your family is from Hyderabad, Vijayawada, Guntur, or Warangal. You do not need to explain the context.' } },
   { '@type': 'Question', name: 'I am on an H1B. Do listeners understand visa stress?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. H1B anxiety — the employer dependency, the lottery fear, the decade-long green card wait, the layoff terror — is something Telugu listeners understand well, both from personal knowledge and from the many seekers who have shared this with them.' } },
-  { '@type': 'Question', name: 'How much does it cost and when can I call from the US?', acceptedAnswer: { '@type': 'Answer', text: 'Sessions start from ₹160 for 15 minutes, with the first 5 minutes free. India listeners are active 6pm–11pm IST. From the US East Coast, that is 8:30am–1:30pm EDT. From the Bay Area, 5:30am–10:30am PDT.' } },
+  { '@type': 'Question', name: 'How much does it cost and when can I call from the US?', acceptedAnswer: { '@type': 'Answer', text: 'Sessions start from US$10 for 15 minutes, with the first 5 minutes free. India listeners are active 6pm–11pm IST. From the US East Coast, that is 8:30am–1:30pm EDT. From the Bay Area, 5:30am–10:30am PDT.' } },
   { '@type': 'Question', name: 'Is this confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Your Telugu community in New Jersey or Fremont will never know. Sessions are anonymous — phone number and first name only. Nothing is shared beyond the session.' } },
 ] }
 
@@ -100,7 +100,7 @@ export default function TeluguNriSupportPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Telugu manishi ki Telugu listener.</h2><p>Someone who understands your world without the explanation. First 5 minutes free. Sessions from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Telugu manishi ki Telugu listener.</h2><p>Someone who understands your world without the explanation. First 5 minutes free. Sessions from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-support">NRI support &rarr;</a>
           <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>

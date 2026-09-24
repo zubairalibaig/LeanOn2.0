@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Will the listener understand British Indian culture?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners are based in India and understand the British Indian diaspora experience — the Gujarati and Punjabi communities of the Midlands and North, the intergenerational dynamics, the specific pressures of being raised British and Indian simultaneously. No lengthy explanation needed.' } },
   { '@type': 'Question', name: 'What if my situation feels complicated — is this still right?', acceptedAnswer: { '@type': 'Answer', text: 'Complicated is exactly what peer support is designed for. Listeners don\'t need a simple problem to work with. They can sit with complexity and ambiguity without pushing you toward any particular answer.' } },
   { '@type': 'Question', name: 'Is this confidential from my family and community?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Nothing is shared with your family, community, or anyone else.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -94,7 +94,7 @@ export default function NriMarriageUkPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Both worlds understood. No explanation required.</h2><p>Real Indian peer listener. Understands British Indian marriage dynamics. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Both worlds understood. No explanation required.</h2><p>Real Indian peer listener. Understands British Indian marriage dynamics. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/indians-in-uk">Indians in UK &rarr;</a>
           <a href="/nri-loneliness-uk">NRI loneliness UK &rarr;</a>

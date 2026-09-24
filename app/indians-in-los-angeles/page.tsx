@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do LeanOn listeners understand what it means to be Indian in LA?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners are based in India and understand the NRI experience broadly — including the specific dynamics of LA Indian life: the cultural mismatch of Indian values in a city built around reinvention, the Artesia and Cerritos community dynamics, the entertainment industry adjacent Indian experience, and the economic range within the LA Indian community.' } },
   { '@type': 'Question', name: 'What time can I call from Los Angeles?', acceptedAnswer: { '@type': 'Answer', text: 'Los Angeles (PST) is 13.5 hours behind IST. 7am in LA = 8:30pm in India. Early mornings, before the commute, Indian listeners are in their evening and available. Weekend mornings also work well.' } },
   { '@type': 'Question', name: 'Is it confidential from my community?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. LeanOn uses phone number and first name only. Sessions are private and nothing is shared with your Artesia temple community, your Cerritos family network, or anyone else in your LA circle.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription required.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription required.' } },
   { '@type': 'Question', name: 'I feel like I don\'t fully belong to either world — Indian or American. Can listeners understand this?', acceptedAnswer: { '@type': 'Answer', text: 'This is one of the most common things LeanOn listeners hear from NRIs. The in-between feeling — too Indian for LA, too LA for India — is real, and listeners are trained to hold that complexity without trying to resolve it or give you an answer.' } },
 ] }
 
@@ -91,7 +91,7 @@ export default function IndiansInLosAngelesPage() {
           <h2>The Dream Chasers and the Distance Between Who You Are and Who LA Wants You to Be</h2>
           <p>LA draws Indians who came for dreams — entertainment industry, fashion, music, film. These Indians often exist in a different kind of isolation: their Indian community doesn&rsquo;t understand their creative ambitions, and their Hollywood world doesn&rsquo;t understand their Indian identity. The second-generation Indian kid from Cerritos who moved to Silver Lake to be a filmmaker, and feels like a stranger in both worlds.</p>
           <p>The Bollywood-adjacent dream chasers — the ones who came to LA because India&rsquo;s entertainment industry felt too closed, and America&rsquo;s felt impossibly far. The Indian engineer in Playa Vista who chose LA over the Bay Area because they wanted culture, and now spends 90 minutes in traffic each way and has almost no friends. The cultural mismatch is not just personal — it is structural. LA was not built for the kind of community Indian immigrants instinctively build.</p>
-          <p>Los Angeles (PST) is 13.5 hours behind IST. 7am in LA is 8:30pm in India — before the morning commute starts, Indian listeners are available. Talk to someone who gets the LA Indian experience. From ₹160.</p>
+          <p>Los Angeles (PST) is 13.5 hours behind IST. 7am in LA is 8:30pm in India — before the morning commute starts, Indian listeners are available. Talk to someone who gets the LA Indian experience. From US$10.</p>
         </div>
 
         <div className="section">
@@ -101,7 +101,7 @@ export default function IndiansInLosAngelesPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>In a city of millions, talk to one person who actually listens.</h2><p>Real Indian peer listener. Understands the desi LA experience — from Artesia to Silicon Beach. Anonymous. First 5 minutes free. From ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>In a city of millions, talk to one person who actually listens.</h2><p>Real Indian peer listener. Understands the desi LA experience — from Artesia to Silicon Beach. Anonymous. First 5 minutes free. From US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-support">NRI support &rarr;</a>
           <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>

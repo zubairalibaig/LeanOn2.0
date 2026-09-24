@@ -184,22 +184,6 @@ export default function KochiPage() {
           </ul>
         </div>
 
-        <h2 style={{fontSize:'20px',fontWeight:800,color:'var(--navy)',marginBottom:'16px'}}>Peer Listeners from Kerala</h2>
-        <div className="listeners-grid">
-          {[
-            { emoji: '✈️', name: 'Rajan', tag: 'Gulf Migration', bio: 'Spent 8 years in Dubai before returning to Kochi. Know the loneliness of working abroad and the complicated feelings around home. Happy to listen.' },
-            { emoji: '💙', name: 'Divya', tag: 'Long-Distance Family', bio: 'My husband worked in Qatar for five years. I navigated that stretch alone. I understand what that kind of absence does to a marriage and a family.' },
-            { emoji: '📚', name: 'Arun', tag: 'Education Pressure', bio: 'Dropped engineering after the first year — the hardest thing I did. The pressure on Kerala students is real. I can sit with that without judgment.' },
-          ].map((l, i) => (
-            <div key={i} className="listener-card">
-              <div className="listener-avatar">{l.emoji}</div>
-              <div className="listener-name">{l.name}</div>
-              <div className="listener-tag">{l.tag}</div>
-              <p className="listener-bio">{l.bio}</p>
-            </div>
-          ))}
-        </div>
-
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Understands Kerala?</h2>
           <p>Browse peer listeners who know the NRI experience and Kerala family dynamics. Available worldwide, 24/7, from ₹160.</p>

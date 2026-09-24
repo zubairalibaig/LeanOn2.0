@@ -68,7 +68,7 @@ const faqSchema = {
       name: 'How much does it cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Your first 5 minutes are free with every new listener. Paid sessions start from ₹130 for 15 minutes (approximately 5.5 AED). You pay from an in-app wallet; unused time is fully refunded.',
+        text: 'Your first 5 minutes are free with every new listener. Paid sessions start from US$10 for 15 minutes. You pay from an in-app wallet; unused time is fully refunded.',
       },
     },
   ],

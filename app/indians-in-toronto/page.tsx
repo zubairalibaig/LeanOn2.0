@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand the Toronto Indian community experience?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are based in India and understand the NRI experience — including the Brampton and Mississauga Punjabi community, the Scarborough Tamil and Gujarati communities, and the specific weight of Canadian immigrant life. No explanation needed.' } },
   { '@type': 'Question', name: 'When can I connect from Toronto?', acceptedAnswer: { '@type': 'Answer', text: 'Toronto (EST) is 10.5 hours behind IST. 8am Toronto = 6:30pm India. Your morning before work is India\'s evening — a reliable window for listeners. No appointment needed.' } },
   { '@type': 'Question', name: 'Is this private from my Brampton or Mississauga community?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Listeners are in India with no connection to the GTA Indian community. Nothing is shared with anyone.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -89,11 +89,11 @@ export default function IndiansInTorontoPage() {
         <div className="section">
           <h2>Canadian Winters and the Quiet Weight</h2>
           <p>Toronto winters are long and genuinely hard — November through March can be dark, cold, and isolating in ways that newcomers from India underestimate. The snow. The short days. The indoor life. The isolation of a suburban house when you haven&rsquo;t yet built your Canadian friendships. The family calls from India where you say everything is fine.</p>
-          <p>Toronto (EST) is 10.5 hours behind IST. 8am Toronto is 6:30pm India. Your morning — whether you&rsquo;re in Brampton commuting on the 410, or in Mississauga walking to the GO station — is India&rsquo;s evening. A real Indian listener is available, no appointment needed. Anonymous and completely private. The first 5 minutes free — once per listener.</p>
+          <p>Toronto (EST) is 10.5 hours behind IST. 8am Toronto is 6:30pm India. Your morning — whether you&rsquo;re in Brampton commuting on the 410, or in Mississauga walking to the GO station — is India&rsquo;s evening. A real Indian listener is available, no appointment needed. Anonymous and completely private. The first 5-minute session free.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Community everywhere. Real conversation here.</h2><p>Real Indian peer listener. Understands GTA Indian community life. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Community everywhere. Real conversation here.</h2><p>Real Indian peer listener. Understands GTA Indian community life. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/punjabi-support-canada">Punjabi support Canada &rarr;</a>
           <a href="/nri-loneliness-canada">NRI loneliness Canada &rarr;</a>

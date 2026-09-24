@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: "Can't Afford Therapy in India? Here Are Real Alternatives That Actually Help | LeanOn",
-  description: 'Therapy costs ₹1,500–₹5,000 per session in India. If that is out of reach, here are affordable alternatives — including LeanOn peer support from ₹99.',
+  description: 'Therapy costs ₹1,500–₹5,000 per session in India. If that is out of reach, here are affordable alternatives — including LeanOn peer support from ₹160.',
   keywords: [
     'cant afford therapy India', 'therapy too expensive India', 'affordable mental health India',
     'cheap therapy India', 'therapy alternative India', 'free mental health support India',
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Can't Afford Therapy in India? Here Are Real Alternatives That Actually Help | LeanOn",
-    description: 'Therapy costs ₹1,500–₹5,000 per session in India. If that is out of reach, here are affordable alternatives — including LeanOn peer support from ₹99.',
+    description: 'Therapy costs ₹1,500–₹5,000 per session in India. If that is out of reach, here are affordable alternatives — including LeanOn peer support from ₹160.',
     url: 'https://www.leanon.app/cant-afford-therapy-india',
     siteName: 'LeanOn',
     type: 'article',

@@ -54,7 +54,7 @@ export const post = {
 
 <p>The practical barrier to talking to someone in India is real: cost, availability, stigma, not knowing where to start. Here is the actual path of least resistance:</p>
 
-<p>LeanOn connects you with trained peer listeners — real people who have lived experience and training in supportive conversation — for a session that starts at ₹99. No appointment. No intake form. No waiting list. You browse, pick someone whose profile feels right, and connect. The first five minutes are free so you can see if it feels okay before committing.</p>
+<p>LeanOn connects you with trained peer listeners — real people who have lived experience and training in supportive conversation — for a session that starts at ₹160. No appointment. No intake form. No waiting list. You browse, pick someone whose profile feels right, and connect. The first five minutes are free so you can see if it feels okay before committing.</p>
 
 <p>You do not have to know what you want to say before you start. Most people do not. You can open with &ldquo;something has been pressing on me and I am not entirely sure what it is&rdquo; — and go from there. The listener&apos;s job is to be present with whatever comes up, not to receive a polished presentation of a problem.</p>
 

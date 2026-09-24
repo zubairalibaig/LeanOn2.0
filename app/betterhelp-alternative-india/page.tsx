@@ -41,7 +41,7 @@ const faqSchema = {
       name: 'Is there a free option on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'The first 5 minutes of every LeanOn session are free — you try before you commit. Sessions after that start at ₹160. There is no monthly subscription or free tier beyond the trial window.',
+        text: 'Your first 5-minute LeanOn session is free — you try before you commit. Sessions after that start at ₹160. There is no monthly subscription or free tier beyond the trial window.',
       },
     },
     {
@@ -242,7 +242,7 @@ export default function BetterhelpAlternativeIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is there a free option on LeanOn?</div>
-            <div className="faq-a">The first 5 minutes of every LeanOn session are free — you try before you commit. Sessions after that start at ₹160. There is no monthly subscription.</div>
+            <div className="faq-a">Your first 5-minute LeanOn session is free — you try before you commit. Sessions after that start at ₹160. There is no monthly subscription.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Why does BetterHelp cost so much in India?</div>

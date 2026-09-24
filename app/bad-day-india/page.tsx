@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
     {'@type': 'Question', name: 'Do I need a specific reason to use LeanOn?', acceptedAnswer: {'@type': 'Answer', text: 'No. "I had a bad day and I need to talk to someone" is reason enough.'}},
     {'@type': 'Question', name: 'How quickly can I start a session?', acceptedAnswer: {'@type': 'Answer', text: 'Immediately. Browse listeners who are online right now and start a session. No appointment, no form, no assessment. The first 5 minutes are free.'}},
-    {'@type': 'Question', name: 'What if I can\'t afford it?', acceptedAnswer: {'@type': 'Answer', text: 'The first 5 minutes of every session are free with no charge. Sessions start at ₹160 if you continue beyond that. There is no subscription.'}},
+    {'@type': 'Question', name: 'What if I can\'t afford it?', acceptedAnswer: {'@type': 'Answer', text: 'Your first 5-minute session is free with no charge. Sessions start at ₹160 if you continue beyond that. There is no subscription.'}},
     {'@type': 'Question', name: 'How much does it cost?', acceptedAnswer: {'@type': 'Answer', text: 'Sessions start at ₹160. First 5 minutes free.'}}
 ] }
 

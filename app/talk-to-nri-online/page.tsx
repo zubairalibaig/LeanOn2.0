@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Can I specifically talk to someone who has lived abroad?', acceptedAnswer: { '@type': 'Answer', text: 'Listener profiles share their background and areas of lived experience. You can browse and choose someone whose specific experience matches what you want to talk about — whether that\'s life in the UK, the US, Canada, or elsewhere.' } },
   { '@type': 'Question', name: 'Can I talk in Hindi or my regional language?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Many listeners are comfortable in Hindi and other Indian languages. Check individual listener profiles for language preferences.' } },
   { '@type': 'Question', name: 'Is my conversation private?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are private — only your phone number and first name are used to create your account. Nothing is shared with your family, community, or anyone else.' } },
-  { '@type': 'Question', name: 'How much does it cost to talk to an NRI online?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free — once per listener. Sessions continue from ₹160 for 15 minutes. No subscription, no commitment.' } },
+  { '@type': 'Question', name: 'How much does it cost to talk to an NRI online?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free — once per listener. Sessions continue from US$10 for 15 minutes. No subscription, no commitment.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -94,7 +94,7 @@ export default function TalkToNriOnlinePage() {
 
         <div className="section">
           <h2>How It Works</h2>
-          <p>Browse listeners at leanon.app/browse. Each listener profile shows their background, what they have experienced, and what they are good at listening to. Pick someone whose profile resonates with what you are carrying. Start a session — first 5 minutes free — once per listener, no appointment needed. Continue the conversation for as long as you need, from ₹160 for 15 minutes.</p>
+          <p>Browse listeners at leanon.app/browse. Each listener profile shows their background, what they have experienced, and what they are good at listening to. Pick someone whose profile resonates with what you are carrying. Start a session — first 5-minute session free, no appointment needed. Continue the conversation for as long as you need, from US$10 for 15 minutes.</p>
           <p>Anonymous. Private. No record that goes back to your family or your community. Just the conversation you need.</p>
         </div>
 

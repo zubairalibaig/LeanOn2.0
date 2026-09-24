@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand the DFW Indian experience?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are based in India and understand the NRI experience in American tech hubs like the DFW corridor. You don\'t need to explain the Plano or Frisco Indian community, the H-1B pressure, or what it means to be surrounded by community but still feel alone.' } },
   { '@type': 'Question', name: 'What time works best to connect from Dallas?', acceptedAnswer: { '@type': 'Answer', text: 'Dallas (CST) is 11.5 hours behind IST. 7am Dallas = 6:30pm India. Your early morning before work is India\'s evening — a reliable window when listeners are available. No appointment needed.' } },
   { '@type': 'Question', name: 'Is this confidential from my Plano or Frisco community?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — only a phone number and first name are required. Nothing is shared with anyone in your community. Listeners are in India, outside your network entirely.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'The first 5 minutes of every session are free. Sessions start from ₹160 for 15 minutes. No subscription, no commitment.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first 5-minute session is free. Sessions start from US$10 for 15 minutes. No subscription, no commitment.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -94,7 +94,7 @@ export default function IndiansInDallasPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>The DFW dream deserves real support behind it.</h2><p>Real Indian peer listener. Understands the Plano-Frisco NRI experience. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>The DFW dream deserves real support behind it.</h2><p>Real Indian peer listener. Understands the Plano-Frisco NRI experience. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/indians-in-texas">Indians in Texas &rarr;</a>
           <a href="/nri-support">NRI support &rarr;</a>

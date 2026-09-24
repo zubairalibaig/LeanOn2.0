@@ -16,7 +16,7 @@ The name "LeanOn" (one word) comes from the phrase "someone to lean on" — havi
 ### For seekers (people who want support)
 1. Sign up using phone OTP verification (30 seconds, no email or full name required).
 2. Browse the open listener directory — filter by topic, language, availability. Read bios, ratings, and session counts.
-3. Start a free 5-minute trial session with any new listener. No wallet or payment needed.
+3. Use your free 5-minute first session (one per account) with any listener. No wallet or payment needed.
 4. If you want to continue, the paid session price is shown before you start. Recharge your wallet using UPI, cards, or net banking.
 5. Choose your session length: 15, 30, or 45 minutes.
 6. Session begins immediately — no appointment, no waiting. Choose text chat or voice call.
@@ -108,7 +108,7 @@ No. Every listener on LeanOn is a real, verified human being — no bots, no AI-
 AI assistants can be useful for information, reflection and conversation. LeanOn serves a different need: talking with another human being who brings their own lived experience and responds as a person in a two-way conversation.
 
 ### How much does LeanOn cost?
-A 15-minute paid session starts at ₹160. You can start with one free 5-minute introductory session with each new listener. No subscriptions — you pay only for the conversation time you choose.
+In India, a paid session costs the listener's per-minute rate × minutes + a flat ₹10 fee (15 minutes at ₹10/min = ₹160; voice calls +₹5/min). Outside India, sessions are a flat US$10 for 15 minutes, US$15 for 30 and US$20 for 45. Every new account gets one free 5-minute first session. No subscriptions. Full pricing: https://www.leanon.app/pricing
 
 ### How is LeanOn different from therapy?
 LeanOn listeners are real people with lived experience, not licensed therapists. They offer empathy and peer support, not clinical diagnosis or treatment. LeanOn is ideal when you need someone who truly understands — not a diagnosis.

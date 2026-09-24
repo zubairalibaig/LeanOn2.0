@@ -48,12 +48,12 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is LeanOn available 24/7?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are available whenever you need them — early morning, late night, or during the workday. There is no appointment. You browse listeners who are online right now and start a session. The first 5 minutes free — once per listener.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are available whenever you need them — early morning, late night, or during the workday. There is no appointment. You browse listeners who are online right now and start a session. The first 5-minute session free.' },
     },
     {
       '@type': 'Question',
       name: 'How much does a session cost?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Sessions start at ₹160. The first 5 minutes of every session are free — you pay only if you continue beyond that. No subscription, no commitment.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Sessions start at ₹160. Your first 5-minute session is free — you pay only if you continue beyond that. No subscription, no commitment.' },
     },
   ],
 }

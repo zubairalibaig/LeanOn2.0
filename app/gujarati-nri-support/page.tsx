@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand the Patel community pressure specifically?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. The Patel community carries specific expectations — family business involvement, arranged marriage within community, the reputation weight of the Patel name abroad. Listeners understand this without needing it explained.' } },
   { '@type': 'Question', name: 'Is this confidential from my community?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Your Gujarati community in Leicester, Harrow, or Houston will never know. Sessions use only your phone number and first name. Nothing is shared.' } },
   { '@type': 'Question', name: 'What if my family pressure is about the family business?', acceptedAnswer: { '@type': 'Answer', text: 'Business family pressure — the expectation to join or grow the family enterprise, the conflict between your own career ambitions and family duty — is something LeanOn listeners hear often. You can talk about it without being judged or advised.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Sessions start from ₹160 for 15 minutes. The first 5 minutes of every session are free. No subscription. Pay only if the session feels right after the first 5 minutes.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Sessions start from US$10 for 15 minutes. Your first 5-minute session is free. No subscription. Pay only if the session feels right after the first 5 minutes.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -100,7 +100,7 @@ export default function GujaratiNriSupportPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Someone who understands the Gujarati weight abroad.</h2><p>No judgment. No advice. Just a real listener who gets it. First 5 minutes free. Sessions from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Someone who understands the Gujarati weight abroad.</h2><p>No judgment. No advice. Just a real listener who gets it. First 5 minutes free. Sessions from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-support">NRI support &rarr;</a>
           <a href="/indians-in-uk">Indians in UK &rarr;</a>

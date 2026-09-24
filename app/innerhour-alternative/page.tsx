@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'Is LeanOn free to browse?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. Browsing listener profiles on LeanOn is completely free. You only pay when you start a session. The first 5 minutes of every session are also free, so you can try a listener before committing.',
+        text: 'Yes. Browsing listener profiles on LeanOn is completely free. You only pay when you start a session. Your first 5-minute session is also free, so you can try a listener before committing.',
       },
     },
   ],
@@ -228,7 +228,7 @@ export default function InnerhourAlternativePage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn free to browse?</div>
-            <div className="faq-a">Yes. Browsing listener profiles is completely free. You only pay when you start a session. The first 5 minutes of every session are also free.</div>
+            <div className="faq-a">Yes. Browsing listener profiles is completely free. You only pay when you start a session. Your first 5-minute session is also free.</div>
           </div>
         </div>
 

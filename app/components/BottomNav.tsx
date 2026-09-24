@@ -43,6 +43,7 @@ export default function BottomNav() {
     pathname.startsWith('/hyderabad') ||
     pathname.startsWith('/blog') ||
     pathname.startsWith('/faq') ||
+    pathname.startsWith('/pricing') ||
     pathname.startsWith('/emotional-support') ||
     pathname.startsWith('/anonymous-support-online') ||
     pathname.startsWith('/someone-to-talk-to-at-night') ||

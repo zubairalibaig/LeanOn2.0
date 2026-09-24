@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'How do I find an empathetic listener online in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Browse listener profiles at leanon.app/browse. Each listener shows their areas of lived experience, their approach, and their availability. Choose someone whose background resonates with what you are going through. The first 5 minutes of every session are free, so you can assess the connection before committing.',
+        text: 'Browse listener profiles at leanon.app/browse. Each listener shows their areas of lived experience, their approach, and their availability. Choose someone whose background resonates with what you are going through. Your first 5-minute session is free, so you can assess the connection before committing.',
       },
     },
     {
@@ -213,7 +213,7 @@ export default function EmpathyFriendIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How do I find an empathetic listener online in India?</div>
-            <div className="faq-a">Browse listener profiles at leanon.app/browse. Each listener shows their areas of lived experience and availability. The first 5 minutes of every session are free, so you can assess the connection before committing.</div>
+            <div className="faq-a">Browse listener profiles at leanon.app/browse. Each listener shows their areas of lived experience and availability. Your first 5-minute session is free, so you can assess the connection before committing.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">What is active listening?</div>

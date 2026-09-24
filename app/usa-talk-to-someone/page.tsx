@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'How much does LeanOn cost from the USA?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first 5 minutes free — once per listener. Compared to $200/hour therapy, it is genuinely accessible.',
+        text: 'Sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first 5-minute session free. Compared to $200/hour therapy, it is genuinely accessible.',
       },
     },
     {
@@ -193,7 +193,7 @@ export default function UsaTalkToSomeonePage() {
           <p>Therapy in the USA costs $200 per session, requires insurance or weeks of paperwork, and
             often has a waiting list measured in months. LeanOn sessions are <strong>$10 for 15 minutes</strong>,
             <strong> $15 for 30 minutes</strong>, and <strong>$20 for 45 minutes</strong>.</p>
-          <p>Your first 5 minutes free — once per listener. No insurance required. No referral needed. No waitlist.
+          <p>Your first 5-minute session free. No insurance required. No referral needed. No waitlist.
             Just a real person, available now.</p>
         </div>
 

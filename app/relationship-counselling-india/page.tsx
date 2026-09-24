@@ -200,7 +200,7 @@ export default function RelationshipCounsellingIndiaPage() {
               <div className="step-num">3</div>
               <div className="step-text">
                 <div className="step-title">Start your session in minutes</div>
-                <div className="step-desc">No appointments, no waitlist. First 5 minutes free on every session. <a href="/browse" style={{color:'var(--teal)',fontWeight:700}}>Browse listeners now.</a></div>
+                <div className="step-desc">No appointments, no waitlist. First 5-minute session free. <a href="/browse" style={{color:'var(--teal)',fontWeight:700}}>Browse listeners now.</a></div>
               </div>
             </div>
           </div>

@@ -183,22 +183,6 @@ export default function ChandigarhPage() {
           </ul>
         </div>
 
-        <h2 style={{fontSize:'20px',fontWeight:800,color:'var(--navy)',marginBottom:'16px'}}>Peer Listeners from Chandigarh</h2>
-        <div className="listeners-grid">
-          {[
-            { emoji: '📚', name: 'Gurpreet', tag: 'Family Pressure', bio: 'Grew up in a joint family in Chandigarh. Know the specific weight of expectations from people who love you. Here to listen without adding to it.' },
-            { emoji: '🏛️', name: 'Simran', tag: 'Career Confusion', bio: 'Dropped UPSC prep after two years. The conversation with my family was hard. Happy to sit with anyone navigating a similar choice.' },
-            { emoji: '💙', name: 'Harman', tag: 'Marriage Pressure', bio: 'Navigated family pressure around marriage in my late 20s. I know how isolating that can feel when you cannot talk to the people applying the pressure.' },
-          ].map((l, i) => (
-            <div key={i} className="listener-card">
-              <div className="listener-avatar">{l.emoji}</div>
-              <div className="listener-name">{l.name}</div>
-              <div className="listener-tag">{l.tag}</div>
-              <p className="listener-bio">{l.bio}</p>
-            </div>
-          ))}
-        </div>
-
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Gets Chandigarh?</h2>
           <p>Browse peer listeners who understand Punjab and Haryana family dynamics. No appointments, no waitlists, available right now.</p>

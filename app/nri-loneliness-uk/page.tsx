@@ -95,7 +95,7 @@ export default function NriLonelinessUkPage() {
           <p>No appointment. No waiting list. Completely anonymous &mdash; a phone number is all you need. Browse who is online now and start a session. The first 5 minutes are free.</p>
         </div>
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>The loneliness you cannot quite name has a name.</h2><p>A real Indian peer listener who understands. First 5 minutes free. From ₹160 (~£1.60).</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>The loneliness you cannot quite name has a name.</h2><p>A real Indian peer listener who understands. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/indians-in-uk">Indians in the UK &rarr;</a>
           <a href="/nri-support">NRI support &rarr;</a>

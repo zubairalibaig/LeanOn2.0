@@ -127,7 +127,7 @@ export default function TalkToSomeoneOnlinePage() {
         <div className="section">
           <h2>How It Works</h2>
           <p>Browse listeners who are currently online. Each listener profile shows a little about their background and what they have been through. Choose someone whose experience resonates with yours. Start a session &mdash; text-based, anonymous, no signup beyond a phone number and first name.</p>
-          <p>The first 5 minutes of every session are free. If it is helpful, you continue. If not, you stop and pay nothing. No subscription, no commitment, no waitlist.</p>
+          <p>Your first 5-minute session is free. If it is helpful, you continue. If not, you stop and pay nothing. No subscription, no commitment, no waitlist.</p>
         </div>
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>Real person. Right now.</h2><p>Not AI. Not a bot. A real human being who will actually listen. First 5 minutes free.</p><a href="/browse" className="btn-cta">Talk to someone now &rarr;</a></div>

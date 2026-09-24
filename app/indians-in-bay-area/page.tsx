@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand the Silicon Valley Indian experience?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are based in India and understand the NRI tech worker experience — the Bay Area burnout, imposter syndrome, the H-1B dependency, the performance culture. You don\'t need to explain the context. Many listeners have close family in the Bay Area tech community.' } },
   { '@type': 'Question', name: 'What time works best to connect from the Bay Area?', acceptedAnswer: { '@type': 'Answer', text: 'Bay Area (PST/PDT) is 13.5 hours behind IST. 8am San Jose = 9:30pm India. Your morning — even before a full evening ends in India — finds listeners available. Evening Bay Area time (8–10pm) is India\'s late night and early morning, which also has listeners for night-owl sessions.' } },
   { '@type': 'Question', name: 'Is this confidential from my colleagues at my tech company?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous. Only a phone number and first name required. Nothing is shared with your employer, your Fremont or Sunnyvale community, or anyone back in India.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription, no commitment.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription, no commitment.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -90,11 +90,11 @@ export default function IndiansInBayAreaPage() {
           <h2>Time Zone and Timing: Bay Area to India</h2>
           <p>Bay Area (PST/PDT) is 13.5 hours behind IST. 8am in San Jose or Fremont is 9:30pm in India — late evening, when some listeners are still available. More reliably: 6am in the Bay Area is 7:30pm India time, a prime window. If you commute early, take a walk before the stand-up meeting, or have a quiet moment before the household wakes — that is often Indian evening time.</p>
           <p>Weekend mornings in the Bay Area — that quiet hour before the Fremont temple visit or the Sunnyvale cricket match — are Indian evenings. There is almost always someone available. No appointment needed. Browse who is online and start a session.</p>
-          <p>Sessions are text-based, anonymous, and completely private. Nothing reaches your team, your H-1B sponsor, or your family back in India. The first 5 minutes free — once per listener.</p>
+          <p>Sessions are text-based, anonymous, and completely private. Nothing reaches your team, your H-1B sponsor, or your family back in India. The first 5-minute session free.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>You optimised everything. Now talk to someone real.</h2><p>Real Indian peer listener. Understands Silicon Valley Indian life. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>You optimised everything. Now talk to someone real.</h2><p>Real Indian peer listener. Understands Silicon Valley Indian life. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/desi-support-usa">Desi support USA &rarr;</a>
           <a href="/nri-support">NRI support &rarr;</a>

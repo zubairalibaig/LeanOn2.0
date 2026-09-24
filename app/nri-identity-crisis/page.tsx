@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Is the NRI identity crisis a real thing?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. The experience of being neither fully from here nor fully from there — of not being claimed completely by either culture — is one of the most common things NRIs describe. It is not a personal failure. It is the structural reality of living between two worlds.' } },
   { '@type': 'Question', name: 'Will a listener in India understand identity questions from abroad?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners are Indian and understand NRI identity dynamics from the Indian side — they know what "foreign-returned" means, they know the gap between how NRIs are perceived in India and how they feel. They understand the in-between.' } },
   { '@type': 'Question', name: 'What if I don\'t even know how to describe my identity problem?', acceptedAnswer: { '@type': 'Answer', text: 'That is completely okay. A listener\'s job is not to receive a well-formulated problem. They can sit with "I don\'t know who I am anymore" just as well as any specific issue. Start where you are.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -93,7 +93,7 @@ export default function NriIdentityCrisisPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>The in-between, understood.</h2><p>Real Indian peer listener. Gets the NRI dual-identity experience. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>The in-between, understood.</h2><p>Real Indian peer listener. Gets the NRI dual-identity experience. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/second-generation-indian-usa">Second gen Indian USA &rarr;</a>
           <a href="/nri-support">NRI support &rarr;</a>

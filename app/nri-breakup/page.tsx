@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'I am not in crisis — I just need to talk about the breakup. Is that enough reason?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. You do not need to be in crisis to talk to a peer listener. Heartbreak is a real and significant thing to carry, especially when you are alone abroad. That is a completely valid reason to want to talk to someone.' } },
   { '@type': 'Question', name: 'What if my visa or living situation is affected by the breakup?', acceptedAnswer: { '@type': 'Answer', text: 'Peer listeners can hear all of this — the practical consequences and the emotional ones together. You do not have to separate them.' } },
   { '@type': 'Question', name: 'Can I talk to the same listener more than once?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. You can return to the same listener for follow-up sessions. Many people find it helpful to talk to the same person as they work through something over time.' } },
-  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes are free. Sessions continue from ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes are free. Sessions continue from US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -98,7 +98,7 @@ export default function NriBreakupPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Heartbreak in a foreign city. Someone is there.</h2><p>Real peer listener. Private, anonymous, understands NRI life. First 5 minutes free, from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Heartbreak in a foreign city. Someone is there.</h2><p>Real peer listener. Private, anonymous, understands NRI life. First 5 minutes free, from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-relationship-problems">NRI relationship problems &rarr;</a>
           <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>

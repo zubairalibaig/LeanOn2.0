@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do LeanOn listeners understand the Minnesota Indian experience?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners are based in India and trained to understand the NRI experience, including the specific isolation of being Indian in Minnesota — the brutal winters, the predominantly white state, the smaller Indian community, and the pressure of being a high-achieving immigrant in a state that is not known for its diversity.' } },
   { '@type': 'Question', name: 'What time can I connect from Minneapolis?', acceptedAnswer: { '@type': 'Answer', text: 'Minneapolis (CST) is 11.5 hours behind IST. 7am Minneapolis = 6:30pm India. Early mornings before work are a good time to connect — Indian listeners are available in their evening.' } },
   { '@type': 'Question', name: 'Does the seasonal darkness in Minnesota affect what I can talk about?', acceptedAnswer: { '@type': 'Answer', text: 'No. You can talk about anything — including the specific weight of Minnesota winters as an Indian immigrant. The seasonal isolation, the lack of sunlight, the way January feels when you are from a warm country and your social world is already thin — listeners are prepared to hear all of it.' } },
-  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
   { '@type': 'Question', name: 'I work at Mayo Clinic or the U of M. Is this private from my institution?', acceptedAnswer: { '@type': 'Answer', text: 'Completely private. LeanOn is anonymous — phone number and first name only. Nothing is shared with your employer, colleagues, or institution.' } },
 ] }
 
@@ -84,14 +84,14 @@ export default function IndiansInMinneapolisPage() {
           <h2>Mayo Clinic, UMN, Medtronic: The Minnesota Indian Medical World</h2>
           <p>The Twin Cities draw Indian professionals primarily through two channels: the medical world and technology. Mayo Clinic in Rochester draws Indian physicians and researchers from across the country. The University of Minnesota has a significant Indian student and faculty community. Medtronic, UnitedHealth Group, 3M — the Minneapolis corporate world has Indian engineers and professionals distributed across the suburbs from Eden Prairie to Maple Grove to Eagan.</p>
           <p>The Indian community here is real but small by comparison to coastal cities. There are temples, cultural associations, and a functioning Indian social world. But you can spend a week in Minneapolis without seeing another Indian face in your building, your neighbourhood, or your gym. The visibility — being conspicuous as an Indian in a predominantly white state — is its own weight. The sense of being watched, of representing your entire country in every room you enter, is exhausting in a way that accumulates.</p>
-          <p>LeanOn listeners understand this specific kind of fatigue. First 5 minutes free, from ₹160.</p>
+          <p>LeanOn listeners understand this specific kind of fatigue. First 5 minutes free, from US$10.</p>
         </div>
 
         <div className="section">
           <h2>What Minnesota Winter Does to Indian Immigrants</h2>
           <p>January in Minneapolis averages -14°C. The sun sets at 4:30pm. The cold is not just uncomfortable — it is physically constraining in a way that Indian immigrants, from a country where you can always walk outside, find profoundly isolating. The spontaneous socialising that is natural in warmer places — a walk after dinner, sitting outside, visiting a friend without a plan — doesn&rsquo;t exist for five months of the year.</p>
           <p>The Indian doctor who moved from Mumbai to work at Abbott Northwestern and spends Minnesota winter evenings indoors with Netflix and a growing anxiety about whether they made the right choice. The UMN graduate student from Chennai, here for their PhD, who has been indoors since November and whose last real conversation was with their advisor about data. The tech worker in Eden Prairie who has a comfortable suburban life and a profound sense of being somewhere they don&rsquo;t quite belong.</p>
-          <p>Minneapolis (CST) is 11.5 hours behind IST. 7am Minneapolis = 6:30pm India. Before your Minnesota morning, India is awake. Talk to someone who understands. From ₹160.</p>
+          <p>Minneapolis (CST) is 11.5 hours behind IST. 7am Minneapolis = 6:30pm India. Before your Minnesota morning, India is awake. Talk to someone who understands. From US$10.</p>
         </div>
 
         <div className="section">
@@ -101,7 +101,7 @@ export default function IndiansInMinneapolisPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Minnesota winter is brutal. You don&rsquo;t have to go through it alone.</h2><p>Real Indian peer listener. Understands the Twin Cities Indian experience. Anonymous. First 5 minutes free. From ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Minnesota winter is brutal. You don&rsquo;t have to go through it alone.</h2><p>Real Indian peer listener. Understands the Twin Cities Indian experience. Anonymous. First 5 minutes free. From US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-support">NRI support &rarr;</a>
           <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>

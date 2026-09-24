@@ -81,7 +81,7 @@ export const post = {
 
 <p>LeanOn is built specifically for the everyday-support layer of this landscape — the very large, very real category of need that sits between &quot;I am fine&quot; and &quot;I need clinical treatment.&quot; It connects you one-on-one, by text chat or voice call, with a verified peer listener who has personally lived through loneliness, anxiety, burnout, grief, breakups, or family pressure, and who has been trained in <strong>empathetic listener India</strong> practices — genuine, active, judgment-free listening, not scripted responses.</p>
 
-<p>Every session is anonymous by default. Listeners are manually verified. A short trial session is available for new users, so you can find the right listener before committing to a longer session. After that, sessions run ₹8–25 per minute, a fraction of typical therapy costs, available 24/7, in 12 Indian languages.</p>
+<p>Every session is anonymous by default. Listeners are manually verified. A short trial session is available for new users, so you can find the right listener before committing to a longer session. After that, sessions cost the per-minute rate set by the listener (15 minutes at ₹10/min = ₹160), a fraction of typical therapy costs, available 24/7, in 12 Indian languages.</p>
 
 <h3>Having a Good First Session</h3>
 

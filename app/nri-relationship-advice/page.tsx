@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'What kinds of NRI relationship situations can I talk about?', acceptedAnswer: { '@type': 'Answer', text: 'Any situation that is weighing on you — arranged marriage pressure, long-distance with a partner in India, marriage strain abroad, dating as an NRI, breakup in a foreign country, relationship with parents from abroad. Nothing is too specific or too complex.' } },
   { '@type': 'Question', name: 'Is this session confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are private — only your phone number and first name are used. Nothing goes back to your partner, your family, or anyone else in your life.' } },
   { '@type': 'Question', name: 'Do listeners understand the NRI relationship context?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners are Indian and many have direct experience with the relationship dynamics NRIs navigate — the cultural expectations, the immigration pressures, the family involvement. You will not need to explain the basics.' } },
-  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -99,7 +99,7 @@ export default function NriRelationshipAdvicePage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Clarity, not a list. Someone to think out loud with.</h2><p>Real NRI peer listener. Understands the immigrant relationship world. First 5 minutes free, from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Clarity, not a list. Someone to think out loud with.</h2><p>Real NRI peer listener. Understands the immigrant relationship world. First 5 minutes free, from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-relationship-problems">NRI relationship problems &rarr;</a>
           <a href="/nri-long-distance-relationship">NRI long distance &rarr;</a>

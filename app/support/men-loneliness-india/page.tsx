@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'What is LeanOn and how does it help with loneliness?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn connects you with trained peer listeners — real people who have their own lived experience and are specifically trained to listen actively and without judgment. A session is not therapy — it is a real conversation with a real person who is there specifically to hear what you are going through. Many men use LeanOn specifically because it provides what their current social circle cannot: someone to talk to about the actual internal experience, not just the surface level. Sessions start at ₹85 for 15 minutes. First 5 minutes are free.',
+        text: 'LeanOn connects you with trained peer listeners — real people who have their own lived experience and are specifically trained to listen actively and without judgment. A session is not therapy — it is a real conversation with a real person who is there specifically to hear what you are going through. Many men use LeanOn specifically because it provides what their current social circle cannot: someone to talk to about the actual internal experience, not just the surface level. Sessions start at ₹160 for 15 minutes. First 5 minutes are free.',
       },
     },
     {

@@ -94,7 +94,7 @@ export default function NriLonelinessCanadaPage() {
           <p>You sign up with just your phone number. No photo, no full name, no social account. Your family back home and your colleagues in Canada never know. There is no appointment, no waiting list. Browse who is online right now and start a session. The first 5 minutes are free.</p>
         </div>
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>The loneliness is real. So is the support.</h2><p>A real Indian peer listener who understands the Canada experience. First 5 minutes free. From ₹160 (~$3 CAD).</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>The loneliness is real. So is the support.</h2><p>A real Indian peer listener who understands the Canada experience. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/punjabi-support-canada">Punjabi support Canada &rarr;</a>
           <a href="/nri-support">NRI support &rarr;</a>

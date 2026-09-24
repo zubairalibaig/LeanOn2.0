@@ -53,7 +53,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'How much does LeanOn cost?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Sessions start at ₹160. The first 5 minutes are free on every session — you pay only if you continue. No subscription, no appointment, no waiting.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Sessions start at ₹160. Your first 5-minute session is free — you pay only if you continue. No subscription, no appointment, no waiting.' },
     },
   ],
 }

@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand the Birmingham Indian community?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are based in India and understand the British Indian diaspora experience — including Birmingham\'s Punjabi and Gujarati communities, the intergenerational pressures of a community that has been here for generations, and the particular dynamics of Handsworth and Soho Road. No explanation needed.' } },
   { '@type': 'Question', name: 'When is a good time to connect from Birmingham?', acceptedAnswer: { '@type': 'Answer', text: 'UK (GMT/BST) is 5.5 hours behind IST in winter and 4.5 hours in summer. 3pm Birmingham = 8:30pm India. Afternoon in Birmingham is Indian evening — a reliable window for listeners.' } },
   { '@type': 'Question', name: 'Is this private from the Birmingham community?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Listeners are in India with no connection to the Birmingham Indian network. Nothing is shared.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -93,7 +93,7 @@ export default function IndiansInBirminghamPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Outside the community. Inside the culture.</h2><p>Real Indian peer listener. Understands British Indian community dynamics. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Outside the community. Inside the culture.</h2><p>Real Indian peer listener. Understands British Indian community dynamics. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/indians-in-uk">Indians in UK &rarr;</a>
           <a href="/nri-loneliness-uk">NRI loneliness UK &rarr;</a>

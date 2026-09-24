@@ -1,9 +1,92 @@
 # LeanOn Discoverability & SEO Master Plan
 
-**Last updated:** 2026-09-13  
+**Last updated:** 2026-09-24  
 **Goal:** Be the first result for "lean on", "leanon", "empathy", and all mental health / peer support / peer counselling / emotional support searches in India. Be cited in ChatGPT, Gemini, Perplexity, and Claude answers. **Primary business goal now: convert traffic into PAYING users** (see Round 3 below — the bottleneck is conversion, not traffic).
 
 **Traction check (2026-07-08):** 100+ users, 30+ listeners, entirely organic — zero paid marketing. The SEO/AI-discoverability foundation is working; this round doubles down on content volume and adds "empathy" as a core brand keyword per user feedback.
+
+---
+
+## Round 13 — Strategy validation: stop adding pages, fix trust, go off-site (2026-09-24)
+
+**Situation:** 414 public pages (about 490 added since June) and a flood of listener sign-ups, but
+only 3 genuine paying seekers in 2 months, plus 2 who paid for "friendship". More pages won't fix this.
+
+### What the review found
+1. **The site has more pages than help, and the volume is now a risk.** Mental health is a YMYL
+   topic. A new domain with few backlinks publishing 15–23 templated pages a day matches Google's
+   *scaled content abuse* and *doorway page* patterns. The `ai-chatbot-alternative-<country>`
+   pages were about 90% identical to each other. A site-wide quality demotion drags the good pages down too.
+   **Check in GSC → Indexing → Pages:** if most URLs are "Crawled/Discovered – currently not
+   indexed", Google has already made that judgement.
+2. **Some pages were bringing in the users you don't want.**
+   - Companionship and stranger-chat searches (the "time passers"): `/paid-friend-india`,
+     `/online-friend-india`, `/stranger-friend-india`, `/talk-to-stranger-online-india`,
+     `/human-companionship-online-india`, `/getcompanion-alternative`, `/anonymous-chat-india`.
+   - Chat-job seekers: `/get-paid-to-chat-india`.
+   - People who want it free: `/talk-to-someone-free-india`.
+3. **Pages contradicted each other.** That hurts AI answers (GEO) and trust:
+   - About 60 overseas pages quoted "₹160 (about £1.60 / $2)", but NRIs are charged **US$10** for
+     15 minutes. A diaspora visitor saw one price and was charged about 5× more at checkout.
+   - About 36 pages said "the first 5 minutes of **every** session are free", and about 80 said
+     "free with each new listener". The actual rule is **one free 5-minute session per account**.
+   - India prices varied: ₹20/min, ₹85, ₹99, ₹8–25/min and ₹160. `/faq` still said "₹150 goes to
+     your listener", which has been untrue since the 40% service fee.
+   - `llms.txt` told AI assistants "₹160 (~$2 USD)" and "free trial per listener".
+   - 4 city pages showed invented listener profiles ("Arjun, IT burnout, Noida…").
+
+   When sources disagree, AI assistants hedge or leave the brand out. Making the facts consistent
+   is the cheapest GEO win.
+4. **No single page answered "how much does LeanOn cost?"** It's the #1 question people and AI
+   assistants ask before buying.
+5. **Almost no off-site presence yet.** Most of the off-site tasks in `SEO-PLAYBOOK.md` Phases 1–2
+   are still unchecked. `llms.txt` helps a little; what ChatGPT, Perplexity and Gemini actually quote
+   is Reddit, Quora, directories, press and comparison articles.
+
+### What was changed
+- **New `/pricing` page**, in the sitemap and the footer. It has India and abroad price tables plus
+  FAQPage and Offer schema. Every number comes from `lib/constants.ts` / `lib/geo-pricing.ts`, so it
+  always matches what users are charged.
+- **Overseas pages** now quote US$10 / $15 / $20. The country template shows the right currency per country.
+- **Free-trial wording** is fixed site-wide: "your first 5-minute session is free".
+- **India prices** are consistent: rate × minutes + ₹10, with ₹160 for 15 minutes at ₹10/min as the
+  example. `/faq` is fixed.
+- **`llms.txt` / `llms-full.txt`** now have the correct trial rule and India + NRI prices, and point
+  to `/pricing` as the source.
+- **Invented listener profiles removed** from `/noida`, `/gurgaon`, `/chandigarh` and `/kochi`.
+- **Pages removed from search** (noindex, follow; they stay live): the 9 wrong-intent pages above
+  and the 9 near-duplicate `ai-chatbot-alternative-<country>` pages. The list and reasons are in
+  `lib/seo-noindex.ts`; remove a path there to bring it back. The sitemap now leaves out noindexed
+  and duplicate URLs.
+- **Sitemap `lastmod`** now uses the real date content changed. Before, every URL got the deploy
+  date, which teaches Google to ignore lastmod.
+
+### The plan for paying users (in order)
+1. **No new keyword pages for 60 days.** Improve the roughly 30 pages that already get impressions
+   (GSC → Performance → Pages, last 3 months) and leave the rest alone.
+2. **Check that NRIs can actually sign up and pay before promoting to them.** Test that the OTP
+   arrives on a +44, +971 and +1 number (MSG91 international), and make a real international card
+   payment on Razorpay (international payments must be enabled). If either fails, the NRI pages are wasted.
+3. **Target people who already pay to talk:**
+   - relationship, marriage and in-law problems (AstroTalk's biggest paying category);
+   - late-night loneliness among 25–40-year-old professionals;
+   - Indians living abroad. For them the pitch is price plus culture: a local therapist costs
+     US$100–200, £60–90 or AED 400+ a session. LeanOn is US$10 for 15 minutes with someone who
+     understands Indian family life, in Hindi, Tamil, Malayalam and more.
+4. **Time zones decide which NRIs convert.** Listeners are in India:
+   - Gulf, Singapore and Malaysia evenings overlap Indian evenings.
+   - UK evenings are late night in India.
+   - US and Canada evenings are early morning in India.
+
+   So prioritise the Gulf, Singapore/Malaysia and the UK. Target the US and Canada only once some
+   listeners commit to IST-morning hours.
+5. **GEO means off-site work.** See `SEO-PLAYBOOK.md` → "Priority now".
+6. **Measure paying users, not traffic.** Add GA4 key events for a successful recharge and a first
+   paid session, broken down by landing page and country. A page with no paying users after 90 days
+   of impressions is a candidate for noindex.
+7. **Conversion matters more than SEO.** A seeker who arrives when no listener is online converts at 0%.
+   Show honest "online now" counts, and recruit listeners for the hours when seekers arrive instead
+   of adding more listeners overall.
 
 ---
 
@@ -150,10 +233,10 @@ Specific Life Situations (E–K):
 - `/online-support-group-india` — problems with group support, 1:1 benefits, community aspect.
 
 **4 city pages** (all `force-static`, FAQPage + BreadcrumbList + LocalBusiness JSON-LD, priority 0.85):
-- `/noida` — IT hub (Sector 50/62/137), apartment loneliness, NCR commute. Listeners: Arjun (IT Burnout), Priya (Relocation), Rahul (Work-Life).
-- `/gurgaon` — corporate hub, BFSI/MNC/startups, transient population, weekend loneliness. Listeners: Vivek (Corporate Burnout), Ananya (Startup), Sameer (Weekend Loneliness).
-- `/chandigarh` — Punjab/Haryana family pressure, UPSC culture, joint family dynamics, marriage pressure. Listeners: Gurpreet (Family Pressure), Simran (Career Confusion), Harman (Marriage Pressure).
-- `/kochi` — Kerala NRI/Gulf migration, long-distance marriage, joint family, high education pressure, Malayalam listeners. Listeners: Rajan (Gulf Migration), Divya (Long-Distance Family), Arun (Education Pressure).
+- `/noida` — IT hub (Sector 50/62/137), apartment loneliness, NCR commute. (Invented listener profiles removed 2026-09-24.)
+- `/gurgaon` — corporate hub, BFSI/MNC/startups, transient population, weekend loneliness. (Invented listener profiles removed 2026-09-24.)
+- `/chandigarh` — Punjab/Haryana family pressure, UPSC culture, joint family dynamics, marriage pressure. (Invented listener profiles removed 2026-09-24.)
+- `/kochi` — Kerala NRI/Gulf migration, long-distance marriage, joint family, high education pressure, Malayalam listeners. (Invented listener profiles removed 2026-09-24.)
 
 **5 blog posts** (all wired into blog slug page + sitemap, priority 0.95/0.93):
 - `/blog/best-mental-health-apps-india-2026` — honest comparison of Amaha, YourDOST, Wysa, iCall, Tata 1mg, LeanOn. Routing guide. (~800 words)

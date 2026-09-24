@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Will the listener judge me for dating non-Indians or outside my caste?', acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn listeners are peer listeners, not moral authorities. They will hear you without judgement, whatever your choices or situation. Their role is to understand, not to assess.' } },
   { '@type': 'Question', name: 'Is this confidential from my family and community?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Nothing is shared with your family, community, or anyone else.' } },
   { '@type': 'Question', name: 'What if I\'m second-generation and my dating life is complicated by identity questions?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is particularly well-suited to second-generation Indian-Americans, who often navigate an identity gap between their American life and their Indian family. Listeners understand the ABCD experience without needing extensive explanation.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -94,7 +94,7 @@ export default function NriDatingUsaPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Someone who understands both instructions.</h2><p>Real Indian peer listener. Gets the NRI dating experience. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Someone who understands both instructions.</h2><p>Real Indian peer listener. Gets the NRI dating experience. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-marriage-usa">NRI marriage USA &rarr;</a>
           <a href="/desi-support-usa">Desi support USA &rarr;</a>

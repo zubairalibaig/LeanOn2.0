@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'I had a racist incident at uni and I don\'t know what to do with it. Can I talk about that?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Racist experiences — in halls, in seminars, in social settings — are something listeners hear often from Indian students in the UK. You can speak about it honestly, including the confusion about how to respond and the anger and the sadness, without being told what you should have done.' } },
   { '@type': 'Question', name: 'The UK is very expensive and I am stressed about money. Is this confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Financial stress — the cost of a UK degree, the guilt of spending family money, the anxiety of making it work — is something you can speak about honestly. Sessions are anonymous. Nothing reaches your family or your university.' } },
   { '@type': 'Question', name: 'I missed Diwali at home for the first time this year and I feel terrible about it. Is that something to talk about?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Festival homesickness — Diwali, Holi, Eid, Christmas — is real grief. Missing the first one is often harder than anyone prepares you for. A listener will hear it as the real thing it is.' } },
-  { '@type': 'Question', name: 'How much does it cost? I am a student on a tight budget.', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes — roughly £1.50-2 GBP. No subscription, no commitment.' } },
+  { '@type': 'Question', name: 'How much does it cost? I am a student on a tight budget.', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes-2 GBP. No subscription, no commitment.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -100,7 +100,7 @@ export default function IndianStudentUkPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>The real student experience deserves to be heard.</h2><p>A peer listener who understands India, the UK, and the gap between them. First 5 minutes free. Sessions from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>The real student experience deserves to be heard.</h2><p>A peer listener who understands India, the UK, and the gap between them. First 5 minutes free. Sessions from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-student-support">Indian student abroad &rarr;</a>
           <a href="/indians-in-uk">Indians in UK &rarr;</a>

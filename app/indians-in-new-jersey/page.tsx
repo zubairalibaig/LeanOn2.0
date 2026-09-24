@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Is this for NJ Indians specifically?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is for Indians anywhere abroad, and listeners understand the specific NJ Indian experience — the Oak Tree Road community, the high density in Edison and Parsippany, the pressure of being in one of the most watched Indian communities in America. You don\'t need to explain the context.' } },
   { '@type': 'Question', name: 'When is the best time to connect from New Jersey?', acceptedAnswer: { '@type': 'Answer', text: 'New Jersey (EST) is 10.5 hours behind IST. 8am NJ = 6:30pm India. Your morning before the commute aligns with Indian evenings — a reliable window for finding a listener online.' } },
   { '@type': 'Question', name: 'Is this private from the Edison and Parsippany community?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous. Only a phone number and first name. Listeners are in India, with no connection to NJ Indian networks. Nothing leaves the session.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -93,7 +93,7 @@ export default function IndiansInNewJerseyPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Outside the NJ network. Inside the culture.</h2><p>Real Indian peer listener. Understands the NJ Indian experience. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Outside the NJ network. Inside the culture.</h2><p>Real Indian peer listener. Understands the NJ Indian experience. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/desi-support-usa">Desi support USA &rarr;</a>
           <a href="/nri-support">NRI support &rarr;</a>

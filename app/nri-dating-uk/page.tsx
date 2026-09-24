@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Do listeners understand British Indian dating culture?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are based in India and understand the British Indian diaspora experience — the generational dynamics, the community gossip, the expectations around who you should marry and when. They won\'t need the cultural context explained.' } },
   { '@type': 'Question', name: 'What if I\'m in a secret relationship and it\'s taking a toll?', acceptedAnswer: { '@type': 'Answer', text: 'That is exactly the kind of weight peer support is for. The exhaustion of a hidden relationship, the fear of coming out to your family, the guilt and the longing — a listener will hear all of it without judgement.' } },
   { '@type': 'Question', name: 'Is this for British Indians of all backgrounds — Punjabi, Gujarati, Tamil?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners have cultural familiarity across North and South Indian backgrounds. Your specific community context doesn\'t need extensive explanation.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
   { '@type': 'Question', name: 'Is this confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Nothing is shared with your family, community, or anyone else.' } },
 ] }
 
@@ -94,7 +94,7 @@ export default function NriDatingUkPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Both cultures understood. No explanation needed.</h2><p>Real Indian peer listener. Gets British Indian dating complexity. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>Both cultures understood. No explanation needed.</h2><p>Real Indian peer listener. Gets British Indian dating complexity. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/indians-in-uk">Indians in UK &rarr;</a>
           <a href="/nri-marriage-uk">NRI marriage UK &rarr;</a>

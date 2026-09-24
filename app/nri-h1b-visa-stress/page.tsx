@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'I was laid off and I am terrified. Is this the right place to talk about that?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. H1B layoff is not like a normal layoff — it comes with a 60-day clock, immediate visa jeopardy, and a rush of decisions that need to be made under enormous pressure. The emotional weight of that terror is something LeanOn listeners understand and can hold with you.' } },
   { '@type': 'Question', name: 'My partner is on H4 and cannot work. We are both struggling. Can we each talk to a listener?', acceptedAnswer: { '@type': 'Answer', text: 'Yes, absolutely. The H4 isolation — financial dependency, professional sidelining, far from your own support network — is its own form of stress that deserves space. Both the H1B holder and the H4 partner can find listeners who understand their specific experience.' } },
   { '@type': 'Question', name: 'Is this confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are anonymous — phone number and first name only. Your employer, your community, and your family will never know.' } },
-  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription needed.' } },
+  { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription needed.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -100,7 +100,7 @@ export default function NriH1bVisaStressPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>The H1B anxiety deserves to be spoken aloud.</h2><p>Real peer listener. Understands the visa weight completely. First 5 minutes free. Sessions from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>The H1B anxiety deserves to be spoken aloud.</h2><p>Real peer listener. Understands the visa weight completely. First 5 minutes free. Sessions from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-workplace-stress">NRI workplace stress &rarr;</a>
           <a href="/telugu-nri-support">Telugu NRI support &rarr;</a>

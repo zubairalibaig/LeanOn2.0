@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'How much does peer support cost in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'On LeanOn, peer support sessions start at approximately ₹160 for 30 minutes. The first 5 minutes of every session are free, so you can talk to a listener and decide if it feels right before you commit. There are no subscription fees, no membership charges, and no automatic renewals — you pay per session.',
+        text: 'On LeanOn, peer support sessions start at about ₹160 for 15 minutes. Your first 5-minute session is free, so you can talk to a listener and decide if it feels right before you commit. There are no subscription fees, no membership charges, and no automatic renewals — you pay per session.',
       },
     },
     {
@@ -248,7 +248,7 @@ export default function PeerSupportPage() {
               <div className="step-num">2</div>
               <div className="step-text">
                 <div className="step-title">Start with 5 minutes free</div>
-                <div className="step-desc">Every session begins with a free 5-minute trial. Talk, get a sense of the connection, and decide whether to continue — with no commitment until you choose to extend.</div>
+                <div className="step-desc">Your first session is a free 5-minute trial. Talk, get a sense of the connection, and decide whether to continue — with no commitment until you choose to extend.</div>
               </div>
             </div>
             <div className="step">
@@ -303,7 +303,7 @@ export default function PeerSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does peer support cost in India?</div>
-            <div className="faq-a">On LeanOn, peer support sessions start at approximately ₹160 for 30 minutes. The first 5 minutes of every session are free, so you can talk to a listener and decide if it feels right before you commit. There are no subscription fees, no membership charges, and no automatic renewals — you pay per session.</div>
+            <div className="faq-a">On LeanOn, peer support sessions start at about ₹160 for 15 minutes. Your first 5-minute session is free, so you can talk to a listener and decide if it feels right before you commit. There are no subscription fees, no membership charges, and no automatic renewals — you pay per session.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is peer support anonymous?</div>

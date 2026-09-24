@@ -37,7 +37,7 @@ const serviceSchema = {
   },
   offers: {
     '@type': 'Offer',
-    description: 'First 5 minutes free. Sessions from ₹20/min in India, $10 for 15 min internationally.',
+    description: 'First 5 minutes free. Sessions from ₹160 for 15 minutes in India, US$10 for 15 minutes abroad.',
   },
 }
 
@@ -276,7 +276,7 @@ export default function EmotionalSupportWithoutAIPage() {
             </li>
             <li>
               <strong>Continue as long as you need.</strong> Sessions are available in 15, 30, or 45-minute
-              blocks. Pricing starts from ₹20/min in India, $10 for 15 minutes internationally.
+              blocks. Pricing starts at ₹160 for 15 minutes in India and US$10 for 15 minutes abroad.
             </li>
           </ol>
         </div>

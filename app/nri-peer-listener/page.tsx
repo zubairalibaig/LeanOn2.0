@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'How is a peer listener different from a friend?', acceptedAnswer: { '@type': 'Answer', text: 'A friend has their own life, their own history with you, and sometimes their own opinions about what you should do. A peer listener has none of that. They are there solely to listen to you — no agenda, no judgment, no feedback you didn\'t ask for. That neutrality is the point.' } },
   { '@type': 'Question', name: 'Do NRI peer listeners have specific lived experience abroad?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are Indian and many have direct experience with life abroad or with close family who have lived abroad. You can browse profiles to find someone whose specific experience matches what you want to talk about.' } },
   { '@type': 'Question', name: 'Can I talk about anything or is it limited to certain topics?', acceptedAnswer: { '@type': 'Answer', text: 'You can talk about anything that is weighing on you — loneliness, relationships, family pressure, marriage, career anxiety, homesickness, identity. There are no required topics and no judgment about what you bring.' } },
-  { '@type': 'Question', name: 'How much does a session with an NRI peer listener cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session with each new listener is free (5 minutes). After that, sessions start at ₹160 for 15 minutes. No subscription.' } },
+  { '@type': 'Question', name: 'How much does a session with an NRI peer listener cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -99,7 +99,7 @@ export default function NriPeerListenerPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Someone who already understands.</h2><p>Real NRI peer listener. No preamble needed. First 5 minutes free, from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a peer listener &rarr;</a></div>
+        <div className="cta-card"><h2>Someone who already understands.</h2><p>Real NRI peer listener. No preamble needed. First 5 minutes free, from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a peer listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-support">NRI support &rarr;</a>
           <a href="/nri-mental-health">NRI mental health &rarr;</a>

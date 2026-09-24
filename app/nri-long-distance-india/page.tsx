@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'My partner is in India and doesn\'t know I\'m talking to someone — is that okay?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are private. You do not need your partner\'s knowledge or permission. Having your own space to process what you are going through is not a betrayal.' } },
   { '@type': 'Question', name: 'Do listeners understand F2/H4/UK spouse visa dynamics?', acceptedAnswer: { '@type': 'Answer', text: 'Listeners are Indian and many understand the reality of dependent visa situations — the wait, the uncertainty, the way it shapes the relationship dynamic. You will not need to explain the immigration basics.' } },
   { '@type': 'Question', name: 'Can I talk in Hindi?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Many listeners are comfortable in Hindi. Check individual listener profiles.' } },
-  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes are free. Sessions continue from ₹160 for 15 minutes. No subscription, no commitment.' } },
+  { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes are free. Sessions continue from US$10 for 15 minutes. No subscription, no commitment.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -98,7 +98,7 @@ export default function NriLongDistanceIndiaPage() {
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>The wait, the uncertainty, the weight of two different loneliness.</h2><p>Real peer listener. Understands the India-abroad long-distance reality. First 5 minutes free, from ₹160.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
+        <div className="cta-card"><h2>The wait, the uncertainty, the weight of two different loneliness.</h2><p>Real peer listener. Understands the India-abroad long-distance reality. First 5 minutes free, from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-long-distance-relationship">NRI long distance &rarr;</a>
           <a href="/nri-relationship-problems">NRI relationship problems &rarr;</a>

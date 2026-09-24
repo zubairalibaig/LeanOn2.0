@@ -6,6 +6,49 @@ Budget: most of this is free; total cost if you do everything paid is under ₹1
 
 ---
 
+## ⭐ Priority now (2026-09-24): off-site GEO for PAYING users
+
+The code side of SEO is saturated (414 pages). What AI assistants cite is **other websites
+talking about LeanOn**. Do these in order and tick them off here. Rules:
+- Never post fake reviews or pretend to be a user; always say you're the founder.
+- Give the crisis numbers (NIMHANS 080-46110007 / Tele-MANAS 14416) whenever someone sounds at risk.
+- Stay out of teen communities.
+
+**Week 1: checks (about 2 hours)**
+- [ ] GSC → Indexing → Pages: note how many pages are indexed and how many aren't. Send the numbers to engineering.
+- [ ] GSC → Performance (last 3 months): export the top 50 queries and pages. This decides what to improve.
+- [ ] Verify the site in Bing Webmaster Tools and submit the sitemap (ChatGPT search and Copilot use Bing).
+- [ ] Test the NRI path with a real foreign number and a foreign card: the OTP arrives, the recharge
+      works, and a session can be booked.
+- [ ] Ask ChatGPT, Perplexity and Gemini these questions and save the answers as a baseline:
+      "how much does LeanOn cost", "talk to someone in Hindi from Dubai",
+      "affordable alternative to therapy for Indians in UK".
+
+**Weeks 2–4: build the base AI assistants cite**
+- [ ] List LeanOn in directories, using the **same one-line description and the /pricing link** everywhere:
+      Product Hunt, AlternativeTo (as an alternative to 7 Cups, BetterHelp, Amaha and YourDOST),
+      Crunchbase, startupindia.gov.in, app directories, and a Wikidata item.
+- [ ] Reddit, from a founder account, helpful first (9 useful replies for every 1 mention):
+      r/dubai, r/UAE, r/singapore, r/NRI, r/india, r/bangalore, r/AskIndianWomen.
+      Make one honest post in r/NRI and one in r/dubai: "I built this: US$10 for 15 minutes with an
+      Indian listener, first session free".
+- [ ] Quora: answer the questions paying users actually ask, for example:
+      - "Is there an Indian therapist in Dubai or London who speaks Hindi?"
+      - "How do I deal with my in-laws after marriage?"
+      - "Where can I talk to someone about my marriage in India?"
+
+      Give a genuinely useful answer and one link to /pricing or /browse.
+- [ ] Pitch 3 diaspora outlets (Khaleej Times, Gulf News, Eastern Eye UK, DESIblitz). Angle:
+      "Indians abroad can talk to a listener back home, in their own language, for US$10."
+
+**Ongoing**
+- [ ] One short video a week answering a real question (Instagram Reels + YouTube Shorts), captioned
+      with the question as people search it ("can't talk to my parents about my marriage", "lonely in Dubai").
+- [ ] Get into "best mental health apps India 2026" roundups: email the authors of the top 10 results.
+- [ ] Every month, re-run the AI-answer baseline above and note what changed in DISCOVERABILITY.md.
+
+---
+
 ## How search works now (2026 reality)
 
 Three doors people come through — you must win all three:

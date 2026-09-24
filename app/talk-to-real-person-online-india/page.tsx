@@ -56,7 +56,7 @@ const faqSchema = {
       name: 'How much does it cost to talk to a real person on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Your first 5 minutes are free, every session. After that, 15-minute paid sessions start at ₹160 depending on the listener. Much more affordable than professional therapy.',
+        text: 'Your first 5-minute session is free. After that, 15-minute paid sessions start at ₹160 depending on the listener. Much more affordable than professional therapy.',
       },
     },
     {
@@ -256,7 +256,7 @@ export default function TalkToRealPersonPage() {
           </div>
           <div className="faq-item">
             <h3>How much does it cost to talk on LeanOn?</h3>
-            <p>Your first 5 minutes are free, every session. After that, 15-minute paid sessions start at ₹160
+            <p>Your first 5-minute session is free. After that, 15-minute paid sessions start at ₹160
               depending on the listener — much more affordable than professional therapy.</p>
           </div>
           <div className="faq-item">
