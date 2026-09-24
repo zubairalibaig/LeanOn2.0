@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
-import { PLATFORM_FEE, FREE_SESSION_MINS, MAX_FREE_TRIALS, SESSION_DURATIONS, sessionRatePerMin } from '@/lib/constants'
+import { PLATFORM_FEE, FREE_SESSION_MINS, MAX_FREE_TRIALS, SESSION_DURATIONS, sessionRatePerMin, REQUEST_RESPONSE_WINDOW_SECS } from '@/lib/constants'
 import { isNriCountry, NRI_INR_EQUIV } from '@/lib/geo-pricing'
 import { isUnlimitedTestPhone } from '@/lib/test-users'
 import { settleSession } from '@/lib/session-billing'
 import { applySettlement } from '@/lib/settlement-ledger'
 import { notifySessionComplete } from '@/lib/notify'
 import { logger } from '@/lib/logger'
-import { sendPushNotification } from '@/lib/firebase-admin'
+import { sendPushToUser } from '@/lib/push'
 
 const VALID_SESSION_TYPES = ['text', 'voice'] as const
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -222,16 +222,23 @@ export async function POST(req: NextRequest) {
       if (txErr) logger.error('Session POST: wallet_transactions insert failed (audit gap):', { sessionId, error: txErr.message })
     }
 
-    // Send FCM push notification to listener (Item 27)
+    // Push to every device of the listener — reaches them with LeanOn in the
+    // background or closed. High urgency so Android delivers it through Doze;
+    // TTL = the response window so a late push never rings for a dead request.
+    // Tapping opens /dashboard, where the accept/decline modal lives.
     try {
-      const { data: listenerUser } = await sb.from('users').select('fcm_token').eq('id', listenerId).single()
-      if (listenerUser?.fcm_token) {
-        await sendPushNotification(
-          listenerUser.fcm_token,
-          'New session request!',
-          `A seeker wants to connect for a ${durationMins}-minute ${sessionType} session.`,
-          { sessionId: String(sessionId), type: 'session_request' }
-        )
+      const push = await sendPushToUser(sb, listenerId, {
+        title: '🔔 New session request',
+        body: `A seeker wants a ${durationMins}-min ${sessionType} session. Tap to accept — you have ${Math.round(REQUEST_RESPONSE_WINDOW_SECS / 60)} minutes.`,
+        url: '/dashboard',
+        tag: `leanon-req-${sessionId}`,
+        ttlSecs: REQUEST_RESPONSE_WINDOW_SECS,
+        urgent: true,
+        requireInteraction: true,
+        data: { sessionId: String(sessionId), type: 'session_request' },
+      })
+      if (push.delivered === 0) {
+        logger.warn('session request push not delivered', { sessionId, listenerId, ...push })
       }
     } catch (fcmErr) {
       logger.error('FCM push failed (non-critical):', { error: fcmErr instanceof Error ? fcmErr.message : String(fcmErr) })

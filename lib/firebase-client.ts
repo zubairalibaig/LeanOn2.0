@@ -77,10 +77,12 @@ async function doRegister(): Promise<boolean> {
       : await Notification.requestPermission()
     if (permission !== 'granted') return false
 
-    // Must be registered at the origin root so FCM's scope covers the whole
-    // site. The service worker itself is served by app/firebase-messaging-sw.js
-    // (a route handler, not a static file — see that file for why).
-    const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js')
+    // The ONE LeanOn service worker (public/sw.js) — the same file
+    // ServiceWorkerRegister installs on every page load. Registering a
+    // different script at scope "/" (the old /firebase-messaging-sw.js) made
+    // the two replace each other and silently dropped the push handler.
+    await navigator.serviceWorker.register('/sw.js')
+    const registration = await navigator.serviceWorker.ready
 
     const app = getApps().length ? getApp() : initializeApp(FIREBASE_CONFIG)
     const messaging = getMessaging(app)
@@ -105,4 +107,63 @@ async function doRegister(): Promise<boolean> {
     // listener still has the in-app realtime alert while a tab is open.
     return false
   }
+}
+
+export type AlertStatus =
+  | 'not_configured'  // Firebase env vars missing on this deploy
+  | 'unsupported'     // browser has no Push API
+  | 'ios_install'     // iPhone/iPad Safari: push only works from the home-screen app
+  | 'denied'          // listener (or the OS) blocked notifications for LeanOn
+  | 'prompt'          // not asked yet
+  | 'granted'
+
+function isIos(): boolean {
+  const ua = navigator.userAgent
+  return /iPad|iPhone|iPod/.test(ua) || (ua.includes('Macintosh') && navigator.maxTouchPoints > 1)
+}
+
+function isStandalone(): boolean {
+  return window.matchMedia?.('(display-mode: standalone)').matches
+    || (navigator as Navigator & { standalone?: boolean }).standalone === true
+}
+
+// What the listener needs to know about phone alerts on THIS device — shown on
+// the dashboard so a silent failure is no longer invisible.
+export function getAlertStatus(): AlertStatus {
+  if (typeof window === 'undefined') return 'unsupported'
+  if (!firebaseConfigured) return 'not_configured'
+  if (isIos() && !isStandalone()) return 'ios_install'
+  if (!('serviceWorker' in navigator) || !('Notification' in window) || !('PushManager' in window)) return 'unsupported'
+  if (Notification.permission === 'denied') return 'denied'
+  if (Notification.permission === 'default') return 'prompt'
+  return 'granted'
+}
+
+// Show a notification from an open tab. Android Chrome does NOT support
+// `new Notification()` (it throws "Illegal constructor"), so the old in-tab
+// alert never appeared on phones — it has to go through the service worker.
+// Uses the same tag as the server push for the same request, so the two
+// replace each other instead of stacking.
+export async function showLocalNotification(title: string, opts: { body: string; tag: string; url: string; requireInteraction?: boolean }) {
+  try {
+    if (typeof window === 'undefined' || !('Notification' in window) || Notification.permission !== 'granted') return
+    if ('serviceWorker' in navigator) {
+      const reg = await navigator.serviceWorker.getRegistration('/')
+      if (reg) {
+        await reg.showNotification(title, {
+          body: opts.body,
+          tag: opts.tag,
+          icon: '/icon-192.png',
+          badge: '/icon-192.png',
+          requireInteraction: !!opts.requireInteraction,
+          data: { url: opts.url },
+          // renotify / vibrate aren't in every TS lib version's NotificationOptions.
+          ...({ renotify: true, vibrate: [400, 150, 400, 150, 800] } as Record<string, unknown>),
+        })
+        return
+      }
+    }
+    const n = new Notification(title, { body: opts.body, tag: opts.tag, icon: '/icon-192.png' })
+    n.onclick = () => { window.focus(); n.close() }
+  } catch { /* unsupported — the in-page ring still plays */ }
 }

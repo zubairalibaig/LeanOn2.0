@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
 import { SHOW_LISTENER_IN_SESSION_STATUS } from '@/lib/feature-flags'
+import { sweepStaleListeners } from '@/lib/listener-presence'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,44 +18,11 @@ export async function GET(req: NextRequest) {
 
     const sb = createAdminClient()
 
-    // Self-heal stuck-online ghosts before reading the list.
-    //
-    // Listeners who close the app without clicking "Go offline" are left with
-    // is_available=true and a stale (or null) heartbeat. We correct them here
-    // using two separate updates — NOT a single .or() with a timestamp, because
-    // PostgREST's OR filter string parser chokes on ISO-8601 colons/dots and
-    // silently ignores the clause, leaving ghosts forever.
-    //
-    // 15-minute threshold: deliberately generous so mobile browsers that throttle
-    // background timers don't knock a genuinely-online listener offline. The
-    // availability toggle stamps last_heartbeat_at=now() on going online, so a
-    // freshly-toggled listener is always inside the window.
-    //
-    // Both updates are fire-and-forget: a sweep failure logs a warning and never
-    // blocks the browse response.
-    const staleCutoff = new Date(Date.now() - 15 * 60 * 1000).toISOString()
-
-    // Awaited so the list read below already reflects the correction (no one-cycle
-    // lag). Each pass is isolated in try/catch so a sweep failure can never block
-    // or error the browse response.
-    try {
-      // Pass 1 — null heartbeat (e.g. a listener who went online but never sent
-      // a heartbeat, then closed the app).
-      const { error: e1 } = await sb.from('listener_profiles')
-        .update({ is_available: false })
-        .eq('is_available', true)
-        .is('last_heartbeat_at', null)
-      if (e1) logger.warn('sweep(null-hb) failed', { error: e1.message })
-
-      // Pass 2 — heartbeat older than 15 minutes.
-      const { error: e2 } = await sb.from('listener_profiles')
-        .update({ is_available: false })
-        .eq('is_available', true)
-        .lt('last_heartbeat_at', staleCutoff)
-      if (e2) logger.warn('sweep(stale-hb) failed', { error: e2.message })
-    } catch (e) {
-      logger.warn('staleness sweep threw', { error: String(e) })
-    }
+    // Self-heal stuck-online ghosts before reading the list — awaited so the
+    // list below already reflects it; never throws. Rules (15-min heartbeat,
+    // longer "away" window only for listeners push alerts can reach) live in
+    // lib/listener-presence.ts.
+    await sweepStaleListeners(sb)
 
     // Exclude orphaned accounts: LeanOn is phone-only, so a listener whose users
     // row has no phone can never be logged into and must not appear bookable.

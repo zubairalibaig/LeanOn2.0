@@ -439,7 +439,10 @@ function SessionContent() {
       setRequestSecsLeft(left)
       if (left <= 0 && isSeeker && !fired) {
         fired = true
-        fetch(`/api/sessions/${sessionId}/decline`, { method: 'POST' })
+        fetch(`/api/sessions/${sessionId}/decline`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reason: 'timeout' }),
+        })
           .catch(() => {})
           .finally(() => setSessionStatus('cancelled'))
       }

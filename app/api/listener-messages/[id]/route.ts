@@ -3,7 +3,7 @@ import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-se
 import { UUID_RE } from '@/lib/constants'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { sendSms } from '@/lib/twilio'
-import { sendPushNotification } from '@/lib/firebase-admin'
+import { sendPushToUser } from '@/lib/push'
 import { logger } from '@/lib/logger'
 
 // A listener may re-invite the same seeker at most once per this window.
@@ -143,22 +143,20 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
       action_url: `/listener/${thread.listener_id}`,
     }).then(() => {}, (e) => logger.error('invite notification insert failed (non-critical):', { error: String(e) }))
 
-    // 2) FCM push + SMS — reach the seeker even if they've left the app.
+    // 2) Push (every device) + SMS — reach the seeker even if they've left the app.
+    await sendPushToUser(admin, thread.seeker_id as string, {
+      title: `${listenerName} is available now`,
+      body: 'Tap to start a live session on LeanOn.',
+      url: `/listener/${thread.listener_id}`,
+      tag: `leanon-avail-${thread.listener_id}`,
+      ttlSecs: 60 * 60,
+      data: { type: 'listener_available', listenerId: String(thread.listener_id) },
+    }).catch(e => logger.error('invite push failed (non-critical):', { error: String(e) }))
     const { data: seeker } = await admin
       .from('users')
-      .select('phone, fcm_token')
+      .select('phone')
       .eq('id', thread.seeker_id)
       .maybeSingle()
-    if (seeker?.fcm_token) {
-      try {
-        await sendPushNotification(
-          seeker.fcm_token as string,
-          `${listenerName} is available now`,
-          'Tap to start a live session on LeanOn.',
-          { type: 'listener_available', listenerId: String(thread.listener_id) },
-        )
-      } catch (e) { logger.error('invite FCM failed (non-critical):', { error: String(e) }) }
-    }
     if (seeker?.phone) {
       try {
         await sendSms(

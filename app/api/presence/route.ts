@@ -27,12 +27,18 @@ export async function POST(req: NextRequest) {
 
     const sb = createAdminClient()
 
-    // Heartbeat: only refresh the timestamp, never touch is_available.
+    // Heartbeat: only refresh the timestamp, never touch is_available. It does
+    // REPORT is_available back, so a dashboard still showing "online" learns
+    // that the sweep or a missed request set this listener offline, instead of
+    // looking online to them while seekers see them offline.
     if (body.heartbeat === true) {
-      await sb.from('listener_profiles')
+      const { data } = await sb.from('listener_profiles')
         .update({ last_heartbeat_at: new Date().toISOString() })
         .eq('user_id', user.id)
-      return NextResponse.json({ ok: true })
+        .select('is_available')
+        .maybeSingle()
+      const isAvailable = (data as { is_available?: boolean } | null)?.is_available
+      return NextResponse.json(typeof isAvailable === 'boolean' ? { ok: true, is_available: isAvailable } : { ok: true })
     }
 
     // Any other call can only ever set the listener OFFLINE (never online).

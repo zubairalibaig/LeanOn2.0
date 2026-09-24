@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
 import { REQUEST_RESPONSE_WINDOW_MS } from '@/lib/constants'
+import { recordMissedRequest } from '@/lib/listener-presence'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const REQUEST_TTL_MS = REQUEST_RESPONSE_WINDOW_MS
@@ -85,7 +86,7 @@ export async function POST(
 async function expireSession(
   sb: ReturnType<typeof createAdminClient>,
   sessionId: string,
-  session: { seeker_id: string; amount_held: number | string; is_free_trial: boolean }
+  session: { seeker_id: string; listener_id: string; amount_held: number | string; is_free_trial: boolean }
 ) {
   const { data: cancelled } = await sb
     .from('sessions')
@@ -95,6 +96,7 @@ async function expireSession(
     .select('id')
     .maybeSingle()
   if (!cancelled) return
+  await recordMissedRequest(sb, { listenerId: session.listener_id, sessionId })
 
   const held = Number(session.amount_held) || 0
   if (held > 0 && !session.is_free_trial) {

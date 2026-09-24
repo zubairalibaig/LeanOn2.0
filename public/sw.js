@@ -1,8 +1,19 @@
-// LeanOn service worker — minimal, deliberately NON-CACHING.
+// LeanOn service worker — deliberately NON-CACHING, and the ONLY service worker.
 //
-// Its ONLY job is to satisfy Chrome's PWA-installability requirement (a
-// registered service worker with a fetch handler), which is what makes the
-// site wrappable as a TWA / installable to the home screen.
+// Jobs:
+//  1. Satisfy Chrome's PWA-installability requirement (a fetch handler), which
+//     is what makes the site installable / wrappable as the Play Store TWA.
+//  2. Show push notifications (session requests to listeners, "listener is
+//     available" to seekers) — including when no LeanOn tab is open.
+//
+// WHY PUSH LIVES HERE (2026-09-24): there used to be a SECOND worker,
+// /firebase-messaging-sw.js, registered at the same scope "/". A scope holds
+// ONE worker, so each registration replaced the other: every full page load
+// re-registered this file (app/components/ServiceWorkerRegister.tsx), which
+// silently removed the push handler that "Go online" had installed. Pushes
+// then reached a worker with no push handler and no request alert was shown.
+// Now lib/firebase-client.ts registers THIS file too, and
+// /firebase-messaging-sw.js just imports it for old registrations.
 //
 // It does NOT cache anything. LeanOn is a real-time human-support app:
 // sessions, wallet balance, listener availability and OTP all MUST hit the
@@ -49,4 +60,56 @@ self.addEventListener('fetch', (event) => {
     )
   }
   // All other requests (assets, API, XHR) are left to the browser — untouched.
+})
+
+// ── Push ──────────────────────────────────────────────────────────────────────
+// FCM delivers a JSON payload: { data: {...}, notification?: {...}, ... }.
+// Server messages are data-only (lib/firebase-admin.ts sendWebPush) so this
+// worker decides how they look. A notification MUST be shown for every push —
+// Chrome penalises (and may unsubscribe) workers that stay silent.
+self.addEventListener('push', (event) => {
+  let payload = {}
+  try { payload = event.data ? event.data.json() : {} } catch { payload = {} }
+  const data = payload.data || {}
+  const n = payload.notification || {}
+  const title = data.title || n.title || 'LeanOn'
+  const isRequest = data.type === 'session_request'
+  const options = {
+    body: data.body || n.body || 'You have a new notification.',
+    icon: '/icon-192.png',
+    badge: '/icon-192.png',
+    tag: data.tag || 'leanon-notification',
+    // renotify: a second request must buzz again even if an older notification
+    // with a similar tag is still in the tray.
+    renotify: true,
+    requireInteraction: data.requireInteraction === '1',
+    vibrate: isRequest ? [400, 150, 400, 150, 400, 150, 800] : [200, 100, 200],
+    timestamp: Date.now(),
+    data: { url: data.url || '/dashboard', type: data.type || '', sessionId: data.sessionId || '' },
+  }
+  event.waitUntil(self.registration.showNotification(title, options))
+})
+
+// Tap → focus an open LeanOn window and move it to the target page, or open a
+// new one. Session requests go to /dashboard, where the accept modal lives.
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close()
+  const target = new URL((event.notification.data && event.notification.data.url) || '/dashboard', self.location.origin).href
+  event.waitUntil((async () => {
+    const list = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+    for (const c of list) {
+      if (c.url.indexOf(self.location.origin) !== 0) continue
+      // Navigate first, then focus, each on its own: if one is refused by the
+      // browser the other still gets the listener to the request.
+      let client = c
+      // Never pull someone out of a live conversation — just bring it forward.
+      const inSession = new URL(c.url).pathname.indexOf('/session/') === 0
+      if (!inSession && c.url !== target && 'navigate' in c) {
+        try { client = (await c.navigate(target)) || c } catch { /* uncontrolled window */ }
+      }
+      try { if ('focus' in client) await client.focus() } catch { /* focus refused */ }
+      return
+    }
+    if (self.clients.openWindow) await self.clients.openWindow(target)
+  })())
 })

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
+import { REQUEST_RESPONSE_WINDOW_MS } from '@/lib/constants'
+import { recordMissedRequest } from '@/lib/listener-presence'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -9,8 +11,12 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 //   - Listener: explicitly decline a pending request
 //   - Seeker:   cancel their own pending request
 // In both cases: session → cancelled, seeker's held wallet amount refunded.
+// Body { reason: 'timeout' } = sent automatically when the response window ran
+// out (seeker's waiting screen or the listener's countdown). Recorded as
+// 'timed_out' — not 'seeker_cancelled' / 'declined' — so missed requests are
+// counted correctly and the listener can be set offline (recordMissedRequest).
 export async function POST(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const sessionId = params.id
@@ -26,7 +32,7 @@ export async function POST(
 
   const { data: session } = await sb
     .from('sessions')
-    .select('id, listener_id, seeker_id, status, amount_held, is_free_trial')
+    .select('id, listener_id, seeker_id, status, amount_held, is_free_trial, created_at')
     .eq('id', sessionId)
     .single()
 
@@ -39,6 +45,11 @@ export async function POST(
   }
 
   const isListener = session.listener_id === user.id
+  const body = await req.json().catch(() => ({}))
+  // 30s of slack for clock skew between the device that counted down and the DB.
+  const ageMs = Date.now() - new Date(session.created_at as string).getTime()
+  const timedOut = body?.reason === 'timeout' && ageMs >= REQUEST_RESPONSE_WINDOW_MS - 30_000
+  const cancelReason = timedOut ? 'timed_out' : isListener ? 'declined' : 'seeker_cancelled'
 
   // Atomically cancel (optimistic lock on status='pending' → refund fires once)
   const { data: cancelled } = await sb
@@ -46,7 +57,7 @@ export async function POST(
     .update({
       status: 'cancelled',
       ended_at: new Date().toISOString(),
-      cancel_reason: isListener ? 'declined' : 'seeker_cancelled',
+      cancel_reason: cancelReason,
       responded_at: new Date().toISOString(),
     })
     .eq('id', sessionId)
@@ -74,11 +85,13 @@ export async function POST(
         user_id:     session.seeker_id,
         amount:      held,
         type:        'refund',
-        description: isListener ? 'Refund — listener declined' : 'Refund — request cancelled',
+        description: timedOut ? 'Refund — listener did not respond' : isListener ? 'Refund — listener declined' : 'Refund — request cancelled',
         session_id:  sessionId,
       }).then(() => {}, (e) => logger.error('decline: wallet_transactions insert failed', { sessionId, error: String(e) }))
     }
   }
+
+  if (timedOut) await recordMissedRequest(sb, { listenerId: session.listener_id as string, sessionId })
 
   // Notify the seeker (only meaningful when the LISTENER declined; if the seeker
   // cancelled their own request they already know)

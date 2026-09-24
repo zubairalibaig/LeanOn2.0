@@ -84,6 +84,22 @@
   templated keyword pages; Google declined most of the last batch.
 - After deploying public-page changes, run `node scripts/indexnow.mjs` (Bing → ChatGPT search).
 
+## Listener presence & request alerts (2026-09-24) — read `docs/NOTIFICATIONS.md` first
+
+- **ONE service worker: `public/sw.js`** (fetch passthrough + push + notification click).
+  Never register a second worker at scope `/` — the old `/firebase-messaging-sw.js`
+  kept replacing `sw.js` (and vice versa) and silently dropped the push handler,
+  so request alerts never showed. That URL now only `importScripts('/sw.js')`.
+- Pushes are **web push**: send via `lib/push.ts sendPushToUser()` (all devices,
+  `webpush` Urgency high + short TTL, data-only, dead tokens removed). `android.priority`
+  does nothing for web tokens.
+- In-page alerts use `showLocalNotification()` — `new Notification()` throws on Android Chrome.
+- Presence rules live in `lib/listener-presence.ts` (15-min heartbeat; 4-hour away window
+  only with a push device; auto-offline on missed requests). Heartbeats never set
+  `is_available=true`; they report it back so the UI re-syncs.
+- A request that runs out of time is cancelled as `timed_out` (decline route with
+  `{ reason: 'timeout' }`), never `seeker_cancelled` / `declined`.
+
 ## Business invariants
 
 - Platform fee: **flat ₹10 per paid session** (`PLATFORM_FEE`), paid by the

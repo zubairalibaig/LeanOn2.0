@@ -3,12 +3,12 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
-import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE, LISTENER_SERVICE_FEE_RATE, REQUEST_RESPONSE_WINDOW_SECS, VOICE_PRICING_ENABLED, VOICE_RATE_PREMIUM } from '@/lib/constants'
+import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE, LISTENER_SERVICE_FEE_RATE, REQUEST_RESPONSE_WINDOW_SECS, VOICE_PRICING_ENABLED, VOICE_RATE_PREMIUM, AWAY_WITH_ALERTS_MINS, STALE_HEARTBEAT_MINS } from '@/lib/constants'
 import { SHOW_LISTENER_GROWTH_NOTICE, SHOW_LISTENER_PRICING_UPDATE_NOTICE } from '@/lib/feature-flags'
 import { PRICING_NOTICE } from '@/lib/listener-announcements'
 import { estimateListenerTakeHome } from '@/lib/session-billing'
 import { showToast } from '@/lib/toast'
-import { registerPushNotifications } from '@/lib/firebase-client'
+import { registerPushNotifications, getAlertStatus, showLocalNotification, type AlertStatus } from '@/lib/firebase-client'
 import { compressImage, extForType, MAX_INPUT_BYTES } from '@/lib/compress-image'
 import Avatar from '@/app/components/Avatar'
 import { TAGLINE_PHRASES, TAGLINE_PICK, LIVED_MIN_CHARS, LIVED_MAX_CHARS } from '@/lib/listener-onboarding'
@@ -257,6 +257,63 @@ export default function DashboardPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Bumped at the start and end of every toggle, so a heartbeat that was sent
+  // before the listener tapped "Go online" can't report the OLD offline state
+  // and flip the button back.
+  const toggleSeqRef = useRef(0)
+  const [alertStatus, setAlertStatus] = useState<AlertStatus | null>(null)
+  const [testingAlert, setTestingAlert] = useState(false)
+
+  // Heartbeat that also re-syncs the button with the database. The sweep
+  // (away too long, no phone alerts) or a missed request can set a listener
+  // offline while this page still says "online" — the exact "it showed me
+  // online but seekers saw me offline" complaint. Heartbeats never set
+  // is_available=true; they only report it.
+  async function sendHeartbeat() {
+    const seq = toggleSeqRef.current
+    const res = await fetch('/api/presence', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ heartbeat: true }),
+    }).catch(() => null)
+    if (!res?.ok) return
+    const d = await res.json().catch(() => ({}))
+    // Odd seq = a toggle is in flight; a changed seq = the answer is outdated.
+    if (d?.is_available === false && seq === toggleSeqRef.current && seq % 2 === 0) {
+      setAvail(false)
+      showToast("You were set offline — LeanOn was in the background too long, or a request went unanswered. Tap Go online when you're ready.", 'info')
+    }
+  }
+
+  useEffect(() => {
+    setAlertStatus(getAlertStatus())
+    // Permission already granted on this device → silently (re)register so the
+    // push token is current and lives on the single LeanOn service worker.
+    if (getAlertStatus() === 'granted') registerPushNotifications().catch(() => {})
+  }, [])
+
+  async function enableAlerts() {
+    ensureAudioUnlocked()
+    const ok = await registerPushNotifications().catch(() => false)
+    setAlertStatus(getAlertStatus())
+    if (ok) showToast('Phone alerts are on for this device.', 'success')
+    else if (getAlertStatus() === 'denied') showToast('Notifications are blocked for LeanOn — allow them in your phone settings.', 'error')
+    else showToast('Could not turn on alerts on this device.', 'error')
+  }
+
+  async function sendTestAlert() {
+    setTestingAlert(true)
+    try {
+      await registerPushNotifications().catch(() => false)
+      const res = await fetch('/api/push/test', { method: 'POST' }).catch(() => null)
+      const d = await res?.json().catch(() => ({})) ?? {}
+      if (d.ok) showToast('Test alert sent. Switch to another app — it should arrive within a few seconds.', 'success')
+      else if (d.reason === 'no_device') showToast('This device is not registered for alerts yet — tap "Turn on alerts".', 'error')
+      else if (d.reason === 'not_configured') showToast('Alerts are not set up on the server yet. Please tell LeanOn support.', 'error')
+      else showToast(d.error || 'The test alert could not be sent. Try again in a minute.', 'error')
+    } finally { setTestingAlert(false) }
+  }
+
   // Presence heartbeat — immediately on going online, then every 60s. The
   // leading-edge ping closes the window after a page load / returning from a
   // session where the browse query would otherwise treat the listener as stale.
@@ -271,14 +328,10 @@ export default function DashboardPage() {
   // open; leaving simply lets the heartbeat lapse.
   useEffect(() => {
     if (!avail) return
-    const ping = () => fetch('/api/presence', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ heartbeat: true }),
-    }).catch(() => {})
-    ping()
-    const iv = setInterval(ping, 60_000)
+    sendHeartbeat()
+    const iv = setInterval(sendHeartbeat, 60_000)
     return () => clearInterval(iv)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [avail])
 
   // When the tab returns to the foreground, send an immediate heartbeat so the
@@ -288,11 +341,7 @@ export default function DashboardPage() {
     if (!avail) return
     function handleVis() {
       if (document.visibilityState === 'visible') {
-        fetch('/api/presence', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ heartbeat: true }),
-        }).catch(() => {})
+        sendHeartbeat()
         // Mobile browsers suspend the realtime websocket while backgrounded, so
         // a request that arrived meanwhile never fired an INSERT event. Re-query
         // pending requests on foreground to recover it.
@@ -310,8 +359,15 @@ export default function DashboardPage() {
   // request. Guaranteed to surface it well within the 5-minute accept window.
   useEffect(() => {
     if (!avail || !user?.id) return
-    const iv = setInterval(() => {
-      if (!incomingIdRef.current) checkPendingRequest(user.id)
+    const iv = setInterval(async () => {
+      if (!incomingIdRef.current) { checkPendingRequest(user.id); return }
+      // A request is on screen: if the seeker cancelled it (or it was handled
+      // elsewhere), take the modal down instead of ringing until the countdown ends.
+      const shownId = incomingIdRef.current
+      const { data: cur } = await sb.from('sessions').select('status').eq('id', shownId).maybeSingle()
+      if (cur && (cur as { status: string }).status !== 'pending' && incomingIdRef.current === shownId) {
+        dismissIncoming()
+      }
     }, 20_000)
     return () => clearInterval(iv)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -374,19 +430,16 @@ export default function DashboardPage() {
     ringTimerRef.current = setInterval(ringOnce, 3000)
     if (savedTitleRef.current === null) savedTitleRef.current = document.title
     document.title = '🔔 New session request — LeanOn'
-    // Browser notification reaches a backgrounded tab / minimized browser.
-    // Permission is requested on the "Go online" toggle; if denied or
-    // unsupported this silently no-ops and the chime still rings.
-    try {
-      if ('Notification' in window && Notification.permission === 'granted' && document.visibilityState !== 'visible') {
-        const n = new Notification('New session request 🔔', {
-          body: `${s.duration_mins}-min ${s.session_type} session — respond within 60 seconds`,
-          tag: 'leanon-incoming-request', // replaces rather than stacks
-          icon: '/logo.png',
-        })
-        n.onclick = () => { window.focus(); n.close() }
-      }
-    } catch { /* Notification constructor throws on some Android WebViews */ }
+    // Notification for a backgrounded tab. Goes through the service worker —
+    // `new Notification()` throws on Android Chrome, so this never showed on
+    // phones before. Same tag as the server push for this request, so the two
+    // replace each other rather than stacking.
+    if (document.visibilityState !== 'visible') {
+      showLocalNotification('🔔 New session request', {
+        body: `${s.duration_mins}-min ${s.session_type} session — tap to accept`,
+        tag: `leanon-req-${s.id}`, url: '/dashboard', requireInteraction: true,
+      })
+    }
   }
 
   function stopRequestAlert() {
@@ -435,7 +488,10 @@ export default function DashboardPage() {
       stopRequestAlert()
       // Auto-decline so the seeker gets an immediate refund instead of waiting
       // for their own 5-minute timeout to fire.
-      fetch(`/api/sessions/${expiredId}/decline`, { method: 'POST' }).catch(() => {})
+      fetch(`/api/sessions/${expiredId}/decline`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: 'timeout' }),
+      }).catch(() => {})
       showToast('Session request expired — seeker has been refunded.', 'info')
     }, remaining)
   }
@@ -610,6 +666,7 @@ export default function DashboardPage() {
 
   async function toggleAvailability() {
     if (!user) return
+    toggleSeqRef.current++
     const prev = avail
     const next = !prev
     if (next) {
@@ -619,7 +676,7 @@ export default function DashboardPage() {
       // reconfirms the token if already granted). Push reaches the listener
       // even with no LeanOn tab open — the in-tab chime alone cannot.
       ensureAudioUnlocked()
-      registerPushNotifications().catch(() => {})
+      registerPushNotifications().catch(() => {}).finally(() => setAlertStatus(getAlertStatus()))
     }
     setAvail(next) // optimistic
     // Send explicit intent (not a flip) so the server sets exactly what the
@@ -629,6 +686,7 @@ export default function DashboardPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ available: next }),
     }).catch(() => null)
+    toggleSeqRef.current++
     if (!res?.ok) {
       setAvail(prev) // revert on failure
       const body = await res?.json().catch(() => ({}))
@@ -1160,6 +1218,39 @@ export default function DashboardPage() {
             </span>
           </div>
         </div>
+
+        {/* Phone alerts — whether session requests can reach THIS device with
+            LeanOn in the background. Before, a missing/blocked permission failed
+            silently and listeners only found out by missing requests. */}
+        {profile.is_approved !== false && alertStatus && alertStatus !== 'not_configured' && (
+          <div style={{background: alertStatus === 'granted' ? '#F0FFF4' : '#FFF8EC', border: `1.5px solid ${alertStatus === 'granted' ? '#B7EBC6' : '#FFD9A0'}`, borderRadius:14, padding:'12px 14px', marginBottom:18, fontSize:12.5, lineHeight:1.55, color:'#27394A'}}>
+            {alertStatus === 'granted' ? (
+              <>
+                <div style={{fontWeight:800, color:'#276749', marginBottom:2}}>🔔 Phone alerts are on for this device</div>
+                <div>You can switch to other apps — you stay online for up to {AWAY_WITH_ALERTS_MINS / 60} hours and every request rings this phone. If a request goes unanswered while you&apos;re away, we set you offline so seekers aren&apos;t left waiting.</div>
+                <button onClick={sendTestAlert} disabled={testingAlert} style={{marginTop:8, background:'white', border:'1.5px solid #B7EBC6', color:'#276749', borderRadius:50, padding:'6px 14px', fontWeight:800, fontSize:12, cursor:'pointer', fontFamily:'inherit'}}>
+                  {testingAlert ? 'Sending…' : 'Send a test alert'}
+                </button>
+                <div style={{marginTop:6, fontSize:11.5, color:'var(--gray)'}}>Test alert not arriving? Set your browser (or the LeanOn app) to &quot;Unrestricted&quot; battery use: Settings → Apps → Chrome → Battery.</div>
+              </>
+            ) : (
+              <>
+                <div style={{fontWeight:800, color:'#9A5B00', marginBottom:2}}>🔕 Phone alerts are off on this device</div>
+                <div style={{marginBottom:6}}>
+                  {alertStatus === 'prompt' && <>Turn them on so requests reach you while you use other apps. Without alerts you&apos;re only reachable while LeanOn is open, and you go offline {STALE_HEARTBEAT_MINS} minutes after leaving it.</>}
+                  {alertStatus === 'denied' && <>Notifications are blocked for LeanOn. Allow them in your phone settings (Settings → Apps → Chrome or LeanOn → Notifications), then reload this page. Until then you go offline {STALE_HEARTBEAT_MINS} minutes after leaving LeanOn.</>}
+                  {alertStatus === 'ios_install' && <>On iPhone, alerts only work from the home-screen app: tap Share → Add to Home Screen, open LeanOn from there and go online. Until then keep LeanOn open while you&apos;re online.</>}
+                  {alertStatus === 'unsupported' && <>This browser can&apos;t show alerts. Use Chrome on Android, or keep LeanOn open while you&apos;re online.</>}
+                </div>
+                {alertStatus === 'prompt' && (
+                  <button onClick={enableAlerts} style={{background:'#FF9933', color:'white', border:'none', borderRadius:50, padding:'7px 14px', fontWeight:800, fontSize:12, cursor:'pointer', fontFamily:'inherit'}}>
+                    Turn on alerts
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+        )}
 
         {profile.is_approved === false && (
           <div style={{background:'#FFFBF0',border:'1.5px solid #FFE0B2',borderRadius:14,padding:'14px 16px',marginBottom:18,fontSize:13,fontWeight:700,color:'#b35c00',lineHeight:1.6}}>

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
+import { recordMissedRequest } from '@/lib/listener-presence'
 import { settleSession, abandonedSessionEnd } from '@/lib/session-billing'
 import { applySettlement } from '@/lib/settlement-ledger'
 import { REQUEST_RESPONSE_WINDOW_MS } from '@/lib/constants'
@@ -122,7 +123,7 @@ export async function POST(req: Request) {
   // Cancel stale pending sessions (stuck in 'pending' past the response window — refund seeker)
   const { data: stalePending } = await sb
     .from('sessions')
-    .select('id, seeker_id, amount_held')
+    .select('id, seeker_id, listener_id, amount_held')
     .eq('status', 'pending')
     .lt('created_at', new Date(Date.now() - REQUEST_RESPONSE_WINDOW_MS).toISOString())
 
@@ -137,6 +138,7 @@ export async function POST(req: Request) {
       .single()
 
     if (!cancelled) continue
+    await recordMissedRequest(sb, { listenerId: s.listener_id as string, sessionId: s.id as string })
 
     // Refund held amount back to seeker
     if ((s.amount_held as number) > 0) {

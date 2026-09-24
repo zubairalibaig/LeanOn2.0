@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { showToast } from '@/lib/toast'
-import { registerPushNotifications } from '@/lib/firebase-client'
+import { registerPushNotifications, showLocalNotification } from '@/lib/firebase-client'
 import { REQUEST_RESPONSE_WINDOW_SECS } from '@/lib/constants'
 import { estimateListenerTakeHome } from '@/lib/session-billing'
 
@@ -42,6 +42,7 @@ const SKIP_PREFIXES = ['/dashboard', '/session', '/auth', '/admin']
 
 type Incoming = {
   id: string
+  created_at?: string
   duration_mins: number
   session_type: string
   amount_held: number
@@ -65,6 +66,9 @@ export default function ListenerPresence() {
   const audioCtxRef  = useRef<AudioContext | null>(null)
   const ringTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const incomingIdRef = useRef<string | null>(null)
+  const expiryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // Odd while a "Go online" tap is in flight — see the heartbeat below.
+  const toggleSeqRef = useRef(0)
   const pathRef = useRef(pathname)
   useEffect(() => { pathRef.current = pathname }, [pathname])
 
@@ -112,6 +116,13 @@ export default function ListenerPresence() {
     try { navigator.vibrate?.([200, 100, 200]) } catch { /* not supported */ }
   }
 
+  const clearIncoming = useCallback(() => {
+    incomingIdRef.current = null
+    setIncoming(null)
+    if (ringTimerRef.current) { clearInterval(ringTimerRef.current); ringTimerRef.current = null }
+    if (expiryTimerRef.current) { clearTimeout(expiryTimerRef.current); expiryTimerRef.current = null }
+  }, [])
+
   const surface = useCallback((s: Incoming) => {
     if (incomingIdRef.current) return          // one at a time
     incomingIdRef.current = s.id
@@ -119,21 +130,21 @@ export default function ListenerPresence() {
     ring()
     if (ringTimerRef.current) clearInterval(ringTimerRef.current)
     ringTimerRef.current = setInterval(ring, 3000)
-    try {
-      if ('Notification' in window && Notification.permission === 'granted' && document.visibilityState !== 'visible') {
-        new Notification('New session request 🔔', {
-          body: `${s.duration_mins}-min ${s.session_type} session — respond now`,
-          tag: 'leanon-incoming-request', icon: '/logo.png',
-        })
-      }
-    } catch { /* some Android WebViews throw */ }
-  }, [])
-
-  const clearIncoming = useCallback(() => {
-    incomingIdRef.current = null
-    setIncoming(null)
-    if (ringTimerRef.current) { clearInterval(ringTimerRef.current); ringTimerRef.current = null }
-  }, [])
+    // Stop ringing when the request window closes — otherwise the popup rang
+    // every 3s forever for a request the seeker had already given up on.
+    const ageMs = s.created_at ? Date.now() - new Date(s.created_at).getTime() : 0
+    if (expiryTimerRef.current) clearTimeout(expiryTimerRef.current)
+    expiryTimerRef.current = setTimeout(() => {
+      if (incomingIdRef.current === s.id) clearIncoming()
+    }, Math.max(5_000, REQUEST_RESPONSE_WINDOW_SECS * 1000 - ageMs))
+    // Via the service worker: `new Notification()` throws on Android Chrome.
+    if (document.visibilityState !== 'visible') {
+      showLocalNotification('🔔 New session request', {
+        body: `${s.duration_mins}-min ${s.session_type} session — tap to accept`,
+        tag: `leanon-req-${s.id}`, url: '/dashboard', requireInteraction: true,
+      })
+    }
+  }, [clearIncoming])
 
   // ── Subscribe + catch-up while online. Mirrors the dashboard's approach:
   //    realtime for immediacy, plus a poll so a dropped socket cannot lose a
@@ -143,7 +154,14 @@ export default function ListenerPresence() {
     let cancelled = false
 
     const check = async () => {
-      if (cancelled || incomingIdRef.current) return
+      if (cancelled) return
+      if (incomingIdRef.current) {
+        // Seeker cancelled / someone else handled it → take the popup down.
+        const shownId = incomingIdRef.current
+        const { data: cur } = await sb.from('sessions').select('status').eq('id', shownId).maybeSingle()
+        if (!cancelled && cur && (cur as { status: string }).status !== 'pending' && incomingIdRef.current === shownId) clearIncoming()
+        return
+      }
       const { data } = await sb
         .from('sessions')
         .select('id, duration_mins, session_type, amount_held, platform_fee, seeker_id, created_at, status')
@@ -179,9 +197,9 @@ export default function ListenerPresence() {
       clearInterval(iv)
       document.removeEventListener('visibilitychange', onVis)
       sb.removeChannel(ch)
-      if (ringTimerRef.current) clearInterval(ringTimerRef.current)
+      clearIncoming()
     }
-  }, [skip, userId, isListener, available, surface]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [skip, userId, isListener, available, surface, clearIncoming]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Global heartbeat — keeps presence alive from ANY page, not just /dashboard.
   //
@@ -220,10 +238,19 @@ export default function ListenerPresence() {
 
     const ping = () => {
       if (isSessionPage()) return
+      const seq = toggleSeqRef.current
       fetch('/api/presence', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ heartbeat: true }),
+      }).then(r => r.ok ? r.json() : null).then(d => {
+        // The sweep or a missed request set this listener offline: show the
+        // offline nudge instead of silently looking online. Heartbeats never
+        // set is_available=true — they only report it.
+        if (d?.is_available === false && seq === toggleSeqRef.current && seq % 2 === 0) {
+          setAvailable(false)
+          setDismissedNudge(false)
+        }
       }).catch(() => {})
     }
 
@@ -241,6 +268,21 @@ export default function ListenerPresence() {
     }
   }, [isListener, available])
 
+  // The dashboard posts every toggle on this channel; follow it so this layer
+  // doesn't keep ringing (or nudging) with a stale idea of the listener's state.
+  useEffect(() => {
+    if (!userId || typeof BroadcastChannel === 'undefined') return
+    let bc: BroadcastChannel | null = null
+    try {
+      bc = new BroadcastChannel('leanon-availability')
+      bc.onmessage = (e) => {
+        const m = e.data as { user_id?: string; is_available?: boolean }
+        if (m?.user_id === userId && typeof m.is_available === 'boolean') setAvailable(m.is_available)
+      }
+    } catch { /* unsupported */ }
+    return () => { try { bc?.close() } catch { /* ignore */ } }
+  }, [userId])
+
   // Silently keep the push token fresh for a listener who is ALREADY online
   // and permission was already granted in an earlier session (e.g. they
   // reloaded, or opened LeanOn on a new device). No prompt is shown —
@@ -256,6 +298,7 @@ export default function ListenerPresence() {
 
   async function goOnline() {
     setBusy(true)
+    toggleSeqRef.current++
     // Unlock audio on this user gesture so the incoming-request chime can play
     // later (browsers block sound until the page has been interacted with),
     // and register for push so a request still reaches this listener with no
@@ -279,7 +322,7 @@ export default function ListenerPresence() {
       }
     } catch {
       showToast('Network error — could not go online.', 'error')
-    } finally { setBusy(false) }
+    } finally { toggleSeqRef.current++; setBusy(false) }
   }
 
   if (skip || !isListener) return null

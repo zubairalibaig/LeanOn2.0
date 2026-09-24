@@ -94,6 +94,8 @@ async function scrubUserData(admin: ReturnType<typeof createAdminClient>, userId
     is_suspended: true,
     fcm_token: null,
   }).eq('id', userId)
+  // Device push tokens (migration 061) — a deleted account must never ring a phone.
+  await admin.from('push_tokens').delete().eq('user_id', userId).then(() => {}, () => {})
 
   // 2. Scrub listener_profiles — hide from all discovery, clear bio
   // bio is NOT NULL in the live schema — use empty string, not null
