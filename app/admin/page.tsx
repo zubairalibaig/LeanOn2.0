@@ -20,8 +20,9 @@ type KPIs = {
   walletLiability?: {
     totalRupees: number; usersWithBalance: number; listenerEarningsUnrequestedRupees?: number
     heldInSessionsRupees?: number; heldInSessionsCount?: number; pendingRefundsRupees?: number; pendingRefundsCount?: number
-    listenersWithBalance?: number; ledgerUnrequestedRupees?: number
+    listenersWithBalance?: number
   }
+  walletIntegrity?: { usersChecked: number; mismatchedUsers: number; netDiffRupees: number; top: { user_id: string; name: string | null; balance: number; ledger: number; diff: number }[] } | null
   funnel?: { requested: number; completedAny: number; completedTrial: number; recharged: number; paid: number; repeatPaid: number; rechargedNotPaid: number } | null
   platformEarnings?: { allTimeRupees: number; thisMonthRupees: number; todayRupees: number; paidSessions: number }
   gatewayFees: { allTime: number; thisMonth: number; today: number }
@@ -1238,12 +1239,24 @@ export default function AdminPage() {
                           <div className="liability-label" style={{ color: '#0d6e7e' }}>Unrequested listener earnings</div>
                           <div className="liability-sub">
                             Listener wallet balances ({kpis.walletLiability.listenersWithBalance ?? '—'} listener{kpis.walletLiability.listenersWithBalance === 1 ? '' : 's'}) not yet requested as payout. Owed to them on demand.
-                            {kpis.walletLiability.ledgerUnrequestedRupees != null && Math.abs(kpis.walletLiability.ledgerUnrequestedRupees - (kpis.walletLiability.listenerEarningsUnrequestedRupees ?? 0)) >= 1 && (
-                              <><br /><strong style={{ color: '#c0392b' }}>Check:</strong> the earnings ledger says {fmtRs(kpis.walletLiability.ledgerUnrequestedRupees)} (settled earnings − payout requests). A gap usually means a failed wallet credit (Sessions → unsettled) or a manual balance edit.</>
-                            )}
                           </div>
                         </div>
                         <div className="liability-amount" style={{ color: '#0d6e7e' }}>{fmtRs(kpis.walletLiability.listenerEarningsUnrequestedRupees ?? 0)}</div>
+                      </div>
+                    )}
+                    {/* Wallet ↔ ledger check — every balance should equal its own transaction history */}
+                    {kpis.walletIntegrity && (
+                      <div className="liability-bar" style={kpis.walletIntegrity.mismatchedUsers > 0 ? { borderLeftColor: '#d4a017', borderColor: '#F5D98A', background: '#FFFBEB' } : { borderLeftColor: 'var(--green)', borderColor: '#B2DEB2', background: '#F3FBF4' }}>
+                        <div>
+                          <div className="liability-label" style={{ color: kpis.walletIntegrity.mismatchedUsers > 0 ? '#8a6500' : '#1B7A3A' }}>
+                            Wallet check: {kpis.walletIntegrity.mismatchedUsers === 0 ? 'all balances match their transaction history' : `${kpis.walletIntegrity.mismatchedUsers} wallet${kpis.walletIntegrity.mismatchedUsers === 1 ? '' : 's'} differ from their transaction history`}
+                          </div>
+                          <div className="liability-sub">
+                            {kpis.walletIntegrity.usersChecked} wallets checked (credits + refunds − debits).
+                            {kpis.walletIntegrity.top.length > 0 && <> Biggest: {kpis.walletIntegrity.top.slice(0, 5).map(r => `${r.name || r.user_id.slice(0, 8)} (balance ${fmtRs(r.balance)} vs history ${fmtRs(r.ledger)})`).join(' · ')}.</>}
+                          </div>
+                        </div>
+                        {kpis.walletIntegrity.mismatchedUsers > 0 && <div className="liability-amount" style={{ color: '#8a6500' }}>{kpis.walletIntegrity.netDiffRupees >= 0 ? '+' : '−'}{fmtRs(Math.abs(kpis.walletIntegrity.netDiffRupees))}</div>}
                       </div>
                     )}
                     {/* 3 — Pending payout requests already submitted */}

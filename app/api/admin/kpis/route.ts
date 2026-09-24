@@ -144,6 +144,14 @@ export async function GET(req: NextRequest) {
       // Refund requests soft-hold (deduct) the wallet until you process them.
       safe(fetchAll<{ amount: number }>(c => c.from('refund_requests').select('amount').eq('status', 'pending').order('id'), sb)),
     ])
+    // Wallet ↔ ledger reconciliation: every balance change writes a
+    // wallet_transactions row (credit/refund in, debit out; gateway_fee is not
+    // wallet money). A wallet whose balance differs from its own history means
+    // a credit/debit happened without a ledger row, or a manual edit.
+    const [allTxns, allBalances] = await Promise.all([
+      safe(fetchAll<{ user_id: string; type: string; amount: number }>(c => c.from('wallet_transactions').select('user_id, type, amount').in('type', ['credit', 'debit', 'refund']).order('id'), sb)),
+      safe(fetchAll<{ id: string; name: string | null; wallet_balance: number }>(c => c.from('users').select('id, name, wallet_balance').order('id'), sb)),
+    ])
 
     // Extract values safely — failed queries return zero/null defaults
     type QR<T> = { data: T[] | null; count: number | null }
@@ -238,6 +246,23 @@ export async function GET(req: NextRequest) {
       rechargedNotPaid: Array.from(rechargers).filter(id => !paidSeekers.has(id)).length,
     } : null
 
+    const walletIntegrity = (() => {
+      if (!allTxns || !allBalances) return null
+      const net = new Map<string, number>()
+      for (const t of allTxns) net.set(t.user_id, (net.get(t.user_id) ?? 0) + (t.type === 'debit' ? -1 : 1) * Number(t.amount ?? 0))
+      const off = allBalances
+        .map(u => ({ user_id: u.id, name: u.name, balance: Number(u.wallet_balance ?? 0), ledger: Math.round((net.get(u.id) ?? 0) * 100) / 100 }))
+        .filter(r => Math.abs(r.balance - r.ledger) >= 1)
+        .map(r => ({ ...r, diff: Math.round((r.balance - r.ledger) * 100) / 100 }))
+        .sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff))
+      return {
+        usersChecked: allBalances.length,
+        mismatchedUsers: off.length,
+        netDiffRupees: off.reduce((t, r) => t + r.diff, 0),
+        top: off.slice(0, 10),
+      }
+    })()
+
     const sum = (rows: { amount?: number; net_amount?: number }[] | null, field: 'amount' | 'net_amount' = 'amount') =>
       (rows ?? []).reduce((s, r) => s + (r[field] ?? 0), 0)
 
@@ -319,11 +344,8 @@ export async function GET(req: NextRequest) {
         // (settlement credits the wallet; a payout request deducts all of it).
         listenerEarningsUnrequestedRupees: walletRowsAll ? sumBal(listenerWalletRows) : Math.max(0, settledNet - sum(allClaimedPayouts.data)),
         listenersWithBalance: listenerWalletRows.length,
-        // Cross-check from the earnings ledger: settled earnings − payouts requested
-        // (not rejected). Should equal the figure above; a gap means a failed
-        // wallet credit or a manual balance edit worth investigating.
-        ledgerUnrequestedRupees: settledNet - sum(allClaimedPayouts.data),
       },
+      walletIntegrity,
       funnel,
       payouts: {
         pendingAmountRupees: sum(pendingPayouts.data),
