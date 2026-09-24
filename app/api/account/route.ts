@@ -52,9 +52,8 @@ async function scrubUserData(admin: ReturnType<typeof createAdminClient>, userId
   const phoneDigits = phone.replace(/\D/g, '')
   const scrubPhone = phoneDigits ? `DELETE${phoneDigits}` : `DELETED_${userId.slice(0, 8)}`
 
-  // 1. Scrub users table — name, email, avatar gone; phone becomes DELETExxxxx
+  // 1. Scrub users table — keep name for admin audit trail; scrub phone, email, avatar
   await admin.from('users').update({
-    name: 'Deleted User',
     email: null,
     phone: scrubPhone,
     avatar_url: null,
@@ -63,20 +62,23 @@ async function scrubUserData(admin: ReturnType<typeof createAdminClient>, userId
     fcm_token: null,
   }).eq('id', userId)
 
-  // 2. Scrub listener_profiles — hide from all discovery, wipe bio
-  await admin.from('listener_profiles').update({
+  // 2. Scrub listener_profiles — hide from all discovery, clear bio
+  // bio is NOT NULL in the live schema — use empty string, not null
+  const { error: lpErr } = await admin.from('listener_profiles').update({
     is_active: false,
     is_approved: false,
     is_available: false,
     is_suspended: true,
-    bio: null,
+    bio: '',
   }).eq('user_id', userId)
+  if (lpErr) {
+    logger.error('scrubUserData: listener_profiles update failed', { userId, error: lpErr.message })
+  }
 
   // 3. Scrub listener_applications — wipe all PII (bank, aadhaar, phone, name, UPI)
   // Use 'rejected' status (valid CHECK constraint value) — 'deleted' is not allowed.
   // account_holder_name may not exist yet (pre-migration) — try with, fall back without.
   let laErr = (await admin.from('listener_applications').update({
-    name: 'Deleted User',
     phone: scrubPhone,
     aadhaar_last4: null,
     bank_account: null,
@@ -89,7 +91,6 @@ async function scrubUserData(admin: ReturnType<typeof createAdminClient>, userId
   if (laErr?.message?.includes('account_holder_name')) {
     // Column doesn't exist yet — retry without it
     await admin.from('listener_applications').update({
-      name: 'Deleted User',
       phone: scrubPhone,
       aadhaar_last4: null,
       bank_account: null,

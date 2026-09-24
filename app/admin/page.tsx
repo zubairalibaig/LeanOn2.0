@@ -1375,7 +1375,9 @@ export default function AdminPage() {
                           <td style={{ color: 'var(--gray)', fontSize: 12 }}>{fmtDateTime(u.last_sign_in_at)}</td>
                           <td>₹{u.wallet_balance ?? 0}</td>
                           <td>
-                            {u.is_suspended
+                            {u.phone?.startsWith('DELETE')
+                              ? <span className="badge badge-red" style={{ background: '#1a1a1a', color: '#ff6b6b' }}>Deleted</span>
+                              : u.is_suspended
                               ? <span className="badge badge-red">Suspended</span>
                               : u.is_active
                                 ? <span className="badge badge-green">Active</span>
@@ -1682,7 +1684,9 @@ export default function AdminPage() {
                               })()}
                             </td>
                             <td>
-                              {isNeedsResubmission
+                              {l.users?.phone?.startsWith('DELETE')
+                                ? <span className="badge badge-red" style={{ background: '#1a1a1a', color: '#ff6b6b' }}>Deleted</span>
+                                : isNeedsResubmission
                                 ? <span className="badge badge-orange" style={{ background: '#fff3cd', color: '#856404' }}>Needs Fix</span>
                                 : isPending
                                 ? <span className="badge badge-orange">Pending Approval</span>
