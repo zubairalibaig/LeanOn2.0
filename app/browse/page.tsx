@@ -1,8 +1,10 @@
 'use client'
 import { useState, useEffect, useRef, RefObject } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { BadgeCheck, Globe, Gift, LogIn, Mail, MessageCircle, Phone, Search, SlidersHorizontal, Star, Wallet as WalletIcon, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase'
-import { LANGUAGES, PLATFORM_FEE, AGE_RANGES, ageRangeId, VOICE_PRICING_ENABLED, sessionRatePerMin, MAX_FREE_TRIALS } from '@/lib/constants'
+import { LANGUAGES, AGE_RANGES, ageRangeId, VOICE_PRICING_ENABLED, sessionRatePerMin, MAX_FREE_TRIALS } from '@/lib/constants'
 import { SHOW_LISTENER_IN_SESSION_STATUS } from '@/lib/feature-flags'
 import { estimateListenerTakeHome } from '@/lib/session-billing'
 import { showToast } from '@/lib/toast'
@@ -15,7 +17,9 @@ import Avatar from '@/app/components/Avatar'
 function WelcomeBanner({
   listenerGridRef,
   onDismiss,
+  trialAvailable = true,
 }: {
+  trialAvailable?: boolean
   listenerGridRef?: RefObject<HTMLDivElement | null>
   // Called with the topic the user came from (if any), so the parent can
   // pre-filter the listener grid before the modal closes.
@@ -110,16 +114,32 @@ function WelcomeBanner({
     )
   }
 
-  // Thin strip for returning but un-onboarded users (unchanged)
+  // The one intro strip on /browse (it replaced a separate free-trial nudge).
   return (
-    <div style={{background:'var(--navy)',color:'white',padding:'12px 20px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,fontFamily:'Nunito,sans-serif'}}>
+    <div style={{background:'var(--navy)',color:'white',padding:'10px 8px 10px 20px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:8,fontFamily:'Nunito,sans-serif'}}>
       <div style={{flex:1}}>
-        <p style={{fontSize:14,fontWeight:800,margin:0,marginBottom:2}}>Not sure where to start?</p>
-        <p style={{fontSize:12,fontWeight:600,opacity:0.8,margin:0}}>Browse listeners by topic → Find one you like → Start a 5-min session</p>
+        <p style={{fontSize:14,fontWeight:800,margin:0,marginBottom:2}}>
+          {trialAvailable ? 'Your first 5 minutes are free.' : 'Not sure where to start?'}
+        </p>
+        <p style={{fontSize:13,fontWeight:600,color:'rgba(213,238,246,0.9)',margin:0}}>
+          {trialAvailable
+            ? 'Pick someone you’d feel comfortable talking to — text or voice, private and one-to-one.'
+            : 'Pick a topic, then someone you’d feel comfortable talking to.'}
+        </p>
       </div>
-      <button onClick={() => { setShow(false); localStorage.setItem('leanon_onboarded','1') }} style={{background:'none',border:'none',color:'white',cursor:'pointer',fontSize:18,fontWeight:900,padding:0,lineHeight:1}}>✕</button>
+      <button aria-label="Dismiss" onClick={() => { setShow(false); localStorage.setItem('leanon_onboarded','1') }} style={{background:'none',border:'none',color:'white',cursor:'pointer',width:44,height:44,flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center'}}><X size={20} aria-hidden /></button>
     </div>
   )
+}
+
+// Photo-less listeners get a stable brand-palette colour from their name, so
+// cards don't all look identical. Blues/teals only (orange is the CTA colour);
+// all pass 4.5:1 with white initials.
+const INITIALS_COLORS = ['#0F4867', '#137A89', '#2E6F8E', '#3B6E86']
+function initialsColor(name: string): string {
+  let h = 0
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0
+  return INITIALS_COLORS[h % INITIALS_COLORS.length]
 }
 
 type Listener = {
@@ -258,69 +278,73 @@ const S = `
 body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:antialiased;
   background:radial-gradient(ellipse 90% 55% at 0% 0%,#C2E4F2 0%,#DAEEF8 22%,#FFFFFF 58%) fixed;}
 a{text-decoration:none;color:inherit;}
-.topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:14px 20px;}
-.topbar-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.topbar h1{font-size:20px;font-weight:900;color:var(--navy);}
-.wallet-chip{display:flex;align-items:center;gap:6px;background:var(--light);padding:8px 14px;border-radius:50px;font-weight:800;font-size:14px;color:var(--navy);cursor:pointer;border:1.5px solid var(--border);}
-.search-container{width:100%;max-width:600px;margin:0 auto 12px;position:relative;}
-.search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;}
-.search-wrap{width:100%;padding:12px 16px 12px 44px;border-radius:50px;border:1.5px solid var(--border);font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;color:var(--navy);background:white;outline:none;display:block;box-sizing:border-box;}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px;}
+.head{padding:16px 0 10px;}
+.head-row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.head h1{font-size:21px;font-weight:900;color:var(--navy);line-height:1.2;}
+.wallet-chip{display:flex;align-items:center;gap:6px;background:var(--light);min-height:44px;padding:0 16px;border-radius:50px;font-weight:800;font-size:14px;color:var(--navy);cursor:pointer;border:1.5px solid var(--border);flex-shrink:0;}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:10px 0;}
+.search-container{width:100%;max-width:600px;margin:0 0 10px;position:relative;}
+.search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--gray);pointer-events:none;display:flex;}
+.search-wrap{width:100%;min-height:44px;padding:10px 16px 10px 44px;border-radius:50px;border:1.5px solid var(--border);font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;color:var(--navy);background:white;outline:none;display:block;box-sizing:border-box;}
 .search-wrap:focus{border-color:var(--navy);}
-.search-wrap::placeholder{color:#B0C8D8;font-weight:400;}
-.filter-container{background:white;border-radius:24px;padding:12px 0 8px;margin-bottom:4px;}
-.tag-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;}
+.search-wrap::placeholder{color:var(--gray);font-weight:500;}
+.tag-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;
+  -webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent);}
 .tag-scroll::-webkit-scrollbar{display:none;}
-.tag-pill{flex-shrink:0;display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:50px;font-size:12px;font-weight:700;border:1.5px solid var(--border);background:white;color:var(--gray);cursor:pointer;transition:all .15s;white-space:nowrap;}
+@media(min-width:960px){.tag-scroll{flex-wrap:wrap;overflow:visible;-webkit-mask-image:none;mask-image:none;}}
+.tag-pill{flex-shrink:0;display:flex;align-items:center;gap:6px;min-height:44px;padding:0 16px;border-radius:50px;font-size:13px;font-weight:700;border:1.5px solid var(--border);background:white;color:var(--gray);cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'Nunito',sans-serif;}
 .tag-pill.active{background:var(--navy);color:white;border-color:var(--navy);}
+.filter-panel{margin-top:10px;display:grid;gap:8px;}
 /* Bottom padding clears the fixed BottomNav — previously supplied by the
    listener-recruitment CTA that used to sit below this list. */
-.list{padding:16px 20px 96px;display:grid;grid-template-columns:1fr;gap:14px;max-width:1200px;margin:0 auto;}
-@media(min-width:640px){.list{grid-template-columns:1fr 1fr;}}
-@media(min-width:960px){.list{grid-template-columns:1fr 1fr 1fr;}}
-.card{background:white;border:1.5px solid var(--border);border-radius:20px;padding:18px;cursor:pointer;transition:all .2s;box-shadow:0 1px 4px rgba(15,72,103,.04);}
-.card:hover{border-color:var(--teal);box-shadow:0 4px 20px rgba(15,72,103,.08);transform:translateY(-2px);}
+.list{padding:16px 20px 96px;display:grid;grid-template-columns:minmax(0,1fr);gap:14px;max-width:1200px;margin:0 auto;}
+@media(min-width:640px){.list{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(min-width:960px){.list{grid-template-columns:repeat(3,minmax(0,1fr));}}
+.card{background:white;border:1.5px solid var(--border);border-radius:20px;padding:18px;transition:border-color .2s,box-shadow .2s;box-shadow:0 1px 4px rgba(15,72,103,.04);display:flex;flex-direction:column;}
+.card:hover{border-color:var(--teal);box-shadow:0 4px 20px rgba(15,72,103,.08);}
+.card-link{display:block;color:inherit;border-radius:14px;outline-offset:4px;}
+.card-link:focus-visible{outline:2.5px solid var(--teal);}
+.card-actions{margin-top:auto;padding-top:4px;}
 .card-top{display:flex;gap:14px;align-items:center;margin-bottom:12px;}
 .av{width:88px;height:88px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;color:white;flex-shrink:0;position:relative;overflow:hidden;}
 .av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
 .dot{position:absolute;bottom:1px;right:1px;width:14px;height:14px;border-radius:50%;border:2.5px solid white;}
 .dot.on{background:#34C759;}.dot.off{background:#C7C7CC;}.dot.busy{background:var(--orange);}
 .meta{flex:1;min-width:0;}
-.name{font-size:16px;font-weight:900;color:var(--navy);margin-bottom:1px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.name{font-size:16px;font-weight:900;color:var(--navy);margin-bottom:2px;display:flex;align-items:center;gap:6px;min-width:0;}
+.name-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
 .card-tagline{font-size:13px;font-weight:600;color:var(--gray);margin-bottom:4px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;}
-.stats{display:flex;align-items:center;flex-wrap:wrap;gap:2px 10px;font-size:12px;color:var(--gray);font-weight:600;}
+.stats{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;font-size:13px;color:var(--gray);font-weight:600;margin-bottom:6px;}
+.stats .st{display:inline-flex;align-items:center;gap:4px;}
+.new-tag{background:#FFF4E5;color:#7A4A00;font-size:11px;font-weight:800;padding:2px 8px;border-radius:50px;}
 .stats span{white-space:nowrap;}
-.rate{font-size:15px;font-weight:900;color:var(--navy);flex-shrink:0;}
-.rate span{font-size:11px;font-weight:500;color:var(--gray);}
-.bio{font-size:13px;color:#4A6B7E;line-height:1.6;margin-bottom:12px;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
-.fit{font-size:12.5px;color:var(--navy);font-weight:700;line-height:1.5;margin-bottom:12px;}
+.fit{font-size:13px;color:var(--navy);font-weight:700;line-height:1.6;margin-bottom:14px;}
 .fit span{color:var(--gray);font-weight:600;}
-.btn-filters{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:50px;font-size:12px;font-weight:800;border:1.5px solid var(--navy);background:white;color:var(--navy);cursor:pointer;margin-top:8px;font-family:'Nunito',sans-serif;}
+.fit .ln{display:flex;align-items:center;gap:6px;}
+.btn-filters{flex-shrink:0;display:flex;align-items:center;gap:6px;min-height:44px;padding:0 16px;border-radius:50px;font-size:13px;font-weight:800;border:1.5px solid var(--navy);background:white;color:var(--navy);cursor:pointer;font-family:'Nunito',sans-serif;}
 .btn-filters .cnt{background:var(--orange);color:white;border-radius:50px;padding:0 6px;font-size:11px;}
-.tag-badge{background:rgba(26,143,160,.1);color:var(--navy);font-size:11px;font-weight:700;padding:4px 10px;border-radius:50px;}
-.verified-chip{background:#E6F6FF;color:#0F4867;font-size:10px;font-weight:800;padding:3px 7px;border-radius:50px;border:1.5px solid #B8D9F0;}
-.card-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;}
-.card-price-avail{display:flex;flex-direction:column;align-items:flex-start;gap:2px;flex-shrink:0;}
-.btns{flex:1;display:flex;gap:8px;align-items:center;justify-content:flex-end;}
-.btn-chat{color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:11px 18px;border-radius:12px;border:none;cursor:pointer;transition:all .2s;white-space:nowrap;}
-.btn-chat.avail{background:#34C759;box-shadow:0 2px 10px rgba(52,199,89,.3);}
-.btn-chat.avail:hover{background:#28a745;}
-.btn-chat.busy{background:var(--orange);cursor:not-allowed;opacity:.85;}
-.btn-chat.busy:hover{background:var(--orange);}
-.btn-chat.offline{background:#C7C7CC;cursor:not-allowed;box-shadow:none;}
-.mode-free{font-size:11px;font-weight:700;color:#166534;margin-bottom:8px;}
+.verified-chip{display:inline-flex;align-items:center;gap:3px;flex-shrink:0;background:#E6F6FF;color:#0F4867;font-size:11px;font-weight:800;padding:2px 8px 2px 6px;border-radius:50px;border:1.5px solid #B8D9F0;}
 .mode-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.btn-mode{color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:8px 6px;border-radius:12px;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.25;transition:all .2s;}
-.btn-mode small{font-size:11px;font-weight:700;opacity:.92;}
-.btn-mode.text{background:#34C759;box-shadow:0 2px 10px rgba(52,199,89,.3);}
-.btn-mode.text:hover{background:#28a745;}
-.btn-mode.voice{background:var(--navy);box-shadow:0 2px 10px rgba(15,72,103,.25);}
+.btn-mode{color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;min-height:52px;padding:6px;border-radius:12px;border:1.5px solid transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1.25;transition:background .2s;width:100%;}
+.btn-mode .bl{display:inline-flex;align-items:center;gap:6px;}
+.btn-mode small{font-size:12px;font-weight:700;opacity:.95;}
+.btn-mode.text{background:#137A89;}
+.btn-mode.text:hover{background:#0F6673;}
+.btn-mode.voice{background:var(--navy);}
 .btn-mode.voice:hover{background:#0b3650;}
-.mode-prices{font-size:12px;font-weight:800;color:var(--navy);display:flex;flex-direction:column;gap:1px;}
-.btn-voice{background:white;color:var(--navy);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;padding:11px 16px;border-radius:12px;border:1.5px solid var(--border);cursor:pointer;white-space:nowrap;}
-.avail-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;}
-.avail-label.on{color:#34C759;}.avail-label.off{color:#C7C7CC;}.avail-label.busy{color:var(--orange);}
-.skeleton{background:linear-gradient(90deg,#e8e8e4 25%,#f2f2ee 50%,#e8e8e4 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:12px;height:160px;}
+.btn-mode.full{grid-column:1 / -1;flex-direction:row;gap:8px;}
+.btn-mode.msg{background:#137A89;}
+.btn-mode.msg:hover{background:#0F6673;}
+.btn-mode.busy{background:white;color:#4E6B7A;border-color:var(--border);cursor:not-allowed;}
+.card-caption{margin-top:8px;font-size:12px;font-weight:700;color:var(--gray);display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;}
+.card-caption.free{color:#1B7A3A;}
+.status-row{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;}
+.avail-label{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;padding:3px 10px;border-radius:50px;white-space:nowrap;}
+.avail-label::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor;}
+.avail-label.on{color:#1B7A3A;background:#E7F6EC;}.avail-label.off{color:#4E6B7A;background:#EEF3F6;}.avail-label.busy{color:#9A4E00;background:#FFF1E0;}
+.last-seen{font-size:12px;font-weight:600;color:var(--gray);}
+.skeleton{background:linear-gradient(90deg,#E6F2F8 25%,#F4FAFD 50%,#E6F2F8 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:20px;height:250px;border:1.5px solid var(--border);}
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 .empty{text-align:center;padding:60px 20px;}
 .session-toast{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--orange);color:white;font-family:'Nunito',sans-serif;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 4px 20px rgba(255,153,51,.35);animation:toastDrop .25s ease;}
@@ -342,15 +366,6 @@ a{text-decoration:none;color:inherit;}
 .avail-bar-recovery-chip{background:white;border:1.5px solid var(--border);border-radius:50px;padding:6px 14px;font-size:12px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:5px;cursor:pointer;transition:border-color .15s;}
 .avail-bar-recovery-chip:hover{border-color:var(--teal);color:var(--teal);}
 .avail-bar-recovery-chip .dot-sm{width:6px;height:6px;border-radius:50%;background:#34C759;display:inline-block;}
-.free-nudge{margin:0 20px 0;background:linear-gradient(135deg,#0F4867 0%,#1A6E8A 100%);border-radius:20px 20px 0 0;padding:16px 18px 12px;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden;}
-.free-nudge::after{content:'';position:absolute;inset:0;background:rgba(255,153,51,.07);pointer-events:none;}
-.free-nudge-icon{font-size:28px;line-height:1;flex-shrink:0;}
-.free-nudge-text{flex:1;min-width:0;}
-.free-nudge-title{font-size:15px;font-weight:900;color:white;margin-bottom:3px;line-height:1.2;}
-.free-nudge-sub{font-size:12px;color:rgba(213,238,246,0.75);font-weight:600;line-height:1.4;}
-.free-nudge-close{background:rgba(255,255,255,0.12);border:none;color:rgba(255,255,255,0.7);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;font-weight:900;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;}
-.free-nudge-arrow{text-align:center;padding:6px 20px 0;color:rgba(26,143,160,0.9);font-size:20px;line-height:1;animation:bounce 1.2s ease-in-out infinite;}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
 `
 
 function BrowseContent() {
@@ -375,7 +390,7 @@ function BrowseContent() {
   const listenerGridRef = useRef<HTMLDivElement | null>(null)
   // Free-trial nudge banner — shown to users who signed up within the last 30
   // days and haven't had a single session yet. Disappears after first session.
-  const [showFreeNudge, setShowFreeNudge] = useState(false)
+  const [authChecked, setAuthChecked] = useState(false)
   // Anonymous visitors are assumed eligible; logged-in seekers are checked below.
   const [trialAvailable, setTrialAvailable] = useState(true)
   const [showFilters, setShowFilters] = useState(false)
@@ -526,29 +541,16 @@ function BrowseContent() {
 
   useEffect(() => {
     client.auth.getUser().then(async ({data:{user}}) => {
+      setAuthChecked(true)
       if (!user) return
       // Remember who I am so I never see (or can book) my own listener card.
       setMyUserId(user.id)
       client.from('sessions').select('id', { count: 'exact', head: true })
         .eq('seeker_id', user.id).eq('is_free_trial', true).eq('status', 'completed')
         .then(({ count }) => { if ((count ?? 0) >= MAX_FREE_TRIALS) setTrialAvailable(false) })
-      const {data} = await client.from('users').select('wallet_balance,created_at').eq('id',user.id).single()
+      const {data} = await client.from('users').select('wallet_balance').eq('id',user.id).single()
       if (data) {
         setBalance(data.wallet_balance as number | null)
-
-        // Free-trial nudge: new user (joined ≤30 days ago) with 0 seeker sessions.
-        // Check localStorage first — if they dismissed it, respect that.
-        const dismissed = localStorage.getItem('leanon_nudge_dismissed')
-        if (!dismissed && data.created_at) {
-          const joinedDaysAgo = (Date.now() - new Date(data.created_at as string).getTime()) / 86_400_000
-          if (joinedDaysAgo <= 30) {
-            const { count } = await client
-              .from('sessions')
-              .select('id', { count: 'exact', head: true })
-              .eq('seeker_id', user.id)
-            if ((count ?? 0) === 0) setShowFreeNudge(true)
-          }
-        }
       }
 
       // Only subscribe to incoming sessions if user is an approved listener — avoids
@@ -608,9 +610,13 @@ function BrowseContent() {
     // Item 2: age-range filter. A listener with no age set is only excluded
     // when a specific range is chosen (they still appear under "All ages").
     .filter(l => ageRange === 'all' || ageRangeId(l.birth_year, l.birth_month) === ageRange)
-    .filter(l => !query
-      || l.name.toLowerCase().includes(query.toLowerCase())
-      || l.bio?.toLowerCase().includes(query.toLowerCase()))
+    .filter(l => {
+      const q = query.trim().toLowerCase()
+      if (!q) return true
+      return l.name.toLowerCase().includes(q)
+        || !!l.bio?.toLowerCase().includes(q)
+        || (l.specialty_tags || []).some(t => (TAGS.find(x => x.id === t)?.label ?? t).toLowerCase().includes(q))
+    })
 
   // Apply the user's chosen ordering at RENDER time only. The underlying
   // `listeners` array stays in the canonical compareListeners() order that the
@@ -702,6 +708,7 @@ function BrowseContent() {
       )}
 
       <WelcomeBanner
+        trialAvailable={trialAvailable}
         listenerGridRef={listenerGridRef}
         onDismiss={(topic) => {
           // Pre-filter the listener grid to the user's topic intent when
@@ -710,42 +717,50 @@ function BrowseContent() {
           if (topic && TAGS.some(t => t.id === topic)) setTag(topic)
         }}
       />
+      <div className="head">
+        <div className="wrap head-row">
+          <h1>Who would you like to talk to?</h1>
+          {authChecked && (myUserId ? (
+            <a href="/wallet" className="wallet-chip" aria-label="Wallet balance">
+              <WalletIcon size={17} aria-hidden /> {balance !== null ? `₹${balance}` : 'Wallet'}
+            </a>
+          ) : (
+            <a href="/auth?redirect=/browse" className="wallet-chip">
+              <LogIn size={17} aria-hidden /> Log in
+            </a>
+          ))}
+        </div>
+      </div>
       <div className="topbar">
-        <div className="topbar-row">
-          <h1>Find a listener</h1>
-          <a href="/wallet" className="wallet-chip">
-            💰 {balance !== null ? `₹${balance}` : 'Wallet'}
-          </a>
-        </div>
-        <div className="search-container">
-          <span className="search-icon">🔍</span>
-          <input
-            className="search-wrap"
-            placeholder="Search listeners..."
-            value={query}
-            onChange={e=>setQuery(e.target.value)}
-            aria-label="Search listeners by name or topic"
-          />
-        </div>
-        <div className="filter-container">
+        <div className="wrap">
+          <div className="search-container">
+            <span className="search-icon"><Search size={18} aria-hidden /></span>
+            <input
+              className="search-wrap"
+              placeholder="Search by name or topic"
+              value={query}
+              onChange={e=>setQuery(e.target.value)}
+              aria-label="Search listeners by name or topic"
+            />
+          </div>
           <div className="tag-scroll">
+            {(() => {
+              const activeFilters = (lang !== 'all' ? 1 : 0) + (ageRange !== 'all' ? 1 : 0) + (sortBy !== 'best' ? 1 : 0)
+              return (
+                <button className="btn-filters" onClick={() => setShowFilters(v => !v)} aria-expanded={showFilters}>
+                  <SlidersHorizontal size={16} aria-hidden /> Filters{activeFilters > 0 && <span className="cnt">{activeFilters}</span>}
+                </button>
+              )
+            })()}
             {TAGS.map(t=>(
               <button key={t.id} className={`tag-pill${tag===t.id?' active':''}`} onClick={()=>setTag(t.id)}>
                 {t.icon} {t.label}
               </button>
             ))}
           </div>
-          {(() => {
-            const activeFilters = (lang !== 'all' ? 1 : 0) + (ageRange !== 'all' ? 1 : 0) + (sortBy !== 'best' ? 1 : 0)
-            return (
-              <button className="btn-filters" onClick={() => setShowFilters(v => !v)} aria-expanded={showFilters}>
-                ⚙️ Filters{activeFilters > 0 && <span className="cnt">{activeFilters}</span>} {showFilters ? '▴' : '▾'}
-              </button>
-            )
-          })()}
           {showFilters && (
-            <>
-          <div className="tag-scroll" style={{marginTop:8}}>
+            <div className="filter-panel">
+          <div className="tag-scroll">
             <button className={`tag-pill${lang==='all'?' active':''}`} onClick={()=>setLang('all')}>
               🌐 All languages
             </button>
@@ -755,7 +770,7 @@ function BrowseContent() {
               </button>
             ))}
           </div>
-          <div className="tag-scroll" style={{marginTop:8}}>
+          <div className="tag-scroll">
             <button className={`tag-pill${ageRange==='all'?' active':''}`} onClick={()=>setAgeRange('all')}>
               🎂 All ages
             </button>
@@ -766,7 +781,7 @@ function BrowseContent() {
             ))}
           </div>
           {/* Sort — online listeners stay first in every mode. */}
-          <div className="tag-scroll" style={{marginTop:8}}>
+          <div className="tag-scroll">
             {SORTS.map(s=>(
               <button
                 key={s.id}
@@ -778,7 +793,7 @@ function BrowseContent() {
               </button>
             ))}
           </div>
-            </>
+            </div>
           )}
         </div>
       </div>
@@ -825,27 +840,6 @@ function BrowseContent() {
         )
       )}
 
-      {showFreeNudge && (
-        <div>
-          <div className="free-nudge">
-            <div className="free-nudge-icon">💙</div>
-            <div className="free-nudge-text">
-              <div className="free-nudge-title">Your first 5 minutes are free.</div>
-              <div className="free-nudge-sub">Pick someone you&apos;d feel comfortable talking to — it&apos;s private and one-to-one.</div>
-            </div>
-            <button
-              className="free-nudge-close"
-              aria-label="Dismiss"
-              onClick={() => {
-                setShowFreeNudge(false)
-                try { localStorage.setItem('leanon_nudge_dismissed', '1') } catch { /* ignore */ }
-              }}
-            >✕</button>
-          </div>
-          <div className="free-nudge-arrow">↓</div>
-        </div>
-      )}
-
       <div className="list" ref={listenerGridRef}>
         {loading ? (
           [1,2,3].map(i=><div key={i} className="skeleton"/>)
@@ -874,113 +868,87 @@ function BrowseContent() {
             </p>
           </div>
         ) : visible.map(l => {
-          const statusClass = SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session ? 'busy' : l.is_available ? 'on' : 'off'
-          const statusLabel = SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session ? '● In session' : l.is_available ? '● Available now' : '● Offline'
+          const inSession = SHOW_LISTENER_IN_SESSION_STATUS && !!l.is_in_session
+          const statusClass = inSession ? 'busy' : l.is_available ? 'on' : 'off'
+          const statusLabel = inSession ? 'In a conversation' : l.is_available ? 'Available now' : 'Offline'
           const bioFirstLine = l.bio ? l.bio.split(/[.\n]/).filter(Boolean)[0]?.trim() : ''
+          const isNew = !(l.rating > 0) && !(l.total_sessions > 0)
+          const textRate  = sessionRatePerMin(Number(l.rate_per_min), 'text')
+          const voiceRate = sessionRatePerMin(Number(l.rate_per_min), 'voice')
+          const priceCaption = VOICE_PRICING_ENABLED ? `Text ₹${textRate}/min · Call ₹${voiceRate}/min` : `₹${textRate}/min · text or call`
+          const goodFor = (l.specialty_tags||[]).slice(0,2).map(t => tagInfo(t)?.label || t)
+          const langs = (l.languages_spoken||[]).slice(0,2).map(lid => {
+            const label = LANGUAGES.find(x=>x.id===lid)?.label || lid
+            return label.match(/\(([^)]+)\)/)?.[1] ?? label
+          })
+          const go = (type?: 'text' | 'voice') => router.push(`/listener/${l.user_id}${type ? `?type=${type}` : ''}`)
           return (
-          <div key={l.id} className="card" onClick={()=>router.push(`/listener/${l.user_id}`)}>
-            <div className="card-top">
-              <div className="av">
-                {l.avatar_url
-                  ? <Avatar src={l.avatar_url} alt={l.name} size={160} />
-                  : ini(l.name)}
-                <div className={`dot ${statusClass}`}/>
-              </div>
-              <div className="meta">
-                <div className="name">
-                  {l.name}
-                  {l.is_verified && <span className="verified-chip">✓ Verified</span>}
+          <div key={l.id} className="card">
+            <Link href={`/listener/${l.user_id}`} className="card-link" aria-label={`${l.name} — view profile`}>
+              <div className="card-top">
+                <div className="av" style={l.avatar_url ? undefined : { background: initialsColor(l.name) }}>
+                  {l.avatar_url
+                    ? <Avatar src={l.avatar_url} alt="" size={176} />
+                    : <span aria-hidden>{ini(l.name)}</span>}
+                  <div className={`dot ${statusClass}`}/>
                 </div>
-                {bioFirstLine && <div className="card-tagline">{bioFirstLine}</div>}
-                <div className="stats">
-                  {l.rating > 0 && <span>⭐ {(+l.rating).toFixed(1)}</span>}
-                  {l.total_sessions > 0 && <span>{l.total_sessions} {l.total_sessions === 1 ? 'conversation' : 'conversations'}</span>}
-                  <span className={`avail-label ${statusClass}`}>{statusLabel}</span>
-                </div>
-                {!l.is_available && !l.is_in_session && lastOnlineLabel(l) && (
-                  <div style={{fontSize:11,fontWeight:600,color:'var(--gray)',marginTop:1}}>
-                    {lastOnlineLabel(l)}
+                <div className="meta">
+                  <div className="name">
+                    <span className="name-text" title={l.name}>{l.name}</span>
+                    {l.is_verified && <span className="verified-chip"><BadgeCheck size={12} aria-hidden /> Verified</span>}
                   </div>
-                )}
-              </div>
-            </div>
-            {(() => {
-              // One calm line instead of up to five pills: what they're good for + languages.
-              const goodFor = (l.specialty_tags||[]).slice(0,2).map(t => tagInfo(t)?.label || t)
-              const langs = (l.languages_spoken||[]).slice(0,2).map(lid => {
-                const label = LANGUAGES.find(x=>x.id===lid)?.label || lid
-                return label.match(/\(([^)]+)\)/)?.[1] ?? label
-              })
-              if (!goodFor.length && !langs.length) return null
-              return (
-                <div className="fit">
-                  {goodFor.length > 0 && <>Good for <span>{goodFor.join(' · ')}</span></>}
-                  {goodFor.length > 0 && langs.length > 0 && <br/>}
-                  {langs.length > 0 && <>🌐 <span>{langs.join(' · ')}</span></>}
-                </div>
-              )
-            })()}
-            {VOICE_PRICING_ENABLED ? (() => {
-              const textRate  = sessionRatePerMin(Number(l.rate_per_min), 'text')
-              const voiceRate = sessionRatePerMin(Number(l.rate_per_min), 'voice')
-              const inSession = SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session
-              if (l.is_available && !inSession) return (
-                <div>
-                  {trialAvailable && <div className="mode-free">🎁 Your first 5 minutes are free — text or voice</div>}
-                  <div className="mode-btns">
-                    <button className="btn-mode text" aria-label={`Text conversation, ₹${textRate} per minute`}
-                      onClick={e=>{e.stopPropagation(); router.push(`/listener/${l.user_id}?type=text`)}}>
-                      <span>💬 Text</span><small>₹{textRate}/min</small>
-                    </button>
-                    <button className="btn-mode voice" aria-label={`Voice call, ₹${voiceRate} per minute`}
-                      onClick={e=>{e.stopPropagation(); router.push(`/listener/${l.user_id}?type=voice`)}}>
-                      <span>📞 Call</span><small>₹{voiceRate}/min</small>
-                    </button>
+                  {bioFirstLine && <div className="card-tagline">{bioFirstLine}</div>}
+                  <div className="stats">
+                    {isNew
+                      ? <span className="new-tag">New listener</span>
+                      : <>
+                          {l.rating > 0 && <span className="st"><Star size={14} fill="#FF9933" color="#FF9933" aria-hidden />{(+l.rating).toFixed(1)}</span>}
+                          {l.total_sessions > 0 && <span className="st">{l.total_sessions} {l.total_sessions === 1 ? 'conversation' : 'conversations'}</span>}
+                        </>}
                   </div>
-                </div>
-              )
-              return (
-                <div className="card-bottom">
-                  <div className="mode-prices">
-                    <span>💬 ₹{textRate}<span style={{fontSize:11,fontWeight:500,color:'var(--gray)'}}>/min</span></span>
-                    <span>📞 ₹{voiceRate}<span style={{fontSize:11,fontWeight:500,color:'var(--gray)'}}>/min</span></span>
-                  </div>
-                  <div className="btns">
-                    {inSession ? (
-                      <button className="btn-chat busy" onClick={e => e.stopPropagation()}>In session</button>
-                    ) : (
-                      <button className="btn-chat avail" style={{background:'var(--teal)',boxShadow:'none'}}
-                        onClick={e=>{e.stopPropagation(); router.push(`/listener/${l.user_id}`)}}>✉️ Leave a message</button>
+                  <div className="status-row">
+                    <span className={`avail-label ${statusClass}`}>{statusLabel}</span>
+                    {!l.is_available && !inSession && lastOnlineLabel(l) && (
+                      <span className="last-seen">{lastOnlineLabel(l)}</span>
                     )}
                   </div>
                 </div>
-              )
-            })() : (
-            <div className="card-bottom">
-              <div className="card-price-avail">
-                <div className="rate">₹{l.rate_per_min}<span>/min</span></div>
-                {l.is_available && !(SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session) && (
-                  <div style={{fontSize:11,color:'#5A7A8A',fontWeight:600}}>
-                    ₹{Math.round(l.rate_per_min*15)+PLATFORM_FEE} for 15 min
+              </div>
+              {(goodFor.length > 0 || langs.length > 0) && (
+                <div className="fit">
+                  {goodFor.length > 0 && <div className="ln">Good for <span>{goodFor.join(' · ')}</span></div>}
+                  {langs.length > 0 && <div className="ln"><Globe size={14} color="#5A7A8A" aria-hidden /><span>{langs.join(' · ')}</span></div>}
+                </div>
+              )}
+            </Link>
+            <div className="card-actions">
+              {l.is_available && !inSession ? (
+                <>
+                  <div className="mode-btns">
+                    <button className="btn-mode text" aria-label={`Text conversation with ${l.name}, ₹${textRate} per minute`} onClick={() => go('text')}>
+                      <span className="bl"><MessageCircle size={16} aria-hidden /> Text</span><small>₹{textRate}/min</small>
+                    </button>
+                    <button className="btn-mode voice" aria-label={`Voice call with ${l.name}, ₹${voiceRate} per minute`} onClick={() => go('voice')}>
+                      <span className="bl"><Phone size={16} aria-hidden /> Call</span><small>₹{voiceRate}/min</small>
+                    </button>
                   </div>
-                )}
-              </div>
-              <div className="btns">
-                {SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session ? (
-                  <button className="btn-chat busy" onClick={e => e.stopPropagation()}>
-                    In session
-                  </button>
-                ) : (
-                  <button
-                    className={`btn-chat ${l.is_available ? 'avail' : 'offline'}`}
-                    onClick={e=>{e.stopPropagation(); if(l.is_available) router.push(`/listener/${l.user_id}`)}}
-                  >
-                    {l.is_available ? '🎁 Try free · 5 min' : 'View profile'}
-                  </button>
-                )}
-              </div>
+                  {trialAvailable && <div className="card-caption free"><Gift size={14} aria-hidden /> First 5 min free</div>}
+                </>
+              ) : (
+                <>
+                  <div className="mode-btns">
+                    {inSession ? (
+                      <button className="btn-mode full busy" disabled aria-disabled>In a conversation — back soon</button>
+                    ) : (
+                      <button className="btn-mode full msg" onClick={() => go()}>
+                        <Mail size={16} aria-hidden /> Leave a message
+                      </button>
+                    )}
+                  </div>
+                  <div className="card-caption">{priceCaption}</div>
+                </>
+              )}
             </div>
-            )}
           </div>
           )
         })}

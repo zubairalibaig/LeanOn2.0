@@ -1,8 +1,14 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
+
+// Signed-in app screens already have their own primary actions; a floating
+// "Start now" there just covers content.
+const HIDE_ON = ['/browse', '/dashboard', '/wallet', '/history', '/profile', '/notifications', '/sessions', '/session/', '/listener/', '/admin']
 
 export default function FloatingCTA() {
   const [visible, setVisible] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
     const onScroll = () => setVisible(window.scrollY > 400)
@@ -10,7 +16,7 @@ export default function FloatingCTA() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  if (!visible) return null
+  if (!visible || HIDE_ON.some(p => pathname === p || pathname.startsWith(p.endsWith('/') ? p : p + '/'))) return null
 
   return (
     <a

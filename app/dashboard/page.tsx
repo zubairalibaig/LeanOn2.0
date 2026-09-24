@@ -1118,6 +1118,18 @@ export default function DashboardPage() {
 
         <Suspense fallback={null}><EditPricingParam ready={!!profile} onOpen={openEdit} /></Suspense>
 
+        {/* Skip while a new selfie is awaiting admin review (pending_avatar_url). */}
+        {!profile.avatar_url && !(profile as { pending_avatar_url?: string | null }).pending_avatar_url && (
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,flexWrap:'wrap',background:'var(--light)',border:'1.5px solid var(--border)',borderRadius:14,padding:'12px 16px',marginBottom:16}}>
+            <div style={{fontSize:13,fontWeight:700,color:'var(--navy)',lineHeight:1.5,flex:1,minWidth:200}}>
+              📷 Add a profile photo — seekers find it easier to choose someone they can see.
+            </div>
+            <button onClick={openEdit} style={{background:'var(--navy)',color:'white',border:'none',borderRadius:50,minHeight:44,padding:'0 18px',fontFamily:"'Nunito',sans-serif",fontWeight:800,fontSize:13,cursor:'pointer'}}>
+              Add photo →
+            </button>
+          </div>
+        )}
+
         {showFeeNotice && (() => {
           const text  = Number(profile.rate_per_min) || 0
           const voice = text + VOICE_RATE_PREMIUM

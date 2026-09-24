@@ -91,7 +91,8 @@ export default function NotificationsBell() {
     }).catch(() => {})
   }
 
-  if (!userId) return null
+  // Logged out: show the bell (no badge/dropdown) so the Alerts tab isn't blank.
+  if (!userId) return <span aria-hidden style={{ fontSize: 22, lineHeight: 1, padding: 8, display: 'flex' }}>🔔</span>
 
   return (
     <div ref={dropdownRef} style={{ position: 'relative' }}>
