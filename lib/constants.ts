@@ -16,6 +16,16 @@ export const GATEWAY_FEE_RATE   = 0.0236
 export const grossRechargeAmount = (amount: number) => Math.ceil(amount * (1 + GATEWAY_FEE_RATE))
 export const MIN_LISTENER_RATE  = 1    // ₹/min (suggestion floor; no hard mandate)
 export const MAX_LISTENER_RATE  = 500  // ₹/min — requires migration 039 (011 was a no-op; live cap stays ≤200 until 039 runs)
+// Text/voice pricing (2026-09-24). Only the TEXT rate is stored
+// (listener_profiles.rate_per_min); voice is always text + VOICE_RATE_PREMIUM,
+// so voice > text holds structurally and no migration is needed.
+// Kill switch: set NEXT_PUBLIC_VOICE_PRICING=false and redeploy → one rate for
+// both modes again. Read by both client and server (inlined at build), so the
+// price shown and the price charged always agree.
+export const VOICE_PRICING_ENABLED = process.env.NEXT_PUBLIC_VOICE_PRICING !== 'false'
+export const VOICE_RATE_PREMIUM    = 5 // ₹/min
+export const sessionRatePerMin = (textRate: number, type: 'text' | 'voice') =>
+  type === 'voice' && VOICE_PRICING_ENABLED ? textRate + VOICE_RATE_PREMIUM : textRate
 export const FREE_SESSION_MINS  = 5
 // Each user gets N free 5-min trials, ONE per listener (so they can try the
 // product before paying). Reduced 5 → 3 (2026-08-11) → 2 → 1 (2026-09-13):

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
-import { PLATFORM_FEE, FREE_SESSION_MINS, MAX_FREE_TRIALS, SESSION_DURATIONS } from '@/lib/constants'
+import { PLATFORM_FEE, FREE_SESSION_MINS, MAX_FREE_TRIALS, SESSION_DURATIONS, sessionRatePerMin } from '@/lib/constants'
 import { isNriCountry, NRI_INR_EQUIV } from '@/lib/geo-pricing'
 import { isUnlimitedTestPhone } from '@/lib/test-users'
 import { settleSession } from '@/lib/session-billing'
@@ -120,7 +120,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'already_in_session', message: 'You already have a session in progress. Please finish or cancel it before starting a new one.', sessionId: seekerActive[0].id }, { status: 409 })
     }
 
-    const rate  = lp.rate_per_min ?? 10  // ?? not || — a legitimate rate of 0 must not be overridden
+    // Voice bills at text rate + premium. This per-mode rate is also what gets
+    // stored in listener_rate_per_min below — settlement caps the listener's
+    // share at that rate × billed mins, so storing the text rate would strip
+    // the voice premium from the listener's earnings.
+    const rate  = sessionRatePerMin(Number(lp.rate_per_min ?? 10), sessionType)  // ?? not || — a legitimate rate of 0 must not be overridden
 
     // NRI pricing (Phase 2): if the seeker signed up with a non-India country,
     // bill at the flat INR equivalent of the USD price. The listener still earns

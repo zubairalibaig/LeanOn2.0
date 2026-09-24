@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
-import { LANGUAGES, PLATFORM_FEE, MAX_FREE_TRIALS } from '@/lib/constants'
+import { LANGUAGES, PLATFORM_FEE, MAX_FREE_TRIALS, VOICE_PRICING_ENABLED, sessionRatePerMin } from '@/lib/constants'
 import { SHOW_LISTENER_IN_SESSION_STATUS } from '@/lib/feature-flags'
 import { isNriCountry, getBookingPriceDisplay } from '@/lib/geo-pricing'
 import Avatar from '@/app/components/Avatar'
@@ -125,6 +125,8 @@ export default function ListenerClient({ id }: { id: string }) {
   // Read URL params client-side (avoids Suspense boundary requirement)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
+    const t = params.get('type')
+    if (t === 'text' || t === 'voice') setType(t)
     if (params.get('from') === 'wallet') {
       setFromWallet(true)
       // Auto-select 15 min (not 5 min which is the free trial) since user just topped up
@@ -213,7 +215,8 @@ export default function ListenerClient({ id }: { id: string }) {
   )
 
   const ini  = (n:string) => n.split(' ').map((x:string)=>x[0]||'').join('').slice(0,2).toUpperCase()||'?'
-  const cost = duration === 5 ? 0 : listener.rate_per_min * duration + PLATFORM_FEE
+  const rate = sessionRatePerMin(Number(listener.rate_per_min), type)
+  const cost = duration === 5 ? 0 : rate * duration + PLATFORM_FEE
 
   const ERROR_MESSAGES: Record<string, string> = {
     listener_unavailable: 'This listener is currently unavailable.',
@@ -308,7 +311,9 @@ export default function ListenerClient({ id }: { id: string }) {
                 {listener.is_verified && <span className="verified-badge">✓ Verified</span>}
                 {listener.rating > 0 && <span className="stat">⭐ {(+listener.rating).toFixed(1)}</span>}
                 {listener.total_sessions > 0 && <span className="stat">{listener.total_sessions} sessions</span>}
-                <span className="rate-badge">₹{listener.rate_per_min}/min</span>
+                <span className="rate-badge" style={{whiteSpace:'nowrap'}}>
+                  {VOICE_PRICING_ENABLED ? `From ₹${listener.rate_per_min}/min` : `₹${listener.rate_per_min}/min`}
+                </span>
               </div>
             </div>
           </div>
@@ -408,6 +413,15 @@ export default function ListenerClient({ id }: { id: string }) {
               </div>
             )}
             {bookError && <div className="wallet-warn">{bookError}</div>}
+            <div className="type-row">
+              <span className="type-row-label">Mode:</span>
+              <button className={`type-btn${type==='text'?' sel':''}`} onClick={()=>setType('text')}>
+                💬 Text{VOICE_PRICING_ENABLED ? ` · ₹${sessionRatePerMin(Number(listener.rate_per_min), 'text')}/min` : ''}
+              </button>
+              <button className={`type-btn${type==='voice'?' sel':''}`} onClick={()=>setType('voice')}>
+                📞 Voice{VOICE_PRICING_ENABLED ? ` · ₹${sessionRatePerMin(Number(listener.rate_per_min), 'voice')}/min` : ''}
+              </button>
+            </div>
             <div className="book-opts">
               {([5,15,30,45] as const).map(d => {
                 const isFreeTier = d === 5
@@ -425,7 +439,7 @@ export default function ListenerClient({ id }: { id: string }) {
                     <div className="opt-label">{d} min</div>
                     <div className="opt-price">
                       {isFreeTier ? '—' : (() => {
-                        const inrCost = listener.rate_per_min * d + PLATFORM_FEE
+                        const inrCost = rate * d + PLATFORM_FEE
                         if (!isNriCountry(accountCountry)) return `₹${inrCost}`
                         const { primary } = getBookingPriceDisplay(inrCost, accountCountry, d)
                         return primary
@@ -446,11 +460,6 @@ export default function ListenerClient({ id }: { id: string }) {
                 {duration !== 5 && balance < cost && <span style={{color:'#c53030',marginLeft:6}}>· need ₹{cost - balance} more</span>}
               </div>
             )}
-            <div className="type-row">
-              <span className="type-row-label">Mode:</span>
-              <button className={`type-btn${type==='text'?' sel':''}`} onClick={()=>setType('text')}>💬 Text</button>
-              <button className={`type-btn${type==='voice'?' sel':''}`} onClick={()=>setType('voice')}>🎙️ Voice</button>
-            </div>
             {duration === 5 && !freeTrialUsed && (
               <div style={{background:'rgba(52,199,89,.1)',border:'1px solid rgba(52,199,89,.3)',borderRadius:10,padding:'8px 12px',fontSize:12,fontWeight:700,color:'#166534',marginBottom:8,textAlign:'center'}}>
                 ✅ No payment needed — completely free for 5 minutes

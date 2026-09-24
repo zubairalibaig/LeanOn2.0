@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
-import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE, LISTENER_SERVICE_FEE_RATE, REQUEST_RESPONSE_WINDOW_SECS } from '@/lib/constants'
+import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE, LISTENER_SERVICE_FEE_RATE, REQUEST_RESPONSE_WINDOW_SECS, VOICE_PRICING_ENABLED, VOICE_RATE_PREMIUM } from '@/lib/constants'
 import { SHOW_LISTENER_GROWTH_NOTICE, SHOW_LISTENER_FEE_UPDATE_NOTICE } from '@/lib/feature-flags'
 import { showToast } from '@/lib/toast'
 import { registerPushNotifications } from '@/lib/firebase-client'
@@ -221,6 +221,7 @@ export default function DashboardPage() {
   const [editTags, setEditTags]       = useState<string[]>([])
   const [editLangs, setEditLangs]     = useState<string[]>([])
   const [editRate, setEditRate]       = useState('')
+  const [editVoiceDraft, setEditVoiceDraft] = useState<string | null>(null)
   const [editAvatar, setEditAvatar]   = useState<string | null>(null)
   const [uploadingAv, setUploadingAv] = useState(false)
   const [avatarUploadMsg, setAvatarUploadMsg] = useState<{ type: 'error' | 'info'; text: string } | null>(null)
@@ -753,7 +754,9 @@ export default function DashboardPage() {
     if (!user) return
     const rate = parseInt(editRate)
     if (isNaN(rate) || rate < MIN_LISTENER_RATE || rate > MAX_LISTENER_RATE) {
-      alert(`Rate must be between ₹${MIN_LISTENER_RATE} and ₹${MAX_LISTENER_RATE} per minute`)
+      alert(VOICE_PRICING_ENABLED
+        ? `Text rate must be ₹${MIN_LISTENER_RATE}–₹${MAX_LISTENER_RATE}/min (voice ₹${MIN_LISTENER_RATE + VOICE_RATE_PREMIUM}–₹${MAX_LISTENER_RATE + VOICE_RATE_PREMIUM}/min)`
+        : `Rate must be between ₹${MIN_LISTENER_RATE} and ₹${MAX_LISTENER_RATE} per minute`)
       return
     }
     // Match the server's bio length validation (30–400) so the user gets a
@@ -976,6 +979,40 @@ export default function DashboardPage() {
             {/* Rate */}
             <div className="field-group">
               <div className="field-label">Your rate /min — suggested ₹5–₹50 (max ₹{MAX_LISTENER_RATE})</div>
+              {VOICE_PRICING_ENABLED ? (
+                <>
+                  <div className="rate-row" style={{flexWrap:'wrap'}}>
+                    <span style={{fontSize:13,fontWeight:800,color:'var(--navy)'}}>💬 Text ₹</span>
+                    <input
+                      type="number"
+                      className="rate-input"
+                      aria-label="Text chat rate per minute"
+                      value={editRate}
+                      min={MIN_LISTENER_RATE}
+                      max={MAX_LISTENER_RATE}
+                      onChange={e => { setEditVoiceDraft(null); setEditRate(e.target.value) }}
+                    />
+                    <span style={{fontSize:13,fontWeight:800,color:'var(--navy)'}}>📞 Voice ₹</span>
+                    <input
+                      type="number"
+                      className="rate-input"
+                      aria-label="Voice call rate per minute"
+                      value={editVoiceDraft ?? (editRate.trim() && Number.isFinite(parseInt(editRate)) ? String(parseInt(editRate) + VOICE_RATE_PREMIUM) : '')}
+                      min={MIN_LISTENER_RATE + VOICE_RATE_PREMIUM}
+                      max={MAX_LISTENER_RATE + VOICE_RATE_PREMIUM}
+                      onChange={e => {
+                        const n = parseInt(e.target.value)
+                        setEditVoiceDraft(e.target.value)
+                        setEditRate(Number.isFinite(n) ? String(n - VOICE_RATE_PREMIUM) : '')
+                      }}
+                      onBlur={() => setEditVoiceDraft(null)}
+                    />
+                  </div>
+                  <div style={{fontSize:12,color:'var(--gray)',fontWeight:600,marginTop:6}}>
+                    Voice is always ₹{VOICE_RATE_PREMIUM}/min more than text — change either one and the other adjusts.
+                  </div>
+                </>
+              ) : (
               <div className="rate-row">
                 <span style={{fontSize:20,fontWeight:900,color:'var(--navy)'}}>₹</span>
                 <input
@@ -988,22 +1025,26 @@ export default function DashboardPage() {
                 />
                 <span style={{fontSize:14,color:'var(--gray)',fontWeight:600}}>/min</span>
               </div>
+              )}
               {/* Earnings preview — updates live as rate changes. Shows net-of-service-fee
                   earnings (matches become-listener/page.tsx's calculator and what
                   listener_earnings.net_amount will actually credit) — never the seeker's
                   flat ₹10, which is irrelevant to listener economics. */}
               {(() => {
                 const r = Math.min(Math.max(parseInt(editRate)||MIN_LISTENER_RATE, MIN_LISTENER_RATE), MAX_LISTENER_RATE)
-                const net = (mins: number) => {
-                  const gross = r * mins
+                const net = (mins: number, perMin = r) => {
+                  const gross = perMin * mins
                   return gross - Math.round(gross * LISTENER_SERVICE_FEE_RATE)
                 }
+                const earn = (mins: number) => VOICE_PRICING_ENABLED
+                  ? <>💬 <strong style={{color:'var(--navy)'}}>₹{net(mins)}</strong> · 📞 <strong style={{color:'var(--navy)'}}>₹{net(mins, r + VOICE_RATE_PREMIUM)}</strong></>
+                  : <strong style={{color:'var(--navy)'}}>₹{net(mins)}</strong>
                 return (
                   <div style={{marginTop:10,background:'var(--light)',borderRadius:12,padding:'10px 14px',fontSize:12,color:'var(--gray)',fontWeight:600,lineHeight:1.9}}>
                     📅 Sessions are booked in <strong style={{color:'var(--navy)'}}>15 / 30 / 45 min slots</strong>
-                    <br/>15 min → you earn <strong style={{color:'var(--navy)'}}>₹{net(15)}</strong>
-                    <br/>30 min → you earn <strong style={{color:'var(--navy)'}}>₹{net(30)}</strong>
-                    <br/>45 min → you earn <strong style={{color:'var(--navy)'}}>₹{net(45)}</strong>
+                    <br/>15 min → you earn {earn(15)}
+                    <br/>30 min → you earn {earn(30)}
+                    <br/>45 min → you earn {earn(45)}
                     <br/><span style={{fontSize:11,opacity:0.85}}>LeanOn deducts {Math.round(LISTENER_SERVICE_FEE_RATE*100)}% of your earnings as a service fee.</span>
                   </div>
                 )
@@ -1158,7 +1199,9 @@ export default function DashboardPage() {
             <div>
               <div className="profile-name">{profile.name}</div>
               <div className="profile-rate">
-                ₹{profile.rate_per_min}/min · {(profile.specialty_tags || []).slice(0, 2).join(', ')}
+                {VOICE_PRICING_ENABLED
+                  ? `💬 ₹${profile.rate_per_min} · 📞 ₹${Number(profile.rate_per_min) + VOICE_RATE_PREMIUM} /min`
+                  : `₹${profile.rate_per_min}/min`} · {(profile.specialty_tags || []).slice(0, 2).join(', ')}
               </div>
             </div>
           </div>

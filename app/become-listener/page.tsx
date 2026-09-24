@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, LISTENER_SERVICE_FEE_RATE, LANGUAGES, MONTHS, MIN_LISTENER_AGE, MAX_LISTENER_AGE, ageFromBirth } from '@/lib/constants'
+import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, LISTENER_SERVICE_FEE_RATE, VOICE_PRICING_ENABLED, VOICE_RATE_PREMIUM, LANGUAGES, MONTHS, MIN_LISTENER_AGE, MAX_LISTENER_AGE, ageFromBirth } from '@/lib/constants'
 import { createClient } from '@/lib/supabase'
 import { SHOW_LISTENER_GROWTH_NOTICE, SHOW_NEW_LISTENER_ONBOARDING } from '@/lib/feature-flags'
 import { compressImage, extForType, AVATAR_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
@@ -73,8 +73,10 @@ const S = `
   .rate-wrap:focus-within{border-color:var(--navy);}
   .rate-wrap.err{border-color:#E53935;}
   .rate-prefix{padding:13px 14px;font-weight:800;color:var(--gray);border-right:2px solid var(--border);}
-  .rate-input{flex:1;padding:13px 14px;border:none;outline:none;font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;color:var(--navy);}
+  .rate-input{flex:1;min-width:0;padding:13px 14px;border:none;outline:none;font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;color:var(--navy);}
   .rate-suffix{padding:13px 14px;font-size:13px;font-weight:600;color:var(--gray);}
+  .rate-pair .rate-prefix,.rate-pair .rate-suffix{padding:13px 8px;}
+  .rate-pair .rate-input{padding:13px 6px;}
   .rate-preview{background:var(--light);border-radius:12px;padding:12px 16px;margin-bottom:16px;}
   .rate-preview p{font-size:13px;color:var(--gray);font-weight:600;line-height:1.8;}
   .rate-preview strong{color:var(--navy);}
@@ -141,6 +143,11 @@ function validateBio(v: string): string {
 }
 function validateRate(v: string): string {
   const n = parseInt(v)
+  if (VOICE_PRICING_ENABLED) {
+    if (isNaN(n) || n < MIN_LISTENER_RATE) return `Text rate must be at least ₹${MIN_LISTENER_RATE}/min (voice at least ₹${MIN_LISTENER_RATE + VOICE_RATE_PREMIUM}/min)`
+    if (n > MAX_LISTENER_RATE) return `Text rate can be at most ₹${MAX_LISTENER_RATE}/min (voice at most ₹${MAX_LISTENER_RATE + VOICE_RATE_PREMIUM}/min)`
+    return ''
+  }
   if (isNaN(n) || n < MIN_LISTENER_RATE) return `Please enter a rate of at least ₹${MIN_LISTENER_RATE} per minute`
   if (n > MAX_LISTENER_RATE) return `Rate can be at most ₹${MAX_LISTENER_RATE} per minute`
   return ''
@@ -194,6 +201,8 @@ export default function BecomeListenerPage() {
   const [bio, setBio]     = useState('')
   const [tags, setTags]   = useState<string[]>([])
   const [rate, setRate]   = useState('10')
+  // Raw voice text while the listener is typing in the voice box; null = derive from rate.
+  const [voiceDraft, setVoiceDraft] = useState<string | null>(null)
   const [langs, setLangs] = useState<string[]>(['english'])
   const [accountHolder, setAccountHolder] = useState('')
   const [bank, setBank]   = useState('')
@@ -939,12 +948,46 @@ export default function BecomeListenerPage() {
             </p>
 
             <label className="lbl">Your rate per minute <span style={{color:'#c0392b'}}>*</span> <span style={{fontWeight:500,color:'var(--gray)'}}>— suggestion: ₹10–₹50/min</span></label>
+            {VOICE_PRICING_ENABLED ? (
+              <>
+                <div className="rate-pair" style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) minmax(0,1fr)',gap:10}}>
+                  <div>
+                    <div style={{fontSize:12,fontWeight:800,color:'var(--navy)',marginBottom:4}}>💬 Text chat</div>
+                    <div className={`rate-wrap${fieldErrors.rate ? ' err' : ''}`}>
+                      <span className="rate-prefix">₹</span>
+                      <input className="rate-input" type="number" min={MIN_LISTENER_RATE} max={MAX_LISTENER_RATE} value={rate} aria-label="Text chat rate per minute"
+                        onChange={e => { setVoiceDraft(null); setRate(e.target.value); if (fieldErrors.rate) setFieldErrors(f => ({...f, rate: ''})) }} />
+                      <span className="rate-suffix">/min</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{fontSize:12,fontWeight:800,color:'var(--navy)',marginBottom:4}}>📞 Voice call</div>
+                    <div className={`rate-wrap${fieldErrors.rate ? ' err' : ''}`}>
+                      <span className="rate-prefix">₹</span>
+                      <input className="rate-input" type="number" min={MIN_LISTENER_RATE + VOICE_RATE_PREMIUM} max={MAX_LISTENER_RATE + VOICE_RATE_PREMIUM} aria-label="Voice call rate per minute"
+                        value={voiceDraft ?? (rate.trim() && Number.isFinite(parseInt(rate)) ? String(parseInt(rate) + VOICE_RATE_PREMIUM) : '')}
+                        onChange={e => {
+                          const v = e.target.value
+                          const n = parseInt(v)
+                          setVoiceDraft(v)
+                          setRate(Number.isFinite(n) ? String(n - VOICE_RATE_PREMIUM) : '')
+                          if (fieldErrors.rate) setFieldErrors(f => ({...f, rate: ''}))
+                        }}
+                        onBlur={() => setVoiceDraft(null)} />
+                      <span className="rate-suffix">/min</span>
+                    </div>
+                  </div>
+                </div>
+                <p style={{fontSize:12,color:'var(--gray)',margin:'2px 0 4px',fontWeight:600}}>Voice is always ₹{VOICE_RATE_PREMIUM}/min more than text — change either one and the other adjusts.</p>
+              </>
+            ) : (
             <div className={`rate-wrap${fieldErrors.rate ? ' err' : ''}`}>
               <span className="rate-prefix">₹</span>
               <input className="rate-input" type="number" min={1} max={MAX_LISTENER_RATE} value={rate}
                 onChange={e => { setRate(e.target.value); if (fieldErrors.rate) setFieldErrors(f => ({...f, rate: ''})) }} />
               <span className="rate-suffix">/ minute</span>
             </div>
+            )}
             {fieldErrors.rate && <span className="field-err">{fieldErrors.rate}</span>}
             <p style={{fontSize:12,color:'var(--gray)',marginBottom:12,fontWeight:500}}>You keep {Math.round((1 - LISTENER_SERVICE_FEE_RATE) * 100)}% of your rate after LeanOn&apos;s service fee. New listeners often start at ₹10–₹15 and raise it as they build reviews.</p>
 
@@ -952,12 +995,27 @@ export default function BecomeListenerPage() {
               📅 Sessions are booked in <strong>15, 30, or 45 minute slots</strong>. No open-ended calls — clean start and end times for both sides.
             </div>
 
+            {VOICE_PRICING_ENABLED ? (() => {
+              const voiceNet = (mins: number) => {
+                const g = (rateNum + VOICE_RATE_PREMIUM) * mins
+                return g - Math.round(g * LISTENER_SERVICE_FEE_RATE)
+              }
+              return (
+                <div className="rate-preview">
+                  <p>You earn (after the service fee):</p>
+                  <p>15 min → 💬 <strong>₹{earn15.toLocaleString('en-IN')}</strong> · 📞 <strong>₹{voiceNet(15).toLocaleString('en-IN')}</strong></p>
+                  <p>30 min → 💬 <strong>₹{earn30.toLocaleString('en-IN')}</strong> · 📞 <strong>₹{voiceNet(30).toLocaleString('en-IN')}</strong></p>
+                  <p>45 min → 💬 <strong>₹{earn45.toLocaleString('en-IN')}</strong> · 📞 <strong>₹{voiceNet(45).toLocaleString('en-IN')}</strong></p>
+                </div>
+              )
+            })() : (
             <div className="rate-preview">
               <p>At <strong>₹{rateNum.toLocaleString('en-IN')}/min</strong> you earn (after the service fee):</p>
               <p>15 min → you earn <strong>₹{earn15.toLocaleString('en-IN')}</strong></p>
               <p>30 min → you earn <strong>₹{earn30.toLocaleString('en-IN')}</strong></p>
               <p>45 min → you earn <strong>₹{earn45.toLocaleString('en-IN')}</strong></p>
             </div>
+            )}
 
             <div className="fee-box">
               <h3>How the {Math.round(LISTENER_SERVICE_FEE_RATE * 100)}% LeanOn service fee works</h3>

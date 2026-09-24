@@ -77,6 +77,12 @@
   sessions.platform_fee`, which no longer equals what the listener receives),
   `app/faq/page.tsx`, `app/get-paid-to-chat-india/page.tsx`, `app/terms/page.tsx`,
   `app/press/page.tsx`, `app/blog/posts/therapy-cost-india.ts`.
+- Text/voice pricing (2026-09-24): only the TEXT rate is stored
+  (`listener_profiles.rate_per_min`); voice = text + `VOICE_RATE_PREMIUM` (₹5/min),
+  via `sessionRatePerMin()` in `lib/constants.ts`. `/api/sessions` POST stores the
+  per-mode rate in `sessions.listener_rate_per_min` — settlement caps the listener's
+  share at that rate, so it MUST be the voice rate for voice sessions. Kill switch:
+  `NEXT_PUBLIC_VOICE_PRICING=false` + redeploy → single rate for both modes.
 - Session durations: 5 (free trial) / 15 / 30 / 45 minutes.
 - Crisis helplines: ONLY NIMHANS (080-46110007) and Tele-MANAS (14416).
   Never add iCall, Vandrevala, SNEHI, or any other number.

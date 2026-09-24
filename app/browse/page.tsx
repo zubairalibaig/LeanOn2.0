@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef, RefObject } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
-import { LANGUAGES, PLATFORM_FEE, AGE_RANGES, ageRangeId } from '@/lib/constants'
+import { LANGUAGES, PLATFORM_FEE, AGE_RANGES, ageRangeId, VOICE_PRICING_ENABLED, sessionRatePerMin } from '@/lib/constants'
 import { SHOW_LISTENER_IN_SESSION_STATUS } from '@/lib/feature-flags'
 import { showToast } from '@/lib/toast'
 import Avatar from '@/app/components/Avatar'
@@ -302,6 +302,15 @@ a{text-decoration:none;color:inherit;}
 .btn-chat.busy{background:var(--orange);cursor:not-allowed;opacity:.85;}
 .btn-chat.busy:hover{background:var(--orange);}
 .btn-chat.offline{background:#C7C7CC;cursor:not-allowed;box-shadow:none;}
+.mode-free{font-size:11px;font-weight:700;color:#166534;margin-bottom:8px;}
+.mode-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.btn-mode{color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:8px 6px;border-radius:12px;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.25;transition:all .2s;}
+.btn-mode small{font-size:11px;font-weight:700;opacity:.92;}
+.btn-mode.text{background:#34C759;box-shadow:0 2px 10px rgba(52,199,89,.3);}
+.btn-mode.text:hover{background:#28a745;}
+.btn-mode.voice{background:var(--navy);box-shadow:0 2px 10px rgba(15,72,103,.25);}
+.btn-mode.voice:hover{background:#0b3650;}
+.mode-prices{font-size:12px;font-weight:800;color:var(--navy);display:flex;flex-direction:column;gap:1px;}
 .btn-voice{background:white;color:var(--navy);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;padding:11px 16px;border-radius:12px;border:1.5px solid var(--border);cursor:pointer;white-space:nowrap;}
 .avail-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;}
 .avail-label.on{color:#34C759;}.avail-label.off{color:#C7C7CC;}.avail-label.busy{color:var(--orange);}
@@ -879,6 +888,41 @@ function BrowseContent() {
                 return <span key={lid} className="tag-badge" style={{background:'rgba(255,153,51,.1)',color:'#7A4A00'}}>🌐 {info?.label||lid}</span>
               })}
             </div>
+            {VOICE_PRICING_ENABLED ? (() => {
+              const textRate  = sessionRatePerMin(Number(l.rate_per_min), 'text')
+              const voiceRate = sessionRatePerMin(Number(l.rate_per_min), 'voice')
+              const inSession = SHOW_LISTENER_IN_SESSION_STATUS && l.is_in_session
+              if (l.is_available && !inSession) return (
+                <div>
+                  <div className="mode-free">🎁 First 5 min free</div>
+                  <div className="mode-btns">
+                    <button className="btn-mode text" aria-label={`Text chat, ₹${textRate} per minute`}
+                      onClick={e=>{e.stopPropagation(); router.push(`/listener/${l.user_id}?type=text`)}}>
+                      <span>💬 Chat</span><small>₹{textRate}/min</small>
+                    </button>
+                    <button className="btn-mode voice" aria-label={`Voice call, ₹${voiceRate} per minute`}
+                      onClick={e=>{e.stopPropagation(); router.push(`/listener/${l.user_id}?type=voice`)}}>
+                      <span>📞 Call</span><small>₹{voiceRate}/min</small>
+                    </button>
+                  </div>
+                </div>
+              )
+              return (
+                <div className="card-bottom">
+                  <div className="mode-prices">
+                    <span>💬 ₹{textRate}<span style={{fontSize:11,fontWeight:500,color:'var(--gray)'}}>/min</span></span>
+                    <span>📞 ₹{voiceRate}<span style={{fontSize:11,fontWeight:500,color:'var(--gray)'}}>/min</span></span>
+                  </div>
+                  <div className="btns">
+                    {inSession ? (
+                      <button className="btn-chat busy" onClick={e => e.stopPropagation()}>In session</button>
+                    ) : (
+                      <button className="btn-chat offline" onClick={e=>e.stopPropagation()}>View profile</button>
+                    )}
+                  </div>
+                </div>
+              )
+            })() : (
             <div className="card-bottom">
               <div className="card-price-avail">
                 <div className="rate">₹{l.rate_per_min}<span>/min</span></div>
@@ -903,6 +947,7 @@ function BrowseContent() {
                 )}
               </div>
             </div>
+            )}
           </div>
           )
         })}
