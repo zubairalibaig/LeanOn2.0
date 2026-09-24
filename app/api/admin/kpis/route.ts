@@ -8,6 +8,21 @@ import { requireAdmin , ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS } from '@/lib
 // must always reflect the live DB, not a cached snapshot.
 export const dynamic = 'force-dynamic'
 
+// PostgREST returns at most 1,000 rows per request (Supabase default max-rows),
+// silently. Any KPI that sums or de-duplicates rows must page through all of them.
+type Sb = ReturnType<typeof createAdminClient>
+async function fetchAll<T>(build: (sb: Sb) => { range: (a: number, b: number) => PromiseLike<{ data: unknown; error: { message: string } | null }> }, sb: Sb): Promise<T[]> {
+  const PAGE = 1000
+  const out: T[] = []
+  for (let from = 0; ; from += PAGE) {
+    const { data, error } = await build(sb).range(from, from + PAGE - 1)
+    if (error) throw new Error(error.message)
+    const rows = (data ?? []) as T[]
+    out.push(...rows)
+    if (rows.length < PAGE) return out
+  }
+}
+
 export async function GET(req: NextRequest) {
   const { error, code, status, user, isPrimaryAdmin } = await requireAdmin(req)
   if (error) return NextResponse.json({ error, code }, { status })
@@ -83,7 +98,7 @@ export async function GET(req: NextRequest) {
       // wallet_balance = session earnings, already tracked in listener_earnings).
       // Appended LAST on purpose: extract() below is positional, so adding
       // anywhere else would silently reindex every KPI after it.
-      sb.from('users').select('id, wallet_balance'),
+      sb.from('users').select('id, wallet_balance').gt('wallet_balance', 0),
 
       // PLATFORM EARNINGS — LeanOn's actual income: the flat ₹10 seeker fee
       // PLUS the listener service fee (both captured in
@@ -127,6 +142,21 @@ export async function GET(req: NextRequest) {
 
       // index 38: unique seekers who booked at least one session
       sb.from('sessions').select('seeker_id'),
+    ])
+
+    // Row-level queries that must not be truncated at 1,000 rows (see fetchAll).
+    // Each degrades to null independently so one failure never blanks the page.
+    const safe = <T,>(p: Promise<T[]>) => p.catch(err => { logger.error('KPI paged query failed', { error: String(err) }); return null })
+    const [walletRowsAll, earningsRowsAll, sessionRowsAll, rechargeRowsAll, heldSessionRows, pendingRefundRows] = await Promise.all([
+      safe(fetchAll<{ id: string; wallet_balance: number }>(c => c.from('users').select('id, wallet_balance').gt('wallet_balance', 0).order('id'), sb)),
+      safe(fetchAll<{ listener_id: string; net_amount: number; platform_fee: number; status: string; created_at: string }>(c => c.from('listener_earnings').select('listener_id, net_amount, platform_fee, status, created_at').order('id'), sb)),
+      safe(fetchAll<{ seeker_id: string; status: string; is_free_trial: boolean; duration_mins: number | null }>(c => c.from('sessions').select('seeker_id, status, is_free_trial, duration_mins').order('id'), sb)),
+      safe(fetchAll<{ user_id: string; amount: number }>(c => c.from('wallet_transactions').select('user_id, amount').eq('type', 'credit').ilike('description', '%recharge%').order('id'), sb)),
+      // Paid sessions not yet settled: create_session already took this out of the
+      // seeker's wallet, so it is in neither wallet_balance nor listener earnings.
+      safe(fetchAll<{ amount_held: number }>(c => c.from('sessions').select('amount_held').in('status', ['pending', 'active']).eq('is_free_trial', false).order('id'), sb)),
+      // Refund requests soft-hold (deduct) the wallet until you process them.
+      safe(fetchAll<{ amount: number }>(c => c.from('refund_requests').select('amount').eq('status', 'pending').order('id'), sb)),
     ])
 
     // Extract values safely — failed queries return zero/null defaults
@@ -177,25 +207,26 @@ export async function GET(req: NextRequest) {
     const rechargeUsers          = extract<{ user_id: string }>(37)
     const sessionSeekers         = extract<{ seeker_id: string }>(38)
 
-    // Build a set of approved-listener user IDs so we can strip their wallet
-    // balances from the seeker liability figure. Their earnings are already
-    // tracked in listener_earnings / unrequested-earnings — double-counting them
-    // here would overstate what we owe seekers and confuse cash-flow reporting.
-    const approvedListenerIds = new Set(
-      (approvedListenerRows.data ?? []).map(r => r.user_id)
-    )
+    // Who is a listener for money purposes: anyone who has EVER earned
+    // (a listener_earnings row) — not just currently approved accounts. A
+    // suspended or "needs fix" listener still has earnings in their wallet, and
+    // counting that as seeker money overstated the seeker liability.
+    const earningRows = earningsRowsAll ?? []
+    const earnerIds = new Set(earningRows.map(r => r.listener_id))
+    // Fallback while the paged query is unavailable: approved listeners, as before.
+    for (const r of approvedListenerRows.data ?? []) if (!earningsRowsAll) earnerIds.add(r.user_id)
 
-    // Seeker-only wallet balances (exclude approved listeners)
-    const seekerWalletRows = (walletBalances.data ?? []).filter(
-      r => !approvedListenerIds.has(r.id)
-    )
+    const walletRows = walletRowsAll ?? (walletBalances.data ?? []).filter(r => Number(r.wallet_balance ?? 0) > 0)
+    const seekerWalletRows   = walletRows.filter(r => !earnerIds.has(r.id))
+    const listenerWalletRows = walletRows.filter(r => earnerIds.has(r.id))
+    const sumBal = (rows: { wallet_balance: number }[]) => rows.reduce((t, r) => t + Number(r.wallet_balance ?? 0), 0)
 
     // Platform earnings: sum listener_earnings.platform_fee (= ₹10 seeker fee
-    // + listener service fee (15% from 2026-09-14, 40% from 2026-09-24); just ₹10 for older rows).
+    // + listener service fee + any NRI margin; just ₹10 for older rows).
     // Accidental-start full-refund rows have platform_fee = 0 → skipped.
     // Bucketed by listener_earnings.created_at (set at settlement time ≈ session end).
     const platformFee = { allTime: 0, thisMonth: 0, today: 0, sessions: 0 }
-    for (const e of earningsForKpi.data ?? []) {
+    for (const e of (earningsRowsAll ?? earningsForKpi.data ?? [])) {
       const fee = Number(e.platform_fee ?? 0)
       if (fee <= 0) continue
       platformFee.allTime += fee
@@ -204,12 +235,35 @@ export async function GET(req: NextRequest) {
       if (e.created_at >= today) platformFee.today += fee
     }
 
+    // Seeker funnel — distinct seekers at each step (all time).
+    const sessionRows = sessionRowsAll ?? []
+    const distinct = (pred: (r: typeof sessionRows[number]) => boolean) => new Set(sessionRows.filter(pred).map(r => r.seeker_id))
+    const paidCounts = new Map<string, number>()
+    for (const r of sessionRows) if (!r.is_free_trial && r.status === 'completed') paidCounts.set(r.seeker_id, (paidCounts.get(r.seeker_id) ?? 0) + 1)
+    const rechargers = new Set((rechargeRowsAll ?? rechargeUsers.data ?? []).map(r => r.user_id))
+    const paidSeekers = new Set(paidCounts.keys())
+    const funnel = sessionRowsAll ? {
+      requested:        distinct(() => true).size,
+      completedAny:     distinct(r => r.status === 'completed').size,
+      completedTrial:   distinct(r => r.is_free_trial && r.status === 'completed').size,
+      recharged:        rechargers.size,
+      paid:             paidSeekers.size,
+      repeatPaid:       Array.from(paidCounts.values()).filter(n => n >= 2).length,
+      rechargedNotPaid: Array.from(rechargers).filter(id => !paidSeekers.has(id)).length,
+    } : null
+
     const sum = (rows: { amount?: number; net_amount?: number }[] | null, field: 'amount' | 'net_amount' = 'amount') =>
       (rows ?? []).reduce((s, r) => s + (r[field] ?? 0), 0)
 
-    const avgDuration = avgSessionDuration.data?.length
-      ? Math.round(avgSessionDuration.data.reduce((s, r) => s + (r.duration_mins ?? 0), 0) / avgSessionDuration.data.length)
+    const completedDurations = sessionRowsAll
+      ? sessionRows.filter(r => r.status === 'completed').map(r => r.duration_mins ?? 0)
+      : (avgSessionDuration.data ?? []).map(r => r.duration_mins ?? 0)
+    const avgDuration = completedDurations.length
+      ? Math.round(completedDurations.reduce((t, n) => t + n, 0) / completedDurations.length)
       : 0
+    const settledNet = earningsRowsAll
+      ? earningRows.filter(r => r.status === 'settled').reduce((t, r) => t + Number(r.net_amount ?? 0), 0)
+      : sum(totalEarnings.data, 'net_amount')
 
     return NextResponse.json({
       users: {
@@ -243,12 +297,12 @@ export async function GET(req: NextRequest) {
         avgDurationMins: avgDuration,
       },
       revenue: {
-        totalRechargedRupees: sum(totalRevenue.data),
+        totalRechargedRupees: rechargeRowsAll ? rechargeRowsAll.reduce((t, r) => t + Number(r.amount ?? 0), 0) : sum(totalRevenue.data),
         thisMonthRupees: sum(revenueThisMonth.data),
         todayRupees: sum(revenueToday.data),
-        listenerEarningsRupees: sum(totalEarnings.data, 'net_amount'),
-        uniqueRechargers: new Set((rechargeUsers.data ?? []).map(r => r.user_id)).size,
-        uniqueSessionSeekers: new Set((sessionSeekers.data ?? []).map(r => r.seeker_id)).size,
+        listenerEarningsRupees: settledNet,
+        uniqueRechargers: rechargers.size,
+        uniqueSessionSeekers: sessionRowsAll ? funnel!.requested : new Set((sessionSeekers.data ?? []).map(r => r.seeker_id)).size,
       },
       // LeanOn's own income — the flat fee kept per paid session. This is the
       // only figure on this page that is genuinely yours: recharges are
@@ -264,16 +318,27 @@ export async function GET(req: NextRequest) {
       // Approved-listener wallet balances are EXCLUDED: their wallet_balance = session
       // earnings credited by credit_wallet(), already captured in listenerEarningsUnrequestedRupees.
       // Including them here would double-count the same liability under two labels.
+      // What LeanOn holds on other people's behalf. None of it is revenue.
       walletLiability: {
-        totalRupees: seekerWalletRows.reduce((s, r) => s + Number(r.wallet_balance ?? 0), 0),
-        usersWithBalance: seekerWalletRows.filter(r => Number(r.wallet_balance ?? 0) > 0).length,
-        // Listener earnings settled but not yet requested for payout.
-        // = sum(listener_earnings.net_amount WHERE settled) - sum(payout_requests WHERE not rejected)
-        // This is money owed to listeners — a separate liability from seeker wallet balances.
-        listenerEarningsUnrequestedRupees: Math.max(0,
-          sum(totalEarnings.data, 'net_amount') - sum(allClaimedPayouts.data)
-        ),
+        // Unspent seeker wallets (anyone who has never earned as a listener).
+        totalRupees: sumBal(seekerWalletRows),
+        usersWithBalance: seekerWalletRows.length,
+        // Seeker money already deducted for paid sessions that haven't settled yet.
+        heldInSessionsRupees: (heldSessionRows ?? []).reduce((t, r) => t + Number(r.amount_held ?? 0), 0),
+        heldInSessionsCount: (heldSessionRows ?? []).length,
+        // Seeker refund requests awaiting you (already deducted from their wallet).
+        pendingRefundsRupees: (pendingRefundRows ?? []).reduce((t, r) => t + Number(r.amount ?? 0), 0),
+        pendingRefundsCount: (pendingRefundRows ?? []).length,
+        // Listener earnings they haven't requested yet = their wallet balances
+        // (settlement credits the wallet; a payout request deducts all of it).
+        listenerEarningsUnrequestedRupees: walletRowsAll ? sumBal(listenerWalletRows) : Math.max(0, settledNet - sum(allClaimedPayouts.data)),
+        listenersWithBalance: listenerWalletRows.length,
+        // Cross-check from the earnings ledger: settled earnings − payouts requested
+        // (not rejected). Should equal the figure above; a gap means a failed
+        // wallet credit or a manual balance edit worth investigating.
+        ledgerUnrequestedRupees: settledNet - sum(allClaimedPayouts.data),
       },
+      funnel,
       payouts: {
         pendingAmountRupees: sum(pendingPayouts.data),
         pendingCount: pendingPayouts.data?.length ?? 0,

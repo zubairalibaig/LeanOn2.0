@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback, useRef, Fragment } from 'react'
 import { createClient } from '@/lib/supabase'
 import { LISTENER_SERVICE_FEE_RATE, serviceFeeRateAt } from '@/lib/constants'
 import ListenerReviewPanel, { type ListenerReview } from './ListenerReviewPanel'
+import { EDUCATION_LEVELS, EDUCATION_FIELDS, labelOf } from '@/lib/listener-onboarding'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -16,7 +17,12 @@ type KPIs = {
   }
   revenue: { totalRechargedRupees: number; thisMonthRupees: number; todayRupees: number; listenerEarningsRupees: number; uniqueRechargers?: number; uniqueSessionSeekers?: number }
   // Optional: absent if an older API build is still deployed, so the UI must guard.
-  walletLiability?: { totalRupees: number; usersWithBalance: number; listenerEarningsUnrequestedRupees?: number }
+  walletLiability?: {
+    totalRupees: number; usersWithBalance: number; listenerEarningsUnrequestedRupees?: number
+    heldInSessionsRupees?: number; heldInSessionsCount?: number; pendingRefundsRupees?: number; pendingRefundsCount?: number
+    listenersWithBalance?: number; ledgerUnrequestedRupees?: number
+  }
+  funnel?: { requested: number; completedAny: number; completedTrial: number; recharged: number; paid: number; repeatPaid: number; rechargedNotPaid: number } | null
   platformEarnings?: { allTimeRupees: number; thisMonthRupees: number; todayRupees: number; paidSessions: number }
   gatewayFees: { allTime: number; thisMonth: number; today: number }
   payouts: { pendingAmountRupees: number; pendingCount: number; totalPaidRupees: number }
@@ -914,6 +920,24 @@ export default function AdminPage() {
                               <div style={{ fontSize: 12, color: 'var(--gray)' }}>
                                 {u?.phone || u?.email || '—'} · ₹{l.rate_per_min ?? '—'}/min
                               </div>
+                              {/* Education (public on the profile) and payout account holder (KYC: should match the name above). */}
+                              <div style={{ fontSize: 12, marginTop: 4, color: 'var(--navy)', fontWeight: 700 }}>
+                                🎓 {l.review?.education_level ? labelOf(EDUCATION_LEVELS, l.review.education_level) : 'Education not provided'}
+                                {l.review?.education_field ? ` · ${labelOf(EDUCATION_FIELDS, l.review.education_field)}` : ''}
+                              </div>
+                              {(() => {
+                                const holder = l.application?.account_holder_name?.trim()
+                                const norm = (x?: string | null) => (x ?? '').toLowerCase().replace(/[^a-z]/g, '')
+                                const mismatch = !!holder && !!u?.name && norm(holder) !== norm(u.name)
+                                return (
+                                  <div style={{ fontSize: 12, marginTop: 4, color: 'var(--navy)', fontWeight: 700 }}>
+                                    🏦 {holder || 'Account holder name not provided'}
+                                    {l.application?.bank_account ? ` · ••••${String(l.application.bank_account).slice(-4)}` : ''}
+                                    {l.application?.ifsc_code ? ` · ${l.application.ifsc_code}` : ''}
+                                    {mismatch && <span style={{ color: 'var(--orange)', fontWeight: 800 }}> · ⚠️ differs from profile name</span>}
+                                  </div>
+                                )
+                              })()}
                               {/* Aadhaar — full number when migration 047 is applied, else masked tail */}
                               <div style={{ fontSize: 12, marginTop: 4, fontFamily: 'monospace', letterSpacing: 0.5, color: 'var(--navy)', fontWeight: 700 }}>
                                 Aadhaar: {l.application?.aadhaar
@@ -967,6 +991,38 @@ export default function AdminPage() {
                   </>
                 )}
                 <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Users</div>
+                {/* Seeker funnel — the real adoption metric: distinct people at each step, all time. */}
+                {kpis.funnel && (() => {
+                  const f = kpis.funnel
+                  const pct = (a: number, b: number) => b > 0 ? `${Math.round((a / b) * 100)}%` : '—'
+                  const steps: [string, number, string][] = [
+                    ['Requested a session', f.requested, 'any request, incl. declined / expired'],
+                    ['Had a session', f.completedAny, `${pct(f.completedAny, f.requested)} of requesters`],
+                    ['Completed free trial', f.completedTrial, `${pct(f.completedTrial, f.requested)} of requesters`],
+                    ['Recharged wallet', f.recharged, `${pct(f.recharged, f.completedTrial)} of trial users`],
+                    ['Completed a paid session', f.paid, `${pct(f.paid, f.recharged)} of rechargers`],
+                    ['Paid 2+ times', f.repeatPaid, `${pct(f.repeatPaid, f.paid)} of payers`],
+                  ]
+                  return (
+                    <div style={{ background: 'white', border: '1.5px solid var(--border)', borderRadius: 16, padding: '12px 14px', marginBottom: 14 }}>
+                      <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--navy)', marginBottom: 8 }}>Seeker funnel (unique people, all time)</div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: 8 }}>
+                        {steps.map(([label, n, sub], i) => (
+                          <div key={label} style={{ background: i >= 3 ? '#F0FBF8' : 'var(--light)', borderRadius: 12, padding: '8px 10px' }}>
+                            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--gray)' }}>{i + 1}. {label}</div>
+                            <div style={{ fontSize: 22, fontWeight: 900, color: i >= 3 ? 'var(--teal)' : 'var(--navy)' }}>{fmt(n)}</div>
+                            <div style={{ fontSize: 11, color: 'var(--gray)', fontWeight: 600 }}>{sub}</div>
+                          </div>
+                        ))}
+                      </div>
+                      {f.rechargedNotPaid > 0 && (
+                        <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--orange)', marginTop: 8 }}>
+                          ⚠️ {f.rechargedNotPaid} {f.rechargedNotPaid === 1 ? 'person' : 'people'} recharged but never completed a paid session — worth a personal follow-up.
+                        </div>
+                      )}
+                    </div>
+                  )
+                })()}
                 <div className="kpi-grid" style={{ marginBottom: 20 }}>
                   <div className="kpi-card">
                     <div className="kpi-label">Total Users</div>
@@ -975,7 +1031,7 @@ export default function AdminPage() {
                   <div className="kpi-card">
                     <div className="kpi-label">Active Users</div>
                     <div className="kpi-value">{fmt(kpis.users.active)}</div>
-                    <div className="kpi-sub">last 30 days</div>
+                    <div className="kpi-sub" title="is_active and users.updated_at within 30 days — a profile/wallet change, not a login">account touched in 30 days</div>
                   </div>
                   <div className="kpi-card">
                     <div className="kpi-label">New Today</div>
@@ -990,8 +1046,9 @@ export default function AdminPage() {
                 <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray)', marginBottom: 10 }}>Listeners</div>
                 <div className="kpi-grid" style={{ marginBottom: 20 }}>
                   <div className="kpi-card">
-                    <div className="kpi-label">Total Listeners</div>
+                    <div className="kpi-label">Listener Profiles</div>
                     <div className="kpi-value">{fmt(kpis.listeners.total)}</div>
+                    <div className="kpi-sub">every applicant, any status</div>
                   </div>
                   <div className="kpi-card">
                     <div className="kpi-label">Active Listeners</div>
@@ -1107,16 +1164,23 @@ export default function AdminPage() {
                           Held on behalf of {kpis.walletLiability.usersWithBalance} seeker{kpis.walletLiability.usersWithBalance === 1 ? '' : 's'}.
                           Park this — return it only when they spend it or request a refund.
                           Listener wallet balances are excluded (already in Unrequested Listener Earnings below).
+                          {(kpis.walletLiability.heldInSessionsRupees ?? 0) > 0 && <><br />Plus <strong>{fmtRs(kpis.walletLiability.heldInSessionsRupees ?? 0)}</strong> already deducted for {kpis.walletLiability.heldInSessionsCount} pending/live paid session{kpis.walletLiability.heldInSessionsCount === 1 ? '' : 's'} (refunded if they don&apos;t happen).</>}
+                          {(kpis.walletLiability.pendingRefundsRupees ?? 0) > 0 && <><br /><strong style={{ color: '#c0392b' }}>{fmtRs(kpis.walletLiability.pendingRefundsRupees ?? 0)}</strong> in {kpis.walletLiability.pendingRefundsCount} refund request{kpis.walletLiability.pendingRefundsCount === 1 ? '' : 's'} waiting for you (already deducted from their wallets).</>}
                         </div>
                       </div>
-                      <div className="liability-amount">{fmtRs(kpis.walletLiability.totalRupees)}</div>
+                      <div className="liability-amount">{fmtRs(kpis.walletLiability.totalRupees + (kpis.walletLiability.heldInSessionsRupees ?? 0) + (kpis.walletLiability.pendingRefundsRupees ?? 0))}</div>
                     </div>
                     {/* 2 — Listener earnings settled but not yet requested for payout */}
                     {(kpis.walletLiability.listenerEarningsUnrequestedRupees ?? 0) > 0 && (
                       <div className="liability-bar" style={{ borderLeftColor: 'var(--teal)', borderColor: '#B2DEB2', background: '#F0FBF8' }}>
                         <div>
                           <div className="liability-label" style={{ color: '#0d6e7e' }}>Unrequested listener earnings</div>
-                          <div className="liability-sub">Settled earnings listeners haven't requested as payout yet. Owed to them on demand.</div>
+                          <div className="liability-sub">
+                            Listener wallet balances ({kpis.walletLiability.listenersWithBalance ?? '—'} listener{kpis.walletLiability.listenersWithBalance === 1 ? '' : 's'}) not yet requested as payout. Owed to them on demand.
+                            {kpis.walletLiability.ledgerUnrequestedRupees != null && Math.abs(kpis.walletLiability.ledgerUnrequestedRupees - (kpis.walletLiability.listenerEarningsUnrequestedRupees ?? 0)) >= 1 && (
+                              <><br /><strong style={{ color: '#c0392b' }}>Check:</strong> the earnings ledger says {fmtRs(kpis.walletLiability.ledgerUnrequestedRupees)} (settled earnings − payout requests). A gap usually means a failed wallet credit (Sessions → unsettled) or a manual balance edit.</>
+                            )}
+                          </div>
                         </div>
                         <div className="liability-amount" style={{ color: '#0d6e7e' }}>{fmtRs(kpis.walletLiability.listenerEarningsUnrequestedRupees ?? 0)}</div>
                       </div>
@@ -1187,22 +1251,6 @@ export default function AdminPage() {
                       </div>
                     </div>
                   </>
-                )}
-
-                {/* ── CONVERSION TRACKING — Recharges → Sessions ── */}
-                {(kpis.revenue.uniqueRechargers != null || kpis.revenue.uniqueSessionSeekers != null) && (
-                  <div className="kpi-grid" style={{ marginBottom: 20 }}>
-                    <div className="kpi-card">
-                      <div className="kpi-label">Unique Recharges</div>
-                      <div className="kpi-value" style={{ fontSize: 22 }}>{fmt(kpis.revenue.uniqueRechargers ?? 0)}</div>
-                      <div className="kpi-sub">Seekers who topped up wallet</div>
-                    </div>
-                    <div className="kpi-card">
-                      <div className="kpi-label">Unique Seekers (booked)</div>
-                      <div className="kpi-value" style={{ fontSize: 22 }}>{fmt(kpis.revenue.uniqueSessionSeekers ?? 0)}</div>
-                      <div className="kpi-sub">Seekers who started a session</div>
-                    </div>
-                  </div>
                 )}
 
                 {/* ── PAYOUTS / REPORTS alerts ── */}
@@ -1276,7 +1324,7 @@ export default function AdminPage() {
                     Park this and leave it until they spend it or ask for it back.
                   </div>
                 </div>
-                <div className="liability-amount">{fmtRs(kpis.walletLiability.totalRupees)}</div>
+                <div className="liability-amount" title="Unspent wallets + money held for pending/live paid sessions + pending refund requests (same as Overview)">{fmtRs(kpis.walletLiability.totalRupees + (kpis.walletLiability.heldInSessionsRupees ?? 0) + (kpis.walletLiability.pendingRefundsRupees ?? 0))}</div>
               </div>
             )}
             {usersLoading ? (
