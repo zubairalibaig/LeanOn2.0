@@ -4,7 +4,8 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { SELFIE_BUCKET, selfiePath, hasSelfie } from '@/lib/selfie-storage'
 import { logger } from '@/lib/logger'
 
-const MAX_BYTES = 5 * 1024 * 1024
+// Under Vercel's 4.5 MB request-body cap, so oversize photos get our message, not a 413.
+const MAX_BYTES = 4 * 1024 * 1024
 const TYPES = new Set(['image/jpeg', 'image/png', 'image/webp'])
 
 // POST multipart { file } — store the caller's private verification selfie.
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest) {
     const file = form?.get('file')
     if (!(file instanceof Blob)) return NextResponse.json({ error: 'No photo received.' }, { status: 400 })
     if (!TYPES.has(file.type)) return NextResponse.json({ error: 'Please upload a JPEG, PNG or WebP photo.' }, { status: 400 })
-    if (file.size === 0 || file.size > MAX_BYTES) return NextResponse.json({ error: 'Photo must be under 5 MB.' }, { status: 400 })
+    if (file.size === 0 || file.size > MAX_BYTES) return NextResponse.json({ error: 'Photo must be under 4 MB.' }, { status: 400 })
 
     const admin = createAdminClient()
     const { error } = await admin.storage.from(SELFIE_BUCKET)

@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 
 // Signed-in app screens already have their own primary actions; a floating
 // "Start now" there just covers content.
-const HIDE_ON = ['/browse', '/dashboard', '/wallet', '/history', '/profile', '/notifications', '/sessions', '/session/', '/listener/', '/admin']
+const HIDE_ON = ['/become-listener', '/browse', '/dashboard', '/wallet', '/history', '/profile', '/notifications', '/sessions', '/session/', '/listener/', '/admin']
 
 export default function FloatingCTA() {
   const [visible, setVisible] = useState(false)

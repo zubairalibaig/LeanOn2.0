@@ -268,6 +268,43 @@ export default function BecomeListenerPage() {
   // it is always true by the time the form is visible.
   const [otpVerified] = useState(true)
 
+  // "Request fix" applicants only need to change what the admin flagged, so
+  // pre-fill their previous answers. Aadhaar and quiz answers are re-entered.
+  // Each read is independent and ignores errors (e.g. migration 060 columns
+  // not present yet) so a failure never blocks the form.
+  async function prefillResubmission(uid: string) {
+    const str = (v: unknown) => (typeof v === 'string' ? v : '')
+    const arr = (v: unknown) => (Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : [])
+    const [{ data: lp }, { data: lpNew }, { data: la }, { data: laNew }] = await Promise.all([
+      sb.from('listener_profiles').select('bio, specialty_tags, languages_spoken, rate_per_min, birth_year, birth_month').eq('user_id', uid).maybeSingle(),
+      sb.from('listener_profiles').select('education_level, education_field, tagline_phrases, lived_experience').eq('user_id', uid).maybeSingle(),
+      sb.from('listener_applications').select('name, account_holder_name, bank_account, ifsc_code, upi_id').eq('user_id', uid).maybeSingle(),
+      sb.from('listener_applications').select('screening').eq('user_id', uid).maybeSingle(),
+    ])
+    if (lp) {
+      if (lp.bio) setBio(str(lp.bio))
+      if (arr(lp.specialty_tags).length) setTags(arr(lp.specialty_tags))
+      if (arr(lp.languages_spoken).length) setLangs(arr(lp.languages_spoken))
+      if (lp.rate_per_min != null) setRate(String(Math.round(Number(lp.rate_per_min))))
+      if (lp.birth_year && lp.birth_month) { setBirthYear(String(lp.birth_year)); setBirthMonth(String(lp.birth_month)) }
+    }
+    if (lpNew) {
+      setEduLevel(str(lpNew.education_level)); setEduField(str(lpNew.education_field))
+      setTaglines(arr(lpNew.tagline_phrases)); setLived(str(lpNew.lived_experience))
+    }
+    if (la) {
+      if (la.name) setName(str(la.name))
+      setAccountHolder(str(la.account_holder_name)); setBank(str(la.bank_account))
+      setIfsc(str(la.ifsc_code)); setUpi(str(la.upi_id))
+    }
+    const sc = (laNew?.screening ?? null) as Record<string, unknown> | null
+    if (sc) {
+      setOccupation(str(sc.occupation)); setStateName(str(sc.state)); setHoursPerWeek(str(sc.hours_per_week))
+      setTimeSlots(arr(sc.time_slots)); setPriorExp(arr(sc.prior_experience)); setWhy(str(sc.why))
+      setHeardFrom(str(sc.heard_from)); setLinkedin(str(sc.linkedin_url))
+    }
+  }
+
   // Shared auth guard — checks session, loads existing application state,
   // and either shows the form or redirects. Called from both the useEffect
   // (returning visitors who already agreed) and the landing Continue button.
@@ -296,11 +333,11 @@ export default function BecomeListenerPage() {
       } else if (existing && !canResubmit) {
         setAlreadyRegistered(true)
       }
-      if (canResubmit || existing) {
-        fetch('/api/listener/selfie').then(r => r.ok ? r.json() : null).then(d => { if (d?.exists) setSelfieDone(true) }).catch(() => {})
-      }
+      // A selfie taken earlier (e.g. before a reload, or on a previous attempt) is reused.
+      fetch('/api/listener/selfie').then(r => r.ok ? r.json() : null).then(d => { if (d?.exists) setSelfieDone(true) }).catch(() => {})
       if (canResubmit) {
         if (app?.admin_notes) setResubmissionNotes(app.admin_notes as string)
+        prefillResubmission(user.id)
         if (userRow?.avatar_url) {
           setAvatarUrl(userRow.avatar_url as string)
           setAvatarPreview(userRow.avatar_url as string)
