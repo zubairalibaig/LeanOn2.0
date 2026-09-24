@@ -62,3 +62,21 @@ export async function selfieSignedUrls(admin: Admin, userIds: string[]): Promise
   data.forEach((d, i) => { if (!d.error && d.signedUrl) out[userIds[i]] = d.signedUrl })
   return out
 }
+
+// When each user's CURRENT selfie was saved (a retake overwrites the same
+// path), so the admin can see they're looking at the latest one. One list call
+// for the whole folder; users without a selfie are omitted.
+export async function selfieTakenAt(admin: Admin, userIds: string[]): Promise<Record<string, string>> {
+  if (userIds.length === 0) return {}
+  const wanted = new Map(userIds.map(id => [selfiePath(id).slice('selfies/'.length), id]))
+  const { data, error } = await admin.storage.from(SELFIE_BUCKET)
+    .list('selfies', { limit: 1000, sortBy: { column: 'updated_at', order: 'desc' } })
+  if (error || !data) return {}
+  const out: Record<string, string> = {}
+  for (const f of data) {
+    const id = wanted.get(f.name)
+    const at = (f as { updated_at?: string; created_at?: string }).updated_at || (f as { created_at?: string }).created_at
+    if (id && at) out[id] = at
+  }
+  return out
+}

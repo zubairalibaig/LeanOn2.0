@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback, useRef, Fragment } from 'react'
 import { createClient } from '@/lib/supabase'
 import { LISTENER_SERVICE_FEE_RATE, serviceFeeRateAt } from '@/lib/constants'
-import ListenerReviewPanel, { type ListenerReview } from './ListenerReviewPanel'
+import ListenerReviewPanel, { type ListenerReview, photoUploadedAt, fmtWhen } from './ListenerReviewPanel'
 import { EDUCATION_LEVELS, EDUCATION_FIELDS, labelOf } from '@/lib/listener-onboarding'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -499,7 +499,7 @@ export default function AdminPage() {
   const loadUsers = useCallback(async (pg = usersPage, st = usersStatus, q = usersSearch, dir = usersJoinedDir, sort = usersSortBy) => {
     setUsersLoading(true)
     const params = new URLSearchParams({ type: 'user', page: String(pg), status: st, search: q, dir, sort })
-    const res = await fetch(`/api/admin/users?${params}`, { headers: adminHeaders() }).catch(() => null)
+    const res = await fetch(`/api/admin/users?${params}`, { headers: adminHeaders(), cache: 'no-store' }).catch(() => null)
     if (res?.ok) {
       const json = await res.json()
       setUsers(json.items)
@@ -514,7 +514,7 @@ export default function AdminPage() {
   const loadListeners = useCallback(async (pg = listenersPage, st = listenersStatus, dir = listenersJoinedDir, sort = listenersSortBy, q = listenersSearch) => {
     setListenersLoading(true)
     const params = new URLSearchParams({ type: 'listener', page: String(pg), status: st, dir, sort, search: q })
-    const res = await fetch(`/api/admin/users?${params}`, { headers: adminHeaders() }).catch(() => null)
+    const res = await fetch(`/api/admin/users?${params}`, { headers: adminHeaders(), cache: 'no-store' }).catch(() => null)
     if (res?.ok) {
       const json = await res.json()
       setListeners(json.items)
@@ -527,7 +527,7 @@ export default function AdminPage() {
 
   const loadPendingApprovals = useCallback(async () => {
     const params = new URLSearchParams({ type: 'listener', page: '0', status: 'pending' })
-    const res = await fetch(`/api/admin/users?${params}`, { headers: adminHeaders() }).catch(() => null)
+    const res = await fetch(`/api/admin/users?${params}`, { headers: adminHeaders(), cache: 'no-store' }).catch(() => null)
     if (res?.ok) {
       const json = await res.json()
       setPendingApprovals(json.items ?? [])
@@ -928,7 +928,7 @@ export default function AdminPage() {
                         return (
                           <div key={l.user_id} className="kpi-card" style={{ border: '2px solid var(--orange)', display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'flex-start', justifyContent: 'space-between' }}>
                             <div style={{ flexBasis: '100%' }}>
-                              <ListenerReviewPanel review={l.review} displayUrl={l.pending_avatar_url || u?.avatar_url || null} />
+                              <ListenerReviewPanel review={l.review} displayUrl={l.pending_avatar_url || u?.avatar_url || null} displayPending={!!l.pending_avatar_url} />
                             </div>
                             <div style={{ minWidth: 180, flex: 1 }}>
                               <div style={{ fontWeight: 800 }}>{u?.name || '—'}</div>
@@ -1676,24 +1676,34 @@ export default function AdminPage() {
                           <tr className={isPending ? 'pending-row' : isRejected ? 'rejected-row' : ''}>
                             {/* Photo — click to open full size for verification */}
                             <td>
-                              <a
-                                href={u?.avatar_url || undefined}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                title={u?.avatar_url ? 'Open full-size photo' : 'No photo uploaded'}
-                                style={{
-                                  width: 44, height: 44, borderRadius: 8, display: 'flex',
-                                  alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
-                                  background: 'var(--light)', border: '1.5px solid var(--border)',
-                                  fontSize: 9, color: 'var(--gray)', fontWeight: 700, textAlign: 'center',
-                                  cursor: u?.avatar_url ? 'zoom-in' : 'default', textDecoration: 'none',
-                                }}
-                              >
-                                {u?.avatar_url
-                                  // eslint-disable-next-line @next/next/no-img-element
-                                  ? <img src={u.avatar_url} alt={`${u?.name || 'Listener'} profile photo`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                  : 'None'}
-                              </a>
+                              {/* The photo awaiting review wins over the live one — otherwise
+                                  the Pending Photo tab showed the OLD photo it was asking about. */}
+                              {(() => {
+                                const shown = l.pending_avatar_url || u?.avatar_url || null
+                                const isNew = !!l.pending_avatar_url
+                                return (
+                                  <a
+                                    href={shown || undefined}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    title={shown ? (isNew ? 'NEW photo awaiting review — open full size' : 'Open full-size photo') : 'No photo uploaded'}
+                                    style={{
+                                      position: 'relative',
+                                      width: 44, height: 44, borderRadius: 8, display: 'flex',
+                                      alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
+                                      background: 'var(--light)', border: isNew ? '2px solid #d4a017' : '1.5px solid var(--border)',
+                                      fontSize: 9, color: 'var(--gray)', fontWeight: 700, textAlign: 'center',
+                                      cursor: shown ? 'zoom-in' : 'default', textDecoration: 'none',
+                                    }}
+                                  >
+                                    {shown
+                                      // eslint-disable-next-line @next/next/no-img-element
+                                      ? <img src={shown} alt={`${u?.name || 'Listener'} ${isNew ? 'new' : 'profile'} photo`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                      : 'None'}
+                                    {isNew && <span style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#d4a017', color: 'white', fontSize: 8, fontWeight: 900, lineHeight: '11px' }}>NEW</span>}
+                                  </a>
+                                )
+                              })()}
                             </td>
                             <td style={{ fontWeight: 700, maxWidth: 260 }}>
                               {editingNameId === l.user_id ? (
@@ -1906,7 +1916,23 @@ export default function AdminPage() {
                                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 4 }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                       <span style={{ background: '#fff3cd', color: '#856404', border: '1px solid #ffc107', borderRadius: 4, fontSize: 10, fontWeight: 800, padding: '2px 6px', textTransform: 'uppercase' }}>Pending photo</span>
-                                      <a href={l.pending_avatar_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: 'var(--teal)', fontWeight: 700 }}>View</a>
+                                      {fmtWhen(photoUploadedAt(l.pending_avatar_url)) && (
+                                        <span style={{ fontSize: 10, color: 'var(--gray)', fontWeight: 700 }}>uploaded {fmtWhen(photoUploadedAt(l.pending_avatar_url))}</span>
+                                      )}
+                                    </div>
+                                    {/* Current (live) vs new, side by side, so the admin can compare. */}
+                                    <div style={{ display: 'flex', gap: 8 }}>
+                                      {[{ label: 'Current', url: u?.avatar_url || null }, { label: 'New', url: l.pending_avatar_url }].map(p => (
+                                        <a key={p.label} href={p.url || undefined} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', textAlign: 'center' }}>
+                                          <div style={{ width: 72, height: 72, borderRadius: 8, overflow: 'hidden', background: 'var(--light)', border: p.label === 'New' ? '2px solid #d4a017' : '1.5px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: 'var(--gray)', fontWeight: 700 }}>
+                                            {p.url
+                                              // eslint-disable-next-line @next/next/no-img-element
+                                              ? <img src={p.url} alt={`${p.label} photo`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                              : 'None'}
+                                          </div>
+                                          <div style={{ fontSize: 10, fontWeight: 800, color: p.label === 'New' ? '#856404' : 'var(--gray)', marginTop: 2 }}>{p.label}</div>
+                                        </a>
+                                      ))}
                                     </div>
                                     <div className="action-row">
                                       <button className="btn btn-green" style={{ fontSize: 11 }} disabled={busy !== null} onClick={() => userAction(l.user_id, 'approve_selfie')}>
@@ -2025,7 +2051,7 @@ export default function AdminPage() {
                           {reviewOpenId === l.user_id && (
                             <tr>
                               <td colSpan={20}>
-                                <ListenerReviewPanel review={l.review} displayUrl={l.pending_avatar_url || u?.avatar_url || null} />
+                                <ListenerReviewPanel review={l.review} displayUrl={l.pending_avatar_url || u?.avatar_url || null} displayPending={!!l.pending_avatar_url} />
                               </td>
                             </tr>
                           )}

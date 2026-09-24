@@ -43,7 +43,9 @@ export async function POST(req: NextRequest) {
     const admin = createAdminClient()
     const bytes = Buffer.from(await file.arrayBuffer())
     const upload = () => admin.storage.from(SELFIE_BUCKET)
-      .upload(selfiePath(user.id), bytes, { upsert: true, contentType: file.type })
+      // A retake overwrites this same path: keep the storage/CDN cache short
+      // (default is 1 hour) so the admin review never shows the previous selfie.
+      .upload(selfiePath(user.id), bytes, { upsert: true, contentType: file.type, cacheControl: '10' })
 
     let { error } = await upload()
     if (error && reasonFor(error.message) === 'bucket_missing') {

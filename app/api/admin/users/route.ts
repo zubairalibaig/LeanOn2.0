@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { selfieSignedUrls, archiveSelfie } from '@/lib/selfie-storage'
+import { selfieSignedUrls, selfieTakenAt, archiveSelfie } from '@/lib/selfie-storage'
 import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
 import { requireAdmin, dbUserIdOrNull , ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS } from '@/lib/require-admin'
@@ -207,7 +207,10 @@ export async function GET(req: NextRequest) {
         const screenRes = await sb.from('listener_applications').select('user_id, screening').in('user_id', userIds)
         const screenMap = new Map(((screenRes.error ? [] : screenRes.data) ?? [])
           .map(r => [(r as Record<string, unknown>).user_id as string, (r as Record<string, unknown>).screening]))
-        const selfies = await selfieSignedUrls(sb, userIds).catch(() => ({} as Record<string, string>))
+        const [selfies, selfieTimes] = await Promise.all([
+          selfieSignedUrls(sb, userIds).catch(() => ({} as Record<string, string>)),
+          selfieTakenAt(sb, userIds).catch(() => ({} as Record<string, string>)),
+        ])
         items = items.map(p => {
           const uid = p.user_id as string
           const ex = extrasMap.get(uid) ?? {}
@@ -221,6 +224,7 @@ export async function GET(req: NextRequest) {
               legacy_gallery:   ((ex.profile_photos as string[] | null) ?? []).filter(Boolean),
               screening:        screenMap.get(uid) ?? null,
               selfie_url:       selfies[uid] ?? null,
+              selfie_taken_at:  selfieTimes[uid] ?? null,
             },
           }
         })

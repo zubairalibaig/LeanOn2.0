@@ -11,6 +11,7 @@ export type ListenerReview = {
   lived_experience?: string | null
   legacy_gallery?: string[]
   selfie_url?: string | null
+  selfie_taken_at?: string | null
   screening?: {
     occupation?: string; state?: string; hours_per_week?: string; time_slots?: string[]
     prior_experience?: string[]; why?: string; heard_from?: string; linkedin_url?: string | null
@@ -22,7 +23,21 @@ export type ListenerReview = {
 const box: React.CSSProperties = { background: 'white', border: '1.5px solid var(--border)', borderRadius: 12, padding: '10px 12px' }
 const lbl: React.CSSProperties = { fontSize: 11, fontWeight: 800, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }
 
-function Photo({ url, title, note }: { url: string | null | undefined; title: string; note: string }) {
+// Display photos are stored as avatars/<uid>.display-<ms>.<ext> — the upload
+// time is in the name. Returns null for older naming schemes.
+export function photoUploadedAt(url: string | null | undefined): Date | null {
+  const m = url?.match(/\.display-(\d{12,14})\./)
+  return m ? new Date(Number(m[1])) : null
+}
+
+export function fmtWhen(d: Date | string | null | undefined): string | null {
+  if (!d) return null
+  const t = typeof d === 'string' ? new Date(d) : d
+  if (Number.isNaN(t.getTime())) return null
+  return t.toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true })
+}
+
+function Photo({ url, title, note, when }: { url: string | null | undefined; title: string; note: string; when?: string | null }) {
   return (
     <div style={{ flex: '1 1 160px', minWidth: 150 }}>
       <div style={lbl}>{title}</div>
@@ -35,12 +50,15 @@ function Photo({ url, title, note }: { url: string | null | undefined; title: st
           ? <img src={url} alt={title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           : note}
       </a>
+      {url && when && <div style={{ fontSize: 11, color: 'var(--gray)', fontWeight: 700, marginTop: 4 }}>{when}</div>}
     </div>
   )
 }
 
 // Everything the admin needs to approve or reject an application, in one place.
-export default function ListenerReviewPanel({ review, displayUrl }: { review?: ListenerReview | null; displayUrl?: string | null }) {
+// displayPending: displayUrl is a NEW photo awaiting review (pending_avatar_url),
+// not the live one.
+export default function ListenerReviewPanel({ review, displayUrl, displayPending }: { review?: ListenerReview | null; displayUrl?: string | null; displayPending?: boolean }) {
   const r = review ?? {}
   const s = r.screening ?? null
   const q = s?.quiz
@@ -49,8 +67,10 @@ export default function ListenerReviewPanel({ review, displayUrl }: { review?: L
   return (
     <div style={{ display: 'grid', gap: 10, width: '100%', background: 'var(--light)', borderRadius: 14, padding: 12 }}>
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-        <Photo url={r.selfie_url} title="Verification selfie (private)" note="No private selfie on file — applied before the Sep 2026 change, or not taken" />
-        <Photo url={displayUrl} title="Display photo (public)" note="No display photo" />
+        <Photo url={r.selfie_url} title="Verification selfie (private)" note="No private selfie on file — applied before the Sep 2026 change, or not taken"
+          when={fmtWhen(r.selfie_taken_at) ? `Taken ${fmtWhen(r.selfie_taken_at)}` : null} />
+        <Photo url={displayUrl} title={displayPending ? 'NEW display photo — awaiting review' : 'Display photo (public)'} note="No display photo"
+          when={fmtWhen(photoUploadedAt(displayUrl)) ? `Uploaded ${fmtWhen(photoUploadedAt(displayUrl))}` : null} />
       </div>
       <div style={{ fontSize: 12, fontWeight: 700, color: '#7A4500', background: '#FFF8E6', border: '1px solid #F5A623', borderRadius: 10, padding: '8px 10px' }}>
         Approve only if both photos are real, well-lit, clearly the same person, with the face fully visible (no filters, sunglasses or group shots).
