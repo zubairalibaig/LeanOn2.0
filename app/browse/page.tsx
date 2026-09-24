@@ -159,6 +159,7 @@ type Listener = {
   birth_year?: number | null
   birth_month?: number | null
   last_heartbeat_at?: string | null
+  tagline_phrases?: string[] | null
 }
 
 // Ranking used everywhere on this page. The online/offline precedence is
@@ -314,7 +315,7 @@ a{text-decoration:none;color:inherit;}
 .meta{flex:1;min-width:0;}
 .name{font-size:16px;font-weight:900;color:var(--navy);margin-bottom:2px;display:flex;align-items:center;gap:6px;min-width:0;}
 .name-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
-.card-tagline{font-size:13px;font-weight:600;color:var(--gray);margin-bottom:4px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;}
+.card-tagline{font-size:13px;font-weight:600;color:var(--gray);margin-bottom:4px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .stats{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;font-size:13px;color:var(--gray);font-weight:600;margin-bottom:6px;}
 .stats .st{display:inline-flex;align-items:center;gap:4px;}
 .new-tag{background:#FFF4E5;color:#7A4A00;font-size:11px;font-weight:800;padding:2px 8px;border-radius:50px;}
@@ -871,7 +872,10 @@ function BrowseContent() {
           const inSession = SHOW_LISTENER_IN_SESSION_STATUS && !!l.is_in_session
           const statusClass = inSession ? 'busy' : l.is_available ? 'on' : 'off'
           const statusLabel = inSession ? 'In a conversation' : l.is_available ? 'Available now' : 'Offline'
-          const bioFirstLine = l.bio ? l.bio.split(/[.\n]/).filter(Boolean)[0]?.trim() : ''
+          // Listener-picked phrases ("People talk to me about…") when set; else the bio's first sentence.
+          const bioFirstLine = (l.tagline_phrases ?? []).length > 0
+            ? (l.tagline_phrases ?? []).join(' · ')
+            : l.bio ? l.bio.split(/[.\n]/).filter(Boolean)[0]?.trim() : ''
           const isNew = !(l.rating > 0) && !(l.total_sessions > 0)
           const textRate  = sessionRatePerMin(Number(l.rate_per_min), 'text')
           const voiceRate = sessionRatePerMin(Number(l.rate_per_min), 'voice')

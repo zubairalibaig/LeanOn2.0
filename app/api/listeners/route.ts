@@ -99,7 +99,12 @@ export async function GET(req: NextRequest) {
     // birth_year/birth_month drive the browse age-range filter (migration 049).
     const SELECT_WITH_AGE = SELECT_WITH_IN_SESSION.replace(', users!inner', ', birth_year, birth_month, users!inner')
 
-    let { data, error } = await buildQuery(SELECT_WITH_AGE)
+    // tagline_phrases (migration 060) — the "People talk to me about…" line on
+    // browse cards. Tried first; dropped if the column doesn't exist yet.
+    let { data, error } = await buildQuery(SELECT_WITH_AGE.replace(', users!inner', ', tagline_phrases, users!inner'))
+    if (error && error.message?.includes('tagline_phrases')) {
+      ;({ data, error } = await buildQuery(SELECT_WITH_AGE))
+    }
     if (error && (error.message?.includes('birth_year') || error.message?.includes('birth_month'))) {
       ;({ data, error } = await buildQuery(SELECT_WITH_IN_SESSION))
     }

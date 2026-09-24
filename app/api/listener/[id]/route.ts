@@ -13,24 +13,25 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
 
   const admin = createAdminClient()
 
-  let { data: lp, error } = await admin
+  // Gallery photos (profile_photos) are no longer shown publicly — they were
+  // never reviewed. Onboarding fields (migration 060) are fetched separately
+  // so a missing column can't break the profile page.
+  const { data: lp, error } = await admin
     .from('listener_profiles')
-    .select('user_id, bio, specialty_tags, languages_spoken, rate_per_min, rating, total_sessions, is_available, is_approved, is_active, is_verified, is_in_session, profile_photos, users!inner(name, avatar_url)')
+    .select('user_id, bio, specialty_tags, languages_spoken, rate_per_min, rating, total_sessions, is_available, is_approved, is_active, is_verified, is_in_session, users!inner(name, avatar_url)')
     .eq('user_id', id)
     .eq('is_approved', true)
     .eq('is_active', true)
     .maybeSingle()
 
-  if (error?.message?.includes('profile_photos')) {
-    // Migration 058 not applied yet — retry without the column so profile
-    // pages keep working during the deploy-before-migration window.
-    ;({ data: lp, error } = await admin
+  let extras: Record<string, unknown> = {}
+  if (lp) {
+    const { data: ex, error: exErr } = await admin
       .from('listener_profiles')
-      .select('user_id, bio, specialty_tags, languages_spoken, rate_per_min, rating, total_sessions, is_available, is_approved, is_active, is_verified, is_in_session, users!inner(name, avatar_url)')
+      .select('education_level, education_field, tagline_phrases, lived_experience')
       .eq('user_id', id)
-      .eq('is_approved', true)
-      .eq('is_active', true)
-      .maybeSingle())
+      .maybeSingle()
+    if (!exErr && ex) extras = ex as Record<string, unknown>
   }
 
   if (error) {
@@ -62,5 +63,5 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     }
   }
 
-  return NextResponse.json({ profile: { ...lp, is_in_session: Boolean(is_in_session) } })
+  return NextResponse.json({ profile: { ...lp, ...extras, is_in_session: Boolean(is_in_session) } })
 }

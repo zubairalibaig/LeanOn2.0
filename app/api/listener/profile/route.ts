@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { MIN_LISTENER_RATE, MAX_LISTENER_RATE } from '@/lib/constants'
+import { TAGLINE_PHRASES, TAGLINE_PICK, LIVED_MIN_CHARS, LIVED_MAX_CHARS } from '@/lib/listener-onboarding'
 import { logger } from '@/lib/logger'
 
 // PATCH — update listener profile fields (server-side to bypass RLS fragility)
@@ -52,11 +53,34 @@ export async function PATCH(req: NextRequest) {
       updates.rate_per_min = rate
     }
 
+    // Public onboarding fields (migration 060). Education is intentionally not
+    // editable here — it was reviewed at application time.
+    if (Array.isArray(body?.tagline_phrases)) {
+      const phrases = Array.from(new Set((body.tagline_phrases as unknown[])
+        .filter((p): p is string => typeof p === 'string' && (TAGLINE_PHRASES as readonly string[]).includes(p))))
+      if (phrases.length !== TAGLINE_PICK) return NextResponse.json({ error: `Pick exactly ${TAGLINE_PICK} phrases.` }, { status: 400 })
+      updates.tagline_phrases = phrases
+    }
+    if (typeof body?.lived_experience === 'string') {
+      const lived = body.lived_experience.trim()
+      if (lived.length < LIVED_MIN_CHARS || lived.length > LIVED_MAX_CHARS)
+        return NextResponse.json({ error: `"What I've been through" must be ${LIVED_MIN_CHARS}–${LIVED_MAX_CHARS} characters.` }, { status: 400 })
+      updates.lived_experience = lived
+    }
+
     if (Object.keys(updates).length === 0) {
       return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
     }
 
-    const { error: updateErr } = await sb.from('listener_profiles').update(updates).eq('user_id', user.id)
+    let { error: updateErr } = await sb.from('listener_profiles').update(updates).eq('user_id', user.id)
+    if (updateErr && (updateErr.message?.includes('tagline_phrases') || updateErr.message?.includes('lived_experience'))) {
+      // Migration 060 not applied yet — save everything else.
+      delete updates.tagline_phrases
+      delete updates.lived_experience
+      updateErr = Object.keys(updates).length
+        ? (await sb.from('listener_profiles').update(updates).eq('user_id', user.id)).error
+        : null
+    }
     if (updateErr) {
       logger.error('listener profile PATCH error:', { error: updateErr.message, userId: user.id })
       return NextResponse.json({ error: 'Failed to update profile. Please try again.' }, { status: 500 })

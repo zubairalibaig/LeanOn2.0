@@ -6,6 +6,7 @@ import { LANGUAGES, PLATFORM_FEE, MAX_FREE_TRIALS, VOICE_PRICING_ENABLED, sessio
 import { SHOW_LISTENER_IN_SESSION_STATUS } from '@/lib/feature-flags'
 import { isNriCountry, getBookingPriceDisplay } from '@/lib/geo-pricing'
 import Avatar from '@/app/components/Avatar'
+import { EDUCATION_LEVELS, EDUCATION_FIELDS, labelOf } from '@/lib/listener-onboarding'
 
 type ListenerProfile = {
   id: string
@@ -21,7 +22,10 @@ type ListenerProfile = {
   specialty_tags: string[]
   languages_spoken: string[]
   avatar_url?: string
-  profile_photos?: string[]
+  education_level?: string | null
+  education_field?: string | null
+  tagline_phrases?: string[] | null
+  lived_experience?: string | null
 }
 
 type Review = {
@@ -328,14 +332,24 @@ export default function ListenerClient({ id }: { id: string }) {
               return <span key={lid} className="tag" style={{background:'rgba(255,153,51,.12)',color:'#7A4A00'}}>🌐 {info?.label||lid}</span>
             })}
           </div>
-          <p className="bio">{listener.bio}</p>
-          {(listener.profile_photos ?? []).filter(Boolean).length > 0 && (
-            <div style={{display:'grid',gridTemplateColumns:`repeat(${Math.min((listener.profile_photos!).filter(Boolean).length, 3)},1fr)`,gap:8,marginTop:12}}>
-              {(listener.profile_photos!).filter(Boolean).map((url, i) => (
-                <div key={i} style={{borderRadius:12,overflow:'hidden',aspectRatio:'1',background:'#f0f8fc'}}>
-                  <img src={url} alt="" style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}} loading="lazy" />
-                </div>
+          {(listener.tagline_phrases ?? []).length > 0 && (
+            <div style={{display:'flex',flexWrap:'wrap',gap:6,marginTop:10}}>
+              {(listener.tagline_phrases ?? []).map(t => (
+                <span key={t} style={{background:'#E7F6EC',color:'#1B5E32',fontSize:12,fontWeight:800,padding:'4px 10px',borderRadius:50}}>{t}</span>
               ))}
+            </div>
+          )}
+          <p className="bio">{listener.bio}</p>
+          {listener.lived_experience && (
+            <div style={{marginTop:12,background:'var(--light)',border:'1.5px solid var(--border)',borderRadius:14,padding:'12px 14px'}}>
+              <div style={{fontSize:12,fontWeight:900,color:'var(--navy)',textTransform:'uppercase',letterSpacing:'.04em',marginBottom:4}}>What I&apos;ve been through</div>
+              <p style={{fontSize:14,color:'#3A6070',lineHeight:1.65,fontWeight:500,margin:0,whiteSpace:'pre-wrap'}}>{listener.lived_experience}</p>
+            </div>
+          )}
+          {listener.education_level && (
+            <div style={{marginTop:10,fontSize:13,fontWeight:700,color:'var(--gray)'}}>
+              🎓 {labelOf(EDUCATION_LEVELS, listener.education_level)}
+              {listener.education_field && listener.education_field !== 'none' ? ` · ${labelOf(EDUCATION_FIELDS, listener.education_field)}` : ''}
             </div>
           )}
         </div>

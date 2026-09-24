@@ -6,6 +6,14 @@ import { createClient } from '@/lib/supabase'
 import { SHOW_LISTENER_GROWTH_NOTICE, SHOW_NEW_LISTENER_ONBOARDING } from '@/lib/feature-flags'
 import { compressImage, extForType, AVATAR_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
 import SelfieCapture from '@/app/components/SelfieCapture'
+import {
+  EDUCATION_LEVELS, EDUCATION_FIELDS, OCCUPATIONS, INDIAN_STATES, HOURS_PER_WEEK, TIME_SLOTS,
+  PRIOR_EXPERIENCE, HEARD_FROM, TAGLINE_PHRASES, TAGLINE_PICK, SCREENING_QUIZ,
+  WHY_MIN_WORDS, WHY_MAX_WORDS, LIVED_MIN_CHARS, LIVED_MAX_CHARS, wordCount, isValidLinkedIn,
+} from '@/lib/listener-onboarding'
+
+// Public display photo: sharper than the old selfie avatar (shown large on profiles).
+const DISPLAY_PHOTO_OPTS = { maxDim: 1024, quality: 0.86 }
 
 const TAGS = [
   {id:'loneliness', label:'Loneliness 🌙'},
@@ -141,6 +149,11 @@ function validateBio(v: string): string {
   if (v.trim().length > 400) return 'Bio must be 30–400 characters'
   return ''
 }
+function validateLived(v: string): string {
+  const n = v.trim().length
+  if (n < LIVED_MIN_CHARS || n > LIVED_MAX_CHARS) return `"What I've been through" must be ${LIVED_MIN_CHARS}–${LIVED_MAX_CHARS} characters`
+  return ''
+}
 function validateRate(v: string): string {
   const n = parseInt(v)
   if (VOICE_PRICING_ENABLED) {
@@ -223,11 +236,26 @@ export default function BecomeListenerPage() {
   const [avatarUrl, setAvatarUrl] = useState<string>('')
   const [avatarUploading, setAvatarUploading] = useState(false)
   const [selfieProcessing, setSelfieProcessing] = useState(false)
-  // Up to 3 optional profile gallery photos
-  const [galleryFiles, setGalleryFiles] = useState<(File | null)[]>([null, null, null])
-  const [galleryPreviews, setGalleryPreviews] = useState<string[]>(['', '', ''])
-  const [galleryUrls, setGalleryUrls] = useState<string[]>(['', '', ''])
-  const [galleryUploading, setGalleryUploading] = useState(false)
+  // Private verification selfie (camera-only, stored server-side, never public)
+  const [selfieDone, setSelfieDone] = useState(false)
+  const [selfiePreview, setSelfiePreview] = useState('')
+  const [selfieUploading, setSelfieUploading] = useState(false)
+  // Public profile extras
+  const [taglines, setTaglines] = useState<string[]>([])
+  const [lived, setLived] = useState('')
+  // Private screening (step 2)
+  const [eduLevel, setEduLevel] = useState('')
+  const [eduField, setEduField] = useState('')
+  const [occupation, setOccupation] = useState('')
+  const [stateName, setStateName] = useState('')
+  const [hoursPerWeek, setHoursPerWeek] = useState('')
+  const [timeSlots, setTimeSlots] = useState<string[]>([])
+  const [priorExp, setPriorExp] = useState<string[]>([])
+  const [why, setWhy] = useState('')
+  const [heardFrom, setHeardFrom] = useState('')
+  const [linkedin, setLinkedin] = useState('')
+  const [quiz, setQuiz] = useState<Record<string, number>>({})
+  const [step3Submitted, setStep3Submitted] = useState(false)
   // Onboarding agreement (new flow) — persisted in sessionStorage across the
   // auth redirect so the landing page is not shown again on return.
   const [agreementChecked, setAgreementChecked] = useState(false)
@@ -267,6 +295,9 @@ export default function BecomeListenerPage() {
         return
       } else if (existing && !canResubmit) {
         setAlreadyRegistered(true)
+      }
+      if (canResubmit || existing) {
+        fetch('/api/listener/selfie').then(r => r.ok ? r.json() : null).then(d => { if (d?.exists) setSelfieDone(true) }).catch(() => {})
       }
       if (canResubmit) {
         if (app?.admin_notes) setResubmissionNotes(app.admin_notes as string)
@@ -330,11 +361,68 @@ export default function BecomeListenerPage() {
     // Phone is verified at sign-in time — no in-form OTP check needed.
     const be = validateBio(bio); if (be) errs.push(be)
     if (tags.length === 0) errs.push('Please select at least one topic')
-    if (!avatarFile && !avatarUrl) errs.push('Please take a selfie')
+    if (!avatarFile && !avatarUrl) errs.push('Please add a clear display photo of your face')
+    if (!selfieDone) errs.push('Please take your verification selfie')
+    if (taglines.length !== TAGLINE_PICK) errs.push(`Pick exactly ${TAGLINE_PICK} phrases that describe you`)
+    const lv = validateLived(lived); if (lv) errs.push(lv)
     return errs
   }
 
-  function validateStep2(): string[] {
+  function step2FieldErrors(): Record<string, string> {
+    const fe: Record<string, string> = {}
+    if (!eduLevel) fe.eduLevel = 'Select your highest education'
+    if (!eduField) fe.eduField = 'Select your field of education'
+    if (!occupation) fe.occupation = 'Select your occupation'
+    if (!stateName) fe.stateName = 'Select your state'
+    if (!hoursPerWeek) fe.hoursPerWeek = 'Select your weekly hours'
+    if (timeSlots.length === 0) fe.timeSlots = 'Select at least one time slot'
+    if (priorExp.length === 0) fe.priorExp = 'Select your listening experience (or "None yet")'
+    const wc = wordCount(why)
+    if (wc < WHY_MIN_WORDS || wc > WHY_MAX_WORDS) fe.why = `Write ${WHY_MIN_WORDS}–${WHY_MAX_WORDS} words (currently ${wc})`
+    if (!heardFrom) fe.heardFrom = 'Tell us how you heard about LeanOn'
+    if (linkedin.trim() && !isValidLinkedIn(linkedin)) fe.linkedin = 'Enter a LinkedIn profile URL (linkedin.com/in/…) or leave blank'
+    if (SCREENING_QUIZ.some(q => quiz[q.id] === undefined)) fe.quiz = 'Please answer every situation question'
+    return fe
+  }
+  function validateStep2(): string[] { return Object.values(step2FieldErrors()) }
+
+  function tryNextFromStep2() {
+    setStep2Submitted(true)
+    const fe = step2FieldErrors()
+    if (Object.keys(fe).length > 0) {
+      setFieldErrors(fe)
+      setShaking(true)
+      setTimeout(() => setShaking(false), 500)
+      return
+    }
+    setFieldErrors({})
+    setStep(3)
+    window.scrollTo({ top: 0 })
+  }
+
+  async function uploadSelfie(file: File) {
+    if (file.size > MAX_INPUT_BYTES) { setFieldErrors(f => ({...f, selfie: 'Photo must be under 20 MB'})); return }
+    setSelfieUploading(true)
+    try {
+      const shrunk = await compressImage(file, AVATAR_OPTS)
+      const fd = new FormData()
+      fd.append('file', shrunk, 'selfie')
+      const res = await fetch('/api/listener/selfie', { method: 'POST', body: fd })
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) { setFieldErrors(f => ({...f, selfie: json.error || 'Selfie upload failed. Please try again.'})); return }
+      const reader = new FileReader()
+      reader.onload = ev => setSelfiePreview(ev.target?.result as string)
+      reader.readAsDataURL(shrunk)
+      setSelfieDone(true)
+      setFieldErrors(f => ({...f, selfie: ''}))
+    } catch {
+      setFieldErrors(f => ({...f, selfie: 'Selfie upload failed. Please try again.'}))
+    } finally {
+      setSelfieUploading(false)
+    }
+  }
+
+  function validateStep3(): string[] {
     const errs: string[] = []
     const bde = validateBirth(birthMonth, birthYear); if (bde) errs.push(bde)
     const re = validateRate(rate); if (re) errs.push(re)
@@ -355,7 +443,10 @@ export default function BecomeListenerPage() {
       const pe = validatePhone(phone); if (pe) fe.phone = pe
       const be = validateBio(bio); if (be) fe.bio = be
       if (tags.length === 0) fe.tags = 'Please select at least one topic'
-      if (!avatarFile && !avatarUrl) fe.avatar = 'Please take a selfie'
+      if (!avatarFile && !avatarUrl) fe.avatar = 'Please add a clear display photo of your face'
+      if (!selfieDone) fe.selfie = 'Please take your verification selfie'
+      if (taglines.length !== TAGLINE_PICK) fe.taglines = `Pick exactly ${TAGLINE_PICK} phrases`
+      const lv = validateLived(lived); if (lv) fe.lived = lv
       setFieldErrors(fe)
       setShaking(true)
       setTimeout(() => setShaking(false), 500)
@@ -370,7 +461,9 @@ export default function BecomeListenerPage() {
         // avatarFile was already downscaled at selection time.
         // Derive extension from MIME type — never trust the user-controlled filename
         const ext = extForType(avatarFile.type)
-        const path = `${user.id}.${ext}`
+        // Unique path per upload so a new photo never overwrites a live,
+        // already-approved one (it stays pending until the admin approves).
+        const path = `${user.id}.display-${Date.now()}.${ext}`
         // Race the upload against a 30-second timeout. Mobile browsers on weak
         // connections can stall indefinitely on storage.upload() if the TCP
         // connection hangs without closing, locking the button forever.
@@ -397,45 +490,14 @@ export default function BecomeListenerPage() {
       }
       setAvatarUploading(false)
     }
-    // Upload optional gallery photos (up to 3)
-    const newGalleryUrls = [...galleryUrls]
-    const filesToUpload = galleryFiles.map((f, i) => ({ file: f, idx: i })).filter(x => x.file && !galleryUrls[x.idx])
-    if (filesToUpload.length > 0) {
-      setGalleryUploading(true)
-      try {
-        const { data: { user } } = await sb.auth.getUser()
-        if (!user) { setError('Session expired. Please refresh.'); setGalleryUploading(false); return }
-        for (const { file, idx } of filesToUpload) {
-          if (!file) continue
-          const ext = extForType(file.type)
-          const path = `${user.id}.gallery-${idx}.${ext}`
-          const uploadTimeout = new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error('upload_timeout')), 30_000)
-          )
-          const { error: upErr } = await Promise.race([
-            sb.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type }),
-            uploadTimeout,
-          ])
-          if (upErr) { setFieldErrors(f => ({...f, gallery: 'One of the photos failed to upload. Please try again.'})); setGalleryUploading(false); return }
-          const { data: { publicUrl } } = sb.storage.from('avatars').getPublicUrl(path)
-          newGalleryUrls[idx] = `${publicUrl}?t=${Date.now()}`
-        }
-        setGalleryUrls(newGalleryUrls)
-      } catch {
-        setFieldErrors(f => ({...f, gallery: 'Photo upload failed. Please try again.'}))
-        setGalleryUploading(false)
-        return
-      }
-      setGalleryUploading(false)
-    }
-
     setFieldErrors({})
     setStep(2)
+    window.scrollTo({ top: 0 })
   }
 
   async function submit() {
-    setStep2Submitted(true)
-    const errs = validateStep2()
+    setStep3Submitted(true)
+    const errs = validateStep3()
     if (errs.length > 0) {
       const fe: Record<string,string> = {}
       const bde = validateBirth(birthMonth, birthYear); if (bde) fe.birth = bde
@@ -482,7 +544,19 @@ export default function BecomeListenerPage() {
           upi:        upi.trim(),
           aadhaar:    aadhaar.replace(/\D/g, ''),
           avatar_url: avatarUrl || undefined,
-          profile_photos: galleryUrls.filter(Boolean),
+          tagline_phrases: taglines,
+          lived_experience: lived.trim(),
+          education_level: eduLevel,
+          education_field: eduField,
+          occupation,
+          state: stateName,
+          hours_per_week: hoursPerWeek,
+          time_slots: timeSlots,
+          prior_experience: priorExp,
+          why: why.trim(),
+          heard_from: heardFrom,
+          linkedin_url: linkedin.trim(),
+          quiz,
         }),
       })
       if (!res.ok) {
@@ -691,6 +765,7 @@ export default function BecomeListenerPage() {
   // Show persistent error list after first submit attempt (not just during the 500ms shake)
   const step1Errors = step === 1 && step1Submitted ? validateStep1() : []
   const step2Errors = step === 2 && step2Submitted ? validateStep2() : []
+  const step3Errors = step === 3 && step3Submitted ? validateStep3() : []
 
   return (
     <>
@@ -731,7 +806,7 @@ export default function BecomeListenerPage() {
         )}
 
         <div className="step-dots">
-          {[1,2].map((s,i) => (
+          {[1,2,3].map((s,i) => (
             <span key={s} style={{display:'contents'}}>
               {i > 0 && <div className="dot-line" />}
               <div className={`dot ${step > s ? 'done' : step === s ? 'active' : 'todo'}`}>
@@ -783,10 +858,10 @@ export default function BecomeListenerPage() {
               </div>
             )}
 
-            <label className="lbl">Your story (30–400 characters — shown on your profile)</label>
+            <label className="lbl">About me (30–400 characters — shown on your profile)</label>
             <textarea
               className={`input${fieldErrors.bio ? ' err' : ''}`}
-              placeholder="e.g. I went through a painful divorce at 29. It took 2 years to rebuild. I'm here for people who feel like there's no light at the end of the tunnel — I've been there and found my way back."
+              placeholder="e.g. I'm a patient listener who lets you go at your own pace. I won't judge or rush to give advice — I'll help you make sense of what you're feeling."
               value={bio}
               onChange={e => { if (e.target.value.length <= 400) { setBio(e.target.value); if (fieldErrors.bio) setFieldErrors(f => ({...f, bio: ''})) } }}
             />
@@ -795,16 +870,34 @@ export default function BecomeListenerPage() {
             </div>
             {fieldErrors.bio && <span className="field-err">{fieldErrors.bio}</span>}
 
-            <label className="lbl">Profile photo — selfie required</label>
-            <SelfieCapture
-              preview={avatarPreview || null}
-              loading={avatarUploading || selfieProcessing}
-              hasError={!!fieldErrors.avatar}
-              onCapture={async (file) => {
+            <div className="section-title" style={{marginTop:8}}>Your photos</div>
+            <div style={{background:'#FFF8E6',border:'1.5px solid #F5A623',borderRadius:12,padding:'12px 14px',marginBottom:14,fontSize:13,color:'#5A3300',lineHeight:1.6,fontWeight:600}}>
+              ⚠️ <strong>Both photos must be real photos of you, taken in good light.</strong> Your face must be clearly visible — no sunglasses, filters, group photos, avatars, screenshots or photos of someone else. Dark, blurry or unclear photos are not approved.
+            </div>
+
+            <label className="lbl">1. Display photo <span style={{fontWeight:500,color:'var(--gray)'}}>— shown on your public profile</span></label>
+            <p style={{fontSize:12,color:'var(--gray)',marginBottom:10,lineHeight:1.5}}>
+              Upload a clear, well-lit photo of just you, looking at the camera. This is what seekers see, so pick a friendly one. It is reviewed before it goes live.
+            </p>
+            <label style={{display:'flex',alignItems:'center',gap:14,cursor:'pointer',border:`2px ${avatarPreview ? 'solid' : 'dashed'} ${fieldErrors.avatar ? '#E53935' : avatarPreview ? 'var(--teal)' : 'var(--border)'}`,borderRadius:14,padding:12,background:'white',marginBottom:6}}>
+              <div style={{width:88,height:88,borderRadius:'50%',overflow:'hidden',background:'var(--light)',flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',fontSize:28}}>
+                {avatarPreview
+                  // eslint-disable-next-line @next/next/no-img-element
+                  ? <img src={avatarPreview} alt="Your display photo" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+                  : '🖼️'}
+              </div>
+              <div style={{fontSize:13,fontWeight:700,color:'var(--navy)'}}>
+                {selfieProcessing || avatarUploading ? 'Processing…' : avatarPreview ? 'Change display photo' : 'Choose display photo'}
+                <div style={{fontSize:12,fontWeight:500,color:'var(--gray)',marginTop:2}}>From your gallery · JPG or PNG</div>
+              </div>
+              <input type="file" accept="image/jpeg,image/png,image/webp" style={{display:'none'}} onChange={async e => {
+                const file = e.target.files?.[0]
+                e.target.value = ''
+                if (!file) return
                 if (file.size > MAX_INPUT_BYTES) { setFieldErrors(f => ({...f, avatar:'Photo must be under 20 MB'})); return }
                 setSelfieProcessing(true)
                 try {
-                  const shrunk = await compressImage(file, AVATAR_OPTS)
+                  const shrunk = await compressImage(file, DISPLAY_PHOTO_OPTS)
                   setAvatarFile(shrunk)
                   setAvatarUrl('')
                   const reader = new FileReader()
@@ -812,64 +905,57 @@ export default function BecomeListenerPage() {
                   reader.readAsDataURL(shrunk)
                   if (fieldErrors.avatar) setFieldErrors(f => ({...f, avatar:''}))
                 } catch {
-                  setFieldErrors(f => ({...f, avatar:'Could not process photo. Please try again.'}))
+                  setFieldErrors(f => ({...f, avatar:'Could not process photo. Please try another one.'}))
                 } finally {
                   setSelfieProcessing(false)
                 }
-              }}
-            />
+              }} />
+            </label>
             {fieldErrors.avatar && <span className="field-err">{fieldErrors.avatar}</span>}
-            <div style={{background:'rgba(26,143,160,0.06)',border:'1px solid rgba(26,143,160,0.2)',borderRadius:10,padding:'10px 14px',marginBottom:16,marginTop:8,fontSize:12,color:'#1A5F6A',fontWeight:600,lineHeight:1.5}}>
-              🤳 Selfie required — no stock photos, avatars, or screenshots. Seekers trust listeners who show their real face. Every photo is reviewed before your account is approved.
+
+            <label className="lbl" style={{marginTop:14}}>2. Verification selfie <span style={{fontWeight:500,color:'var(--gray)'}}>— private, never shown to anyone</span></label>
+            <p style={{fontSize:12,color:'var(--gray)',marginBottom:10,lineHeight:1.5}}>
+              🔒 Take a live selfie with your camera. Only the LeanOn team sees it, to confirm your display photo is really you.
+            </p>
+            <SelfieCapture
+              preview={selfiePreview || null}
+              loading={selfieUploading}
+              hasError={!!fieldErrors.selfie}
+              onCapture={uploadSelfie}
+            />
+            {selfieDone && !selfiePreview && (
+              <div style={{fontSize:12,fontWeight:700,color:'#276749',marginTop:6}}>✓ Selfie on file — retake only if you were asked to.</div>
+            )}
+            {selfieDone && selfiePreview && (
+              <div style={{fontSize:12,fontWeight:700,color:'#276749',marginTop:6}}>✓ Selfie saved privately</div>
+            )}
+            {fieldErrors.selfie && <span className="field-err">{fieldErrors.selfie}</span>}
+
+            <div className="section-title" style={{marginTop:20}}>How seekers will see you</div>
+            <label className="lbl">People talk to me about… <span style={{fontWeight:500,color:'var(--gray)'}}>— pick {TAGLINE_PICK} ({taglines.length}/{TAGLINE_PICK})</span></label>
+            {fieldErrors.taglines && <span className="field-err">{fieldErrors.taglines}</span>}
+            <div className="tag-grid">
+              {TAGLINE_PHRASES.map(p => {
+                const sel = taglines.includes(p)
+                const full = !sel && taglines.length >= TAGLINE_PICK
+                return (
+                  <button key={p} type="button" className={`tag-chip${sel ? ' sel' : ''}`} disabled={full} style={full ? {opacity:0.45} : undefined}
+                    onClick={() => { setTaglines(t => sel ? t.filter(x => x !== p) : [...t, p]); if (fieldErrors.taglines) setFieldErrors(f => ({...f, taglines: ''})) }}>
+                    {p}
+                  </button>
+                )
+              })}
             </div>
 
-            <label className="lbl">Profile photos <span style={{fontWeight:500,color:'var(--gray)'}}>— optional, up to 3</span></label>
-            <p style={{fontSize:12,color:'var(--gray)',marginBottom:12,lineHeight:1.5}}>
-              📸 These are shown on your public listener profile so seekers can get a better sense of who you are. Add photos that feel genuine and welcoming. Skip if you prefer.
-            </p>
-            <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10,marginBottom:4}}>
-              {[0,1,2].map(i => (
-                <label key={i} style={{cursor:'pointer',display:'block'}}>
-                  <div style={{
-                    border: `2px dashed ${fieldErrors.gallery ? '#E53935' : 'var(--border)'}`,
-                    borderStyle: galleryPreviews[i] ? 'solid' : 'dashed',
-                    borderColor: galleryPreviews[i] ? 'var(--teal)' : 'var(--border)',
-                    borderRadius:14,padding:'12px 8px',textAlign:'center',background:'white',
-                    aspectRatio:'1',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',overflow:'hidden',position:'relative',
-                  }}>
-                    {galleryPreviews[i] ? (
-                      <>
-                        <img src={galleryPreviews[i]} alt={`Photo ${i+1}`} style={{width:'100%',height:'100%',objectFit:'cover',position:'absolute',top:0,left:0,borderRadius:12}} />
-                        <div style={{position:'absolute',bottom:4,right:4,background:'var(--teal)',borderRadius:6,width:20,height:20,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,color:'white',fontWeight:800}}>✓</div>
-                      </>
-                    ) : (
-                      <>
-                        <div style={{fontSize:24,marginBottom:4}}>📷</div>
-                        <div style={{fontSize:11,color:'var(--gray)',fontWeight:600}}>Photo {i+1}</div>
-                      </>
-                    )}
-                  </div>
-                  <input type="file" accept="image/*" style={{display:'none'}} onChange={async e => {
-                    const file = e.target.files?.[0]
-                    if (!file) return
-                    if (file.size > 20 * 1024 * 1024) { setFieldErrors(f => ({...f, gallery: 'Each photo must be under 20 MB'})); return }
-                    try {
-                      const { compressImage, AVATAR_OPTS } = await import('@/lib/compress-image')
-                      const shrunk = await compressImage(file, AVATAR_OPTS)
-                      const newFiles = [...galleryFiles]; newFiles[i] = shrunk; setGalleryFiles(newFiles)
-                      const newUrls = [...galleryUrls]; newUrls[i] = ''; setGalleryUrls(newUrls)
-                      const reader = new FileReader()
-                      reader.onload = ev => {
-                        const newPreviews = [...galleryPreviews]; newPreviews[i] = ev.target?.result as string; setGalleryPreviews(newPreviews)
-                      }
-                      reader.readAsDataURL(shrunk)
-                      if (fieldErrors.gallery) setFieldErrors(f => ({...f, gallery: ''}))
-                    } catch { setFieldErrors(f => ({...f, gallery: 'Could not process photo. Please try again.'})) }
-                  }} />
-                </label>
-              ))}
-            </div>
-            {fieldErrors.gallery && <span className="field-err">{fieldErrors.gallery}</span>}
+            <label className="lbl" style={{marginTop:14}}>What I&apos;ve been through <span style={{fontWeight:500,color:'var(--gray)'}}>— shown on your profile ({LIVED_MIN_CHARS}–{LIVED_MAX_CHARS} characters)</span></label>
+            <textarea
+              className={`input${fieldErrors.lived ? ' err' : ''}`}
+              placeholder="e.g. I moved to a new city alone at 22 and spent two years feeling invisible. I know how heavy loneliness gets, and how small steps helped me through it."
+              value={lived}
+              onChange={e => { if (e.target.value.length <= LIVED_MAX_CHARS) { setLived(e.target.value); if (fieldErrors.lived) setFieldErrors(f => ({...f, lived: ''})) } }}
+            />
+            <div className={`char-count${lived.trim().length > 0 && lived.trim().length < LIVED_MIN_CHARS ? ' warn' : ''}`}>{lived.trim().length}/{LIVED_MAX_CHARS}</div>
+            {fieldErrors.lived && <span className="field-err">{fieldErrors.lived}</span>}
 
             <label className="lbl">Topics you can speak to (select all that apply)</label>
             {fieldErrors.tags && <span className="field-err">{fieldErrors.tags}</span>}
@@ -900,22 +986,137 @@ export default function BecomeListenerPage() {
               </ul>
             </div>
 
-            <button className="btn" onClick={tryNextFromStep1} disabled={avatarUploading || selfieProcessing || galleryUploading}>
-              {(avatarUploading || selfieProcessing || galleryUploading) ? <span className="spin">⟳</span> : 'Next: Payment details →'}
+            <button className="btn" onClick={tryNextFromStep1} disabled={avatarUploading || selfieProcessing || selfieUploading}>
+              {(avatarUploading || selfieProcessing || selfieUploading) ? <span className="spin">⟳</span> : 'Next: Your background →'}
             </button>
           </div>
         )}
 
-        {/* STEP 2: Rate + Payment */}
+        {/* STEP 2: Background & screening (private — only the LeanOn team sees this) */}
         {step === 2 && (
           <div className={shaking ? 'shake' : ''}>
-            <div className="section-title">Rate & payment details</div>
-            <p className="section-sub">Set your rate and add your payout details. Earnings transferred within 3 business days.</p>
+            <div className="section-title">Your background</div>
+            <p className="section-sub">🔒 Private — only the LeanOn team sees this, except your education, which appears on your profile.</p>
 
             {step2Errors.length > 0 && (
               <div className="errors-list">
                 <p>Please fix the following:</p>
                 <ul>{step2Errors.map((e,i) => <li key={i}>{e}</li>)}</ul>
+              </div>
+            )}
+
+            <label className="lbl">Highest education <span style={{fontWeight:500,color:'var(--gray)'}}>— shown on your profile</span></label>
+            <select className={`input${fieldErrors.eduLevel ? ' err' : ''}`} value={eduLevel} onChange={e => { setEduLevel(e.target.value); setFieldErrors(f => ({...f, eduLevel: ''})) }}>
+              <option value="">Select…</option>
+              {EDUCATION_LEVELS.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
+            </select>
+            {fieldErrors.eduLevel && <span className="field-err">{fieldErrors.eduLevel}</span>}
+
+            <label className="lbl">Field of education <span style={{fontWeight:500,color:'var(--gray)'}}>— shown on your profile</span></label>
+            <select className={`input${fieldErrors.eduField ? ' err' : ''}`} value={eduField} onChange={e => { setEduField(e.target.value); setFieldErrors(f => ({...f, eduField: ''})) }}>
+              <option value="">Select…</option>
+              {EDUCATION_FIELDS.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
+            </select>
+            {fieldErrors.eduField && <span className="field-err">{fieldErrors.eduField}</span>}
+
+            <label className="lbl">Occupation</label>
+            <select className={`input${fieldErrors.occupation ? ' err' : ''}`} value={occupation} onChange={e => { setOccupation(e.target.value); setFieldErrors(f => ({...f, occupation: ''})) }}>
+              <option value="">Select…</option>
+              {OCCUPATIONS.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
+            </select>
+            {fieldErrors.occupation && <span className="field-err">{fieldErrors.occupation}</span>}
+
+            <label className="lbl">State</label>
+            <select className={`input${fieldErrors.stateName ? ' err' : ''}`} value={stateName} onChange={e => { setStateName(e.target.value); setFieldErrors(f => ({...f, stateName: ''})) }}>
+              <option value="">Select…</option>
+              {INDIAN_STATES.map(o => <option key={o} value={o}>{o}</option>)}
+            </select>
+            {fieldErrors.stateName && <span className="field-err">{fieldErrors.stateName}</span>}
+
+            <label className="lbl">Hours you can listen per week</label>
+            <select className={`input${fieldErrors.hoursPerWeek ? ' err' : ''}`} value={hoursPerWeek} onChange={e => { setHoursPerWeek(e.target.value); setFieldErrors(f => ({...f, hoursPerWeek: ''})) }}>
+              <option value="">Select…</option>
+              {HOURS_PER_WEEK.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
+            </select>
+            {fieldErrors.hoursPerWeek && <span className="field-err">{fieldErrors.hoursPerWeek}</span>}
+
+            <label className="lbl">Usual time slots <span style={{fontWeight:500,color:'var(--gray)'}}>(select all that apply)</span></label>
+            <div className="tag-grid">
+              {TIME_SLOTS.map(o => (
+                <button key={o.id} type="button" className={`tag-chip${timeSlots.includes(o.id) ? ' sel' : ''}`}
+                  onClick={() => { setTimeSlots(t => t.includes(o.id) ? t.filter(x => x !== o.id) : [...t, o.id]); setFieldErrors(f => ({...f, timeSlots: ''})) }}>{o.label}</button>
+              ))}
+            </div>
+            {fieldErrors.timeSlots && <span className="field-err">{fieldErrors.timeSlots}</span>}
+
+            <label className="lbl" style={{marginTop:8}}>Prior listening experience <span style={{fontWeight:500,color:'var(--gray)'}}>(select all that apply)</span></label>
+            <div className="tag-grid">
+              {PRIOR_EXPERIENCE.map(o => (
+                <button key={o.id} type="button" className={`tag-chip${priorExp.includes(o.id) ? ' sel' : ''}`}
+                  onClick={() => {
+                    setPriorExp(t => o.id === 'none' ? (t.includes('none') ? [] : ['none'])
+                      : t.includes(o.id) ? t.filter(x => x !== o.id) : [...t.filter(x => x !== 'none'), o.id])
+                    setFieldErrors(f => ({...f, priorExp: ''}))
+                  }}>{o.label}</button>
+              ))}
+            </div>
+            {fieldErrors.priorExp && <span className="field-err">{fieldErrors.priorExp}</span>}
+
+            <label className="lbl" style={{marginTop:8}}>Why do you want to be a listener? <span style={{fontWeight:500,color:'var(--gray)'}}>({WHY_MIN_WORDS}–{WHY_MAX_WORDS} words)</span></label>
+            <textarea
+              className={`input${fieldErrors.why ? ' err' : ''}`}
+              style={{minHeight:140}}
+              placeholder="Tell us honestly what draws you to supporting people, and what you would bring to a conversation."
+              value={why}
+              onChange={e => { setWhy(e.target.value); if (fieldErrors.why) setFieldErrors(f => ({...f, why: ''})) }}
+            />
+            {(() => { const wc = wordCount(why); return (
+              <div className={`char-count${wc > 0 && (wc < WHY_MIN_WORDS || wc > WHY_MAX_WORDS) ? ' warn' : ''}`}>{wc} words{wc < WHY_MIN_WORDS && wc > 0 ? ` (${WHY_MIN_WORDS - wc} more needed)` : ''}</div>
+            )})()}
+            {fieldErrors.why && <span className="field-err">{fieldErrors.why}</span>}
+
+            <label className="lbl">How did you hear about LeanOn?</label>
+            <select className={`input${fieldErrors.heardFrom ? ' err' : ''}`} value={heardFrom} onChange={e => { setHeardFrom(e.target.value); setFieldErrors(f => ({...f, heardFrom: ''})) }}>
+              <option value="">Select…</option>
+              {HEARD_FROM.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
+            </select>
+            {fieldErrors.heardFrom && <span className="field-err">{fieldErrors.heardFrom}</span>}
+
+            <label className="lbl">LinkedIn profile URL <span style={{fontWeight:500,color:'var(--gray)'}}>— optional, private</span></label>
+            <input className={`input${fieldErrors.linkedin ? ' err' : ''}`} type="url" inputMode="url" placeholder="https://www.linkedin.com/in/your-name"
+              value={linkedin} onChange={e => { setLinkedin(e.target.value); if (fieldErrors.linkedin) setFieldErrors(f => ({...f, linkedin: ''})) }} />
+            {fieldErrors.linkedin && <span className="field-err">{fieldErrors.linkedin}</span>}
+
+            <div className="section-title" style={{marginTop:22}}>A few situations</div>
+            <p className="section-sub">Pick what you would do. There&apos;s no trick — we want to understand how you&apos;d handle real conversations.</p>
+            {fieldErrors.quiz && <span className="field-err">{fieldErrors.quiz}</span>}
+            {SCREENING_QUIZ.map((q, qi) => (
+              <div key={q.id} style={{background:'white',border:`1.5px solid ${fieldErrors.quiz && quiz[q.id] === undefined ? '#E53935' : 'var(--border)'}`,borderRadius:14,padding:'14px 14px 8px',marginBottom:12}}>
+                <div style={{fontSize:14,fontWeight:800,color:'var(--navy)',marginBottom:10,lineHeight:1.5}}>{qi + 1}. {q.q}</div>
+                {q.options.map((opt, oi) => (
+                  <label key={oi} style={{display:'flex',gap:10,alignItems:'flex-start',padding:'8px 4px',cursor:'pointer',fontSize:13,fontWeight:600,color:'var(--navy)',lineHeight:1.5}}>
+                    <input type="radio" name={`quiz-${q.id}`} checked={quiz[q.id] === oi} style={{marginTop:3,width:18,height:18,flexShrink:0}}
+                      onChange={() => { setQuiz(z => ({...z, [q.id]: oi})); if (fieldErrors.quiz) setFieldErrors(f => ({...f, quiz: ''})) }} />
+                    {opt}
+                  </label>
+                ))}
+              </div>
+            ))}
+
+            <button className="btn" onClick={tryNextFromStep2}>Next: Rate &amp; payment →</button>
+          </div>
+        )}
+
+        {/* STEP 3: Rate + Payment */}
+        {step === 3 && (
+          <div className={shaking ? 'shake' : ''}>
+            <div className="section-title">Rate & payment details</div>
+            <p className="section-sub">Set your rate and add your payout details. Earnings transferred within 3 business days.</p>
+
+            {step3Errors.length > 0 && (
+              <div className="errors-list">
+                <p>Please fix the following:</p>
+                <ul>{step3Errors.map((e,i) => <li key={i}>{e}</li>)}</ul>
               </div>
             )}
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { selfieSignedUrls } from '@/lib/selfie-storage'
 import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
 import { requireAdmin, dbUserIdOrNull , ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS } from '@/lib/require-admin'
@@ -192,6 +193,37 @@ export async function GET(req: NextRequest) {
           : ((await sb.from('listener_applications').select(minimalSelect).in('user_id', userIds)).data ?? []) as Record<string, unknown>[]
         const appMap = new Map(appsData.map(a => [a.user_id as string, a]))
         items = items.map(p => ({ ...p, application: appMap.get(p.user_id as string) ?? null }))
+
+        // Review data for the approval screen: onboarding fields (migration 060),
+        // private screening answers, legacy gallery photos (no longer public) and
+        // a short-lived signed URL for the private verification selfie. Each
+        // query degrades independently so a missing column never breaks the list.
+        const extrasRes = await sb.from('listener_profiles')
+          .select('user_id, education_level, education_field, tagline_phrases, lived_experience, profile_photos')
+          .in('user_id', userIds)
+        const extrasRows = (!extrasRes.error ? extrasRes.data
+          : (await sb.from('listener_profiles').select('user_id, profile_photos').in('user_id', userIds)).data) ?? []
+        const extrasMap = new Map((extrasRows as Record<string, unknown>[]).map(r => [r.user_id as string, r]))
+        const screenRes = await sb.from('listener_applications').select('user_id, screening').in('user_id', userIds)
+        const screenMap = new Map(((screenRes.error ? [] : screenRes.data) ?? [])
+          .map(r => [(r as Record<string, unknown>).user_id as string, (r as Record<string, unknown>).screening]))
+        const selfies = await selfieSignedUrls(sb, userIds).catch(() => ({} as Record<string, string>))
+        items = items.map(p => {
+          const uid = p.user_id as string
+          const ex = extrasMap.get(uid) ?? {}
+          return {
+            ...p,
+            review: {
+              education_level:  ex.education_level ?? null,
+              education_field:  ex.education_field ?? null,
+              tagline_phrases:  ex.tagline_phrases ?? null,
+              lived_experience: ex.lived_experience ?? null,
+              legacy_gallery:   ((ex.profile_photos as string[] | null) ?? []).filter(Boolean),
+              screening:        screenMap.get(uid) ?? null,
+              selfie_url:       selfies[uid] ?? null,
+            },
+          }
+        })
 
         // Total earned per listener, from the earnings ledger. `total` is
         // everything the ledger credits them; `settled` is the subset that has

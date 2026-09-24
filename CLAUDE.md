@@ -54,6 +54,17 @@
     `/api/webhooks/` because `middleware.ts` exempts that prefix from the CSRF
     origin check. Do not delete it; do not wire it back without a DLT template.
 
+- **Listener onboarding (2026-09, migration 060).** Two photos, never mixed up:
+  the **verification selfie** is camera-only, uploaded via `/api/listener/selfie`
+  into the `verifications` bucket at an HMAC path (`lib/selfie-storage.ts`) and is
+  NEVER public — admin sees it via signed URLs; the **display photo** is uploaded
+  from the gallery to `avatars/<uid>.display-<ts>.<ext>` (unique path — never
+  overwrite a live photo) and is reviewed before going live. Gallery photos
+  (`profile_photos`) are no longer collected or shown publicly. Option lists,
+  taglines and the screening quiz live in `lib/listener-onboarding.ts` (shared by
+  form + API). Education level/field are public; everything in
+  `listener_applications.screening` is admin-only.
+
 ## Business invariants
 
 - Platform fee: **flat ₹10 per paid session** (`PLATFORM_FEE`), paid by the

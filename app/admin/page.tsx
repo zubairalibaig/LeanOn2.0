@@ -1,7 +1,8 @@
 'use client'
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, Fragment } from 'react'
 import { createClient } from '@/lib/supabase'
 import { LISTENER_SERVICE_FEE_RATE, serviceFeeRateAt } from '@/lib/constants'
+import ListenerReviewPanel, { type ListenerReview } from './ListenerReviewPanel'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -32,6 +33,7 @@ type ListenerRow = {
   // Summed from listener_earnings by /api/admin/users. earned_total is
   // everything the ledger credits them; earned_settled is the payable subset.
   earned_total?: number; earned_settled?: number
+  review?: ListenerReview
   users: { id: string; name?: string; email?: string; phone?: string; avatar_url?: string | null; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number }
   application?: { status: string; admin_notes: string | null; upi_id?: string | null; bank_account?: string | null; ifsc_code?: string | null; aadhaar?: string | null; aadhaar_last4?: string | null; account_holder_name?: string | null } | null
 }
@@ -369,6 +371,7 @@ export default function AdminPage() {
   const [deleteConfirmInput, setDeleteConfirmInput] = useState('')
   const [deletingUser, setDeletingUser] = useState(false)
   const [confirmRejectOverviewId, setConfirmRejectOverviewId] = useState<string | null>(null)
+  const [reviewOpenId, setReviewOpenId] = useState<string | null>(null)
   const [confirmRejectListenersId, setConfirmRejectListenersId] = useState<string | null>(null)
   // Inline name-edit state (shared for both users and listeners tables)
   const [editingNameId, setEditingNameId] = useState<string | null>(null)
@@ -900,29 +903,9 @@ export default function AdminPage() {
                         const u = l.users
                         return (
                           <div key={l.user_id} className="kpi-card" style={{ border: '2px solid var(--orange)', display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                            {/* Photo — click to open full size for verification */}
-                            {/* Prefer pending_avatar_url (the selfie submitted with this application)
-                                over users.avatar_url (could be an older approved photo). */}
-                            {(() => { const photoUrl = l.pending_avatar_url || u?.avatar_url || null; return (
-                            <a
-                              href={photoUrl || undefined}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              title={photoUrl ? 'Open full-size photo' : 'No photo uploaded'}
-                              style={{
-                                width: 72, height: 72, borderRadius: 12, flexShrink: 0,
-                                background: 'var(--light)', border: '1.5px solid var(--border)',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                overflow: 'hidden', fontSize: 11, color: 'var(--gray)', fontWeight: 700,
-                                cursor: photoUrl ? 'zoom-in' : 'default', textDecoration: 'none',
-                              }}
-                            >
-                              {photoUrl
-                                // eslint-disable-next-line @next/next/no-img-element
-                                ? <img src={photoUrl} alt={`${u?.name || 'Listener'} profile photo`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                : 'No photo'}
-                            </a>
-                            )})()}
+                            <div style={{ flexBasis: '100%' }}>
+                              <ListenerReviewPanel review={l.review} displayUrl={l.pending_avatar_url || u?.avatar_url || null} />
+                            </div>
                             <div style={{ minWidth: 180, flex: 1 }}>
                               <div style={{ fontWeight: 800 }}>{u?.name || '—'}</div>
                               <div style={{ fontSize: 12, color: 'var(--gray)' }}>
@@ -1031,10 +1014,10 @@ export default function AdminPage() {
                   <div
                     className="kpi-card"
                     style={{ border: (kpis.listeners.pendingSelfie ?? 0) > 0 ? '2px solid #d4a017' : undefined, cursor: 'pointer' }}
-                    title="Approved listeners who uploaded a new selfie awaiting review"
+                    title="Approved listeners with a new display photo awaiting review"
                     onClick={() => { setListenersStatus('pending_selfie'); setListenersPage(0); setTab('listeners') }}
                   >
-                    <div className="kpi-label">Pending Selfie</div>
+                    <div className="kpi-label">Pending Photo</div>
                     <div className="kpi-value" style={{ color: (kpis.listeners.pendingSelfie ?? 0) > 0 ? '#d4a017' : undefined }}>{fmt(kpis.listeners.pendingSelfie ?? 0)}</div>
                     {(kpis.listeners.pendingSelfie ?? 0) > 0 && <div className="kpi-sub" style={{ color: '#d4a017' }}>tap to review →</div>}
                   </div>
@@ -1445,7 +1428,7 @@ export default function AdminPage() {
                   className={`filter-btn${listenersStatus === s ? ' active' : ''}`}
                   onClick={() => { setListenersStatus(s); setListenersPage(0); loadListeners(0, s, listenersJoinedDir, listenersSortBy, listenersSearch) }}
                 >
-                  {s === 'pending' ? 'Pending Approval' : s === 'needs_resubmission' ? 'Needs Fix' : s === 'pending_selfie' ? 'Pending Selfie' : s.charAt(0).toUpperCase() + s.slice(1)}
+                  {s === 'pending' ? 'Pending Approval' : s === 'needs_resubmission' ? 'Needs Fix' : s === 'pending_selfie' ? 'Pending Photo' : s.charAt(0).toUpperCase() + s.slice(1)}
                 </button>
               ))}
               <input
@@ -1546,7 +1529,8 @@ export default function AdminPage() {
                           (authUser.email && u?.email && authUser.email === u.email)
                         ))
                         return (
-                          <tr key={l.user_id} className={isPending ? 'pending-row' : isRejected ? 'rejected-row' : ''}>
+                          <Fragment key={l.user_id}>
+                          <tr className={isPending ? 'pending-row' : isRejected ? 'rejected-row' : ''}>
                             {/* Photo — click to open full size for verification */}
                             <td>
                               <a
@@ -1770,7 +1754,7 @@ export default function AdminPage() {
                                 {l.is_approved && l.pending_avatar_url && (
                                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 4 }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                      <span style={{ background: '#fff3cd', color: '#856404', border: '1px solid #ffc107', borderRadius: 4, fontSize: 10, fontWeight: 800, padding: '2px 6px', textTransform: 'uppercase' }}>Pending selfie</span>
+                                      <span style={{ background: '#fff3cd', color: '#856404', border: '1px solid #ffc107', borderRadius: 4, fontSize: 10, fontWeight: 800, padding: '2px 6px', textTransform: 'uppercase' }}>Pending photo</span>
                                       <a href={l.pending_avatar_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: 'var(--teal)', fontWeight: 700 }}>View</a>
                                     </div>
                                     <div className="action-row">
@@ -1876,10 +1860,21 @@ export default function AdminPage() {
                                   <a href={`/listener/${l.user_id}`} target="_blank" rel="noopener" className="btn btn-gray" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
                                     View Profile
                                   </a>
+                                  <button className="btn btn-gray" onClick={() => setReviewOpenId(id => id === l.user_id ? null : l.user_id)}>
+                                    {reviewOpenId === l.user_id ? 'Hide review' : 'Review'}
+                                  </button>
                                 </div>
                               </div>
                             </td>
                           </tr>
+                          {reviewOpenId === l.user_id && (
+                            <tr>
+                              <td colSpan={20}>
+                                <ListenerReviewPanel review={l.review} displayUrl={l.pending_avatar_url || u?.avatar_url || null} />
+                              </td>
+                            </tr>
+                          )}
+                          </Fragment>
                         )
                       })}
                     </tbody>

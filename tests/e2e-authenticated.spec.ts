@@ -34,6 +34,26 @@ const ADMIN_PASSWORD = process.env.TEST_ADMIN_PASSWORD ?? ''
 
 const tenDigits = (p: string) => p.replace(/\D/g, '').slice(-10)
 
+// Fields required by the 2026-09 onboarding revamp (lib/listener-onboarding.ts).
+const ONBOARDING = {
+  education_level: 'graduate', education_field: 'psychology',
+  tagline_phrases: ["Let's talk", 'A calm listener', 'No judgement here'],
+  lived_experience: 'Automated test listener. I have been through a long period of loneliness after moving cities.',
+  occupation: 'working', state: 'Karnataka', hours_per_week: '5_10', time_slots: ['evening'],
+  prior_experience: ['informal'], heard_from: 'friend', linkedin_url: '',
+  why: Array.from({ length: 110 }, (_, i) => `word${i}`).join(' '),
+  quiz: { crisis: 1, contact: 1, flirting: 1, medical: 1, empathy: 2, time: 1, selfcare: 1 },
+}
+
+// The private verification selfie must exist before an application is accepted.
+async function uploadTestSelfie(page: Page) {
+  const jpeg = Buffer.from('ffd8ffe000104a46494600010100000100010000ffd9', 'hex')
+  const res = await page.request.post('/api/listener/selfie', {
+    multipart: { file: { name: 'selfie.jpg', mimeType: 'image/jpeg', buffer: jpeg } },
+  })
+  expect(res.ok(), `selfie upload failed: ${await res.text()}`).toBeTruthy()
+}
+
 /** Log in via phone OTP. Handles both brand-new (name step) and returning users. */
 async function login(page: Page, phone: string, otp: string, opts?: { listenerMode?: boolean }) {
   await page.goto(opts?.listenerMode ? '/auth?mode=listener' : '/auth')
@@ -108,8 +128,10 @@ test.describe('Listener: apply → admin approves → public profile live', () =
     // storage for the API to accept the application in test environments.
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
     const testAvatarUrl = `${supabaseUrl}/storage/v1/object/public/avatars/${userId}.jpg`
+    await uploadTestSelfie(page)
     const apply = await page.request.post('/api/listener/apply', {
       data: {
+        ...ONBOARDING,
         name: 'E2E Listener', phone: tenDigits(LISTENER_PHONE),
         bio: 'Automated end-to-end test listener profile, here to listen with care.',
         tags: ['general'], langs: ['english'], rate: 5,
@@ -160,7 +182,7 @@ test.describe('Listener apply — selfie security', () => {
     })
     expect(res.status(), 'no selfie must be 400').toBe(400)
     const body = await res.json()
-    expect(body.error, 'error message must mention selfie').toMatch(/selfie/i)
+    expect(body.error, 'error message must mention the photo').toMatch(/photo/i)
   })
 
   test('cross-user avatar_url returns 400', async ({ page, context }) => {
@@ -199,8 +221,10 @@ test.describe('Listener apply — selfie security', () => {
     const userId = await authUserId(context)
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
     const ownAvatarUrl = `${supabaseUrl}/storage/v1/object/public/avatars/${userId}.jpg`
+    await uploadTestSelfie(page)
     const res = await page.request.post('/api/listener/apply', {
       data: {
+        ...ONBOARDING,
         name: 'Valid Selfie Test', phone: tenDigits(LISTENER_PHONE),
         bio: 'Test bio that is long enough to pass validation checks here.',
         tags: ['general'], langs: ['english'], rate: 5,

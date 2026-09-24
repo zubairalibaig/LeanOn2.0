@@ -4,6 +4,8 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { ensureUserRow } from '@/lib/ensure-user-row'
 import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, LANGUAGES, MIN_LISTENER_AGE, MAX_LISTENER_AGE, ageFromBirth } from '@/lib/constants'
 import { logger } from '@/lib/logger'
+import { parseOnboarding } from '@/lib/listener-onboarding'
+import { hasSelfie } from '@/lib/selfie-storage'
 
 // POST — submit a listener application (users row + profile + application).
 //
@@ -55,11 +57,6 @@ export async function POST(req: NextRequest) {
     }
     const birthYear  = posIntOrNull(body?.birthYear)
     const birthMonth = posIntOrNull(body?.birthMonth)
-    const galleryStoragePrefix = `${supabaseUrl}/storage/v1/object/public/avatars/${user.id}.gallery-`
-    const rawProfilePhotos = Array.isArray(body?.profile_photos) ? body.profile_photos : []
-    const profilePhotos: string[] = rawProfilePhotos
-      .filter((u: unknown) => typeof u === 'string' && (u as string).split('?')[0].startsWith(galleryStoragePrefix))
-      .slice(0, 3)
 
     const tags  = Array.isArray(body?.tags)  ? body.tags.filter((t: unknown) => typeof t === 'string').slice(0, 10)  : []
     const langIds = new Set(LANGUAGES.map(l => l.id as string))
@@ -75,11 +72,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `Rate must be between ₹${MIN_LISTENER_RATE} and ₹${MAX_LISTENER_RATE} per minute.` }, { status: 400 })
     if (tags.length === 0)
       return NextResponse.json({ error: 'Please select at least one topic.' }, { status: 400 })
-    // Selfie is mandatory — no application proceeds without a verified,
-    // caller-owned avatar URL. This is the server-side gate for the
-    // camera-only selfie requirement enforced by SelfieCapture in the UI.
+    // Public display photo (reviewed by the admin before it goes live) —
+    // must be a caller-owned file in the avatars bucket.
     if (!avatarUrl)
-      return NextResponse.json({ error: 'A selfie photo is required to apply as a listener.' }, { status: 400 })
+      return NextResponse.json({ error: 'A clear display photo of your face is required.' }, { status: 400 })
+    const onboarding = parseOnboarding(body ?? {})
+    if ('error' in onboarding) return NextResponse.json({ error: onboarding.error }, { status: 400 })
     if (!/^\d{9,18}$/.test(bank))
       return NextResponse.json({ error: 'Please enter a valid bank account number.' }, { status: 400 })
     if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc))
@@ -105,6 +103,11 @@ export async function POST(req: NextRequest) {
 
     const admin = createAdminClient()
 
+    // Private verification selfie (camera-only) — stored via /api/listener/selfie,
+    // never public. The admin compares it with the display photo.
+    if (!(await hasSelfie(admin, user.id)))
+      return NextResponse.json({ error: 'Please take your verification selfie before submitting.' }, { status: 400 })
+
     // 1. users row first — listener_profiles/applications FK to users(id)
     const { error: userErr, debug: userDebug } = await ensureUserRow(admin, {
       id: user.id,
@@ -127,9 +130,10 @@ export async function POST(req: NextRequest) {
       rate_per_min:     Math.round(rate),
       is_available:     false,
     }
-    // profile_photos added by migration 058. Only set when supplied so a missing
-    // column (pre-migration) doesn't fail every submission — same pattern as birth_year.
-    if (profilePhotos.length > 0) profileRow.profile_photos = profilePhotos
+    // Public onboarding fields (migration 060). Gallery photos are no longer
+    // collected — profile_photos is left untouched and hidden from public view.
+    const NEW_PROFILE_COLS = ['education_level', 'education_field', 'tagline_phrases', 'lived_experience'] as const
+    Object.assign(profileRow, onboarding.public)
     // birth_year / birth_month added by migration 049. Only set when supplied,
     // and never wipe an existing value on a resubmission that omits it.
     if (birthYear !== null && birthMonth !== null) {
@@ -140,10 +144,11 @@ export async function POST(req: NextRequest) {
     // Writing it to listener_profiles created a second copy that diverged whenever
     // the admin used update_bank_details (which only touches listener_applications).
     let profileErr = (await admin.from('listener_profiles').upsert(profileRow, { onConflict: 'user_id' })).error
-    if (profileErr && profileErr.message?.includes('profile_photos')) {
-      // Migration 058 not applied yet — drop the column and retry so existing
-      // applications keep working until the migration runs.
-      delete profileRow.profile_photos
+    if (profileErr && NEW_PROFILE_COLS.some(c => profileErr?.message?.includes(c))) {
+      // Migration 060 not applied yet — keep applications working; the new
+      // fields are captured once the columns exist.
+      logger.warn('listener apply: migration 060 profile columns missing — saved without them', { userId: user.id })
+      for (const c of NEW_PROFILE_COLS) delete profileRow[c]
       profileErr = (await admin.from('listener_profiles').upsert(profileRow, { onConflict: 'user_id' })).error
     }
     if (profileErr && (profileErr.message?.includes('birth_year') || profileErr.message?.includes('birth_month'))) {
@@ -200,6 +205,8 @@ export async function POST(req: NextRequest) {
       // Clear any prior admin_notes so the reviewing admin isn't misled by stale
       // "fix your IFSC" feedback after the applicant has already corrected it.
       admin_notes:         null,
+      // Private screening answers + auto-scored quiz (migration 060).
+      screening:           { ...onboarding.screening, submitted_at: new Date().toISOString() },
     }
     // Aadhaar (admin-only KYC). aadhaar_last4 predates this work; aadhaar (full)
     // is added by migration 047. Only set them when the applicant supplied a
@@ -209,6 +216,11 @@ export async function POST(req: NextRequest) {
       appRow.aadhaar_last4 = aadhaar.slice(-4)
     }
     let appErr = (await admin.from('listener_applications').upsert(appRow, { onConflict: 'user_id' })).error
+    if (appErr?.message?.includes('screening')) {
+      logger.warn('listener apply: migration 060 screening column missing — saved without it', { userId: user.id })
+      delete appRow.screening
+      appErr = (await admin.from('listener_applications').upsert(appRow, { onConflict: 'user_id' })).error
+    }
     if (appErr?.message?.includes("'aadhaar'")) {
       // Full `aadhaar` column not yet in DB (pre-migration 047) — keep the masked
       // last4 (long-standing column) and retry without the full number. PostgREST
@@ -233,9 +245,10 @@ export async function POST(req: NextRequest) {
     //    failure never leaves an approved listener with no photo. avatarUrl is
     //    guaranteed non-null here (validated and required above).
     //
-    // Approved listeners: selfie goes to pending_avatar_url for admin review
-    // (same logic as profile PATCH) so a re-submitted photo is never auto-published.
-    // Everyone else (new applicants, needs_resubmission): write directly to users.avatar_url.
+    // Approved listeners: the display photo goes to pending_avatar_url for admin
+    // review (same logic as profile PATCH) so it's never auto-published.
+    // Everyone else (new applicants, needs_resubmission): write users.avatar_url —
+    // not public until the admin approves the application.
     const { data: lpForAvatar } = await admin.from('listener_profiles')
       .select('is_approved').eq('user_id', user.id).maybeSingle()
 

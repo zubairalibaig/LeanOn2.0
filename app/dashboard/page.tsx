@@ -9,9 +9,9 @@ import { PRICING_NOTICE } from '@/lib/listener-announcements'
 import { estimateListenerTakeHome } from '@/lib/session-billing'
 import { showToast } from '@/lib/toast'
 import { registerPushNotifications } from '@/lib/firebase-client'
-import { compressImage, extForType, AVATAR_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
+import { compressImage, extForType, MAX_INPUT_BYTES } from '@/lib/compress-image'
 import Avatar from '@/app/components/Avatar'
-import SelfieCapture from '@/app/components/SelfieCapture'
+import { TAGLINE_PHRASES, TAGLINE_PICK, LIVED_MIN_CHARS, LIVED_MAX_CHARS } from '@/lib/listener-onboarding'
 
 let _sb: ReturnType<typeof createBrowserClient> | null = null
 function initSb() {
@@ -235,6 +235,8 @@ export default function DashboardPage() {
   const [editLangs, setEditLangs]     = useState<string[]>([])
   const [editRate, setEditRate]       = useState('')
   const [editVoiceDraft, setEditVoiceDraft] = useState<string | null>(null)
+  const [editTaglines, setEditTaglines] = useState<string[]>([])
+  const [editLived, setEditLived] = useState('')
   const [editAvatar, setEditAvatar]   = useState<string | null>(null)
   const [uploadingAv, setUploadingAv] = useState(false)
   const [avatarUploadMsg, setAvatarUploadMsg] = useState<{ type: 'error' | 'info'; text: string } | null>(null)
@@ -691,6 +693,9 @@ export default function DashboardPage() {
     setEditLangs(profile.languages_spoken || ['english'])
     setEditRate(String(profile.rate_per_min || 10))
     setEditAvatar(profile.avatar_url || null)
+    const p = profile as { tagline_phrases?: string[] | null; lived_experience?: string | null }
+    setEditTaglines(p.tagline_phrases ?? [])
+    setEditLived(p.lived_experience ?? '')
     setShowEdit(true)
   }
 
@@ -700,9 +705,11 @@ export default function DashboardPage() {
     setAvatarUploadMsg(null)
     setUploadingAv(true)
     try {
-      const upload = await compressImage(file, AVATAR_OPTS)
+      const upload = await compressImage(file, { maxDim: 1024, quality: 0.86 })
       const ext = extForType(upload.type)
-      const path = `${user.id}.${ext}`
+      // Unique path per upload: never overwrite the live, approved photo —
+      // the new one stays pending until the admin approves it.
+      const path = `${user.id}.display-${Date.now()}.${ext}`
       const UPLOAD_TIMEOUT_MS = 30_000
       const uploadTimeout = new Promise<never>((_, reject) =>
         setTimeout(() => reject(new Error('upload_timeout')), UPLOAD_TIMEOUT_MS)
@@ -723,7 +730,7 @@ export default function DashboardPage() {
       const json = await res.json().catch(() => ({}))
       if (json.pending_review) {
         // Approved listener: new selfie goes to admin review, not live yet.
-        setAvatarUploadMsg({ type: 'info', text: 'Your new selfie is under review. Your current photo stays live until an admin approves it.' })
+        setAvatarUploadMsg({ type: 'info', text: 'Your new photo is under review. Until an admin approves it you are set offline and hidden from browse — usually within 24 hours.' })
       } else {
         setEditAvatar(url)
       }
@@ -771,6 +778,15 @@ export default function DashboardPage() {
       alert('Please select at least one language you speak.')
       return
     }
+    if (editTaglines.length > 0 && editTaglines.length !== TAGLINE_PICK) {
+      alert(`Pick exactly ${TAGLINE_PICK} phrases for "People talk to me about…".`)
+      return
+    }
+    const livedLen = editLived.trim().length
+    if (livedLen > 0 && (livedLen < LIVED_MIN_CHARS || livedLen > LIVED_MAX_CHARS)) {
+      alert(`"What I've been through" must be ${LIVED_MIN_CHARS}–${LIVED_MAX_CHARS} characters (currently ${livedLen}).`)
+      return
+    }
     setSavingEdit(true)
     const res = await fetch('/api/listener/profile', {
       method: 'PATCH',
@@ -780,6 +796,8 @@ export default function DashboardPage() {
         specialty_tags: editTags,
         languages_spoken: editLangs,
         rate_per_min: rate,
+        ...(editTaglines.length > 0 ? { tagline_phrases: editTaglines } : {}),
+        ...(livedLen > 0 ? { lived_experience: editLived.trim() } : {}),
       }),
     })
     setSavingEdit(false)
@@ -794,6 +812,8 @@ export default function DashboardPage() {
       languages_spoken: editLangs,
       rate_per_min: rate,
       avatar_url: editAvatar,
+      ...(editTaglines.length > 0 ? { tagline_phrases: editTaglines } : {}),
+      ...(livedLen > 0 ? { lived_experience: editLived.trim() } : {}),
     } : null)
     setShowEdit(false)
   }
@@ -948,11 +968,14 @@ export default function DashboardPage() {
                   ? <Avatar src={editAvatar} alt="avatar" size={192} />
                   : ini(profile?.name)}
               </div>
-              <SelfieCapture
-                preview={editAvatar}
-                loading={uploadingAv}
-                onCapture={uploadAvatar}
-              />
+              <label style={{display:'inline-flex',alignItems:'center',gap:8,cursor:uploadingAv ? 'wait' : 'pointer',background:'var(--navy)',color:'white',borderRadius:50,minHeight:44,padding:'0 18px',fontWeight:800,fontSize:13,marginTop:8}}>
+                {uploadingAv ? 'Uploading…' : 'Change display photo'}
+                <input type="file" accept="image/jpeg,image/png,image/webp" style={{display:'none'}} disabled={uploadingAv}
+                  onChange={e => { const f = e.target.files?.[0]; e.target.value = ''; if (f) uploadAvatar(f) }} />
+              </label>
+              <div style={{fontSize:11,color:'var(--gray)',fontWeight:600,marginTop:6,textAlign:'center',lineHeight:1.5}}>
+                A real, well-lit photo of just you, face clearly visible. Reviewed before it goes live.
+              </div>
               {avatarUploadMsg && (
                 <div style={{
                   marginTop: 8, fontSize: 12, fontWeight: 600, lineHeight: 1.5,
@@ -975,7 +998,37 @@ export default function DashboardPage() {
                 rows={3}
                 value={editBio}
                 onChange={e => setEditBio(e.target.value)}
-                placeholder="Share a little about your lived experience and how you can help..."
+                placeholder="Share a little about yourself and how you listen..."
+              />
+            </div>
+
+            {/* People talk to me about… */}
+            <div className="field-group">
+              <div className="field-label">People talk to me about… — pick {TAGLINE_PICK} ({editTaglines.length}/{TAGLINE_PICK})</div>
+              <div className="tag-grid">
+                {TAGLINE_PHRASES.map(p => {
+                  const sel = editTaglines.includes(p)
+                  const full = !sel && editTaglines.length >= TAGLINE_PICK
+                  return (
+                    <button key={p} type="button" className={`tag-chip${sel ? ' sel' : ''}`} disabled={full} style={full ? { opacity: 0.45 } : undefined}
+                      onClick={() => setEditTaglines(t => sel ? t.filter(x => x !== p) : [...t, p])}>
+                      {p}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* What I've been through */}
+            <div className="field-group">
+              <div className="field-label">What I&apos;ve been through ({LIVED_MIN_CHARS}–{LIVED_MAX_CHARS} characters)</div>
+              <textarea
+                className="field-input"
+                rows={4}
+                value={editLived}
+                maxLength={LIVED_MAX_CHARS}
+                onChange={e => setEditLived(e.target.value)}
+                placeholder="Your lived experience — what you've been through and come out the other side of."
               />
             </div>
 
