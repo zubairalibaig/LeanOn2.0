@@ -87,6 +87,10 @@
   per-mode rate in `sessions.listener_rate_per_min` — settlement caps the listener's
   share at that rate, so it MUST be the voice rate for voice sessions. Kill switch:
   `NEXT_PUBLIC_VOICE_PRICING=false` + redeploy → single rate for both modes.
+  Voice→text fallback (`/api/sessions/switch-to-text`, `voiceSwitchRefund()`) refunds
+  the seeker the voice premium for unused minutes by LOWERING `amount_held`; every
+  settlement path (PATCH, cleanup, expire) must therefore bill from the row returned
+  by its own conditional UPDATE — never an earlier read — or the premium is paid twice.
 - Session durations: 5 (free trial) / 15 / 30 / 45 minutes. The free trial may be text OR voice.
 - Crisis helplines: ONLY NIMHANS (080-46110007) and Tele-MANAS (14416).
   Never add iCall, Vandrevala, SNEHI, or any other number.

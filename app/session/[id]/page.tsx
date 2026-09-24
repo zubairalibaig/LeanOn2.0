@@ -558,6 +558,12 @@ function SessionContent() {
         'postgres_changes' as 'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'sessions', filter: `id=eq.${sessionId}` },
         (payload: { new: Record<string, unknown> }) => {
+          if (payload.new.session_type === 'text') {
+            // Other participant fell back to text (see switchToText)
+            cleanupAgora()
+            setIsVoice(false)
+            setVoiceError(null)
+          }
           const ns = payload.new.status as string | undefined
           if (!ns) return
           setSessionStatus(ns)
@@ -994,12 +1000,26 @@ function SessionContent() {
     setVoiceRetryKey(k => k + 1)
   }
 
-  // Fall back to text chat — keeps the same live session, just switches UI mode
+  // Fall back to text chat — same live session. The server turns it into a
+  // text session and refunds the seeker the voice extra for unused minutes;
+  // the other participant switches via the sessions UPDATE subscription.
   function switchToText() {
     cleanupAgora()
     setIsVoice(false)
     setVoiceError(null)
     setVoiceStatus('connecting')
+    fetch('/api/sessions/switch-to-text', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId }),
+    })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (d?.refund > 0 && userId !== listenerId) {
+          showToast(`Switched to text — ₹${d.refund} voice extra refunded to your wallet`, 'success')
+        }
+      })
+      .catch(() => {})
   }
 
   function handleInputChange(val: string) {
@@ -1164,7 +1184,7 @@ function SessionContent() {
               </div>
             )}
             <div className="end-duration">⏱ Duration: {durationDisplay}</div>
-            <p className="end-p">{voiceFailed ? 'The voice connection could not be established. You have not been charged.' : userId === listenerId
+            <p className="end-p">{voiceFailed ? 'The voice connection could not be established. Sessions that end within the first minute are fully refunded to your wallet.' : userId === listenerId
               ? 'Thank you for supporting someone today. 💙'
               : 'How are you feeling? Rate your session to help others find the right listener.'}</p>
             {userId !== listenerId && !voiceFailed && (

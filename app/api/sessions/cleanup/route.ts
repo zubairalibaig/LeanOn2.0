@@ -88,19 +88,19 @@ export async function POST(req: Request) {
     // Shared settlement math (lib/session-billing.ts) — whole minutes rounded
     // UP capped at booked, so a full-length session never gets shaved by floor.
     const endedAt = completed.ended_at ?? new Date().toISOString()
-    const bookedMins = session.duration_mins as number
+    const bookedMins = completed.duration_mins as number
     const { billedMins, listenerEarning: earning, refundAmount, listenerServiceFee } = settleSession({
-      startedAt:          (session.started_at as string | null) ?? null,
+      startedAt:          (completed.started_at as string | null) ?? null,
       endedAt,
       bookedMins,
-      amountHeld:         session.amount_held as number,
-      platformFee:        (session.platform_fee as number) ?? 0,
-      isFreeTrial:        session.is_free_trial as boolean,
-      listenerRatePerMin: (session.listener_rate_per_min as number | null) ?? undefined,
+      amountHeld:         completed.amount_held as number,
+      platformFee:        (completed.platform_fee as number) ?? 0,
+      isFreeTrial:        completed.is_free_trial as boolean,
+      listenerRatePerMin: (completed.listener_rate_per_min as number | null) ?? undefined,
     })
 
     // Refund seeker for unused portion
-    if (refundAmount > 0 && !session.is_free_trial) {
+    if (refundAmount > 0 && !completed.is_free_trial) {
       const { error: refundErr } = await sb.rpc('credit_wallet', { p_user_id: session.seeker_id, p_amount: refundAmount })
       if (refundErr) {
         logger.error('cleanup: seeker refund failed — manual reconciliation needed', { sessionId: session.id, seekerId: session.seeker_id, refundAmount })
@@ -115,7 +115,7 @@ export async function POST(req: Request) {
       }
     }
 
-    if (earning > 0 && !session.is_free_trial) {
+    if (earning > 0 && !completed.is_free_trial) {
       const { error: creditErr } = await sb.rpc('credit_wallet', {
         p_user_id: session.listener_id,
         p_amount: earning,
@@ -139,8 +139,8 @@ export async function POST(req: Request) {
         const { error: earningsErr } = await sb.from('listener_earnings').insert({
           listener_id:    session.listener_id,
           session_id:     session.id,
-          gross_amount:   Math.round(session.amount_held as number),
-          platform_fee:   Math.round(session.amount_held as number) - Math.round(refundAmount) - Math.round(earning),
+          gross_amount:   Math.round(completed.amount_held as number),
+          platform_fee:   Math.round(completed.amount_held as number) - Math.round(refundAmount) - Math.round(earning),
           net_amount:     Math.round(earning),
           listener_gross: listenerGross,
           service_fee:    Math.round(listenerServiceFee),

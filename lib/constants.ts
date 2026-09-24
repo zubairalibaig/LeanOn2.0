@@ -28,6 +28,8 @@ export const MAX_LISTENER_RATE  = 500  // ₹/min — requires migration 039 (01
 // price shown and the price charged always agree.
 export const VOICE_PRICING_ENABLED = process.env.NEXT_PUBLIC_VOICE_PRICING !== 'false'
 export const VOICE_RATE_PREMIUM    = 5 // ₹/min
+// Sessions booked before this (the voice-pricing deploy) never paid the premium.
+export const VOICE_PRICING_FROM    = Date.parse('2026-09-24T04:55:00Z')
 export const sessionRatePerMin = (textRate: number, type: 'text' | 'voice') =>
   type === 'voice' && VOICE_PRICING_ENABLED ? textRate + VOICE_RATE_PREMIUM : textRate
 export const FREE_SESSION_MINS  = 5

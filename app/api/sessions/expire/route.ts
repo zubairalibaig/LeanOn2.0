@@ -73,18 +73,18 @@ export async function GET(req: NextRequest) {
 
       // Shared settlement math (lib/session-billing.ts). This path only fires
       // when a session overran by 10+ minutes, so it settles as a full session.
-      const bookedMins = session.duration_mins as number
+      const bookedMins = completed.duration_mins as number
       const { billedMins, listenerEarning, refundAmount, listenerServiceFee } = settleSession({
-        startedAt:          (session.started_at as string | null) ?? null,
+        startedAt:          (completed.started_at as string | null) ?? null,
         endedAt,
         bookedMins,
-        amountHeld:         session.amount_held as number,
-        platformFee:        (session.platform_fee as number) ?? 0,
-        isFreeTrial:        session.is_free_trial as boolean,
-        listenerRatePerMin: (session.listener_rate_per_min as number | null) ?? undefined,
+        amountHeld:         completed.amount_held as number,
+        platformFee:        (completed.platform_fee as number) ?? 0,
+        isFreeTrial:        completed.is_free_trial as boolean,
+        listenerRatePerMin: (completed.listener_rate_per_min as number | null) ?? undefined,
       })
 
-      if (listenerEarning > 0 && !session.is_free_trial) {
+      if (listenerEarning > 0 && !completed.is_free_trial) {
         await sb.rpc('credit_wallet', { p_user_id: session.listener_id, p_amount: listenerEarning })
           .then(() => {}, () => {})
         await sb.from('wallet_transactions').insert({
@@ -102,8 +102,8 @@ export async function GET(req: NextRequest) {
         const { error: earningsErr } = await sb.from('listener_earnings').insert({
           listener_id:    session.listener_id,
           session_id:     session.id,
-          gross_amount:   Math.round(session.amount_held),
-          platform_fee:   Math.round(session.amount_held) - Math.round(refundAmount) - Math.round(listenerEarning),
+          gross_amount:   Math.round(completed.amount_held),
+          platform_fee:   Math.round(completed.amount_held) - Math.round(refundAmount) - Math.round(listenerEarning),
           net_amount:     Math.round(listenerEarning),
           listener_gross: listenerGross,
           service_fee:    Math.round(listenerServiceFee),

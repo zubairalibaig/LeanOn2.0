@@ -305,22 +305,26 @@ export async function PATCH(req: NextRequest) {
     // and expire crons). Bills whole minutes rounding UP capped at booked — a
     // full-length session that clocks 14m58s settles as 15/15 with no refund;
     // an early exit still pro-rates; < 60s is a full refund (accidental start).
+    // Bill from `completed` — the row as it stood when OUR conditional UPDATE
+    // won — not the earlier `session` read. A concurrent voice→text switch
+    // (/api/sessions/switch-to-text) lowers amount_held; using the stale read
+    // would pay out the premium the seeker was just refunded.
     const endedAt = completed.ended_at ?? new Date().toISOString()
-    const bookedMins = session.duration_mins as number
+    const bookedMins = completed.duration_mins as number
     const { billedMins, listenerEarning, refundAmount, listenerServiceFee } = settleSession({
-      startedAt:         session.started_at ?? null,
+      startedAt:         completed.started_at ?? null,
       endedAt,
       bookedMins,
-      amountHeld:        session.amount_held,
-      platformFee:       session.platform_fee ?? 0,
-      isFreeTrial:       session.is_free_trial,
+      amountHeld:        Number(completed.amount_held),
+      platformFee:       completed.platform_fee ?? 0,
+      isFreeTrial:       completed.is_free_trial,
       // NRI sessions: caps listener's rawShare at their configured rate × billed_mins.
       // NULL for India sessions or pre-migration rows → India formula used as before.
-      listenerRatePerMin: (session.listener_rate_per_min as number | null) ?? undefined,
+      listenerRatePerMin: (completed.listener_rate_per_min as number | null) ?? undefined,
     })
 
     // Issue refund to seeker if applicable
-    if (refundAmount > 0 && !session.is_free_trial) {
+    if (refundAmount > 0 && !completed.is_free_trial) {
       const { error: refundErr } = await sb.rpc('credit_wallet', { p_user_id: session.seeker_id, p_amount: refundAmount })
       if (refundErr) {
         logger.error('Refund credit_wallet failed — manual reconciliation needed:', {
@@ -337,7 +341,7 @@ export async function PATCH(req: NextRequest) {
       }
     }
 
-    if (listenerEarning > 0 && !session.is_free_trial) {
+    if (listenerEarning > 0 && !completed.is_free_trial) {
       const { error: creditErr } = await sb.rpc('credit_wallet', {
         p_user_id: session.listener_id,
         p_amount:  listenerEarning,
@@ -372,8 +376,8 @@ export async function PATCH(req: NextRequest) {
         const { error: earningsErr } = await sb.from('listener_earnings').insert({
           listener_id:   session.listener_id,
           session_id:    sessionId,
-          gross_amount:  Math.round(session.amount_held),
-          platform_fee:  Math.round(session.amount_held) - Math.round(refundAmount) - Math.round(listenerEarning),
+          gross_amount:  Math.round(Number(completed.amount_held)),
+          platform_fee:  Math.round(Number(completed.amount_held)) - Math.round(refundAmount) - Math.round(listenerEarning),
           net_amount:    Math.round(listenerEarning),
           listener_gross: listenerGross,
           service_fee:   Math.round(listenerServiceFee),
@@ -429,7 +433,7 @@ export async function PATCH(req: NextRequest) {
           seekerName:      nameMap[session.seeker_id] ?? 'there',
           listenerName:    nameMap[session.listener_id] ?? 'Listener',
           durationMins:    session.duration_mins as number,
-          sessionType:     session.session_type as string,
+          sessionType:     completed.session_type as string,
           listenerEarning: listenerEarning > 0 ? listenerEarning : 0,
         })
       } catch (err) {

@@ -22,7 +22,7 @@
 // listener's rawShare (full or pro-rated), so an early-exit session is
 // charged the fee on the minutes actually earned, not the booked amount.
 
-import { LISTENER_SERVICE_FEE_RATE, sessionRatePerMin } from './constants'
+import { LISTENER_SERVICE_FEE_RATE, VOICE_PRICING_ENABLED, VOICE_PRICING_FROM, VOICE_RATE_PREMIUM, sessionRatePerMin } from './constants'
 
 export type SettlementInput = {
   startedAt: string | null   // sessions.started_at (null → treat as 0s used)
@@ -106,4 +106,27 @@ export function estimateListenerTakeHome(
     raw = Math.min(raw, sessionRatePerMin(Number(textRate), s.session_type === 'voice' ? 'voice' : 'text') * s.duration_mins)
   }
   return raw - Math.round(raw * LISTENER_SERVICE_FEE_RATE)
+}
+
+// Voice → text switch mid-session: the seeker gets back the voice premium for
+// the minutes not yet used (whole minutes used are rounded DOWN, so a call that
+// fails in the first minute refunds the whole premium). Returns 0 when the
+// session never paid a premium: free trials, NRI flat-price sessions (seeker
+// price is the same for both modes), and sessions booked before voice pricing.
+// Only amount_held is lowered — listener_rate_per_min stays the voice rate so
+// settlement pays voice minutes at voice and the rest at text, automatically.
+export function voiceSwitchRefund(s: {
+  amount_held: number; platform_fee?: number | null; duration_mins: number
+  is_free_trial: boolean; listener_rate_per_min?: number | null
+  started_at?: string | null; created_at?: string | null
+}, nowMs: number): number {
+  if (!VOICE_PRICING_ENABLED || s.is_free_trial || s.listener_rate_per_min == null) return 0
+  if (!s.created_at || Date.parse(s.created_at) < VOICE_PRICING_FROM) return 0
+  // India sessions only: amount_held − fee == rate × booked mins. NRI holds a flat price.
+  if (s.listener_rate_per_min * s.duration_mins !== s.amount_held - (s.platform_fee ?? 0)) return 0
+  if (s.listener_rate_per_min - VOICE_RATE_PREMIUM < 1) return 0
+  const startMs = s.started_at ? Date.parse(s.started_at) : nowMs
+  const usedMins = Math.floor(Math.max(0, nowMs - startMs) / 60_000)
+  const remaining = Math.max(0, s.duration_mins - usedMins)
+  return VOICE_RATE_PREMIUM * remaining
 }
