@@ -522,8 +522,14 @@ export default function DashboardPage() {
     if (SHOW_LISTENER_PRICING_UPDATE_NOTICE) {
       let dismissed = false
       try { dismissed = localStorage.getItem(PRICING_NOTICE.storageKey) === '1' } catch { /* ignore */ }
+      let sent = false
+      try { sent = localStorage.getItem(PRICING_NOTICE.sentKey) === '1' } catch { /* ignore */ }
       if (!dismissed) setShowFeeNotice(true)
-      fetch('/api/listener/announcement', { method: 'POST' }).catch(() => {})
+      if (!sent) {
+        fetch('/api/listener/announcement', { method: 'POST' })
+          .then(r => { if (r.ok) { try { localStorage.setItem(PRICING_NOTICE.sentKey, '1') } catch { /* ignore */ } } })
+          .catch(() => {})
+      }
     }
 
     // Missed requests — pending sessions that were cancelled (declined/timed out)
@@ -1125,13 +1131,13 @@ export default function DashboardPage() {
               <button onClick={dismiss} aria-label="Dismiss"
                 style={{position:'absolute',top:12,right:12,background:'transparent',border:'none',color:'var(--gray)',fontSize:20,fontWeight:900,cursor:'pointer',lineHeight:1,padding:4}}>×</button>
               <div style={{fontSize:16,fontWeight:900,color:'var(--navy)',marginBottom:12,paddingRight:24}}>
-                📣 Two updates to how you earn on LeanOn
+                📣 {VOICE_PRICING_ENABLED ? 'Two updates' : 'An update'} to how you earn on LeanOn
               </div>
               <div style={{fontSize:13,color:'#3A6070',lineHeight:1.65,fontWeight:500,display:'grid',gap:10}}>
-                <div>
+                {VOICE_PRICING_ENABLED && <div>
                   <strong style={{color:'var(--navy)'}}>📞 Voice calls now earn you more.</strong> Seekers can now pick text chat
                   or a voice call, and voice is always priced ₹{VOICE_RATE_PREMIUM}/min above your text rate — automatically.
-                </div>
+                </div>}
                 <div>
                   <strong style={{color:'var(--navy)'}}>🤝 You keep {Math.round((1 - LISTENER_SERVICE_FEE_RATE) * 100)}% of every session.</strong> From
                   24 Sep 2026, LeanOn&apos;s service fee is {Math.round(LISTENER_SERVICE_FEE_RATE * 100)}%. It covers the work around your
@@ -1139,9 +1145,11 @@ export default function DashboardPage() {
                   on listening. Sessions you&apos;ve already completed aren&apos;t affected.
                 </div>
                 <div>
-                  <strong style={{color:'var(--navy)'}}>✏️ You set your price.</strong> At your current rate (💬 ₹{text} · 📞 ₹{voice} /min),
-                  a 30-min voice call takes home <strong style={{color:'var(--navy)'}}>₹{takeHome(voice, 30)}</strong> and a 30-min text chat
-                  <strong style={{color:'var(--navy)'}}> ₹{takeHome(text, 30)}</strong>. Now is a good time to review your price.
+                  <strong style={{color:'var(--navy)'}}>✏️ You set your price.</strong>{' '}
+                  {VOICE_PRICING_ENABLED
+                    ? <>At your current rate (💬 ₹{text} · 📞 ₹{voice} /min), a 30-min voice call takes home <strong style={{color:'var(--navy)'}}>₹{takeHome(voice, 30)}</strong> and a 30-min text chat <strong style={{color:'var(--navy)'}}>₹{takeHome(text, 30)}</strong>.</>
+                    : <>At your current rate (₹{text}/min), a 30-min session takes home <strong style={{color:'var(--navy)'}}>₹{takeHome(text, 30)}</strong>.</>}
+                  {' '}Now is a good time to review your price.
                 </div>
               </div>
               <div style={{display:'flex',gap:10,marginTop:14,flexWrap:'wrap'}}>

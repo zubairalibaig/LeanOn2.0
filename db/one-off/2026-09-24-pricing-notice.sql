@@ -9,6 +9,11 @@ SELECT lp.user_id, 'pricing_update_2026_09', 'Voice calls now earn you more — 
 FROM public.listener_profiles lp
 JOIN public.users u ON u.id = lp.user_id
 WHERE COALESCE(u.phone, '') NOT LIKE 'DELETE%'
+  AND NOT COALESCE(lp.is_suspended, false)
+  AND NOT EXISTS (
+    SELECT 1 FROM public.listener_applications a
+    WHERE a.user_id = lp.user_id AND a.status = 'rejected'
+  )
   AND NOT EXISTS (
     SELECT 1 FROM public.notifications x
     WHERE x.user_id = lp.user_id AND x.type = 'pricing_update_2026_09'
