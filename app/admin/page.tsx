@@ -1920,9 +1920,11 @@ export default function AdminPage() {
                                         <span style={{ fontSize: 10, color: 'var(--gray)', fontWeight: 700 }}>uploaded {fmtWhen(photoUploadedAt(l.pending_avatar_url))}</span>
                                       )}
                                     </div>
-                                    {/* Current (live) vs new, side by side, so the admin can compare. */}
+                                    {/* Current (live) vs new, side by side, so the admin can compare.
+                                        If both URLs are identical the listener has no prior approved
+                                        photo distinct from the pending one — show Current as "None". */}
                                     <div style={{ display: 'flex', gap: 8 }}>
-                                      {[{ label: 'Current', url: u?.avatar_url || null }, { label: 'New', url: l.pending_avatar_url }].map(p => (
+                                      {[{ label: 'Current', url: (u?.avatar_url && u.avatar_url !== l.pending_avatar_url) ? u.avatar_url : null }, { label: 'New', url: l.pending_avatar_url }].map(p => (
                                         <a key={p.label} href={p.url || undefined} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', textAlign: 'center' }}>
                                           <div style={{ width: 72, height: 72, borderRadius: 8, overflow: 'hidden', background: 'var(--light)', border: p.label === 'New' ? '2px solid #d4a017' : '1.5px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: 'var(--gray)', fontWeight: 700 }}>
                                             {p.url
