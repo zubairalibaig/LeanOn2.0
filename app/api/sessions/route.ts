@@ -242,10 +242,15 @@ export async function POST(req: NextRequest) {
           // Recovery: write the rate to the now-active session so settlement is correct.
           // Without this, an NRI session settles with NULL listener_rate_per_min and
           // the listener is paid the entire flat price instead of their rate × billed_mins.
-          const recoveryUpdate: Record<string, unknown> = { listener_rate_per_min: Math.round(rate) }
-          if (bookedServiceFeeRate !== undefined) recoveryUpdate.service_fee_rate = bookedServiceFeeRate
-          const { error: recoveryErr } = await sb.from('sessions')
-            .update(recoveryUpdate).eq('id', sessionId).eq('status', 'active')
+          const recoverWith = (includeFeeRate: boolean) => sb.from('sessions')
+            .update(includeFeeRate
+              ? { listener_rate_per_min: Math.round(rate), service_fee_rate: bookedServiceFeeRate }
+              : { listener_rate_per_min: Math.round(rate) })
+            .eq('id', sessionId).eq('status', 'active')
+          let { error: recoveryErr } = await recoverWith(true)
+          if (recoveryErr?.message?.includes('service_fee_rate')) {
+            ;({ error: recoveryErr } = await recoverWith(false))
+          }
           if (recoveryErr) {
             logger.error('Session POST: recovery rate write failed — RECONCILIATION NEEDED', { sessionId, error: recoveryErr.message })
           } else {

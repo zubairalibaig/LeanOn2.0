@@ -57,7 +57,7 @@ export async function POST(req: Request) {
   // Find sessions that started more than (duration + 2 min grace) ago and are still active
   const { data: orphans, error } = await sb
     .from('sessions')
-    .select('id, seeker_id, listener_id, amount_held, platform_fee, is_free_trial, duration_mins, started_at, listener_rate_per_min, service_fee_rate, seeker_last_seen, listener_last_seen')
+    .select('*')
     .eq('status', 'active')
     .lt('started_at', new Date(Date.now() - 2 * 60_000).toISOString()) // at least 2 min old
 

@@ -33,11 +33,21 @@ export async function POST(req: NextRequest) {
     }
 
     // Fetch the session
-    const { data: session, error: sessErr } = await sb
+    let { data: session, error: sessErr } = await sb
       .from('sessions')
       .select('id, listener_id, seeker_id, status, is_free_trial, amount_held, platform_fee, started_at, ended_at, duration_mins, listener_rate_per_min, service_fee_rate')
       .eq('id', sessionId)
       .single()
+    // service_fee_rate column missing (migration 062 not applied) — retry without it.
+    if (sessErr?.message?.includes('service_fee_rate')) {
+      const fallback = await sb
+        .from('sessions')
+        .select('id, listener_id, seeker_id, status, is_free_trial, amount_held, platform_fee, started_at, ended_at, duration_mins, listener_rate_per_min')
+        .eq('id', sessionId)
+        .single()
+      session = fallback.data ? { ...fallback.data, service_fee_rate: null } : null
+      sessErr = fallback.error ?? null
+    }
     if (sessErr || !session) {
       return NextResponse.json({ error: 'Session not found' }, { status: 404 })
     }

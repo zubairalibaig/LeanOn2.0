@@ -792,13 +792,18 @@ export async function PATCH(req: NextRequest) {
           }
         }
         const rate = raw === undefined ? null : raw  // undefined from body means clear
-        const { error: feeErr } = await sb
+        const { data: updated, error: feeErr } = await sb
           .from('listener_profiles')
           .update({ custom_service_fee_rate: rate })
           .eq('user_id', userId)
+          .select('user_id')
+          .maybeSingle()
         if (feeErr) {
           logger.error('set_custom_fee_rate: update failed', { userId, rate, error: feeErr.message })
           return NextResponse.json({ error: `Failed to set custom fee rate: ${feeErr.message}` }, { status: 500 })
+        }
+        if (!updated) {
+          return NextResponse.json({ error: 'Listener profile not found' }, { status: 404 })
         }
         logger.info('set_custom_fee_rate', { userId, rate, adminId: user!.id })
         break
