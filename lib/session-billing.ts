@@ -22,7 +22,7 @@
 // listener's rawShare (full or pro-rated), so an early-exit session is
 // charged the fee on the minutes actually earned, not the booked amount.
 
-import { LISTENER_SERVICE_FEE_RATE, VOICE_PRICING_ENABLED, VOICE_PRICING_FROM, VOICE_RATE_PREMIUM, serviceFeeRateAt, sessionRatePerMin } from './constants'
+import { LISTENER_SERVICE_FEE_RATE, PLATFORM_FEE, VOICE_PRICING_ENABLED, VOICE_PRICING_FROM, VOICE_RATE_PREMIUM, serviceFeeRateAt, sessionRatePerMin } from './constants'
 
 export type SettlementInput = {
   startedAt: string | null   // sessions.started_at (null → treat as 0s used)
@@ -88,8 +88,11 @@ export function settleSession(s: SettlementInput): Settlement {
 
   // Fee computed first, earning is the remainder — guarantees
   // listenerEarning + listenerServiceFee === rawShare exactly (no rounding leak).
-  // Priority: per-session locked rate (migration 062) > global schedule.
-  const feeRate = s.serviceFeeRate != null ? s.serviceFeeRate : serviceFeeRateAt(s.startedAt ?? s.endedAt)
+  // Priority: per-session locked rate (migration 062) > global schedule at started_at.
+  // Do NOT fall back to endedAt: a fee-schedule change between start and end would apply
+  // the wrong rate. serviceFeeRateAt(null) → current rate (safe: startedAt is only null
+  // for accidental starts, which return early above with listenerServiceFee=0).
+  const feeRate = s.serviceFeeRate != null ? s.serviceFeeRate : serviceFeeRateAt(s.startedAt)
   const listenerServiceFee = Math.round(rawShare * feeRate)
   const listenerEarning = rawShare - listenerServiceFee
 
@@ -128,7 +131,9 @@ export function voiceSwitchRefund(s: {
   if (!VOICE_PRICING_ENABLED || s.is_free_trial || s.listener_rate_per_min == null) return 0
   if (!s.created_at || Date.parse(s.created_at) < VOICE_PRICING_FROM) return 0
   // India sessions only: amount_held − fee == rate × booked mins. NRI holds a flat price.
-  if (s.listener_rate_per_min * s.duration_mins !== s.amount_held - (s.platform_fee ?? 0)) return 0
+  // NULL platform_fee means the ₹10 fee was stored before this column existed — treat as PLATFORM_FEE, not 0.
+  // Using 0 here would make India sessions (amount_held = rate×dur + 10) look like NRI sessions and block the refund.
+  if (s.listener_rate_per_min * s.duration_mins !== s.amount_held - (s.platform_fee ?? PLATFORM_FEE)) return 0
   if (s.listener_rate_per_min - VOICE_RATE_PREMIUM < 1) return 0
   const startMs = s.started_at ? Date.parse(s.started_at) : nowMs
   const usedMins = Math.floor(Math.max(0, nowMs - startMs) / 60_000)

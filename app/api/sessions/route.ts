@@ -140,6 +140,11 @@ export async function POST(req: NextRequest) {
     // the global schedule. NULL custom_service_fee_rate means "use global rate".
     // Resolution chain: custom override → global SERVICE_FEE_SCHEDULE.
     // (Future: a fee_tier lookup can be inserted between the two.)
+    // Rate is locked at POST (booking time), not at started_at. The session doesn't
+    // have a started_at yet — the listener hasn't accepted. started_at is stamped
+    // when the listener presses Accept, seconds to minutes later. Using now() as a
+    // proxy is safe: the global fee schedule changes rarely and only forwards;
+    // a per-listener custom rate is already locked in custom_service_fee_rate.
     const bookedServiceFeeRate = (lp as { custom_service_fee_rate?: number | null }).custom_service_fee_rate
       ?? serviceFeeRateAt(new Date().toISOString())
 
@@ -230,9 +235,23 @@ export async function POST(req: NextRequest) {
           const { error: refundErr } = await sb.rpc('credit_wallet', { p_user_id: user.id, p_amount: total })
           if (refundErr) {
             logger.error('Session POST: booking_error refund failed — RECONCILIATION NEEDED', { sessionId, seekerId: user.id, total, error: refundErr.message })
+            return NextResponse.json({ error: 'booking_error', message: 'We could not set up this session. Your wallet was charged — please contact support for a refund.' }, { status: 500 })
           }
         } else {
-          logger.error('Session POST: could not cancel session after rate write failure — RECONCILIATION NEEDED', { sessionId })
+          // Session was accepted by the listener while we were retrying the rate write.
+          // Recovery: write the rate to the now-active session so settlement is correct.
+          // Without this, an NRI session settles with NULL listener_rate_per_min and
+          // the listener is paid the entire flat price instead of their rate × billed_mins.
+          const recoveryUpdate: Record<string, unknown> = { listener_rate_per_min: Math.round(rate) }
+          if (bookedServiceFeeRate !== undefined) recoveryUpdate.service_fee_rate = bookedServiceFeeRate
+          const { error: recoveryErr } = await sb.from('sessions')
+            .update(recoveryUpdate).eq('id', sessionId).eq('status', 'active')
+          if (recoveryErr) {
+            logger.error('Session POST: recovery rate write failed — RECONCILIATION NEEDED', { sessionId, error: recoveryErr.message })
+          } else {
+            logger.warn('Session POST: rate written to active session after cancel failed', { sessionId })
+          }
+          return NextResponse.json({ error: 'booking_error', message: 'We could not set up this session. Please contact support.' }, { status: 500 })
         }
         return NextResponse.json({ error: 'booking_error', message: 'We could not start this session. You have not been charged — please try again.' }, { status: 500 })
       }

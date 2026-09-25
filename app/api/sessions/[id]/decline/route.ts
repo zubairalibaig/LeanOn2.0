@@ -51,8 +51,11 @@ export async function POST(
   // anyone could book, "time out" early, and knock a listener offline for free.
   // The listener's own countdown gets 30s of clock-skew slack.
   const ageMs = Date.now() - new Date(session.created_at as string).getTime()
+  // Listener gets 30s of clock-skew slack; seeker gets none — they control the
+  // clock on their end and 2s slack let a seeker claim timeout early, triggering
+  // recordMissedRequest and potentially knocking a listener offline.
   const timedOut = body?.reason === 'timeout'
-    && ageMs >= REQUEST_RESPONSE_WINDOW_MS - (isListener ? 30_000 : 2_000)
+    && ageMs >= REQUEST_RESPONSE_WINDOW_MS - (isListener ? 30_000 : 0)
   const cancelReason = timedOut ? 'timed_out' : isListener ? 'declined' : 'seeker_cancelled'
 
   // Atomically cancel (optimistic lock on status='pending' → refund fires once)

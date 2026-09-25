@@ -234,8 +234,14 @@ export async function POST(req: NextRequest) {
   // The derived password is never stored, never returned, and can never be
   // independently learned — an attacker must compromise the service role key
   // (which already gives full DB access) to derive it.
+  // SESSION_PASSWORD_SECRET is a stable secret dedicated to this HMAC.
+  // Intentionally NOT keyed on SUPABASE_SERVICE_ROLE_KEY: rotating that key would
+  // change every user's derived password → updateUserById fires for everyone on
+  // next login → all their existing sessions on other devices are invalidated.
+  // Add SESSION_PASSWORD_SECRET to Vercel env; fallback to service role key for
+  // existing deployments without it (same security, but rotation risk remains).
   const password = crypto
-    .createHmac('sha256', process.env.SUPABASE_SERVICE_ROLE_KEY ?? 'fallback-salt')
+    .createHmac('sha256', process.env.SESSION_PASSWORD_SECRET ?? process.env.SUPABASE_SERVICE_ROLE_KEY ?? 'fallback-salt')
     .update(userId!)
     .digest('base64url')
 

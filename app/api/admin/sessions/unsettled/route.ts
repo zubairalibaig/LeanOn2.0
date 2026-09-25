@@ -3,6 +3,7 @@ import { createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 import { requireAdmin, ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS } from '@/lib/require-admin'
+import { LISTENER_SERVICE_FEE_RATE } from '@/lib/constants'
 
 // GET /api/admin/sessions/unsettled
 // Returns completed paid sessions where no credit wallet_transaction exists
@@ -68,7 +69,9 @@ export async function GET(req: NextRequest) {
       listener_name: s.listener?.name ?? 'Unknown',
       amount_held: s.amount_held ?? 0,
       platform_fee: s.platform_fee ?? 0,
-      listener_earning: (s.amount_held ?? 0) - (s.platform_fee ?? 0),
+      // Estimate: gross share minus service fee. Actual value may differ for NRI
+      // sessions or if a custom fee rate was in effect — rerun-settlement computes exact.
+      listener_earning: Math.round(((s.amount_held ?? 0) - (s.platform_fee ?? 0)) * (1 - LISTENER_SERVICE_FEE_RATE)),
       created_at: s.created_at,
     }))
 
