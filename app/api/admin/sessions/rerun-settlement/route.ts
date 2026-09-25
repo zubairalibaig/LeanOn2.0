@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     // Fetch the session
     const { data: session, error: sessErr } = await sb
       .from('sessions')
-      .select('id, listener_id, seeker_id, status, is_free_trial, amount_held, platform_fee, started_at, ended_at, duration_mins, listener_rate_per_min')
+      .select('id, listener_id, seeker_id, status, is_free_trial, amount_held, platform_fee, started_at, ended_at, duration_mins, listener_rate_per_min, service_fee_rate')
       .eq('id', sessionId)
       .single()
     if (sessErr || !session) {
@@ -77,6 +77,7 @@ export async function POST(req: NextRequest) {
       platformFee: (session.platform_fee as number | null) ?? 0,
       isFreeTrial: session.is_free_trial as boolean,
       listenerRatePerMin: (session.listener_rate_per_min as number | null) ?? undefined,
+      serviceFeeRate:     (session.service_fee_rate as number | null) ?? undefined,
     })
     const { listenerEarning } = settlement
 

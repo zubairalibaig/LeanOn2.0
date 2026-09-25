@@ -38,6 +38,13 @@ export type SettlementInput = {
    * sessions.listener_rate_per_min (stored at booking time, migration 054).
    */
   listenerRatePerMin?: number | null
+  /**
+   * Service fee rate locked at booking time (sessions.service_fee_rate, migration 062).
+   * Set when a per-listener custom rate was in effect. NULL / undefined → fall back to
+   * serviceFeeRateAt(startedAt) from the global schedule, which is the behaviour for all
+   * sessions booked before migration 062 and for listeners without a custom rate.
+   */
+  serviceFeeRate?: number | null
 }
 
 export type Settlement = {
@@ -81,8 +88,9 @@ export function settleSession(s: SettlementInput): Settlement {
 
   // Fee computed first, earning is the remainder — guarantees
   // listenerEarning + listenerServiceFee === rawShare exactly (no rounding leak).
-  // Fee rate is locked at the session's start (see SERVICE_FEE_SCHEDULE).
-  const listenerServiceFee = Math.round(rawShare * serviceFeeRateAt(s.startedAt ?? s.endedAt))
+  // Priority: per-session locked rate (migration 062) > global schedule.
+  const feeRate = s.serviceFeeRate != null ? s.serviceFeeRate : serviceFeeRateAt(s.startedAt ?? s.endedAt)
+  const listenerServiceFee = Math.round(rawShare * feeRate)
   const listenerEarning = rawShare - listenerServiceFee
 
   const refundAmount = pool - charged

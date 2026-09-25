@@ -36,6 +36,8 @@ type ListenerRow = {
   user_id: string; bio?: string; specialty_tags?: string[]; rate_per_min?: number; rating?: number; total_sessions?: number
   is_active: boolean; is_approved: boolean; is_available: boolean; is_verified?: boolean; is_suspended?: boolean; created_at: string
   last_sign_in_at?: string | null
+  // Per-listener service fee override (migration 062). NULL = use global rate.
+  custom_service_fee_rate?: number | null
   // Pending selfie awaiting admin review (uploaded by an already-approved listener)
   pending_avatar_url?: string | null
   // Summed from listener_earnings by /api/admin/users. earned_total is
@@ -395,6 +397,9 @@ export default function AdminPage() {
   // Inline name-edit state (shared for both users and listeners tables)
   const [editingNameId, setEditingNameId] = useState<string | null>(null)
   const [editingNameValue, setEditingNameValue] = useState('')
+  // Inline custom service fee rate edit (per-listener override of global schedule)
+  const [editingFeeRateId, setEditingFeeRateId] = useState<string | null>(null)
+  const [feeRateInputValue, setFeeRateInputValue] = useState('')
   // Inline bank-details edit (replaces window.prompt, blocked on mobile PWA)
   const [editingBankId, setEditingBankId] = useState<string | null>(null)
   const [bankEditValues, setBankEditValues] = useState({ bank: '', ifsc: '', upi: '', holderName: '' })
@@ -2015,6 +2020,56 @@ export default function AdminPage() {
                                         {busy === `request_resubmission:${l.user_id}` ? '…' : 'Send to Needs Fix'}
                                       </button>
                                     </div>
+                                  </div>
+                                )}
+                                {/* Per-listener service fee rate override */}
+                                {l.is_approved && (
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, flexWrap: 'wrap' }}>
+                                    <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '.04em' }}>Service fee</span>
+                                    {editingFeeRateId === l.user_id ? (
+                                      <>
+                                        <input
+                                          type="number" min="0" max="100" step="1"
+                                          placeholder="% (0–100)"
+                                          value={feeRateInputValue}
+                                          onChange={e => setFeeRateInputValue(e.target.value)}
+                                          onKeyDown={e => {
+                                            if (e.key === 'Enter') {
+                                              const pct = feeRateInputValue.trim()
+                                              const rate = pct === '' ? null : Number(pct) / 100
+                                              if (rate !== null && (Number.isNaN(rate) || rate < 0 || rate > 1)) return
+                                              setEditingFeeRateId(null)
+                                              userAction(l.user_id, 'set_custom_fee_rate', undefined, undefined, { custom_service_fee_rate: rate })
+                                            }
+                                            if (e.key === 'Escape') setEditingFeeRateId(null)
+                                          }}
+                                          style={{ width: 80, padding: '3px 6px', border: '1.5px solid var(--teal)', borderRadius: 6, fontSize: 12, fontFamily: 'inherit' }}
+                                          autoFocus
+                                        />
+                                        <button className="btn btn-teal" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => {
+                                          const pct = feeRateInputValue.trim()
+                                          const rate = pct === '' ? null : Number(pct) / 100
+                                          if (rate !== null && (Number.isNaN(rate) || rate < 0 || rate > 1)) return
+                                          setEditingFeeRateId(null)
+                                          userAction(l.user_id, 'set_custom_fee_rate', undefined, undefined, { custom_service_fee_rate: rate })
+                                        }}>Save</button>
+                                        <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setEditingFeeRateId(null)}>Cancel</button>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <span style={{ fontSize: 12, fontWeight: 700, color: l.custom_service_fee_rate != null ? '#856404' : 'var(--gray)', background: l.custom_service_fee_rate != null ? '#fff3cd' : 'transparent', border: l.custom_service_fee_rate != null ? '1px solid #ffc107' : 'none', borderRadius: 4, padding: l.custom_service_fee_rate != null ? '1px 5px' : '0' }}>
+                                          {l.custom_service_fee_rate != null ? `${Math.round(l.custom_service_fee_rate * 100)}% (custom)` : `${Math.round(LISTENER_SERVICE_FEE_RATE * 100)}% (global default)`}
+                                        </span>
+                                        <button className="btn btn-gray" style={{ fontSize: 11, padding: '3px 7px' }} onClick={() => { setFeeRateInputValue(l.custom_service_fee_rate != null ? String(Math.round(l.custom_service_fee_rate * 100)) : ''); setEditingFeeRateId(l.user_id) }}>
+                                          {l.custom_service_fee_rate != null ? 'Edit' : 'Override'}
+                                        </button>
+                                        {l.custom_service_fee_rate != null && (
+                                          <button className="btn btn-gray" style={{ fontSize: 11, padding: '3px 7px', opacity: 0.7 }} onClick={() => userAction(l.user_id, 'set_custom_fee_rate', undefined, undefined, { custom_service_fee_rate: null })}>
+                                            Clear (revert to global)
+                                          </button>
+                                        )}
+                                      </>
+                                    )}
                                   </div>
                                 )}
                                 <div className="action-row">

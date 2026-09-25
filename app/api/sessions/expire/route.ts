@@ -85,6 +85,7 @@ export async function GET(req: NextRequest) {
         platformFee:        (completed.platform_fee as number) ?? 0,
         isFreeTrial:        completed.is_free_trial as boolean,
         listenerRatePerMin: (completed.listener_rate_per_min as number | null) ?? undefined,
+        serviceFeeRate:     (completed.service_fee_rate as number | null) ?? undefined,
       })
 
       await applySettlement(sb, {

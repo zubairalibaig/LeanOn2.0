@@ -123,12 +123,12 @@ export async function GET(req: NextRequest) {
       // from listener_applications below).
       const selectWithVerified = `
         user_id, bio, specialty_tags, rate_per_min, rating, total_sessions,
-        is_active, is_approved, is_available, is_verified, is_suspended, created_at, pending_avatar_url,
+        is_active, is_approved, is_available, is_verified, is_suspended, created_at, pending_avatar_url, custom_service_fee_rate,
         users!inner(id, name, email, phone, avatar_url, created_at, is_active, is_suspended, wallet_balance)
       `
       const selectWithoutVerified = `
         user_id, bio, specialty_tags, rate_per_min, rating, total_sessions,
-        is_active, is_approved, is_available, is_suspended, created_at, pending_avatar_url,
+        is_active, is_approved, is_available, is_suspended, created_at, pending_avatar_url, custom_service_fee_rate,
         users!inner(id, name, email, phone, avatar_url, created_at, is_active, is_suspended, wallet_balance)
       `
 
@@ -339,7 +339,7 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 
-  let body: { userId?: string; action?: string; notes?: string; name?: string; account_holder_name?: string; bank_account?: string; ifsc_code?: string; upi_id?: string; retake_selfie?: boolean }
+  let body: { userId?: string; action?: string; notes?: string; name?: string; account_holder_name?: string; bank_account?: string; ifsc_code?: string; upi_id?: string; retake_selfie?: boolean; custom_service_fee_rate?: number | null }
   try {
     body = await req.json()
   } catch {
@@ -350,7 +350,7 @@ export async function PATCH(req: NextRequest) {
   const retakeSelfie = body?.retake_selfie === true
   if (!userId || !UUID_RE.test(userId)) return NextResponse.json({ error: 'Invalid userId' }, { status: 400 })
 
-  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'suspend_listener', 'unsuspend_listener', 'approve_listener', 'reject_listener', 'request_resubmission', 'approve_selfie', 'reject_selfie', 'rename', 'update_bank_details']
+  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'suspend_listener', 'unsuspend_listener', 'approve_listener', 'reject_listener', 'request_resubmission', 'approve_selfie', 'reject_selfie', 'rename', 'update_bank_details', 'set_custom_fee_rate']
   if (!action || !validActions.includes(action)) return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
 
   const sb = createAdminClient()
@@ -779,6 +779,28 @@ export async function PATCH(req: NextRequest) {
             return NextResponse.json({ error: `Failed to create application record: ${baErr.message}` }, { status: 500 })
           }
         }
+        break
+      }
+
+      case 'set_custom_fee_rate': {
+        // null clears the override (listener reverts to global schedule on next booking).
+        // Validate range when a value is provided.
+        const raw = body.custom_service_fee_rate
+        if (raw !== null && raw !== undefined) {
+          if (typeof raw !== 'number' || raw < 0 || raw > 1) {
+            return NextResponse.json({ error: 'custom_service_fee_rate must be null or a number between 0 and 1' }, { status: 400 })
+          }
+        }
+        const rate = raw === undefined ? null : raw  // undefined from body means clear
+        const { error: feeErr } = await sb
+          .from('listener_profiles')
+          .update({ custom_service_fee_rate: rate })
+          .eq('user_id', userId)
+        if (feeErr) {
+          logger.error('set_custom_fee_rate: update failed', { userId, rate, error: feeErr.message })
+          return NextResponse.json({ error: `Failed to set custom fee rate: ${feeErr.message}` }, { status: 500 })
+        }
+        logger.info('set_custom_fee_rate', { userId, rate, adminId: user!.id })
         break
       }
     }

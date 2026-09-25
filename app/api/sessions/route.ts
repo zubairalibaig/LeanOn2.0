@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
-import { PLATFORM_FEE, FREE_SESSION_MINS, MAX_FREE_TRIALS, SESSION_DURATIONS, sessionRatePerMin, REQUEST_RESPONSE_WINDOW_SECS } from '@/lib/constants'
+import { PLATFORM_FEE, FREE_SESSION_MINS, MAX_FREE_TRIALS, SESSION_DURATIONS, sessionRatePerMin, REQUEST_RESPONSE_WINDOW_SECS, serviceFeeRateAt } from '@/lib/constants'
 import { isNriCountry, NRI_INR_EQUIV } from '@/lib/geo-pricing'
 import { isUnlimitedTestPhone } from '@/lib/test-users'
 import { settleSession } from '@/lib/session-billing'
@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
     // Verify listener is active and available (server-side — client-side check is not enough)
     const { data: lp } = await sb
       .from('listener_profiles')
-      .select('rate_per_min, is_active, is_available, is_approved, is_suspended')
+      .select('rate_per_min, is_active, is_available, is_approved, is_suspended, custom_service_fee_rate')
       .eq('user_id', listenerId)
       .single()
 
@@ -126,6 +126,12 @@ export async function POST(req: NextRequest) {
     // share at that rate × billed mins, so storing the text rate would strip
     // the voice premium from the listener's earnings.
     const rate  = sessionRatePerMin(Number(lp.rate_per_min ?? 10), sessionType)  // ?? not || — a legitimate rate of 0 must not be overridden
+    // Lock the service fee rate at booking time. Per-listener custom rate wins over
+    // the global schedule. NULL custom_service_fee_rate means "use global rate".
+    // Resolution chain: custom override → global SERVICE_FEE_SCHEDULE.
+    // (Future: a fee_tier lookup can be inserted between the two.)
+    const bookedServiceFeeRate = (lp as { custom_service_fee_rate?: number | null }).custom_service_fee_rate
+      ?? serviceFeeRateAt(new Date().toISOString())
 
     // NRI pricing (Phase 2): if the seeker signed up with a non-India country,
     // bill at the flat INR equivalent of the USD price. The listener still earns
@@ -186,7 +192,7 @@ export async function POST(req: NextRequest) {
     // price. So a failed write is fatal: retry once, else cancel + refund.
     if (!effectivelyFree && sessionId) {
       const writeRate = () => sb.from('sessions')
-        .update({ listener_rate_per_min: Math.round(rate) })
+        .update({ listener_rate_per_min: Math.round(rate), service_fee_rate: bookedServiceFeeRate })
         .eq('id', sessionId)
       let { error: rpmErr } = await writeRate()
       if (rpmErr) ({ error: rpmErr } = await writeRate())
@@ -352,6 +358,8 @@ export async function PATCH(req: NextRequest) {
       // NRI sessions: caps listener's rawShare at their configured rate × billed_mins.
       // NULL for India sessions or pre-migration rows → India formula used as before.
       listenerRatePerMin: (completed.listener_rate_per_min as number | null) ?? undefined,
+      // Locked at booking time (migration 062). NULL → fall back to serviceFeeRateAt(started_at).
+      serviceFeeRate: (completed.service_fee_rate as number | null) ?? undefined,
     })
 
     // Money movement (refund, listener credit, ledger rows) — shared with the
