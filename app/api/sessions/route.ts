@@ -76,11 +76,21 @@ export async function POST(req: NextRequest) {
     }
 
     // Verify listener is active and available (server-side — client-side check is not enough)
-    const { data: lp } = await sb
+    // custom_service_fee_rate was added in migration 062. If the migration hasn't run yet
+    // the column is missing and Supabase returns an error, not just a null row — which
+    // makes !lp true and produces a misleading "Listener not found" 400. Retry without
+    // the new column so bookings keep working regardless of migration order.
+    let { data: lp, error: lpColErr } = await sb
       .from('listener_profiles')
       .select('rate_per_min, is_active, is_available, is_approved, is_suspended, custom_service_fee_rate')
       .eq('user_id', listenerId)
       .single()
+    if (lpColErr?.message?.includes('custom_service_fee_rate')) {
+      const fallback = await sb.from('listener_profiles')
+        .select('rate_per_min, is_active, is_available, is_approved, is_suspended')
+        .eq('user_id', listenerId).single()
+      lp = fallback.data ? { ...fallback.data, custom_service_fee_rate: null } : null
+    }
 
     if (!lp) {
       return NextResponse.json({ error: 'listener_unavailable', message: 'Listener not found.' }, { status: 400 })
@@ -195,7 +205,18 @@ export async function POST(req: NextRequest) {
         .update({ listener_rate_per_min: Math.round(rate), service_fee_rate: bookedServiceFeeRate })
         .eq('id', sessionId)
       let { error: rpmErr } = await writeRate()
-      if (rpmErr) ({ error: rpmErr } = await writeRate())
+      // service_fee_rate column may be missing if migration 062 hasn't run yet.
+      // Fall back to writing only listener_rate_per_min (the NRI-critical column)
+      // so bookings keep working. Settlement falls back to serviceFeeRateAt(started_at)
+      // when service_fee_rate is NULL — safe for both India and NRI sessions.
+      if (rpmErr?.message?.includes('service_fee_rate')) {
+        const writeLegacy = () => sb.from('sessions')
+          .update({ listener_rate_per_min: Math.round(rate) }).eq('id', sessionId)
+        rpmErr = (await writeLegacy()).error ?? null
+        if (rpmErr) rpmErr = (await writeLegacy()).error ?? null
+      } else if (rpmErr) {
+        ;({ error: rpmErr } = await writeRate())
+      }
       if (rpmErr) {
         logger.error('Session POST: listener_rate_per_min update failed — cancelling session', { sessionId, error: rpmErr.message })
         const now = new Date().toISOString()
