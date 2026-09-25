@@ -108,12 +108,13 @@ export function settleSession(s: SettlementInput): Settlement {
 export function estimateListenerTakeHome(
   s: { amount_held: number; platform_fee?: number | null; duration_mins: number; session_type: string },
   textRate?: number | null,
+  feeRate?: number | null,
 ): number {
   let raw = Math.max(0, s.amount_held - (s.platform_fee ?? 0))
   if (textRate != null) {
     raw = Math.min(raw, sessionRatePerMin(Number(textRate), s.session_type === 'voice' ? 'voice' : 'text') * s.duration_mins)
   }
-  return raw - Math.round(raw * LISTENER_SERVICE_FEE_RATE)
+  return raw - Math.round(raw * (feeRate ?? LISTENER_SERVICE_FEE_RATE))
 }
 
 // Voice → text switch mid-session: the seeker gets back the voice premium for

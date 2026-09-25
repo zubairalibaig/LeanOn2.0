@@ -165,7 +165,7 @@ type DashProfile = {
   languages_spoken: string[]; total_sessions: number; rating: number
   is_available: boolean; is_approved?: boolean; avatar_url?: string | null; balance: number
   bank_account?: string; ifsc_code?: string; aadhaar_last4?: string; account_holder_name?: string | null
-  name?: string; wallet_balance?: number
+  name?: string; wallet_balance?: number; custom_service_fee_rate?: number | null
 }
 type DashUser = { id: string; name?: string; email?: string; wallet_balance?: number }
 type DashSession = {
@@ -971,7 +971,7 @@ export default function DashboardPage() {
               <div className="modal-detail-item">
                 <div className="modal-detail-label">You earn</div>
                 <div className="modal-detail-value">
-                  {incomingSession.amount_held ? `₹${estimateListenerTakeHome(incomingSession, profile?.rate_per_min)}` : 'Free trial'}
+                  {incomingSession.amount_held ? `₹${estimateListenerTakeHome(incomingSession, profile?.rate_per_min, profile?.custom_service_fee_rate)}` : 'Free trial'}
                 </div>
               </div>
             </div>
@@ -1155,9 +1155,10 @@ export default function DashboardPage() {
                   flat ₹10, which is irrelevant to listener economics. */}
               {(() => {
                 const r = Math.min(Math.max(parseInt(editRate)||MIN_LISTENER_RATE, MIN_LISTENER_RATE), MAX_LISTENER_RATE)
+                const effectiveFeeRate = profile?.custom_service_fee_rate ?? LISTENER_SERVICE_FEE_RATE
                 const net = (mins: number, perMin = r) => {
                   const gross = perMin * mins
-                  return gross - Math.round(gross * LISTENER_SERVICE_FEE_RATE)
+                  return gross - Math.round(gross * effectiveFeeRate)
                 }
                 const earn = (mins: number) => VOICE_PRICING_ENABLED
                   ? <>💬 <strong style={{color:'var(--navy)'}}>₹{net(mins)}</strong> · 📞 <strong style={{color:'var(--navy)'}}>₹{net(mins, r + VOICE_RATE_PREMIUM)}</strong></>
@@ -1168,7 +1169,7 @@ export default function DashboardPage() {
                     <br/>15 min → you earn {earn(15)}
                     <br/>30 min → you earn {earn(30)}
                     <br/>45 min → you earn {earn(45)}
-                    <br/><span style={{fontSize:11,opacity:0.85}}>You keep {Math.round((1 - LISTENER_SERVICE_FEE_RATE)*100)}% of your rate on every paid session — LeanOn&apos;s {Math.round(LISTENER_SERVICE_FEE_RATE*100)}% service fee supports bringing seekers to LeanOn, payments, safety and support.</span>
+                    <br/><span style={{fontSize:11,opacity:0.85}}>You keep {Math.round((1 - effectiveFeeRate)*100)}% of your rate on every paid session — LeanOn&apos;s {Math.round(effectiveFeeRate*100)}% service fee supports bringing seekers to LeanOn, payments, safety and support.</span>
                   </div>
                 )
               })()}
@@ -1287,9 +1288,10 @@ export default function DashboardPage() {
         {showFeeNotice && (() => {
           const text  = Number(profile.rate_per_min) || 0
           const voice = text + VOICE_RATE_PREMIUM
+          const effectiveFeeRate = profile?.custom_service_fee_rate ?? LISTENER_SERVICE_FEE_RATE
           const takeHome = (perMin: number, mins: number) => {
             const g = perMin * mins
-            return g - Math.round(g * LISTENER_SERVICE_FEE_RATE)
+            return g - Math.round(g * effectiveFeeRate)
           }
           const dismiss = () => {
             setShowFeeNotice(false)
@@ -1308,8 +1310,8 @@ export default function DashboardPage() {
                   or a voice call, and voice is always priced ₹{VOICE_RATE_PREMIUM}/min above your text rate — automatically.
                 </div>}
                 <div>
-                  <strong style={{color:'var(--navy)'}}>🤝 You keep {Math.round((1 - LISTENER_SERVICE_FEE_RATE) * 100)}% of your rate on every paid session.</strong> From
-                  24 Sep 2026, LeanOn&apos;s service fee is {Math.round(LISTENER_SERVICE_FEE_RATE * 100)}%. It supports the work around your
+                  <strong style={{color:'var(--navy)'}}>🤝 You keep {Math.round((1 - effectiveFeeRate) * 100)}% of your rate on every paid session.</strong> From
+                  24 Sep 2026, LeanOn&apos;s service fee is {Math.round(effectiveFeeRate * 100)}%. It supports the work around your
                   conversations — bringing seekers to LeanOn, secure payments and payouts, verification, safety and support — so you can focus
                   on listening. Sessions you&apos;ve already completed aren&apos;t affected.
                 </div>
