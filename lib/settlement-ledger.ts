@@ -47,6 +47,11 @@ export async function applySettlement(sb: Sb, args: {
     }
   }
 
+  // Credit listener wallet only when they have something to receive.
+  // But ALWAYS record the earnings row when any listener-side money moved
+  // (listenerEarning > 0 OR listenerServiceFee > 0). A 100%-fee session has
+  // listenerEarning = 0 but listenerServiceFee = rawShare — without this guard
+  // LeanOn's service fee revenue would go unrecorded in listener_earnings.
   if (listenerEarning > 0) {
     const { error } = await sb.rpc('credit_wallet', { p_user_id: listenerId, p_amount: listenerEarning })
     if (error) {
@@ -59,6 +64,8 @@ export async function applySettlement(sb: Sb, args: {
       description: source === 'ended' ? 'Session earnings' : `Session earnings (${source}, ${billedMins}/${bookedMins} min)`,
     })
     if (txErr) logger.error('settlement: listener wallet_transactions insert failed', { sessionId, error: txErr.message })
+  }
+  if (listenerEarning > 0 || listenerServiceFee > 0) {
     await recordEarnings(sb, { sessionId, listenerId, amountHeld, settlement })
   }
   return { refunded, listenerPaid }

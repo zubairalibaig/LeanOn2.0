@@ -792,6 +792,10 @@ export async function PATCH(req: NextRequest) {
           }
         }
         const rate = raw === undefined ? null : raw  // undefined from body means clear
+        // Read previous rate first so the audit log captures the full change.
+        const { data: prevRow } = await sb.from('listener_profiles')
+          .select('custom_service_fee_rate').eq('user_id', userId).maybeSingle()
+        const prevRate = (prevRow as { custom_service_fee_rate?: number | null } | null)?.custom_service_fee_rate ?? null
         const { data: updated, error: feeErr } = await sb
           .from('listener_profiles')
           .update({ custom_service_fee_rate: rate })
@@ -805,7 +809,7 @@ export async function PATCH(req: NextRequest) {
         if (!updated) {
           return NextResponse.json({ error: 'Listener profile not found' }, { status: 404 })
         }
-        logger.info('set_custom_fee_rate', { userId, rate, adminId: user!.id })
+        logger.info('set_custom_fee_rate', { userId, previousRate: prevRate, newRate: rate, adminId: user!.id })
         break
       }
     }

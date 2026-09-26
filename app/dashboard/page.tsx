@@ -177,6 +177,7 @@ type DashSession = {
 }
 type IncomingSession = {
   id: string; duration_mins: number; session_type: string; amount_held: number; platform_fee?: number | null; seeker_id: string
+  service_fee_rate?: number | null
 }
 
 // Opens the edit-profile panel when the URL carries ?edit=pricing (the pricing
@@ -971,7 +972,7 @@ export default function DashboardPage() {
               <div className="modal-detail-item">
                 <div className="modal-detail-label">You earn</div>
                 <div className="modal-detail-value">
-                  {incomingSession.amount_held ? `₹${estimateListenerTakeHome(incomingSession, profile?.rate_per_min, profile?.custom_service_fee_rate)}` : 'Free trial'}
+                  {incomingSession.amount_held ? `₹${estimateListenerTakeHome(incomingSession, profile?.rate_per_min, incomingSession.service_fee_rate ?? profile?.custom_service_fee_rate)}` : 'Free trial'}
                 </div>
               </div>
             </div>
