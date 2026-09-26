@@ -23,8 +23,13 @@ export async function GET(req: NextRequest) {
     // not midnight UTC (which would make "today" start at 5:30am IST — wrong for India).
     const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000
     const nowIST = new Date(now.getTime() + IST_OFFSET_MS)
-    const today = new Date(Date.UTC(nowIST.getUTCFullYear(), nowIST.getUTCMonth(), nowIST.getUTCDate())).toISOString()
-    const thisMonth = new Date(Date.UTC(nowIST.getUTCFullYear(), nowIST.getUTCMonth(), 1)).toISOString()
+    // Date.UTC(y,m,d) gives midnight UTC for the IST calendar date.
+    // Subtract IST_OFFSET_MS to get midnight IST expressed as a UTC timestamp —
+    // e.g. Sept 27 00:00 IST = Sept 26 18:30:00 UTC.
+    // Without this subtraction "today" starts at 05:30 IST instead of 00:00 IST,
+    // causing all sessions created between midnight and 05:30 IST to be missed.
+    const today = new Date(Date.UTC(nowIST.getUTCFullYear(), nowIST.getUTCMonth(), nowIST.getUTCDate()) - IST_OFFSET_MS).toISOString()
+    const thisMonth = new Date(Date.UTC(nowIST.getUTCFullYear(), nowIST.getUTCMonth(), 1) - IST_OFFSET_MS).toISOString()
     const last30Days = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString()
 
     // Use Promise.allSettled so a missing/errored table doesn't crash the whole response.
