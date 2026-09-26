@@ -424,7 +424,7 @@ export default function AdminPage() {
     one_paid_seekers: number; two_plus_paid_seekers: number; three_plus_paid_seekers: number; five_plus_paid_seekers: number; three_plus_rate_pct: number | null
     avg_rating: number | null; rating_count: number | null; five_star_pct: number | null; low_rating_pct: number | null; sessions_rated_pct: number | null
     completion_rate_pct: number | null; short_voice_sessions: number; short_voice_pct: number | null; missing_duration_telemetry: number
-    refund_requests: number; refund_amount: number; refund_rate_pct: number; report_count: number; report_rate_per_1000: number; block_count: number; block_rate_per_100_sessions: number; crisis_flags: number
+    refunds_issued: number; refund_amount: number; refund_rate_pct: number; report_count: number; report_rate_per_1000: number; block_count: number; block_rate_per_100_sessions: number; crisis_flags: number
     paid_sessions: number; paid_minutes: number; listeners_taking_sessions: number; online_listeners_now: number; top_listener_concentration_pct: number | null; failed_starts: number; unmatched_sessions: number
     voice_paid_sessions: number; text_paid_sessions: number; avg_session_duration_mins: number | null
   }
@@ -1193,10 +1193,10 @@ export default function AdminPage() {
                     </tbody>
                   </table>
                   <div style={{ padding: '8px 16px', borderTop: '1px solid var(--border)', fontSize: 12, color: 'var(--gray)', display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-                    <span>Avg duration: <strong>{kpis.sessions.avgDurationMins} min</strong></span>
+                    <span>Avg booked duration: <strong>{kpis.sessions.avgDurationMins} min</strong></span>
                     <span>All created today: <strong>{fmt(kpis.sessions.today)}</strong></span>
                     <span>Created this month: <strong>{fmt(kpis.sessions.thisMonth)}</strong></span>
-                    <span style={{ color: 'var(--teal)' }}>Completed today: <strong>{fmt((kpis.sessions.freeTrialToday ?? 0) + (kpis.sessions.paidToday ?? 0))}</strong> (trials + paid)</span>
+                    <span style={{ color: 'var(--teal)' }}>Completed (created today): <strong>{fmt((kpis.sessions.freeTrialToday ?? 0) + (kpis.sessions.paidToday ?? 0))}</strong> (trials + paid)</span>
                   </div>
                 </div>
 
@@ -2898,7 +2898,7 @@ export default function AdminPage() {
                 <div className="kpi-card"><div className="kpi-label">Short voice sessions</div><div className="kpi-value">{qualitySummary.short_voice_pct==null?'—':`${qualitySummary.short_voice_pct}%`}</div><div className="kpi-sub">{qualitySummary.short_voice_sessions} under 2 min; missing telemetry excluded</div></div>
                 <div className="kpi-card"><div className="kpi-label">Sessions rated</div><div className="kpi-value">{qualitySummary.sessions_rated_pct==null?'—':`${qualitySummary.sessions_rated_pct}%`}</div><div className="kpi-sub">{qualitySummary.rating_count==null?'Rating history unavailable':`${qualitySummary.rating_count} ratings`}</div></div>
                 <div className="kpi-card"><div className="kpi-label">Average rating</div><div className="kpi-value">{qualitySummary.avg_rating==null?'—':`${qualitySummary.avg_rating} ⭐`}</div><div className="kpi-sub">5-star {qualitySummary.five_star_pct==null?'—':`${qualitySummary.five_star_pct}%`} · 1–2 star {qualitySummary.low_rating_pct==null?'—':`${qualitySummary.low_rating_pct}%`}</div></div>
-                <div className="kpi-card"><div className="kpi-label">Refund rate</div><div className="kpi-value">{qualitySummary.refund_rate_pct}%</div><div className="kpi-sub">{qualitySummary.refund_requests} requests · ₹{fmt(qualitySummary.refund_amount)}</div></div>
+                <div className="kpi-card"><div className="kpi-label">Refund rate</div><div className="kpi-value">{qualitySummary.refund_rate_pct}%</div><div className="kpi-sub">{qualitySummary.refunds_issued} issued · ₹{fmt(qualitySummary.refund_amount)}</div></div>
                 <div className="kpi-card"><div className="kpi-label">Reports / 1K</div><div className="kpi-value">{qualitySummary.report_rate_per_1000}</div><div className="kpi-sub">{qualitySummary.report_count} reports</div></div>
                 <div className="kpi-card"><div className="kpi-label">Blocks / 100</div><div className="kpi-value">{qualitySummary.block_rate_per_100_sessions}</div><div className="kpi-sub">{qualitySummary.block_count} blocks</div></div>
                 <div className="kpi-card"><div className="kpi-label">Crisis flags</div><div className="kpi-value">{qualitySummary.crisis_flags}</div></div>

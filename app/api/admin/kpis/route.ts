@@ -41,7 +41,9 @@ export async function GET(req: NextRequest) {
       sb.from('listener_profiles').select('id', { count: 'exact', head: true }).eq('is_active', true).eq('is_approved', true),
       // index 6: only true "pending" (awaiting first admin review)
       sb.from('listener_applications').select('user_id', { count: 'exact', head: true }).eq('status', 'pending'),
-      sb.from('listener_profiles').select('id', { count: 'exact', head: true }).eq('is_available', true),
+      // Defensive: require approved + active + not suspended so stale is_available flags
+      // (e.g. from before a suspension) don't inflate the "Online Now" count.
+      sb.from('listener_profiles').select('id', { count: 'exact', head: true }).eq('is_available', true).eq('is_approved', true).eq('is_active', true).eq('is_suspended', false),
 
       // Session KPIs — use created_at for today/thisMonth (started_at is NULL
       // for cancelled/pending sessions and would undercount).
@@ -68,8 +70,9 @@ export async function GET(req: NextRequest) {
       // Session duration
       sb.from('sessions').select('duration_mins').eq('status', 'completed'),
 
-      // Free vs paid
-      sb.from('sessions').select('id', { count: 'exact', head: true }).eq('is_free_trial', true),
+      // Free vs paid — all three free-trial columns use status='completed' so they're
+      // directly comparable: Today/Month/Total all count the same thing (completed trials).
+      sb.from('sessions').select('id', { count: 'exact', head: true }).eq('is_free_trial', true).eq('status', 'completed'),
       sb.from('sessions').select('id', { count: 'exact', head: true }).eq('is_free_trial', false).eq('status', 'completed'),
 
       // Gateway fee KPIs — amount collected from users to offset Razorpay costs

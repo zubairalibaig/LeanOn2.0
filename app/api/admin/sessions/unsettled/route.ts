@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     // for those, so they must not appear in the unsettled list.
     const { data: sessions, error: sErr } = await sb
       .from('sessions')
-      .select('id, listener_id, amount_held, platform_fee, created_at, started_at, ended_at, listener:users!listener_id(name)')
+      .select('id, listener_id, amount_held, platform_fee, service_fee_rate, created_at, started_at, ended_at, listener:users!listener_id(name)')
       .eq('status', 'completed')
       .eq('is_free_trial', false)
       .gt('amount_held', 0)
@@ -50,30 +50,37 @@ export async function GET(req: NextRequest) {
     type CreditRow = { session_id: string; user_id: string }
     const creditedSessionIds = new Set((credits ?? []).map((c: CreditRow) => c.session_id))
 
-    type RawSession = { id: string; listener_id: string; amount_held: number | null; platform_fee: number | null; created_at: string | null; started_at: string | null; ended_at: string | null; listener: { name?: string } | null }
+    type RawSession = { id: string; listener_id: string; amount_held: number | null; platform_fee: number | null; service_fee_rate: number | null; created_at: string | null; started_at: string | null; ended_at: string | null; listener: { name?: string } | null }
 
     // Sessions with NO credit = potentially unsettled.
-    // Also exclude accidental starts (< 60 seconds): those get full seeker refunds, no listener credit.
+    // Exclusions:
+    // 1. Accidental starts (< 60s): settleSession returns listenerEarning=0, no credit expected.
+    // 2. 100% custom service fee: listenerEarning=0 by design, no credit is ever written.
     const unsettled = (sessions as RawSession[]).filter((s: RawSession) => {
       if (creditedSessionIds.has(s.id)) return false
-      // Accidental start check: if both timestamps exist and ran < 60 seconds,
-      // settleSession returns listenerEarning=0 — no credit expected, not a gap.
       if (s.started_at && s.ended_at) {
         const ranSecs = (new Date(s.ended_at).getTime() - new Date(s.started_at).getTime()) / 1000
         if (ranSecs < 60) return false
       }
+      // Custom 100% fee: listener earns nothing, no wallet credit is produced.
+      if (s.service_fee_rate !== null && s.service_fee_rate >= 1) return false
       return true
-    }).map((s: RawSession) => ({
-      id: s.id,
-      listener_id: s.listener_id,
-      listener_name: s.listener?.name ?? 'Unknown',
-      amount_held: s.amount_held ?? 0,
-      platform_fee: s.platform_fee ?? 0,
-      // Estimate: gross share minus fee at the rate in effect when this session started.
-      // Custom per-listener rates aren't reflected here — rerun-settlement computes exact.
-      listener_earning: Math.round(((s.amount_held ?? 0) - (s.platform_fee ?? 0)) * (1 - serviceFeeRateAt(s.started_at))),
-      created_at: s.created_at,
-    }))
+    }).map((s: RawSession) => {
+      // Use the session's own service_fee_rate when available; fall back to the
+      // schedule-based global rate for rows predating the service_fee_rate column.
+      const feeRate = (s.service_fee_rate !== null && Number.isFinite(s.service_fee_rate))
+        ? s.service_fee_rate
+        : serviceFeeRateAt(s.started_at)
+      return {
+        id: s.id,
+        listener_id: s.listener_id,
+        listener_name: s.listener?.name ?? 'Unknown',
+        amount_held: s.amount_held ?? 0,
+        platform_fee: s.platform_fee ?? 0,
+        listener_earning: Math.round(((s.amount_held ?? 0) - (s.platform_fee ?? 0)) * (1 - feeRate)),
+        created_at: s.created_at,
+      }
+    })
 
     return NextResponse.json({ unsettled, total: unsettled.length })
   } catch (err) {

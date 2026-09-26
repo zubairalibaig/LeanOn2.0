@@ -26,10 +26,14 @@ function ratePer1000(n: number, d: number) {
 }
 function dateFloor(days: number | null) {
   if (days === null) return null
-  const d = new Date()
-  d.setHours(0, 0, 0, 0)
-  d.setDate(d.getDate() - (days - 1))
-  return d.toISOString()
+  // Use IST (UTC+5:30) so "today" matches midnight IST, same as the Overview KPI.
+  // Server runs UTC on Vercel; setHours(0,0,0,0) would start "today" at 5:30am IST.
+  const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000
+  const now = new Date()
+  const nowIST = new Date(now.getTime() + IST_OFFSET_MS)
+  const floorIST = new Date(Date.UTC(nowIST.getUTCFullYear(), nowIST.getUTCMonth(), nowIST.getUTCDate()))
+  floorIST.setUTCDate(floorIST.getUTCDate() - (days - 1))
+  return floorIST.toISOString()
 }
 function addDays(iso: string, days: number) {
   return new Date(new Date(iso).getTime() + days * 86_400_000)
@@ -58,15 +62,16 @@ export async function GET(req: NextRequest) {
   const since = dateFloor(days)
   const now = new Date()
 
-  // Refunds: wallet_transactions with type='refund' (no separate refund_requests table).
-  // Blocks: no user_blocks table exists; block signals come from content_flags.
-  const [sessionsRes, usersRes, profilesRes, reportsRes, refundsRes, earningsRes] = await Promise.all([
+  // Refunds: wallet_transactions with type='refund' (completed refunds issued to seekers).
+  // Blocks: user_blocks table — blocker_id/blocked_id written by /api/block.
+  const [sessionsRes, usersRes, profilesRes, reportsRes, refundsRes, earningsRes, blocksRes] = await Promise.all([
     (() => { let q = sb.from('sessions').select('id,listener_id,seeker_id,session_type,duration_mins,status,is_free_trial,started_at,ended_at,created_at,crisis_flagged,listener_rate_per_min,amount_held'); if (since) q = q.gte('created_at', since); return q.limit(50000) })(),
     sb.from('users').select('id,name').limit(50000),
     sb.from('listener_profiles').select('user_id,is_available,is_active,is_approved,rating').limit(10000),
-    (() => { let q = sb.from('reports').select('id,target_user_id,created_at'); if (since) q = q.gte('created_at', since); return q.limit(10000) })(),
+    (() => { let q = sb.from('reports').select('id,reported_user_id,created_at'); if (since) q = q.gte('created_at', since); return q.limit(10000) })(),
     (() => { let q = sb.from('wallet_transactions').select('user_id,amount,session_id,created_at').eq('type', 'refund'); if (since) q = q.gte('created_at', since); return q.limit(10000) })(),
     (() => { let q = sb.from('listener_earnings').select('listener_id,gross_amount,created_at'); if (since) q = q.gte('created_at', since); return q.limit(50000) })(),
+    (() => { let q = sb.from('user_blocks').select('blocked_id,created_at'); if (since) q = q.gte('created_at', since); return q.limit(50000) })(),
   ])
 
   if (sessionsRes.error) {
@@ -77,9 +82,8 @@ export async function GET(req: NextRequest) {
   const users = (usersRes.data ?? []) as AnyRow[]
   const profiles = (profilesRes.data ?? []) as AnyRow[]
   const reports = reportsRes.error ? [] : (reportsRes.data ?? []) as AnyRow[]
-  // Refunds come from wallet_transactions type='refund'; no user_blocks table exists.
   const refunds = refundsRes.error ? [] : (refundsRes.data ?? []) as AnyRow[]
-  const blocks: AnyRow[] = []
+  const blocks = blocksRes.error ? [] : (blocksRes.data ?? []) as AnyRow[]
   const earnings = earningsRes.error ? [] : (earningsRes.data ?? []) as AnyRow[]
   const userMap = new Map(users.map(u => [String(u.id), u.name || '—']))
 
@@ -94,8 +98,9 @@ export async function GET(req: NextRequest) {
   const unmatchedSessions = sessions.filter(s => !s.listener_id).length
   const failedStarts = sessions.filter(s => ['cancelled', 'failed', 'expired'].includes(String(s.status)) && !s.started_at).length
 
-  // Trial cohorts are only counted after the requested conversion window has matured.
-  const trialSessions = sessions.filter(s => !!s.is_free_trial && s.seeker_id)
+  // Trial cohorts: only completed free trials count — a cancelled/expired trial
+  // never gave the seeker value, so it should not be in the conversion denominator.
+  const trialSessions = sessions.filter(s => !!s.is_free_trial && s.seeker_id && s.status === 'completed')
   const trialBySeeker = new Map<string, AnyRow[]>()
   for (const s of trialSessions) {
     const id = String(s.seeker_id)
@@ -174,10 +179,8 @@ export async function GET(req: NextRequest) {
       }
     }
   }
-  // reports.target_user_id is the reported user (schema: content_flags / reports table)
-  for (const r of reports) { const id = r.target_user_id; if (id) ensure(String(id)).reports++ }
-  // blocks array is empty (no user_blocks table); loop is a no-op kept for future wiring
-  for (const b of blocks) { const id = firstDefined(b, ['blocked_id', 'blocked_user_id']); if (id) ensure(String(id)).blocks++ }
+  for (const r of reports) { const id = r.reported_user_id; if (id) ensure(String(id)).reports++ }
+  for (const b of blocks) { const id = b.blocked_id; if (id) ensure(String(id)).blocks++ }
   for (const r of validRatings) { const id = r.listenerId; if (id) ensure(String(id)).ratings.push(r.value as number) }
   for (const e of earnings) {
     const id = e.listener_id
@@ -278,7 +281,7 @@ export async function GET(req: NextRequest) {
       short_voice_sessions: shortVoice,
       short_voice_pct: pct(shortVoice, completedVoice.length),
       missing_duration_telemetry: missingDurationTelemetry,
-      refund_requests: refunds.length,
+      refunds_issued: refunds.length,
       refund_amount: Number(refundAmount.toFixed(2)),
       refund_rate_pct: refundRate,
       report_count: reports.length,
