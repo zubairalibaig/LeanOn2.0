@@ -255,19 +255,23 @@ export async function middleware(req: NextRequest) {
   // allows users to read their own row, so no service-role key needed here.
   // Only applies to page routes (API routes pass through PUBLIC_PREFIXES above
   // and carry their own per-route suspension checks).
-  if (pathname !== '/suspended') {
-    try {
-      const { data: userRow } = await supabase
-        .from('users')
-        .select('is_suspended')
-        .eq('id', user.id)
-        .single()
-      if (userRow?.is_suspended === true) {
-        return NextResponse.redirect(new URL('/suspended', req.url))
-      }
-    } catch {
-      // Transient DB error — let the request through; the page will handle it.
+  // /suspended is in PUBLIC_PAGES so it exits before reaching this block —
+  // no redirect loop possible.
+  try {
+    const { data: userRow } = await supabase
+      .from('users')
+      .select('is_suspended')
+      .eq('id', user.id)
+      .single()
+    if (userRow?.is_suspended === true) {
+      const suspendedRedirect = NextResponse.redirect(new URL('/suspended', req.url))
+      // Carry refreshed session cookies so the token rotation from getUser()
+      // above isn't lost (same pattern as the /auth redirect below).
+      res.cookies.getAll().forEach(c => suspendedRedirect.cookies.set(c))
+      return suspendedRedirect
     }
+  } catch {
+    // Transient DB error — let the request through; the page will handle it.
   }
 
   return res

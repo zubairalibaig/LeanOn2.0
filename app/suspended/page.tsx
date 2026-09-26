@@ -6,8 +6,12 @@ export default function SuspendedPage() {
   const router = useRouter()
 
   async function handleSignOut() {
-    const sb = createClient()
-    await sb.auth.signOut()
+    try {
+      const sb = createClient()
+      await sb.auth.signOut()
+    } catch {
+      // Ignore — proceed to redirect regardless; the session will expire naturally.
+    }
     router.push('/')
   }
 

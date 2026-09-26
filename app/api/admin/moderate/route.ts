@@ -71,10 +71,12 @@ export async function POST(req: NextRequest) {
         .update({ is_suspended: true, is_active: false })
         .eq('id', target)
       if (suspendErr) throw suspendErr
-      await sb.from('listener_profiles')
+      const { error: lpModErr } = await sb.from('listener_profiles')
         .update({ is_active: false, is_available: false, is_suspended: true })
         .eq('user_id', target)
-        .then(() => {}, () => {})
+      if (lpModErr) {
+        logger.error('moderate suspend: listener_profiles update failed — RECONCILIATION NEEDED — profile may still be live', { target, error: lpModErr.message })
+      }
       await sb.auth.admin.signOut(target, 'global').then(() => {}, () => {})
     }
 

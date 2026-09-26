@@ -358,25 +358,28 @@ export async function PATCH(req: NextRequest) {
   try {
     switch (action) {
       case 'approve_listener': {
-        // Fetch pending_avatar_url so we can promote it atomically with approval.
-        // If the column doesn't exist yet in production, treat as no pending avatar.
+        // Fetch pending_avatar_url and is_suspended together — one round-trip.
+        // is_suspended matters: approving a currently-suspended listener must NOT
+        // set is_active=true, which would create the impossible {is_suspended:true,
+        // is_active:true} state and could expose them as active in downstream checks.
         const { data: lpCurrent } = await sb
           .from('listener_profiles')
-          .select('pending_avatar_url')
+          .select('pending_avatar_url, is_suspended')
           .eq('user_id', userId)
           .maybeSingle()
         const pendingAvatar = (lpCurrent as Record<string, unknown> | null)?.pending_avatar_url as string | null ?? null
+        const isSuspended = (lpCurrent as Record<string, unknown> | null)?.is_suspended === true
 
         // listener_profiles is the authoritative approval gate — must succeed.
         // Only include pending_avatar_url: null when there's a value to clear,
         // avoiding a column-missing error when the migration hasn't run yet.
-        const lpUpdate: Record<string, unknown> = { is_approved: true, is_active: true }
+        const lpUpdate: Record<string, unknown> = { is_approved: true, is_active: !isSuspended }
         if (pendingAvatar) lpUpdate.pending_avatar_url = null // clear after promoting
         let lpErr = (await sb.from('listener_profiles').update(lpUpdate).eq('user_id', userId)).error
         if (lpErr?.message?.includes('pending_avatar_url')) {
           // Column not yet in production — approve without touching it
           lpErr = (await sb.from('listener_profiles')
-            .update({ is_approved: true, is_active: true })
+            .update({ is_approved: true, is_active: !isSuspended })
             .eq('user_id', userId)).error
         }
         if (lpErr) {
@@ -576,10 +579,14 @@ export async function PATCH(req: NextRequest) {
           logger.error('suspend: users update failed', { userId, error: uErr.message })
           return NextResponse.json({ error: `Failed to suspend user: ${uErr.message}` }, { status: 500 })
         }
-        await sb.from('listener_profiles')
+        // Not fire-and-forget: if this fails, users is suspended but the listener
+        // profile stays live — log so it surfaces for manual reconciliation.
+        const { error: lpSuspendErr } = await sb.from('listener_profiles')
           .update({ is_active: false, is_available: false, is_suspended: true })
           .eq('user_id', userId)
-          .then(() => {}, () => {})
+        if (lpSuspendErr) {
+          logger.error('suspend: listener_profiles update failed — RECONCILIATION NEEDED — profile may still be live', { userId, error: lpSuspendErr.message })
+        }
         await sb.auth.admin.signOut(userId, 'global').then(() => {}, () => {})
         break
       }
@@ -594,10 +601,12 @@ export async function PATCH(req: NextRequest) {
           logger.error('ban: users update failed', { userId, error: uErr.message })
           return NextResponse.json({ error: `Failed to ban user: ${uErr.message}` }, { status: 500 })
         }
-        await sb.from('listener_profiles')
+        const { error: lpBanErr } = await sb.from('listener_profiles')
           .update({ is_active: false, is_available: false, is_suspended: true })
           .eq('user_id', userId)
-          .then(() => {}, () => {})
+        if (lpBanErr) {
+          logger.error('ban: listener_profiles update failed — RECONCILIATION NEEDED — profile may still be live', { userId, error: lpBanErr.message })
+        }
         await sb.auth.admin.signOut(userId, 'global').then(() => {}, () => {})
         // Add a ban notification so the user knows why (optional — best-effort)
         await sb.from('notifications').insert({
@@ -627,10 +636,12 @@ export async function PATCH(req: NextRequest) {
           return NextResponse.json({ error: `Failed to read listener profile: ${lpUnsuspendErr.message}` }, { status: 500 })
         }
         const wasApprovedUnsuspend = lpUnsuspend?.is_approved === true
-        await sb.from('listener_profiles')
-          .update({ is_active: wasApprovedUnsuspend, is_suspended: false })
+        const { error: lpUnsuspendProfileErr } = await sb.from('listener_profiles')
+          .update({ is_active: wasApprovedUnsuspend, is_suspended: false, is_available: false })
           .eq('user_id', userId)
-          .then(() => {}, () => {})
+        if (lpUnsuspendProfileErr) {
+          logger.error('unsuspend: listener_profiles update failed — RECONCILIATION NEEDED', { userId, error: lpUnsuspendProfileErr.message })
+        }
         break
       }
 
