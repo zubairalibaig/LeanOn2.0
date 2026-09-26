@@ -41,6 +41,12 @@ export async function POST(req: NextRequest) {
     }
 
     const admin = createAdminClient()
+
+    const { data: userRow } = await admin.from('users').select('is_suspended').eq('id', user.id).maybeSingle()
+    if (userRow?.is_suspended) {
+      return NextResponse.json({ error: 'Your account is suspended. Please contact support.', code: 'suspended' }, { status: 403 })
+    }
+
     const bytes = Buffer.from(await file.arrayBuffer())
     const upload = () => admin.storage.from(SELFIE_BUCKET)
       // A retake overwrites this same path: keep the storage/CDN cache short

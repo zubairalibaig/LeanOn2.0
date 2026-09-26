@@ -26,12 +26,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'id_number_hash must be a SHA-256 hex digest' }, { status: 400 })
     }
 
-    // SECURITY: only allow Supabase Storage URLs to prevent SSRF/phishing via arbitrary URLs
-    const STORAGE_PREFIX = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/verifications/`
-    if (selfie_url && !selfie_url.startsWith(STORAGE_PREFIX)) {
+    // Accept storage paths only (e.g. "id-verify/selfies/uuid-hmactag").
+    // The upload route returns paths, not URLs — files are stored privately
+    // and the admin views them via signed URLs generated server-side.
+    // Reject anything that looks like an external URL so an attacker can't
+    // supply an arbitrary https:// link to phish or trigger SSRF.
+    if (selfie_url && (selfie_url.includes('://') || !selfie_url.startsWith('id-verify/'))) {
       return NextResponse.json({ error: 'Invalid selfie_url' }, { status: 400 })
     }
-    if (id_doc_url && !id_doc_url.startsWith(STORAGE_PREFIX)) {
+    if (id_doc_url && (id_doc_url.includes('://') || !id_doc_url.startsWith('id-verify/'))) {
       return NextResponse.json({ error: 'Invalid id_doc_url' }, { status: 400 })
     }
 

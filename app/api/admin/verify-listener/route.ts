@@ -3,6 +3,7 @@ import { createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 import { requireAdmin, dbUserIdOrNull , ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS } from '@/lib/require-admin'
+import { idVerificationSignedUrl } from '@/lib/selfie-storage'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -116,5 +117,21 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 
-  return NextResponse.json({ verifications: data ?? [] })
+  // Replace storage paths with short-lived signed URLs (10 min) so the admin
+  // UI can display the photos without the files ever being publicly accessible.
+  // Backward compat: old rows stored full public https:// URLs — return as-is.
+  const sb2 = createAdminClient()
+  const rows = await Promise.all((data ?? []).map(async (v) => {
+    const [selfieUrl, idDocUrl] = await Promise.all([
+      v.selfie_url && !v.selfie_url.startsWith('http')
+        ? idVerificationSignedUrl(sb2, v.selfie_url)
+        : Promise.resolve(v.selfie_url),
+      v.id_doc_url && !v.id_doc_url.startsWith('http')
+        ? idVerificationSignedUrl(sb2, v.id_doc_url)
+        : Promise.resolve(v.id_doc_url),
+    ])
+    return { ...v, selfie_url: selfieUrl, id_doc_url: idDocUrl }
+  }))
+
+  return NextResponse.json({ verifications: rows })
 }

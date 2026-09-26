@@ -63,6 +63,30 @@ export async function selfieSignedUrls(admin: Admin, userIds: string[]): Promise
   return out
 }
 
+// ── ID Verification files (separate from the profile verification selfie) ──
+// Stored in the same private `verifications` bucket but under id-verify/
+// with independent HMAC tags so they can't be guessed from listener profile URLs.
+
+export function idVerificationSelfiePath(userId: string): string {
+  const secret = process.env.SELFIE_PATH_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  const tag = createHmac('sha256', secret).update(`id-verify-selfie:${userId}`).digest('hex').slice(0, 32)
+  return `id-verify/selfies/${userId}-${tag}`
+}
+
+export function idVerificationDocPath(userId: string): string {
+  const secret = process.env.SELFIE_PATH_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  const tag = createHmac('sha256', secret).update(`id-verify-doc:${userId}`).digest('hex').slice(0, 32)
+  return `id-verify/docs/${userId}-${tag}`
+}
+
+// Signed URL (10 min) for a single ID verification file path.
+// Falls back to null if the file doesn't exist or the bucket is unreachable.
+export async function idVerificationSignedUrl(admin: Admin, path: string): Promise<string | null> {
+  const { data, error } = await admin.storage.from(SELFIE_BUCKET).createSignedUrl(path, 600)
+  if (error || !data?.signedUrl) return null
+  return data.signedUrl
+}
+
 // When each user's CURRENT selfie was saved (a retake overwrites the same
 // path), so the admin can see they're looking at the latest one. One list call
 // for the whole folder; users without a selfie are omitted.

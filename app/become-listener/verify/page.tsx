@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
-import { compressImage, extForType, DOCUMENT_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
+import { compressImage, DOCUMENT_OPTS, MAX_INPUT_BYTES } from '@/lib/compress-image'
 
 const sb = createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -56,17 +56,19 @@ async function hashString(str: string): Promise<string> {
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
-async function uploadFile(userId: string, folder: string, file: File): Promise<string | null> {
-  // Downscale before upload. DOCUMENT_OPTS caps the long edge at 1600px, which
-  // is far more than an admin needs to read a 12-digit Aadhaar number, while
-  // turning a 5 MB camera file into a few hundred KB.
-  const upload = await compressImage(file, DOCUMENT_OPTS)
-  const ext  = extForType(upload.type)
-  const path = `${folder}/${userId}.${ext}`
-  const { error } = await sb.storage.from('verifications').upload(path, upload, { upsert: true, contentType: upload.type })
-  if (error) return null
-  const { data } = sb.storage.from('verifications').getPublicUrl(path)
-  return data.publicUrl
+// Compress client-side then upload through the server-side API route.
+// The API route uses the admin (service-role) client to write to the private
+// verifications bucket — files are never publicly accessible.
+// Returns the storage path (not a URL); the path is what we send to /api/listener/verify.
+async function uploadFile(folder: 'selfie' | 'id_doc', file: File): Promise<string | null> {
+  const compressed = await compressImage(file, DOCUMENT_OPTS)
+  const form = new FormData()
+  form.append('file', compressed, file.name)
+  form.append('folder', folder)
+  const res = await fetch('/api/listener/verify/upload', { method: 'POST', body: form })
+  if (!res.ok) return null
+  const { path } = await res.json()
+  return path ?? null
 }
 
 export default function VerifyPage() {
@@ -94,8 +96,8 @@ export default function VerifyPage() {
     setError('')
     try {
       const [selfieUrl, idDocUrl, hash] = await Promise.all([
-        selfie ? uploadFile(userId, 'selfies', selfie) : Promise.resolve(null),
-        idDoc  ? uploadFile(userId, 'ids',     idDoc)  : Promise.resolve(null),
+        selfie ? uploadFile('selfie', selfie) : Promise.resolve(null),
+        idDoc  ? uploadFile('id_doc', idDoc)  : Promise.resolve(null),
         hashString(idNumber),
       ])
 

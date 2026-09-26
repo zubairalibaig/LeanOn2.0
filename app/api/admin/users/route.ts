@@ -460,11 +460,11 @@ export async function PATCH(req: NextRequest) {
         // in production (schema drift), retry without it — clearing the
         // approval/active flags is what matters for the resubmission flow.
         let lpErr = (await sb.from('listener_profiles')
-          .update({ is_approved: false, is_active: false, pending_avatar_url: null })
+          .update({ is_approved: false, is_active: false, is_available: false, pending_avatar_url: null })
           .eq('user_id', userId)).error
         if (lpErr?.message?.includes('pending_avatar_url')) {
           lpErr = (await sb.from('listener_profiles')
-            .update({ is_approved: false, is_active: false })
+            .update({ is_approved: false, is_active: false, is_available: false })
             .eq('user_id', userId)).error
         }
         if (lpErr) {
@@ -524,15 +524,17 @@ export async function PATCH(req: NextRequest) {
           logger.error('approve_selfie: users avatar_url update failed', { userId, error: avErr.message })
           return NextResponse.json({ error: `Failed to approve selfie: ${avErr.message}` }, { status: 500 })
         }
-        await sb.from('listener_profiles')
+        const { error: clearPendingErr } = await sb.from('listener_profiles')
           .update({ pending_avatar_url: null })
           .eq('user_id', userId)
-          .then(() => {}, () => {})
+        if (clearPendingErr) {
+          logger.error('approve_selfie: pending_avatar_url clear failed — photo is live but may still appear in pending queue', { userId, error: clearPendingErr.message })
+        }
         await sb.from('notifications').insert({
           user_id: userId,
           type: 'verification_update',
-          title: 'Selfie approved',
-          body: 'Your new profile photo is now live.',
+          title: 'Photo approved',
+          body: 'Your new profile photo is live. Head to your dashboard to re-enable your availability.',
           action_url: '/dashboard',
         }).then(() => {}, () => {})
         break

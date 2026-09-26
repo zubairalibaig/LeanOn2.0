@@ -103,6 +103,12 @@ export async function POST(req: NextRequest) {
 
     const admin = createAdminClient()
 
+    // Suspension check — a suspended user must not be able to update any profile data.
+    const { data: userRow } = await admin.from('users').select('is_suspended').eq('id', user.id).maybeSingle()
+    if (userRow?.is_suspended) {
+      return NextResponse.json({ error: 'Your account is suspended. Please contact support.' }, { status: 403 })
+    }
+
     // Private verification selfie (camera-only) — stored via /api/listener/selfie,
     // never public. The admin compares it with the display photo.
     const selfieOnFile = await hasSelfie(admin, user.id)
