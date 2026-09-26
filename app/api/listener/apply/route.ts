@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
     const birthYear  = posIntOrNull(body?.birthYear)
     const birthMonth = posIntOrNull(body?.birthMonth)
 
-    const tags  = Array.isArray(body?.tags)  ? body.tags.filter((t: unknown) => typeof t === 'string').slice(0, 10)  : []
+    const tags  = Array.isArray(body?.tags)  ? body.tags.filter((t: unknown) => typeof t === 'string' && (t as string).length <= 60).slice(0, 10)  : []
     const langIds = new Set(LANGUAGES.map(l => l.id as string))
     const langs = Array.isArray(body?.langs)
       ? body.langs.filter((l: unknown) => typeof l === 'string' && langIds.has(l))

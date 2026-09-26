@@ -35,12 +35,14 @@ export async function PATCH(req: NextRequest) {
     }
 
     if (Array.isArray(body?.specialty_tags)) {
-      const tags = (body.specialty_tags as unknown[]).filter(t => typeof t === 'string').slice(0, 10) as string[]
+      const tags = (body.specialty_tags as unknown[])
+        .filter(t => typeof t === 'string' && (t as string).length <= 60)
+        .slice(0, 10) as string[]
       updates.specialty_tags = tags
     }
 
     if (Array.isArray(body?.languages_spoken)) {
-      const langs = (body.languages_spoken as unknown[]).filter(l => typeof l === 'string').slice(0, 12) as string[]
+      const langs = (body.languages_spoken as unknown[]).filter(l => typeof l === 'string' && (l as string).length <= 60).slice(0, 12) as string[]
       if (langs.length === 0) return NextResponse.json({ error: 'At least one language is required.' }, { status: 400 })
       updates.languages_spoken = langs
     }

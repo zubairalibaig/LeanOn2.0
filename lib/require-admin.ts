@@ -115,7 +115,12 @@ export async function requireAdmin(req: Request) {
   if (adminPassword) {
     const providedPw = req.headers.get('x-admin-password') ?? ''
     if (providedPw) {
-      const clientIp = (req.headers.get('x-forwarded-for') ?? 'unknown').split(',')[0].trim()
+      // Use the LAST entry in x-forwarded-for, which is the Vercel CDN-injected real IP.
+      // The first entry is user-controlled (client can prepend fake IPs), so keying on
+      // it lets an attacker bypass the limit by rotating spoofed IPs.
+      const fwdChain = req.headers.get('x-forwarded-for') ?? ''
+      const fwdParts = fwdChain.split(',').map(s => s.trim()).filter(Boolean)
+      const clientIp = fwdParts.length > 0 ? fwdParts[fwdParts.length - 1] : (req.headers.get('x-real-ip') ?? 'unknown')
       const key = `admin-pw:${clientIp}`
       if (await isRateLimitedAsync(key, FAILED_AUTH_LIMIT, FAILED_AUTH_WINDOW_MS)) {
         return { error: 'Too many attempts. Please wait.', code: 'PIN_RATE_LIMITED', status: 429 as const, user: null }

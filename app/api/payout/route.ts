@@ -122,6 +122,20 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Second guard right before the deduct to narrow the TOCTOU window on concurrent
+  // requests (the first SELECT above and this SELECT are not a DB transaction, so
+  // two concurrent requests can both pass the first check; this re-check + the
+  // atomic deduct_wallet RPC together make a double-submission very unlikely).
+  const { data: existingRetry } = await sb
+    .from('payout_requests')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('status', 'pending')
+    .limit(1)
+  if (existingRetry && existingRetry.length > 0) {
+    return NextResponse.json({ error: 'already_pending', message: 'You already have a pending payout request.' }, { status: 409 })
+  }
+
   // Soft-hold: deduct the wallet immediately so the balance can't be spent (or
   // double-requested) while the payout is pending. Credited back if the admin
   // rejects it. The admin "Mark Paid" step then does NOT deduct again.
