@@ -515,7 +515,7 @@ export default function DashboardPage() {
     if (incomingIdRef.current) return // already showing one
     const { data } = await sb
       .from('sessions')
-      .select('id, duration_mins, session_type, amount_held, platform_fee, seeker_id, created_at, status')
+      .select('id, duration_mins, session_type, amount_held, platform_fee, seeker_id, created_at, status, service_fee_rate')
       .eq('listener_id', listenerId)
       .eq('status', 'pending')
       .order('created_at', { ascending: false })

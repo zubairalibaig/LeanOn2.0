@@ -36,11 +36,16 @@ export async function POST(req: NextRequest) {
     if (file.size === 0 || file.size > MAX_BYTES) return NextResponse.json({ error: 'File must be under 4 MB.' }, { status: 400 })
     if (folder !== 'selfie' && folder !== 'id_doc') return NextResponse.json({ error: 'Invalid folder.' }, { status: 400 })
 
+    const admin = createAdminClient()
+
+    const { data: userRow } = await admin.from('users').select('is_suspended').eq('id', user.id).maybeSingle()
+    if (userRow?.is_suspended) {
+      return NextResponse.json({ error: 'Your account is suspended. Please contact support.' }, { status: 403 })
+    }
+
     const storagePath = folder === 'selfie'
       ? idVerificationSelfiePath(user.id)
       : idVerificationDocPath(user.id)
-
-    const admin = createAdminClient()
     const bytes = Buffer.from(await file.arrayBuffer())
     const { error } = await admin.storage.from(SELFIE_BUCKET)
       .upload(storagePath, bytes, { upsert: true, contentType: file.type, cacheControl: '10' })

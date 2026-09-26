@@ -89,6 +89,9 @@ export async function POST(req: NextRequest) {
       const fallback = await sb.from('listener_profiles')
         .select('rate_per_min, is_active, is_available, is_approved, is_suspended')
         .eq('user_id', listenerId).single()
+      if (fallback.error) {
+        logger.error('Session POST: listener_profiles fallback select failed', { listenerId, error: fallback.error.message })
+      }
       lp = fallback.data ? { ...fallback.data, custom_service_fee_rate: null } : null
     }
 
@@ -253,10 +256,14 @@ export async function POST(req: NextRequest) {
           }
           if (recoveryErr) {
             logger.error('Session POST: recovery rate write failed — RECONCILIATION NEEDED', { sessionId, error: recoveryErr.message })
-          } else {
-            logger.warn('Session POST: rate written to active session after cancel failed', { sessionId })
+            // Session is active but rates weren't written — tell the client so they can
+            // surface it rather than the seeker trying to rebook (which would double-charge).
+            return NextResponse.json({ error: 'booking_error', message: 'We could not set up this session. Please contact support.' }, { status: 500 })
           }
-          return NextResponse.json({ error: 'booking_error', message: 'We could not set up this session. Please contact support.' }, { status: 500 })
+          // Recovery succeeded: the session is live with correct rates. Return success so
+          // the seeker's UI transitions to the session rather than showing a booking error.
+          logger.warn('Session POST: rate written to active session after cancel failed', { sessionId })
+          return NextResponse.json({ sessionId })
         }
         return NextResponse.json({ error: 'booking_error', message: 'We could not start this session. You have not been charged — please try again.' }, { status: 500 })
       }
