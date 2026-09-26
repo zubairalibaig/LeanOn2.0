@@ -55,6 +55,7 @@ const PUBLIC_PAGES = [
   '/terms',
   '/glossary',
   '/admin', // handled client-side with Supabase auth + PIN gate
+  '/suspended',
   // Gulf country pages
   '/kuwait-talk-to-someone',
   '/kuwait-nri-support',
@@ -247,6 +248,26 @@ export async function middleware(req: NextRequest) {
     // Carry any cookie changes (e.g. cleared stale tokens) onto the redirect
     res.cookies.getAll().forEach(c => redirect.cookies.set(c))
     return redirect
+  }
+
+  // Suspension gate: check if the authenticated user is suspended.
+  // Uses the anon client with the user's session — RLS policy users_select_own
+  // allows users to read their own row, so no service-role key needed here.
+  // Only applies to page routes (API routes pass through PUBLIC_PREFIXES above
+  // and carry their own per-route suspension checks).
+  if (pathname !== '/suspended') {
+    try {
+      const { data: userRow } = await supabase
+        .from('users')
+        .select('is_suspended')
+        .eq('id', user.id)
+        .single()
+      if (userRow?.is_suspended === true) {
+        return NextResponse.redirect(new URL('/suspended', req.url))
+      }
+    } catch {
+      // Transient DB error — let the request through; the page will handle it.
+    }
   }
 
   return res

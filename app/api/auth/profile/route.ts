@@ -183,6 +183,13 @@ export async function PATCH(req: NextRequest) {
 
     const admin = createAdminClient()
 
+    // Check suspension before any write. Suspended users must not be able to
+    // take any action, including uploading a new photo.
+    const { data: userRow } = await admin.from('users').select('is_suspended').eq('id', user.id).maybeSingle()
+    if (userRow?.is_suspended) {
+      return NextResponse.json({ error: 'Your account is suspended. Please contact support.' }, { status: 403 })
+    }
+
     // Single listener_profiles lookup covers both the name-lock check and the
     // avatar routing decision — one DB round-trip instead of two.
     const { data: lp } = await admin
