@@ -387,7 +387,6 @@ export default function AdminPage() {
   const [payoutsLoading, setPayoutsLoading] = useState(false)
   // Inline confirm state for destructive actions (window.confirm blocked in mobile PWA/iOS)
   const [confirmBanId, setConfirmBanId] = useState<string | null>(null)
-  const [confirmBanListenerId, setConfirmBanListenerId] = useState<string | null>(null)
   const [confirmDeleteUserId, setConfirmDeleteUserId] = useState<string | null>(null)
   const [deleteConfirmInput, setDeleteConfirmInput] = useState('')
   const [deletingUser, setDeletingUser] = useState(false)
@@ -687,7 +686,6 @@ export default function AdminPage() {
       setRejectNotesListeners(prev => { const n = { ...prev }; delete n[userId]; return n })
       setRetakeSelfie(prev => { const n = { ...prev }; delete n[userId]; return n })
       setConfirmBanId(null)
-      setConfirmBanListenerId(null)
       setConfirmRejectOverviewId(null)
       setConfirmRejectListenersId(null)
       if (tab === 'users') loadUsers()
@@ -2083,16 +2081,7 @@ export default function AdminPage() {
                                       {busy === `suspend_listener:${l.user_id}` ? '…' : 'Suspend listener'}
                                     </button>
                                   )}
-                                  {/* Ban — permanent. Hidden when already suspended. Requires confirmation. */}
-                                  {!isPending && !isRejected && !l.is_suspended && (confirmBanListenerId === l.user_id ? (
-                                    <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
-                                      <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--red)' }}>Ban permanently?</span>
-                                      <button className="btn btn-red" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => { setConfirmBanListenerId(null); userAction(l.user_id, 'ban') }}>Yes, ban</button>
-                                      <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setConfirmBanListenerId(null)}>Cancel</button>
-                                    </span>
-                                  ) : (
-                                    !l.is_suspended && <button className="btn btn-red" disabled={busy !== null} onClick={() => setConfirmBanListenerId(l.user_id)}>Ban</button>
-                                  ))}
+                                  {/* Account-level ban lives on the Users tab — use Suspend listener for listener-only blocks */}
                                   {l.users?.phone?.startsWith('DELETE') ? (
                                     <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--red)', opacity: 0.6 }}>Account deleted</span>
                                   ) : (

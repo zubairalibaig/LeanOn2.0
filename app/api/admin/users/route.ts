@@ -657,6 +657,13 @@ export async function PATCH(req: NextRequest) {
           logger.error('suspend_listener: listener_profiles update failed', { userId, error: lpErr.message })
           return NextResponse.json({ error: `Failed to suspend listener profile: ${lpErr.message}` }, { status: 500 })
         }
+        await sb.from('notifications').insert({
+          user_id: userId,
+          type: 'system',
+          title: 'Listener profile suspended',
+          body: notes || 'Your listener profile has been suspended. You can still use the app as a seeker. Contact support if you have questions.',
+          action_url: '/contact',
+        }).then(() => {}, () => {})
         break
       }
 
@@ -677,6 +684,15 @@ export async function PATCH(req: NextRequest) {
           logger.error('unsuspend_listener: listener_profiles update failed', { userId, error: lpErr.message })
           return NextResponse.json({ error: `Failed to unsuspend listener profile: ${lpErr.message}` }, { status: 500 })
         }
+        await sb.from('notifications').insert({
+          user_id: userId,
+          type: 'system',
+          title: 'Listener profile reinstated',
+          body: wasApproved
+            ? 'Your listener profile has been reinstated. Head to your dashboard to re-enable your availability.'
+            : 'Your listener profile suspension has been lifted, but your account needs to be re-approved before you can go live.',
+          action_url: '/dashboard',
+        }).then(() => {}, () => {})
         break
       }
 
@@ -685,6 +701,13 @@ export async function PATCH(req: NextRequest) {
         if (uErr) {
           logger.error('deactivate: users update failed', { userId, error: uErr.message })
           return NextResponse.json({ error: `Failed to deactivate user: ${uErr.message}` }, { status: 500 })
+        }
+        // Cascade to listener profile — a deactivated account must not remain live as a listener.
+        const { error: lpErr } = await sb.from('listener_profiles')
+          .update({ is_active: false, is_available: false })
+          .eq('user_id', userId)
+        if (lpErr) {
+          logger.error('deactivate: listener_profiles cascade failed — RECONCILIATION NEEDED — profile may still be live', { userId, error: lpErr.message })
         }
         break
       }

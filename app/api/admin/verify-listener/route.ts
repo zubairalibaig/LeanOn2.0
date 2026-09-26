@@ -63,6 +63,15 @@ export async function POST(req: NextRequest) {
         logger.error('verify-listener: is_verified update failed', { listenerId: verification.listener_id, error: lpErr.message })
         return NextResponse.json({ error: 'Verification approved but badge update failed. Run migration 008/014 (is_verified column) and retry.' }, { status: 500 })
       }
+    } else {
+      // Reject — clear is_verified in case a previously-verified listener resubmits
+      // and is rejected; leaving is_verified=true would let them keep the badge.
+      const { error: lpErr } = await sb.from('listener_profiles')
+        .update({ is_verified: false })
+        .eq('user_id', verification.listener_id)
+      if (lpErr) {
+        logger.error('verify-listener: is_verified clear failed — RECONCILIATION NEEDED — badge may still show', { listenerId: verification.listener_id, error: lpErr.message })
+      }
     }
 
     // Notify the listener
