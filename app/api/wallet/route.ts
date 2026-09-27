@@ -152,7 +152,7 @@ export async function PUT(req: NextRequest) {
       await sb.from('wallet_transactions').insert({
         user_id:      user.id,
         amount:       gatewayFee,
-        type:         'gateway_fee',
+        type:         'debit',
         description:  `Razorpay gateway fee (₹${grossPaid} charged − ₹${verifiedAmount} credited)`,
         reference_id: `gf_${razorpay_payment_id}`,
       }).then(() => {}, () => {}) // ignore conflict if webhook already recorded it

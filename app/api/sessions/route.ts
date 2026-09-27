@@ -380,10 +380,11 @@ export async function PATCH(req: NextRequest) {
       .single()
 
     if (!completed) {
-      // Already completed — only seeker can update rating/review
+      // Already completed — only seeker can update rating/review on a properly completed session.
+      // Cancelled, declined, and timed-out sessions must not receive ratings.
       if (rating && user.id === session.seeker_id) {
         await sb.from('sessions').update({ seeker_rating: rating, ...(sanitizedReview ? { seeker_review: sanitizedReview } : {}) })
-          .eq('id', sessionId).eq('seeker_id', user.id)
+          .eq('id', sessionId).eq('seeker_id', user.id).eq('status', 'completed')
         // Recalculate rating average even on late updates
         await updateListenerRating(sb, session.listener_id)
       }

@@ -17,17 +17,26 @@ function checkRateLimit(ip: string): boolean {
   return true
 }
 
+// Strip ANSI escape sequences and control characters to prevent log injection.
+function sanitizeLogField(s: string): string {
+  // eslint-disable-next-line no-control-regex
+  return s.replace(/\x1b\[[0-9;]*[a-zA-Z]/g, '').replace(/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/g, '')
+}
+
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  // Use the last x-forwarded-for entry (CDN-injected real IP).
+  const fwdChain = req.headers.get('x-forwarded-for') ?? ''
+  const fwdParts = fwdChain.split(',').map(s => s.trim()).filter(Boolean)
+  const ip = fwdParts.length > 0 ? fwdParts[fwdParts.length - 1] : (req.headers.get('x-real-ip') ?? 'unknown')
   if (!checkRateLimit(ip)) {
     return NextResponse.json({ ok: false }, { status: 429 })
   }
 
   try {
     const body = await req.json().catch(() => ({}))
-    const message = typeof body?.message === 'string' ? body.message.slice(0, 500) : 'unknown error'
-    const stack   = typeof body?.stack   === 'string' ? body.stack.slice(0, 2000)  : undefined
-    const url     = typeof body?.url     === 'string' ? body.url.slice(0, 200)     : undefined
+    const message = sanitizeLogField(typeof body?.message === 'string' ? body.message.slice(0, 500) : 'unknown error')
+    const stack   = typeof body?.stack === 'string' ? sanitizeLogField(body.stack.slice(0, 2000)) : undefined
+    const url     = typeof body?.url   === 'string' ? sanitizeLogField(body.url.slice(0, 200))   : undefined
 
     logger.error('client-error', { message, stack, url, ip })
     return NextResponse.json({ ok: true })

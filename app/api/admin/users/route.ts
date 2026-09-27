@@ -157,7 +157,7 @@ export async function GET(req: NextRequest) {
         }
 
         if (search) {
-          const safe = search.replace(/[,()*:\\%_]/g, '').slice(0, 100)
+          const safe = search.replace(/[,()*:\\%_']/g, '').slice(0, 100)
           // Filter on the joined users row — must use referencedTable so PostgREST
           // knows the columns belong to the foreign table, not listener_profiles.
           if (safe) q = q.or(`name.ilike.%${safe}%,phone.ilike.%${safe}%`, { referencedTable: 'users' })

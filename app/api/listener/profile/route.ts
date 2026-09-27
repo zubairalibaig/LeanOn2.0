@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
-import { MIN_LISTENER_RATE, MAX_LISTENER_RATE } from '@/lib/constants'
+import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, LANGUAGES } from '@/lib/constants'
 import { TAGLINE_PHRASES, TAGLINE_PICK, LIVED_MIN_CHARS, LIVED_MAX_CHARS } from '@/lib/listener-onboarding'
 import { logger } from '@/lib/logger'
 
@@ -42,7 +42,10 @@ export async function PATCH(req: NextRequest) {
     }
 
     if (Array.isArray(body?.languages_spoken)) {
-      const langs = (body.languages_spoken as unknown[]).filter(l => typeof l === 'string' && (l as string).length <= 60).slice(0, 12) as string[]
+      const langIds = new Set(LANGUAGES.map(l => l.id as string))
+      const langs = (body.languages_spoken as unknown[])
+        .filter(l => typeof l === 'string' && langIds.has(l as string))
+        .slice(0, 12) as string[]
       if (langs.length === 0) return NextResponse.json({ error: 'At least one language is required.' }, { status: 400 })
       updates.languages_spoken = langs
     }

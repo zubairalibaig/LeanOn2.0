@@ -252,7 +252,7 @@ function WalletPageInner() {
             showToast(`₹${selected} added to your wallet!`, 'success')
             // If user came from the free-trial conversion screen, redirect back to the
             // listener profile so they can immediately book a paid session.
-            if (returnUrl && returnUrl.startsWith('/')) {
+            if (returnUrl && returnUrl.startsWith('/') && !returnUrl.startsWith('//')) {
               setTimeout(() => router.push(returnUrl), 800)
             }
           } else {
