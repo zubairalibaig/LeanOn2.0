@@ -387,6 +387,8 @@ export default function AdminPage() {
   const [payoutsLoading, setPayoutsLoading] = useState(false)
   // Inline confirm state for destructive actions (window.confirm blocked in mobile PWA/iOS)
   const [confirmBanId, setConfirmBanId] = useState<string | null>(null)
+  // Tracks users where unsuspend was blocked with ACCOUNT_BANNED — show Unban instead
+  const [bannedUserIds, setBannedUserIds] = useState<Set<string>>(new Set())
   const [confirmDeleteUserId, setConfirmDeleteUserId] = useState<string | null>(null)
   const [deleteConfirmInput, setDeleteConfirmInput] = useState('')
   const [deletingUser, setDeletingUser] = useState(false)
@@ -688,13 +690,24 @@ export default function AdminPage() {
       setConfirmBanId(null)
       setConfirmRejectOverviewId(null)
       setConfirmRejectListenersId(null)
+      // After a successful unban, remove from the banned tracking set
+      if (action === 'unban') {
+        setBannedUserIds(prev => { const n = new Set(prev); n.delete(userId); return n })
+      }
       if (tab === 'users') loadUsers()
       if (tab === 'listeners') loadListeners()
       if (tab === 'overview') loadPendingApprovals()
       loadKPIs()
     } else {
       const err = await res.json()
-      showToast(`Error: ${err.error || 'Something went wrong'}`)
+      // When unsuspend is blocked because the account was banned, surface an Unban
+      // button so admin must explicitly acknowledge the action.
+      if (action === 'unsuspend' && err.code === 'ACCOUNT_BANNED') {
+        setBannedUserIds(prev => new Set(prev).add(userId))
+        showToast('Account was banned — use the Unban button to restore it')
+      } else {
+        showToast(`Error: ${err.error || 'Something went wrong'}`)
+      }
     }
   }
 
@@ -1515,21 +1528,28 @@ export default function AdminPage() {
                           </td>
                           <td>
                             <div className="action-row">
-                              {/* Suspend ↔ Unsuspend — temporary block, fully reversible */}
+                              {/* Suspend ↔ Unsuspend / Unban */}
                               {u.is_suspended ? (
-                                <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(u.id, 'unsuspend')}>
-                                  {busy === `unsuspend:${u.id}` ? '…' : 'Unsuspend'}
-                                </button>
+                                bannedUserIds.has(u.id) ? (
+                                  <button className="btn btn-red" disabled={busy !== null} onClick={() => userAction(u.id, 'unban')}
+                                    title="Account was banned — click to explicitly restore">
+                                    {busy === `unban:${u.id}` ? '…' : 'Unban'}
+                                  </button>
+                                ) : (
+                                  <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(u.id, 'unsuspend')}>
+                                    {busy === `unsuspend:${u.id}` ? '…' : 'Unsuspend'}
+                                  </button>
+                                )
                               ) : (
                                 <button className="btn btn-orange" disabled={busy !== null} onClick={() => userAction(u.id, 'suspend')}>
                                   {busy === `suspend:${u.id}` ? '…' : 'Suspend'}
                                 </button>
                               )}
-                              {/* Ban — permanent/severe. Requires confirmation.
-                                  Hidden when already suspended (no point re-banning). */}
+                              {/* Ban — severe block, requires explicit Unban to restore.
+                                  Hidden when already suspended. */}
                               {!u.is_suspended && (confirmBanId === u.id ? (
                                 <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
-                                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--red)' }}>Ban permanently?</span>
+                                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--red)' }}>Ban this account?</span>
                                   <button className="btn btn-red" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => { setConfirmBanId(null); userAction(u.id, 'ban') }}>Yes, ban</button>
                                   <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setConfirmBanId(null)}>Cancel</button>
                                 </span>

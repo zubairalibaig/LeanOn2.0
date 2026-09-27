@@ -21,11 +21,15 @@ export async function POST(req: Request) {
   const authHeader = req.headers.get('authorization')
 
   if (!cronSecret) {
-    // No cron secret configured (any environment) — require at minimum a valid
-    // user session. Never let this admin-client wallet-mutation loop run anonymously.
+    // No cron secret configured — require a valid user session + rate limit.
+    // Never let this admin-client wallet-mutation loop run anonymously or without throttle.
     const { createServerSupabaseClient: makeClient } = await import('@/lib/supabase-server')
+    const { checkRateLimit } = await import('@/lib/rate-limit')
     const { data: { user } } = await makeClient().auth.getUser()
     if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    if (!checkRateLimit(`session-cleanup:${user.id}`, 1, 60_000)) {
+      return NextResponse.json({ cleaned: 0, checked: 0, staleCancelled: 0 })
+    }
   }
 
   function cronOk(secret: string, header: string | null): boolean {

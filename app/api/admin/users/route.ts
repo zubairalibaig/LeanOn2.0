@@ -350,7 +350,7 @@ export async function PATCH(req: NextRequest) {
   const retakeSelfie = body?.retake_selfie === true
   if (!userId || !UUID_RE.test(userId)) return NextResponse.json({ error: 'Invalid userId' }, { status: 400 })
 
-  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'suspend_listener', 'unsuspend_listener', 'approve_listener', 'reject_listener', 'request_resubmission', 'approve_selfie', 'reject_selfie', 'rename', 'update_bank_details', 'set_custom_fee_rate']
+  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'unban', 'suspend_listener', 'unsuspend_listener', 'approve_listener', 'reject_listener', 'request_resubmission', 'approve_selfie', 'reject_selfie', 'rename', 'update_bank_details', 'set_custom_fee_rate']
   if (!action || !validActions.includes(action)) return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
 
   const sb = createAdminClient()
@@ -594,8 +594,8 @@ export async function PATCH(req: NextRequest) {
       }
 
       case 'ban': {
-        // Permanent/severe block. Same enforcement as suspend but logged differently
-        // and intentionally not reversible via the normal Unsuspend button.
+        // Severe block — logged as user_ban in audit_logs so unsuspend is blocked.
+        // Use the explicit 'unban' action to restore a banned account.
         const { error: uErr } = await sb.from('users')
           .update({ is_suspended: true, is_active: false })
           .eq('id', userId)
@@ -610,18 +610,34 @@ export async function PATCH(req: NextRequest) {
           logger.error('ban: listener_profiles update failed — RECONCILIATION NEEDED — profile may still be live', { userId, error: lpBanErr.message })
         }
         await sb.auth.admin.signOut(userId, 'global').then(() => {}, () => {})
-        // Add a ban notification so the user knows why (optional — best-effort)
         await sb.from('notifications').insert({
           user_id: userId,
           type: 'system',
-          title: 'Account banned',
-          body: notes || 'Your account has been permanently banned for violating our community guidelines.',
+          title: 'Account suspended',
+          body: notes || 'Your account has been suspended for violating our community guidelines. Contact support to appeal.',
           action_url: '/support',
         }).then(() => {}, () => {})
         break
       }
 
       case 'unsuspend': {
+        // Guard: if this account was banned (audit log has user_ban with no subsequent
+        // user_unban), require the explicit 'unban' action to restore it. This prevents
+        // accidentally undoing a deliberate ban with a routine Unsuspend click.
+        const { data: auditRows } = await sb.from('admin_audit_logs')
+          .select('action')
+          .eq('target_id', userId)
+          .in('action', ['user_ban', 'user_unban'])
+          .order('created_at', { ascending: false })
+          .limit(10)
+        const lastBanAction = (auditRows ?? []).find(r => r.action === 'user_ban' || r.action === 'user_unban')
+        if (lastBanAction?.action === 'user_ban') {
+          return NextResponse.json({
+            error: 'This account was banned. Use the "Unban" action to explicitly restore it.',
+            code: 'ACCOUNT_BANNED',
+          }, { status: 409 })
+        }
+
         const { error: uErr } = await sb.from('users')
           .update({ is_suspended: false, is_active: true })
           .eq('id', userId)
@@ -644,6 +660,35 @@ export async function PATCH(req: NextRequest) {
         if (lpUnsuspendProfileErr) {
           logger.error('unsuspend: listener_profiles update failed — RECONCILIATION NEEDED', { userId, error: lpUnsuspendProfileErr.message })
         }
+        break
+      }
+
+      case 'unban': {
+        // Explicit unban — clears ban state and creates user_unban audit entry so
+        // subsequent unsuspend/activate calls work normally.
+        const { error: uErr } = await sb.from('users')
+          .update({ is_suspended: false, is_active: true })
+          .eq('id', userId)
+        if (uErr) {
+          logger.error('unban: users update failed', { userId, error: uErr.message })
+          return NextResponse.json({ error: `Failed to unban user: ${uErr.message}` }, { status: 500 })
+        }
+        const { data: lpUnban, error: lpUnbanReadErr } = await sb.from('listener_profiles')
+          .select('is_approved').eq('user_id', userId).maybeSingle()
+        if (!lpUnbanReadErr) {
+          const wasApprovedUnban = lpUnban?.is_approved === true
+          await sb.from('listener_profiles')
+            .update({ is_active: wasApprovedUnban, is_suspended: false, is_available: false })
+            .eq('user_id', userId)
+            .then(() => {}, (e) => logger.error('unban: listener_profiles update failed — RECONCILIATION NEEDED', { userId, error: String(e) }))
+        }
+        await sb.from('notifications').insert({
+          user_id: userId,
+          type: 'system',
+          title: 'Account reinstated',
+          body: notes || 'Your account ban has been lifted. You may now use the app again.',
+          action_url: '/browse',
+        }).then(() => {}, () => {})
         break
       }
 
