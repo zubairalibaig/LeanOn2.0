@@ -149,7 +149,7 @@ export default function ListenerLoungePage() {
 
       fetch('/api/lounge/messages')
         .then(r => {
-          if (r.status === 403) { router.replace('/dashboard'); return null }
+          if (r.status === 403) { setLoading(false); router.replace('/dashboard'); return null }
           return r.json()
         })
         .then(data => {
@@ -199,11 +199,15 @@ export default function ListenerLoungePage() {
         const msg = payload.new as LoungeMsg & { users?: { name: string | null } }
         // Keep last-seen current so dashboard badge stays clear while the lounge is open
         try { localStorage.setItem(`lounge_last_seen_${userId}`, new Date().toISOString()) } catch (_) {}
-        // Fetch sender name if not present (realtime payload may lack joined columns)
+        // Realtime payloads don't include joined columns — re-fetch with names
         if (!msg.users) {
-          fetch(`/api/lounge/messages?before=${new Date(new Date(msg.created_at).getTime() + 1).toISOString()}&limit=1`)
+          const justBefore = new Date(new Date(msg.created_at).getTime() - 1).toISOString()
+          fetch(`/api/lounge/messages?since=${encodeURIComponent(justBefore)}`)
             .then(r => r.json())
-            .then(d => { if (d.messages?.[0]) applyMsg(d.messages[0]) })
+            .then(d => {
+              const fetched = (d.messages ?? []).find((m: LoungeMsg) => m.id === msg.id)
+              if (fetched) applyMsg(fetched)
+            })
             .catch(() => {})
         } else {
           applyMsg(msg)
@@ -218,40 +222,53 @@ export default function ListenerLoungePage() {
   const loadMore = useCallback(async () => {
     if (loadingMore || !hasMore || !messages.length) return
     setLoadingMore(true)
-    const oldest = messages[0].created_at
-    const res = await fetch(`/api/lounge/messages?before=${encodeURIComponent(oldest)}`)
-    const data = await res.json()
-    const container = msgsContainerRef.current
-    const prevScrollHeight = container?.scrollHeight ?? 0
-    setMessages(prev => [...(data.messages ?? []), ...prev])
-    setHasMore(data.hasMore ?? false)
-    setLoadingMore(false)
-    // Keep scroll position
-    requestAnimationFrame(() => {
-      if (container) container.scrollTop = container.scrollHeight - prevScrollHeight
-    })
+    try {
+      const oldest = messages[0].created_at
+      const res = await fetch(`/api/lounge/messages?before=${encodeURIComponent(oldest)}`)
+      const data = await res.json()
+      const container = msgsContainerRef.current
+      const prevScrollHeight = container?.scrollHeight ?? 0
+      setMessages(prev => [...(data.messages ?? []), ...prev])
+      setHasMore(data.hasMore ?? false)
+      requestAnimationFrame(() => {
+        if (container) container.scrollTop = container.scrollHeight - prevScrollHeight
+      })
+    } catch (_) {
+      // Network error — leave hasMore as-is so user can retry
+    } finally {
+      setLoadingMore(false)
+    }
   }, [loadingMore, hasMore, messages])
 
   const handleSearch = useCallback(async (q: string) => {
     if (!q.trim()) {
       setIsSearchMode(false)
-      // Reload recent messages
       setLoading(true)
-      const res = await fetch('/api/lounge/messages')
-      const data = await res.json()
-      setMessages(data.messages ?? [])
-      setHasMore(data.hasMore ?? false)
-      setLoading(false)
-      setTimeout(() => scrollToBottom(), 50)
+      try {
+        const res = await fetch('/api/lounge/messages')
+        const data = await res.json()
+        setMessages(data.messages ?? [])
+        setHasMore(data.hasMore ?? false)
+        setTimeout(() => scrollToBottom(), 50)
+      } catch (_) {
+        setError('Failed to reload messages.')
+      } finally {
+        setLoading(false)
+      }
       return
     }
     setSearching(true)
     setIsSearchMode(true)
-    const res = await fetch(`/api/lounge/messages?q=${encodeURIComponent(q)}`)
-    const data = await res.json()
-    setMessages(data.messages ?? [])
-    setHasMore(false)
-    setSearching(false)
+    try {
+      const res = await fetch(`/api/lounge/messages?q=${encodeURIComponent(q)}`)
+      const data = await res.json()
+      setMessages(data.messages ?? [])
+      setHasMore(false)
+    } catch (_) {
+      setMessages([])
+    } finally {
+      setSearching(false)
+    }
   }, [scrollToBottom])
 
   const sendMsg = useCallback(async () => {
@@ -280,7 +297,11 @@ export default function ListenerLoungePage() {
     setSending(false)
     if (res.ok) {
       const { message } = await res.json()
-      setMessages(prev => prev.map(m => m.id === tempId ? { ...message, temp: false } : m))
+      setMessages(prev => {
+        // If the realtime event already added this message, just drop the temp
+        if (prev.some(m => m.id === message.id)) return prev.filter(m => m.id !== tempId)
+        return prev.map(m => m.id === tempId ? { ...message, temp: false } : m)
+      })
     } else {
       setMessages(prev => prev.filter(m => m.id !== tempId))
       setInput(content)

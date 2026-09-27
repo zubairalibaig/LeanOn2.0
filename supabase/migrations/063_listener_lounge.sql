@@ -3,7 +3,7 @@
 
 CREATE TABLE IF NOT EXISTS lounge_messages (
   id          uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
-  sender_id   uuid        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  sender_id   uuid        NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
   content     text        NOT NULL CHECK (char_length(content) BETWEEN 1 AND 2000),
   created_at  timestamptz NOT NULL DEFAULT now()
 );

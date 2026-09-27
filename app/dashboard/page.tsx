@@ -650,13 +650,13 @@ export default function DashboardPage() {
     // Lounge unread check — only for approved listeners; gracefully skips if table not yet created
     if (lp?.is_approved) {
       try {
-        const lastSeen = localStorage.getItem(`lounge_last_seen_${u.id}`) ?? ''
-        if (lastSeen) {
-          fetch(`/api/lounge/messages?since=${encodeURIComponent(lastSeen)}&countOnly=true`)
-            .then(r => r.ok ? r.json() : null)
-            .then(d => { if (d?.hasNew) setLoungeHasNew(true) })
-            .catch(() => {})
-        }
+        const lastSeen = localStorage.getItem(`lounge_last_seen_${u.id}`)
+        // No prior visit → show badge if any messages exist at all (use epoch as baseline)
+        const since = lastSeen ?? new Date(0).toISOString()
+        fetch(`/api/lounge/messages?since=${encodeURIComponent(since)}&countOnly=true`)
+          .then(r => r.ok ? r.json() : null)
+          .then(d => { if (d?.hasNew) setLoungeHasNew(true) })
+          .catch(() => {})
         // Show one-time launch announcement if not yet dismissed
         const seen = localStorage.getItem('lounge_launch_v1_seen')
         if (!seen) setLoungeAnnouncementDismissed(false)

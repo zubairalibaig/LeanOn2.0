@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient, createServerSupabaseClient } from '@/lib/supabase-server'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 const PAGE_SIZE = 50
 
@@ -45,7 +46,7 @@ export async function GET(req: NextRequest) {
     // Full-text search — ilike across all history
     const { data, error } = await admin
       .from('lounge_messages')
-      .select('id, content, created_at, sender_id, users!inner(name)')
+      .select('id, content, created_at, sender_id, users(name)')
       .ilike('content', `%${q}%`)
       .order('created_at', { ascending: false })
       .limit(100)
@@ -54,13 +55,15 @@ export async function GET(req: NextRequest) {
   }
 
   // Paginated load: most-recent PAGE_SIZE rows before cursor
+  // `since` without `countOnly` fetches rows after that timestamp (used by realtime fallback)
   let query = admin
     .from('lounge_messages')
-    .select('id, content, created_at, sender_id, users!inner(name)')
+    .select('id, content, created_at, sender_id, users(name)')
     .order('created_at', { ascending: false })
     .limit(PAGE_SIZE)
 
   if (before) query = query.lt('created_at', before)
+  if (since && !countOnly) query = query.gt('created_at', since)
 
   const { data, error } = await query
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -71,10 +74,14 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ messages, hasMore })
 }
 
-// POST /api/lounge/messages
+// POST /api/lounge/messages — 20 messages/minute per listener
 export async function POST(req: NextRequest) {
   const user = await getAuthedListener()
   if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+  if (!checkRateLimit(`lounge:${user.id}`, 20, 60_000)) {
+    return NextResponse.json({ error: 'Too many messages — slow down a little.' }, { status: 429 })
+  }
 
   const body = await req.json()
   const content = typeof body.content === 'string' ? body.content.trim() : ''
@@ -86,7 +93,7 @@ export async function POST(req: NextRequest) {
   const { data, error } = await admin
     .from('lounge_messages')
     .insert({ sender_id: user.id, content })
-    .select('id, content, created_at, sender_id, users!inner(name)')
+    .select('id, content, created_at, sender_id, users(name)')
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
