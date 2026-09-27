@@ -18,7 +18,9 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { verificationId, action, notes } = await req.json()
+    const raw = await req.json()
+    const { verificationId, action } = raw
+    const notes = typeof raw.notes === 'string' ? raw.notes.slice(0, 500) : undefined
 
     if (!verificationId || !UUID_RE.test(verificationId)) {
       return NextResponse.json({ error: 'Invalid verificationId' }, { status: 400 })
@@ -71,6 +73,7 @@ export async function POST(req: NextRequest) {
         .eq('user_id', verification.listener_id)
       if (lpErr) {
         logger.error('verify-listener: is_verified clear failed — RECONCILIATION NEEDED — badge may still show', { listenerId: verification.listener_id, error: lpErr.message })
+        return NextResponse.json({ error: 'Verification rejected but badge clear failed. Run migration for is_verified column and retry.' }, { status: 500 })
       }
     }
 

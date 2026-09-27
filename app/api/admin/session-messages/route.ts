@@ -24,9 +24,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
   const sessionId = new URL(req.url).searchParams.get('sessionId') || ''
-  if (!sessionId) {
-    return NextResponse.json({ error: 'sessionId required' }, { status: 400 })
+  if (!sessionId || !UUID_RE.test(sessionId)) {
+    return NextResponse.json({ error: 'Valid sessionId UUID required' }, { status: 400 })
   }
 
   try {
@@ -53,6 +54,7 @@ export async function GET(req: NextRequest) {
       .select('id, sender_id, content, created_at, is_flagged')
       .eq('session_id', sessionId)
       .order('created_at', { ascending: sort })
+      .limit(500)
     if (mErr) throw mErr
 
     // Audit every transcript read — this is the highest-sensitivity endpoint.
@@ -62,7 +64,8 @@ export async function GET(req: NextRequest) {
       target_id: sessionId,
     })
     if (auditErr) {
-      logger.error('Audit log write FAILED for transcript read', { sessionId, error: auditErr.message })
+      logger.error('Audit log write FAILED for transcript read — blocking response; no untracked reads allowed', { sessionId, error: auditErr.message })
+      return NextResponse.json({ error: 'Audit log unavailable — transcript read blocked to preserve audit trail. Try again shortly.' }, { status: 503 })
     }
 
     return NextResponse.json({ session, messages: messages ?? [] })

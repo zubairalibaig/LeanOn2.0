@@ -43,12 +43,30 @@ export async function POST(req: NextRequest) {
     }
 
     let target: string | null = targetUserId ?? report.reported_user_id ?? null
+    let sessionParticipants: { seeker_id: string; listener_id: string } | null = null
     if (!target && report.session_id && action !== 'dismiss') {
       const { data: s } = await sb.from('sessions')
         .select('seeker_id, listener_id')
         .eq('id', report.session_id)
         .single()
-      if (s) target = s.seeker_id === report.reporter_id ? s.listener_id : s.seeker_id
+      if (s) {
+        sessionParticipants = s
+        target = s.seeker_id === report.reporter_id ? s.listener_id : s.seeker_id
+      }
+    }
+    // Security: if admin supplied targetUserId, validate it is actually a participant
+    // in this report — prevents acting on arbitrary users via a manipulated request.
+    if (targetUserId && action !== 'dismiss') {
+      const validTargets = new Set<string>()
+      if (report.reported_user_id) validTargets.add(report.reported_user_id)
+      if (report.reporter_id) validTargets.add(report.reporter_id)
+      if (sessionParticipants) {
+        validTargets.add(sessionParticipants.seeker_id)
+        validTargets.add(sessionParticipants.listener_id)
+      }
+      if (validTargets.size > 0 && !validTargets.has(targetUserId)) {
+        return NextResponse.json({ error: 'targetUserId is not a participant in this report' }, { status: 400 })
+      }
     }
     if (action !== 'dismiss' && !target) {
       return NextResponse.json({ error: 'Could not determine which user to act on for this report' }, { status: 400 })
@@ -56,15 +74,20 @@ export async function POST(req: NextRequest) {
 
     const newStatus = action === 'dismiss' ? 'dismissed' : 'resolved'
 
-    const { error: updateErr } = await sb.from('reports').update({
+    // Idempotency: only moderate a pending report — prevents duplicate warn notifications
+    // if an admin double-clicks or retries an already-resolved report.
+    const { data: updateData, error: updateErr } = await sb.from('reports').update({
       status:      newStatus,
       // resolved_by has an FK to users(id) — the synthetic password-admin id
       // would violate it and fail the whole update.
       resolved_by: dbUserIdOrNull(user!.id),
       updated_at:  new Date().toISOString(),
-    }).eq('id', reportId)
+    }).eq('id', reportId).eq('status', 'pending').select('id')
 
     if (updateErr) throw updateErr
+    if (!updateData || updateData.length === 0) {
+      return NextResponse.json({ ok: true, alreadyProcessed: true })
+    }
 
     if (action === 'suspend' && target) {
       const { error: suspendErr } = await sb.from('users')
@@ -74,10 +97,16 @@ export async function POST(req: NextRequest) {
       const { error: lpModErr } = await sb.from('listener_profiles')
         .update({ is_active: false, is_available: false, is_suspended: true })
         .eq('user_id', target)
+      await sb.auth.admin.signOut(target, 'global').then(() => {}, () => {})
       if (lpModErr) {
         logger.error('moderate suspend: listener_profiles update failed — RECONCILIATION NEEDED — profile may still be live', { target, error: lpModErr.message })
+        await sb.from('admin_audit_logs').insert({
+          admin_id:  dbUserIdOrNull(user!.id),
+          action:    `moderate_report_${action}`,
+          target_id: target ?? reportId,
+        }).then(() => {}, () => {})
+        return NextResponse.json({ ok: true, warning: 'Account suspended but listener profile deactivation failed — manual reconciliation required' })
       }
-      await sb.auth.admin.signOut(target, 'global').then(() => {}, () => {})
     }
 
     if (action === 'warn' && target) {

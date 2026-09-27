@@ -11,7 +11,10 @@ const normalizePhone = (p: string) => p.replace(/\D/g, '')
 export async function POST(req: NextRequest) {
   try {
     // Throttle OTP sends per IP to prevent SMS-bombing the admin number.
-    const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'unknown'
+    // Use the last x-forwarded-for entry (CDN-injected real IP) to prevent spoofing.
+    const fwdChain = req.headers.get('x-forwarded-for') ?? ''
+    const fwdParts = fwdChain.split(',').map(s => s.trim()).filter(Boolean)
+    const clientIp = fwdParts.length > 0 ? fwdParts[fwdParts.length - 1] : (req.headers.get('x-real-ip') ?? 'unknown')
     if (!checkRateLimit(`admin-otp:${clientIp}`, 3, 5 * 60_000)) {
       return NextResponse.json({ ok: true }) // silent throttle, no enumeration signal
     }
@@ -48,7 +51,7 @@ export async function POST(req: NextRequest) {
     const { error } = await sb.auth.signInWithOtp({ phone: formattedPhone })
     if (error) {
       logger.error('Admin OTP send failed', { error: error.message })
-      return NextResponse.json({ ok: false, error: 'OTP send failed. Check Supabase SMS config.' }, { status: 500 })
+      return NextResponse.json({ ok: false, error: 'OTP send failed. Check Supabase SMS config.' })
     }
 
     return NextResponse.json({ ok: true, sent: true })

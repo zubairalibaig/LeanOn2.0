@@ -205,12 +205,13 @@ export async function POST(req: NextRequest) {
   }
 
   if (action === 'reject_listener') {
-    const { error: err } = await admin.from('listener_applications').update({ status: 'rejected' }).eq('user_id', id)
+    const safeNotes = typeof notes === 'string' ? notes.slice(0, 500) : undefined
+    // Combine status + notes in one UPDATE to avoid a race where a concurrent
+    // re-approval between the two calls overwrites the rejection with stale notes.
+    const { error: err } = await admin.from('listener_applications')
+      .update({ status: 'rejected', ...(safeNotes ? { admin_notes: safeNotes } : {}) })
+      .eq('user_id', id)
     if (err) { logger.error('admin reject_listener failed:', { error: err.message }); return NextResponse.json({ error: 'Server error' }, { status: 500 }) }
-    if (notes) {
-      await admin.from('listener_applications').update({ admin_notes: notes }).eq('user_id', id)
-        .then(() => {}, (e) => logger.warn('admin reject_listener: admin_notes update failed:', { id, error: String(e) }))
-    }
     await auditLog(admin, user!.id, 'reject_listener', id)
     return NextResponse.json({ ok: true })
   }

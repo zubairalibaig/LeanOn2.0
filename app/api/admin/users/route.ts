@@ -46,7 +46,8 @@ export async function GET(req: NextRequest) {
   const url = new URL(req.url)
   const type = url.searchParams.get('type') || 'user'
   const userStatus = url.searchParams.get('status') || 'all'
-  const page = Math.max(0, parseInt(url.searchParams.get('page') || '0'))
+  const parsedPage = parseInt(url.searchParams.get('page') || '0', 10)
+  const page = Math.max(0, Number.isFinite(parsedPage) ? parsedPage : 0)
   const search = url.searchParams.get('search') || ''
   // Sort direction for the "Joined" column. Applied server-side so it orders
   // across ALL pages, not just the visible one. (Last-login sorting stays
@@ -283,7 +284,7 @@ export async function GET(req: NextRequest) {
     // Status/search filters are applied identically to the page query and the
     // wallet-total query, so the headline total always describes exactly the
     // set the admin is looking at.
-    const safeSearch = search ? search.replace(/[,()*:\\%_]/g, '').slice(0, 100) : ''
+    const safeSearch = search ? search.replace(/[,()*:\\%_']/g, '').slice(0, 100) : ''
     const searchFilter = safeSearch ? `name.ilike.%${safeSearch}%,phone.ilike.%${safeSearch}%` : ''
 
     let query = sb.from('users')
@@ -346,7 +347,8 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  const { userId, action, notes, name } = body
+  const { userId, action, name } = body
+  const notes = typeof body.notes === 'string' ? body.notes.slice(0, 500) : undefined
   const retakeSelfie = body?.retake_selfie === true
   if (!userId || !UUID_RE.test(userId)) return NextResponse.json({ error: 'Invalid userId' }, { status: 400 })
 
@@ -590,6 +592,13 @@ export async function PATCH(req: NextRequest) {
           logger.error('suspend: listener_profiles update failed — RECONCILIATION NEEDED — profile may still be live', { userId, error: lpSuspendErr.message })
         }
         await sb.auth.admin.signOut(userId, 'global').then(() => {}, () => {})
+        await sb.from('notifications').insert({
+          user_id: userId,
+          type: 'system',
+          title: 'Account suspended',
+          body: notes || 'Your account has been temporarily suspended. Contact support if you believe this is an error.',
+          action_url: '/support',
+        }).then(() => {}, () => {})
         break
       }
 
@@ -617,6 +626,21 @@ export async function PATCH(req: NextRequest) {
           body: notes || 'Your account has been suspended for violating our community guidelines. Contact support to appeal.',
           action_url: '/support',
         }).then(() => {}, () => {})
+        // Critical: write user_ban audit entry immediately — the unsuspend guard reads
+        // this to distinguish a ban from a regular suspend. If this fails, return 500
+        // so the admin knows to retry rather than getting a silent incorrect state.
+        const { error: banAuditErr } = await sb.from('admin_audit_logs').insert({
+          admin_id: dbUserIdOrNull(user!.id),
+          action: 'user_ban',
+          target_id: userId,
+        })
+        if (banAuditErr) {
+          logger.error('ban: critical audit log write FAILED — account is suspended but ban record missing; unsuspend guard will not work', { userId, error: banAuditErr.message })
+          return NextResponse.json({
+            error: 'Account suspended but the ban record could not be written. The ban may be undone by a routine Unsuspend. Retry the ban action.',
+            code: 'AUDIT_LOG_FAILED',
+          }, { status: 500 })
+        }
         break
       }
 
@@ -758,6 +782,21 @@ export async function PATCH(req: NextRequest) {
       }
 
       case 'activate': {
+        // Guard: if this account was banned, require the explicit 'unban' action —
+        // same check as 'unsuspend' to prevent ban bypass via the activate path.
+        const { data: activateAuditRows } = await sb.from('admin_audit_logs')
+          .select('action')
+          .eq('target_id', userId)
+          .in('action', ['user_ban', 'user_unban'])
+          .order('created_at', { ascending: false })
+          .limit(10)
+        const lastActivateBanAction = (activateAuditRows ?? []).find((r: { action: string }) => r.action === 'user_ban' || r.action === 'user_unban')
+        if (lastActivateBanAction?.action === 'user_ban') {
+          return NextResponse.json({
+            error: 'This account was banned. Use the "Unban" action to explicitly restore it.',
+            code: 'ACCOUNT_BANNED',
+          }, { status: 409 })
+        }
         // Also clear is_suspended — a suspended user's is_suspended=true would otherwise
         // create the impossible {is_active:true, is_suspended:true} state.
         const { error: uErr } = await sb.from('users').update({ is_active: true, is_suspended: false }).eq('id', userId)
@@ -793,6 +832,16 @@ export async function PATCH(req: NextRequest) {
         const bankAcc    = typeof body.bank_account        === 'string' ? body.bank_account.trim() : null
         const ifsc       = typeof body.ifsc_code           === 'string' ? body.ifsc_code.trim().toUpperCase() : null
         const upi        = typeof body.upi_id              === 'string' ? body.upi_id.trim() : null
+        // Format validation
+        if (bankAcc !== null && bankAcc !== '' && !/^\d{9,18}$/.test(bankAcc)) {
+          return NextResponse.json({ error: 'Bank account must be 9–18 digits.' }, { status: 400 })
+        }
+        if (ifsc !== null && ifsc !== '' && !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc)) {
+          return NextResponse.json({ error: 'Invalid IFSC code (expected format: XXXX0XXXXXXX).' }, { status: 400 })
+        }
+        if (upi !== null && upi !== '' && !upi.includes('@')) {
+          return NextResponse.json({ error: 'UPI ID must contain @.' }, { status: 400 })
+        }
         if (holderName !== null) updates.account_holder_name = holderName || null
         if (bankAcc    !== null && bankAcc !== '') updates.bank_account = bankAcc
         else if (bankAcc === '') { /* ignore empty string — don't wipe valid account number */ }

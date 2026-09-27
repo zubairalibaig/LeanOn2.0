@@ -55,10 +55,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 
+  try {
   const sb = createAdminClient()
   const url = new URL(req.url)
   const windowKey = url.searchParams.get('window') || '30d'
-  const days = WINDOWS[windowKey] === undefined ? 30 : WINDOWS[windowKey]
+  // Use hasOwnProperty to prevent prototype-inherited keys (e.g. 'constructor',
+  // '__proto__') from bypassing the undefined guard and causing a RangeError.
+  const days = Object.prototype.hasOwnProperty.call(WINDOWS, windowKey) ? WINDOWS[windowKey] : 30
   const since = dateFloor(days)
   const now = new Date()
 
@@ -313,4 +316,8 @@ export async function GET(req: NextRequest) {
       return Array.from(pairMap.values()).filter(p => p.count >= 2).sort((a, b) => b.count - a.count).slice(0, 30).map(p => ({ seeker_name: userMap.get(p.seeker) ?? '—', listener_name: userMap.get(p.listener) ?? '—', count: p.count }))
     })(),
   })
+  } catch (err) {
+    console.error('admin/quality: unexpected error', err)
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+  }
 }

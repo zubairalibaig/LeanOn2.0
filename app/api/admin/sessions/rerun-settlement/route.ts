@@ -28,8 +28,9 @@ export async function POST(req: NextRequest) {
   try {
     const sb = createAdminClient()
     const { sessionId } = await req.json()
-    if (!sessionId || typeof sessionId !== 'string') {
-      return NextResponse.json({ error: 'sessionId required' }, { status: 400 })
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (!sessionId || typeof sessionId !== 'string' || !UUID_RE.test(sessionId)) {
+      return NextResponse.json({ error: 'Valid sessionId UUID required' }, { status: 400 })
     }
 
     // Fetch the session
@@ -113,14 +114,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `credit_wallet failed: ${creditErr.message}` }, { status: 500 })
     }
 
-    // Record wallet_transaction
-    await sb.from('wallet_transactions').insert({
+    // Record wallet_transaction — this row is the idempotency marker for future
+    // reruns. If this insert fails after credit_wallet succeeded, the next rerun
+    // would find no credit row and double-pay. Treat this as a hard error.
+    const { error: txInsertErr } = await sb.from('wallet_transactions').insert({
       user_id:     session.listener_id,
       amount:      listenerEarning,
       type:        'credit',
       description: 'Session earnings (settlement rerun)',
       session_id:  sessionId,
-    }).then(() => {}, (e: Error) => logger.error('rerun-settlement: wallet_transactions insert failed', { sessionId, error: e.message }))
+    })
+    if (txInsertErr) {
+      logger.error('rerun-settlement: wallet_transactions insert FAILED after successful credit_wallet — MANUAL ACTION REQUIRED: verify listener wallet was credited and add the transaction row manually', { sessionId, listenerId: session.listener_id, listenerEarning, error: txInsertErr.message })
+      return NextResponse.json({ error: `Wallet credited (₹${listenerEarning}) but transaction record failed: ${txInsertErr.message}. Verify manually and add the wallet_transactions row before rerunning.` }, { status: 500 })
+    }
 
     // Earnings ledger: same row shape as normal settlement — platform_fee is
     // LeanOn's TOTAL take (₹10 + service fee + NRI margin), not just the ₹10,
