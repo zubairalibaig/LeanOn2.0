@@ -130,7 +130,8 @@ export default function ListenerLoungePage() {
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [error, setError] = useState('')         // fatal load error — replaces page
+  const [sendError, setSendError] = useState('') // inline send error — toast only
   const [connected, setConnected] = useState(false)
   const [hasMore, setHasMore] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
@@ -333,9 +334,17 @@ export default function ListenerLoungePage() {
   }, [scrollToBottom])
 
   const deleteMsg = useCallback(async (msg: LoungeMsg) => {
-    const res = await fetch(`/api/lounge/messages/${msg.id}`, { method: 'DELETE' })
-    if (res.ok) {
-      setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, deleted: true, content: '' } : m))
+    try {
+      const res = await fetch(`/api/lounge/messages/${msg.id}`, { method: 'DELETE' })
+      if (res.ok) {
+        setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, deleted: true, content: '' } : m))
+      } else {
+        setSendError('Could not delete message — please try again.')
+        setTimeout(() => setSendError(''), 4000)
+      }
+    } catch {
+      setSendError('Network error — could not delete message.')
+      setTimeout(() => setSendError(''), 4000)
     }
   }, [])
 
@@ -384,12 +393,14 @@ export default function ListenerLoungePage() {
         const errData = await res.json().catch(() => ({}))
         setMessages(prev => prev.filter(m => m.id !== tempId))
         setInput(content)
-        setError(errData?.error || 'Failed to send message.')
+        setSendError(errData?.error || 'Failed to send message.')
+        setTimeout(() => setSendError(''), 4000)
       }
     } catch {
       setMessages(prev => prev.filter(m => m.id !== tempId))
       setInput(content)
-      setError('Network error — please try again.')
+      setSendError('Network error — please try again.')
+      setTimeout(() => setSendError(''), 4000)
     } finally {
       setSending(false)
     }
@@ -548,6 +559,13 @@ export default function ListenerLoungePage() {
         ))}
         <div ref={msgsEndRef} />
       </div>
+
+      {/* Inline send error toast */}
+      {sendError && (
+        <div style={{ background:'#FFEBEE', borderTop:'1.5px solid #EF9A9A', padding:'8px 16px', fontSize:13, fontWeight:700, color:'#C62828', flexShrink:0 }}>
+          {sendError}
+        </div>
+      )}
 
       {/* Input */}
       {!isSearchMode && (
