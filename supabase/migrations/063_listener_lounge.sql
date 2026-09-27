@@ -46,4 +46,12 @@ CREATE POLICY "lounge_admin_all" ON lounge_messages
   );
 
 -- Add to realtime publication so the client gets live INSERT events
-ALTER PUBLICATION supabase_realtime ADD TABLE lounge_messages;
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables
+    WHERE pubname = 'supabase_realtime' AND tablename = 'lounge_messages'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE lounge_messages;
+  END IF;
+END $$;
