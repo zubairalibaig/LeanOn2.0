@@ -215,6 +215,8 @@ export default function DashboardPage() {
   const [sessionEarnings, setSessionEarnings] = useState<Map<string, number>>(new Map())
   const [monthEarned, setMonthEarned] = useState<number | null>(null)
   const [unreadMsgCount, setUnreadMsgCount] = useState(0)
+  const [loungeHasNew, setLoungeHasNew] = useState(false)
+  const [loungeAnnouncementDismissed, setLoungeAnnouncementDismissed] = useState(true)
   const [countdown, setCountdown] = useState(60)
   // How long the listener has to answer, in sync with the seeker's server-side
   // 5-minute auto-cancel window. Previously the dashboard auto-declined after
@@ -644,6 +646,22 @@ export default function DashboardPage() {
       .then(r => r.ok ? r.json() : { unreadCount: 0 })
       .then(d => setUnreadMsgCount(d.unreadCount ?? 0))
       .catch(() => {})
+
+    // Lounge unread check — only for approved listeners; gracefully skips if table not yet created
+    if (lp?.is_approved) {
+      try {
+        const lastSeen = localStorage.getItem(`lounge_last_seen_${u.id}`) ?? ''
+        if (lastSeen) {
+          fetch(`/api/lounge/messages?since=${encodeURIComponent(lastSeen)}&countOnly=true`)
+            .then(r => r.ok ? r.json() : null)
+            .then(d => { if (d?.hasNew) setLoungeHasNew(true) })
+            .catch(() => {})
+        }
+        // Show one-time launch announcement if not yet dismissed
+        const seen = localStorage.getItem('lounge_launch_v1_seen')
+        if (!seen) setLoungeAnnouncementDismissed(false)
+      } catch (_) { /* localStorage blocked */ }
+    }
 
     if (channelRef.current) sb.removeChannel(channelRef.current)
     const channel = sb.channel(`dashboard-incoming-${u.id}`)
@@ -1531,16 +1549,64 @@ export default function DashboardPage() {
 
         {/* Listener Lounge — only shown to approved listeners */}
         {profile?.is_approved && (
-          <button
-            onClick={() => router.push('/listener-lounge')}
-            style={{ width:'100%', background:'linear-gradient(135deg,#E8F4FD,#F0F8FC)', border:'1.5px solid var(--border)', borderRadius:18, padding:'16px 20px', marginBottom:20, display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer', textAlign:'left' }}
-          >
-            <div>
-              <div style={{ fontSize:16, fontWeight:800, color:'var(--navy)' }}>Listener Lounge</div>
-              <div style={{ fontSize:13, color:'var(--gray)', fontWeight:600, marginTop:2 }}>Chat with other listeners · Ask questions · Share knowledge</div>
-            </div>
-            <span style={{ fontSize:20 }}>🛋️</span>
-          </button>
+          <>
+            {/* One-time launch announcement */}
+            {!loungeAnnouncementDismissed && (
+              <div style={{ background:'linear-gradient(135deg,#E8F4FD,#EBF8FF)', border:'2px solid #1A8FA0', borderRadius:18, padding:'16px 18px', marginBottom:12, position:'relative' }}>
+                <button
+                  onClick={() => {
+                    setLoungeAnnouncementDismissed(true)
+                    try { localStorage.setItem('lounge_launch_v1_seen', '1') } catch (_) {}
+                  }}
+                  style={{ position:'absolute', top:10, right:12, background:'none', border:'none', fontSize:18, color:'#5A7A8A', cursor:'pointer', lineHeight:1 }}
+                  aria-label="Dismiss"
+                >✕</button>
+                <div style={{ fontSize:15, fontWeight:800, color:'#0F4867', marginBottom:4 }}>
+                  🛋️ New: Listener Lounge is here!
+                </div>
+                <div style={{ fontSize:13, color:'#3A6070', fontWeight:600, lineHeight:1.6, marginBottom:10 }}>
+                  A private space just for listeners — ask questions, share experiences, and support each other. No seeker details, just real talk between peers.
+                </div>
+                <button
+                  onClick={() => {
+                    setLoungeAnnouncementDismissed(true)
+                    setLoungeHasNew(false)
+                    try {
+                      localStorage.setItem('lounge_launch_v1_seen', '1')
+                      localStorage.setItem(`lounge_last_seen_${user?.id}`, new Date().toISOString())
+                    } catch (_) {}
+                    router.push('/listener-lounge')
+                  }}
+                  style={{ background:'#1A8FA0', color:'white', border:'none', borderRadius:50, padding:'9px 20px', fontFamily:'Nunito,sans-serif', fontWeight:800, fontSize:13, cursor:'pointer' }}
+                >
+                  Open Listener Lounge →
+                </button>
+              </div>
+            )}
+
+            {/* Lounge nav button */}
+            <button
+              onClick={() => {
+                setLoungeHasNew(false)
+                try { localStorage.setItem(`lounge_last_seen_${user?.id}`, new Date().toISOString()) } catch (_) {}
+                router.push('/listener-lounge')
+              }}
+              style={{ width:'100%', background:'linear-gradient(135deg,#E8F4FD,#F0F8FC)', border:`1.5px solid ${loungeHasNew ? '#1A8FA0' : 'var(--border)'}`, borderRadius:18, padding:'16px 20px', marginBottom:20, display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer', textAlign:'left', position:'relative' }}
+            >
+              <div>
+                <div style={{ fontSize:16, fontWeight:800, color:'var(--navy)', display:'flex', alignItems:'center', gap:8 }}>
+                  Listener Lounge
+                  {loungeHasNew && (
+                    <span style={{ display:'inline-block', width:9, height:9, borderRadius:'50%', background:'#FF5252', flexShrink:0 }} />
+                  )}
+                </div>
+                <div style={{ fontSize:13, color: loungeHasNew ? '#1A8FA0' : 'var(--gray)', fontWeight:600, marginTop:2 }}>
+                  {loungeHasNew ? 'New messages from fellow listeners' : 'Chat with other listeners · Ask questions · Share knowledge'}
+                </div>
+              </div>
+              <span style={{ fontSize:20 }}>🛋️</span>
+            </button>
+          </>
         )}
 
         {sessions.length > 0 && (

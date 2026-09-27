@@ -19,7 +19,7 @@ async function getAuthedListener() {
   return user
 }
 
-// GET /api/lounge/messages?before=<iso-timestamp>&q=<search>
+// GET /api/lounge/messages?before=<iso-timestamp>&q=<search>&since=<iso>&countOnly=true
 export async function GET(req: NextRequest) {
   const user = await getAuthedListener()
   if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
@@ -27,8 +27,19 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const before = searchParams.get('before')
   const q = searchParams.get('q')?.trim()
+  const since = searchParams.get('since')
+  const countOnly = searchParams.get('countOnly') === 'true'
 
   const admin = createAdminClient()
+
+  // Lightweight unread check — just returns { hasNew: boolean }
+  if (since && countOnly) {
+    const { count } = await admin
+      .from('lounge_messages')
+      .select('id', { count: 'exact', head: true })
+      .gt('created_at', since)
+    return NextResponse.json({ hasNew: (count ?? 0) > 0 })
+  }
 
   if (q) {
     // Full-text search — ilike across all history

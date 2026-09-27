@@ -158,6 +158,8 @@ export default function ListenerLoungePage() {
           setMessages(data.messages ?? [])
           setHasMore(data.hasMore ?? false)
           setLoading(false)
+          // Mark seen so the dashboard unread badge clears
+          try { localStorage.setItem(`lounge_last_seen_${user.id}`, new Date().toISOString()) } catch (_) {}
           setTimeout(() => scrollToBottom(), 50)
         })
         .catch(() => { setError('Failed to load messages.'); setLoading(false) })
@@ -195,6 +197,8 @@ export default function ListenerLoungePage() {
         table: 'lounge_messages',
       }, (payload) => {
         const msg = payload.new as LoungeMsg & { users?: { name: string | null } }
+        // Keep last-seen current so dashboard badge stays clear while the lounge is open
+        try { localStorage.setItem(`lounge_last_seen_${userId}`, new Date().toISOString()) } catch (_) {}
         // Fetch sender name if not present (realtime payload may lack joined columns)
         if (!msg.users) {
           fetch(`/api/lounge/messages?before=${new Date(new Date(msg.created_at).getTime() + 1).toISOString()}&limit=1`)
