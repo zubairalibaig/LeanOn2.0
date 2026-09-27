@@ -368,21 +368,30 @@ export default function ListenerLoungePage() {
     setMessages(prev => [...prev, tempMsg])
     setTimeout(() => scrollToBottom(true), 20)
 
-    const res = await fetch('/api/lounge/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content }),
-    })
-    setSending(false)
-    if (res.ok) {
-      const { message } = await res.json()
-      setMessages(prev => {
-        if (prev.some(m => m.id === message.id)) return prev.filter(m => m.id !== tempId)
-        return prev.map(m => m.id === tempId ? { ...message, temp: false } : m)
+    try {
+      const res = await fetch('/api/lounge/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content }),
       })
-    } else {
+      if (res.ok) {
+        const { message } = await res.json()
+        setMessages(prev => {
+          if (prev.some(m => m.id === message.id)) return prev.filter(m => m.id !== tempId)
+          return prev.map(m => m.id === tempId ? { ...message, temp: false } : m)
+        })
+      } else {
+        const errData = await res.json().catch(() => ({}))
+        setMessages(prev => prev.filter(m => m.id !== tempId))
+        setInput(content)
+        setError(errData?.error || 'Failed to send message.')
+      }
+    } catch {
       setMessages(prev => prev.filter(m => m.id !== tempId))
       setInput(content)
+      setError('Network error — please try again.')
+    } finally {
+      setSending(false)
     }
   }, [input, sending, userId, userName, scrollToBottom])
 
