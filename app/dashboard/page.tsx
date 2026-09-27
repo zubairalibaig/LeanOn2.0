@@ -658,7 +658,7 @@ export default function DashboardPage() {
           .then(d => { if (d?.hasNew) setLoungeHasNew(true) })
           .catch(() => {})
         // Show one-time launch announcement if not yet dismissed
-        const seen = localStorage.getItem('lounge_launch_v1_seen')
+        const seen = localStorage.getItem(`lounge_launch_v1_seen_${u.id}`)
         if (!seen) setLoungeAnnouncementDismissed(false)
       } catch (_) { /* localStorage blocked */ }
     }
@@ -1556,7 +1556,7 @@ export default function DashboardPage() {
                 <button
                   onClick={() => {
                     setLoungeAnnouncementDismissed(true)
-                    try { localStorage.setItem('lounge_launch_v1_seen', '1') } catch (_) {}
+                    try { localStorage.setItem(`lounge_launch_v1_seen_${user?.id}`, '1') } catch (_) {}
                   }}
                   style={{ position:'absolute', top:10, right:12, background:'none', border:'none', fontSize:18, color:'#5A7A8A', cursor:'pointer', lineHeight:1 }}
                   aria-label="Dismiss"
@@ -1572,7 +1572,7 @@ export default function DashboardPage() {
                     setLoungeAnnouncementDismissed(true)
                     setLoungeHasNew(false)
                     try {
-                      localStorage.setItem('lounge_launch_v1_seen', '1')
+                      localStorage.setItem(`lounge_launch_v1_seen_${user?.id}`, '1')
                       localStorage.setItem(`lounge_last_seen_${user?.id}`, new Date().toISOString())
                     } catch (_) {}
                     router.push('/listener-lounge')
