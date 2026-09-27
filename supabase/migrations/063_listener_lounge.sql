@@ -12,6 +12,10 @@ CREATE INDEX IF NOT EXISTS idx_lounge_messages_created ON lounge_messages(create
 
 ALTER TABLE lounge_messages ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "lounge_select"    ON lounge_messages;
+DROP POLICY IF EXISTS "lounge_insert"    ON lounge_messages;
+DROP POLICY IF EXISTS "lounge_admin_all" ON lounge_messages;
+
 -- Only approved, non-suspended listeners may read messages
 CREATE POLICY "lounge_select" ON lounge_messages
   FOR SELECT USING (

@@ -13,9 +13,10 @@ REVOKE ALL ON lounge_messages FROM anon;
 GRANT SELECT, INSERT ON lounge_messages TO authenticated;
 
 -- 3. Rebuild RLS policies to include is_active check and hide deleted messages
-DROP POLICY IF EXISTS "lounge_select" ON lounge_messages;
-DROP POLICY IF EXISTS "lounge_insert" ON lounge_messages;
-DROP POLICY IF EXISTS "lounge_admin_all" ON lounge_messages;
+DROP POLICY IF EXISTS "lounge_select"      ON lounge_messages;
+DROP POLICY IF EXISTS "lounge_insert"      ON lounge_messages;
+DROP POLICY IF EXISTS "lounge_admin_all"   ON lounge_messages;
+DROP POLICY IF EXISTS "lounge_self_delete" ON lounge_messages;
 
 -- Approved, active, non-suspended listeners can read non-deleted messages
 CREATE POLICY "lounge_select" ON lounge_messages
