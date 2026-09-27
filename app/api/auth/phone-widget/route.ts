@@ -123,8 +123,12 @@ async function findAuthUserIdByPhone(
 }
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'unknown'
-  // MSG91 already rate-limits OTP sends; this guards the mint endpoint itself.
+  // Use the last x-forwarded-for entry (CDN-injected real IP) to prevent
+  // rate-limit bypass via spoofed IPs in the header chain.
+  const fwdChain = req.headers.get('x-forwarded-for') ?? ''
+  const fwdParts = fwdChain.split(',').map(s => s.trim()).filter(Boolean)
+  const ip = fwdParts.length > 0 ? fwdParts[fwdParts.length - 1] : (req.headers.get('x-real-ip') ?? 'unknown')
+  // MSG91 already rate-limits OTP sends; this guards the session-mint endpoint.
   if (!checkRateLimit(`phone-widget:${ip}`, 20, 15 * 60_000)) {
     return NextResponse.json({ error: 'Too many attempts. Please wait a few minutes.' }, { status: 429 })
   }
@@ -240,8 +244,13 @@ export async function POST(req: NextRequest) {
   // next login → all their existing sessions on other devices are invalidated.
   // Add SESSION_PASSWORD_SECRET to Vercel env; fallback to service role key for
   // existing deployments without it (same security, but rotation risk remains).
+  const passwordSecret = process.env.SESSION_PASSWORD_SECRET ?? process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!passwordSecret) {
+    logger.error('phone-widget: SESSION_PASSWORD_SECRET and SUPABASE_SERVICE_ROLE_KEY are both unset — cannot mint session')
+    return NextResponse.json({ error: 'Phone sign-in is misconfigured.' }, { status: 500 })
+  }
   const password = crypto
-    .createHmac('sha256', process.env.SESSION_PASSWORD_SECRET ?? process.env.SUPABASE_SERVICE_ROLE_KEY ?? 'fallback-salt')
+    .createHmac('sha256', passwordSecret)
     .update(userId!)
     .digest('base64url')
 

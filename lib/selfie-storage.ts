@@ -9,9 +9,14 @@ import type { createAdminClient } from '@/lib/supabase-server'
 // column is needed to find a user's selfie.
 export const SELFIE_BUCKET = 'verifications'
 
+function selfieSecret(): string {
+  const s = process.env.SELFIE_PATH_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  if (!s) throw new Error('selfie-storage: SELFIE_PATH_SECRET and SUPABASE_SERVICE_ROLE_KEY are both unset — private storage paths cannot be computed safely')
+  return s
+}
+
 export function selfiePath(userId: string): string {
-  const secret = process.env.SELFIE_PATH_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-  const tag = createHmac('sha256', secret).update(`selfie:${userId}`).digest('hex').slice(0, 32)
+  const tag = createHmac('sha256', selfieSecret()).update(`selfie:${userId}`).digest('hex').slice(0, 32)
   return `selfies/${userId}-${tag}`
 }
 
@@ -68,14 +73,12 @@ export async function selfieSignedUrls(admin: Admin, userIds: string[]): Promise
 // with independent HMAC tags so they can't be guessed from listener profile URLs.
 
 export function idVerificationSelfiePath(userId: string): string {
-  const secret = process.env.SELFIE_PATH_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-  const tag = createHmac('sha256', secret).update(`id-verify-selfie:${userId}`).digest('hex').slice(0, 32)
+  const tag = createHmac('sha256', selfieSecret()).update(`id-verify-selfie:${userId}`).digest('hex').slice(0, 32)
   return `id-verify/selfies/${userId}-${tag}`
 }
 
 export function idVerificationDocPath(userId: string): string {
-  const secret = process.env.SELFIE_PATH_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-  const tag = createHmac('sha256', secret).update(`id-verify-doc:${userId}`).digest('hex').slice(0, 32)
+  const tag = createHmac('sha256', selfieSecret()).update(`id-verify-doc:${userId}`).digest('hex').slice(0, 32)
   return `id-verify/docs/${userId}-${tag}`
 }
 
