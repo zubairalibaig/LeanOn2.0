@@ -99,15 +99,17 @@ $$;
 
 -- ── 4. RLS policies: re-assert hardened forms (017, 024, 025, 026) ──
 
--- sessions: drop the over-broad update policy from the base schema,
--- restrict user UPDATE to seeker rating after completion (service role
--- handles all other mutations).
-DROP POLICY IF EXISTS "sessions_update_own"          ON public.sessions;
+-- sessions: drop ALL client UPDATE policies. Rating/review is submitted via
+-- /api/sessions PATCH (service-role) — no authenticated UPDATE on sessions
+-- is ever needed from the browser.
+--
+-- SECURITY: RLS policies do NOT provide column-level restriction; a policy
+-- allowing authenticated UPDATE would let seekers update any column on their
+-- completed sessions, not just rating/review. Migration 050 revoked the
+-- underlying UPDATE table privilege from authenticated; this ensures no policy
+-- accidentally re-enables it if that revoke is ever replayed.
+DROP POLICY IF EXISTS "sessions_update_own"           ON public.sessions;
 DROP POLICY IF EXISTS "sessions_seeker_rating_update" ON public.sessions;
-CREATE POLICY "sessions_seeker_rating_update"
-  ON public.sessions FOR UPDATE
-  USING (auth.uid() = seeker_id AND status = 'completed')
-  WITH CHECK (auth.uid() = seeker_id);
 
 -- payout_requests: split FOR ALL into scoped SELECT + bounded INSERT.
 DROP POLICY IF EXISTS "payout_own"        ON public.payout_requests;

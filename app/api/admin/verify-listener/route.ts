@@ -133,6 +133,15 @@ export async function GET(req: NextRequest) {
   // UI can display the photos without the files ever being publicly accessible.
   // Backward compat: old rows stored full public https:// URLs — return as-is.
   const rows = await Promise.all((data ?? []).map(async (v) => {
+    // Legacy rows stored full public https:// URLs. Log these so they can be
+    // identified and migrated to private storage paths. These are identity
+    // documents; public URLs are a privacy risk and should be migrated.
+    if (v.selfie_url?.startsWith('http')) {
+      logger.warn('verify-listener: legacy public selfie URL found — migrate to private storage', { listenerId: v.listener_id })
+    }
+    if (v.id_doc_url?.startsWith('http')) {
+      logger.warn('verify-listener: legacy public id_doc URL found — migrate to private storage', { listenerId: v.listener_id })
+    }
     const [selfieUrl, idDocUrl] = await Promise.all([
       v.selfie_url && !v.selfie_url.startsWith('http')
         ? idVerificationSignedUrl(sb, v.selfie_url)

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient, createServerSupabaseClient } from '@/lib/supabase-server'
+import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
 import { settleSession, abandonedSessionEnd } from '@/lib/session-billing'
 import { applySettlement } from '@/lib/settlement-ledger'
@@ -8,7 +8,9 @@ import { applySettlement } from '@/lib/settlement-ledger'
 // Sessions where status='active' AND started_at < now() - (duration_mins + 10 minutes)
 // For abandoned sessions, listener gets pro-rated credit based on actual minutes
 //
-// Auth: CRON_SECRET bearer (Vercel cron) OR authenticated user session (self-heal)
+// SECURITY: CRON_SECRET only — no user session fallback. This endpoint runs with
+// the service-role client and mutates wallet balances globally. Authenticated users
+// must not be able to invoke it (OWASP API5 broken function-level authorization).
 export async function GET(req: NextRequest) {
   const cronSecret = process.env.CRON_SECRET
   const authHeader = req.headers.get('authorization')
@@ -20,25 +22,13 @@ export async function GET(req: NextRequest) {
     return require('crypto').timingSafeEqual(Buffer.from(actual), Buffer.from(expected))
   }
 
-  if (cronSecret && !cronOk(cronSecret, authHeader)) {
-    // Not the cron secret — require a valid user session (self-heal path)
-    const { checkRateLimit } = await import('@/lib/rate-limit')
-    const userSb = createServerSupabaseClient()
-    const { data: { user } } = await userSb.auth.getUser()
-    if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-    if (!checkRateLimit(`session-expire:${user.id}`, 1, 60_000)) {
-      return NextResponse.json({ expired: 0 })
-    }
-  } else if (!cronSecret) {
-    // No CRON_SECRET configured — require a valid user session + rate limit.
-    // Never let this admin-client wallet-mutation loop run anonymously or unbounded.
-    const { checkRateLimit } = await import('@/lib/rate-limit')
-    const userSb = createServerSupabaseClient()
-    const { data: { user } } = await userSb.auth.getUser()
-    if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-    if (!checkRateLimit(`session-expire:${user.id}`, 1, 60_000)) {
-      return NextResponse.json({ expired: 0 })
-    }
+  if (!cronSecret) {
+    logger.error('Session expire called but CRON_SECRET is not set — denying all access')
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
+  if (!cronOk(cronSecret, authHeader)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
   try {

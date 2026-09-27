@@ -108,6 +108,31 @@ export async function checkRateLimitAsync(key: string, max: number, windowMs: nu
 }
 
 /**
+ * Strict async rate limiter — FAIL CLOSED when Redis is configured but unavailable.
+ *
+ * Use this for security-critical paths (authentication, payment, admin PIN) where
+ * an in-memory per-container fallback would allow bypass via concurrent cold starts.
+ * If Redis is configured but throws, this returns false (deny) rather than falling
+ * back to the per-process store.
+ *
+ * Without Redis configured, falls back to in-memory (dev/staging parity).
+ */
+export async function checkRateLimitStrict(key: string, max: number, windowMs: number): Promise<boolean> {
+  const rl = getRedisLimiter()
+  if (rl.Ratelimit && rl.redis) {
+    // Redis is configured — fail closed on any error
+    const limiter = new rl.Ratelimit({
+      redis: rl.redis,
+      limiter: rl.Ratelimit.slidingWindow(max, `${windowMs}ms`),
+    })
+    const { success } = await limiter.limit(key)
+    return success
+  }
+  // No Redis configured (dev / no env vars) — use in-memory
+  return checkRateLimit(key, max, windowMs)
+}
+
+/**
  * Async read-only rate-limit check (does NOT record an attempt).
  * Mirrors isRateLimited() but uses Redis sliding window when configured,
  * giving globally-consistent enforcement across all serverless containers.

@@ -7,30 +7,20 @@ import { applySettlement } from '@/lib/settlement-ledger'
 import { REQUEST_RESPONSE_WINDOW_MS } from '@/lib/constants'
 
 // POST — clean up sessions that have been "active" past their scheduled end time.
-// Called by Vercel cron job (daily at 02:00 UTC) and by session page on mount (self-heal).
+// Called by Vercel cron job (daily at 02:00 UTC).
+//
+// SECURITY: This endpoint runs with the service-role client and mutates wallet
+// balances across all users. It must ONLY be callable by the Vercel cron job
+// via CRON_SECRET. The previous "self-heal" path allowed any authenticated user
+// to invoke the global financial-mutation loop — broken function-level authorization
+// (OWASP API5). Self-heal for a specific session should use a scoped per-session
+// endpoint, never the global cron job.
 //
 // A session is considered orphaned if:
 //   status = 'active'  AND  started_at + duration_mins * 60s < now - 2 min grace period
-//
-// Vercel cron authentication: cron requests include the CRON_SECRET header.
 export async function POST(req: Request) {
-  // Auth: accept either a valid CRON_SECRET bearer token (Vercel cron)
-  // OR an authenticated user session (session-page self-heal on mount).
-  // Plain unauthenticated requests are rejected when CRON_SECRET is configured.
   const cronSecret = process.env.CRON_SECRET
   const authHeader = req.headers.get('authorization')
-
-  if (!cronSecret) {
-    // No cron secret configured — require a valid user session + rate limit.
-    // Never let this admin-client wallet-mutation loop run anonymously or without throttle.
-    const { createServerSupabaseClient: makeClient } = await import('@/lib/supabase-server')
-    const { checkRateLimit } = await import('@/lib/rate-limit')
-    const { data: { user } } = await makeClient().auth.getUser()
-    if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-    if (!checkRateLimit(`session-cleanup:${user.id}`, 1, 60_000)) {
-      return NextResponse.json({ cleaned: 0, checked: 0, staleCancelled: 0 })
-    }
-  }
 
   function cronOk(secret: string, header: string | null): boolean {
     const expected = `Bearer ${secret}`
@@ -39,21 +29,14 @@ export async function POST(req: Request) {
     return require('crypto').timingSafeEqual(Buffer.from(actual), Buffer.from(expected))
   }
 
-  if (cronSecret) {
-    if (cronOk(cronSecret, authHeader)) {
-      // Verified cron call — proceed
-    } else {
-      // Not the cron secret — require a valid user session (self-heal path)
-      const { createServerSupabaseClient } = await import('@/lib/supabase-server')
-      const { checkRateLimit } = await import('@/lib/rate-limit')
-      const userSb = createServerSupabaseClient()
-      const { data: { user } } = await userSb.auth.getUser()
-      if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-      // Rate-limit self-heal: 1 per user per minute to prevent DoS/cost amplification
-      if (!checkRateLimit(`session-cleanup:${user.id}`, 1, 60_000)) {
-        return NextResponse.json({ cleaned: 0, checked: 0, staleCancelled: 0 })
-      }
-    }
+  if (!cronSecret) {
+    // No CRON_SECRET configured — deny all. Set CRON_SECRET in Vercel env vars.
+    logger.error('Session cleanup called but CRON_SECRET is not set — denying all access')
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
+  if (!cronOk(cronSecret, authHeader)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
   const sb = createAdminClient()

@@ -43,6 +43,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Your account is suspended. Please contact support.' }, { status: 403 })
     }
 
+    // Only allow users who have started a listener application or already have a
+    // listener profile. Any authenticated user could otherwise consume verification
+    // upload quota and storage resources.
+    const [{ count: appCount }, { count: lpCount }] = await Promise.all([
+      admin.from('listener_applications').select('user_id', { count: 'exact', head: true }).eq('user_id', user.id),
+      admin.from('listener_profiles').select('user_id', { count: 'exact', head: true }).eq('user_id', user.id),
+    ])
+    if ((appCount ?? 0) === 0 && (lpCount ?? 0) === 0) {
+      return NextResponse.json({ error: 'You must be a listener applicant to upload verification documents.' }, { status: 403 })
+    }
+
     const storagePath = folder === 'selfie'
       ? idVerificationSelfiePath(user.id)
       : idVerificationDocPath(user.id)

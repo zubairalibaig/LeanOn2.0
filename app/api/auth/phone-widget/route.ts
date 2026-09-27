@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
-import { checkRateLimitAsync } from '@/lib/rate-limit'
+import { checkRateLimitStrict } from '@/lib/rate-limit'
 import { ensureUserRow } from '@/lib/ensure-user-row'
 import { logger } from '@/lib/logger'
 
@@ -131,7 +131,7 @@ export async function POST(req: NextRequest) {
   // MSG91 already rate-limits OTP sends; this guards the session-mint endpoint.
   // Use the async variant so Redis (when configured) enforces this across all
   // Vercel serverless containers — prevents bypass via concurrent cold starts.
-  if (!await checkRateLimitAsync(`phone-widget:${ip}`, 20, 15 * 60_000)) {
+  if (!await checkRateLimitStrict(`phone-widget:${ip}`, 20, 15 * 60_000)) {
     return NextResponse.json({ error: 'Too many attempts. Please wait a few minutes.' }, { status: 429 })
   }
 
