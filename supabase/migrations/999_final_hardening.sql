@@ -195,3 +195,28 @@ BEGIN
     END IF;
   END LOOP;
 END $$;
+
+-- ── 7. Belt-and-suspenders explicit revokes for high-risk SECURITY DEFINER
+--       functions that have been observed with auth_exec=true in production
+--       (accept_session and the guard trigger functions). The loop above
+--       handles these too; these explicit statements survive partial runs. ──
+DO $$
+DECLARE fn TEXT;
+BEGIN
+  -- accept_session: SECURITY DEFINER that changes session status + wallet —
+  -- must NEVER be directly callable by authenticated users; all calls must go
+  -- through the API route which verifies the caller IS the listener for that session.
+  FOR fn IN
+    SELECT pg_get_function_identity_arguments(p.oid)
+    FROM pg_proc p
+    WHERE p.pronamespace = 'public'::regnamespace
+      AND p.proname = 'accept_session' AND p.prosecdef = true
+  LOOP
+    EXECUTE format('REVOKE ALL ON FUNCTION public.accept_session(%s) FROM PUBLIC, anon, authenticated', fn);
+    EXECUTE format('GRANT EXECUTE ON FUNCTION public.accept_session(%s) TO service_role', fn);
+  END LOOP;
+END $$;
+
+-- Revoke TRUNCATE on sessions from anon/authenticated (belt-and-suspenders;
+-- TRUNCATE requires table ownership regardless, but the grant should not exist).
+REVOKE TRUNCATE ON public.sessions FROM anon, authenticated;
