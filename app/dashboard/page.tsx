@@ -1520,7 +1520,7 @@ export default function DashboardPage() {
         {/* My Chats shortcut */}
         <button
           onClick={() => router.push('/history')}
-          style={{ width:'100%', background:'white', border:'1.5px solid var(--border)', borderRadius:18, padding:'16px 20px', marginBottom:20, display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer', textAlign:'left' }}
+          style={{ width:'100%', background:'white', border:'1.5px solid var(--border)', borderRadius:18, padding:'16px 20px', marginBottom:12, display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer', textAlign:'left' }}
         >
           <div>
             <div style={{ fontSize:16, fontWeight:800, color:'var(--navy)' }}>My Chats</div>
@@ -1528,6 +1528,20 @@ export default function DashboardPage() {
           </div>
           <span style={{ fontSize:20 }}>💬</span>
         </button>
+
+        {/* Listener Lounge — only shown to approved listeners */}
+        {profile?.is_approved && (
+          <button
+            onClick={() => router.push('/listener-lounge')}
+            style={{ width:'100%', background:'linear-gradient(135deg,#E8F4FD,#F0F8FC)', border:'1.5px solid var(--border)', borderRadius:18, padding:'16px 20px', marginBottom:20, display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer', textAlign:'left' }}
+          >
+            <div>
+              <div style={{ fontSize:16, fontWeight:800, color:'var(--navy)' }}>Listener Lounge</div>
+              <div style={{ fontSize:13, color:'var(--gray)', fontWeight:600, marginTop:2 }}>Chat with other listeners · Ask questions · Share knowledge</div>
+            </div>
+            <span style={{ fontSize:20 }}>🛋️</span>
+          </button>
+        )}
 
         {sessions.length > 0 && (
           <>
