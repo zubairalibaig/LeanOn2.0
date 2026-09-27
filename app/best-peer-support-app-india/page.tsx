@@ -25,7 +25,7 @@ const faqSchema = {
       name: 'What is the best peer support app in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'For people who want to talk to a real human with lived experience, LeanOn is the strongest option in India in 2026. It offers real peer listeners (not AI), costs ₹160/session with the first 5 minutes free, is fully anonymous, and is available 24/7 without an appointment. For clinical counselling with a licensed professional, options like iCall (TISS) may be more appropriate. For a free AI companion, Wysa is available.',
+        text: 'For people who want to talk to a real human with lived experience, LeanOn is the strongest option in India in 2026. It offers real peer listeners (not AI), costs ₹160/session with the first 5 minutes free, is private, and is available without an appointment. For clinical counselling with a licensed professional, options like iCall (TISS) may be more appropriate. For a free AI companion, Wysa is available.',
       },
     },
     {
@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'How does LeanOn compare to YourDOST?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'YourDOST is a mixed platform offering both AI tools and sessions with licensed counsellors and psychologists. Sessions typically cost ₹500–₹2,000 and require booking in advance. LeanOn focuses exclusively on peer support — real people with lived experience rather than clinical professionals. LeanOn is more affordable (₹160/session), fully anonymous, and available 24/7 without an appointment. The choice depends on whether you need clinical counselling or human peer connection.',
+        text: 'YourDOST is a mixed platform offering both AI tools and sessions with licensed counsellors and psychologists. Sessions typically cost ₹500–₹2,000 and require booking in advance. LeanOn focuses exclusively on peer support — real people with lived experience rather than clinical professionals. LeanOn is more affordable (₹160/session), private, and available without an appointment. The choice depends on whether you need clinical counselling or human peer connection.',
       },
     },
     {
@@ -244,7 +244,7 @@ export default function BestPeerSupportAppIndiaPage() {
             </div>
             <div className="diff-card">
               <div className="diff-icon">🔒</div>
-              <div className="diff-title">Fully anonymous</div>
+              <div className="diff-title">Private</div>
               <div className="diff-desc">First name only. No last name, no photo, no social account. What you share stays between you and your listener.</div>
             </div>
             <div className="diff-card">
@@ -289,11 +289,11 @@ export default function BestPeerSupportAppIndiaPage() {
           <h2>Frequently Asked Questions</h2>
           <div className="faq-item">
             <div className="faq-q">What is the best peer support app in India?</div>
-            <div className="faq-a">For people who want to talk to a real human with lived experience, LeanOn is the strongest option in India in 2026. It offers real peer listeners (not AI), costs ₹160/session with the first 5 minutes free, is fully anonymous, and is available 24/7 without an appointment.</div>
+            <div className="faq-a">For people who want to talk to a real human with lived experience, LeanOn is the strongest option in India in 2026. It offers real peer listeners (not AI), costs ₹160/session with the first 5 minutes free, is private, and is available without an appointment.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">How does LeanOn compare to YourDOST?</div>
-            <div className="faq-a">YourDOST is a mixed platform offering AI tools and sessions with licensed counsellors. Sessions typically cost ₹500–₹2,000 and require booking in advance. LeanOn focuses exclusively on peer support — real people with lived experience. LeanOn is more affordable (₹160/session), fully anonymous, and available 24/7 without an appointment.</div>
+            <div className="faq-a">YourDOST is a mixed platform offering AI tools and sessions with licensed counsellors. Sessions typically cost ₹500–₹2,000 and require booking in advance. LeanOn focuses exclusively on peer support — real people with lived experience. LeanOn is more affordable (₹160/session), private, and available without an appointment.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn better than Wysa?</div>

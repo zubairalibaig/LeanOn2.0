@@ -32,7 +32,7 @@ const faqSchema = {
       name: 'Are LeanOn listeners real people or AI?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn listeners are real humans — peer-trained Indians who have applied to be listeners, gone through a training process, and choose to be on the app to support other people. There is no AI in the listening sessions. When you talk, a real person is on the other side.',
+        text: 'LeanOn listeners are real humans — Indians who have applied to be listeners, gone through screening and identity verification, and choose to be on the app to support other people. There is no AI in the listening sessions. When you talk, a real person is on the other side.',
       },
     },
     {
@@ -209,7 +209,7 @@ export default function UkTalkToSomeonePage() {
           <h2>Frequently asked questions</h2>
           <div className="faq-item">
             <h3>Are LeanOn listeners real people or AI?</h3>
-            <p>Real humans — peer-trained Indians who applied to be listeners and went through a training
+            <p>Real humans — Indians who applied to be listeners and went through screening
               process. There is no AI in the listening sessions. A real person is on the other side.</p>
           </div>
           <div className="faq-item">

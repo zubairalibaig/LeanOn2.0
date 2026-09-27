@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Empathy Listener for Indians in Malaysia — Feel Truly Heard | LeanOn',
-    description: 'Feeling unheard is exhausting. LeanOn connects Indian expats in Malaysia with trained peer listeners who give you their full, undivided attention — in Tamil, Hindi, or your language.',
+    description: 'Feeling unheard is exhausting. LeanOn connects Indian expats in Malaysia with screened peer listeners who give you their full, undivided attention — in Tamil, Hindi, or your language.',
     url: 'https://www.leanon.app/malaysia-empathy-listener',
     siteName: 'LeanOn',
     type: 'article',

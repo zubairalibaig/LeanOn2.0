@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Relationship Advice Online India — Talk to a Real Listener | LeanOn',
-  description: 'Going through relationship problems? Talk to a real, trained peer listener online — confidential, affordable, available 24/7 in India. Get relationship support without judgment.',
+  description: 'Going through relationship problems? Talk to a real, screened peer listener online — confidential, affordable, available 24/7 in India. Get relationship support without judgment.',
   keywords: [
     'relationship advice online india', 'relationship problems india', 'talk about relationship issues india',
     'partner problems india', 'breakup support india', 'relationship counselling online india',
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Relationship Advice Online India — Real Human Support, Not Predictions',
-    description: 'Talk to a trained peer listener about relationship problems. Anonymous, affordable, and available 24/7 across India.',
+    description: 'Talk to a screened peer listener about relationship problems. Anonymous, affordable, and available 24/7 across India.',
     url: 'https://www.leanon.app/relationship-advice-online-india',
     siteName: 'LeanOn',
     type: 'article',
@@ -32,7 +32,7 @@ const faqSchema = {
       name: 'How do I get relationship advice online in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn lets you talk to a trained peer listener about relationship problems — anonymously and affordably. Browse available listeners, start a free 5-minute session, and talk about whatever is on your mind.',
+        text: 'LeanOn lets you talk to a screened peer listener about relationship problems — anonymously and affordably. Browse available listeners, start a free 5-minute session, and talk about whatever is on your mind.',
       },
     },
     {
@@ -40,7 +40,7 @@ const faqSchema = {
       name: 'Is it safe to talk about my relationship problems online?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn is fully anonymous — your name and personal details are never shared with listeners. All conversations are private and confidential.',
+        text: 'Yes. LeanOn is private — your name and personal details are never shared with listeners. All conversations are private and confidential.',
       },
     },
     {
@@ -242,13 +242,13 @@ export default function RelationshipAdvicePage() {
           <h2>Frequently asked questions</h2>
           <div className="faq-item">
             <h3>How do I get relationship advice online in India?</h3>
-            <p>LeanOn lets you talk to a trained peer listener about relationship problems — anonymously and
+            <p>LeanOn lets you talk to a screened peer listener about relationship problems — anonymously and
               affordably. Browse available listeners, start a free 5-minute session, and talk about whatever
               is on your mind.</p>
           </div>
           <div className="faq-item">
             <h3>Is it safe to talk about my relationship problems online?</h3>
-            <p>Yes. LeanOn is fully anonymous — your name and personal details are never shared with listeners.
+            <p>Yes. LeanOn is private — your name and personal details are never shared with listeners.
               All conversations are private and confidential.</p>
           </div>
           <div className="faq-item">

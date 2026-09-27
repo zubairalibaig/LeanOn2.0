@@ -81,7 +81,7 @@ export default function OmanNriSupportPage() {
         </h1>
 
         <p style={{ fontSize: '1.05rem', color: '#444', lineHeight: 1.7, marginBottom: 32 }}>
-          The Indian community in Oman — particularly from Kerala, Tamil Nadu, and Andhra Pradesh — is one of the largest in the Gulf. But the size of the community does not close the emotional gap that expat life creates. LeanOn is a trained peer listener who understands the specific weight of this life, available anonymously any hour of the day.
+          The Indian community in Oman — particularly from Kerala, Tamil Nadu, and Andhra Pradesh — is one of the largest in the Gulf. But the size of the community does not close the emotional gap that expat life creates. LeanOn is a screened peer listener who understands the specific weight of this life, available anonymously any hour of the day.
         </p>
 
         <a href="/browse" style={{ display: 'inline-block', background: '#0F4867', color: '#fff', padding: '14px 28px', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: '1rem', marginBottom: 48 }}>

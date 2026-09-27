@@ -68,7 +68,7 @@ export const post = {
 
 <p>The need for private emotional support is real. But not all support is equal. What makes the difference between support that genuinely helps and support that leaves you feeling worse?</p>
 
-<p><strong>Non-judgment.</strong> Effective support begins with the listener setting aside their own opinions about what you should do, how you should feel, or what the right outcome is. This is surprisingly rare. Even well-meaning friends and family members find it hard to listen without evaluating. A trained peer listener who has agreed to show up without judgment creates a fundamentally different quality of space.</p>
+<p><strong>Non-judgment.</strong> Effective support begins with the listener setting aside their own opinions about what you should do, how you should feel, or what the right outcome is. This is surprisingly rare. Even well-meaning friends and family members find it hard to listen without evaluating. A screened peer listener who has agreed to show up without judgment creates a fundamentally different quality of space.</p>
 
 <p><strong>Genuine understanding.</strong> There is a difference between a listener who nods along and a listener who actually knows — from their own experience — something of what you are describing. When you are navigating the specific pressures of joint family life in India, speaking with someone who understands those pressures from the inside is qualitatively different from speaking with someone for whom this is abstract.</p>
 

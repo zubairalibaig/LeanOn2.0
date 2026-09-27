@@ -69,7 +69,7 @@ const jsonLd = {
 
 const options = [
   ['Therapy / clinical care', 'Qualified mental-health professionals can assess, diagnose and treat mental-health conditions. This is the appropriate path when you need clinical care.', 'Clinical care'],
-  ['Peer support', 'A trained peer listener offers a private conversation based on lived experience. It is non-clinical and does not diagnose or treat.', 'Human conversation'],
+  ['Peer support', 'A screened peer listener offers a private conversation based on lived experience. It is non-clinical and does not diagnose or treat.', 'Human conversation'],
   ['Trusted people', 'Friends, family or community can provide familiar support when you have people you feel safe talking to.', 'Personal connection'],
   ['Self-guided support', 'Journaling, reflection, exercise, sleep routines and other self-guided practices can complement support, depending on your situation.', 'Self-directed'],
 ]

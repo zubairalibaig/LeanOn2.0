@@ -89,7 +89,7 @@ export default function NriMarriageUkPage() {
 
         <div className="section">
           <h2>What Peer Support Looks Like for Marriage Pressure</h2>
-          <p>LeanOn listeners are not advisors and will not tell you what to do about your marriage. They are real people — trained peer listeners with lived experience of Indian cultural dynamics — who will genuinely hear you. No judgement. No advice you didn&rsquo;t ask for. Just the experience of being understood by someone who gets the cultural context without needing it explained.</p>
+          <p>LeanOn listeners are not advisors and will not tell you what to do about your marriage. They are real people — screened peer listeners with lived experience of Indian cultural dynamics — who will genuinely hear you. No judgement. No advice you didn&rsquo;t ask for. Just the experience of being understood by someone who gets the cultural context without needing it explained.</p>
           <p>UK (GMT/BST) afternoons align with Indian evenings — 3pm in Birmingham or Leicester is 8:30pm in India. Your quiet afternoon at home, or your lunch break at work, is when Indian listeners are in their evenings. No appointment needed. Anonymous. First 5 minutes free — once per listener.</p>
         </div>
 

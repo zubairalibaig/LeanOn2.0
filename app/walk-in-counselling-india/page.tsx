@@ -29,7 +29,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is this walk-in counselling?',
-      acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is peer support, not clinical counselling. But it offers the same core quality that makes walk-in counselling valuable: immediate access, no prior appointment, available when you need it. The support comes from trained peer listeners rather than licensed counsellors &mdash; which makes it appropriate for processing everyday emotional weight, not for clinical assessment or treatment.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is peer support, not clinical counselling. But it offers the same core quality that makes walk-in counselling valuable: immediate access, no prior appointment, available when you need it. The support comes from screened peer listeners rather than licensed counsellors &mdash; which makes it appropriate for processing everyday emotional weight, not for clinical assessment or treatment.' },
     },
     {
       '@type': 'Question',

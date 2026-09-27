@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Paid Counselling India — Affordable, Anonymous & Online | LeanOn',
-  description: 'Paid online counselling in India from ₹160 per session. Talk to a trained peer listener — anonymous, judgment-free, available now.',
+  description: 'Paid online counselling in India from ₹160 per session. Talk to a screened peer listener — anonymous, judgment-free, available now.',
   keywords: ['paid counselling india', 'affordable counselling india', 'low cost counselling india', 'mental health counselling india', 'talk to counsellor online india', 'emotional counselling india'],
   alternates: { canonical: 'https://www.leanon.app/online-counselling-india-cost', languages: { 'en-IN': 'https://www.leanon.app/online-counselling-india-cost' } },
   openGraph: {
     title: 'Paid Counselling India — Affordable, Anonymous & Online | LeanOn',
-    description: 'Paid online counselling in India from ₹160 per session. Talk to a trained peer listener — anonymous, judgment-free, available now.',
+    description: 'Paid online counselling in India from ₹160 per session. Talk to a screened peer listener — anonymous, judgment-free, available now.',
     url: 'https://www.leanon.app/online-counselling-india-cost',
     siteName: 'LeanOn',
     type: 'website',
@@ -211,7 +211,7 @@ export default function PaidCounsellingIndiaPage() {
           <ul>
             <li><strong>1:1 voice call</strong> with a real human peer listener — not a bot, not a form</li>
             <li><strong>Trained peer listener</strong> with lived experience in the area you want to discuss</li>
-            <li><strong>Fully anonymous</strong> — first name only, no photo, no social account required</li>
+            <li><strong>Private</strong> — first name only, no photo, no social account required</li>
             <li><strong>No waitlist</strong> — browse available listeners and start in minutes</li>
             <li><strong>Pay as you go</strong> — recharge when you want, use when you need it</li>
             <li><strong>Your first 5-minute session is free</strong> — try before you commit</li>

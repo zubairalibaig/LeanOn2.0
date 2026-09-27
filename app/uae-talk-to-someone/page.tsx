@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Talk to Someone Online in UAE & Dubai | LeanOn',
-  description: 'Need a real person to talk to in the UAE or Dubai? LeanOn connects Indian expats with trained peer listeners 24/7 — in Hindi, Tamil, Malayalam and more. First 5 minutes free.',
+  description: 'Need a real person to talk to in the UAE or Dubai? LeanOn connects Indian expats with screened peer listeners 24/7 — in Hindi, Tamil, Malayalam and more. First 5 minutes free.',
   keywords: [
     'talk to someone online UAE', 'someone to talk to dubai', 'need to talk UAE',
     'online chat support dubai', 'talk to a person UAE', 'emotional support online UAE',
@@ -68,7 +68,7 @@ const faqSchema = {
       name: 'How much does it cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Your first 5 minutes are free with every new listener. Paid sessions start from US$10 for 15 minutes. You pay from an in-app wallet; unused time is fully refunded.',
+        text: 'Your first 5 minutes of your account are free. Paid sessions start from US$10 for 15 minutes. You pay from an in-app wallet; unused time is fully refunded.',
       },
     },
   ],

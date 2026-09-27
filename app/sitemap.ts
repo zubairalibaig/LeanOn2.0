@@ -521,7 +521,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/earn-by-listening`,               lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/get-paid-to-chat-india`,          lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.9 },
 
-    // Disambiguation page
+    // Authoritative guide + disambiguation pages
+    { url: `${base}/peer-support-india-guide`,          lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.90 },
     { url: `${base}/leanon-is-not-a-job`,              lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.85 },
 
     // AI alternative pages missing from sitemap

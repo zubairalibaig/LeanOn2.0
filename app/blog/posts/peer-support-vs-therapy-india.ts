@@ -96,7 +96,7 @@ export const post = {
 
 <p>Structured peer support in India is still emerging as a category. For a long time, &quot;talking to someone&quot; meant calling a friend — which, as many people know, comes with its own complications. Friends get tired. Friends have opinions. Friends are embedded in the same social network where your problems live. And not everyone has a friend they can fully lean on.</p>
 
-<p>LeanOn is building something different: a dedicated <strong>peer support India</strong> platform where you can connect with trained peer listeners who understand Indian life — the pressures of family, the loneliness of cities, the weight of expectations, the difficulty of asking for help in a culture that often does not make space for it. If you want to <a href="/browse">browse peer listeners</a> and find someone whose experience resonates with yours, the platform makes that possible.</p>
+<p>LeanOn is building something different: a dedicated <strong>peer support India</strong> platform where you can connect with screened peer listeners who understand Indian life — the pressures of family, the loneliness of cities, the weight of expectations, the difficulty of asking for help in a culture that often does not make space for it. If you want to <a href="/browse">browse peer listeners</a> and find someone whose experience resonates with yours, the platform makes that possible.</p>
 
 <p>If you have been through something difficult and want to offer that understanding to others, you can also <a href="/become-listener">become a listener</a> — and be the kind of presence for someone else that you may have needed yourself.</p>
 

@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Peer Support Online India — Talk to Someone Who\'s Been There | LeanOn',
-  description: 'Peer support from real people who\'ve experienced what you\'re going through. Anonymous, ₹160/session, available 24/7 across India. First 5 min free.',
+  description: 'Peer support from real people who\'ve experienced what you\'re going through. Private, ₹160/session, no appointment needed. First 5 min free.',
   keywords: ['peer support online india', 'peer support app india', 'peer support mental health india', 'peer support india', 'online peer support india'],
   alternates: { canonical: 'https://www.leanon.app/peer-support-online-india', languages: { 'en-IN': 'https://www.leanon.app/peer-support-online-india' } },
   openGraph: {
     title: 'Peer Support Online India — Talk to Someone Who\'s Been There | LeanOn',
-    description: 'Peer support from real people who\'ve experienced what you\'re going through. Anonymous, ₹160/session, available 24/7 across India. First 5 min free.',
+    description: 'Peer support from real people who\'ve experienced what you\'re going through. Private, ₹160/session, no appointment needed. First 5 min free.',
     url: 'https://www.leanon.app/peer-support-online-india',
     siteName: 'LeanOn',
     type: 'article',
@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'Is peer support the same as therapy?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'No. Therapy is delivered by a licensed mental health professional — a psychologist, psychiatrist, or counsellor — who can diagnose conditions and provide clinical treatment. Peer support is delivered by a trained person with lived experience, and focuses on empathy, listening, and emotional connection rather than diagnosis or treatment. Peer support is not a replacement for therapy when therapy is needed, but for everyday emotional overwhelm, burnout, relationship stress, and the weight of hard weeks, peer support is often exactly what helps — and it is far more accessible and affordable.',
+        text: 'No. Therapy is delivered by a licensed mental health professional — a psychologist, psychiatrist, or counsellor — who can diagnose conditions and provide clinical treatment. Peer support is delivered by a screened peer with lived experience, and focuses on empathy, listening, and emotional connection rather than diagnosis or treatment. Peer support is not a replacement for therapy when therapy is needed, but for everyday emotional overwhelm, burnout, relationship stress, and the weight of hard weeks, peer support is often exactly what helps — and it is far more accessible and affordable.',
       },
     },
     {
@@ -155,7 +155,7 @@ export default function PeerSupportOnlineIndiaPage() {
 
         {/* Hero */}
         <div className="hero">
-          <p className="tag">Peer Support · India · 24/7</p>
+          <p className="tag">Peer Support · India · No Appointment Needed</p>
           <h1>Peer Support That Feels Like Talking to a Friend <em>Who Gets It</em></h1>
           <p className="lead">Not therapy. Not a helpline. Not advice from someone who has never been through it. Peer support is the experience of speaking to a real person who has lived something like what you are carrying right now — and who listens without judgment, without rushing, and without a clinical distance between you.</p>
         </div>
@@ -169,7 +169,7 @@ export default function PeerSupportOnlineIndiaPage() {
           <p>There is a specific kind of relief that happens when someone says &quot;I went through that too&quot; — and means it. Not as a polite thing to say, but because they actually did. That moment of recognition changes something. The thing you have been carrying alone stops feeling like a personal failure and starts feeling like a human experience. That is the core of peer support, and it is something no amount of professional training can replicate.</p>
 
           <h3>Listening, Not Fixing</h3>
-          <p>Most people who reach out for support are not looking to be fixed. They know their situation. What they need is to say the actual version of it — not the acceptable summary — to someone who will not flinch, will not try to resolve it in ten minutes, and will not change how they see you after. Peer support gives you that space. A trained peer listener knows how to hold a conversation without steering it toward a conclusion you did not ask for.</p>
+          <p>Most people who reach out for support are not looking to be fixed. They know their situation. What they need is to say the actual version of it — not the acceptable summary — to someone who will not flinch, will not try to resolve it in ten minutes, and will not change how they see you after. Peer support gives you that space. A screened peer listener knows how to hold a conversation without steering it toward a conclusion you did not ask for.</p>
 
           <h3>What Peer Support Is Not</h3>
           <p>Peer support is not therapy. It does not replace clinical care for diagnosed mental health conditions. It is not a crisis service — if you are in immediate danger, please call NIMHANS 080-46110007 or Tele-MANAS 14416. And it is not advice: a peer listener will not tell you what to do, because that is not what helps. What helps is being genuinely heard.</p>
@@ -194,13 +194,13 @@ export default function PeerSupportOnlineIndiaPage() {
         <div className="section">
           <h2>How LeanOn Does Peer Support</h2>
 
-          <h3>Trained Peer Listeners</h3>
-          <p>Every listener on LeanOn is a real person who has lived through something relevant to the conversations they take. They go through LeanOn&apos;s listener training — active listening, reflecting, holding space, knowing when to refer someone to professional help — before they are made available. They are not therapists, and we are transparent about that. But they are not random volunteers either.</p>
+          <h3>Screened Peer Listeners</h3>
+          <p>Every listener on LeanOn is a real person who has lived through something relevant to the conversations they take. They are reviewed through LeanOn&apos;s screening process — application review, identity verification, and an assessment on active listening, boundaries and when to refer to professional help — before they are made available. They are not therapists, and we are transparent about that. But they are not random volunteers either.</p>
 
-          <h3>Fully Anonymous</h3>
-          <p>You sign up with a phone number and a first name. No last name, no photo of you, no social account. Nothing you say is shared with anyone in your life. The conversation stays between you and your listener.</p>
+          <h3>Private Conversations</h3>
+          <p>You sign up with a phone number and a first name. No last name, no photo of you, no social account required. Nothing you say is shared with anyone in your life. The conversation stays between you and your listener.</p>
 
-          <h3>Available 24/7 Across India</h3>
+          <h3>No Appointment, No Waitlist</h3>
           <p>Listeners are available in the middle of the night, over weekends, on public holidays. Whether you are in Mumbai, Bengaluru, a small town in UP, or anywhere else in India — if you have a phone and data, peer support is available.</p>
 
           <h3>Affordable</h3>
@@ -236,7 +236,7 @@ export default function PeerSupportOnlineIndiaPage() {
               <tbody>
                 <tr>
                   <td className="col-label">LeanOn peer support</td>
-                  <td>Lived-experience listening, warmth, anonymity, ₹160/session, 24/7</td>
+                  <td>Lived-experience listening, warmth, privacy, ₹160/session, no appointment</td>
                   <td>Clinical diagnosis or treatment</td>
                 </tr>
                 <tr>
@@ -304,7 +304,7 @@ export default function PeerSupportOnlineIndiaPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Find a Peer Listener Today</h2>
-          <p>Browse listeners by experience area. First 5 minutes free. Anonymous, available 24/7 — no appointment, no waitlist.</p>
+          <p>Browse listeners by experience area. First 5 minutes free. Private, no appointment, no waitlist — check live listener availability.</p>
           <div className="cta-btns">
             <a href="/auth"><button className="btn-primary">Find a peer listener →</button></a>
             <a href="/browse"><button className="btn-secondary">Browse peer listeners →</button></a>

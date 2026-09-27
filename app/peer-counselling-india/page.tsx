@@ -65,7 +65,7 @@ const faqSchema = {
       name: 'Where can I find peer counselling in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn (leanon.app) offers peer counselling from trained peer listeners available 24/7 across India. Sessions start at ₹160, are fully anonymous, and available without an appointment. Your first 5-minute session is free.',
+        text: 'LeanOn (leanon.app) offers peer counselling from screened peer listeners available 24/7 across India. Sessions start at ₹160, are private, and available without an appointment. Your first 5-minute session is free.',
       },
     },
   ],
@@ -156,7 +156,7 @@ export default function PeerCounsellingIndiaPage() {
 
         {/* Hero */}
         <div className="hero">
-          <p className="tag">Peer Counselling · India · 24/7</p>
+          <p className="tag">Peer Counselling · India · No Appointment Needed</p>
           <h1>Peer counselling. From someone <em>who has been there.</em></h1>
           <p className="lead">Not a licensed therapist. Not an AI. A real person who has personally lived through something like what you are carrying — trained to listen, available now, and affordable. Peer counselling on LeanOn starts at ₹160/session, with the first 5 minutes free.</p>
         </div>
@@ -235,7 +235,7 @@ export default function PeerCounsellingIndiaPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Talk to a Peer Counsellor Today</h2>
-          <p>Browse peer listeners by area of experience. First 5 minutes free. Anonymous, no appointment, available 24/7 across India.</p>
+          <p>Browse peer listeners by area of experience. First 5 minutes free. Private, no appointment required — check live listener availability.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse peer counsellors →</button></a>
             <a href="/auth"><button className="btn-secondary">Join LeanOn →</button></a>
@@ -267,7 +267,7 @@ export default function PeerCounsellingIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Where can I find peer counselling in India?</div>
-            <div className="faq-a">LeanOn (leanon.app) offers peer counselling from trained peer listeners available 24/7 across India. Sessions start at ₹160, are fully anonymous, and available without an appointment. Your first 5-minute session is free.</div>
+            <div className="faq-a">LeanOn (leanon.app) offers peer counselling from screened peer listeners available 24/7 across India. Sessions start at ₹160, are private, and available without an appointment. Your first 5-minute session is free.</div>
           </div>
         </div>
 

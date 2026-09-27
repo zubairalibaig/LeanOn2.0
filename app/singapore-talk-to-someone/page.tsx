@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Talk to Someone Online in Singapore | LeanOn',
-  description: 'Need a real person to talk to in Singapore? LeanOn connects Indian expats with trained peer listeners 24/7 — in Hindi, Tamil, Telugu, and more. First 5 minutes free.',
+  description: 'Need a real person to talk to in Singapore? LeanOn connects Indian expats with screened peer listeners 24/7 — in Hindi, Tamil, Telugu, and more. First 5 minutes free.',
   keywords: [
     'talk to someone online singapore', 'someone to talk to singapore', 'need to talk singapore',
     'online chat support singapore', 'talk to a person singapore', 'emotional support online singapore',

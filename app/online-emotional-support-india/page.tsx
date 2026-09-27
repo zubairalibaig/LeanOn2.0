@@ -49,7 +49,7 @@ export default function OnlineEmotionalSupportIndiaPage() {
 
         <div className="card">
           <h2>What is online emotional support?</h2>
-          <p>Online emotional support is a structured conversation with a trained peer listener who has personal experience with what you&apos;re going through. Unlike advice-giving or prescribing, peer emotional support focuses on active listening, empathy, and helping you feel genuinely heard.</p>
+          <p>Online emotional support is a structured conversation with a screened peer listener who has personal experience with what you&apos;re going through. Unlike advice-giving or prescribing, peer emotional support focuses on active listening, empathy, and helping you feel genuinely heard.</p>
           <p>On LeanOn, you can connect with listeners who have personally experienced loneliness, anxiety, burnout, grief, relationship breakdowns, and more. Their understanding comes from lived experience, not a textbook.</p>
         </div>
 

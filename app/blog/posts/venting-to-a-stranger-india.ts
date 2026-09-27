@@ -29,7 +29,7 @@ export const post = {
 
 <h2>What a Stranger Offers</h2>
 
-<p>A stranger — and particularly a trained peer listener — offers something that even the best friend cannot: a completely clean receiving space. No history with you. No stake in how things turn out. No prior opinions about the people you are talking about. No risk of it going further. No emotional debt on either side.</p>
+<p>A stranger — and particularly a screened peer listener — offers something that even the best friend cannot: a completely clean receiving space. No history with you. No stake in how things turn out. No prior opinions about the people you are talking about. No risk of it going further. No emotional debt on either side.</p>
 
 <p>This creates a specific kind of freedom. People consistently report that they say things to peer listeners that they have not been able to say to anyone in their actual life. Not because the listener is more skilled than a friend (though training helps), but because the absence of social consequences removes the internal editor. You can say the uncharitable thing, the petty thing, the thing that makes you look bad, the thing you are not sure you are allowed to feel — without managing anyone else&apos;s reaction to it.</p>
 
@@ -45,7 +45,7 @@ export const post = {
 
 <h2>A Trained Listener vs a Sympathetic Friend</h2>
 
-<p>There is also a skill dimension. A good friend is sympathetic. A trained peer listener is something different — they are practised in receiving without redirecting. The difference looks like this:</p>
+<p>There is also a skill dimension. A good friend is sympathetic. A screened peer listener is something different — they are practised in receiving without redirecting. The difference looks like this:</p>
 
 <p>A friend, when you say &ldquo;I am furious at my in-laws,&rdquo; might say: &ldquo;You should just ignore them.&rdquo; Or: &ldquo;They mean well.&rdquo; Or: &ldquo;My in-laws do the same thing.&rdquo; All of these are sympathetic — and all of them move the conversation away from what you were feeling into something else.</p>
 

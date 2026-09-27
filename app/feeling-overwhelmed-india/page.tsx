@@ -43,7 +43,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is it confidential?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions on LeanOn are fully anonymous — you do not need to share your name, your job, your location, or any identifying information. What you say in a session stays in the session. Listeners are bound by a strict confidentiality commitment and are not connected to your employer, your family, or any institution. You can say anything without consequence.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions on LeanOn are private — you do not need to share your name, your job, your location, or any identifying information. What you say in a session stays in the session. Listeners are bound by a strict confidentiality commitment and are not connected to your employer, your family, or any institution. You can say anything without consequence.' },
     },
     {
       '@type': 'Question',

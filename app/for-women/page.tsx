@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support for Women India — Someone Who Actually Listens | LeanOn',
-  description: 'For women carrying the weight of marriage, motherhood, family, and work — all at once. Talk to a trained peer listener who understands what that weight actually feels like. Anonymous. Available now.',
+  description: 'For women carrying the weight of marriage, motherhood, family, and work — all at once. Talk to a screened peer listener who understands what that weight actually feels like. Anonymous. Available now.',
   keywords: [
     'emotional support for women India', 'women mental health India', 'support for women India',
     'working women stress India', 'women emotional health India', 'Indian women mental health',
@@ -251,7 +251,7 @@ export default function ForWomenPage() {
 
         <div className="cta-card">
           <h2>You Deserve to Be Heard Too</h2>
-          <p>Browse trained peer listeners — many of them women, many of them mothers — who understand what you are carrying. Anonymous, available now.</p>
+          <p>Browse screened peer listeners — many of them women, many of them mothers — who understand what you are carrying. Anonymous, available now.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Listeners</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works</button></a>

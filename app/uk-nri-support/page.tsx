@@ -200,7 +200,7 @@ export default function UkNriSupportPage() {
 
         <div className="cta">
           <h2>Talk to someone who already understands NRI life</h2>
-          <p>Indian peer listeners. Private, anonymous, 24/7.</p>
+          <p>Indian peer listeners. Private, private, no appointment.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>

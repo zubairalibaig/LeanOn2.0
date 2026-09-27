@@ -54,7 +54,7 @@ export const post = {
 
 <h2>What Real Peer Support Looks Like</h2>
 
-<p>LeanOn connects you with trained peer listeners — real people who have applied, gone through a process, and are there to listen without agenda. They are not therapists. They are not going to diagnose you or give you clinical advice. They are humans who have lived through difficult things and trained in active listening — and who show up, are accountable, and are genuinely present for a conversation.</p>
+<p>LeanOn connects you with screened peer listeners — real people who have applied, gone through a process, and are there to listen without agenda. They are not therapists. They are not going to diagnose you or give you clinical advice. They are humans who have lived through difficult things and practised listening in real conversations — and who show up, are accountable, and are genuinely present for a conversation.</p>
 
 <p>Sessions start with a free five minutes. There is no appointment. Listeners are available in twelve Indian languages and speak to experiences that are hard to explain to anyone who has not lived them: immigrant loneliness, family pressure, relationship problems that do not have clean names, the particular weight of holding something alone.</p>
 

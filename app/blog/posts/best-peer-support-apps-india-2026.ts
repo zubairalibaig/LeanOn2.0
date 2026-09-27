@@ -25,11 +25,11 @@ export const post = {
 
 <h2>LeanOn</h2>
 
-<p><strong>What it is:</strong> A peer support platform connecting people with trained peer listeners — real humans who have lived experience in the emotional area they support people through. Every LeanOn listener has personally been through something relevant to the conversations they take. They are trained in active listening and supportive conversation. They are not licensed therapists.</p>
+<p><strong>What it is:</strong> A peer support platform connecting people with screened peer listeners — real humans who have lived experience in the emotional area they support people through. Every LeanOn listener has personally been through something relevant to the conversations they take. They are trained in active listening and supportive conversation. They are not licensed therapists.</p>
 
 <p><strong>Cost:</strong> Around ₹160/session. Your first 5-minute session is free, so you can get a sense of whether the connection feels right before committing.</p>
 
-<p><strong>Pros:</strong> Real humans, not AI. Fully anonymous — first name only, no last name, no photo. Available 24/7 without an appointment. Pay per session, no subscription trap. The lived-experience angle is the most meaningful differentiator: when someone says "I've been through something like that," they mean it.</p>
+<p><strong>Pros:</strong> Real humans, not AI. Private — first name only, no last name, no photo. Available 24/7 without an appointment. Pay per session, no subscription trap. The lived-experience angle is the most meaningful differentiator: when someone says "I've been through something like that," they mean it.</p>
 
 <p><strong>Cons:</strong> Not a substitute for clinical care. If you need a diagnosis, medication, or structured psychotherapy, LeanOn is not the right tool. It is also not a crisis service — if you are in immediate danger, please call NIMHANS (080-46110007) or Tele-MANAS (14416).</p>
 

@@ -35,7 +35,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'How is this different from Omegle or random chat apps?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Completely different. On Omegle or random chat apps, you are matched with a truly random person with no vetting, no training, and no accountability. On LeanOn, every listener has been specifically selected, trained in active listening, and is bound by confidentiality. You can read their profile before choosing them. It is the difference between talking to a random person on the street and talking to a trained, accountable human being.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Completely different. On Omegle or random chat apps, you are matched with a truly random person with no vetting, no training, and no accountability. On LeanOn, every listener has been specifically selected through a screening process, assessed on active listening, and is bound by confidentiality. You can read their profile before choosing them. It is the difference between talking to a random person on the street and talking to a screened, accountable human being.' },
     },
     {
       '@type': 'Question',

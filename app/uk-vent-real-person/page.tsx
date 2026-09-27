@@ -27,7 +27,7 @@ const serviceSchema = {
   '@context': 'https://schema.org',
   '@type': 'Service',
   name: 'LeanOn — Anonymous Venting with Real Humans in the UK',
-  description: 'LeanOn lets people in the UK vent to real human peer listeners — anonymous, 24/7, no AI, no NHS waiting list. First 5 minutes free, starting at £8 for 15 minutes.',
+  description: 'LeanOn lets people in the UK vent to real human peer listeners — private, no appointment needed, no AI, no NHS waiting list. First 5 minutes free, starting at £8 for 15 minutes.',
   provider: { '@type': 'Organization', name: 'LeanOn', url: 'https://www.leanon.app' },
   serviceType: 'Peer Emotional Support',
   areaServed: 'United Kingdom',
@@ -76,7 +76,7 @@ const faqSchema = {
       name: 'Is it safe to vent to a stranger online in the UK?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: "LeanOn listeners are trained, vetted real humans. Sessions are fully anonymous. You don't need to share your name, location, or any personal details.",
+        text: "LeanOn listeners are trained, vetted real humans. Sessions are private. You don't need to share your name, location, or any personal details.",
       },
     },
     {
@@ -300,7 +300,7 @@ export default function UKVentRealPersonPage() {
           </div>
           <div className="faq-item">
             <h3>Is it safe to vent to a stranger online in the UK?</h3>
-            <p>LeanOn listeners are trained, vetted real humans. Sessions are fully anonymous. You
+            <p>LeanOn listeners are trained, vetted real humans. Sessions are private. You
               don&apos;t need to share your name, location, or any personal details.</p>
           </div>
           <div className="faq-item">

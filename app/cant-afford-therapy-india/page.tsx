@@ -210,7 +210,7 @@ export default function CantAffordTherapyIndiaPage() {
           <p>Writing, breathwork apps, and self-help tools can be genuinely useful as supplements. But they do not do the one thing that matters most: make you feel heard by another person. Research consistently shows that the felt experience of being understood by another human is qualitatively different from self-reflection, however rigorous.</p>
 
           <h3>Peer Support — The Real Middle Ground</h3>
-          <p>Peer support sits between talking to friends (free, limited) and therapy (expensive, clinical). A trained peer listener is not a friend — they are an objective outside presence without a stake in your situation. And they are not a therapist — no diagnosis, no treatment framework, no clinical record. They are a person who has navigated hard things and been trained to support others doing the same.</p>
+          <p>Peer support sits between talking to friends (free, limited) and therapy (expensive, clinical). A screened peer listener is not a friend — they are an objective outside presence without a stake in your situation. And they are not a therapist — no diagnosis, no treatment framework, no clinical record. They are a person who has navigated hard things and been trained to support others doing the same.</p>
         </div>
 
         <div className="section">

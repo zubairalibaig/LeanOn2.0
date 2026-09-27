@@ -263,7 +263,7 @@ export default function MarriageProblemsIndiaPage() {
         <div className="cta-card">
           <h2>You can say it here</h2>
           <p>
-            Talk to a trained peer listener — anonymous, no judgment, available now.
+            Talk to a screened peer listener — anonymous, no judgment, available now.
             First 5 minutes free. ₹160 for a 15-minute session.
           </p>
           <div className="cta-btns">

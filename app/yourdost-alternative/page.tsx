@@ -32,7 +32,7 @@ const faqSchema = {
       name: 'Is LeanOn like YourDOST?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn and YourDOST both exist to help you feel better — but they work very differently. YourDOST connects you with credentialed counselors through your employer. LeanOn connects you with trained peer listeners who have been through similar experiences, directly and anonymously, without any employer involvement. Think of LeanOn as a complement to therapy — more accessible, more immediate, and completely private.',
+        text: 'LeanOn and YourDOST both exist to help you feel better — but they work very differently. YourDOST connects you with credentialed counselors through your employer. LeanOn connects you with screened peer listeners who have been through similar experiences, directly and anonymously, without any employer involvement. Think of LeanOn as a complement to therapy — more accessible, more immediate, and completely private.',
       },
     },
     {
@@ -206,7 +206,7 @@ export default function YourDOSTAlternativePage() {
               <tr>
                 <td>Anonymous?</td>
                 <td className="cross">Linked to employer</td>
-                <td className="tick">✅ Fully anonymous</td>
+                <td className="tick">✅ Private</td>
               </tr>
               <tr>
                 <td>Available 24/7?</td>
@@ -277,7 +277,7 @@ export default function YourDOSTAlternativePage() {
             <h3>Is LeanOn like YourDOST?</h3>
             <p>LeanOn and YourDOST both exist to help you feel better — but they work very differently.
               YourDOST connects you with credentialed counselors through your employer. LeanOn connects you
-              with trained peer listeners, directly and anonymously, with no employer involvement. Think of
+              with screened peer listeners, directly and anonymously, with no employer involvement. Think of
               LeanOn as more accessible and more immediate — a complement to therapy, not a replacement.</p>
           </div>
           <div className="faq-item">

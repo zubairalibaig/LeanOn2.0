@@ -239,7 +239,7 @@ export default function MarriedButLonelyPage() {
 
         <div className="cta-card">
           <h2>You Deserve to Be Heard</h2>
-          <p>Talk to a real trained peer listener — anonymous, no judgment, available now. First 5 minutes free.</p>
+          <p>Talk to a real screened peer listener — anonymous, no judgment, available now. First 5 minutes free.</p>
           <div className="cta-btns">
             <a href="/browse?topic=relationships"><button className="btn-primary">Talk to someone who understands — first 5 min free →</button></a>
             <a href="/for-women"><button className="btn-secondary">Support for women</button></a>

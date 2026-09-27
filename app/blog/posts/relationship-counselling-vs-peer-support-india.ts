@@ -23,7 +23,7 @@ export const post = {
 <p>In India, relationship counselling from a qualified therapist typically costs ₹2,000–8,000 per session. Online platforms like Amaha or YourDOST reduce this somewhat. It requires commitment from both partners and usually takes multiple sessions over weeks or months to be effective.</p>
 
 <h2>What Peer Support Is</h2>
-<p>Peer support is a private conversation with a trained peer listener — someone who has relevant lived experience. It is not clinical. It is not structured therapy. It is a human conversation with someone who understands.</p>
+<p>Peer support is a private conversation with a screened peer listener — someone who has relevant lived experience. It is not clinical. It is not structured therapy. It is a human conversation with someone who understands.</p>
 <p>It is appropriate when:</p>
 <ul>
 <li>You need to talk through a relationship situation before you know what you think about it</li>

@@ -195,7 +195,7 @@ export default function CanadaLonelinessPage() {
           <ul className="checklist">
             <li>Your first 5 minutes are completely free — no card needed</li>
             <li>CA$14 for 15 min &nbsp;·&nbsp; CA$21 for 30 min &nbsp;·&nbsp; CA$28 for 45 min</li>
-            <li>Real humans — trained peer listeners, not AI or bots</li>
+            <li>Real humans — screened peer listeners, not AI or bots</li>
             <li>Anonymous — your name, your story, your privacy</li>
             <li>Available day and night, any timezone</li>
             <li>Many listeners understand the Indian immigrant experience personally</li>

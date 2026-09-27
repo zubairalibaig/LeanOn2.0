@@ -48,7 +48,7 @@ const faqSchema = {
       name: 'Can a LeanOn listener help me with immigration paperwork or legal questions?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn listeners are not immigration lawyers or consultants and cannot advise you on your immigration case. They are trained peer listeners — people who will hear your fears, frustrations, and uncertainty without judgment. For legal questions, please consult a registered RCIC or immigration lawyer.',
+        text: 'LeanOn listeners are not immigration lawyers or consultants and cannot advise you on your immigration case. They are screened peer listeners — people who will hear your fears, frustrations, and uncertainty without judgment. For legal questions, please consult a registered RCIC or immigration lawyer.',
       },
     },
     {
@@ -222,7 +222,7 @@ export default function CanadaImmigrationStressPage() {
           </div>
           <div className="faq-item">
             <h3>Can a LeanOn listener help with immigration paperwork?</h3>
-            <p>No — LeanOn listeners are trained peer listeners, not immigration consultants or lawyers.
+            <p>No — LeanOn listeners are screened peer listeners, not immigration consultants or lawyers.
               For legal questions, please consult a registered RCIC or immigration lawyer.</p>
           </div>
           <div className="faq-item">

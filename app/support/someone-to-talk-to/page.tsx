@@ -4,11 +4,11 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Someone to Talk To in India | LeanOn Peer Listeners',
-  description: 'Need someone to talk to? LeanOn connects you with trained peer listeners in India. Anonymous, available 24/7.',
+  description: 'Need someone to talk to? LeanOn connects you with screened peer listeners in India. Anonymous, available 24/7.',
   alternates: { canonical: 'https://www.leanon.app/support/someone-to-talk-to', languages: { 'en-IN': 'https://www.leanon.app/support/someone-to-talk-to' } },
   openGraph: {
     title: 'Someone to Talk To in India | LeanOn Peer Listeners',
-    description: 'Need someone to talk to? LeanOn connects you with trained peer listeners in India. Anonymous, available 24/7.',
+    description: 'Need someone to talk to? LeanOn connects you with screened peer listeners in India. Anonymous, available 24/7.',
     url: 'https://www.leanon.app/support/someone-to-talk-to',
     siteName: 'LeanOn',
     type: 'article',

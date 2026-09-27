@@ -48,7 +48,7 @@ const faqSchema = {
       name: 'Can I talk about my relationship problems anonymously?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn sessions are fully anonymous. You do not need to share your name, your partner\'s name, or any identifying information.',
+        text: 'Yes. LeanOn sessions are private. You do not need to share your name, your partner\'s name, or any identifying information.',
       },
     },
     {
@@ -206,7 +206,7 @@ export default function RelationshipSupportPage() {
             </div>
             <div className="compare-col human">
               <h3>💙 LeanOn Real Listener</h3>
-              <p>Fully anonymous. What you share stays between you and your listener. No names needed.</p>
+              <p>Private. What you share stays between you and your listener. No names needed.</p>
             </div>
           </div>
         </div>
@@ -245,7 +245,7 @@ export default function RelationshipSupportPage() {
           </div>
           <div className="faq-item">
             <h3>Can I talk about my relationship problems anonymously?</h3>
-            <p>Yes. LeanOn sessions are fully anonymous. You do not need to share your name, your
+            <p>Yes. LeanOn sessions are private. You do not need to share your name, your
               partner&apos;s name, or any identifying information.</p>
           </div>
           <div className="faq-item">

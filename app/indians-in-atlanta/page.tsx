@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
   { '@type': 'Question', name: 'Do listeners understand the Atlanta Indian community experience?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are based in India and understand the NRI experience including the close-knit community dynamics of places like Alpharetta and Johns Creek. You don\'t need to explain what it feels like when the community is both support and pressure.' } },
   { '@type': 'Question', name: 'What time zone works for talking from Atlanta?', acceptedAnswer: { '@type': 'Answer', text: 'Atlanta (EST) is 10.5 hours behind IST. 8am Atlanta = 6:30pm India. Your morning before work aligns with Indian evenings — a natural window when many listeners are available.' } },
-  { '@type': 'Question', name: 'Will anyone in my community find out?', acceptedAnswer: { '@type': 'Answer', text: 'No. Sessions are fully anonymous — only a phone number and first name. Listeners are in India, outside your Atlanta network. Nothing is shared with your community, family, or employer.' } },
+  { '@type': 'Question', name: 'Will anyone in my community find out?', acceptedAnswer: { '@type': 'Answer', text: 'No. Sessions are private — only a phone number and first name. Listeners are in India, outside your Atlanta network. Nothing is shared with your community, family, or employer.' } },
   { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first 5-minute session is free. Sessions start from US$10 for 15 minutes. No subscription, no commitment.' } },
 ] }
 

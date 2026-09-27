@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'Is LeanOn a mental health app?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn is a peer emotional support platform — not a therapy app or a mental health treatment service. It connects people who need someone to talk to with trained peer listeners who have lived experience. LeanOn does not provide clinical diagnosis or treatment, and does not claim to be a substitute for professional mental health care.',
+        text: 'LeanOn is a peer emotional support platform — not a therapy app or a mental health treatment service. It connects people who need someone to talk to with screened peer listeners who have lived experience. LeanOn does not provide clinical diagnosis or treatment, and does not claim to be a substitute for professional mental health care.',
       },
     },
     {
@@ -267,7 +267,7 @@ export default function MentalHealthSupportIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn a mental health app?</div>
-            <div className="faq-a">LeanOn is a peer emotional support platform — not a therapy app or mental health treatment service. It connects people who need someone to talk to with trained peer listeners who have lived experience. LeanOn does not provide clinical diagnosis or treatment, and does not claim to be a substitute for professional care.</div>
+            <div className="faq-a">LeanOn is a peer emotional support platform — not a therapy app or mental health treatment service. It connects people who need someone to talk to with screened peer listeners who have lived experience. LeanOn does not provide clinical diagnosis or treatment, and does not claim to be a substitute for professional care.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">How does peer support help mental health?</div>

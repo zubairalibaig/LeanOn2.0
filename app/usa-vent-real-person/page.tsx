@@ -27,7 +27,7 @@ const serviceSchema = {
   '@context': 'https://schema.org',
   '@type': 'Service',
   name: 'LeanOn — Anonymous Venting with Real Humans in the US',
-  description: 'LeanOn lets Americans vent to real human peer listeners — anonymous, 24/7, no AI. First 5 minutes free, $10 for 15 minutes.',
+  description: 'LeanOn lets Americans vent to real human peer listeners — private, no appointment needed, no AI. First 5 minutes free, $10 for 15 minutes.',
   provider: { '@type': 'Organization', name: 'LeanOn', url: 'https://www.leanon.app' },
   serviceType: 'Peer Emotional Support',
   areaServed: 'United States',
@@ -248,7 +248,7 @@ export default function USAVentRealPersonPage() {
             </div>
             <div className="compare-col human">
               <h3>💙 LeanOn Real Human</h3>
-              <p>Fully anonymous — no name, no location, no identifying details required</p>
+              <p>Private — no name, no location, no identifying details required</p>
             </div>
           </div>
         </div>

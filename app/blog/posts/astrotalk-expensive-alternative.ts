@@ -60,7 +60,7 @@ export const post = {
 
 <h2>Try LeanOn First</h2>
 
-<p>If you have never used a peer support platform and are not sure whether talking to a trained peer listener is what you are looking for, LeanOn's first session is free — five minutes, no obligation, no card required. You can <a href="/browse">browse peer listeners</a>, read a little about who they are and what they have experience with, and try a conversation before spending anything.</p>
+<p>If you have never used a peer support platform and are not sure whether talking to a screened peer listener is what you are looking for, LeanOn's first session is free — five minutes, no obligation, no card required. You can <a href="/browse">browse peer listeners</a>, read a little about who they are and what they have experience with, and try a conversation before spending anything.</p>
 
 <p>If it is not what you needed, nothing is lost. If it is, you will probably find that the conversation you were routing through an astrology app could have happened here all along — at one-fifth the price, and without the detour.</p>
 

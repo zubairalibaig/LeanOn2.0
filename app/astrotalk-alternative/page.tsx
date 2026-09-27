@@ -32,7 +32,7 @@ const faqSchema = {
       name: 'How is LeanOn different from AstroTalk?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'AstroTalk connects you with astrologers for horoscope and prediction-based chats. LeanOn connects you with trained peer listeners for real emotional conversations — no predictions, just genuine human support. LeanOn is ideal when you want to talk, vent, or feel heard.',
+        text: 'AstroTalk connects you with astrologers for horoscope and prediction-based chats. LeanOn connects you with screened peer listeners for real emotional conversations — no predictions, just genuine human support. LeanOn is ideal when you want to talk, vent, or feel heard.',
       },
     },
     {
@@ -56,7 +56,7 @@ const faqSchema = {
       name: 'Will my conversations be kept private?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn is fully anonymous — your name, phone number, and personal details are never shared with listeners. You can speak freely without worrying about privacy.',
+        text: 'Yes. LeanOn is private — your name, phone number, and personal details are never shared with listeners. You can speak freely without worrying about privacy.',
       },
     },
     {
@@ -168,7 +168,7 @@ export default function AstroTalkAlternativePage() {
           </p>
           <p>
             The problem is that astrologers are trained to give predictions — not to listen. LeanOn was built
-            to fill that gap: trained peer listeners who are there specifically to hear you, not to tell you
+            to fill that gap: screened peer listeners who are there specifically to hear you, not to tell you
             what the stars say.
           </p>
         </div>
@@ -201,7 +201,7 @@ export default function AstroTalkAlternativePage() {
               </tr>
               <tr>
                 <td>Anonymous</td>
-                <td className="tick">Fully anonymous</td>
+                <td className="tick">Private</td>
                 <td>Requires registration</td>
               </tr>
               <tr>
@@ -267,7 +267,7 @@ export default function AstroTalkAlternativePage() {
           <div className="faq-item">
             <h3>How is LeanOn different from AstroTalk?</h3>
             <p>AstroTalk connects you with astrologers for horoscope and prediction-based chats. LeanOn connects you
-              with trained peer listeners for real emotional conversations — no predictions, just genuine human support.</p>
+              with screened peer listeners for real emotional conversations — no predictions, just genuine human support.</p>
           </div>
           <div className="faq-item">
             <h3>Can I talk to someone on LeanOn just to feel better?</h3>
@@ -281,7 +281,7 @@ export default function AstroTalkAlternativePage() {
           </div>
           <div className="faq-item">
             <h3>Will my conversations be kept private?</h3>
-            <p>Yes. LeanOn is fully anonymous — your name, phone number, and personal details are never shared with
+            <p>Yes. LeanOn is private — your name, phone number, and personal details are never shared with
               listeners. You can speak freely without worrying about privacy.</p>
           </div>
           <div className="faq-item">

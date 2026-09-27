@@ -32,7 +32,7 @@ const faqSchema = {
       name: 'Is it worth paying to talk to someone?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes — and you probably already are, just inefficiently. If you have ever spent ₹500 on an AstroTalk call or paid for a chat app subscription, you were already paying to have someone listen. LeanOn makes that explicit and affordable: ₹160 for a full 15-minute session with a trained peer listener.',
+        text: 'Yes — and you probably already are, just inefficiently. If you have ever spent ₹500 on an AstroTalk call or paid for a chat app subscription, you were already paying to have someone listen. LeanOn makes that explicit and affordable: ₹160 for a full 15-minute session with a screened peer listener.',
       },
     },
     {
@@ -157,7 +157,7 @@ export default function PayToTalkOnlineIndiaPage() {
         <p className="lead">
           If you have ever spent ₹500–1500 on AstroTalk just because you needed someone to hear you out,
           you were doing the right thing — just at the wrong price. LeanOn is the honest version: pay to
-          talk to a real trained peer listener, no astrology wrapped around it, at a third of the cost.
+          talk to a real screened peer listener, no astrology wrapped around it, at a third of the cost.
         </p>
 
         <a href="/auth" className="cta-hero">Start talking — first 5 min free →</a>
@@ -249,7 +249,7 @@ export default function PayToTalkOnlineIndiaPage() {
               </tr>
               <tr>
                 <td>Anonymous</td>
-                <td className="tick">Fully anonymous</td>
+                <td className="tick">Private</td>
                 <td>Usually requires profile</td>
               </tr>
               <tr>
@@ -288,7 +288,7 @@ export default function PayToTalkOnlineIndiaPage() {
             <h3>Is it worth paying to talk to someone?</h3>
             <p>Yes — and you probably already are, just inefficiently. If you have ever spent ₹500 on an AstroTalk
               call or paid for a chat app subscription, you were already paying to have someone listen. LeanOn makes
-              that explicit and affordable: ₹160 for a full 15-minute session with a trained peer listener.</p>
+              that explicit and affordable: ₹160 for a full 15-minute session with a screened peer listener.</p>
           </div>
           <div className="faq-item">
             <h3>How much does it cost per minute?</h3>

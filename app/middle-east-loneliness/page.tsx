@@ -66,7 +66,7 @@ const faqSchema = {
       name: 'Is LeanOn available late at night from the Middle East?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn listeners are available 24/7. The small time difference between the Middle East and India means listeners are awake and available even during Gulf night hours. You are never left alone with your thoughts.',
+        text: 'Yes. LeanOn listeners are available throughout the day. Many India-based listeners are active during Gulf evening hours. No appointment needed — browse who is available now.',
       },
     },
   ],
@@ -175,7 +175,7 @@ export default function MiddleEastLonelinessPage() {
         <div className="night-box">
           <h2>🌙 The loneliness peaks after sundown</h2>
           <p>When the workday ends and there is nothing left to distract you, the quiet fills in fast.
-            LeanOn listeners are available 24/7 — across every timezone in the Middle East. You are
+            LeanOn listeners are available throughout the day, with many active during Gulf evening hours. You are
             never left alone with it after dark.</p>
           <p>First 5 minutes are completely free. No card needed to start.</p>
           <a href="/browse" className="cta-night">Find an Indian listener now →</a>
@@ -231,7 +231,7 @@ export default function MiddleEastLonelinessPage() {
           </div>
           <div className="faq-item">
             <h3>Is LeanOn available late at night from the Middle East?</h3>
-            <p>Yes, 24/7. The small time difference with India means listeners are always awake and available
+            <p>Yes. The small time difference with India means listeners are often available during Gulf evening hours —
               — even during Gulf night hours. You are never alone with your thoughts.</p>
           </div>
         </div>

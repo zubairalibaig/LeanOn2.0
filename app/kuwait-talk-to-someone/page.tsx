@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Talk to Someone Online in Kuwait | LeanOn',
-  description: 'Need a real person to talk to in Kuwait? LeanOn connects Indian expats with trained peer listeners 24/7 — in Hindi, Tamil, Malayalam and more. First 5 minutes free.',
+  description: 'Need a real person to talk to in Kuwait? LeanOn connects Indian expats with screened peer listeners 24/7 — in Hindi, Tamil, Malayalam and more. First 5 minutes free.',
   keywords: [
     'talk to someone online kuwait', 'someone to talk to kuwait', 'need to talk kuwait',
     'online chat support kuwait', 'talk to a person kuwait', 'emotional support online kuwait',
@@ -67,7 +67,7 @@ const faqSchema = {
       name: 'How much does it cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Your first 5 minutes are free with every new listener. Paid sessions start from US$10 for 15 minutes. You pay from an in-app wallet and unused time is fully refunded.',
+        text: 'Your first 5 minutes of your account are free. Paid sessions start from US$10 for 15 minutes. You pay from an in-app wallet and unused time is fully refunded.',
       },
     },
   ],
@@ -103,7 +103,7 @@ export default function KuwaitTalkToSomeonePage() {
           <li>Malayalam, Hindi, Tamil, Telugu and 9 more Indian languages</li>
           <li>No appointment — available at 2am Kuwait time if you need it</li>
           <li>Anonymous — your name, your employer, your family will not know</li>
-          <li>First 5 minutes free with every new listener</li>
+          <li>First 5 minutes free (one per account)</li>
         </ul>
 
         <h2 style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: 12 }}>What People Talk About</h2>

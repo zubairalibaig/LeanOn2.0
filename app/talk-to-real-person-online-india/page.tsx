@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Talk to a Real Person Online India — Human Support, Not AI',
-    description: 'LeanOn connects you with real trained peer listeners across India. No bots, no algorithms, no predictions — just genuine human conversation.',
+    description: 'LeanOn connects you with real screened peer listeners across India. No bots, no algorithms, no predictions — just genuine human conversation.',
     url: 'https://www.leanon.app/talk-to-real-person-online-india',
     siteName: 'LeanOn',
     type: 'article',
@@ -32,7 +32,7 @@ const faqSchema = {
       name: 'How can I talk to a real person online in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn connects you with real trained peer listeners across India. Browse who is online, start a free 5-minute session, and talk to a real human who is there just to listen — no AI, no bots.',
+        text: 'LeanOn connects you with real screened peer listeners across India. Browse who is online, start a free 5-minute session, and talk to a real human who is there just to listen — no AI, no bots.',
       },
     },
     {
@@ -56,7 +56,7 @@ const faqSchema = {
       name: 'How much does it cost to talk to a real person on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Your first 5 minutes are free, every session. After that, 15-minute paid sessions start at ₹160 depending on the listener. Much more affordable than professional therapy.',
+        text: 'Your first 5 minutes are free (one per account). After that, 15-minute paid sessions start at ₹160 depending on the listener. Much more affordable than professional therapy.',
       },
     },
     {
@@ -64,7 +64,7 @@ const faqSchema = {
       name: 'Is talking to a LeanOn listener private?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn is fully anonymous — no real name required. Your conversations are private and confidential. Listeners sign agreements to maintain your privacy.',
+        text: 'Yes. LeanOn is private — no real name required. Your conversations are private and confidential. Listeners sign agreements to maintain your privacy.',
       },
     },
   ],
@@ -156,7 +156,7 @@ export default function TalkToRealPersonPage() {
         <h1>Done Talking to Bots?<br />Talk to a Real Human Who Listens</h1>
         <p className="lead">
           AI can answer questions. But when you are struggling, anxious, or just need to feel understood —
-          only a real human can do that. LeanOn connects you with real trained peer listeners across India,
+          only a real human can do that. LeanOn connects you with real screened peer listeners across India,
           available 24/7. No AI. No bots. No predictions.
         </p>
 
@@ -240,7 +240,7 @@ export default function TalkToRealPersonPage() {
           <h2>Frequently asked questions</h2>
           <div className="faq-item">
             <h3>How can I talk to a real person online in India?</h3>
-            <p>LeanOn connects you with real trained peer listeners across India. Browse who is online, start a
+            <p>LeanOn connects you with real screened peer listeners across India. Browse who is online, start a
               free 5-minute session, and talk to a real human who is there just to listen.</p>
           </div>
           <div className="faq-item">
@@ -256,12 +256,12 @@ export default function TalkToRealPersonPage() {
           </div>
           <div className="faq-item">
             <h3>How much does it cost to talk on LeanOn?</h3>
-            <p>Your first 5 minutes are free, every session. After that, 15-minute paid sessions start at ₹160
+            <p>Your first 5 minutes are free (one per account). After that, 15-minute paid sessions start at ₹160
               depending on the listener — much more affordable than professional therapy.</p>
           </div>
           <div className="faq-item">
             <h3>Is talking to a LeanOn listener private?</h3>
-            <p>Yes. LeanOn is fully anonymous — no real name required. Your conversations are private and
+            <p>Yes. LeanOn is private — no real name required. Your conversations are private and
               confidential.</p>
           </div>
         </div>

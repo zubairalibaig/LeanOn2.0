@@ -46,7 +46,7 @@ export const post = {
 <p><strong>Where it falls short:</strong> Availability. Wait times can be significant. The counsellors are postgraduate students under supervision — that is not a criticism (the training is rigorous), but it is worth knowing. Less suitable for urgent or crisis situations.</p>
 
 <h2>LeanOn</h2>
-<p><strong>What it does well:</strong> LeanOn does one thing: connect you with a trained peer listener — a real person with relevant lived experience — for a private 1:1 conversation. Available immediately, no appointment, from ₹160 for 15 minutes. Anonymous. Not clinical, not a chatbot, not a group.</p>
+<p><strong>What it does well:</strong> LeanOn does one thing: connect you with a screened peer listener — a real person with relevant lived experience — for a private 1:1 conversation. Available immediately, no appointment, from ₹160 for 15 minutes. Anonymous. Not clinical, not a chatbot, not a group.</p>
 <p><strong>Where it falls short:</strong> LeanOn is peer support, not therapy. Listeners are not licensed professionals. If you need diagnosis, medication, or clinical treatment for a mental health condition, LeanOn is not the right choice — and the platform is explicit about this.</p>
 
 <h2>How to Choose</h2>

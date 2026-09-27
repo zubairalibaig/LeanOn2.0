@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Peer Support India — Real People, Real Conversations | LeanOn',
-  description: 'Peer support connects you with someone who has lived through what you\'re facing. Not therapy. Not AI. Real conversations on LeanOn — ₹160/session, anonymous, 24/7.',
+  description: 'Peer support connects you with someone who has lived through what you\'re facing. Not therapy. Not AI. Real conversations on LeanOn — ₹160/session, private, no appointment.',
   keywords: ['peer support', 'peer support India', 'peer support platform', 'peer support online', 'peer support app India', 'what is peer support'],
   alternates: { canonical: 'https://www.leanon.app/peer-support', languages: { 'en-IN': 'https://www.leanon.app/peer-support' } },
   openGraph: {
     title: 'Peer Support India — Real People, Real Conversations | LeanOn',
-    description: 'Peer support connects you with someone who has lived through what you\'re facing. Not therapy. Not AI. Real conversations on LeanOn — ₹160/session, anonymous, 24/7.',
+    description: 'Peer support connects you with someone who has lived through what you\'re facing. Not therapy. Not AI. Real conversations on LeanOn — ₹160/session, private, no appointment.',
     url: 'https://www.leanon.app/peer-support',
     siteName: 'LeanOn',
     type: 'website',
@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'How is peer support different from therapy?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Therapy is delivered by a licensed professional — a psychologist, psychiatrist, or counsellor — who can diagnose and treat mental health conditions. Peer support is delivered by someone with lived experience who is trained to listen and support, not to diagnose or treat. Therapy costs ₹1,500–₹5,000 per session in India and requires an appointment. Peer support on LeanOn costs ₹160/session and is available 24/7 with no appointment.',
+        text: 'Therapy is delivered by a licensed professional — a psychologist, psychiatrist, or counsellor — who can diagnose and treat mental health conditions. Peer support is delivered by someone with lived experience who is trained to listen and support, not to diagnose or treat. Therapy costs ₹1,500–₹5,000 per session in India and requires an appointment. Peer support on LeanOn costs ₹160/session and is available without appointment.',
       },
     },
     {
@@ -164,7 +164,7 @@ export default function PeerSupportPage() {
 
         {/* Hero */}
         <div className="hero">
-          <p className="tag">Peer Support · India · 24/7</p>
+          <p className="tag">Peer Support · India · No Appointment Needed</p>
           <h1>Peer support. <em>Real people.</em> Real conversations.</h1>
           <p className="lead">Not therapy. Not an AI chatbot. Not advice from someone who has never been through it. Peer support is the experience of talking to a real human being who has lived something like what you are carrying right now — and who listens without judgment, without a diagnosis, and without a clinical distance between you.</p>
         </div>
@@ -182,7 +182,7 @@ export default function PeerSupportPage() {
         <div className="stats-row">
           <div className="stat-pill"><em>₹160</em>/session</div>
           <div className="stat-pill">First <em>5 min free</em></div>
-          <div className="stat-pill"><em>24/7</em> available</div>
+          <div className="stat-pill"><em>No appointment</em> needed</div>
           <div className="stat-pill"><em>Anonymous</em></div>
           <div className="stat-pill">30+ <em>trained listeners</em></div>
         </div>
@@ -295,7 +295,7 @@ export default function PeerSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How is peer support different from therapy?</div>
-            <div className="faq-a">Therapy is delivered by a licensed professional — a psychologist, psychiatrist, or counsellor — who can diagnose and treat mental health conditions. Peer support is delivered by someone with lived experience who is trained to listen and support, not to diagnose or treat. Therapy costs ₹1,500–₹5,000 per session in India and requires an appointment. Peer support on LeanOn costs ₹160/session and is available 24/7 with no appointment.</div>
+            <div className="faq-a">Therapy is delivered by a licensed professional — a psychologist, psychiatrist, or counsellor — who can diagnose and treat mental health conditions. Peer support is delivered by someone with lived experience who is trained to listen and support, not to diagnose or treat. Therapy costs ₹1,500–₹5,000 per session in India and requires an appointment. Peer support on LeanOn costs ₹160/session and is available without appointment.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is peer support effective?</div>

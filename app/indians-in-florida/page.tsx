@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
   { '@type': 'Question', name: 'Do listeners understand Indian life in Florida?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are based in India and understand the NRI experience — including the Florida Indian experience of being in a fast-growing but still-forming community, new arrivals still building connections, and the specific isolation that warm weather and suburban sprawl can create.' } },
   { '@type': 'Question', name: 'What time works to connect from Florida?', acceptedAnswer: { '@type': 'Answer', text: 'Florida (EST) is 10.5 hours behind IST. 8am Florida = 6:30pm India. Early Florida mornings before work align with Indian evenings — a reliable window for finding listeners online.' } },
-  { '@type': 'Question', name: 'Is this confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are fully anonymous — phone number and first name only. Nothing is shared with your community, family, or employer.' } },
+  { '@type': 'Question', name: 'Is this confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are private — phone number and first name only. Nothing is shared with your community, family, or employer.' } },
   { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
 ] }
 

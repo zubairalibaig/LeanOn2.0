@@ -234,7 +234,7 @@ export default function AnonymousChatIndiaPage() {
               <tr>
                 <td>Who you are speaking to</td>
                 <td className="bad">Completely unknown — anyone</td>
-                <td className="good">Screened, trained peer listener</td>
+                <td className="good">Screened, screened peer listener</td>
               </tr>
               <tr>
                 <td>Purpose</td>

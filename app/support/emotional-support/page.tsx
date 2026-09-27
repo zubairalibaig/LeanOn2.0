@@ -4,11 +4,11 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Online Emotional Support India — Talk to a Peer Listener | LeanOn',
-  description: 'Get online emotional support from trained peer listeners in India. Anonymous, affordable, and available 24/7 on LeanOn.',
+  description: 'Get online emotional support from screened peer listeners in India. Anonymous, affordable, and available 24/7 on LeanOn.',
   alternates: { canonical: 'https://www.leanon.app/support/emotional-support', languages: { 'en-IN': 'https://www.leanon.app/support/emotional-support' } },
   openGraph: {
     title: 'Online Emotional Support India — Talk to a Peer Listener | LeanOn',
-    description: 'Get online emotional support from trained peer listeners in India. Anonymous, affordable, and available 24/7 on LeanOn.',
+    description: 'Get online emotional support from screened peer listeners in India. Anonymous, affordable, and available 24/7 on LeanOn.',
     url: 'https://www.leanon.app/support/emotional-support',
     siteName: 'LeanOn',
     type: 'article',

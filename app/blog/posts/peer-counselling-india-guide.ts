@@ -63,7 +63,7 @@ export const post = {
 
 <h2>Where to Find Peer Counselling in India</h2>
 
-<p>The main peer counselling option available 24/7 across India is <a href="/peer-counselling-india">LeanOn</a>. It offers trained peer listeners across a range of lived experience areas, available now with no appointment needed. Sessions cost approximately ₹160, and the first 5 minutes are free.</p>
+<p>The main peer counselling option available 24/7 across India is <a href="/peer-counselling-india">LeanOn</a>. It offers screened peer listeners across a range of lived experience areas, available now with no appointment needed. Sessions cost approximately ₹160, and the first 5 minutes are free.</p>
 
 <p>If you need professional counselling — licensed, clinical, structured — iCall (run by TISS) is the most affordable option, starting at around ₹200. Private therapists and online platforms like YourDOST are available at higher price points.</p>
 

@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Talk to Someone Online in Australia | Indian Expat Support | LeanOn',
-  description: 'Need a real person to talk to in Australia? LeanOn connects Indian expats with trained peer listeners 24/7 — in Hindi, Tamil, Telugu, Malayalam and more. First 5 minutes free.',
+  description: 'Need a real person to talk to in Australia? LeanOn connects Indian expats with screened peer listeners 24/7 — in Hindi, Tamil, Telugu, Malayalam and more. First 5 minutes free.',
   keywords: [
     'talk to someone online australia', 'someone to talk to australia indian', 'need to talk australia expat',
     'online chat support australia indian', 'emotional support australia indian',
@@ -36,7 +36,7 @@ const faqSchema = {
       name: 'Can I talk to someone in Australia right now?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn listeners are available 24/7 across time zones. No appointment, no waiting list. The first 5 minutes are free with every new listener. Browse who is online and start a conversation immediately.',
+        text: 'Yes. LeanOn listeners are available 24/7 across time zones. No appointment, no waiting list. The first 5 minutes of your account are free. Browse who is online and start a conversation immediately.',
       },
     },
     {

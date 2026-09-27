@@ -160,7 +160,7 @@ export default function EmpathyFriendIndiaPage() {
         <div className="section">
           <h2>How LeanOn Listeners Are Different</h2>
           <h3>Trained in Active Listening</h3>
-          <p>Active listening is a specific set of skills — presence, reflection, asking questions that open rather than close. Every LeanOn listener completes training in these techniques before they take sessions.</p>
+          <p>Active listening is a specific set of skills — presence, reflection, asking questions that open rather than close. Every LeanOn listener is assessed on these skills as part of the screening process before they take sessions.</p>
           <h3>Peer-Lived Experience</h3>
           <p>LeanOn listeners are not professionals who learned about emotional difficulty from textbooks. They have lived through something similar to what you are carrying. When they say &quot;I understand&quot;, they mean it.</p>
           <h3>Indian Context</h3>

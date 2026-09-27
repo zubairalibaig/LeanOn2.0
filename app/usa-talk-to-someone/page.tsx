@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'What makes LeanOn different from AI chat or mental health apps?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn connects you with a real human being — a trained peer listener who is actually present with you, responding in real time, genuinely curious about your experience. AI cannot hold space. AI cannot feel the weight of what you are saying and be moved by it. A LeanOn listener can.',
+        text: 'LeanOn connects you with a real human being — a screened peer listener who is actually present with you, responding in real time, genuinely curious about your experience. AI cannot hold space. AI cannot feel the weight of what you are saying and be moved by it. A LeanOn listener can.',
       },
     },
     {
@@ -208,7 +208,7 @@ export default function UsaTalkToSomeonePage() {
           <h2>Frequently asked questions</h2>
           <div className="faq-item">
             <h3>What makes LeanOn different from AI chat or mental health apps?</h3>
-            <p>LeanOn connects you with a real human being — a trained peer listener who is actually
+            <p>LeanOn connects you with a real human being — a screened peer listener who is actually
               present with you, responding in real time, genuinely curious about your experience.
               AI cannot hold space. A LeanOn listener can.</p>
           </div>
