@@ -6,8 +6,8 @@ export const metadata: Metadata = {
   title: 'Talk to Someone Online Right Now | Real Person, Not AI | LeanOn',
   description: 'When you need a real person to listen — not an AI, not a bot, not a therapist. LeanOn peer listeners are available now, no appointment needed.',
   keywords: ['talk to someone online', 'someone to talk to', 'someone to chat with', 'friendly chat online', 'talk to someone right now', 'I have no one to talk to', 'need someone to listen', 'want someone to talk to but don\'t need therapy', 'anonymous person to talk to', 'need to talk to someone', 'talk to real person online', 'real person to talk to online', 'not ai someone to talk to'],
-  alternates: { canonical: 'https://www.leanon.app/support/someone-to-talk-to' },
-  openGraph: { title: 'Talk to Someone Online Right Now | Real Person, Not AI | LeanOn', description: 'When you need a real person to listen — not an AI, not a bot, not a therapist. LeanOn peer listeners are available now, no appointment needed.', url: 'https://www.leanon.app/support/someone-to-talk-to', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
+  alternates: { canonical: 'https://www.leanon.app/talk-to-someone-online' },
+  openGraph: { title: 'Talk to Someone Online Right Now | Real Person, Not AI | LeanOn', description: 'When you need a real person to listen — not an AI, not a bot, not a therapist. LeanOn peer listeners are available now, no appointment needed.', url: 'https://www.leanon.app/talk-to-someone-online', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
 }
 
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
@@ -20,7 +20,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'Talk to Someone Online Right Now', item: 'https://www.leanon.app/support/someone-to-talk-to' },
+  { '@type': 'ListItem', position: 2, name: 'Talk to Someone Online Right Now', item: 'https://www.leanon.app/talk-to-someone-online' },
 ] }
 
 const S = `
@@ -127,7 +127,7 @@ export default function TalkToSomeoneOnlinePage() {
         <div className="section">
           <h2>How It Works</h2>
           <p>Browse listeners who are currently online. Each listener profile shows a little about their background and what they have been through. Choose someone whose experience resonates with yours. Start a session &mdash; text-based, anonymous, no signup beyond a phone number and first name.</p>
-          <p>Your first 5-minute session is free. If it is helpful, you continue. If not, you stop and pay nothing. No subscription, no commitment, no waitlist.</p>
+          <p>The first 5 minutes of every session are free. If it is helpful, you continue. If not, you stop and pay nothing. No subscription, no commitment, no waitlist.</p>
         </div>
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>Real person. Right now.</h2><p>Not AI. Not a bot. A real human being who will actually listen. First 5 minutes free.</p><a href="/browse" className="btn-cta">Talk to someone now &rarr;</a></div>

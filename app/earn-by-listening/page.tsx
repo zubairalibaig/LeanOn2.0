@@ -19,42 +19,12 @@ export const metadata: Metadata = {
   },
 }
 
-const faqSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: [
-    {
-      '@type': 'Question',
-      name: 'How much can I earn as a peer listener on LeanOn?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Listeners on LeanOn set their own session rate (typically ₹100–₹300 per 15 minutes). Listeners keep 60% of their rate on paid sessions (LeanOn\'s 40% service fee supports bringing seekers to LeanOn, payments, safety and support), so active listeners conducting 3–5 sessions per day can take home ₹180–₹480 per hour of sessions. Your earnings depend on your rate, availability, and how many seekers book with you. There are no upfront costs or hidden fees — the 40% service fee is the only deduction, shown transparently on every session.' },
-    },
-    {
-      '@type': 'Question',
-      name: 'Do I need a degree or certification to become a listener on LeanOn?',
-      acceptedAnswer: { '@type': 'Answer', text: 'No degree or certification is required. What matters is lived experience — you should have personally navigated what your future seekers are going through (loneliness, burnout, anxiety, grief, relationship stress, etc.). You will answer screening questions on active listening, boundaries and crisis referral as part of your application. This is peer support, not therapy — your qualification is your story.' },
-    },
-    {
-      '@type': 'Question',
-      name: 'How do I get paid as a listener on LeanOn?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Earnings accumulate in your listener dashboard. You can request a payout to your UPI ID at any time (subject to minimum thresholds). Payouts are processed within 48–72 hours. There are no joining fees, subscription fees, or hidden deductions.' },
-    },
-    {
-      '@type': 'Question',
-      name: 'Can I do this as a side income while working a full-time job?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes — and this is how most LeanOn listeners start. You set your own availability. Many listeners take sessions during lunch breaks, evenings, or weekends. You can turn your listener status on or off at any time from the app. There is no minimum commitment.' },
-    },
-    {
-      '@type': 'Question',
-      name: 'What topics can I listen to as a peer listener on LeanOn?',
-      acceptedAnswer: { '@type': 'Answer', text: 'You choose the topics you are qualified to support based on your own experience: loneliness, anxiety, burnout, grief, career stress, relationship issues, student stress, or any combination. You only take sessions on topics you select — you are never assigned calls outside your comfort zone.' },
-    },
-    {
-      '@type': 'Question',
-      name: 'Is being a LeanOn listener emotionally draining?',
-      acceptedAnswer: { '@type': 'Answer', text: 'It can be if you do not protect yourself. LeanOn recommends clear session boundaries and community support for listeners. Most listeners find the work deeply fulfilling rather than draining because they are making a real difference using experience they already carry. The key is to set your own pace and limits.' },
-    },
-  ],
-}
+const faqs = [
+  { q: 'Do I need a degree or certification to become a listener?', a: 'No degree or certification is required. What matters is lived experience — you should have personally navigated what your future seekers are going through (loneliness, burnout, anxiety, grief, relationship stress, etc.). You will answer screening questions on active listening, boundaries and crisis referral as part of your application. This is peer support, not therapy — your qualification is your story.' },
+  { q: 'How do I get paid as a listener on LeanOn?', a: 'Earnings accumulate in your listener dashboard. You can request a payout to your UPI ID at any time (subject to minimum thresholds). Payouts are processed within 48–72 hours. There are no joining fees, subscription fees, or hidden deductions.' },
+  { q: 'What topics can I listen to as a peer listener?', a: 'You choose the topics you are qualified to support based on your own experience: loneliness, anxiety, burnout, grief, career stress, relationship issues, student stress, or any combination. You only take sessions on topics you select — you are never assigned calls outside your comfort zone.' },
+  { q: 'Is being a LeanOn listener emotionally draining?', a: 'It can be if you do not protect yourself. LeanOn recommends clear session boundaries and community support for listeners. Most listeners find the work deeply fulfilling rather than draining because they are making a real difference using experience they already carry. The key is to set your own pace and limits.' },
+]
 
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
@@ -116,10 +86,8 @@ const S = `
 `
 
 export default function EarnByListeningPage() {
-  const faqs = faqSchema.mainEntity
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <style>{S}</style>
 
@@ -219,8 +187,8 @@ export default function EarnByListeningPage() {
           <h2>Frequently Asked Questions</h2>
           {faqs.map((f, i) => (
             <div className="faq-item" key={i}>
-              <p className="faq-q">{f.name}</p>
-              <p className="faq-a">{f.acceptedAnswer.text}</p>
+              <p className="faq-q">{f.q}</p>
+              <p className="faq-a">{f.a}</p>
             </div>
           ))}
         </div>
