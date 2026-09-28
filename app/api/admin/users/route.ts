@@ -543,33 +543,33 @@ export async function PATCH(req: NextRequest) {
       }
 
       case 'reject_selfie': {
-        // Rejected selfie → send listener back to needs_resubmission so they
-        // can upload a proper photo. Clear pending_avatar_url, revoke approval
-        // and take offline until resubmitted & re-approved.
+        // Rejected replacement photo for an already-approved listener.
+        // IMPORTANT: only clear pending_avatar_url and take the listener offline
+        // temporarily — do NOT revoke is_approved or is_active. The listener's
+        // existing live photo remains unchanged. Sending them back into the full
+        // application resubmission workflow for a photo rejection is wrong and
+        // causes them to lose their approval status unnecessarily.
         let lpErr = (await sb.from('listener_profiles')
-          .update({ pending_avatar_url: null, is_approved: false, is_active: false, is_available: false })
+          .update({ pending_avatar_url: null, is_available: false })
           .eq('user_id', userId)).error
         if (lpErr?.message?.includes('pending_avatar_url')) {
+          // Column not yet migrated — just take offline
           lpErr = (await sb.from('listener_profiles')
-            .update({ is_approved: false, is_active: false, is_available: false })
+            .update({ is_available: false })
             .eq('user_id', userId)).error
         }
         if (lpErr) {
           logger.error('reject_selfie: listener_profiles update failed', { userId, error: lpErr.message })
-          return NextResponse.json({ error: `Failed to reject selfie: ${lpErr.message}` }, { status: 500 })
+          return NextResponse.json({ error: `Failed to reject photo: ${lpErr.message}` }, { status: 500 })
         }
-        const selfieNotes = notes || 'Your display photo was not approved. Please upload a clear, well-lit photo of your face and resubmit.'
-        const { error: laErr } = await sb.from('listener_applications')
-          .upsert({ user_id: userId, status: 'needs_resubmission', admin_notes: selfieNotes }, { onConflict: 'user_id' })
-        if (laErr) {
-          logger.warn('reject_selfie: listener_applications upsert failed', { userId, error: laErr.message })
-        }
+        // No listener_applications status change — listener remains approved.
+        const reason = notes?.trim() || 'Your new profile photo was not approved.'
         await sb.from('notifications').insert({
           user_id: userId,
           type: 'verification_update',
-          title: 'Photo not approved — please resubmit',
-          body: `Please fix the following and resubmit your application: ${selfieNotes}`,
-          action_url: '/become-listener/status',
+          title: 'Profile photo not approved',
+          body: `${reason} Your current photo is still active on your profile. Please upload another clear, well-lit photo of your face from your dashboard settings.`,
+          action_url: '/dashboard',
         }).then(() => {}, () => {})
         break
       }

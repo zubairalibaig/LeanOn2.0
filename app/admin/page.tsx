@@ -317,6 +317,7 @@ export default function AdminPage() {
   // never pre-fills the Listeners tab input for the same user (Bug: shared state).
   const [rejectNotesOverview, setRejectNotesOverview] = useState<Record<string, string>>({})
   const [rejectNotesListeners, setRejectNotesListeners] = useState<Record<string, string>>({})
+  const [photoRejectNotes, setPhotoRejectNotes] = useState<Record<string, string>>({})
   // Per-applicant "needs a new verification selfie" flag for Request Fix.
   const [retakeSelfie, setRetakeSelfie] = useState<Record<string, boolean>>({})
 
@@ -1968,7 +1969,16 @@ export default function AdminPage() {
                                       <button className="btn btn-green" style={{ fontSize: 11 }} disabled={busy !== null} onClick={() => userAction(l.user_id, 'approve_selfie')}>
                                         {busy === `approve_selfie:${l.user_id}` ? '…' : 'Approve photo'}
                                       </button>
-                                      <button className="btn btn-red" style={{ fontSize: 11 }} disabled={busy !== null} onClick={() => userAction(l.user_id, 'reject_selfie', 'Photo not suitable')}>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 6 }}>
+                                      <input
+                                        className="search-input"
+                                        style={{ flex: 1, padding: '4px 8px', fontSize: 12 }}
+                                        placeholder="Reason for rejection (required)"
+                                        value={photoRejectNotes[l.user_id] || ''}
+                                        onChange={e => setPhotoRejectNotes(v => ({ ...v, [l.user_id]: e.target.value }))}
+                                      />
+                                      <button className="btn btn-red" style={{ fontSize: 11 }} disabled={busy !== null || !photoRejectNotes[l.user_id]?.trim()} onClick={() => userAction(l.user_id, 'reject_selfie', photoRejectNotes[l.user_id])}>
                                         {busy === `reject_selfie:${l.user_id}` ? '…' : 'Reject photo'}
                                       </button>
                                     </div>
