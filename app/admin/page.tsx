@@ -971,10 +971,9 @@ export default function AdminPage() {
                                   </div>
                                 )
                               })()}
-                              {/* Aadhaar — full number when migration 047 is applied, else masked tail */}
+                              {/* Aadhaar — show masked last-4 only; full number is now stored as a hash */}
                               <div style={{ fontSize: 12, marginTop: 4, fontFamily: 'monospace', letterSpacing: 0.5, color: 'var(--navy)', fontWeight: 700 }}>
-                                Aadhaar: {l.application?.aadhaar
-                                  || (l.application?.aadhaar_last4 ? `••••••••${l.application.aadhaar_last4}` : '— not provided')}
+                                Aadhaar: {l.application?.aadhaar_last4 ? `••••••••${l.application.aadhaar_last4}` : '— not provided'}
                               </div>
                               {(l.specialty_tags?.length ?? 0) > 0 && (
                                 <div style={{ fontSize: 11, color: 'var(--teal)', fontWeight: 700, marginTop: 4 }}>
@@ -1777,8 +1776,7 @@ export default function AdminPage() {
                               {u?.phone || '—'}
                             </td>
                             <td style={{ fontSize: 12, fontFamily: 'monospace', letterSpacing: 0.5 }}>
-                              {l.application?.aadhaar
-                                || (l.application?.aadhaar_last4 ? `••••••••${l.application.aadhaar_last4}` : '—')}
+                              {l.application?.aadhaar_last4 ? `••••••••${l.application.aadhaar_last4}` : '—'}
                             </td>
                             <td style={{ fontSize: 11, minWidth: 160 }}>
                               {l.application?.account_holder_name && (
@@ -1863,7 +1861,7 @@ export default function AdminPage() {
                             </td>
                             <td>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                                {isNeedsResubmission && u?.avatar_url && (
+                                {isNeedsResubmission && u?.avatar_url && (['photo', 'selfie', 'image', 'picture', 'display'].some(kw => (l.application?.admin_notes ?? '').toLowerCase().includes(kw))) && (
                                   <div style={{ background: '#FFF8E1', border: '1.5px solid #FFB300', borderRadius: 8, padding: '8px 10px', display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 2 }}>
                                     <div style={{ fontSize: 11, fontWeight: 800, color: '#7A4500' }}>
                                       ⚠️ Previously approved — stuck due to photo rejection bug

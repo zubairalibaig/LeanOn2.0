@@ -218,11 +218,14 @@ export async function POST(req: NextRequest) {
       // Private screening answers + auto-scored quiz (migration 060).
       screening:           { ...onboarding.screening, submitted_at: new Date().toISOString() },
     }
-    // Aadhaar (admin-only KYC). aadhaar_last4 predates this work; aadhaar (full)
-    // is added by migration 047. Only set them when the applicant supplied a
+    // Aadhaar (admin-only KYC). Store only a SHA-256 hash — never the plaintext
+    // number. aadhaar_last4 is kept for admin display; the hash is stored in the
+    // aadhaar column (migration 047). Only set them when the applicant supplied a
     // number — never wipe an existing value on a resubmission that omits it.
     if (aadhaar) {
-      appRow.aadhaar = aadhaar
+      const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(aadhaar))
+      const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('')
+      appRow.aadhaar = hashHex
       appRow.aadhaar_last4 = aadhaar.slice(-4)
     }
     let appErr = (await admin.from('listener_applications').upsert(appRow, { onConflict: 'user_id' })).error

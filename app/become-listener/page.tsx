@@ -210,6 +210,7 @@ export default function BecomeListenerPage() {
   const [permanentlyRejected, setPermanentlyRejected] = useState(false)
   const [rejectedNotes, setRejectedNotes] = useState<string | null>(null)
   const [resubmissionNotes, setResubmissionNotes] = useState<string | null>(null)
+  const [isResubmission, setIsResubmission] = useState(false)
   const [phone, setPhone] = useState('')
   const [bio, setBio]     = useState('')
   const [tags, setTags]   = useState<string[]>([])
@@ -340,6 +341,7 @@ export default function BecomeListenerPage() {
       // A selfie taken earlier (e.g. before a reload, or on a previous attempt) is reused.
       fetch('/api/listener/selfie').then(r => r.ok ? r.json() : null).then(d => { if (d?.exists) setSelfieDone(true) }).catch(() => {})
       if (canResubmit) {
+        setIsResubmission(true)
         if (app?.admin_notes) setResubmissionNotes(app.admin_notes as string)
         prefillResubmission(user.id)
         if (userRow?.avatar_url) {
@@ -470,7 +472,11 @@ export default function BecomeListenerPage() {
     if (!accountHolder.trim()) errs.push('Enter the name exactly as on your bank account')
     const banke = validateBank(bank); if (banke) errs.push(banke)
     const ifsce = validateIFSC(ifsc); if (ifsce) errs.push(ifsce)
-    const aae = validateAadhaar(aadhaar); if (aae) errs.push(aae)
+    // On resubmission, Aadhaar is optional — the API preserves the existing hash
+    // if a new number isn't supplied. On a first submission it is required.
+    if (!isResubmission || aadhaar.trim()) {
+      const aae = validateAadhaar(aadhaar); if (aae) errs.push(aae)
+    }
     if (upi.trim()) { const upie = validateUPI(upi); if (upie) errs.push(upie) }
     return errs
   }
@@ -1311,9 +1317,9 @@ export default function BecomeListenerPage() {
             {fieldErrors.upi && <span className="field-err">{fieldErrors.upi}</span>}
 
             <label className="lbl">Aadhaar number (12 digits) <span style={{color:'#c0392b'}}>*</span></label>
-            {resubmissionNotes && (
+            {isResubmission && (
               <p style={{fontSize:12,color:'var(--gray)',fontWeight:600,marginBottom:6}}>
-                🔒 Re-enter your Aadhaar — we never store the actual number, only a one-way hash.
+                🔒 Optional — only re-enter if your identity details have changed. We hash your Aadhaar and never store the number in full.
               </p>
             )}
             <input

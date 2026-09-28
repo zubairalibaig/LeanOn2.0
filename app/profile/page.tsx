@@ -324,7 +324,7 @@ export default function ProfilePage() {
                 </p>
                 {walletBalance > 0 && (
                   <p style={{ fontSize: 13, fontWeight: 700, color: '#B71C1C', background: '#FFF5F5', border: '1px solid #FFCDD2', borderRadius: 8, padding: '8px 12px', marginBottom: 16 }}>
-                    You have ₹{walletBalance} in your wallet. This balance will be forfeited and cannot be recovered after deletion.
+                    You have ₹{walletBalance} in your wallet. You'll need to use or withdraw this balance before your account can be deleted.
                   </p>
                 )}
                 <p style={{ fontSize: 13, fontWeight: 700, color: '#0F4867', marginBottom: 10 }}>

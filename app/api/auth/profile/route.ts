@@ -194,7 +194,7 @@ export async function PATCH(req: NextRequest) {
     // avatar routing decision — one DB round-trip instead of two.
     const { data: lp } = await admin
       .from('listener_profiles')
-      .select('is_approved')
+      .select('is_approved, pending_avatar_url')
       .eq('user_id', user.id)
       .maybeSingle()
 
@@ -212,7 +212,11 @@ export async function PATCH(req: NextRequest) {
       // applicants update avatar_url directly (no review needed).
 
       if (lp?.is_approved === true) {
-        // Write pending selfie + take listener offline until admin approves.
+        // Block re-upload if a photo is already awaiting admin review.
+        if ((lp as { pending_avatar_url?: string | null }).pending_avatar_url) {
+          return NextResponse.json({ error: 'You already have a photo awaiting review. Please wait for admin approval before uploading another.' }, { status: 409 })
+        }
+        // Write pending display photo + take listener offline until admin approves.
         // is_available = false prevents new session requests while the photo is unreviewed.
         const { error: pendingErr } = await admin
           .from('listener_profiles')
@@ -222,12 +226,12 @@ export async function PATCH(req: NextRequest) {
           logger.error('profile PATCH: pending_avatar_url write failed', { error: pendingErr.message })
           return NextResponse.json({ error: 'Failed to update profile. Please try again.' }, { status: 500 })
         } else {
-          // Notify listener their photo is under review and they're offline.
+          // Notify listener their profile photo is under review and they're offline.
           await admin.from('notifications').insert({
             user_id: user.id,
             type: 'system',
-            title: 'Selfie under review — you\'re temporarily offline',
-            body: 'Your new selfie is being reviewed. You\'ll be able to go online again once it\'s approved.',
+            title: 'Profile photo under review — you\'re temporarily offline',
+            body: 'Your new profile photo is being reviewed. You\'ll be able to go online again once it\'s approved.',
             action_url: '/dashboard',
           }).then(() => {}, () => {})
         }

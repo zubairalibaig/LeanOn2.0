@@ -1054,11 +1054,17 @@ export default function DashboardPage() {
                   ? <Avatar src={editAvatar} alt="avatar" size={192} />
                   : ini(profile?.name)}
               </div>
-              <label style={{display:'inline-flex',alignItems:'center',gap:8,cursor:uploadingAv ? 'wait' : 'pointer',background:'var(--navy)',color:'white',borderRadius:50,minHeight:44,padding:'0 18px',fontWeight:800,fontSize:13,marginTop:8}}>
-                {uploadingAv ? 'Uploading…' : 'Change display photo'}
-                <input type="file" accept="image/jpeg,image/png,image/webp" style={{display:'none'}} disabled={uploadingAv}
-                  onChange={e => { const f = e.target.files?.[0]; e.target.value = ''; if (f) uploadAvatar(f) }} />
-              </label>
+              {(profile as { pending_avatar_url?: string | null }).pending_avatar_url ? (
+                <div style={{marginTop:8,fontSize:12,fontWeight:700,color:'#856404',background:'#FFF8E1',border:'1px solid #FFB300',borderRadius:8,padding:'8px 12px',textAlign:'center',lineHeight:1.5}}>
+                  Photo under review — you&apos;ll be able to upload again once an admin approves or rejects it.
+                </div>
+              ) : (
+                <label style={{display:'inline-flex',alignItems:'center',gap:8,cursor:uploadingAv ? 'wait' : 'pointer',background:'var(--navy)',color:'white',borderRadius:50,minHeight:44,padding:'0 18px',fontWeight:800,fontSize:13,marginTop:8}}>
+                  {uploadingAv ? 'Uploading…' : 'Change display photo'}
+                  <input type="file" accept="image/jpeg,image/png,image/webp" style={{display:'none'}} disabled={uploadingAv}
+                    onChange={e => { const f = e.target.files?.[0]; e.target.value = ''; if (f) uploadAvatar(f) }} />
+                </label>
+              )}
               <div style={{fontSize:11,color:'var(--gray)',fontWeight:600,marginTop:6,textAlign:'center',lineHeight:1.5}}>
                 A real, well-lit photo of just you, face clearly visible. Reviewed before it goes live.
               </div>

@@ -546,9 +546,18 @@ export async function PATCH(req: NextRequest) {
         // Rejected replacement photo for an already-approved listener.
         // IMPORTANT: only clear pending_avatar_url and take the listener offline
         // temporarily — do NOT revoke is_approved or is_active. The listener's
-        // existing live photo remains unchanged. Sending them back into the full
-        // application resubmission workflow for a photo rejection is wrong and
-        // causes them to lose their approval status unnecessarily.
+        // existing live photo remains unchanged.
+        //
+        // Read the pending URL before clearing so we can delete the rejected file
+        // from storage — avoids accumulating unreferenced photo objects in the
+        // public avatars bucket.
+        const { data: lpBeforeReject } = await sb
+          .from('listener_profiles')
+          .select('pending_avatar_url')
+          .eq('user_id', userId)
+          .maybeSingle()
+        const rejectedPhotoUrl = (lpBeforeReject as { pending_avatar_url?: string | null } | null)?.pending_avatar_url ?? null
+
         let lpErr = (await sb.from('listener_profiles')
           .update({ pending_avatar_url: null, is_available: false })
           .eq('user_id', userId)).error
@@ -562,6 +571,15 @@ export async function PATCH(req: NextRequest) {
           logger.error('reject_selfie: listener_profiles update failed', { userId, error: lpErr.message })
           return NextResponse.json({ error: `Failed to reject photo: ${lpErr.message}` }, { status: 500 })
         }
+
+        // Delete the rejected photo from the avatars bucket (non-fatal).
+        if (rejectedPhotoUrl) {
+          const match = rejectedPhotoUrl.match(/\/avatars\/([^?]+)/)
+          if (match?.[1]) {
+            sb.storage.from('avatars').remove([match[1]]).catch(() => {})
+          }
+        }
+
         // No listener_applications status change — listener remains approved.
         const reason = notes?.trim() || 'Your new profile photo was not approved.'
         await sb.from('notifications').insert({
@@ -576,9 +594,27 @@ export async function PATCH(req: NextRequest) {
 
       case 'restore_listener': {
         // Restore a previously-approved listener whose approval was incorrectly
-        // stripped by the old reject_selfie bug. Sets is_approved/is_active back
-        // to true without requiring a full application resubmission.
-        // is_available is left false — the listener chooses when to go back online.
+        // stripped by the old reject_selfie bug. Only valid when:
+        //   1. The user has an existing avatar_url (evidence of prior approval — only
+        //      set by the approve_listener / approve_selfie paths, not at application time).
+        //   2. Their application is in needs_resubmission.
+        //   3. The admin_notes contain a photo-related keyword (this was a photo case,
+        //      not a bio/skills/identity resubmission).
+        const [{ data: uRow }, { data: laRow }] = await Promise.all([
+          sb.from('users').select('avatar_url').eq('id', userId).maybeSingle(),
+          sb.from('listener_applications').select('status, admin_notes').eq('user_id', userId).maybeSingle(),
+        ])
+        if (!uRow?.avatar_url) {
+          return NextResponse.json({ error: 'Cannot restore: no prior approved photo found. Use the standard Approve action.' }, { status: 400 })
+        }
+        if (laRow?.status !== 'needs_resubmission') {
+          return NextResponse.json({ error: 'Cannot restore: listener is not in needs_resubmission state. Use the standard Approve action.' }, { status: 400 })
+        }
+        const notesLower = (laRow?.admin_notes ?? '').toLowerCase()
+        const photoKeywords = ['photo', 'selfie', 'image', 'picture', 'display']
+        if (!photoKeywords.some(kw => notesLower.includes(kw))) {
+          return NextResponse.json({ error: 'Cannot restore: admin notes do not indicate a photo-rejection case. Use the standard Approve action for other resubmission types.' }, { status: 400 })
+        }
         let lpErr = (await sb.from('listener_profiles')
           .update({ is_approved: true, is_active: true })
           .eq('user_id', userId)).error
