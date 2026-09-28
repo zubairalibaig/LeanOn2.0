@@ -352,7 +352,7 @@ export async function PATCH(req: NextRequest) {
   const retakeSelfie = body?.retake_selfie === true
   if (!userId || !UUID_RE.test(userId)) return NextResponse.json({ error: 'Invalid userId' }, { status: 400 })
 
-  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'unban', 'suspend_listener', 'unsuspend_listener', 'approve_listener', 'reject_listener', 'request_resubmission', 'approve_selfie', 'reject_selfie', 'rename', 'update_bank_details', 'set_custom_fee_rate']
+  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'unban', 'suspend_listener', 'unsuspend_listener', 'approve_listener', 'reject_listener', 'request_resubmission', 'approve_selfie', 'reject_selfie', 'restore_listener', 'rename', 'update_bank_details', 'set_custom_fee_rate']
   if (!action || !validActions.includes(action)) return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
 
   const sb = createAdminClient()
