@@ -574,6 +574,32 @@ export async function PATCH(req: NextRequest) {
         break
       }
 
+      case 'restore_listener': {
+        // Restore a previously-approved listener whose approval was incorrectly
+        // stripped by the old reject_selfie bug. Sets is_approved/is_active back
+        // to true without requiring a full application resubmission.
+        // is_available is left false — the listener chooses when to go back online.
+        let lpErr = (await sb.from('listener_profiles')
+          .update({ is_approved: true, is_active: true })
+          .eq('user_id', userId)).error
+        if (lpErr) {
+          logger.error('restore_listener: listener_profiles update failed', { userId, error: lpErr.message })
+          return NextResponse.json({ error: `Failed to restore listener: ${lpErr.message}` }, { status: 500 })
+        }
+        await sb.from('listener_applications')
+          .update({ status: 'approved', admin_notes: null })
+          .eq('user_id', userId)
+          .then(() => {}, () => {})
+        await sb.from('notifications').insert({
+          user_id: userId,
+          type: 'verification_update',
+          title: 'Your account has been restored',
+          body: 'Your listener account is active again. Please upload a new profile photo from your dashboard — go to Edit Profile and tap your photo.',
+          action_url: '/dashboard',
+        }).then(() => {}, () => {})
+        break
+      }
+
       case 'suspend': {
         // Temporary block — can be reversed with 'unsuspend'.
         const { error: uErr } = await sb.from('users')

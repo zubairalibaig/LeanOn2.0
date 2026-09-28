@@ -687,6 +687,7 @@ export default function AdminPage() {
       // this user so they don't pre-fill or re-render on next review cycle.
       setRejectNotesOverview(prev => { const n = { ...prev }; delete n[userId]; return n })
       setRejectNotesListeners(prev => { const n = { ...prev }; delete n[userId]; return n })
+      setPhotoRejectNotes(prev => { const n = { ...prev }; delete n[userId]; return n })
       setRetakeSelfie(prev => { const n = { ...prev }; delete n[userId]; return n })
       setConfirmBanId(null)
       setConfirmRejectOverviewId(null)
@@ -1862,6 +1863,19 @@ export default function AdminPage() {
                             </td>
                             <td>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                                {isNeedsResubmission && u?.avatar_url && (
+                                  <div style={{ background: '#FFF8E1', border: '1.5px solid #FFB300', borderRadius: 8, padding: '8px 10px', display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 2 }}>
+                                    <div style={{ fontSize: 11, fontWeight: 800, color: '#7A4500' }}>
+                                      ⚠️ Previously approved — stuck due to photo rejection bug
+                                    </div>
+                                    <div style={{ fontSize: 11, color: '#5A3300', lineHeight: 1.5 }}>
+                                      Click <strong>Restore Approval</strong> to reinstate their account. They will be asked to upload a new photo from their dashboard.
+                                    </div>
+                                    <button className="btn btn-teal" disabled={busy !== null} onClick={() => userAction(l.user_id, 'restore_listener')}>
+                                      {busy === `restore_listener:${l.user_id}` ? 'Restoring…' : 'Restore Approval'}
+                                    </button>
+                                  </div>
+                                )}
                                 {isPending && (
                                   <div className="action-row">
                                     <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'approve_listener')}>
