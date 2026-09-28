@@ -1316,7 +1316,7 @@ export default function BecomeListenerPage() {
             />
             {fieldErrors.upi && <span className="field-err">{fieldErrors.upi}</span>}
 
-            <label className="lbl">Aadhaar number (12 digits) <span style={{color:'#c0392b'}}>*</span></label>
+            <label className="lbl">Aadhaar number (12 digits) {!isResubmission && <span style={{color:'#c0392b'}}>*</span>}</label>
             {isResubmission && (
               <p style={{fontSize:12,color:'var(--gray)',fontWeight:600,marginBottom:6}}>
                 🔒 Optional — only re-enter if your identity details have changed. We hash your Aadhaar and never store the number in full.

@@ -1054,7 +1054,7 @@ export default function DashboardPage() {
                   ? <Avatar src={editAvatar} alt="avatar" size={192} />
                   : ini(profile?.name)}
               </div>
-              {(profile as { pending_avatar_url?: string | null }).pending_avatar_url ? (
+              {(profile as { pending_avatar_url?: string | null }).pending_avatar_url || avatarUploadMsg?.type === 'info' ? (
                 <div style={{marginTop:8,fontSize:12,fontWeight:700,color:'#856404',background:'#FFF8E1',border:'1px solid #FFB300',borderRadius:8,padding:'8px 12px',textAlign:'center',lineHeight:1.5}}>
                   Photo under review — you&apos;ll be able to upload again once an admin approves or rejects it.
                 </div>
