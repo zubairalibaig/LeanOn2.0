@@ -269,7 +269,7 @@ export default function BecomeListenerPage() {
   const [otpVerified] = useState(true)
 
   // "Request fix" applicants only need to change what the admin flagged, so
-  // pre-fill their previous answers. Aadhaar and quiz answers are re-entered.
+  // pre-fill their previous answers. Only Aadhaar is re-entered (never stored).
   // Each read is independent and ignores errors (e.g. migration 060 columns
   // not present yet) so a failure never blocks the form.
   async function prefillResubmission(uid: string) {
@@ -302,6 +302,10 @@ export default function BecomeListenerPage() {
       setOccupation(str(sc.occupation)); setStateName(str(sc.state)); setHoursPerWeek(str(sc.hours_per_week))
       setTimeSlots(arr(sc.time_slots)); setPriorExp(arr(sc.prior_experience)); setWhy(str(sc.why))
       setHeardFrom(str(sc.heard_from)); setLinkedin(str(sc.linkedin_url))
+      // Restore quiz answers so the listener doesn't have to re-answer every question
+      if (sc.quiz && typeof sc.quiz === 'object' && !Array.isArray(sc.quiz)) {
+        setQuiz(sc.quiz as Record<string, number>)
+      }
     }
   }
 
@@ -1307,6 +1311,11 @@ export default function BecomeListenerPage() {
             {fieldErrors.upi && <span className="field-err">{fieldErrors.upi}</span>}
 
             <label className="lbl">Aadhaar number (12 digits) <span style={{color:'#c0392b'}}>*</span></label>
+            {resubmissionNotes && (
+              <p style={{fontSize:12,color:'var(--gray)',fontWeight:600,marginBottom:6}}>
+                🔒 Re-enter your Aadhaar — we never store the actual number, only a one-way hash.
+              </p>
+            )}
             <input
               className={`input${fieldErrors.aadhaar ? ' err' : ''}`}
               type="text"
