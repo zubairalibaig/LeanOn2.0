@@ -759,7 +759,7 @@ export default function BecomeListenerPage() {
               <div style={{fontSize:48,marginBottom:12}}>😔</div>
               <p style={{fontWeight:800,fontSize:17,marginBottom:6}}>Application not approved</p>
               <p style={{fontSize:14,color:'#5A7A8A',marginBottom:16}}>
-                We&apos;ve completed our review and we&apos;re unable to approve your application at this time.
+                We&apos;ve completed our review and we&apos;re unable to approve your application.
               </p>
               {rejectedNotes && (
                 <div style={{background:'#F0F8FC',border:'1.5px solid #D5EEF6',borderRadius:14,padding:'14px 16px',textAlign:'left',marginBottom:16}}>
