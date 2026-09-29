@@ -420,6 +420,10 @@ export async function PATCH(req: NextRequest) {
       }
 
       case 'reject_listener': {
+        // A reason is required so the listener always receives a meaningful notification.
+        if (!notes?.trim()) {
+          return NextResponse.json({ error: 'A reason is required when permanently rejecting an application.' }, { status: 400 })
+        }
         // Clear pending_avatar_url on rejection — the pending selfie is discarded.
         // The existing avatar_url (if any) is deliberately NOT touched so the
         // listener retains their current photo if they reapply.

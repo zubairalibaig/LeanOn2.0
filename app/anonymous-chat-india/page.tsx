@@ -207,8 +207,8 @@ export default function AnonymousChatIndiaPage() {
         <div className="section">
           <h2>Anonymous Does Not Mean Low Quality</h2>
 
-          <h3>Screened and Trained Listeners</h3>
-          <p>Every listener on LeanOn goes through an application process, a background check, and training in active listening before they are approved. They are reviewed by the platform. You are not speaking to a random person from the internet — you are speaking to someone who has been vetted and is here because they want to support people, not for entertainment.</p>
+          <h3>Screened and Reviewed Listeners</h3>
+          <p>Every listener on LeanOn goes through a multi-step application process — including identity verification, screening questions on active listening and boundaries, and a profile review — before they are approved. You are not speaking to a random person from the internet — you are speaking to someone who has been vetted and is here because they want to support people, not for entertainment.</p>
 
           <h3>Reviewed, With Real Profiles</h3>
           <p>Listeners have real profiles with their lived experience, the topics they support, and their listener ratings from past sessions. Before you start a session, you can read about who you are going to speak to. Anonymity does not mean you are stepping into the unknown — you can make an informed choice about who to talk to.</p>

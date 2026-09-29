@@ -767,8 +767,11 @@ export default function BecomeListenerPage() {
                   <div style={{fontSize:14,color:'#0F4867',lineHeight:1.6,fontWeight:500}}>{rejectedNotes}</div>
                 </div>
               )}
+              <p style={{fontSize:13,color:'#5A7A8A',marginBottom:6}}>
+                You cannot resubmit this application directly.
+              </p>
               <p style={{fontSize:13,color:'#5A7A8A',marginBottom:16}}>
-                If you believe this is a mistake, please get in touch — we&apos;re happy to take another look.
+                If you believe this decision was made in error, contact support and we&apos;ll review your case.
               </p>
               <a href="/contact">
                 <button className="btn">Contact support →</button>

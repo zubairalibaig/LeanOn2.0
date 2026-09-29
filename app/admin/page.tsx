@@ -990,17 +990,29 @@ export default function AdminPage() {
                               <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'approve_listener')}>
                                 {busy === `approve_listener:${l.user_id}` ? 'Approving…' : 'Approve'}
                               </button>
+                              <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 4 }}>
+                                {([
+                                  { label: '📷 Profile photo', text: 'Please upload a clearer profile photo of yourself.' },
+                                  { label: '📝 Bio/info', text: 'Please update your bio or application details.' },
+                                  { label: '🏦 Bank details', text: 'Please provide valid bank or UPI payment details.' },
+                                ] as { label: string; text: string }[]).map(({ label, text }) => (
+                                  <button key={label} type="button" style={{ fontSize: 10, padding: '3px 9px', borderRadius: 20, border: '1.5px solid var(--border)', background: 'var(--light)', cursor: 'pointer', fontFamily: 'Nunito,sans-serif', fontWeight: 700, color: 'var(--navy)' }}
+                                    onClick={() => setRejectNotesOverview(prev => { const e = prev[l.user_id]?.trim(); return { ...prev, [l.user_id]: e ? `${e} ${text}` : text } })}>
+                                    {label}
+                                  </button>
+                                ))}
+                                <button type="button" style={{ fontSize: 10, padding: '3px 9px', borderRadius: 20, border: `1.5px solid ${retakeSelfie[l.user_id] ? '#d4a017' : 'var(--border)'}`, background: retakeSelfie[l.user_id] ? '#FFF3CD' : 'var(--light)', cursor: 'pointer', fontFamily: 'Nunito,sans-serif', fontWeight: 700, color: retakeSelfie[l.user_id] ? '#856404' : 'var(--navy)' }}
+                                  title="Requires a new verification selfie" onClick={() => setRetakeSelfie(prev => ({ ...prev, [l.user_id]: !prev[l.user_id] }))}>
+                                  {retakeSelfie[l.user_id] ? '✓ ' : ''}🪪 New verification selfie
+                                </button>
+                              </div>
                               <input
                                 className="reject-input"
-                                style={{ width: 130, marginBottom: 0 }}
-                                placeholder="Reason (required)"
+                                style={{ width: 160, marginBottom: 0 }}
+                                placeholder="Reason for listener (required)"
                                 value={rejectNotesOverview[l.user_id] || ''}
                                 onChange={e => setRejectNotesOverview(prev => ({ ...prev, [l.user_id]: e.target.value }))}
                               />
-                              <label style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 700, color: 'var(--navy)', cursor: 'pointer' }} title="Identity or photo concern — the applicant must take a fresh verification selfie">
-                                <input type="checkbox" checked={!!retakeSelfie[l.user_id]} onChange={e => setRetakeSelfie(prev => ({ ...prev, [l.user_id]: e.target.checked }))} />
-                                New selfie
-                              </label>
                               <button className="btn btn-orange" disabled={busy !== null || !rejectNotesOverview[l.user_id]?.trim()} onClick={() => userAction(l.user_id, 'request_resubmission', rejectNotesOverview[l.user_id], undefined, { retake_selfie: !!retakeSelfie[l.user_id] })} title="Ask them to fix and resubmit">
                                 {busy === `request_resubmission:${l.user_id}` ? '…' : 'Request Fix'}
                               </button>
@@ -1011,7 +1023,7 @@ export default function AdminPage() {
                                   <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setConfirmRejectOverviewId(null)}>Cancel</button>
                                 </span>
                               ) : (
-                                <button className="btn btn-red" disabled={busy !== null} onClick={() => setConfirmRejectOverviewId(l.user_id)} title="Permanently reject — cannot resubmit">
+                                <button className="btn btn-red" disabled={busy !== null || !rejectNotesOverview[l.user_id]?.trim()} onClick={() => setConfirmRejectOverviewId(l.user_id)} title="Permanently reject — reason required">
                                   {busy === `reject_listener:${l.user_id}` ? '…' : 'Permanently Reject'}
                                 </button>
                               )}
@@ -1879,21 +1891,35 @@ export default function AdminPage() {
                                     <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'approve_listener')}>
                                       {busy === `approve_listener:${l.user_id}` ? 'Approving…' : 'Approve'}
                                     </button>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'flex-start' }}>
-                                      <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--gray)' }}>Type reason, then click Request Fix or Reject:</div>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'flex-start' }}>
+                                      {/* Quick-fill chips — each appends a standard phrase to the notes input */}
+                                      <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--gray)' }}>What needs fixing? (click to add):</div>
+                                      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                                        {([
+                                          { label: '📷 Profile photo', text: 'Please upload a clearer profile photo of yourself.' },
+                                          { label: '📝 Bio/info', text: 'Please update your bio or application details.' },
+                                          { label: '🏦 Bank details', text: 'Please provide valid bank or UPI payment details.' },
+                                        ] as { label: string; text: string }[]).map(({ label, text }) => (
+                                          <button key={label} type="button" style={{ fontSize: 10, padding: '3px 9px', borderRadius: 20, border: '1.5px solid var(--border)', background: 'var(--light)', cursor: 'pointer', fontFamily: 'Nunito,sans-serif', fontWeight: 700, color: 'var(--navy)' }}
+                                            onClick={() => setRejectNotesListeners(prev => { const e = prev[l.user_id]?.trim(); return { ...prev, [l.user_id]: e ? `${e} ${text}` : text } })}>
+                                            {label}
+                                          </button>
+                                        ))}
+                                        <button type="button" style={{ fontSize: 10, padding: '3px 9px', borderRadius: 20, border: `1.5px solid ${retakeSelfie[l.user_id] ? '#d4a017' : 'var(--border)'}`, background: retakeSelfie[l.user_id] ? '#FFF3CD' : 'var(--light)', cursor: 'pointer', fontFamily: 'Nunito,sans-serif', fontWeight: 700, color: retakeSelfie[l.user_id] ? '#856404' : 'var(--navy)' }}
+                                          title="Requires the applicant to take a new verification selfie"
+                                          onClick={() => setRetakeSelfie(prev => ({ ...prev, [l.user_id]: !prev[l.user_id] }))}>
+                                          {retakeSelfie[l.user_id] ? '✓ ' : ''}🪪 New verification selfie
+                                        </button>
+                                      </div>
                                       <div style={{ display: 'flex', gap: 4, alignItems: 'center', flexWrap: 'wrap' }}>
                                       <input
                                         className="reject-input"
-                                        style={{ width: 160, marginBottom: 0 }}
-                                        placeholder="e.g. blurry selfie, invalid IFSC…"
+                                        style={{ width: 200, marginBottom: 0 }}
+                                        placeholder="Reason for listener (required)"
                                         value={rejectNotesListeners[l.user_id] || ''}
                                         onChange={e => setRejectNotesListeners(prev => ({ ...prev, [l.user_id]: e.target.value }))}
                                       />
-                                      <label style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 700, color: 'var(--navy)', cursor: 'pointer' }} title="Identity or photo concern — the applicant must take a fresh verification selfie">
-                                <input type="checkbox" checked={!!retakeSelfie[l.user_id]} onChange={e => setRetakeSelfie(prev => ({ ...prev, [l.user_id]: e.target.checked }))} />
-                                New selfie
-                              </label>
-                              <button className="btn btn-orange" disabled={busy !== null || !rejectNotesListeners[l.user_id]?.trim()} onClick={() => userAction(l.user_id, 'request_resubmission', rejectNotesListeners[l.user_id], undefined, { retake_selfie: !!retakeSelfie[l.user_id] })} title="Ask them to fix and resubmit">
+                                      <button className="btn btn-orange" disabled={busy !== null || !rejectNotesListeners[l.user_id]?.trim()} onClick={() => userAction(l.user_id, 'request_resubmission', rejectNotesListeners[l.user_id], undefined, { retake_selfie: !!retakeSelfie[l.user_id] })} title="Ask them to fix and resubmit">
                                         {busy === `request_resubmission:${l.user_id}` ? '…' : 'Request Fix'}
                                       </button>
                                       {confirmRejectListenersId === l.user_id ? (
@@ -1903,7 +1929,7 @@ export default function AdminPage() {
                                           <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setConfirmRejectListenersId(null)}>Cancel</button>
                                         </span>
                                       ) : (
-                                        <button className="btn btn-red" disabled={busy !== null} onClick={() => setConfirmRejectListenersId(l.user_id)} title="Permanently reject — cannot resubmit">
+                                        <button className="btn btn-red" disabled={busy !== null || !rejectNotesListeners[l.user_id]?.trim()} onClick={() => setConfirmRejectListenersId(l.user_id)} title="Permanently reject — reason required">
                                           {busy === `reject_listener:${l.user_id}` ? '…' : 'Permanently Reject'}
                                         </button>
                                       )}

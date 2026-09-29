@@ -103,7 +103,7 @@ export default function ListenerStatusPage() {
     rejected: {
       icon: '😔',
       title: 'Application Not Approved',
-      desc: 'We\'ve completed our review and we\'re unable to approve your application. If you believe this is a mistake, please reach out — we\'re happy to take another look.',
+      desc: 'We\'ve completed our review and your application was not approved. You cannot resubmit this application directly.',
     },
     needs_resubmission: {
       icon: '✏️',
@@ -155,7 +155,9 @@ export default function ListenerStatusPage() {
 
           {notes && (
             <div className="notes-box">
-              <div className="notes-label">{status === 'rejected' ? 'Reason' : 'Notes from our team'}</div>
+              <div className="notes-label">
+                {status === 'rejected' ? 'Reason from our team' : status === 'needs_resubmission' ? 'What you need to fix' : 'Notes from our team'}
+              </div>
               <div className="notes-text">{notes}</div>
             </div>
           )}
@@ -172,11 +174,16 @@ export default function ListenerStatusPage() {
             <a href="/become-listener"><button className="btn">Resubmit application →</button></a>
           )}
           {status === 'rejected' && (
-            <a href="/contact"><button className="btn">Contact support →</button></a>
+            <div>
+              <a href="/contact"><button className="btn">Contact support →</button></a>
+              <p style={{fontSize:12,color:'var(--gray)',marginTop:10,fontWeight:600,lineHeight:1.5}}>
+                If you believe this decision was made in error, contact support and we&apos;ll review your case.
+              </p>
+            </div>
           )}
           {status === 'pending' && (
-            <div style={{fontSize:13,color:'var(--gray)',fontWeight:600}}>
-              Check back in a few hours — we&apos;ll notify you on your dashboard when there&apos;s an update.
+            <div style={{fontSize:13,color:'var(--gray)',fontWeight:600,lineHeight:1.5}}>
+              No action is needed from you right now. We&apos;ll update you when the review is complete.
             </div>
           )}
         </div>
