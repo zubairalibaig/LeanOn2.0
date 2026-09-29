@@ -759,16 +759,16 @@ export default function BecomeListenerPage() {
               <div style={{fontSize:48,marginBottom:12}}>😔</div>
               <p style={{fontWeight:800,fontSize:17,marginBottom:6}}>Application not approved</p>
               <p style={{fontSize:14,color:'#5A7A8A',marginBottom:16}}>
-                Unfortunately your listener application was not approved at this time.
+                We&apos;ve completed our review and we&apos;re unable to approve your application at this time.
               </p>
               {rejectedNotes && (
                 <div style={{background:'#F0F8FC',border:'1.5px solid #D5EEF6',borderRadius:14,padding:'14px 16px',textAlign:'left',marginBottom:16}}>
-                  <div style={{fontSize:11,fontWeight:800,color:'#1A8FA0',textTransform:'uppercase',letterSpacing:'.06em',marginBottom:6}}>Reason</div>
+                  <div style={{fontSize:11,fontWeight:800,color:'#1A8FA0',textTransform:'uppercase',letterSpacing:'.06em',marginBottom:6}}>Reason from our team</div>
                   <div style={{fontSize:14,color:'#0F4867',lineHeight:1.6,fontWeight:500}}>{rejectedNotes}</div>
                 </div>
               )}
               <p style={{fontSize:13,color:'#5A7A8A',marginBottom:16}}>
-                If you believe this is an error, please contact us and we&apos;ll look into it.
+                If you believe this is a mistake, please get in touch — we&apos;re happy to take another look.
               </p>
               <a href="/contact">
                 <button className="btn">Contact support →</button>
@@ -780,8 +780,8 @@ export default function BecomeListenerPage() {
           ) : (
             <>
               <div style={{fontSize:48,marginBottom:12}}>✅</div>
-              <p style={{fontWeight:800,fontSize:17,marginBottom:6}}>Your application was received!</p>
-              <p style={{fontSize:14,color:'#5A7A8A',marginBottom:16}}>We got your listener application and our team is reviewing it. You&apos;ll hear from us within 24–48 hours on the phone number you registered with.</p>
+              <p style={{fontWeight:800,fontSize:17,marginBottom:6}}>Application submitted!</p>
+              <p style={{fontSize:14,color:'#5A7A8A',marginBottom:16}}>Our team is reviewing your profile. You&apos;ll hear from us within 24–48 hours — check the status page for updates anytime.</p>
               <a href="/become-listener/status">
                 <button className="btn">Check application status →</button>
               </a>

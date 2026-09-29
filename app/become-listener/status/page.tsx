@@ -98,17 +98,17 @@ export default function ListenerStatusPage() {
     approved: {
       icon: '🎉',
       title: 'You\'re Approved!',
-      desc: 'Congratulations! Your listener application has been approved. Complete your profile to start receiving session requests.',
+      desc: 'Congratulations! Your listener application has been approved. Head to your dashboard to complete your profile and go live.',
     },
     rejected: {
       icon: '😔',
       title: 'Application Not Approved',
-      desc: 'Unfortunately your application was not approved at this time.',
+      desc: 'We\'ve completed our review and we\'re unable to approve your application at this time. If you believe this is a mistake, please reach out — we\'re happy to take another look.',
     },
     needs_resubmission: {
-      icon: '📝',
-      title: 'Additional Information Needed',
-      desc: 'We need a little more information to complete your review. Please check the notes and resubmit your application.',
+      icon: '✏️',
+      title: 'Action Required',
+      desc: 'Your application is on hold because we need something from you. Please read the note from our team below and resubmit.',
     },
   }
 
@@ -186,19 +186,24 @@ export default function ListenerStatusPage() {
           )}
         </div>
 
-        <div className="steps">
-          {[
-            { label: 'Application submitted', done: true },
-            { label: 'Background check in progress', done: status === 'approved' || status === 'needs_resubmission' },
-            { label: 'Profile review', done: status === 'approved' },
-            { label: 'Start earning as a listener', done: status === 'approved' },
-          ].map((step, i) => (
-            <div key={i} className="step">
-              <div className={`step-num${step.done ? ' done' : ''}`}>{step.done ? '✓' : i + 1}</div>
-              <div className="step-text">{step.label}</div>
-            </div>
-          ))}
-        </div>
+        {/* Steps panel: only shown while review is still active (pending / needs_resubmission / approved).
+            Hidden for rejected — the review is complete and showing "screening in progress"
+            alongside "not approved" caused confusion about whether the process was still ongoing. */}
+        {status !== 'rejected' && (
+          <div className="steps">
+            {[
+              { label: 'Application submitted', done: true },
+              { label: 'Screening in progress', done: status === 'approved' },
+              { label: 'Profile review', done: status === 'approved' },
+              { label: 'Start earning as a listener', done: status === 'approved' },
+            ].map((step, i) => (
+              <div key={i} className="step">
+                <div className={`step-num${step.done ? ' done' : ''}`}>{step.done ? '✓' : i + 1}</div>
+                <div className="step-text">{step.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </>
   )
