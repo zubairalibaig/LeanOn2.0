@@ -450,8 +450,8 @@ export async function PATCH(req: NextRequest) {
           type: 'verification_update',
           title: 'Application not approved',
           body: notes
-            ? `Your listener application was not approved. Reason: ${notes}`
-            : 'Your listener application was not approved at this time. Please contact support if you have questions.',
+            ? `We've reviewed your listener application and are unable to approve it. Reason: ${notes}`
+            : "We've completed our review and are unable to approve your listener application. Contact support if you'd like to discuss this.",
           action_url: '/become-listener/status',
         }).then(() => {}, () => {})
         break

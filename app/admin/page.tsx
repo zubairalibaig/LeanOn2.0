@@ -1912,17 +1912,17 @@ export default function AdminPage() {
                                   </div>
                                 )}
                                 {isRejected && (
-                                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                                     {l.application?.admin_notes && (
-                                      <div style={{ fontSize: 11, color: 'var(--gray)', fontStyle: 'italic', maxWidth: 180 }}>
-                                        Note: {l.application.admin_notes}
+                                      <div style={{ background: '#FFF5F5', border: '1.5px solid #FFBDBD', borderRadius: 8, padding: '7px 10px', fontSize: 12, color: '#7a1a1a', fontWeight: 600, lineHeight: 1.5 }}>
+                                        <span style={{ fontWeight: 800, color: '#c0392b' }}>Rejection reason: </span>{l.application.admin_notes}
                                       </div>
                                     )}
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                                       <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'approve_listener')}>
                                         {busy === `approve_listener:${l.user_id}` ? 'Approving…' : 'Re-approve'}
                                       </button>
-                                      <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--gray)' }}>Type reason, then allow resubmission:</div>
+                                      <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--gray)' }}>Or give them a chance to fix and resubmit:</div>
                                       <div style={{ display: 'flex', gap: 4, alignItems: 'center', flexWrap: 'wrap' }}>
                                       <input
                                         className="reject-input"
