@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
+import Razorpay from 'razorpay'
 import { selfieSignedUrls, selfieTakenAt, archiveSelfie } from '@/lib/selfie-storage'
 import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
 import { requireAdmin, dbUserIdOrNull , ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS } from '@/lib/require-admin'
+
+function getRzp() {
+  return new Razorpay({
+    key_id:     process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+    key_secret: process.env.RAZORPAY_KEY_SECRET!,
+  })
+}
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const PAGE_SIZE = 25
@@ -976,6 +984,142 @@ export async function PATCH(req: NextRequest) {
           }
         }
         break
+      }
+
+      // ── Admin-initiated wallet refund (before ban) ───────────────────────────
+      // Mirrors /api/refund but bypasses the user-facing guards and auto-calls
+      // the Razorpay refund API immediately. The wallet is zeroed first so the
+      // user can't spend funds between the admin's decision and the Razorpay call.
+      // Works after T+2 settlement — Razorpay nets the amount against the next
+      // incoming settlement. No extra API flag needed; Razorpay handles it.
+      case 'force_refund': {
+        const { data: userRow } = await sb.from('users').select('wallet_balance').eq('id', userId).maybeSingle()
+        const balance = Number((userRow as { wallet_balance?: number } | null)?.wallet_balance ?? 0)
+        if (balance <= 0) return NextResponse.json({ error: 'User has no wallet balance to refund' }, { status: 400 })
+
+        // Block duplicate
+        const { data: existing } = await sb.from('refund_requests').select('id').eq('user_id', userId).eq('status', 'pending').maybeSingle()
+        if (existing) return NextResponse.json({ error: 'A refund request is already pending for this user' }, { status: 409 })
+
+        // Most recent Razorpay payment ID (same heuristic as /api/refund)
+        const { data: lastCredit } = await sb.from('wallet_transactions')
+          .select('reference_id')
+          .eq('user_id', userId)
+          .eq('type', 'credit')
+          .not('reference_id', 'ilike', 'gf_%')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle()
+        const paymentId: string | null = (lastCredit as { reference_id?: string | null } | null)?.reference_id ?? null
+
+        // Insert refund row first (idempotency anchor)
+        const { data: refundRow, error: insertErr } = await sb.from('refund_requests').insert({
+          user_id: userId,
+          amount: balance,
+          reason: 'Admin-initiated refund',
+          status: 'pending',
+          ...(paymentId ? { razorpay_payment_id: paymentId } : {}),
+        }).select('id').single()
+        if (insertErr) {
+          logger.error('force_refund: insert failed', { userId, error: insertErr.message })
+          return NextResponse.json({ error: `Failed to create refund: ${insertErr.message}` }, { status: 500 })
+        }
+
+        // Zero the wallet
+        const { error: deductErr } = await sb.rpc('deduct_wallet', { p_user_id: userId, p_amount: balance })
+        if (deductErr) {
+          await sb.from('refund_requests').update({ status: 'rejected', admin_notes: 'Auto-reverted: wallet deduct failed' }).eq('id', refundRow.id)
+          return NextResponse.json({ error: `Wallet deduct failed: ${deductErr.message}` }, { status: 500 })
+        }
+
+        // Audit ledger row
+        await sb.from('wallet_transactions').insert({
+          user_id: userId, type: 'debit', amount: balance,
+          reference_id: `rfnd_${refundRow.id}`, description: 'Admin-initiated refund — balance cleared',
+        }).then(() => {}, () => {})
+
+        // Attempt Razorpay refund immediately
+        let razorpayRefundId: string | null = null
+        let razorpayNote = 'No Razorpay payment found — manual refund needed.'
+        if (paymentId) {
+          try {
+            const rzpRefund = await getRzp().payments.refund(paymentId, { amount: balance * 100 })
+            razorpayRefundId = (rzpRefund as { id?: string }).id ?? null
+            razorpayNote = razorpayRefundId
+              ? `Razorpay refund ID: ${razorpayRefundId}`
+              : 'Razorpay call returned no refund ID — verify in Razorpay dashboard.'
+          } catch (e) {
+            razorpayNote = `Razorpay failed: ${e instanceof Error ? e.message : String(e)}. Manual refund needed.`
+            logger.error('force_refund: Razorpay call failed', { userId, paymentId, error: razorpayNote })
+          }
+        }
+
+        await sb.from('refund_requests').update({
+          status: 'completed',
+          admin_notes: `Admin-initiated. ${razorpayNote}`,
+        }).eq('id', refundRow.id)
+
+        return NextResponse.json({ ok: true, amount: balance, razorpayRefundId })
+      }
+
+      // ── Admin-initiated listener payout (before ban) ─────────────────────────
+      // Creates a payout_requests row on behalf of the listener and deducts the
+      // soft hold — the admin then does the actual UPI transfer and marks it paid
+      // in the Payouts tab (same manual flow as all listener payouts today).
+      case 'force_payout': {
+        const { data: listenerUser } = await sb.from('users').select('wallet_balance').eq('id', userId).maybeSingle()
+        const walletBalance = Number((listenerUser as { wallet_balance?: number } | null)?.wallet_balance ?? 0)
+
+        // Cap at settled earnings (same rule as /api/payout for listeners who also recharged)
+        const [{ data: earned }, { data: claimed }] = await Promise.all([
+          sb.from('listener_earnings').select('net_amount').eq('listener_id', userId).eq('status', 'settled'),
+          sb.from('payout_requests').select('amount').eq('user_id', userId).neq('status', 'rejected'),
+        ])
+        const earnedTotal  = (earned  ?? []).reduce((t, r) => t + Number((r as { net_amount?: number }).net_amount ?? 0), 0)
+        const claimedTotal = (claimed ?? []).reduce((t, r) => t + Number((r as { amount?: number }).amount ?? 0), 0)
+        const available = Math.min(walletBalance, Math.max(0, earnedTotal - claimedTotal))
+        const amount = Math.floor(available)
+
+        if (amount <= 0) return NextResponse.json({ error: 'No settled earnings available for payout' }, { status: 400 })
+
+        // Block duplicate
+        const { data: existingPayout } = await sb.from('payout_requests').select('id').eq('user_id', userId).eq('status', 'pending').maybeSingle()
+        if (existingPayout) return NextResponse.json({ error: 'A payout request is already pending for this listener' }, { status: 409 })
+
+        // Get payment details from application
+        const { data: app } = await sb.from('listener_applications')
+          .select('upi_id, bank_account, ifsc_code, account_holder_name')
+          .eq('user_id', userId)
+          .maybeSingle()
+        const appRow = app as { upi_id?: string | null; bank_account?: string | null; ifsc_code?: string | null } | null
+        let upiId: string | null = null
+        if (appRow?.upi_id && (appRow.upi_id as string).includes('@')) {
+          upiId = appRow.upi_id as string
+        } else if (appRow?.bank_account && appRow?.ifsc_code) {
+          upiId = `bank:${appRow.ifsc_code}/${appRow.bank_account}`
+        }
+
+        // Soft hold
+        const { error: holdErr } = await sb.rpc('deduct_wallet', { p_user_id: userId, p_amount: amount })
+        if (holdErr) return NextResponse.json({ error: `Wallet hold failed: ${holdErr.message}` }, { status: 500 })
+
+        const { error: insertErr } = await sb.from('payout_requests').insert({
+          user_id: userId, amount, status: 'pending',
+          admin_notes: 'Admin-initiated payout (pre-ban)',
+          ...(upiId ? { upi_id: upiId } : {}),
+        })
+        if (insertErr) {
+          // Roll back the hold
+          await sb.rpc('credit_wallet', { p_user_id: userId, p_amount: amount }).then(() => {}, () => {})
+          return NextResponse.json({ error: `Failed to create payout: ${insertErr.message}` }, { status: 500 })
+        }
+
+        await sb.from('wallet_transactions').insert({
+          user_id: userId, type: 'debit', amount,
+          description: 'Admin-initiated payout — balance held',
+        }).then(() => {}, () => {})
+
+        return NextResponse.json({ ok: true, amount })
       }
 
       case 'set_custom_fee_rate': {

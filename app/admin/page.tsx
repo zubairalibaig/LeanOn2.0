@@ -396,6 +396,8 @@ export default function AdminPage() {
   const [confirmRejectOverviewId, setConfirmRejectOverviewId] = useState<string | null>(null)
   const [reviewOpenId, setReviewOpenId] = useState<string | null>(null)
   const [confirmRejectListenersId, setConfirmRejectListenersId] = useState<string | null>(null)
+  const [confirmForceRefundId, setConfirmForceRefundId] = useState<string | null>(null)
+  const [confirmForcePayoutId, setConfirmForcePayoutId] = useState<string | null>(null)
   // Inline name-edit state (shared for both users and listeners tables)
   const [editingNameId, setEditingNameId] = useState<string | null>(null)
   const [editingNameValue, setEditingNameValue] = useState('')
@@ -682,7 +684,16 @@ export default function AdminPage() {
     })
     setBusy(null)
     if (res.ok) {
-      showToast(`Action "${action}" completed`)
+      const resData = await res.json().catch(() => ({}))
+      let toastMsg = `Action "${action}" completed`
+      if (action === 'force_refund') {
+        toastMsg = resData.razorpayRefundId
+          ? `₹${resData.amount} refunded via Razorpay ✓`
+          : `Balance cleared — manual Razorpay refund needed (check admin notes)`
+      } else if (action === 'force_payout') {
+        toastMsg = `₹${resData.amount} payout queued — pay via UPI then mark paid in Payouts tab`
+      }
+      showToast(toastMsg)
       // Clear the typed rejection reason and any stale ban-confirm state for
       // this user so they don't pre-fill or re-render on next review cycle.
       setRejectNotesOverview(prev => { const n = { ...prev }; delete n[userId]; return n })
@@ -1541,6 +1552,20 @@ export default function AdminPage() {
                           </td>
                           <td>
                             <div className="action-row">
+                              {/* Force Refund — admin-initiated wallet refund before banning */}
+                              {(u.wallet_balance ?? 0) > 0 && !u.phone?.startsWith('DELETE') && (
+                                confirmForceRefundId === u.id ? (
+                                  <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
+                                    <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--teal)' }}>Refund ₹{u.wallet_balance}?</span>
+                                    <button className="btn btn-teal" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => { setConfirmForceRefundId(null); userAction(u.id, 'force_refund') }}>Yes, refund</button>
+                                    <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setConfirmForceRefundId(null)}>Cancel</button>
+                                  </span>
+                                ) : (
+                                  <button className="btn btn-teal" style={{ fontSize: 12 }} disabled={busy !== null} onClick={() => setConfirmForceRefundId(u.id)} title="Refund wallet balance via Razorpay, then ban">
+                                    Refund ₹{u.wallet_balance}
+                                  </button>
+                                )
+                              )}
                               {/* Suspend ↔ Unsuspend / Unban */}
                               {u.is_suspended ? (
                                 bannedUserIds.has(u.id) ? (
@@ -2139,6 +2164,20 @@ export default function AdminPage() {
                                   </div>
                                 )}
                                 <div className="action-row">
+                                  {/* Force Payout — admin-initiated payout of settled earnings before banning */}
+                                  {(l.earned_settled ?? 0) > 0 && !l.users?.phone?.startsWith('DELETE') && (
+                                    confirmForcePayoutId === l.user_id ? (
+                                      <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
+                                        <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--teal)' }}>Queue ₹{l.earned_settled} payout?</span>
+                                        <button className="btn btn-teal" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => { setConfirmForcePayoutId(null); userAction(l.user_id, 'force_payout') }}>Yes, queue</button>
+                                        <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setConfirmForcePayoutId(null)}>Cancel</button>
+                                      </span>
+                                    ) : (
+                                      <button className="btn btn-teal" style={{ fontSize: 12 }} disabled={busy !== null} onClick={() => setConfirmForcePayoutId(l.user_id)} title="Queue payout of settled earnings, then ban. Pay manually via UPI and mark paid in Payouts tab.">
+                                        Payout ₹{l.earned_settled}
+                                      </button>
+                                    )
+                                  )}
                                   {!isPending && !isRejected && l.is_suspended && (
                                     <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'unsuspend_listener')}>
                                       {busy === `unsuspend_listener:${l.user_id}` ? '…' : 'Unsuspend'}
