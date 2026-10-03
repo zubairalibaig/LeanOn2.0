@@ -2734,7 +2734,7 @@ export default function AdminPage() {
                               const n = payoutHolderNameValue.trim()
                               setEditingPayoutHolderNameId(null)
                               setPayoutHolderNameValue('')
-                              fetch('/api/admin/users', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: p.user_id, action: 'update_bank_details', account_holder_name: n }) })
+                              fetch('/api/admin/users', { method: 'PATCH', headers: adminHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify({ userId: p.user_id, action: 'update_bank_details', account_holder_name: n }) })
                                 .then(r => r.json()).then(j => { if (j.ok) { setPayouts(prev => prev.map(x => x.id === p.id ? { ...x, bank: { ...x.bank, account_holder_name: n } } : x)); setToast('Saved.') } else setToast(j.error || 'Failed') })
                             }}>Save</button>
                             <button style={{ fontSize: 11, fontWeight: 800, color: 'var(--gray)', background: 'transparent', border: '1px solid var(--border)', borderRadius: 6, padding: '3px 8px', cursor: 'pointer' }} onClick={() => { setEditingPayoutHolderNameId(null); setPayoutHolderNameValue('') }}>Cancel</button>

@@ -62,8 +62,14 @@ export async function POST(req: NextRequest) {
     if (!session.amount_held || session.amount_held <= 0) {
       return NextResponse.json({ error: 'Session has no amount_held' }, { status: 400 })
     }
+    // ended_at must be present — substituting now() would bill thousands of minutes
+    // for a session that started days ago. Sessions with null ended_at should be
+    // resolved via the session expiry flow, not a manual settlement rerun.
+    if (!session.ended_at) {
+      return NextResponse.json({ error: 'Session has no ended_at timestamp. Resolve via the session expiry flow (/api/sessions/expire), not a manual settlement rerun.' }, { status: 400 })
+    }
 
-    // Idempotency check: look for an existing credit wallet_transaction for this session
+    // Primary idempotency: wallet_transactions credit row
     const { data: existingCredit } = await sb
       .from('wallet_transactions')
       .select('id, amount')
@@ -78,11 +84,28 @@ export async function POST(req: NextRequest) {
         message: `Listener already has a credit of ₹${existingCredit[0].amount} for this session`,
       })
     }
+    // Secondary idempotency: listener_earnings row. Written immediately before
+    // wallet_transactions in this rerun path (see below), so if wallet_transactions
+    // failed on a prior run the earnings row still exists and prevents a double-credit
+    // on retry. The wallet_transactions row is missing — add it manually for ledger
+    // reconciliation before the next rerun.
+    const { data: existingEarnings } = await sb
+      .from('listener_earnings')
+      .select('id')
+      .eq('session_id', sessionId)
+      .limit(1)
+    if (existingEarnings && existingEarnings.length > 0) {
+      return NextResponse.json({
+        ok: true,
+        already_settled: true,
+        message: 'Earnings record exists but wallet_transactions credit row is missing — the listener was credited on a prior run. Add the wallet_transactions row manually for ledger reconciliation.',
+      })
+    }
 
     // Calculate what the listener should earn (same math as the settlement path)
     const settlement = settleSession({
       startedAt:   session.started_at ?? null,
-      endedAt:     session.ended_at ?? new Date().toISOString(),
+      endedAt:     session.ended_at,
       bookedMins:  session.duration_mins as number,
       amountHeld:  session.amount_held as number,
       platformFee: (session.platform_fee as number | null) ?? 0,
@@ -104,6 +127,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: reason, listenerEarning, ranSecs }, { status: 400 })
     }
 
+    // Write listener_earnings BEFORE credit_wallet. This row is the secondary
+    // idempotency anchor checked above — if credit_wallet succeeds but
+    // wallet_transactions fails, any retry finds this row and stops, preventing
+    // a double-credit. Upsert so a re-run over a genuinely-unsettled session
+    // (no prior earnings row) inserts cleanly, and a re-run after a partial
+    // failure updates the row with the correct values.
+    await recordEarnings(sb, { sessionId, listenerId: session.listener_id, amountHeld: Number(session.amount_held), settlement, mode: 'upsert' })
+
     // Run credit_wallet
     const { error: creditErr } = await sb.rpc('credit_wallet', {
       p_user_id: session.listener_id,
@@ -114,9 +145,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `credit_wallet failed: ${creditErr.message}` }, { status: 500 })
     }
 
-    // Record wallet_transaction — this row is the idempotency marker for future
-    // reruns. If this insert fails after credit_wallet succeeded, the next rerun
-    // would find no credit row and double-pay. Treat this as a hard error.
+    // Record wallet_transaction — the human-readable ledger row. The listener_earnings
+    // row written above is the true idempotency anchor; if this insert fails after
+    // credit_wallet succeeded, any retry finds listener_earnings and stops safely.
+    // Still treat this as a hard error so the admin knows to add the row manually.
     const { error: txInsertErr } = await sb.from('wallet_transactions').insert({
       user_id:     session.listener_id,
       amount:      listenerEarning,
@@ -125,14 +157,9 @@ export async function POST(req: NextRequest) {
       session_id:  sessionId,
     })
     if (txInsertErr) {
-      logger.error('rerun-settlement: wallet_transactions insert FAILED after successful credit_wallet — MANUAL ACTION REQUIRED: verify listener wallet was credited and add the transaction row manually', { sessionId, listenerId: session.listener_id, listenerEarning, error: txInsertErr.message })
-      return NextResponse.json({ error: `Wallet credited (₹${listenerEarning}) but transaction record failed: ${txInsertErr.message}. Verify manually and add the wallet_transactions row before rerunning.` }, { status: 500 })
+      logger.error('rerun-settlement: wallet_transactions insert FAILED after successful credit_wallet — listener_earnings row exists as idempotency anchor; add the wallet_transactions row manually for ledger reconciliation', { sessionId, listenerId: session.listener_id, listenerEarning, error: txInsertErr.message })
+      return NextResponse.json({ error: `Wallet credited (₹${listenerEarning}) but ledger record failed: ${txInsertErr.message}. Add the wallet_transactions row manually. Do NOT rerun — the listener was credited.` }, { status: 500 })
     }
-
-    // Earnings ledger: same row shape as normal settlement — platform_fee is
-    // LeanOn's TOTAL take (₹10 + service fee + NRI margin), not just the ₹10,
-    // so revenue figures stay right after a re-run. Upsert corrects a bad row.
-    await recordEarnings(sb, { sessionId, listenerId: session.listener_id, amountHeld: Number(session.amount_held), settlement, mode: 'upsert' })
 
     logger.info('rerun-settlement: success', { sessionId, listenerId: session.listener_id, listenerEarning, adminId: user!.id })
 

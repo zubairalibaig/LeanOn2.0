@@ -612,8 +612,9 @@ export async function PATCH(req: NextRequest) {
         //   2. Their application is in needs_resubmission.
         //   3. The admin_notes contain a photo-related keyword (this was a photo case,
         //      not a bio/skills/identity resubmission).
-        const [{ data: uRow }, { data: laRow }] = await Promise.all([
+        const [{ data: uRow }, { data: userSuspRow }, { data: laRow }] = await Promise.all([
           sb.from('users').select('avatar_url').eq('id', userId).maybeSingle(),
+          sb.from('users').select('is_suspended').eq('id', userId).maybeSingle(),
           sb.from('listener_applications').select('status, admin_notes').eq('user_id', userId).maybeSingle(),
         ])
         if (!uRow?.avatar_url) {
@@ -627,8 +628,12 @@ export async function PATCH(req: NextRequest) {
         if (!photoKeywords.some(kw => notesLower.includes(kw))) {
           return NextResponse.json({ error: 'Cannot restore: admin notes do not indicate a photo-rejection case. Use the standard Approve action for other resubmission types.' }, { status: 400 })
         }
+        // Never set is_active=true for a suspended account — that creates the
+        // forbidden {is_active:true, is_suspended:true} state. Restore approval
+        // only; is_active will be set when the account is unsuspended.
+        const isSuspended = (userSuspRow as { is_suspended?: boolean } | null)?.is_suspended ?? false
         let lpErr = (await sb.from('listener_profiles')
-          .update({ is_approved: true, is_active: true })
+          .update({ is_approved: true, is_active: !isSuspended })
           .eq('user_id', userId)).error
         if (lpErr) {
           logger.error('restore_listener: listener_profiles update failed', { userId, error: lpErr.message })
@@ -693,16 +698,10 @@ export async function PATCH(req: NextRequest) {
           logger.error('ban: listener_profiles update failed — RECONCILIATION NEEDED — profile may still be live', { userId, error: lpBanErr.message })
         }
         await sb.auth.admin.signOut(userId, 'global').then(() => {}, () => {})
-        await sb.from('notifications').insert({
-          user_id: userId,
-          type: 'system',
-          title: 'Account suspended',
-          body: notes || 'Your account has been suspended for violating our community guidelines. Contact support to appeal.',
-          action_url: '/support',
-        }).then(() => {}, () => {})
-        // Critical: write user_ban audit entry immediately — the unsuspend guard reads
-        // this to distinguish a ban from a regular suspend. If this fails, return 500
-        // so the admin knows to retry rather than getting a silent incorrect state.
+        // Write audit log BEFORE the notification. If the audit log fails, return 500
+        // without sending any notification — on retry the notification goes out exactly
+        // once (after the now-successful audit write). Notification before audit log
+        // caused duplicate push alerts when the admin retried after an audit failure.
         const { error: banAuditErr } = await sb.from('admin_audit_logs').insert({
           admin_id: dbUserIdOrNull(user!.id),
           action: 'user_ban',
@@ -715,6 +714,13 @@ export async function PATCH(req: NextRequest) {
             code: 'AUDIT_LOG_FAILED',
           }, { status: 500 })
         }
+        await sb.from('notifications').insert({
+          user_id: userId,
+          type: 'system',
+          title: 'Account suspended',
+          body: notes || 'Your account has been suspended for violating our community guidelines. Contact support to appeal.',
+          action_url: '/support',
+        }).then(() => {}, () => {})
         break
       }
 
@@ -1054,12 +1060,18 @@ export async function PATCH(req: NextRequest) {
           }
         }
 
+        // Mark completed only when Razorpay actually issued the refund.
+        // On failure (no paymentId OR Razorpay threw), keep status='pending' so
+        // the request appears in the admin Payouts tab under "Pending Refunds"
+        // where the admin can process it manually via the existing Complete Refund
+        // button. The wallet was already zeroed either way — that is irreversible.
+        const finalStatus = razorpayRefundId ? 'completed' : 'pending'
         await sb.from('refund_requests').update({
-          status: 'completed',
+          status: finalStatus,
           admin_notes: `Admin-initiated. ${razorpayNote}`,
         }).eq('id', refundRow.id)
 
-        return NextResponse.json({ ok: true, amount: balance, razorpayRefundId })
+        return NextResponse.json({ ok: true, amount: balance, razorpayRefundId, requiresManualRefund: !razorpayRefundId })
       }
 
       // ── Admin-initiated listener payout (before ban) ─────────────────────────
@@ -1117,7 +1129,7 @@ export async function PATCH(req: NextRequest) {
         await sb.from('wallet_transactions').insert({
           user_id: userId, type: 'debit', amount,
           description: 'Admin-initiated payout — balance held',
-        }).then(() => {}, () => {})
+        }).then(() => {}, (e) => logger.error('force_payout: wallet_transactions insert failed — ledger desync', { userId, amount, error: String(e) }))
 
         return NextResponse.json({ ok: true, amount })
       }

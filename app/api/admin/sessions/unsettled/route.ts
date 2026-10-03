@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     // for those, so they must not appear in the unsettled list.
     const { data: sessions, error: sErr } = await sb
       .from('sessions')
-      .select('id, listener_id, amount_held, platform_fee, service_fee_rate, created_at, started_at, ended_at, listener:users!listener_id(name)')
+      .select('id, listener_id, amount_held, platform_fee, service_fee_rate, created_at, started_at, ended_at, duration_mins, listener_rate_per_min, listener:users!listener_id(name)')
       .eq('status', 'completed')
       .eq('is_free_trial', false)
       .gt('amount_held', 0)
@@ -35,8 +35,16 @@ export async function GET(req: NextRequest) {
       .limit(500)
     if (sErr) throw sErr
 
+    // Count total so the UI can warn when the 500-row cap silently truncates.
+    const { count: totalCompleted } = await sb
+      .from('sessions')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'completed')
+      .eq('is_free_trial', false)
+      .gt('amount_held', 0)
+
     if (!sessions || sessions.length === 0) {
-      return NextResponse.json({ unsettled: [] })
+      return NextResponse.json({ unsettled: [], truncated: false })
     }
 
     const sessionIds = sessions.map((s: { id: string }) => s.id)
@@ -50,7 +58,12 @@ export async function GET(req: NextRequest) {
     type CreditRow = { session_id: string; user_id: string }
     const creditedSessionIds = new Set((credits ?? []).map((c: CreditRow) => c.session_id))
 
-    type RawSession = { id: string; listener_id: string; amount_held: number | null; platform_fee: number | null; service_fee_rate: number | null; created_at: string | null; started_at: string | null; ended_at: string | null; listener: { name?: string } | null }
+    type RawSession = {
+      id: string; listener_id: string; amount_held: number | null; platform_fee: number | null
+      service_fee_rate: number | null; created_at: string | null; started_at: string | null
+      ended_at: string | null; duration_mins: number | null; listener_rate_per_min: number | null
+      listener: { name?: string } | null
+    }
 
     // Sessions with NO credit = potentially unsettled.
     // Exclusions:
@@ -71,18 +84,35 @@ export async function GET(req: NextRequest) {
       const feeRate = (s.service_fee_rate !== null && Number.isFinite(s.service_fee_rate))
         ? s.service_fee_rate
         : serviceFeeRateAt(s.started_at)
+
+      // Raw share — NRI sessions: listener's INR rate × actual mins (amount_held
+      // includes an NRI margin not payable to the listener, so using it overstates).
+      // India sessions: amount_held − ₹10 platform fee is the correct raw share.
+      let rawShare: number
+      if (s.listener_rate_per_min && s.listener_rate_per_min > 0 && s.started_at && s.ended_at) {
+        const elapsedMins = (new Date(s.ended_at).getTime() - new Date(s.started_at).getTime()) / 60000
+        const actualMins = Math.min(elapsedMins, s.duration_mins ?? elapsedMins)
+        rawShare = Math.round(actualMins * s.listener_rate_per_min)
+      } else {
+        rawShare = (s.amount_held ?? 0) - (s.platform_fee ?? 0)
+      }
+
       return {
         id: s.id,
         listener_id: s.listener_id,
         listener_name: s.listener?.name ?? 'Unknown',
         amount_held: s.amount_held ?? 0,
         platform_fee: s.platform_fee ?? 0,
-        listener_earning: Math.round(((s.amount_held ?? 0) - (s.platform_fee ?? 0)) * (1 - feeRate)),
+        listener_earning: Math.round(rawShare * (1 - feeRate)),
         created_at: s.created_at,
       }
     })
 
-    return NextResponse.json({ unsettled, total: unsettled.length })
+    return NextResponse.json({
+      unsettled,
+      total: unsettled.length,
+      truncated: (totalCompleted ?? 0) > 500,
+    })
   } catch (err) {
     logger.error('unsettled sessions GET error:', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
