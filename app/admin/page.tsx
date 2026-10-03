@@ -1553,16 +1553,16 @@ export default function AdminPage() {
                           <td>
                             <div className="action-row">
                               {/* Force Refund — admin-initiated wallet refund before banning */}
-                              {(u.wallet_balance ?? 0) > 0 && !u.phone?.startsWith('DELETE') && (
+                              {!u.phone?.startsWith('DELETE') && (
                                 confirmForceRefundId === u.id ? (
                                   <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
-                                    <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--teal)' }}>Refund ₹{u.wallet_balance}?</span>
-                                    <button className="btn btn-teal" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => { setConfirmForceRefundId(null); userAction(u.id, 'force_refund') }}>Yes, refund</button>
+                                    <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--teal)' }}>Refund ₹{u.wallet_balance ?? 0}?</span>
+                                    <button className="btn btn-teal" style={{ fontSize: 11, padding: '4px 8px' }} disabled={busy !== null || (u.wallet_balance ?? 0) <= 0} onClick={() => { setConfirmForceRefundId(null); userAction(u.id, 'force_refund') }}>Yes, refund</button>
                                     <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setConfirmForceRefundId(null)}>Cancel</button>
                                   </span>
                                 ) : (
-                                  <button className="btn btn-teal" style={{ fontSize: 12 }} disabled={busy !== null} onClick={() => setConfirmForceRefundId(u.id)} title="Refund wallet balance via Razorpay, then ban">
-                                    Refund ₹{u.wallet_balance}
+                                  <button className="btn btn-teal" style={{ fontSize: 12 }} disabled={busy !== null || (u.wallet_balance ?? 0) <= 0} onClick={() => setConfirmForceRefundId(u.id)} title={(u.wallet_balance ?? 0) > 0 ? 'Refund wallet balance via Razorpay, then ban' : 'No balance to refund'}>
+                                    Refund {(u.wallet_balance ?? 0) > 0 ? `₹${u.wallet_balance}` : '₹0'}
                                   </button>
                                 )
                               )}
@@ -2165,16 +2165,16 @@ export default function AdminPage() {
                                 )}
                                 <div className="action-row">
                                   {/* Force Payout — admin-initiated payout of settled earnings before banning */}
-                                  {(l.earned_settled ?? 0) > 0 && !l.users?.phone?.startsWith('DELETE') && (
+                                  {!l.users?.phone?.startsWith('DELETE') && (
                                     confirmForcePayoutId === l.user_id ? (
                                       <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
-                                        <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--teal)' }}>Queue ₹{l.earned_settled} payout?</span>
-                                        <button className="btn btn-teal" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => { setConfirmForcePayoutId(null); userAction(l.user_id, 'force_payout') }}>Yes, queue</button>
+                                        <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--teal)' }}>Queue ₹{l.earned_settled ?? 0} payout?</span>
+                                        <button className="btn btn-teal" style={{ fontSize: 11, padding: '4px 8px' }} disabled={busy !== null || (l.earned_settled ?? 0) <= 0} onClick={() => { setConfirmForcePayoutId(null); userAction(l.user_id, 'force_payout') }}>Yes, queue</button>
                                         <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setConfirmForcePayoutId(null)}>Cancel</button>
                                       </span>
                                     ) : (
-                                      <button className="btn btn-teal" style={{ fontSize: 12 }} disabled={busy !== null} onClick={() => setConfirmForcePayoutId(l.user_id)} title="Queue payout of settled earnings, then ban. Pay manually via UPI and mark paid in Payouts tab.">
-                                        Payout ₹{l.earned_settled}
+                                      <button className="btn btn-teal" style={{ fontSize: 12 }} disabled={busy !== null || (l.earned_settled ?? 0) <= 0} onClick={() => setConfirmForcePayoutId(l.user_id)} title={(l.earned_settled ?? 0) > 0 ? 'Queue payout, pay via UPI, mark paid in Payouts tab' : 'No settled earnings to pay out'}>
+                                        Payout {(l.earned_settled ?? 0) > 0 ? `₹${l.earned_settled}` : '₹0'}
                                       </button>
                                     )
                                   )}
