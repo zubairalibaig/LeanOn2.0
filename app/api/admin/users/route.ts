@@ -721,7 +721,9 @@ export async function PATCH(req: NextRequest) {
           body: notes || 'Your account has been suspended for violating our community guidelines. Contact support to appeal.',
           action_url: '/support',
         }).then(() => {}, () => {})
-        break
+        // Return early — the audit log was already written above (before the notification).
+        // The shared audit write at the end of this handler must not run a second time.
+        return NextResponse.json({ ok: true })
       }
 
       case 'unsuspend': {

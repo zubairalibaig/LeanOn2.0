@@ -84,21 +84,36 @@ export async function POST(req: NextRequest) {
         message: `Listener already has a credit of ₹${existingCredit[0].amount} for this session`,
       })
     }
-    // Secondary idempotency: listener_earnings row. Written immediately before
-    // wallet_transactions in this rerun path (see below), so if wallet_transactions
-    // failed on a prior run the earnings row still exists and prevents a double-credit
-    // on retry. The wallet_transactions row is missing — add it manually for ledger
-    // reconciliation before the next rerun.
+    // Secondary idempotency: listener_earnings row. Written AFTER credit_wallet (see
+    // below), so its presence means credit_wallet already succeeded on a prior run.
+    // If wallet_transactions failed on that prior run, recover here by writing only the
+    // missing ledger row — do NOT call credit_wallet again.
     const { data: existingEarnings } = await sb
       .from('listener_earnings')
-      .select('id')
+      .select('id, net_amount')
       .eq('session_id', sessionId)
       .limit(1)
     if (existingEarnings && existingEarnings.length > 0) {
+      // credit_wallet succeeded but wallet_transactions was never written. Write it now.
+      const recoveredAmount = existingEarnings[0].net_amount as number
+      const { error: txRecoveryErr } = await sb.from('wallet_transactions').insert({
+        user_id:     session.listener_id,
+        amount:      recoveredAmount,
+        type:        'credit',
+        description: 'Session earnings (settlement rerun — ledger recovery)',
+        session_id:  sessionId,
+      })
+      if (txRecoveryErr) {
+        logger.error('rerun-settlement: ledger recovery insert failed', { sessionId, listenerId: session.listener_id, recoveredAmount, error: txRecoveryErr.message })
+        return NextResponse.json({ error: `Wallet was already credited (₹${recoveredAmount}) on a prior run but ledger record still missing: ${txRecoveryErr.message}. Add the wallet_transactions row manually. Do NOT rerun.` }, { status: 500 })
+      }
+      logger.info('rerun-settlement: ledger recovery success', { sessionId, listenerId: session.listener_id, recoveredAmount, adminId: user!.id })
       return NextResponse.json({
         ok: true,
-        already_settled: true,
-        message: 'Earnings record exists but wallet_transactions credit row is missing — the listener was credited on a prior run. Add the wallet_transactions row manually for ledger reconciliation.',
+        already_settled: false,
+        recovered: true,
+        listenerEarning: recoveredAmount,
+        message: 'Prior run credited the wallet but wallet_transactions row was missing — ledger row added.',
       })
     }
 
@@ -127,28 +142,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: reason, listenerEarning, ranSecs }, { status: 400 })
     }
 
-    // Write listener_earnings BEFORE credit_wallet. This row is the secondary
-    // idempotency anchor checked above — if credit_wallet succeeds but
-    // wallet_transactions fails, any retry finds this row and stops, preventing
-    // a double-credit. Upsert so a re-run over a genuinely-unsettled session
-    // (no prior earnings row) inserts cleanly, and a re-run after a partial
-    // failure updates the row with the correct values.
-    await recordEarnings(sb, { sessionId, listenerId: session.listener_id, amountHeld: Number(session.amount_held), settlement, mode: 'upsert' })
-
-    // Run credit_wallet
+    // Run credit_wallet first. Only after it succeeds do we write listener_earnings
+    // and wallet_transactions. listener_earnings is the secondary idempotency anchor:
+    // its presence (checked above) means credit_wallet already ran successfully.
     const { error: creditErr } = await sb.rpc('credit_wallet', {
       p_user_id: session.listener_id,
       p_amount:  listenerEarning,
     })
     if (creditErr) {
       logger.error('rerun-settlement: credit_wallet failed:', { sessionId, listenerId: session.listener_id, listenerEarning, error: creditErr.message })
-      return NextResponse.json({ error: `credit_wallet failed: ${creditErr.message}` }, { status: 500 })
+      return NextResponse.json({ error: `credit_wallet failed: ${creditErr.message}. Retry is safe — wallet was NOT credited.` }, { status: 500 })
     }
 
-    // Record wallet_transaction — the human-readable ledger row. The listener_earnings
-    // row written above is the true idempotency anchor; if this insert fails after
-    // credit_wallet succeeded, any retry finds listener_earnings and stops safely.
-    // Still treat this as a hard error so the admin knows to add the row manually.
+    // Write listener_earnings AFTER credit_wallet. Its presence is the secondary
+    // idempotency anchor: any retry that finds this row but no wallet_transactions
+    // row knows credit_wallet already succeeded and recovers by writing only the
+    // missing ledger row (see secondary check above).
+    await recordEarnings(sb, { sessionId, listenerId: session.listener_id, amountHeld: Number(session.amount_held), settlement, mode: 'upsert' })
+
+    // Record wallet_transaction — the human-readable ledger row. Primary idempotency
+    // anchor. If this insert fails after credit_wallet and recordEarnings succeeded,
+    // any retry finds listener_earnings (secondary check) and recovers by writing
+    // only this row without re-crediting the wallet.
     const { error: txInsertErr } = await sb.from('wallet_transactions').insert({
       user_id:     session.listener_id,
       amount:      listenerEarning,
@@ -158,7 +173,7 @@ export async function POST(req: NextRequest) {
     })
     if (txInsertErr) {
       logger.error('rerun-settlement: wallet_transactions insert FAILED after successful credit_wallet — listener_earnings row exists as idempotency anchor; add the wallet_transactions row manually for ledger reconciliation', { sessionId, listenerId: session.listener_id, listenerEarning, error: txInsertErr.message })
-      return NextResponse.json({ error: `Wallet credited (₹${listenerEarning}) but ledger record failed: ${txInsertErr.message}. Add the wallet_transactions row manually. Do NOT rerun — the listener was credited.` }, { status: 500 })
+      return NextResponse.json({ error: `Wallet credited (₹${listenerEarning}) but ledger record failed: ${txInsertErr.message}. Rerun to auto-recover (the secondary idempotency check will write only the missing row).` }, { status: 500 })
     }
 
     logger.info('rerun-settlement: success', { sessionId, listenerId: session.listener_id, listenerEarning, adminId: user!.id })
