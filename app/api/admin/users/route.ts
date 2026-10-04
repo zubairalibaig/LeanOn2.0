@@ -664,8 +664,10 @@ export async function PATCH(req: NextRequest) {
         }
         // Not fire-and-forget: if this fails, users is suspended but the listener
         // profile stays live — log so it surfaces for manual reconciliation.
+        // Also clear pending_avatar_url so a pre-suspension photo doesn't appear
+        // as a legitimate pending review in the admin queue.
         const { error: lpSuspendErr } = await sb.from('listener_profiles')
-          .update({ is_active: false, is_available: false, is_suspended: true })
+          .update({ is_active: false, is_available: false, is_suspended: true, pending_avatar_url: null })
           .eq('user_id', userId)
         if (lpSuspendErr) {
           logger.error('suspend: listener_profiles update failed — RECONCILIATION NEEDED — profile may still be live', { userId, error: lpSuspendErr.message })
@@ -692,7 +694,7 @@ export async function PATCH(req: NextRequest) {
           return NextResponse.json({ error: `Failed to ban user: ${uErr.message}` }, { status: 500 })
         }
         const { error: lpBanErr } = await sb.from('listener_profiles')
-          .update({ is_active: false, is_available: false, is_suspended: true })
+          .update({ is_active: false, is_available: false, is_suspended: true, pending_avatar_url: null })
           .eq('user_id', userId)
         if (lpBanErr) {
           logger.error('ban: listener_profiles update failed — RECONCILIATION NEEDED — profile may still be live', { userId, error: lpBanErr.message })

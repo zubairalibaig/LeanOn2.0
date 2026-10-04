@@ -190,13 +190,19 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Your account is suspended. Please contact support.' }, { status: 403 })
     }
 
-    // Single listener_profiles lookup covers both the name-lock check and the
-    // avatar routing decision — one DB round-trip instead of two.
+    // Single listener_profiles lookup covers the name-lock check, avatar routing
+    // decision, and inactive guard — one DB round-trip instead of three.
     const { data: lp } = await admin
       .from('listener_profiles')
-      .select('is_approved, pending_avatar_url')
+      .select('is_approved, is_active, pending_avatar_url')
       .eq('user_id', user.id)
       .maybeSingle()
+
+    // Inactive (deactivated) approved listeners may not queue new photos for
+    // admin review. Contact support to reactivate first.
+    if (validatedAvatarUrl && lp?.is_approved === true && lp?.is_active === false) {
+      return NextResponse.json({ error: 'Your listener account is inactive. Contact support to reactivate before updating your photo.' }, { status: 403 })
+    }
 
     if (nameChange !== null) {
       // Approved listeners cannot change their display name — it was verified at onboarding.

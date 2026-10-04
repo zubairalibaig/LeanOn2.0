@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
         .eq('id', target)
       if (suspendErr) throw suspendErr
       const { error: lpModErr } = await sb.from('listener_profiles')
-        .update({ is_active: false, is_available: false, is_suspended: true })
+        .update({ is_active: false, is_available: false, is_suspended: true, pending_avatar_url: null })
         .eq('user_id', target)
       await sb.auth.admin.signOut(target, 'global').then(() => {}, () => {})
       if (lpModErr) {
