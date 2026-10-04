@@ -123,11 +123,16 @@ async function findAuthUserIdByPhone(
 }
 
 export async function POST(req: NextRequest) {
-  // Use the last x-forwarded-for entry (CDN-injected real IP) to prevent
-  // rate-limit bypass via spoofed IPs in the header chain.
+  // Use the FIRST x-forwarded-for entry for rate-limiting.
+  // Cloudflare (and most CDNs) inject the real client IP at position 0 and append
+  // their own egress IPs at the end. Taking the last entry would give Cloudflare's
+  // shared egress IP, meaning one attacker could exhaust the limit for all users,
+  // or the limit would be ineffective against attackers (all appear as one IP).
+  // Clients cannot spoof fwdParts[0] when Cloudflare is in front — Cloudflare
+  // overwrites the header with the verified client IP.
   const fwdChain = req.headers.get('x-forwarded-for') ?? ''
   const fwdParts = fwdChain.split(',').map(s => s.trim()).filter(Boolean)
-  const ip = fwdParts.length > 0 ? fwdParts[fwdParts.length - 1] : (req.headers.get('x-real-ip') ?? 'unknown')
+  const ip = fwdParts.length > 0 ? fwdParts[0] : (req.headers.get('x-real-ip') ?? 'unknown')
   // MSG91 already rate-limits OTP sends; this guards the session-mint endpoint.
   // Use the async variant so Redis (when configured) enforces this across all
   // Vercel serverless containers — prevents bypass via concurrent cold starts.
@@ -197,8 +202,12 @@ export async function POST(req: NextRequest) {
   // user who re-does OTP would otherwise receive a fresh Supabase session, bypassing
   // the suspension. Check BEFORE minting any session.
   if (userId) {
-    const { data: suspendCheck } = await admin
+    const { data: suspendCheck, error: suspendCheckErr } = await admin
       .from('users').select('is_suspended').eq('id', userId).maybeSingle()
+    if (suspendCheckErr) {
+      logger.error('phone-widget: suspension check DB error', { userId, error: suspendCheckErr.message })
+      return NextResponse.json({ error: 'Could not verify account status. Please try again.' }, { status: 503 })
+    }
     if (suspendCheck?.is_suspended) {
       logger.warn('phone-widget: blocked login for suspended account', { userId })
       return NextResponse.json(
@@ -214,9 +223,19 @@ export async function POST(req: NextRequest) {
   // Without this check a banned user can re-register with the same phone.
   if (!userId) {
     const digits = e164.replace(/\D/g, '')
-    const { data: deletedBannedRow } = await admin
-      .from('users').select('is_suspended').eq('phone', `DELETE${digits}`).maybeSingle()
-    if (deletedBannedRow?.is_suspended) {
+    // Check both scrub forms: DELETE918055411383 (full E.164 digits, added after the
+    // widget rollout) and DELETE8055411383 (legacy 10-digit, for accounts whose phone
+    // was stored without a country code when scrubUserData ran). Without the legacy
+    // form, a user banned before the widget rollout could re-register freely.
+    const tenDigit = digits.length > 10 ? digits.slice(-10) : null
+    const scrubForms = [`DELETE${digits}`, ...(tenDigit ? [`DELETE${tenDigit}`] : [])]
+    const { data: deletedBannedRows, error: banCheckErr } = await admin
+      .from('users').select('is_suspended').in('phone', scrubForms)
+    if (banCheckErr) {
+      logger.error('phone-widget: ban check DB error', { error: banCheckErr.message, last4: digits.slice(-4) })
+      return NextResponse.json({ error: 'Could not verify account eligibility. Please try again.' }, { status: 503 })
+    }
+    if (deletedBannedRows?.some(r => r.is_suspended)) {
       logger.warn('phone-widget: blocked re-registration for banned phone', { last4: digits.slice(-4) })
       return NextResponse.json(
         { error: 'This phone number is not eligible for registration. Please contact support if you believe this is an error.' },
@@ -248,8 +267,12 @@ export async function POST(req: NextRequest) {
           // Re-run suspension check — the earlier check at step 3a only ran
           // when findAuthUserIdByPhone returned a userId. This path sets userId
           // from the listUsers fallback scan, bypassing that check entirely.
-          const { data: suspendRetry } = await admin
+          const { data: suspendRetry, error: suspendRetryErr } = await admin
             .from('users').select('is_suspended').eq('id', userId).maybeSingle()
+          if (suspendRetryErr) {
+            logger.error('phone-widget: suspension check DB error (listUsers fallback path)', { userId, error: suspendRetryErr.message })
+            return NextResponse.json({ error: 'Could not verify account status. Please try again.' }, { status: 503 })
+          }
           if (suspendRetry?.is_suspended) {
             logger.warn('phone-widget: blocked login for suspended account (listUsers fallback path)', { userId })
             return NextResponse.json(
