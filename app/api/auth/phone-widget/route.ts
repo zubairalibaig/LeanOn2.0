@@ -295,14 +295,36 @@ export async function POST(req: NextRequest) {
   // response cookies (SSR + middleware read it from there).
   const sb = createServerSupabaseClient()
 
-  // Fast path: try the derived password first. Succeeds for returning users
-  // whose password was already migrated to the derived value.
+  // Fast path: try both phone formats before ever touching updateUserById.
+  // Supabase may store the phone as E.164 (+91...) or bare (91...) depending on
+  // how old the account is. Trying both here prevents a format mismatch from
+  // incorrectly triggering the slow path, which calls updateUserById and
+  // invalidates ALL other sessions for this user.
+  const bare = e164.replace(/^\+/, '')
   let { error: signInErr } = await sb.auth.signInWithPassword({ phone: e164, password })
   if (signInErr) {
-    // Slow path (first sign-in after migration, or new user): the stored
-    // password is still the old random value. Set the derived password once —
-    // this is the one updateUserById call that invalidates other sessions, but
-    // it only ever fires once per user, not on every sign-in.
+    const { error: bareErr } = await sb.auth.signInWithPassword({ phone: bare, password })
+    if (!bareErr) signInErr = null  // bare format worked
+    else signInErr = bareErr        // keep the last error for the slow-path check
+  }
+
+  if (signInErr) {
+    // Slow path — only run when the error is definitively a wrong-password
+    // (credential) error, NOT a transient network or service error.
+    // updateUserById invalidates ALL existing sessions for this user, so
+    // triggering it on a transient failure would log the user out of every
+    // other device. Status 400 = "Invalid login credentials" in Supabase auth.
+    const isCredentialError =
+      signInErr.status === 400 ||
+      /invalid.*login|invalid.*credentials|invalid.*password/i.test(signInErr.message ?? '')
+    if (!isCredentialError) {
+      logger.error('phone-widget: signInWithPassword failed (transient — not updating password)', { error: signInErr.message, status: signInErr.status })
+      return NextResponse.json({ error: 'Could not sign you in. Please try again.' }, { status: 500 })
+    }
+
+    // Credential error: password not yet migrated to the stable derived value.
+    // Set it once — this IS the one updateUserById call that invalidates other
+    // sessions, but it only fires when the stored password genuinely differs.
     // Also normalises the stored phone to E.164 (heals legacy bare-10-digit rows).
     const { error: pwErr } = await admin.auth.admin.updateUserById(userId!, {
       password,
@@ -313,16 +335,11 @@ export async function POST(req: NextRequest) {
       logger.error('phone-widget: could not set session password', { error: pwErr.message })
       return NextResponse.json({ error: 'Could not sign you in. Please try again.' }, { status: 500 })
     }
-    const { error: retryErr } = await sb.auth.signInWithPassword({ phone: e164, password })
-    signInErr = retryErr
-    if (signInErr) {
-      // Supabase may have stored the phone without the leading '+'.
-      logger.warn('phone-widget: signInWithPassword (E.164) failed, retrying with bare number', { error: signInErr.message })
-      const bare = e164.replace(/^\+/, '')
-      const { error: bareErr } = await sb.auth.signInWithPassword({ phone: bare, password })
-      signInErr = bareErr
-      if (signInErr) {
-        logger.error('phone-widget: signInWithPassword failed (both formats)', { error: signInErr.message })
+    const { error: retryE164 } = await sb.auth.signInWithPassword({ phone: e164, password })
+    if (retryE164) {
+      const { error: retryBare } = await sb.auth.signInWithPassword({ phone: bare, password })
+      if (retryBare) {
+        logger.error('phone-widget: signInWithPassword failed after password update', { error: retryBare.message })
         return NextResponse.json({ error: 'Could not sign you in. Please try again.' }, { status: 500 })
       }
     }
