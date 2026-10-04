@@ -360,7 +360,7 @@ export async function PATCH(req: NextRequest) {
   const retakeSelfie = body?.retake_selfie === true
   if (!userId || !UUID_RE.test(userId)) return NextResponse.json({ error: 'Invalid userId' }, { status: 400 })
 
-  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'unban', 'suspend_listener', 'unsuspend_listener', 'approve_listener', 'reject_listener', 'request_resubmission', 'approve_selfie', 'reject_selfie', 'restore_listener', 'rename', 'update_bank_details', 'set_custom_fee_rate']
+  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'unban', 'suspend_listener', 'unsuspend_listener', 'approve_listener', 'reject_listener', 'request_resubmission', 'approve_selfie', 'reject_selfie', 'restore_listener', 'rename', 'update_bank_details', 'set_custom_fee_rate', 'force_refund', 'force_payout']
   if (!action || !validActions.includes(action)) return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
 
   const sb = createAdminClient()
@@ -1070,10 +1070,14 @@ export async function PATCH(req: NextRequest) {
         // where the admin can process it manually via the existing Complete Refund
         // button. The wallet was already zeroed either way — that is irreversible.
         const finalStatus = razorpayRefundId ? 'completed' : 'pending'
-        await sb.from('refund_requests').update({
+        const { error: refundUpdateErr } = await sb.from('refund_requests').update({
           status: finalStatus,
           admin_notes: `Admin-initiated. ${razorpayNote}`,
         }).eq('id', refundRow.id)
+        if (refundUpdateErr) {
+          logger.error('force_refund: refund_requests status update failed — row stays pending, Razorpay refund was issued', { userId, refundRowId: refundRow.id, razorpayRefundId, error: refundUpdateErr.message })
+          // Don't block the response — money was moved and wallet zeroed. Admin sees the row as pending.
+        }
 
         return NextResponse.json({ ok: true, amount: balance, razorpayRefundId, requiresManualRefund: !razorpayRefundId })
       }
@@ -1125,8 +1129,12 @@ export async function PATCH(req: NextRequest) {
           ...(upiId ? { upi_id: upiId } : {}),
         })
         if (insertErr) {
-          // Roll back the hold
-          await sb.rpc('credit_wallet', { p_user_id: userId, p_amount: amount }).then(() => {}, () => {})
+          // Roll back the hold — log if rollback also fails (funds stranded)
+          const { error: rollbackErr } = await sb.rpc('credit_wallet', { p_user_id: userId, p_amount: amount })
+          if (rollbackErr) {
+            logger.error('force_payout: payout insert AND rollback both failed — wallet decremented with no payout record. MANUAL RECONCILIATION REQUIRED.', { userId, amount, insertError: insertErr.message, rollbackError: rollbackErr.message })
+            return NextResponse.json({ error: `Payout insert failed AND wallet rollback failed — ₹${amount} deducted but no payout record created. Fix manually: credit_wallet(${userId}, ${amount}) and verify payout_requests.` }, { status: 500 })
+          }
           return NextResponse.json({ error: `Failed to create payout: ${insertErr.message}` }, { status: 500 })
         }
 

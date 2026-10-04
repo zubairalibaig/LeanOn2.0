@@ -95,7 +95,12 @@ export async function POST(req: NextRequest) {
       .limit(1)
     if (existingEarnings && existingEarnings.length > 0) {
       // credit_wallet succeeded but wallet_transactions was never written. Write it now.
-      const recoveredAmount = existingEarnings[0].net_amount as number
+      const rawNetAmount = existingEarnings[0].net_amount
+      if (rawNetAmount == null || !Number.isFinite(Number(rawNetAmount))) {
+        logger.error('rerun-settlement: listener_earnings row has null net_amount — manual reconciliation needed', { sessionId })
+        return NextResponse.json({ error: 'Earnings record exists but net_amount is null — the wallet credit amount is unknown. Add the wallet_transactions row manually.' }, { status: 500 })
+      }
+      const recoveredAmount = Number(rawNetAmount)
       const { error: txRecoveryErr } = await sb.from('wallet_transactions').insert({
         user_id:     session.listener_id,
         amount:      recoveredAmount,
@@ -158,7 +163,17 @@ export async function POST(req: NextRequest) {
     // idempotency anchor: any retry that finds this row but no wallet_transactions
     // row knows credit_wallet already succeeded and recovers by writing only the
     // missing ledger row (see secondary check above).
+    // recordEarnings logs errors but does not throw — verify the row was actually
+    // written before proceeding. Without this check, a silent failure here leaves
+    // no idempotency anchor, and the next retry would call credit_wallet again
+    // (double-credit), because neither wallet_transactions nor listener_earnings
+    // would exist to stop it.
     await recordEarnings(sb, { sessionId, listenerId: session.listener_id, amountHeld: Number(session.amount_held), settlement, mode: 'upsert' })
+    const { data: anchorCheck } = await sb.from('listener_earnings').select('id').eq('session_id', sessionId).limit(1)
+    if (!anchorCheck || anchorCheck.length === 0) {
+      logger.error('rerun-settlement: listener_earnings write failed — idempotency anchor missing. Wallet was credited. DO NOT RERUN until row is manually added.', { sessionId, listenerId: session.listener_id, listenerEarning })
+      return NextResponse.json({ error: `Wallet credited (₹${listenerEarning}) but the idempotency earnings record failed to write. DO NOT RERUN — add the listener_earnings row manually first, then retry once.` }, { status: 500 })
+    }
 
     // Record wallet_transaction — the human-readable ledger row. Primary idempotency
     // anchor. If this insert fails after credit_wallet and recordEarnings succeeded,

@@ -245,6 +245,18 @@ export async function POST(req: NextRequest) {
         })
         if (match) {
           userId = match.id
+          // Re-run suspension check — the earlier check at step 3a only ran
+          // when findAuthUserIdByPhone returned a userId. This path sets userId
+          // from the listUsers fallback scan, bypassing that check entirely.
+          const { data: suspendRetry } = await admin
+            .from('users').select('is_suspended').eq('id', userId).maybeSingle()
+          if (suspendRetry?.is_suspended) {
+            logger.warn('phone-widget: blocked login for suspended account (listUsers fallback path)', { userId })
+            return NextResponse.json(
+              { error: 'Your account has been suspended. Please contact support to appeal.' },
+              { status: 403 }
+            )
+          }
         } else {
           logger.error('phone-widget: createUser failed and no match found', { error: createErr?.message })
           return NextResponse.json({ error: 'Could not create your account. Please try again.' }, { status: 500 })
