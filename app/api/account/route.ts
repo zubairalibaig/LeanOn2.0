@@ -216,6 +216,19 @@ export async function POST() {
     }
 
     const admin = createAdminClient()
+
+    // Suspended accounts may not self-delete. Without this guard, a suspended user
+    // could re-authenticate via OTP, self-delete (scrubbing their phone), then
+    // immediately re-register with the same phone — bypassing the suspension entirely.
+    const { data: suspendCheck } = await admin
+      .from('users').select('is_suspended').eq('id', user.id).maybeSingle()
+    if (suspendCheck?.is_suspended) {
+      return NextResponse.json(
+        { error: 'Suspended accounts cannot be deleted. Please contact support.' },
+        { status: 403 }
+      )
+    }
+
     await scrubUserData(admin, user.id)
 
     return NextResponse.json({ success: true })

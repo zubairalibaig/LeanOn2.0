@@ -190,6 +190,41 @@ export async function POST(req: NextRequest) {
   // ── 3. Find or create the auth user for this phone ─────────────────────────
   let userId = await findAuthUserIdByPhone(admin, e164)
   let isNewUser = false
+
+  // ── 3a. Block suspended accounts from getting a new session ─────────────────
+  // The suspend/ban action calls auth.admin.signOut globally, but the OTP widget
+  // is an external verification — it doesn't know about our DB state. A suspended
+  // user who re-does OTP would otherwise receive a fresh Supabase session, bypassing
+  // the suspension. Check BEFORE minting any session.
+  if (userId) {
+    const { data: suspendCheck } = await admin
+      .from('users').select('is_suspended').eq('id', userId).maybeSingle()
+    if (suspendCheck?.is_suspended) {
+      logger.warn('phone-widget: blocked login for suspended account', { userId })
+      return NextResponse.json(
+        { error: 'Your account has been suspended. Please contact support to appeal.' },
+        { status: 403 }
+      )
+    }
+  }
+
+  // ── 3b. Block re-registration after ban/deletion ─────────────────────────────
+  // When an account is deleted (scrubUserData), the auth user is removed but
+  // public.users is kept with phone = "DELETE<digits>" and is_suspended = true.
+  // Without this check a banned user can re-register with the same phone.
+  if (!userId) {
+    const digits = e164.replace(/\D/g, '')
+    const { data: deletedBannedRow } = await admin
+      .from('users').select('is_suspended').eq('phone', `DELETE${digits}`).maybeSingle()
+    if (deletedBannedRow?.is_suspended) {
+      logger.warn('phone-widget: blocked re-registration for banned phone', { last4: digits.slice(-4) })
+      return NextResponse.json(
+        { error: 'This phone number is not eligible for registration. Please contact support if you believe this is an error.' },
+        { status: 403 }
+      )
+    }
+  }
+
   if (!userId) {
     const { data: created, error: createErr } = await admin.auth.admin.createUser({
       phone: e164,
