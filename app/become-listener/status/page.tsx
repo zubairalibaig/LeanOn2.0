@@ -44,7 +44,8 @@ export default function ListenerStatusPage() {
     setLoadError(false)
     async function load() {
       try {
-        const { data: { user } } = await sb.auth.getUser()
+        const { data: { user }, error: authError } = await sb.auth.getUser()
+        if (authError) return  // transient failure — keep user on page
         if (!user) { router.push('/auth'); return }
 
         // Read application status from listener_applications (the admin approval flow)

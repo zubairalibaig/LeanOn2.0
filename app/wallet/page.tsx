@@ -109,7 +109,8 @@ function WalletPageInner() {
   }, [userId])
 
   async function loadUserData() {
-    const { data: { user } } = await sb.auth.getUser()
+    const { data: { user }, error: authError } = await sb.auth.getUser()
+    if (authError) return  // transient failure — keep user on page, don't redirect
     if (!user) { router.push('/auth'); return }
     setUserId(user.id)
 

@@ -316,9 +316,15 @@ export async function POST(req: NextRequest) {
   // next login → all their existing sessions on other devices are invalidated.
   // Add SESSION_PASSWORD_SECRET to Vercel env; fallback to service role key for
   // existing deployments without it (same security, but rotation risk remains).
-  const passwordSecret = process.env.SESSION_PASSWORD_SECRET ?? process.env.SUPABASE_SERVICE_ROLE_KEY
+  // SESSION_PASSWORD_SECRET must be set explicitly — no fallback to the service
+  // role key. If the service role key rotates (Supabase key rotation, leak
+  // response), every user's derived password would change, and their next login
+  // would trigger updateUserById() → all other sessions invalidated globally.
+  // A dedicated stable secret avoids this. Set SESSION_PASSWORD_SECRET in Vercel
+  // and never rotate it (or coordinate a migration if you must).
+  const passwordSecret = process.env.SESSION_PASSWORD_SECRET
   if (!passwordSecret) {
-    logger.error('phone-widget: SESSION_PASSWORD_SECRET and SUPABASE_SERVICE_ROLE_KEY are both unset — cannot mint session')
+    logger.error('phone-widget: SESSION_PASSWORD_SECRET is not set — cannot mint session safely. Set this env var in Vercel.')
     return NextResponse.json({ error: 'Phone sign-in is misconfigured.' }, { status: 500 })
   }
   const password = crypto
@@ -348,9 +354,12 @@ export async function POST(req: NextRequest) {
     // (credential) error, NOT a transient network or service error.
     // updateUserById invalidates ALL existing sessions for this user, so
     // triggering it on a transient failure would log the user out of every
-    // other device. Status 400 = "Invalid login credentials" in Supabase auth.
+    // other device.
+    // IMPORTANT: status 400 alone is NOT sufficient — HTTP 400 can come from
+    // load balancers, WAFs, or other Supabase service errors. BOTH conditions
+    // must be true: status 400 AND the error message identifies invalid credentials.
     const isCredentialError =
-      signInErr.status === 400 ||
+      signInErr.status === 400 &&
       /invalid.*login|invalid.*credentials|invalid.*password/i.test(signInErr.message ?? '')
     if (!isCredentialError) {
       logger.error('phone-widget: signInWithPassword failed (transient — not updating password)', { error: signInErr.message, status: signInErr.status })

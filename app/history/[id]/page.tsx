@@ -87,7 +87,8 @@ export default function ChatHistoryPage() {
   }, [loading])
 
   async function loadHistory() {
-    const { data: { user } } = await sb.auth.getUser()
+    const { data: { user }, error: authError } = await sb.auth.getUser()
+    if (authError) { setLoading(false); return }  // transient failure — keep user on page
     if (!user) { router.push('/auth'); return }
     setUserId(user.id)
 

@@ -86,7 +86,8 @@ export default function NotificationsPage() {
   const [userId, setUserId] = useState<string | null>(null)
 
   const load = useCallback(async (p: number) => {
-    const { data: { user } } = await sb.auth.getUser()
+    const { data: { user }, error: authError } = await sb.auth.getUser()
+    if (authError) { setLoading(false); return }  // transient failure — keep user on page
     if (!user) { router.replace('/auth?redirect=/notifications'); return }
     setUserId(user.id)
 

@@ -29,6 +29,18 @@
 - Admin auth: env-var based (`ADMIN_SECRET` / `ADMIN_PHONE`+`ADMIN_PIN`),
   see `lib/require-admin.ts`. The synthetic admin user id must never be
   written to FK columns — use `dbUserIdOrNull()`.
+- **Client-side `getUser()` error handling (Oct 2026):** `supabase.auth.getUser()`
+  returns `{ data: { user: null }, error: AuthError }` on transient network/service
+  failures — `user` is null even though the session is still valid. Client pages
+  MUST check the `error` field before redirecting to `/auth`. The pattern is:
+  ```typescript
+  const { data: { user }, error: authError } = await sb.auth.getUser()
+  if (authError) return  // transient — keep user on page, let them retry
+  if (!user) { router.push('/auth'); return }  // genuinely not logged in
+  ```
+  Never do `if (!user) router.push('/auth')` without first checking `error`.
+  Failing to do this causes listeners to be redirected to OTP on every network
+  hiccup (root cause of the "keeps getting logged out" reports).
 
 - **Phone sign-in uses the MSG91 OTP WIDGET, and mints the Supabase session
   server-side** (Aug 2026). The clean "Supabase generates the OTP, MSG91 just
@@ -42,11 +54,23 @@
   - That route verifies the token with MSG91's `verifyAccessToken`
     (server-side, `MSG91_WIDGET_AUTHKEY`), **reads the verified phone from
     MSG91's response — NEVER from the request body**, then mints a real
-    Supabase session: find-or-create the auth user by phone, set a throwaway
-    random password, `signInWithPassword({ phone, password })`. Real Supabase
-    tokens with rotation — NOT a hand-signed JWT. This is the one sanctioned
-    place that bridges an external verification into a Supabase session; keep
-    all of it server-side.
+    Supabase session: find-or-create the auth user by phone, use a
+    **stable HMAC-SHA256 derived password** (`HMAC(userId, SESSION_PASSWORD_SECRET)`),
+    `signInWithPassword({ phone, password })`. Real Supabase tokens with rotation —
+    NOT a hand-signed JWT. This is the one sanctioned place that bridges an external
+    verification into a Supabase session; keep all of it server-side.
+  - **`SESSION_PASSWORD_SECRET`** must be set in Vercel env and NEVER fall back to
+    `SUPABASE_SERVICE_ROLE_KEY`. If the service role key rotates, every user's derived
+    password changes → first login calls `updateUserById()` → all other devices logged out.
+    A dedicated, never-rotating secret prevents this. The route fails closed if this env
+    var is missing. Do NOT remove the `?? process.env.SUPABASE_SERVICE_ROLE_KEY` fallback
+    that was deleted in Oct 2026 — it was a real mass-logout risk.
+  - **Session password migration:** First time a user logs in after the HMAC migration,
+    `signInWithPassword` fails (wrong password) and `updateUserById()` is called once to
+    set the derived password — this invalidates other active sessions for that user. This
+    is a one-time cost per account. The password migration path only runs when the error
+    is status 400 AND matches `/invalid.*credentials/i` — broad transient errors are
+    explicitly excluded to prevent accidental session invalidation.
   - The verify auth key is called from Vercel's rotating IPs, so it MUST have
     **IP Security OFF** in the MSG91 dashboard, or every verify fails.
   - The old Send-SMS hook (`app/api/webhooks/supabase-sms`) is kept as dormant

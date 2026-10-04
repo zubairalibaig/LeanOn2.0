@@ -107,7 +107,8 @@ export default function HistoryPage() {
 
   async function load() {
     try {
-      const { data: { user } } = await sb.auth.getUser()
+      const { data: { user }, error: authError } = await sb.auth.getUser()
+      if (authError) return  // transient failure — keep user on page, don't redirect
       if (!user) { router.push('/auth?redirect=/history'); return }
 
       // Fetch sessions and offline message requests in parallel

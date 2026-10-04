@@ -81,7 +81,8 @@ export default function ProfilePage() {
   useEffect(() => {
     async function loadProfile() {
       try {
-        const { data: { user } } = await supabase.auth.getUser()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError) return  // transient failure — keep user on page, don't redirect
         if (!user) { router.push('/auth'); return }
         setUserId(user.id)
 

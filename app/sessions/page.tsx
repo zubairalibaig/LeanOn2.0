@@ -62,7 +62,8 @@ export default function SessionsPage() {
   useEffect(() => {
     async function load() {
       try {
-        const { data: { user } } = await supabase.auth.getUser()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError) { setLoading(false); return }  // transient failure — keep user on page
         if (!user) { router.push('/auth'); return }
 
         const { data } = await supabase
