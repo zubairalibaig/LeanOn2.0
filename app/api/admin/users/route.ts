@@ -612,7 +612,11 @@ export async function PATCH(req: NextRequest) {
         //   2. Their application is in needs_resubmission.
         //   3. The admin_notes contain a photo-related keyword (this was a photo case,
         //      not a bio/skills/identity resubmission).
-        const [{ data: uRow }, { data: userSuspRow }, { data: laRow }] = await Promise.all([
+        const [
+          { data: uRow },
+          { data: userSuspRow, error: suspCheckErr },
+          { data: laRow },
+        ] = await Promise.all([
           sb.from('users').select('avatar_url').eq('id', userId).maybeSingle(),
           sb.from('users').select('is_suspended').eq('id', userId).maybeSingle(),
           sb.from('listener_applications').select('status, admin_notes').eq('user_id', userId).maybeSingle(),
@@ -631,6 +635,12 @@ export async function PATCH(req: NextRequest) {
         // Never set is_active=true for a suspended account — that creates the
         // forbidden {is_active:true, is_suspended:true} state. Restore approval
         // only; is_active will be set when the account is unsuspended.
+        // Fail closed on DB error: if we can't read is_suspended, don't assume false
+        // (that would produce the forbidden state for a suspended account).
+        if (suspCheckErr) {
+          logger.error('restore_listener: could not read is_suspended', { userId, error: suspCheckErr.message })
+          return NextResponse.json({ error: 'Could not verify account suspension state. Please try again.' }, { status: 500 })
+        }
         const isSuspended = (userSuspRow as { is_suspended?: boolean } | null)?.is_suspended ?? false
         let lpErr = (await sb.from('listener_profiles')
           .update({ is_approved: true, is_active: !isSuspended })

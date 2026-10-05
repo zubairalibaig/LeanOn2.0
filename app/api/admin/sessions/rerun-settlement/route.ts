@@ -110,7 +110,10 @@ export async function POST(req: NextRequest) {
       })
       if (txRecoveryErr) {
         logger.error('rerun-settlement: ledger recovery insert failed', { sessionId, listenerId: session.listener_id, recoveredAmount, error: txRecoveryErr.message })
-        return NextResponse.json({ error: `Wallet was already credited (₹${recoveredAmount}) on a prior run but ledger record still missing: ${txRecoveryErr.message}. Add the wallet_transactions row manually. Do NOT rerun.` }, { status: 500 })
+        // listener_earnings IS present (that's how we reached this path), so
+        // re-running is SAFE — the next run will find listener_earnings again and
+        // retry only this insert. No double-credit risk.
+        return NextResponse.json({ error: `Wallet was already credited (₹${recoveredAmount}) on a prior run but ledger record still missing: ${txRecoveryErr.message}. Rerun is safe — the recovery path will retry this insert automatically.` }, { status: 500 })
       }
       logger.info('rerun-settlement: ledger recovery success', { sessionId, listenerId: session.listener_id, recoveredAmount, adminId: user!.id })
       return NextResponse.json({
@@ -171,8 +174,26 @@ export async function POST(req: NextRequest) {
     await recordEarnings(sb, { sessionId, listenerId: session.listener_id, amountHeld: Number(session.amount_held), settlement, mode: 'upsert' })
     const { data: anchorCheck } = await sb.from('listener_earnings').select('id').eq('session_id', sessionId).limit(1)
     if (!anchorCheck || anchorCheck.length === 0) {
-      logger.error('rerun-settlement: listener_earnings write failed — idempotency anchor missing. Wallet was credited. DO NOT RERUN until row is manually added.', { sessionId, listenerId: session.listener_id, listenerEarning })
-      return NextResponse.json({ error: `Wallet credited (₹${listenerEarning}) but the idempotency earnings record failed to write. DO NOT RERUN — add the listener_earnings row manually first, then retry once.` }, { status: 500 })
+      // listener_earnings anchor failed to write. Write wallet_transactions NOW as
+      // an alternative idempotency anchor — without any anchor, a future rerun would
+      // pass both idempotency checks and call credit_wallet again (double-credit).
+      // The primary check (wallet_transactions) is checked FIRST in every rerun, so
+      // writing it here prevents double-credit even without the earnings anchor.
+      const { error: emergencyTxErr } = await sb.from('wallet_transactions').insert({
+        user_id:     session.listener_id,
+        amount:      listenerEarning,
+        type:        'credit',
+        description: 'Session earnings (settlement rerun — earnings anchor failed; add listener_earnings row manually)',
+        session_id:  sessionId,
+      })
+      if (emergencyTxErr) {
+        // Both anchors failed — no idempotency guard remains. Now it is genuinely
+        // unsafe to rerun: the next run would double-credit.
+        logger.error('rerun-settlement: BOTH listener_earnings AND wallet_transactions failed after credit_wallet — NO IDEMPOTENCY ANCHOR. DO NOT RERUN.', { sessionId, listenerId: session.listener_id, listenerEarning, earningsErr: 'see prior log', txErr: emergencyTxErr.message })
+        return NextResponse.json({ error: `Wallet credited (₹${listenerEarning}) but BOTH idempotency records failed to write. DO NOT RERUN — add both a listener_earnings row and a wallet_transactions row for this session manually before retrying.` }, { status: 500 })
+      }
+      logger.error('rerun-settlement: listener_earnings write failed but wallet_transactions written as fallback anchor — add listener_earnings row manually for earnings ledger completeness', { sessionId, listenerId: session.listener_id, listenerEarning })
+      return NextResponse.json({ error: `Wallet credited (₹${listenerEarning}) and ledger row written, but earnings record failed. Add a listener_earnings row for this session manually. DO NOT rerun — the wallet_transactions row now prevents double-credit.` }, { status: 500 })
     }
 
     // Record wallet_transaction — the human-readable ledger row. Primary idempotency

@@ -85,13 +85,19 @@ async function scrubUserData(admin: ReturnType<typeof createAdminClient>, userId
   const phoneDigits = phone.replace(/\D/g, '')
   const scrubPhone = phoneDigits ? `DELETE${phoneDigits}` : `DELETED_${userId.slice(0, 8)}`
 
-  // 1. Scrub users table — keep name for admin audit trail; scrub phone, email, avatar
+  // 1. Scrub users table — keep name for admin audit trail; scrub phone, email, avatar.
+  // is_suspended=true is set ONLY for admin-initiated deletions (banned/removed users).
+  // Self-deletes use is_suspended=false so that users who voluntarily leave can
+  // re-register with the same phone number. is_active=false is sufficient to hide
+  // a self-deleted account from all discovery. The re-registration ban in
+  // phone-widget checks for (DELETE<digits> + is_suspended=true), so it only
+  // blocks admin-banned accounts, not voluntary self-deletes.
   await admin.from('users').update({
     email: null,
     phone: scrubPhone,
     avatar_url: null,
     is_active: false,
-    is_suspended: true,
+    is_suspended: opts.byAdmin === true,
     fcm_token: null,
   }).eq('id', userId)
   // Device push tokens (migration 061) — a deleted account must never ring a phone.
@@ -103,7 +109,7 @@ async function scrubUserData(admin: ReturnType<typeof createAdminClient>, userId
     is_active: false,
     is_approved: false,
     is_available: false,
-    is_suspended: true,
+    is_suspended: opts.byAdmin === true,
     bio: '',
   }).eq('user_id', userId)
   if (lpErr) {
