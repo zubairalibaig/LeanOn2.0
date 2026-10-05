@@ -316,16 +316,20 @@ export async function POST(req: NextRequest) {
   // next login → all their existing sessions on other devices are invalidated.
   // Add SESSION_PASSWORD_SECRET to Vercel env; fallback to service role key for
   // existing deployments without it (same security, but rotation risk remains).
-  // SESSION_PASSWORD_SECRET must be set explicitly — no fallback to the service
-  // role key. If the service role key rotates (Supabase key rotation, leak
-  // response), every user's derived password would change, and their next login
-  // would trigger updateUserById() → all other sessions invalidated globally.
-  // A dedicated stable secret avoids this. Set SESSION_PASSWORD_SECRET in Vercel
-  // and never rotate it (or coordinate a migration if you must).
-  const passwordSecret = process.env.SESSION_PASSWORD_SECRET
+  // SESSION_PASSWORD_SECRET should be a dedicated, stable secret in Vercel env.
+  // Fall back to SUPABASE_SERVICE_ROLE_KEY only for existing deployments that
+  // haven't added SESSION_PASSWORD_SECRET yet — the fallback keeps logins working
+  // but carries rotation risk: if the service role key changes, every user's
+  // derived password changes and their next login triggers updateUserById(),
+  // invalidating other active sessions. Set SESSION_PASSWORD_SECRET in Vercel
+  // to eliminate this risk; once set, the fallback is never reached.
+  const passwordSecret = process.env.SESSION_PASSWORD_SECRET ?? process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!passwordSecret) {
-    logger.error('phone-widget: SESSION_PASSWORD_SECRET is not set — cannot mint session safely. Set this env var in Vercel.')
+    logger.error('phone-widget: SESSION_PASSWORD_SECRET and SUPABASE_SERVICE_ROLE_KEY are both unset — cannot mint session')
     return NextResponse.json({ error: 'Phone sign-in is misconfigured.' }, { status: 500 })
+  }
+  if (!process.env.SESSION_PASSWORD_SECRET) {
+    logger.warn('phone-widget: SESSION_PASSWORD_SECRET not set — falling back to service role key. Add SESSION_PASSWORD_SECRET to Vercel env to eliminate key-rotation logout risk.')
   }
   const password = crypto
     .createHmac('sha256', passwordSecret)
