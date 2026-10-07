@@ -100,6 +100,27 @@ const faqs = [
     ],
   },
   {
+    category: 'Indians Abroad (NRI)',
+    items: [
+      {
+        q: 'Can Indians living in the USA, UK, Canada or Australia use LeanOn?',
+        a: 'Yes. LeanOn has dedicated support for Indians and South Asians living abroad. Whether you are in the USA, UK, Canada, Australia, UAE, Singapore, or anywhere else, you can connect with peer listeners who understand the cultural context — family expectations, homesickness, H-1B visa stress, cultural adjustment, or simply wanting to talk to someone who gets it.',
+      },
+      {
+        q: 'How much does LeanOn cost for NRIs outside India?',
+        a: 'For people using LeanOn outside India, sessions are priced in US dollars: US$10 for 15 minutes, US$15 for 30 minutes, and US$20 for 45 minutes — text or voice. Your first 5-minute session is always free. Full pricing: leanon.app/pricing.',
+      },
+      {
+        q: 'What can NRIs talk about on LeanOn?',
+        a: 'NRIs on LeanOn most commonly talk about homesickness and missing family, immigration stress (H-1B, visa uncertainty, work permit anxiety), cultural isolation ("fitting in" between two worlds), marriage pressure from family back home, career confusion abroad, loneliness in a new country, and relationship difficulties across distances.',
+      },
+      {
+        q: 'Do LeanOn listeners understand NRI cultural experiences?',
+        a: 'Many LeanOn listeners have lived abroad themselves or have close experience with NRI life — immigration stress, being caught between Indian and local culture, long-distance family dynamics. You can read listener bios and filter by topic to find someone whose experience matches yours.',
+      },
+    ],
+  },
+  {
     category: 'Becoming a Listener',
     items: [
       {

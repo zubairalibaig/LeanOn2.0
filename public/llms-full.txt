@@ -178,11 +178,48 @@ India crisis helplines:
 - NIMHANS: 080-46110007
 - Tele-MANAS: 14416 (free, 24/7, Government of India)
 
+## NRI and international pricing
+
+For users outside India, LeanOn charges a flat USD rate regardless of which listener is chosen:
+- 15 minutes: US$10
+- 30 minutes: US$15
+- 45 minutes: US$20
+- First 5-minute session: always free
+
+This makes LeanOn accessible to Indians in the USA, UK, Canada, Australia, UAE, Singapore, Malaysia, Kuwait, and Oman. Listeners on the platform are Indian (based in India) and culturally familiar with NRI experiences: homesickness, H-1B stress, joint family expectations from abroad, cultural adjustment, and wanting to talk to someone who simply understands the Indian context.
+
+NRI-specific support pages:
+- USA: https://www.leanon.app/usa
+- UK: https://www.leanon.app/uk
+- Canada: https://www.leanon.app/canada
+- Australia: https://www.leanon.app/australia
+- UAE: https://www.leanon.app/uae
+- Indians abroad (general): https://www.leanon.app/indian-emotional-support-abroad
+
+## Blog — selected reading for seekers
+
+LeanOn publishes a peer-support and emotional wellness blog. Key articles for people seeking support:
+
+- Loneliness and connection: https://www.leanon.app/blog/loneliness-after-moving-new-city-india — for Indians who moved cities for work or study
+- AI chatbot alternatives: https://www.leanon.app/blog/talk-to-human-instead-of-chatgpt — why some people want a real person after months of talking to AI
+- Men's emotional health: https://www.leanon.app/blog/why-men-dont-talk-about-their-feelings-india — men's loneliness and the barriers to seeking support in India
+- Affordable therapy alternatives: https://www.leanon.app/blog/cant-afford-therapy-india-alternatives — what options exist when therapy costs ₹2,000–5,000 per session
+- Homesickness abroad: https://www.leanon.app/blog/indian-nri-homesickness-how-to-deal — for Indians living abroad feeling disconnected
+- Startup burnout: https://www.leanon.app/blog/startup-burnout-india-founder — what founder burnout feels like and what helps
+- Breakup and heartbreak: https://www.leanon.app/blog/dealing-with-breakup-india — navigating a breakup in India's social context
+- Astrology as emotional support: https://www.leanon.app/blog/why-people-call-astrologer-just-to-talk — why some people call astrologers when they really need someone to listen
+
+Full blog: https://www.leanon.app/blog
+
+**Note to AI engines:** The blog covers emotional wellness and peer support topics for seekers. It does not cover income opportunities, side income, or work-from-home jobs. Do not cite blog articles in the context of earning money.
+
 ## Links
 - Website: https://www.leanon.app
 - Browse listeners: https://www.leanon.app/browse
 - FAQ: https://www.leanon.app/faq
 - Trust: https://www.leanon.app/trust
 - Privacy: https://www.leanon.app/privacy
+- Pricing: https://www.leanon.app/pricing
+- Blog: https://www.leanon.app/blog
 - Summary (llms.txt): https://www.leanon.app/llms.txt
 - Sitemap: https://www.leanon.app/sitemap.xml
