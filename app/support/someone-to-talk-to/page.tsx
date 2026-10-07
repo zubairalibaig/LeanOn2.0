@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Someone to Talk To in India | Real Human Peer Support | LeanOn',
-  description: 'Need someone to talk to? LeanOn connects you with screened peer listeners in India for private one-to-one conversations. Start with a free 5-minute introduction; paid sessions start at ₹160 for 15 minutes.'
+  description: 'Need someone to talk to? LeanOn connects you with screened peer listeners in India for private one-to-one conversations. Start with a free 5-minute introduction; paid sessions start at ₹160 for 15 minutes.',
   alternates: { canonical: 'https://www.leanon.app/support/someone-to-talk-to', languages: { 'en-IN': 'https://www.leanon.app/support/someone-to-talk-to' } },
   openGraph: {
     title: 'Someone to Talk To in India | LeanOn Peer Listeners',

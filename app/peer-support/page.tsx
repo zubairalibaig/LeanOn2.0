@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'Is peer support anonymous?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn sign-up uses a phone number and first name. You do not need to use a last name, photo or social account to create the account. Sessions are intended to be private; see the Privacy and Trust pages for LeanOn's specific information practices.',
+        text: "LeanOn sign-up uses a phone number and first name. You do not need to use a last name, photo or social account to create the account. Sessions are intended to be private; see the Privacy and Trust pages for LeanOn's specific information practices.",
       },
     },
     {
