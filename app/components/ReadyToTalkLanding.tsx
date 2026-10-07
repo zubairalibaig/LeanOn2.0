@@ -67,7 +67,7 @@ export default function ReadyToTalkLanding({ data }: { data: ReadyToTalkLandingD
             <a href="/browse" className="rounded-full bg-[#FF9933] px-7 py-3.5 font-extrabold text-white">Browse listeners →</a>
             <a href="/trust" className="rounded-full border-2 border-[#1A8FA0] px-6 py-3 font-extrabold text-[#1A8FA0]">How LeanOn handles trust</a>
           </div>
-          <p className="mt-4 text-sm font-semibold text-slate-500">Start with one free 5-minute introduction. Continue with paid time only if you want to.</p>
+          <p className="mt-4 text-sm font-semibold text-slate-500">Start with one free 5-minute introduction per account. Continue with paid time only if you want to.</p>
         </header>
 
         <section className="mt-12 rounded-3xl border border-[#D5EEF6] bg-[#F0F8FC] p-6 sm:p-8">
@@ -91,7 +91,7 @@ export default function ReadyToTalkLanding({ data }: { data: ReadyToTalkLandingD
           <h2 className="mb-5 text-2xl font-black">A simple path from needing support to talking</h2>
           <ol className="space-y-5">
             <li><strong>1. Find a relevant listener.</strong><br /><span className="text-slate-600">Browse profiles and look for lived experience, topics and availability that fit what you want to discuss.</span></li>
-            <li><strong>2. Start with ₹0.</strong><br /><span className="text-slate-600">Your first 5-minute introductory session with a new listener is free. You can use it to see whether the conversation feels right.</span></li>
+            <li><strong>2. Start with ₹0.</strong><br /><span className="text-slate-600">Your first 5-minute introductory session is free once per account. You can use it to see whether the conversation feels right.</span></li>
             <li><strong>3. Continue only if you want to.</strong><br /><span className="text-slate-600">If you want more time, the paid session price is shown before you start. Paid sessions currently start at ₹160 for 15 minutes.</span></li>
             <li><strong>4. Choose text or voice.</strong><br /><span className="text-slate-600">Use the format that makes it easier for you to have the conversation privately.</span></li>
           </ol>

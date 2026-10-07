@@ -3,8 +3,8 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Someone to Talk To in India | LeanOn Peer Listeners',
-  description: 'Need someone to talk to? LeanOn connects you with screened peer listeners in India. Anonymous, available 24/7.',
+  title: 'Someone to Talk To in India | Real Human Peer Support | LeanOn',
+  description: 'Need someone to talk to? LeanOn connects you with screened peer listeners in India for private one-to-one conversations. Start with a free 5-minute introduction; paid sessions start at ₹160 for 15 minutes.'
   alternates: { canonical: 'https://www.leanon.app/support/someone-to-talk-to', languages: { 'en-IN': 'https://www.leanon.app/support/someone-to-talk-to' } },
   openGraph: {
     title: 'Someone to Talk To in India | LeanOn Peer Listeners',
@@ -210,7 +210,7 @@ export default function SomeoneToTalkToPage() {
           <p>A therapist is a licensed professional who works within a clinical framework — diagnosing conditions, applying evidence-based interventions, and tracking therapeutic progress over time. That structure is exactly right for people who need clinical care. But many people do not need treatment. They need to be heard by someone who has been through something similar and come out the other side.</p>
 
           <h3>Accessibility and Affordability</h3>
-          <p>Therapy in Indian metro cities typically costs ₹1,500–₹3,000 per session, with waiting lists at good practices stretching weeks. LeanOn peer support starts at ₹160 for 15 minutes, with a short trial session available for new users. It is available right now — at midnight, on a Sunday, during a lunch break — whenever you need it most.</p>
+          <p>Therapy in Indian metro cities typically costs ₹1,500–₹3,000 per session, with waiting lists at good practices stretching weeks. LeanOn paid peer support starts at ₹160 for 15 minutes, with one free 5-minute introductory session per account. No appointment is required; you can browse listeners and start when someone is available.</p>
 
           <h3>Complementary, Not Competing</h3>
           <p>Many people use peer support alongside therapy — as a way to process between clinical sessions, access support when a therapist is not available, or take a meaningful first step before they are ready for formal treatment. LeanOn listeners are trained to recognise when someone might benefit from professional care and will gently say so when that appears to be the case.</p>
@@ -219,20 +219,20 @@ export default function SomeoneToTalkToPage() {
         {/* Getting Started */}
         <div className="section">
           <h2>Getting Started — It Takes Less Than a Minute</h2>
-          <p>You are three steps away from having someone to talk to right now:</p>
+          <p>You can be three steps away from having someone to talk to when a listener is available:</p>
 
           <h3>Browse Listeners</h3>
           <p>Go to <a href="/browse" style={{color:'var(--teal)',fontWeight:700}}>Browse Listeners</a> and read through peer profiles. Each listener shares their personal experience, the topics they support, and their availability. Taking a few minutes to find someone whose experience resonates with yours makes a real difference to the quality of the conversation.</p>
 
           <h3>Start Instantly</h3>
-          <p>Sessions start immediately. A short trial session is available for new users, giving you a genuine chance to feel whether the connection is right before you commit to a longer session.</p>
+          <p>Once you choose an available listener, you can start the free 5-minute introductory session. It gives you a chance to see whether the conversation feels right before you pay for more time.</p>
 
           <h3>Say What You Need to Say</h3>
-          <p>Once you are in a session, just start wherever feels right. You do not need to explain everything or give context. Your listener will follow you and ask gentle questions to help you feel heard. There is no agenda, no homework, and no follow-up required unless you want it.</p>
+          <p>Once you are in a session, just start wherever feels right. You do not need to explain everything or give context. Your listener can listen and ask questions as appropriate. There is no clinical treatment plan, homework or follow-up requirement.</p>
         </div>
 
         {/* Listener cards */}
-        <h2 style={{fontSize:'20px',fontWeight:800,color:'var(--navy)',marginBottom:'16px'}}>Real Listeners, Ready Now</h2>
+        <h2 style={{fontSize:'20px',fontWeight:800,color:'var(--navy)',marginBottom:'16px'}}>Listeners you can browse Now</h2>
         <div className="listeners-grid">
           {[
             {

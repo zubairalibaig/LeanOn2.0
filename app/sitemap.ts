@@ -40,7 +40,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/support/career-confusion`,         lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/support/relationship-stress`,      lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/support/emotional-support`,        lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.85 },
-    { url: `${base}/support/someone-to-talk-to`,       lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/support/someone-to-talk-to`,       lastModified: d('2026-10-07'), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/support/anonymous-support`,        lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/support/social-anxiety`,            lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/support/imposter-syndrome`,         lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.85 },

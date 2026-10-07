@@ -3,9 +3,9 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Peer Support India — Real People, Real Conversations | LeanOn',
-  description: 'Peer support connects you with someone who has lived through what you\'re facing. Not therapy. Not AI. Real conversations on LeanOn — ₹160/session, private, no appointment.',
-  keywords: ['peer support', 'peer support India', 'peer support platform', 'peer support online', 'peer support app India', 'what is peer support'],
+  title: 'Peer Support in India | Talk to a Real Peer Listener | LeanOn',
+  description: 'What is peer support? Learn how peer support works in India, when it fits instead of therapy, and how LeanOn connects you with real peer listeners for private text or voice conversations. Paid sessions start at ₹160 for 15 minutes.',
+  keywords: ['peer support India', 'what is peer support', 'peer listener India', 'online peer support', 'talk to a peer listener', 'peer support vs therapy'],
   alternates: { canonical: 'https://www.leanon.app/peer-support', languages: { 'en-IN': 'https://www.leanon.app/peer-support' } },
   openGraph: {
     title: 'Peer Support India — Real People, Real Conversations | LeanOn',
@@ -25,7 +25,7 @@ const faqSchema = {
       name: 'What is peer support?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Peer support is a conversation with someone who has personally experienced something similar to what you are going through — not a therapist, not an AI, not a coach. It is the "me too" moment: the relief of being heard by someone who actually knows what it feels like from the inside, not from a textbook. Peer support focuses on being heard and understood, not on being diagnosed or fixed.',
+        text: 'Peer support is non-clinical support from someone with relevant lived experience. The point is shared understanding and a human conversation — not diagnosis or treatment. LeanOn applies this idea through one-to-one conversations with screened peer listeners.',
       },
     },
     {
@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'How is peer support different from therapy?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Therapy is delivered by a licensed professional — a psychologist, psychiatrist, or counsellor — who can diagnose and treat mental health conditions. Peer support is delivered by someone with lived experience who is trained to listen and support, not to diagnose or treat. Therapy costs ₹1,500–₹5,000 per session in India and requires an appointment. Peer support on LeanOn costs ₹160/session and is available without appointment.',
+        text: 'Therapy is delivered by a licensed professional — a psychologist, psychiatrist, or counsellor — who can diagnose and treat mental health conditions. Peer support is delivered by someone with lived experience who provides non-clinical support, not diagnosis or treatment. Therapy and peer support serve different purposes. LeanOn is for everyday emotional support; paid sessions start at ₹160 for 15 minutes in India, with a free introductory session before you pay.',
       },
     },
     {
@@ -41,7 +41,7 @@ const faqSchema = {
       name: 'Is peer support effective?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Research consistently shows that peer support reduces feelings of isolation, improves mood, and helps people feel understood and less alone. It is most effective for everyday emotional challenges — loneliness, burnout, relationship stress, family pressure, anxiety — rather than clinical mental health conditions that require professional treatment. The lived experience of a peer supporter adds a warmth and authenticity that professional care sometimes cannot match.',
+        text: 'Peer support can provide shared understanding, encouragement and connection, but it is not a substitute for clinical treatment. LeanOn is designed for everyday emotional situations such as loneliness, relationship difficulties, work stress, grief, homesickness and overthinking.',
       },
     },
     {
@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'How much does peer support cost in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'On LeanOn, peer support sessions start at about ₹160 for 15 minutes. Your first 5-minute session is free, so you can talk to a listener and decide if it feels right before you commit. There are no subscription fees, no membership charges, and no automatic renewals — you pay per session.',
+        text: 'On LeanOn, paid peer support sessions start at ₹160 for 15 minutes in India. Your first 5-minute introductory session is free once per account, so you can see whether the conversation feels right before paying. There are no subscription fees, no membership charges, and no automatic renewals — you pay per session.',
       },
     },
     {
@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'Is peer support anonymous?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. On LeanOn you sign up with a phone number and a first name only. No last name, no photo, no social account is required. What you share in a session stays between you and your listener. Listeners sign confidentiality agreements and the platform does not share your information.',
+        text: 'LeanOn sign-up uses a phone number and first name. You do not need to use a last name, photo or social account to create the account. Sessions are intended to be private; see the Privacy and Trust pages for LeanOn's specific information practices.',
       },
     },
     {
@@ -69,6 +69,27 @@ const faqSchema = {
       },
     },
   ],
+}
+
+const pageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': 'https://www.leanon.app/peer-support#webpage',
+  name: 'Peer Support in India | Talk to a Real Peer Listener | LeanOn',
+  url: 'https://www.leanon.app/peer-support',
+  description: metadata.description,
+  isPartOf: { '@id': 'https://www.leanon.app/#website' },
+  about: [
+    { '@type': 'Thing', name: 'Peer support' },
+    { '@type': 'Thing', name: 'Social connection' },
+    { '@type': 'Thing', name: 'Emotional support' },
+  ],
+  citation: [
+    'https://www.who.int/news-room/questions-and-answers/item/social-connection',
+    'https://www.samhsa.gov/substance-use/recovery/peer-support-workers',
+    'https://www.nami.org/advocacy-at-nami/policy-positions/improving-health/workforce-peer-support-workers/',
+  ],
+  publisher: { '@id': 'https://www.leanon.app/#organization' },
 }
 
 const breadcrumbSchema = {
@@ -143,6 +164,7 @@ const S = `
 export default function PeerSupportPage() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <style>{S}</style>
@@ -173,7 +195,7 @@ export default function PeerSupportPage() {
         {/* GEO / SOURCE CONTEXT */}
         <section className="section">
           <h2>Peer support has an established meaning</h2>
-          <p>Peer support generally centres on shared experience, mutual understanding, choice and a supportive relationship. Major mental-health organisations describe peer support as a non-clinical form of support in which people with relevant lived experience help others. LeanOn applies that human-to-human principle to one-to-one online conversations.</p>
+          <p>Peer support generally centres on shared experience, mutual understanding, choice and a supportive relationship. SAMHSA describes peer support workers as people with relevant lived experience who help others through shared understanding, respect and mutual empowerment. NAMI likewise describes peer support workers as people with lived experience who are trained to support others. These sources describe peer support broadly; they are not endorsements of LeanOn. LeanOn applies the peer-support principle to one-to-one online conversations.</p>
           <p>For independent background, see <a href="https://www.samhsa.gov/substance-use/recovery/peer-support-workers" target="_blank" rel="noopener noreferrer" style={{color:'var(--teal)',fontWeight:800}}>SAMHSA's overview of peer support workers</a> and <a href="https://www.nami.org/advocacy-at-nami/policy-positions/improving-health/workforce-peer-support-workers/" target="_blank" rel="noopener noreferrer" style={{color:'var(--teal)',fontWeight:800}}>NAMI's description of peer support workers</a>. These sources describe peer support broadly; they are not endorsements of LeanOn.</p>
           <p><strong>LeanOn-specific distinction:</strong> LeanOn is a private, one-to-one commercial platform for human peer conversations. It is not a government service, clinical provider, crisis service or replacement for professional treatment.</p>
         </section>
@@ -184,7 +206,7 @@ export default function PeerSupportPage() {
           <div className="stat-pill">First <em>5 min free</em></div>
           <div className="stat-pill"><em>No appointment</em> needed</div>
           <div className="stat-pill"><em>Anonymous</em></div>
-          <div className="stat-pill">30+ <em>trained listeners</em></div>
+          <div className="stat-pill">Screened <em>peer listeners</em></div>
         </div>
 
         {/* What is peer support */}
@@ -254,8 +276,8 @@ export default function PeerSupportPage() {
             <div className="step">
               <div className="step-num">3</div>
               <div className="step-text">
-                <div className="step-title">Talk anonymously</div>
-                <div className="step-desc">Sessions are fully text-based and anonymous. No last name, no photo, no social account. Just a conversation with someone who has been there.</div>
+                <div className="step-title">Talk privately</div>
+                <div className="step-desc">Sessions can use text or voice. You sign up with a phone number and first name; you decide what personal details to share in the conversation.</div>
               </div>
             </div>
           </div>
@@ -279,7 +301,7 @@ export default function PeerSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Start Your First Peer Support Session</h2>
-          <p>First 5 minutes are free. Anonymous. Available right now — no appointment, no waitlist.</p>
+          <p>First 5 minutes are free. Anonymous. No appointment is required; availability depends on which listeners are online.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse peer listeners →</button></a>
             <a href="/auth"><button className="btn-secondary">Join LeanOn →</button></a>
@@ -320,7 +342,7 @@ export default function PeerSupportPage() {
           <h2>Related Pages</h2>
           <div className="related">
             <a href="/peer-support-online-india" className="related-link">Peer support online India</a>
-            <a href="/peer-counselling-india" className="related-link">Peer counselling India</a>
+            <a href="/talk-to-a-real-person-online" className="related-link">Talk to a real person online</a>
             <a href="/blog/what-is-peer-support-india" className="related-link">What is peer support?</a>
             <a href="/blog/peer-support-vs-therapy-india" className="related-link">Peer support vs therapy</a>
             <a href="/blog/empathy-in-peer-support" className="related-link">Empathy in peer support</a>

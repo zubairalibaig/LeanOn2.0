@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 export const metadata: Metadata = {
-  title: 'LeanOn — Talk to a Real Person Online | Peer Support India & NRI Support',
-  description: 'Need someone to talk to? LeanOn connects Indians in India and Indians abroad with real people for private one-to-one peer support by text or voice. Start free, then paid conversations from ₹160 for 15 minutes.',
+  title: 'LeanOn — Real Human Peer Support | Talk to a Listener in India',
+  description: 'Need someone to talk to? LeanOn connects people in India and Indians abroad with real human peer listeners for private one-to-one conversations by text or voice. Start with a free 5-minute introduction; paid sessions start at ₹160 for 15 minutes in India.',
   alternates: { canonical: 'https://www.leanon.app', languages: { 'en-IN': 'https://www.leanon.app', 'en-US': 'https://www.leanon.app', 'en-GB': 'https://www.leanon.app' } },
   keywords: [
     'leanon', 'lean on', 'LeanOn', 'lean on app',
@@ -31,13 +31,13 @@ const faqSchema = {
   '@type': 'FAQPage',
   mainEntity: [
     { '@type': 'Question', name: 'What is LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is a peer support platform built on empathy — someone to lean on anytime you need it. You talk to real people in India who have lived through what you\'re facing: loneliness, burnout, anxiety, grief, relationships, and more. Every listener brings genuine empathy from lived experience, not a script. It is not therapy, but real human connection through one-to-one peer conversations.' } },
-    { '@type': 'Question', name: 'What makes LeanOn listeners empathetic?', acceptedAnswer: { '@type': 'Answer', text: 'Every LeanOn listener has personally lived through what they support others with — loneliness, anxiety, burnout, grief, or relationship pain. That lived experience is what makes their empathy real rather than rehearsed. They are trained in active listening and empathetic communication, so you are heard without being judged, fixed, or rushed.' } },
+    { '@type': 'Question', name: 'What makes LeanOn listeners empathetic?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn screens listener applications for identity, active listening, boundaries and crisis-referral understanding. Listener profiles also show the topics and lived experience they can support with, so you can choose someone who feels relevant. LeanOn listeners are peers, not therapists.' } },
     { '@type': 'Question', name: 'What does "lean on" mean in LeanOn?', acceptedAnswer: { '@type': 'Answer', text: '"Lean on" means having someone you can rely on emotionally — someone who supports you without judgment when you\'re going through something hard. LeanOn (the platform) gives everyone access to that kind of support through verified peer listeners who have lived experience.' } },
     { '@type': 'Question', name: 'How does pricing work?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn charges a flat fee per session. 15-minute sessions start at ₹160. Your first session is free (5 minutes) — no wallet top-up needed.' } },
     { '@type': 'Question', name: 'How much does a paid LeanOn session cost?', acceptedAnswer: { '@type': 'Answer', text: 'A 15-minute paid session starts at ₹160. You can start with one free 5-minute introductory session with each new listener, then continue only if you want to. There are no subscriptions; you pay for the conversation time you choose.' } },
     { '@type': 'Question', name: 'How is LeanOn different from therapy?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are real people with lived experience, not licensed therapists. They offer empathy and peer support, not clinical diagnosis or treatment. LeanOn is ideal when you need someone to lean on — not a diagnosis.' } },
     { '@type': 'Question', name: 'Is LeanOn related to the song "Lean On" by Major Lazer?', acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn (one word, at leanon.app) is an Indian peer emotional support platform where you talk to verified human listeners. It has no connection to the 2015 song "Lean On" by Major Lazer and DJ Snake. The name comes from the phrase "someone to lean on" — having a person you can rely on emotionally.' } },
-    { '@type': 'Question', name: 'Is LeanOn confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. All sessions are private and confidential. LeanOn never shares your personal information or conversation content with anyone.' } },
+    { '@type': 'Question', name: 'Is LeanOn confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are private. LeanOn explains its information practices in its Privacy and Trust pages, and you decide what personal details to share in a conversation.' } },
     { '@type': 'Question', name: 'How do I start a paid LeanOn session?', acceptedAnswer: { '@type': 'Answer', text: 'Browse listener profiles, choose someone who feels relevant, and start with the free 5-minute introduction. If you want to continue, the paid session price is shown before you start.' } },
     { '@type': 'Question', name: 'Which cities does LeanOn serve?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is available across all of India — Bengaluru, Mumbai, Delhi, Chennai, Hyderabad, Pune, Kolkata, Jaipur, Ahmedabad, and everywhere else. It is fully online — accessible from anywhere.' } },
     { '@type': 'Question', name: 'What topics can I talk about on LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'Listeners on LeanOn specialise in loneliness, work stress, career confusion, relationships, grief and loss, student pressure, startup journey, breakups, anxiety, and more. If you just need someone to lean on with no specific topic, that\'s fine too.' } },
@@ -96,7 +96,7 @@ const howToSchema = {
   step: [
     { '@type': 'HowToStep', position: 1, name: 'Sign up to LeanOn', text: 'Enter your phone number and verify with OTP. Takes 30 seconds, no email or full name required.' },
     { '@type': 'HowToStep', position: 2, name: 'Browse peer listeners', text: 'Filter listeners by topic (loneliness, relationships, work stress, grief, etc.). Read their bios, ratings, and lived experience.' },
-    { '@type': 'HowToStep', position: 3, name: 'Start a free 5-minute trial', text: 'Your first session with each new listener is a free 5-minute text or voice conversation. No wallet or payment needed.' },
+    { '@type': 'HowToStep', position: 3, name: 'Start a free 5-minute trial', text: 'Your first 5-minute introductory session is free once per account. No wallet or payment is needed to start.' },
     { '@type': 'HowToStep', position: 4, name: 'Continue with a paid session', text: 'If you want more time, recharge your wallet via UPI, cards, or net banking. Choose 15, 30, or 45 minutes. Paid sessions start at ₹160.' },
     { '@type': 'HowToStep', position: 5, name: 'Talk by text or voice', text: 'Choose text chat for privacy or voice call for warmth. Your session begins immediately — no appointment.' },
     { '@type': 'HowToStep', position: 6, name: 'Rate and return', text: 'Rate your listener after the session. Book again anytime. Unused wallet balance is fully refundable.' },
@@ -563,6 +563,23 @@ export default function Home() {
       {/* READY-TO-TALK INTENT HUB — routes high-volume homepage traffic into seeker pages */}
       <div className="white-section">
         <div className="inner">
+          <div className="al">What is LeanOn?</div>
+          <h2 className="at">Real human peer support when you want someone to listen.</h2>
+          <div className="ab">
+            <p><strong>LeanOn is an India-origin peer-support platform that connects people with real human peer listeners for private one-to-one conversations by text or voice.</strong> It is designed for everyday situations such as loneliness, relationship difficulties, work stress, grief, homesickness, family pressure and overthinking.</p>
+            <p>LeanOn is <strong>not therapy, counselling, diagnosis, clinical treatment or crisis care</strong>. It is also not a dating or friendship-matching service. The core use case is simple: you want another person to listen, and you want to choose who you talk to.</p>
+          </div>
+          <div style={{display:'flex',flexWrap:'wrap',gap:8,marginTop:22}}>
+            <a href="/peer-support" className="city-chip">What is peer support?</a>
+            <a href="/trust" className="city-chip">How LeanOn handles trust</a>
+            <a href="/pricing" className="city-chip">See pricing</a>
+            <a href="/browse" className="city-chip" style={{background:'#1A8FA0',color:'#fff',borderColor:'#1A8FA0'}}>Browse listeners →</a>
+          </div>
+        </div>
+      </div>
+
+      <div className="white-section">
+        <div className="inner">
           <div className="al">Not sure where to start?</div>
           <h2 className="at">Start with the situation you&apos;re actually in.</h2>
           <div className="topic-grid">
@@ -629,29 +646,15 @@ export default function Home() {
             <a href="/support/long-distance-relationship">Long-distance relationship</a>
           </div>
           <div className="fli" style={{marginTop:4,fontSize:12,opacity:0.75}}>
-            <a href="/support/someone-to-talk-to">Talk to someone online</a>
-            <a href="/someone-to-lean-on">Someone to lean on</a>
-            <a href="/daily-check-in">Daily check-in — how do you feel today?</a>
-            <a href="/talk-to-someone-not-astrologer">Not a prediction — just someone to talk to</a>
-            <a href="/online-counselling-india-cost">Online counselling cost India</a>
-            <a href="/blog/therapy-cost-india">What therapy costs in India</a>
-            <a href="/blog/no-one-to-talk-to">No one to talk to?</a>
-            <a href="/blog/how-to-stop-overthinking-at-night">Stop overthinking at night</a>
-            <a href="/blog/why-people-call-astrologers-to-talk">Why people call astrologers just to talk</a>
-            <a href="/love-problems-india">Love problems India</a>
-            <a href="/marriage-problems-india">Marriage problems India</a>
-            <a href="/pay-to-talk-online-india">Pay to talk online India</a>
-            <a href="/anonymous-chat-india">Anonymous chat India</a>
-            <a href="/late-night-support-india">Late night support India</a>
-            <a href="/astrotalk-alternative">AstroTalk alternative</a>
-            <a href="/yourdost-alternative">YourDOST alternative</a>
-            <a href="/wysa-alternative">Wysa alternative</a>
-            <a href="/peer-support-online-india">Peer support online India</a>
-            <a href="/depression-support-india">Depression support India</a>
-            <a href="/talk-about-my-problems-online">Talk about my problems online</a>
-            <a href="/feeling-overwhelmed-india">Feeling overwhelmed India</a>
-            <a href="/blog/astrotalk-expensive-alternative">Is AstroTalk worth the cost?</a>
-            <a href="/blog/talk-to-real-person-not-astrologer">Talk to a real person, not an astrologer</a>
+            <a href="/talk-to-a-real-person-online">Talk to a real person online</a>
+            <a href="/someone-to-talk-to-when-lonely">Someone to talk to when lonely</a>
+            <a href="/i-need-someone-to-talk-to">I need someone to talk to</a>
+            <a href="/need-someone-to-talk-to-but-dont-need-therapy">Support, not therapy</a>
+            <a href="/talk-to-human-instead-of-chatgpt">Talk to a human instead of AI</a>
+            <a href="/indian-emotional-support-abroad">Indian support abroad</a>
+            <a href="/peer-support">Peer support India</a>
+            <a href="/pricing">LeanOn pricing</a>
+            <a href="/trust">Trust &amp; safety</a>
           </div>
           <div className="fli" style={{marginTop:4,fontSize:12,opacity:0.75}}>
             <a href="/blog/what-does-lean-on-mean">What does lean on mean</a>
