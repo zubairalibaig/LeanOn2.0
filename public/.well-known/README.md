@@ -1,9 +1,9 @@
 # Digital Asset Links — TWA verification
 
-> Current process: `docs/PLAY_STORE_STEP_BY_STEP.md`. The live Play app is
-> `app.leanon.therapy` (published Apr 2024) — keep that package name. The
-> fingerprints must be the **Play app signing key** (and upload key) SHA-256
-> values from Play Console → App integrity.
+> Current process: `docs/PLAY_STORE_STEP_BY_STEP.md`. The new Play app is
+> **`app.leanon`** (PWABuilder). `app.leanon.therapy` is the retired 2024 therapist
+> app. Fingerprints: the PWABuilder key + the Play app signing key from
+> Play Console → App integrity.
 
 `assetlinks.json` is what removes the browser URL bar from the Android TWA
 (Trusted Web Activity) wrapper and proves leanon.app owns the Play Store app.
