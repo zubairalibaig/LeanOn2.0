@@ -58,9 +58,21 @@ import { post as relationshipCounsellingVsPeerPost } from '../posts/relationship
 import { post as angerManagementPost } from '../posts/how-to-find-anger-management-support-india'
 import { post as paidFriendPost } from '../posts/paid-friend-vs-peer-support-india'
 
+import { post as empathyMeaningPost } from '../posts/empathy-meaning-india'
+import { post as quarterLifePost } from '../posts/quarter-life-crisis-india-guide'
+import { post as tarotAstrologyPost } from '../posts/tarot-astrology-emotional-support-india'
+import { post as housewifeGuidePost } from '../posts/housewife-mental-health-india-guide'
+import { post as divorceRecoveryPost } from '../posts/divorce-india-emotional-recovery'
+import { post as strangerConvPost } from '../posts/stranger-conversation-healing-india'
+import { post as rantVsVentPost } from '../posts/rant-vs-vent-india'
+import { post as claudeGeminiPost } from '../posts/claude-gemini-chatgpt-emotional-support'
+import { post as aiChatbotNriPost } from '../posts/ai-chatbot-nri-abroad'
+
 export const dynamic = 'force-static'
 
 const allPosts = [
+  empathyMeaningPost, quarterLifePost, tarotAstrologyPost, housewifeGuidePost, divorceRecoveryPost, strangerConvPost, rantVsVentPost, claudeGeminiPost, aiChatbotNriPost,
+  
   lonelinessPost, burnoutPost, peerSupportPost, leanOnMeanPost, lonelinessAtNightPost,
   emotionalBurnoutPost, anonymousSupportPost, peerVsTherapyPost, jointFamilyPost,
   lonelinessJointFamilyPost, founderBurnoutPost, affordableTherapyPost, mensMentalHealthPost, womenLonelinessPost,
