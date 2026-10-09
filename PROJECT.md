@@ -102,7 +102,8 @@ LeanOn is a **PEER SUPPORT** platform. It is not a mental health, clinical, or t
 |---|---|
 | Frontend + Backend | Next.js 14 (App Router, TypeScript, Tailwind CSS) |
 | Database + Auth + Realtime | Supabase (PostgreSQL, Auth, Realtime) |
-| Phone OTP auth | **Supabase Auth phone OTP** (not a third-party SMS verifier) |
+| Phone OTP auth | **MSG91 OTP Widget** (MSG91 sends + verifies the OTP; the server then mints the Supabase session — see CLAUDE.md) |
+| User notifications | **In-app only** (realtime bell + web push where the user allowed it). LeanOn sends **no SMS** to users — Twilio was removed in Oct 2026. |
 | Voice calls | Agora.io Web SDK (RTC tokens generated server-side, never client-side) |
 | Payments | Razorpay (server-created orders; webhook-validated) |
 | AI moderation | Claude API (Haiku) — first-line content moderation |

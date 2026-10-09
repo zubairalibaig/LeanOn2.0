@@ -110,6 +110,12 @@
 
 ## Listener presence & request alerts (2026-09-24) — read `docs/NOTIFICATIONS.md` first
 
+- **No SMS to users, ever.** All user notifications are in-app (`notifications` table → realtime
+  bell) plus web push via `lib/push.ts`. The only SMS LeanOn triggers is the MSG91 login OTP.
+  Twilio is legacy and was removed (Oct 2026) — don't reintroduce it. Note: almost no seekers
+  have push enabled (only listeners are asked), so a seeker usually sees an alert only when
+  they next open the app.
+
 - **ONE service worker: `public/sw.js`** (fetch passthrough + push + notification click).
   Never register a second worker at scope `/` — the old `/firebase-messaging-sw.js`
   kept replacing `sw.js` (and vice versa) and silently dropped the push handler,

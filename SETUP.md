@@ -61,8 +61,9 @@ code .env.local
 
 # In Supabase dashboard:
 # Authentication → Providers → Phone → Enable
-# For testing: enable "SMS provider" → select "Twilio" 
-#   OR use "Test OTPs" in Auth settings to test without real SMS:
+# Production OTP is sent and verified by the MSG91 OTP Widget (see CLAUDE.md),
+# not by a Supabase SMS provider. Twilio is not used anywhere.
+# For testing, use "Test OTPs" in Auth settings to test without real SMS:
 # Authentication → Configuration → Enable "Test phone numbers"
 # Add test number: +919876543210 → OTP: 123456
 

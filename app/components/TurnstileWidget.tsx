@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 // ── Cloudflare Turnstile CAPTCHA ─────────────────────────────────────────────
-// Blocks bots from triggering SMS OTP sends (which cost real money on Twilio).
+// Blocks bots from triggering SMS OTP sends (which cost real money on MSG91).
 //
 // PERFORMANCE / SEO: the Turnstile script is loaded LAZILY — only when this
 // component actually mounts. Pages should mount it only at the moment a user is

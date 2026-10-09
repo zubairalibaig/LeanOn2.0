@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { UUID_RE } from '@/lib/constants'
 import { checkRateLimit } from '@/lib/rate-limit'
-import { sendSms } from '@/lib/twilio'
 import { sendPushToUser } from '@/lib/push'
 import { logger } from '@/lib/logger'
 
@@ -143,7 +142,7 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
       action_url: `/listener/${thread.listener_id}`,
     }).then(() => {}, (e) => logger.error('invite notification insert failed (non-critical):', { error: String(e) }))
 
-    // 2) Push (every device) + SMS — reach the seeker even if they've left the app.
+    // 2) Push (every device) — reach the seeker even if they've left the app.
     await sendPushToUser(admin, thread.seeker_id as string, {
       title: `${listenerName} is available now`,
       body: 'Tap to start a live session on LeanOn.',
@@ -152,19 +151,6 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
       ttlSecs: 60 * 60,
       data: { type: 'listener_available', listenerId: String(thread.listener_id) },
     }).catch(e => logger.error('invite push failed (non-critical):', { error: String(e) }))
-    const { data: seeker } = await admin
-      .from('users')
-      .select('phone')
-      .eq('id', thread.seeker_id)
-      .maybeSingle()
-    if (seeker?.phone) {
-      try {
-        await sendSms(
-          seeker.phone as string,
-          `${listenerName} is now online on LeanOn and ready to talk. Start a session: leanon.app/listener/${thread.listener_id}`,
-        )
-      } catch (e) { logger.error('invite SMS failed (non-critical):', { error: String(e) }) }
-    }
 
     // 3) Stamp the cooldown (tolerate the column being absent pre-migration 052).
     await admin.from('listener_messages')

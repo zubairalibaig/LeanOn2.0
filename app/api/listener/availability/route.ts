@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
-import { sendSms } from '@/lib/twilio'
 import { logger } from '@/lib/logger'
 
 export const dynamic = 'force-dynamic'
@@ -13,7 +12,7 @@ export const dynamic = 'force-dynamic'
 // view has drifted from the row (e.g. clicking "Go offline" would read a row
 // that's already false and flip it back ON). If no body is sent we fall back to
 // the legacy flip for backward compatibility.
-// When a listener goes ONLINE, SMS their recent seekers (last 30 days, up to 5).
+// When a listener goes ONLINE, notify their recent seekers in-app (up to 10).
 export async function PATCH(req: NextRequest) {
   try {
     const userSb = createServerSupabaseClient()
@@ -103,7 +102,7 @@ export async function PATCH(req: NextRequest) {
       }, { status: 409 })
     }
 
-    // Only SMS when this call actually transitioned offline → online.
+    // Only notify when this call actually transitioned offline → online.
     if (goingOnline && !lp.is_available) {
       notifyRecentSeekers(sb, user.id).catch(e =>
         logger.error('notifyRecentSeekers error (non-critical):', { error: String(e) })
@@ -126,7 +125,7 @@ const MSG_PING_COOLDOWN_MS = 12 * 60 * 60 * 1000 // 12 hours
 //       case (e.g. "Need a patient listener") where, previously, nobody was ever
 //       told the listener returned. That gap is exactly why a message could rot
 //       for weeks with no way to reconnect.
-// Each seeker gets a free in-app notification (realtime bell) plus an SMS.
+// Each seeker gets an in-app notification (realtime bell). LeanOn sends no SMS.
 // Non-blocking — called fire-and-forget; failures are logged only.
 async function notifyRecentSeekers(
   sb: ReturnType<typeof createAdminClient>,
@@ -184,13 +183,6 @@ async function notifyRecentSeekers(
   }
   if (seekerIds.length === 0) return
 
-  const { data: seekers } = await sb
-    .from('users')
-    .select('id, phone')
-    .in('id', seekerIds)
-  if (!seekers || seekers.length === 0) return
-
-  // In-app realtime notifications for everyone (free), linked to the listener.
   const notifRows = seekerIds.map(sid => ({
     user_id:    sid,
     type:       'listener_available',
@@ -202,13 +194,6 @@ async function notifyRecentSeekers(
     () => {},
     (e) => logger.error('notifyRecentSeekers notification insert failed (non-critical):', { error: String(e) }),
   )
-
-  // SMS for reach.
-  const message = `${listenerName} is now online on LeanOn and ready to listen. Start a session anytime: leanon.app/browse`
-  for (const seeker of seekers) {
-    if (!seeker.phone) continue
-    await sendSms(seeker.phone as string, message)
-  }
 
   // Stamp the cooldown on the message rows we just pinged (tolerate missing column).
   const stampedIds = freshMsgRows.map(r => r.id)
