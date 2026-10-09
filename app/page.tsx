@@ -34,7 +34,7 @@ const faqSchema = {
     { '@type': 'Question', name: 'What makes LeanOn listeners empathetic?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn screens listener applications for identity, active listening, boundaries and crisis-referral understanding. Listener profiles also show the topics and lived experience they can support with, so you can choose someone who feels relevant. LeanOn listeners are peers, not therapists.' } },
     { '@type': 'Question', name: 'What does "lean on" mean in LeanOn?', acceptedAnswer: { '@type': 'Answer', text: '"Lean on" means having someone you can rely on emotionally — someone who supports you without judgment when you\'re going through something hard. LeanOn (the platform) gives everyone access to that kind of support through verified peer listeners who have lived experience.' } },
     { '@type': 'Question', name: 'How does pricing work?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn charges a flat fee per session. 15-minute sessions start at ₹160. Your first session is free (5 minutes) — no wallet top-up needed.' } },
-    { '@type': 'Question', name: 'How much does a paid LeanOn session cost?', acceptedAnswer: { '@type': 'Answer', text: 'A 15-minute paid session starts at ₹160. You can start with one free 5-minute introductory session with each new listener, then continue only if you want to. There are no subscriptions; you pay for the conversation time you choose.' } },
+    { '@type': 'Question', name: 'How much does a paid LeanOn session cost?', acceptedAnswer: { '@type': 'Answer', text: 'A 15-minute paid session starts at ₹160. You can start with one free 5-minute introductory session per account, then continue only if you want to. There are no subscriptions; you pay for the conversation time you choose.' } },
     { '@type': 'Question', name: 'How is LeanOn different from therapy?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are real people with lived experience, not licensed therapists. They offer empathy and peer support, not clinical diagnosis or treatment. LeanOn is ideal when you need someone to lean on — not a diagnosis.' } },
     { '@type': 'Question', name: 'Is LeanOn related to the song "Lean On" by Major Lazer?', acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn (one word, at leanon.app) is an Indian peer emotional support platform where you talk to verified human listeners. It has no connection to the 2015 song "Lean On" by Major Lazer and DJ Snake. The name comes from the phrase "someone to lean on" — having a person you can rely on emotionally.' } },
     { '@type': 'Question', name: 'Is LeanOn confidential?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are private. LeanOn explains its information practices in its Privacy and Trust pages, and you decide what personal details to share in a conversation.' } },
@@ -47,7 +47,7 @@ const faqSchema = {
     { '@type': 'Question', name: 'Where can I talk to a real person online when I feel lonely?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn (leanon.app) connects you with real human peer listeners for private one-to-one conversations by text or voice. You can browse listener profiles, start with a free 5-minute introduction, and choose someone who has lived experience with what you are going through. Paid sessions start at ₹160 for 15 minutes.' } },
     { '@type': 'Question', name: 'What is an affordable alternative to therapy in India?', acceptedAnswer: { '@type': 'Answer', text: 'While therapy in India typically costs ₹1,500 to ₹5,000 per session, peer support through LeanOn starts at ₹160 for 15 minutes. Peer support is not a replacement for therapy — it is a complementary option for everyday emotional needs like loneliness, relationship stress, work pressure, and difficult days. For clinical needs, consult a qualified mental health professional.' } },
     { '@type': 'Question', name: 'How is LeanOn different from talking to ChatGPT or an AI?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn provides conversations with real human beings who bring their own lived experience. AI assistants provide generated responses. Both have valid uses: AI is useful for information, brainstorming, and reflection. LeanOn is useful when the person specifically wants another human being to listen — for emotional connection rather than information.' } },
-    { '@type': 'Question', name: 'How is LeanOn different from companionship apps like GetCompanion?', acceptedAnswer: { '@type': 'Answer', text: 'Companionship apps connect you with trained companions for pleasant conversation and activities. LeanOn connects you with peer listeners who have personally lived through the same challenge you are facing — loneliness, burnout, a breakup, grief. The empathy comes from shared lived experience, not just training. LeanOn is fully online (text and voice), available across India and 10 countries, with a free 5-minute trial per listener.' } },
+    { '@type': 'Question', name: 'How is LeanOn different from companionship apps like GetCompanion?', acceptedAnswer: { '@type': 'Answer', text: 'Companionship apps connect you with trained companions for pleasant conversation and activities. LeanOn connects you with peer listeners who have personally lived through the same challenge you are facing — loneliness, burnout, a breakup, grief. The empathy comes from shared lived experience, not just training. LeanOn is fully online (text and voice), available across India and supported international markets, with one free 5-minute introductory session per account.' } },
   ],
 }
 const orgSchema = {
@@ -312,12 +312,12 @@ export default function Home() {
       <section className="hero">
         <div className="hero-badge"><span>🤝</span><span>Real people · Real conversations · In minutes</span></div>
         <h1>Someone to<br /><span className="o">lean on,</span><br />right now.</h1>
-        <p>Had a fight. Going through something. Need to vent before you explode. Talk to a real peer listener in India — trained, anonymous, no appointment needed. Available now.</p>
+        <p>Had a fight. Going through something. Need to vent before you explode. Talk one-to-one with a screened peer listener in India. Conversations are private, and no appointment is required; start when a listener is available.</p>
         <div className="hero-btns">
           <a href="/auth" className="btn-primary">Start your 5-min chat</a>
           <a href="/browse" className="btn-outline">Browse peer listeners</a>
         </div>
-        <p className="hero-note">No appointment needed · Anonymous · Paid sessions from ₹160</p>
+        <p className="hero-note">Private one-to-one conversation · No appointment · Paid sessions from ₹160</p>
       </section>
 
       {/* TOPICS */}
@@ -391,11 +391,11 @@ export default function Home() {
           <div className="fl">
             {[
               {i:'🔍',t:'Open listener directory',d:'Browse peer listeners by topic. Read their stories and ratings before you pay anything.'},
-              {i:'⚡',t:'Instant, no-appointment access',d:'No booking. No waiting. Someone is available right now. Start a session in under 60 seconds.'},
+              {i:'⚡',t:'Instant, no-appointment access',d:'No appointment is required. Browse listeners who are online and start when someone is available.'},
               {i:'💳',t:'Pay-per-session flexibility',d:'No subscriptions. Recharge your wallet and use it whenever. Unused balance refunded anytime.'},
               {i:'💬',t:'Text or voice — your choice',d:'Type for privacy in a joint home. Talk for the warmth of a real voice. Always your call.'},
               {i:'🤝',t:'Lived-experience listeners',d:'Our listeners have been through it — breakups, burnout, grief, startup failure. They get it.'},
-              {i:'🔒',t:'Safe & private by design',d:'Sessions are private. No personal info shared. AI moderation keeps every conversation safe.'},
+              {i:'🔒',t:'Private conversations',d:'Sessions are intended to be private. See the Privacy and Trust pages for how information is handled.'},
             ].map((f,i)=>(
               <div key={i} className="fi"><div className="fw">{f.i}</div><div><div className="ft">{f.t}</div><div className="fd">{f.d}</div></div></div>
             ))}
@@ -411,9 +411,9 @@ export default function Home() {
           <div className="india-grid">
             {[
               {i:'📱',t:'Phone OTP sign-up',d:'No email. No full name. Sign up in 30 seconds with just your number.'},
-              {i:'🔒',t:'Private & anonymous',d:'Your first name only. No last name, no profile photo required. Safe in joint families.'},
+              {i:'🔒',t:'Private sign-up',d:'Phone OTP sign-up; no email or full legal name required. Choose what personal details to share.'},
               {i:'💸',t:'UPI & wallet payments',d:'Recharge with UPI, cards, or net banking. Refundable, no subscription lock-in.'},
-              {i:'⚡',t:'Available right now',d:'Someone is online right now — no appointment, no wait. Start talking in under a minute.'},
+              {i:'⚡',t:'No appointment needed',d:'Browse listeners and start a conversation when someone is online and available.'},
               {i:'🗣️',t:'Text or voice in Hindi',d:'Chat in English or Hindi. Voice call when you need a real voice.'},
               {i:'🤝',t:'Lived-experience listeners',d:'Listeners from Bengaluru, Mumbai, Delhi, Chennai, Hyderabad and across India.'},
             ].map((item,i)=>(
@@ -455,7 +455,7 @@ export default function Home() {
               {t:'Browse peer listeners',d:'Filter by topic. Read bios and ratings. Browse anonymously.'},
               {t:'Pick your session length',d:'5-min trial, or choose 15 or 30 minutes.'},
               {t:'Recharge your wallet',d:'Top up ₹200, ₹500 or ₹1000. Refundable anytime.'},
-              {t:'Start instantly',d:'Text chat or voice call — your session begins immediately.'},
+              {t:'Start instantly',d:'Choose text or voice; the conversation can begin when a listener accepts your request.'},
               {t:'Get the support you need',d:'Rate your listener. Book again anytime. You are not alone.'},
             ].map((s,i)=>(
               <div key={i} className="si"><div className="sn">{i+1}</div><div><div className="stit">{s.t}</div><div className="sd">{s.d}</div></div></div>
@@ -479,7 +479,7 @@ export default function Home() {
             not to over-advertise it in marketing copy. */}
         <div className="pc">
           {[
-            {l:'Trial session',d:'5 minutes · Text or voice · No wallet needed · Free once per listener',p:'₹0',b:'Trial',feat:false},
+            {l:'Trial session',d:'5 minutes · Text or voice · No wallet needed · Free once per account',p:'₹0',b:'Trial',feat:false},
             {l:'Quick chat',d:`15 minutes · One-on-one · Text${voiceFrom(15, 160)}`,p:'₹160',b:'',feat:false},
             {l:'Deep dive',d:`30 minutes · One-on-one · Text${voiceFrom(30, 310)}`,p:'₹310',b:'Most popular',feat:true},
           ].map((item,i)=>(
