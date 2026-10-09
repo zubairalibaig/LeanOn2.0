@@ -63,9 +63,9 @@ export default function PrivacyPage() {
         <h2>5. Listener identity verification</h2>
         <p>Listeners are required to submit a government-issued photo ID and a selfie for manual identity verification. Only the last 4 digits of any ID number are retained for reference; full ID numbers and document images are reviewed by our admin team, stored securely in encrypted cloud storage, and deleted once verification is complete. We do not share this data with third parties.</p>
 
-        <h2>6. Your rights</h2>
+        <h2 id="delete-account">6. Your rights</h2>
         <ul>
-          <li>Request deletion of your account — use the &ldquo;Delete account&rdquo; option inside the app under Profile</li>
+          <li>Request deletion of your account — use the &ldquo;Delete account&rdquo; option inside the app under Profile. If you can&apos;t sign in or no longer have the app, send a deletion request through the <a href="/contact">contact form</a> with the phone number on your account; we remove your personal details within 30 days. Records we must keep for payments and safety (such as transaction history) are retained without your contact details.</li>
           <li>Withdraw consent at any time by deleting your account</li>
         </ul>
         <p>For privacy concerns, use the <a href="/contact">contact form</a> on our website.</p>

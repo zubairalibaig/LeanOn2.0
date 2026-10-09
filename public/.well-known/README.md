@@ -1,5 +1,9 @@
 # Digital Asset Links — TWA verification
 
+> Current process: `docs/PLAY_STORE_STEP_BY_STEP.md` (PWABuilder, package `app.leanon`).
+> The values in `assetlinks.json` are from the abandoned first attempt and will be
+> replaced with the PWABuilder key + Play App Signing fingerprints.
+
 `assetlinks.json` is what removes the browser URL bar from the Android TWA
 (Trusted Web Activity) wrapper and proves leanon.app owns the Play Store app.
 

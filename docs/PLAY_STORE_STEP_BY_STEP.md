@@ -1,198 +1,309 @@
-# Launching LeanOn on the Play Store — plain-English guide
+# Launching LeanOn on Google Play — plain-English guide (v2, Oct 2026)
 
-A step-by-step guide written for a non-technical person. Do the steps in order.
-Whenever a step involves editing a file or code, you don't have to do it — just
-copy the value it asks for and paste it to me (Claude) in chat, and I'll handle
-the file and push it live.
+This replaces the earlier version of this guide. **Do not use the GitHub
+"Build Android TWA" button any more** — see "Why the old route changed" at the end.
 
-## What you'll need
-- A **laptop/desktop** with the **Chrome** browser (not a phone) for most steps.
-- Your **Google Play Developer account** (you already have this).
-- An **Android phone** for testing near the end.
-- About **2 hours of clicking**, spread over a few days (see the timing warning
-  below).
+How it works in one sentence: the Play Store app is a thin Android "frame"
+(a **TWA — Trusted Web Activity**) that opens www.leanon.app full-screen inside
+Chrome, with no address bar. Everything users see is the live website, so
+**website changes reach the app instantly — no app update needed.**
 
-## ⚠️ Read this first — the 14-day testing rule
-Google changed its rules. **If your Play Developer account was created AFTER
-13 November 2023**, Google requires you to:
-- run a **closed test with at least 12 testers** who stay opted in for
-- **at least 14 days**, before you're allowed to publish to the public.
-
-If your account is **older than that date**, you're exempt and can go straight
-to production. Check which applies to you before promising anyone a launch date
-— if the rule applies, the *earliest* you can go public is ~2 weeks after your
-closed test starts. Plan marketing around that.
+Whenever a step says "send to Claude", paste the value into chat and Claude
+changes the code. You never edit files yourself.
 
 ---
 
-## Step 0 — App icons ✅ DONE
-I already generated your app icons (`icon-192.png`, `icon-512.png`) from the
-owl logo and pushed them live. You don't need to do anything here.
-
-You WILL need the large icon as a file on your computer for the store listing
-later. To download it:
-1. Open this link in your browser:
-   `https://www.leanon.app/icon-512.png`
-2. Right-click the owl image → **"Save image as…"** → save it somewhere easy
-   like your Desktop. Name it `leanon-icon-512.png`.
+## What you need
+- A **laptop/desktop with Chrome** (most steps).
+- An **Android phone** signed into a Gmail you control (testing).
+- Your **Google Play Console** login.
+- A **Google Drive** folder to keep the app's signing key safe.
+- Time: **3–5 hours of clicking** in total. Google's review then takes
+  **several days** (you just wait).
 
 ---
 
-## Step 1 — Make the Android app file (GitHub Actions — automatic)
-This turns your website into an installable Android app file. No PWABuilder
-needed — a GitHub Action builds it for you.
+## PART 0 — Three checks (do these first, 15 minutes)
 
-**Package ID:** `app.leanon.therapy` (already set — this is permanent, never changes)
+### Check A — Is your account exempt from the 14-day testing rule?
+Personal accounts created **after 13 November 2023** must run a **closed test
+with at least 12 testers for 14 days** before going public. Older accounts and
+organisation accounts are exempt.
 
-1. Go to **`https://github.com/zubairalibaig/LeanOn2.0/actions`**
-2. In the left sidebar, click **"Build Android TWA"**
-3. Click the blue **"Run workflow"** button on the right
-4. Leave the defaults (Version code: `1`, Version name: `1.0.0`) → click
-   **"Run workflow"** (green button)
-5. Wait 3–5 minutes for the build to finish (the row turns green ✅)
-6. Click on the completed run to open it
-7. Scroll down to **Artifacts** — you'll see two downloads:
-   - **`leanon-signed-aab`** — this is your app file. Click to download.
-   - **`leanon-keystore-SAVE-THIS`** — this is your signing key.
-     **Download it immediately and save it in Google Drive.** It expires
-     from GitHub in 7 days. Losing it = can't update the app.
-8. Also look at the **"Get SHA-256 fingerprint"** step in the build log —
-   it prints a long code like `AB:CD:12:…:EF`. **Copy it and send it to me.**
-   (You'll also get this from Google Play Console in Step 3, so don't worry
-   if you miss it here.)
-9. Unzip the `leanon-signed-aab` download — the file ending in **`.aab`** is
-   what you upload to Google Play.
+Your account is "about 3 years old" — that is **right on the cutoff**, so find
+the exact date:
+1. Open **Gmail**, search for: `Google Play Console` registration (or
+   `Google Play Developer` receipt / "Welcome to Google Play Console").
+2. Or open **pay.google.com → Activity** and look for the **US$25** Google Play
+   developer registration payment.
+3. Note the date. **Before 13 Nov 2023 → exempt (Route A in Part 8).**
+   **On/after → not exempt (Route B in Part 8).**
+4. Also note whether the account type is **Personal** or **Organisation**
+   (Play Console → ⚙ Settings → **Developer account** → Account details).
 
-⚠️ **FIRST RUN NOTE:** The build log will also show a generated keystore
-password. If you want to be extra careful, save that password as a GitHub
-repository secret named `KEYSTORE_PASSWORD` (Settings → Secrets → Actions →
-New repository secret) so future builds use the same key. But for your first
-upload, the auto-generated one is fine.
+### Check B — Is the account healthy?
+1. Go to **play.google.com/console** and sign in.
+2. Look for any **red or yellow banner**: "Verify your identity", "Verify your
+   contact details", or "account closed due to inactivity".
+3. If there is one, **complete it now**. Identity verification can take a few
+   days — that is the one thing that could block your weekend.
 
----
+### Check C — Was anything uploaded in the earlier attempt?
+1. In Play Console, look at **All apps**.
+2. If there is already a LeanOn app, open it → **Test and release** → look for
+   any uploaded bundle. **Tell Claude** what you see (app name + package name
+   shown under the title). This decides the package name below.
 
-## Step 2 — Create your app in Play Console and upload it
-1. Go to **`https://play.google.com/console`** and sign in with your developer
-   account.
-2. Click **"Create app"** (top right).
-3. Fill the form:
-   - **App name:** `LeanOn — Peer Support`
-   - **Default language:** English (India) — `en-IN`
-   - **App or game:** App
-   - **Free or paid:** **Free** (the app download is free; payments happen
-     inside as real-time sessions).
-   - Tick the required **declarations** boxes, then **Create app**.
-4. You'll land on the app dashboard. In the left menu, go to
-   **Test and release → Testing → Internal testing**.
-5. Click **"Create new release"**.
-6. If Google offers **"Play App Signing"**, **accept/continue** — this is the
-   recommended default. (It means Google securely manages your final signing
-   key.)
-7. Under **"App bundles"**, click **Upload** and choose the **`.aab`** file from
-   Step 1.8. Wait for it to process.
-8. Add a short **Release name** (e.g. `1.0 first internal build`) and in
-   **Release notes** type something like `First internal test build.` Click
-   **Next / Save**, then **Review release**, then **Start rollout to Internal
-   testing** and confirm.
-9. On the Internal testing page, open the **Testers** tab, create a tester list
-   and **add your own Gmail address** (and a few friends' Gmails). Save.
-10. Copy the **"Join on Android"** / **testing link** shown there — you'll use
-    it on your phone in Step 4.
+### Check D — Public developer name (protects your privacy)
+The **developer name is shown publicly** on the Play Store page.
+1. ⚙ Settings → **Developer account** → **Account details** (or "Developer
+   profile").
+2. Make sure the **Developer name** is **`LeanOn`** — not your personal name.
+3. Make sure the **public contact email** is a support address, not your
+   personal one.
 
 ---
 
-## Step 3 — Connect your website to the app (the verification file)
-This is what removes the ugly web-address bar from the top of your app. It needs
-one code (a "fingerprint") that only Google can give you, which is why we do it
-now (after uploading), not before.
-
-1. Still in Play Console, in the left menu go to
-   **Test and release → Setup → App integrity** (sometimes **"App signing"**).
-2. Find the section **"App signing key certificate"**. You'll see a line called
-   **"SHA-256 certificate fingerprint"** — a long code like
-   `AB:CD:12:…:EF` (lots of pairs separated by colons). There's a **copy**
-   button next to it.
-3. **Paste that SHA-256 fingerprint to me in chat** (along with the Package ID
-   from Step 1 if you haven't already).
-4. I will put both values into your website's verification file
-   (`assetlinks.json`) and push it live. It'll be active within a couple of
-   minutes on Vercel. **You don't edit any file yourself.**
-5. (Optional check) After I confirm, you can open
-   `https://www.leanon.app/.well-known/assetlinks.json` in your browser and see
-   your real values there.
+## PART 1 — Things Claude does (before you build)
+Send Claude the answers from Part 0. Claude will:
+- **Confirm the package name** (planned: `app.leanon`). It is permanent once
+  uploaded.
+- **Build a reviewer login** (Google's reviewers can't receive your OTP SMS —
+  see Concerns). Needed before Part 8, not before testing.
 
 ---
 
-## Step 4 — Test on your Android phone (do NOT skip)
-1. On your **Android phone**, open the **testing link** you copied in Step 2.10.
-   Tap **"Become a tester"**, then the link to download from the Play Store,
-   and **install** LeanOn.
-2. Open the app. Confirm there is **no web-address bar** at the top (if there
-   is, the verification from Step 3 hasn't gone live yet — wait 10 minutes and
-   reopen).
-3. **Test these two things fully — they are the ones most likely to break:**
-   - **Login + payment:** sign in with your phone number (OTP), then add money
-     to the wallet with a **real small payment** and confirm the balance
-     updates. This proves MSG91 login and Razorpay both work inside the app.
-   - **Voice call:** have a second person (or a second phone/account) act as the
-     listener, start a **voice session**, and confirm **you can hear each
-     other**, and that the app asks for **microphone permission** the first
-     time. (This is the feature that was broken before — test it properly.)
-4. If anything fails, tell me exactly what happened and I'll fix it, then you
-   re-run the GitHub Action (Step 1) to generate a new package with the fix.
-   Bump the **version code** to `2` on the next run.
+## PART 2 — Build the Android app on PWABuilder (30 minutes)
+
+1. On your laptop, open **https://www.pwabuilder.com** in Chrome.
+2. In the box, type **`https://www.leanon.app`** → click **Start**.
+3. Wait for the report card. Yellow/red warnings (e.g. "screenshots") are fine —
+   ignore them.
+4. Click **Package For Stores** (top right).
+5. Under **Android**, click **Generate Package** (or **Options**).
+6. Fill in the options **exactly** like this (leave anything not listed as is):
+
+   | Field | Value |
+   |---|---|
+   | Package ID | **`app.leanon`** (or what Claude confirms in Part 1) |
+   | App name | `LeanOn — Peer Support` |
+   | Launcher name | `LeanOn` |
+   | App version | `1.0.0` |
+   | App version code | `1` |
+   | Host | `www.leanon.app` |
+   | Start URL | `/` |
+   | Theme color | `#1A8FA0` |
+   | Background color | `#0F4867` |
+   | Nav color | `#0F4867` |
+   | Display mode | **Standalone** |
+   | Notification delegation | **ON** (listeners get request alerts) |
+   | Location delegation | OFF |
+   | Google Play billing | **OFF** |
+   | Signing key | **Create new** |
+   | Key full name | **`LeanOn`** (NOT your personal name) |
+   | Key organization | `LeanOn` |
+   | Key organizational unit | `App` |
+   | Key country code | `IN` |
+   | Key password / Store password | leave the generated ones |
+
+7. Click **Download Package**. You get a **.zip** file.
+8. **Right now, before anything else:** upload the whole .zip to a **private
+   Google Drive folder** named `LeanOn Android signing — DO NOT DELETE`, and keep
+   a second copy on a USB stick or another drive.
+   - Inside are `signing.keystore` and `signing-key-info.txt` (passwords).
+     You need them for every future app update.
+   - **Never email them, never share them, never paste the passwords to anyone
+     — including Claude.**
+9. Unzip it on your computer. Find:
+   - **`app-release-bundle.aab`** → this is what you upload to Google Play.
+   - **`assetlinks.json`** → open it with Notepad. Copy the long code after
+     `"sha256_cert_fingerprints"` (looks like `AB:12:CD:...`, 32 pairs).
+     **Send that code to Claude** (it's public, safe to share).
 
 ---
 
-## Step 5 — Fill in the store listing (what people see on Play)
-In Play Console, left menu → **Grow → Store presence → Main store listing**.
-Copy-paste from the file `docs/PLAY_STORE_LISTING.md` in your repo (I wrote all
-the text for you):
-1. **App name:** `LeanOn — Peer Support`
-2. **Short description:** paste the short description from that file.
-3. **Full description:** paste the full description from that file.
-4. **App icon:** upload the `leanon-icon-512.png` you saved in Step 0.
-5. **Feature graphic:** you need one **1024×500** banner image. Easiest way:
-   use **Canva.com** (free), search "Google Play feature graphic", drop your
-   logo + the line "Someone to lean on, anytime." on a navy/teal background,
-   download as PNG, upload it.
-6. **Phone screenshots:** you need **at least 2** (up to 8). Easiest way: open
-   `https://www.leanon.app` on your phone, screenshot the home page, the browse
-   page, a chat, and the wallet page. Upload those. (They should be tall phone
-   screenshots.)
-7. Fill the other required sections Play highlights in red:
-   - **App category:** Health & Fitness
-   - **Contains ads:** No
-   - **Content rating:** complete the questionnaire honestly (expect "Teen").
-   - **Data safety:** phone number collected for sign-in; payments handled by
-     Razorpay; no data sold; conversations not shared; data encrypted in
-     transit. (See `docs/PLAY_STORE_LISTING.md` for the exact answers.)
-   - **Privacy policy URL:** `https://www.leanon.app/privacy`
-   - **Target audience:** adults (18+ is safest for emotional-support content).
-8. Save each section (green checkmarks appear as you complete them).
+## PART 3 — Create the app in Play Console (15 minutes)
+1. **play.google.com/console** → **Create app** (top right).
+2. Fill in:
+   - App name: `LeanOn — Peer Support`
+   - Default language: **English (India) – en-IN**
+   - App or game: **App**
+   - Free or paid: **Free**
+3. Tick both declaration boxes → **Create app**.
 
 ---
 
-## Step 6 — Publish
-- **If your account is exempt from the 14-day rule** (older than 13 Nov 2023):
-  go to **Test and release → Production → Create new release**, upload the same
-  `.aab`, fill release notes, and **Start rollout to Production**. Google review
-  usually takes a few hours to a few days.
-- **If the 14-day rule applies to you:** first run a **Closed test** (left menu
-  → Testing → Closed testing) with **12+ testers for 14 days**. After that,
-  Play Console shows an **"Apply for production access"** form — fill it, then
-  create the Production release as above.
+## PART 4 — Upload to Internal testing (15 minutes)
+Internal testing has **no Google review** — it's for you to try the app.
 
-Once approved, your app is live on the Play Store. 🎉
+1. Left menu → **Test and release** → **Testing** → **Internal testing**.
+2. Open the **Testers** tab → **Create email list** → name it `LeanOn team` →
+   add **your Gmail** (the one on your Android phone) and 1–2 others → **Save**.
+   Tick the list → **Save**.
+3. Open the **Releases** tab → **Create new release**.
+4. If asked about **Play App Signing**, choose the default
+   (**"Use Google-generated key"**) → Continue.
+5. Under **App bundles** → **Upload** → choose **`app-release-bundle.aab`**.
+   Wait until it finishes processing.
+   - If it shows an error about **target API level**, stop and tell Claude.
+6. Release name: `1.0.0 (1)`. Release notes: `First internal test build.`
+7. **Next** → **Save and publish** (or **Start rollout to Internal testing**) →
+   confirm.
+8. Back on the **Testers** tab, click **Copy link** under "How testers join".
+   Send that link to your phone (WhatsApp it to yourself).
 
 ---
 
-## Quick reference — what you send me vs. what you do
-| You do (clicking) | You send me (I do the code) |
+## PART 5 — Link the app to the website (5 minutes + Claude)
+This removes the web address bar inside the app.
+
+1. Left menu → **Test and release** → **App integrity** (or **Setup → App
+   signing**).
+2. Under **App signing key certificate**, copy the **SHA-256 certificate
+   fingerprint**.
+3. **Send it to Claude.** Claude puts both fingerprints (this one + the one from
+   Part 2 step 9) into the website's `assetlinks.json` and deploys.
+4. After Claude confirms, open
+   **https://www.leanon.app/.well-known/assetlinks.json** in Chrome — you should
+   see `app.leanon` and two long codes.
+
+---
+
+## PART 6 — Test on your Android phone (45 minutes — don't skip)
+1. On the phone, open the tester link from Part 4 step 8 → **Accept invite** →
+   **Download it on Google Play** → **Install**.
+   (If Play says "not available", wait 30 minutes — new apps take time to appear.)
+2. Open LeanOn and check each item:
+   - [ ] **No address bar** at the top. (If you see one: wait 15 min, uninstall,
+         reinstall. Still there → tell Claude.)
+   - [ ] **Login** with your phone number + OTP works.
+   - [ ] **Wallet recharge** with a small real payment → UPI app opens → after
+         paying you come **back into LeanOn** and the balance updates.
+   - [ ] **Voice session** with a second account (a friend as listener): the app
+         asks for **microphone** permission, and both of you can hear each other.
+   - [ ] **Notifications**: log in as a listener on the phone, allow
+         notifications, go online, **close the app**, have someone request a
+         session → the alert appears on the phone.
+   - [ ] Tapping a **crisis number** opens the phone dialler.
+   - [ ] The phone's **back button** behaves sensibly (doesn't trap you).
+3. Anything wrong → tell Claude exactly what happened (a screenshot helps).
+   Most fixes are website changes — no new upload needed.
+
+---
+
+## PART 7 — Store listing + App content (60–90 minutes)
+
+### 7a. Main store listing
+Left menu → **Grow users** → **Store presence** → **Main store listing**.
+Copy text from **`docs/PLAY_STORE_LISTING.md`** in the repo.
+- App name: `LeanOn — Peer Support`
+- Short description (max 80 characters) and Full description: from that file.
+- **App icon**: download **https://www.leanon.app/icon-512.png** (right-click →
+  Save image as) and upload it.
+- **Feature graphic** (1024 × 500): on **canva.com** search "Google Play feature
+  graphic", put the LeanOn logo + "Someone to lean on, anytime." on a navy/teal
+  background → Download PNG → upload.
+- **Phone screenshots** (2–8): take them **inside the installed app** on your
+  phone — home, browse listeners, a chat, wallet. **Hide or blur real users'
+  names/photos** — use your own test accounts.
+- App category: **Health & Fitness**. Contact email: your **support** address.
+  Website: `https://www.leanon.app`.
+- **Save**.
+
+### 7b. App content (left menu → **Policy and programs** → **App content**)
+Complete every item that shows "Start" / red:
+
+| Item | What to choose |
 |---|---|
-| GitHub Actions → Run "Build Android TWA" | — (it's automatic) |
-| Download AAB + keystore from artifacts | — (save keystore to Google Drive!) |
-| Play Console → upload AAB | — |
-| Play Console → App integrity | The **SHA-256 fingerprint** |
-| Test on phone | Any bug you find |
-| Fill listing, screenshots, publish | — |
+| Privacy policy | `https://www.leanon.app/privacy` |
+| App access | **All or some functionality is restricted** → add the reviewer login Claude gives you (Part 1) |
+| Ads | **No, my app does not contain ads** |
+| Content rating | Start questionnaire → category **All other app types** → answer honestly: users can **interact/communicate**: **Yes**; digital purchases: **Yes**; violence/sexual/drugs/gambling: **No**. Accept whatever rating comes out. |
+| Target audience | **18 and over only**. "Appeals to children": **No** |
+| News app | No |
+| Government app | No |
+| Financial features | **My app doesn't provide any financial features** |
+| Health apps | Tick only the **mental / behavioural health or wellness** option(s). **Do not** tick anything medical, clinical, diagnosis or treatment. |
+| Data safety | See table below |
+| Account deletion URL (inside Data safety) | `https://www.leanon.app/privacy#delete-account` |
+
+**Data safety answers** (if a question isn't covered here, screenshot it and send
+to Claude):
+- Collects data: **Yes**. Encrypted in transit: **Yes**. Users can request
+  deletion: **Yes**.
+- **Personal info → Phone number**: collected, required, purpose *Account
+  management*. **Name** (display name): collected, purpose *App functionality*.
+- **Personal info → Other** (listeners only: UPI/bank details for payouts):
+  collected, optional, purpose *App functionality*.
+- **Financial info → Purchase history**: collected, *App functionality*. (Card/UPI
+  details are entered on Razorpay, not stored by LeanOn.)
+- **Messages → Other in-app messages**: collected (session chats), *App
+  functionality*.
+- **Photos** (listener profile photo + verification selfie): collected,
+  optional, *App functionality*.
+- **Audio**: voice calls are live and **not recorded** → answer **not collected**.
+- **Device or other IDs** (push notification token): collected, *App
+  functionality*.
+- **Shared with third parties**: **No** (Razorpay, Agora etc. act as service
+  providers on LeanOn's behalf — that is not "sharing" under Google's definition).
+- Data sold: **No**.
+
+---
+
+## PART 8 — Go live
+
+### Route A — account exempt (created before 13 Nov 2023, or organisation)
+1. Left menu → **Test and release** → **Production** → **Countries/regions** →
+   **Add countries** → India + USA, UK, Canada, Australia, UAE, Oman, Kuwait,
+   Singapore, Malaysia (or all countries) → Save.
+2. **Releases** → **Create new release** → **Add from library** → choose the
+   `1.0.0 (1)` bundle you already uploaded → release notes:
+   `LeanOn — talk to a real person, anytime.` → **Next** → **Save**.
+3. Left menu → **Publishing overview** → **Send changes for review**.
+4. Wait. New apps usually take **a few days, sometimes 1–2 weeks** (health apps
+   can get extra scrutiny). You get an email when it's live.
+
+### Route B — 14-day rule applies
+1. Left menu → **Testing** → **Closed testing** → **Create track** (or use
+   "Alpha") → **Testers**: create an email list with **at least 15 people**
+   (12 is the minimum — extras protect you if someone drops out).
+   Good testers: friends, family, trusted listeners. They need an Android phone.
+2. **Create new release** → **Add from library** → `1.0.0 (1)` → roll out.
+   This one **is reviewed** by Google (needs the reviewer login).
+3. Send everyone the opt-in link. Each must **tap "Become a tester", install the
+   app, and keep it installed for 14 days**. Ask them to open it a few times.
+4. After **14 full days**, the **Dashboard** shows **Apply for production**.
+   Answer the questions (what you tested, what you changed) → submit. Google
+   replies in about **7 days**.
+5. Once approved, do **Route A** steps 1–4.
+
+---
+
+## After launch
+- Website changes appear in the app **immediately** — no app update.
+- A **new app build** is only needed for Android-level changes (icon, name,
+  notification settings, yearly Google target-API requirement every August).
+  For that, rebuild on PWABuilder using **"Use existing key"** with the files
+  from your Google Drive, and increase the **version code** (2, 3, …).
+
+---
+
+## Why the old route changed
+The earlier GitHub "Build Android TWA" button (and the `android/` folder):
+- targets Android API 34 — Google now **rejects** new apps below **API 36**;
+- creates a **brand-new signing key on every run**, so the second upload would be
+  refused by Play;
+- printed the key password into the build log;
+- used the package name `app.leanon.therapy` — LeanOn is **not therapy**, and the
+  package name is shown in the Play Store link forever.
+
+---
+
+## Quick reference — you vs Claude
+| You do | You send Claude |
+|---|---|
+| Part 0 checks | Account date + type, any banners, any existing app/package |
+| PWABuilder build | Fingerprint from `assetlinks.json` (never the passwords) |
+| Play Console → App integrity | Google's SHA-256 fingerprint |
+| Phone testing | Anything that breaks |
+| Listing + App content | Any form question you're unsure about |
