@@ -1,5 +1,5 @@
 # ⚠️ DEPRECATED (Oct 2026) — do not run. Targets API 34 (Play now requires 36), generates a
-# new signing key on every run, and uses the package name app.leanon.therapy.
+# new signing key on every run (the live app needs its original upload key), and logs the password.
 # Build with PWABuilder instead: see docs/PLAY_STORE_STEP_BY_STEP.md.
 #
 # Build LeanOn TWA (Trusted Web Activity) Android app
