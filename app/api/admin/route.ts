@@ -5,6 +5,7 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 import { requireAdmin, ADMIN_PASSWORD_USER_ID, ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS } from '@/lib/require-admin'
 import { razorpayxEnabled, createUpiPayout } from '@/lib/razorpayx'
+import { refundAcrossPayments, razorpayAlreadyRefunded, rupees } from '@/lib/razorpay-refund'
 
 function getRzp() {
   return new Razorpay({
@@ -66,7 +67,7 @@ export async function GET(req: NextRequest) {
 
     admin
       .from('refund_requests')
-      .select(`id, amount, reason, status, created_at, razorpay_payment_id, users ( name, email )`)
+      .select(`id, amount, reason, status, created_at, razorpay_payment_id, admin_notes, users ( name, email )`)
       .eq('status', 'pending')
       .order('created_at', { ascending: false })
       .limit(50),
@@ -173,7 +174,7 @@ export async function POST(req: NextRequest) {
 
   const ALLOWED_ACTIONS = [
     'approve_listener', 'reject_listener', 'deactivate_user', 'reactivate_user',
-    'complete_payout', 'reject_payout', 'complete_refund',
+    'complete_payout', 'reject_payout', 'complete_refund', 'complete_refund_manual', 'reject_refund',
   ] as const
   if (!(ALLOWED_ACTIONS as readonly string[]).includes(action)) {
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
@@ -339,73 +340,107 @@ export async function POST(req: NextRequest) {
 
   if (action === 'complete_refund') {
     // Claim the request atomically — prevents concurrent double-processing.
-    // IMPORTANT: do NOT select razorpay_payment_id here — that column only exists
-    // after migration 040 runs. A missing column in RETURNING makes the whole UPDATE
-    // fail and roll back, causing a false 404. Fetch it in a separate query instead.
     const { data: rr, error: claimErr } = await admin.from('refund_requests')
       .update({ status: 'completed' })
       .eq('id', id)
       .eq('status', 'pending')
       .select('user_id, amount')
       .single()
-
     if (claimErr || !rr) {
       return NextResponse.json({ error: 'Refund request not found or already processed' }, { status: 404 })
     }
 
-    // Fetch razorpay_payment_id separately — column may not exist yet (migration 040).
-    // If query fails or returns null, fall back to manual refund path.
     const { data: rzpRow } = await admin.from('refund_requests')
-      .select('razorpay_payment_id')
-      .eq('id', id)
-      .single()
-    const razorpayPaymentId: string | null = (rzpRow as { razorpay_payment_id?: string | null } | null)?.razorpay_payment_id ?? null
+      .select('razorpay_payment_id').eq('id', id).single()
+    const preferredPaymentId = (rzpRow as { razorpay_payment_id?: string | null } | null)?.razorpay_payment_id ?? null
 
-    // /api/refund zeroes the wallet the moment the seeker submits the request,
-    // so there is nothing to deduct here.
-    //
-    // 🔴 FIXED — this previously re-deducted whenever `wallet_balance > 0`,
-    // treating any positive balance as proof the hold had never happened. But a
-    // seeker can freely RECHARGE while a refund sits pending (refunds take 3-5
-    // business days and nothing blocks top-ups). Their new balance was then
-    // wiped on approval: refund ₹800 requested, ₹500 recharged the next day,
-    // admin approves → the ₹500 is deducted and the request is silently
-    // rewritten to ₹500, so the seeker got ₹500 cash for ₹1300 paid in. The
-    // partial-deduct also diverged from the Razorpay refund below, which always
-    // used the ORIGINAL rr.amount — paying out more cash than was retired from
-    // the wallet. Neither could be made safe by heuristic, so the deduction is
-    // removed entirely; the hold upstream is unconditional.
+    // The wallet was already emptied by /api/refund when the request was made —
+    // nothing to deduct here. Only cash moves now.
+    const out = await refundAcrossPayments(admin, getRzp(), {
+      userId: rr.user_id, requestId: id, amountRupees: Number(rr.amount), preferredPaymentId,
+    })
+    const sentPaise = out.sentBeforePaise + out.sentNowPaise
+    const ids = out.refundIds.length ? ` (${out.refundIds.join(', ')})` : ''
 
-    // Auto-issue Razorpay refund if we have the original payment_id.
-    // Amount in Razorpay API is in paise (multiply by 100).
-    let rzpRefundId: string | null = null
-    if (razorpayPaymentId) {
-      try {
-        const rzp = getRzp()
-        const refundAmountPaise = Math.round(Number(rr.amount) * 100)
-        const rzpRefund = await rzp.payments.refund(razorpayPaymentId, {
-          amount: refundAmountPaise,
-          notes: { reason: 'LeanOn wallet refund', refund_request_id: id },
-        })
-        rzpRefundId = rzpRefund.id
-        logger.info('Razorpay refund issued automatically:', { id, rzpRefundId, amount: rr.amount, paymentId: razorpayPaymentId })
-        // Store Razorpay refund ID in admin_notes for audit trail (column exists after migration 040)
-        await admin.from('refund_requests').update({ admin_notes: `Razorpay refund: ${rzpRefundId}` }).eq('id', id)
-          .then(() => {}, (e) => logger.warn('refund admin_notes update failed:', { id, error: String(e) }))
-      } catch (rzpErr) {
-        // Log the failure but do NOT revert the claim — the wallet is already zeroed and the
-        // admin has confirmed intent. They must issue the Razorpay refund manually from the dashboard.
-        logger.error('complete_refund: Razorpay refund API failed — manual action required:', {
-          id, paymentId: razorpayPaymentId, amount: rr.amount,
-          error: rzpErr instanceof Error ? rzpErr.message : String(rzpErr),
-        })
-      }
-    } else {
-      logger.warn('complete_refund: no razorpay_payment_id — admin must issue Razorpay refund manually:', { id, amount: rr.amount })
+    if (out.remainingPaise === 0) {
+      await admin.from('refund_requests')
+        .update({ admin_notes: `Razorpay refunded ${rupees(sentPaise)}${ids}` }).eq('id', id)
+        .then(() => {}, (e) => logger.warn('refund admin_notes update failed:', { id, error: String(e) }))
+      await auditLog(admin, user!.id, 'complete_refund', id)
+      return NextResponse.json({ ok: true, amount: rr.amount, rzpRefundIds: out.refundIds })
     }
 
-    await auditLog(admin, user!.id, 'complete_refund', id)
-    return NextResponse.json({ ok: true, amount: rr.amount, rzpRefundId })
+    // Not fully refunded: put it back in the pending list so it can't be forgotten.
+    // A retry counts what this request already sent, so it never pays twice.
+    const reason = out.errors.length ? out.errors.join('; ') : 'no recharge payment has enough refundable amount left'
+    const note = `Auto-refund incomplete: ${rupees(sentPaise)} sent${ids}, ${rupees(out.remainingPaise)} NOT refunded — ${reason}`
+    const { error: revertErr } = await admin.from('refund_requests')
+      .update({ status: 'pending', admin_notes: note }).eq('id', id)
+    logger.error('complete_refund: incomplete', { id, userId: rr.user_id, sentPaise, remainingPaise: out.remainingPaise, errors: out.errors, revertErr: revertErr?.message })
+    await auditLog(admin, user!.id, 'complete_refund_partial', id)
+    return NextResponse.json({
+      error: `${note}. Retry, or refund the rest in the Razorpay dashboard and press "Mark refunded manually".`
+        + (revertErr ? ` WARNING: could not return the request to pending (${revertErr.message}) — note this refund by hand.` : ''),
+    }, { status: 502 })
+  }
+
+  if (action === 'complete_refund_manual') {
+    const { data: rr, error: claimErr } = await admin.from('refund_requests')
+      .update({ status: 'completed', admin_notes: `Marked refunded manually by admin${notes ? `: ${String(notes).slice(0, 300)}` : ''}` })
+      .eq('id', id)
+      .eq('status', 'pending')
+      .select('id')
+      .single()
+    if (claimErr || !rr) {
+      return NextResponse.json({ error: 'Refund request not found or already processed' }, { status: 404 })
+    }
+    await auditLog(admin, user!.id, 'complete_refund_manual', id)
+    return NextResponse.json({ ok: true })
+  }
+
+  if (action === 'reject_refund') {
+    const { data: rr } = await admin.from('refund_requests')
+      .select('user_id, amount, razorpay_payment_id').eq('id', id).eq('status', 'pending').maybeSingle()
+    if (!rr) return NextResponse.json({ error: 'Refund request not found or already processed' }, { status: 404 })
+
+    // Rejecting returns the full amount to the wallet, so it must not happen
+    // after part of it already went back as cash.
+    let alreadySent = 0
+    try {
+      alreadySent = await razorpayAlreadyRefunded(admin, getRzp(), rr.user_id, id, rr.razorpay_payment_id ?? null)
+    } catch (e) {
+      return NextResponse.json({ error: `${e instanceof Error ? e.message : String(e)}. Try again.` }, { status: 502 })
+    }
+    if (alreadySent > 0) {
+      return NextResponse.json({ error: `${rupees(alreadySent)} of this request was already refunded through Razorpay, so it can't be rejected. Finish the refund instead.` }, { status: 409 })
+    }
+
+    const { data: claimed } = await admin.from('refund_requests')
+      .update({ status: 'rejected', admin_notes: `Rejected by admin${notes ? `: ${String(notes).slice(0, 300)}` : ''} — ₹${rr.amount} returned to wallet` })
+      .eq('id', id).eq('status', 'pending')
+      .select('id').single()
+    if (!claimed) return NextResponse.json({ error: 'Refund request not found or already processed' }, { status: 404 })
+
+    // /api/refund emptied the wallet when the request was made; give it back.
+    const { error: creditErr } = await admin.rpc('credit_wallet', { p_user_id: rr.user_id, p_amount: rr.amount })
+    if (creditErr) {
+      await admin.from('refund_requests').update({ status: 'pending', admin_notes: null }).eq('id', id)
+      logger.error('reject_refund: credit_wallet failed', { id, userId: rr.user_id, amount: rr.amount, error: creditErr.message })
+      return NextResponse.json({ error: `Could not return ₹${rr.amount} to the wallet: ${creditErr.message}. Request left pending.` }, { status: 500 })
+    }
+    // No reference_id: /api/refund picks the latest credit reference as the Razorpay payment.
+    await admin.from('wallet_transactions').insert({
+      user_id: rr.user_id, amount: rr.amount, type: 'refund',
+      description: 'Refund request declined — balance returned to your wallet',
+    }).then(() => {}, (e) => logger.error('reject_refund: ledger insert failed (audit gap)', { id, error: String(e) }))
+    await admin.from('notifications').insert({
+      user_id: rr.user_id, type: 'system', title: 'Refund request declined',
+      body: `Your refund request was declined and ₹${rr.amount} is back in your LeanOn wallet.`,
+      action_url: '/wallet',
+    }).then(() => {}, () => {})
+
+    await auditLog(admin, user!.id, 'reject_refund', id)
+    return NextResponse.json({ ok: true })
   }
 
   if (action === 'reactivate_user') {

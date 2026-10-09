@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
       .select('reference_id')
       .eq('user_id', user.id)
       .eq('type', 'credit')
-      .not('reference_id', 'is', null)
+      .like('reference_id', 'pay_%')
       .order('created_at', { ascending: false })
       .limit(1)
       .maybeSingle()

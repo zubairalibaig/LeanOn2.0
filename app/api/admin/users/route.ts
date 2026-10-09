@@ -3,6 +3,7 @@ import Razorpay from 'razorpay'
 import { selfieSignedUrls, selfieTakenAt, archiveSelfie } from '@/lib/selfie-storage'
 import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
+import { refundAcrossPayments, rupees } from '@/lib/razorpay-refund'
 import { requireAdmin, dbUserIdOrNull , ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS } from '@/lib/require-admin'
 
 function getRzp() {
@@ -1058,27 +1059,17 @@ export async function PATCH(req: NextRequest) {
           reference_id: `rfnd_${refundRow.id}`, description: 'Admin-initiated refund — balance cleared',
         }).then(() => {}, () => {})
 
-        // Attempt Razorpay refund immediately
-        let razorpayRefundId: string | null = null
-        let razorpayNote = 'No Razorpay payment found — manual refund needed.'
-        if (paymentId) {
-          try {
-            const rzpRefund = await getRzp().payments.refund(paymentId, { amount: balance * 100 })
-            razorpayRefundId = (rzpRefund as { id?: string }).id ?? null
-            razorpayNote = razorpayRefundId
-              ? `Razorpay refund ID: ${razorpayRefundId}`
-              : 'Razorpay call returned no refund ID — verify in Razorpay dashboard.'
-          } catch (e) {
-            razorpayNote = `Razorpay failed: ${e instanceof Error ? e.message : String(e)}. Manual refund needed.`
-            logger.error('force_refund: Razorpay call failed', { userId, paymentId, error: razorpayNote })
-          }
-        }
+        // Attempt Razorpay refund immediately, split across recharges if one
+        // payment doesn't cover the balance.
+        const out = await refundAcrossPayments(sb, getRzp(), {
+          userId, requestId: refundRow.id, amountRupees: balance, preferredPaymentId: paymentId,
+        })
+        const razorpayRefundId: string | null = out.remainingPaise === 0 && out.refundIds.length ? out.refundIds.join(', ') : null
+        const razorpayNote = razorpayRefundId
+          ? `Razorpay refund ID(s): ${razorpayRefundId}`
+          : `Auto-refund incomplete: ${rupees(out.sentNowPaise)} sent${out.refundIds.length ? ` (${out.refundIds.join(', ')})` : ''}, ${rupees(out.remainingPaise)} NOT refunded — ${out.errors.join('; ') || 'no refundable recharge found'}`
+        if (!razorpayRefundId) logger.error('force_refund: Razorpay refund incomplete', { userId, refundRowId: refundRow.id, note: razorpayNote })
 
-        // Mark completed only when Razorpay actually issued the refund.
-        // On failure (no paymentId OR Razorpay threw), keep status='pending' so
-        // the request appears in the admin Payouts tab under "Pending Refunds"
-        // where the admin can process it manually via the existing Complete Refund
-        // button. The wallet was already zeroed either way — that is irreversible.
         const finalStatus = razorpayRefundId ? 'completed' : 'pending'
         const { error: refundUpdateErr } = await sb.from('refund_requests').update({
           status: finalStatus,

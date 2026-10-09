@@ -88,7 +88,7 @@ type PayoutRow = {
   // Bank/UPI details captured at listener application time (for manual transfer)
   bank?: { upi_id?: string | null; bank_account?: string | null; ifsc_code?: string | null; account_holder_name?: string | null } | null
 }
-type RefundRow  = { id: string; amount: number; reason?: string; status: string; created_at: string; razorpay_payment_id?: string | null; users: { name?: string; email?: string } | null }
+type RefundRow  = { id: string; amount: number; reason?: string; status: string; created_at: string; razorpay_payment_id?: string | null; admin_notes?: string | null; users: { name?: string; email?: string } | null }
 type CompletedPayoutRow = { id: string; user_id: string; amount: number; upi_id?: string | null; status: string; created_at: string; processed_at: string | null; name: string | null; phone: string | null }
 
 type Tab = 'overview' | 'users' | 'listeners' | 'sessions' | 'reports' | 'payouts' | 'verifications' | 'quality'
@@ -2845,23 +2845,55 @@ export default function AdminPage() {
                   )}
                   {r.razorpay_payment_id ? (
                     <div style={{ fontSize: 11, color: 'var(--teal)', marginTop: 4, fontWeight: 700 }}>
-                      Razorpay Payment: <span style={{ fontFamily: 'monospace' }}>{r.razorpay_payment_id}</span>
-                      <span style={{ marginLeft: 6, color: 'var(--green)' }}>● Auto-refund will trigger on "Mark Processed"</span>
+                      Latest recharge: <span style={{ fontFamily: 'monospace' }}>{r.razorpay_payment_id}</span>
+                      <span style={{ marginLeft: 6, color: 'var(--gray)' }}>· refund is split across recharges if needed</span>
                     </div>
                   ) : (
                     <div style={{ fontSize: 11, color: 'var(--orange)', marginTop: 4, fontWeight: 700 }}>
                       ⚠ No payment ID — issue refund manually in Razorpay dashboard
                     </div>
                   )}
+                  {r.admin_notes && (
+                    <div style={{ fontSize: 12, color: 'var(--red)', marginTop: 6, fontWeight: 700 }}>{r.admin_notes}</div>
+                  )}
+                  <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 4 }}>
+                    This amount is already out of the user&apos;s wallet. Rejecting puts it back.
+                  </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                   <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--navy)' }}>₹{r.amount}</div>
                   <button
                     className="btn btn-teal"
                     disabled={busy !== null}
-                    onClick={() => adminAction('complete_refund', r.id, `Refund of ₹${r.amount} marked complete`)}
+                    onClick={() => {
+                      if (!confirm(`Refund ₹${r.amount} to ${r.users?.name || 'this user'} through Razorpay?`)) return
+                      adminAction('complete_refund', r.id, `Refund of ₹${r.amount} sent via Razorpay`)
+                    }}
                   >
-                    {busy === `complete_refund:${r.id}` ? 'Saving…' : 'Mark Processed'}
+                    {busy === `complete_refund:${r.id}` ? 'Refunding…' : 'Refund via Razorpay'}
+                  </button>
+                  <button
+                    className="btn"
+                    style={{ background: 'white', color: 'var(--navy)', border: '1.5px solid var(--border)' }}
+                    disabled={busy !== null}
+                    onClick={() => {
+                      const n = prompt(`Only use this if you already refunded the full ₹${r.amount} yourself (Razorpay dashboard / UPI). Note (optional):`)
+                      if (n === null) return
+                      adminAction('complete_refund_manual', r.id, 'Refund marked as done manually', n || undefined)
+                    }}
+                  >
+                    {busy === `complete_refund_manual:${r.id}` ? 'Saving…' : 'Mark refunded manually'}
+                  </button>
+                  <button
+                    className="btn btn-red"
+                    disabled={busy !== null}
+                    onClick={() => {
+                      const n = prompt(`Reject this refund? ₹${r.amount} goes back to the user's wallet. Reason (optional):`)
+                      if (n === null) return
+                      adminAction('reject_refund', r.id, `Refund rejected — ₹${r.amount} returned to wallet`, n || undefined)
+                    }}
+                  >
+                    {busy === `reject_refund:${r.id}` ? 'Saving…' : 'Reject'}
                   </button>
                 </div>
               </div>
