@@ -91,7 +91,8 @@ type PayoutRow = {
 type RefundRow  = { id: string; amount: number; reason?: string; status: string; created_at: string; razorpay_payment_id?: string | null; admin_notes?: string | null; users: { name?: string; email?: string } | null }
 type CompletedPayoutRow = { id: string; user_id: string; amount: number; upi_id?: string | null; status: string; created_at: string; processed_at: string | null; name: string | null; phone: string | null }
 
-type Tab = 'overview' | 'users' | 'listeners' | 'sessions' | 'reports' | 'payouts' | 'verifications' | 'quality'
+type Tab = 'overview' | 'users' | 'listeners' | 'sessions' | 'reports' | 'payouts' | 'verifications' | 'quality' | 'lounge'
+type LoungeRow = { id: string; content: string; created_at: string; sender: { id: string; name: string | null; phone: string | null; account_suspended: boolean; listener_status: string }; deleted_at: string | null; deleted_by: string | null; reports: number }
 
 // ── Style ─────────────────────────────────────────────────────────────────────
 
@@ -440,6 +441,11 @@ export default function AdminPage() {
   const [qualityListeners, setQualityListeners] = useState<ListenerQuality[]>([])
   const [qualityPairs, setQualityPairs] = useState<RepeatPair[]>([])
   const [qualityLoading, setQualityLoading] = useState(false)
+  const [loungeMsgs, setLoungeMsgs] = useState<LoungeRow[]>([])
+  const [loungeHasMore, setLoungeHasMore] = useState(false)
+  const [loungeLoading, setLoungeLoading] = useState(false)
+  const [loungeShowDeleted, setLoungeShowDeleted] = useState(false)
+  const [loungeQuery, setLoungeQuery] = useState('')
   const showToast = (msg: string) => {
     if (toastTimer.current) clearTimeout(toastTimer.current)
     setToast(msg)
@@ -619,6 +625,40 @@ export default function AdminPage() {
     setQualityLoading(false)
   }, [qualityWindow]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const loadLounge = useCallback(async (opts: { older?: boolean; showDeleted?: boolean; q?: string } = {}) => {
+    const showDeleted = opts.showDeleted ?? loungeShowDeleted
+    const q = opts.q ?? loungeQuery
+    const params = new URLSearchParams()
+    if (showDeleted) params.set('includeDeleted', '1')
+    if (q.trim().length >= 2) params.set('q', q.trim())
+    if (opts.older && loungeMsgs.length) params.set('before', loungeMsgs[0].created_at)
+    setLoungeLoading(true)
+    const res = await fetch(`/api/admin/lounge?${params}`, { headers: adminHeaders() }).catch(() => null)
+    if (res?.ok) {
+      const json = await res.json()
+      const rows = (json.messages ?? []) as LoungeRow[]
+      setLoungeMsgs(prev => opts.older ? [...rows, ...prev] : rows)
+      setLoungeHasMore(!!json.hasMore)
+    } else showToast('Failed to load lounge messages')
+    setLoungeLoading(false)
+  }, [loungeShowDeleted, loungeQuery, loungeMsgs]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  async function deleteLoungeMsg(m: LoungeRow) {
+    if (!confirm(`Delete this message from ${m.sender.name || 'this listener'} for everyone?\n\n"${m.content.slice(0, 200)}"`)) return
+    setBusy(`lounge:${m.id}`)
+    const res = await fetch(`/api/admin/lounge?id=${m.id}`, { method: 'DELETE', headers: adminHeaders() }).catch(() => null)
+    setBusy(null)
+    if (res?.ok) {
+      showToast('Message deleted')
+      setLoungeMsgs(prev => loungeShowDeleted
+        ? prev.map(x => x.id === m.id ? { ...x, deleted_at: new Date().toISOString(), deleted_by: 'admin' } : x)
+        : prev.filter(x => x.id !== m.id))
+    } else {
+      const err = await res?.json().catch(() => ({}))
+      showToast(`Error: ${err?.error || 'Failed to delete'}`)
+    }
+  }
+
 
   // ── Effects ─────────────────────────────────────────────────────────────────
 
@@ -670,6 +710,10 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (tab === 'quality') loadQuality()
+  }, [tab]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (tab === 'lounge') loadLounge()
   }, [tab]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Actions ─────────────────────────────────────────────────────────────────
@@ -880,6 +924,7 @@ export default function AdminPage() {
     { key: 'payouts', label: `Payouts${kpis ? ` (${kpis.payouts.pendingCount})` : ''}` },
     { key: 'verifications', label: 'Verifications' },
     { key: 'quality', label: '⭐ Quality' },
+    { key: 'lounge', label: '💬 Lounge' },
   ]
 
   const PAGE_SIZE = 25
@@ -3001,6 +3046,67 @@ export default function AdminPage() {
                 )}
               </div>
             ))}
+          </>
+        )}
+
+        {tab === 'lounge' && (
+          <>
+            <div className="section-title" style={{ justifyContent: 'space-between', flexWrap: 'wrap' }}>
+              <span>Listener Lounge — full history</span>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                <input className="search-input" placeholder="Search messages…" value={loungeQuery}
+                  onChange={e => setLoungeQuery(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') loadLounge({ q: loungeQuery }) }} />
+                <button className={`filter-btn${loungeShowDeleted ? ' active' : ''}`}
+                  onClick={() => { const v = !loungeShowDeleted; setLoungeShowDeleted(v); loadLounge({ showDeleted: v }) }}>
+                  {loungeShowDeleted ? 'Showing deleted' : 'Show deleted'}
+                </button>
+                <button className="btn btn-teal" onClick={() => loadLounge()}>↻ Refresh</button>
+              </div>
+            </div>
+            <p style={{ fontSize: 12, color: 'var(--gray)', fontWeight: 700, marginBottom: 12 }}>
+              Admin-only view. Listeners see each other by display name only — never phone numbers. Deleting removes the message for everyone.
+            </p>
+            {loungeHasMore && (
+              <button className="btn" style={{ marginBottom: 12, background: 'white', border: '1.5px solid var(--border)', color: 'var(--navy)' }}
+                disabled={loungeLoading} onClick={() => loadLounge({ older: true })}>
+                {loungeLoading ? 'Loading…' : 'Load older messages'}
+              </button>
+            )}
+            {loungeLoading && loungeMsgs.length === 0 ? (
+              <div className="empty">Loading…</div>
+            ) : loungeMsgs.length === 0 ? (
+              <div className="empty">No lounge messages.</div>
+            ) : (
+              <div className="table-wrap"><table><thead><tr>
+                <th>When</th><th>Sender</th><th>Message</th><th>Reports</th><th></th>
+              </tr></thead><tbody>
+                {loungeMsgs.map(m => (
+                  <tr key={m.id} style={m.deleted_at ? { opacity: 0.55 } : undefined}>
+                    <td style={{ whiteSpace: 'nowrap' }}>{fmtDateTime(m.created_at)}</td>
+                    <td>
+                      <div style={{ fontWeight: 800, color: 'var(--navy)' }}>{m.sender.name || '—'}</div>
+                      <div style={{ color: 'var(--gray)', fontSize: 12 }}>{m.sender.phone || '—'}</div>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: m.sender.listener_status === 'active listener' && !m.sender.account_suspended ? 'var(--teal)' : 'var(--red)' }}>
+                        {m.sender.account_suspended ? 'account suspended' : m.sender.listener_status}
+                      </div>
+                    </td>
+                    <td style={{ maxWidth: 480, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                      {m.content}
+                      {m.deleted_at && <div style={{ fontSize: 11, color: 'var(--red)', fontWeight: 700, marginTop: 4 }}>Deleted {fmtDateTime(m.deleted_at)} by {m.deleted_by}</div>}
+                    </td>
+                    <td style={{ color: m.reports ? 'var(--red)' : 'var(--gray)', fontWeight: 800 }}>{m.reports || '—'}</td>
+                    <td>
+                      {!m.deleted_at && (
+                        <button className="btn btn-red" disabled={busy !== null} onClick={() => deleteLoungeMsg(m)}>
+                          {busy === `lounge:${m.id}` ? 'Deleting…' : 'Delete'}
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody></table></div>
+            )}
           </>
         )}
 
