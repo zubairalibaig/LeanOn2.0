@@ -622,6 +622,17 @@ export async function PATCH(req: NextRequest) {
           sb.from('users').select('is_suspended').eq('id', userId).maybeSingle(),
           sb.from('listener_applications').select('status, admin_notes').eq('user_id', userId).maybeSingle(),
         ])
+        // A suspended listener must be unsuspended explicitly. Restoring here used to
+        // set is_active=true while listener_profiles.is_suspended stayed true, and
+        // told the person "your listener account is active again".
+        const { data: lpSusp, error: lpSuspErr } = await sb.from('listener_profiles')
+          .select('is_suspended').eq('user_id', userId).maybeSingle()
+        if (lpSuspErr) {
+          return NextResponse.json({ error: 'Could not verify listener suspension state. Please try again.' }, { status: 500 })
+        }
+        if (lpSusp?.is_suspended) {
+          return NextResponse.json({ error: 'Cannot restore: this listener is suspended. Use Unsuspend first if you want them back.' }, { status: 409 })
+        }
         if (!uRow?.avatar_url) {
           return NextResponse.json({ error: 'Cannot restore: no prior approved photo found. Use the standard Approve action.' }, { status: 400 })
         }

@@ -25,6 +25,7 @@ async function fetchProfile(id: string) {
       .eq('user_id', id)
       .eq('is_approved', true)
       .eq('is_active', true)
+      .eq('is_suspended', false)
       .maybeSingle()
     return data
   } catch {

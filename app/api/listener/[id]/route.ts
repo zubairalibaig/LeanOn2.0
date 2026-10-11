@@ -22,6 +22,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     .eq('user_id', id)
     .eq('is_approved', true)
     .eq('is_active', true)
+    .eq('is_suspended', false)
     .maybeSingle()
 
   let extras: Record<string, unknown> = {}
