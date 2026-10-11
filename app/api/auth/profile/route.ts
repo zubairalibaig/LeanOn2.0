@@ -192,11 +192,20 @@ export async function PATCH(req: NextRequest) {
 
     // Single listener_profiles lookup covers the name-lock check, avatar routing
     // decision, and inactive guard — one DB round-trip instead of three.
-    const { data: lp } = await admin
+    const { data: lp, error: lpErr } = await admin
       .from('listener_profiles')
-      .select('is_approved, is_active, pending_avatar_url')
+      .select('is_approved, is_active, is_suspended, pending_avatar_url')
       .eq('user_id', user.id)
       .maybeSingle()
+    if (lpErr) {
+      return NextResponse.json({ error: 'Could not update profile right now. Please try again.' }, { status: 503 })
+    }
+
+    // Listener-only suspension keeps seeker access, but the name and photo are
+    // what make up the public listener profile — no changes while suspended.
+    if (lp?.is_suspended) {
+      return NextResponse.json({ error: 'Your listener profile is suspended. Please contact support.' }, { status: 403 })
+    }
 
     // Inactive (deactivated) approved listeners may not queue new photos for
     // admin review. Contact support to reactivate first.

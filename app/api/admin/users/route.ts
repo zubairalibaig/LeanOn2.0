@@ -815,7 +815,7 @@ export async function PATCH(req: NextRequest) {
         // Listener-profile-only suspension — does NOT touch the users row.
         // The person retains seeker access and their wallet is unaffected.
         const { error: lpErr } = await sb.from('listener_profiles')
-          .update({ is_active: false, is_available: false, is_suspended: true })
+          .update({ is_active: false, is_available: false, is_suspended: true, pending_avatar_url: null })
           .eq('user_id', userId)
         if (lpErr) {
           logger.error('suspend_listener: listener_profiles update failed', { userId, error: lpErr.message })

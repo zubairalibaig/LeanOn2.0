@@ -42,8 +42,14 @@ export async function POST(req: NextRequest) {
 
     const admin = createAdminClient()
 
-    const { data: userRow } = await admin.from('users').select('is_suspended').eq('id', user.id).maybeSingle()
-    if (userRow?.is_suspended) {
+    const [{ data: userRow }, { data: lpRow, error: lpErr }] = await Promise.all([
+      admin.from('users').select('is_suspended').eq('id', user.id).maybeSingle(),
+      admin.from('listener_profiles').select('is_suspended').eq('user_id', user.id).maybeSingle(),
+    ])
+    if (lpErr) {
+      return NextResponse.json({ error: 'Could not check your account right now. Please try again.' }, { status: 503 })
+    }
+    if (userRow?.is_suspended || lpRow?.is_suspended) {
       return NextResponse.json({ error: 'Your account is suspended. Please contact support.', code: 'suspended' }, { status: 403 })
     }
 

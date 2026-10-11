@@ -104,8 +104,16 @@ export async function POST(req: NextRequest) {
     const admin = createAdminClient()
 
     // Suspension check — a suspended user must not be able to update any profile data.
-    const { data: userRow } = await admin.from('users').select('is_suspended').eq('id', user.id).maybeSingle()
-    if (userRow?.is_suspended) {
+    // Both suspensions: the account one (users) and the listener-only one
+    // (listener_profiles, set by suspend_listener), which leaves seeker access on.
+    const [{ data: userRow }, { data: lpSusp, error: lpSuspErr }] = await Promise.all([
+      admin.from('users').select('is_suspended').eq('id', user.id).maybeSingle(),
+      admin.from('listener_profiles').select('is_suspended').eq('user_id', user.id).maybeSingle(),
+    ])
+    if (lpSuspErr) {
+      return NextResponse.json({ error: 'Could not check your account right now. Please try again.' }, { status: 503 })
+    }
+    if (userRow?.is_suspended || lpSusp?.is_suspended) {
       return NextResponse.json({ error: 'Your account is suspended. Please contact support.' }, { status: 403 })
     }
 
