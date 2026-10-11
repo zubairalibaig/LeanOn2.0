@@ -133,6 +133,8 @@ export default function ListenerLoungePage() {
   const [error, setError] = useState('')         // fatal load error — replaces page
   const [sendError, setSendError] = useState('') // inline send error — toast only
   const [connected, setConnected] = useState(false)
+  const [reconnectTick, setReconnectTick] = useState(0)
+  const connectedRef = useRef(false)
   const [hasMore, setHasMore] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
   const [searchQ, setSearchQ] = useState('')
@@ -231,7 +233,9 @@ export default function ListenerLoungePage() {
     if (!userId) return
     const sb = getSb()
 
-    const ch = sb.channel('listener-lounge')
+    let cancelled = false
+    let retryTimer: ReturnType<typeof setTimeout> | null = null
+    const ch = sb.channel(`listener-lounge:${reconnectTick}`)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
@@ -256,6 +260,10 @@ export default function ListenerLoungePage() {
       })
       .subscribe(status => {
         setConnected(status === 'SUBSCRIBED')
+        connectedRef.current = status === 'SUBSCRIBED'
+        if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+          if (!cancelled) retryTimer = setTimeout(() => setReconnectTick(t => t + 1), 3000)
+        }
         // Reconnect reconciliation: fetch any messages missed during the drop
         if (status === 'SUBSCRIBED') {
           setMessages(prev => {
@@ -279,8 +287,58 @@ export default function ListenerLoungePage() {
       })
 
     channelRef.current = ch
-    return () => { sb.removeChannel(ch) }
-  }, [userId, applyMsg])
+    return () => {
+      cancelled = true
+      if (retryTimer) clearTimeout(retryTimer)
+      sb.removeChannel(ch)
+    }
+  }, [userId, applyMsg, reconnectTick])
+
+  // Safety net for realtime: re-sync the latest page every 15s while the page is
+  // visible, and right away when the tab comes back or the network returns.
+  // Replacing the newest window also drops messages deleted by others.
+  useEffect(() => {
+    if (!userId) return
+    let inFlight = false
+    const sync = async () => {
+      if (inFlight || isSearchModeRef.current || document.visibilityState !== 'visible') return
+      inFlight = true
+      try {
+        const res = await fetch('/api/lounge/messages', { cache: 'no-store' })
+        if (!res.ok) return
+        const data = await res.json()
+        const latest: LoungeMsg[] = data.messages ?? []
+        if (isSearchModeRef.current) return
+        setMessages(prev => {
+          if (!latest.length) return prev.filter(m => m.temp)
+          const windowStart = new Date(latest[0].created_at).getTime()
+          const older = prev.filter(m => !m.temp && new Date(m.created_at).getTime() < windowStart)
+          const latestIds = new Set(latest.map(m => m.id))
+          const pending = prev.filter(m => m.temp && !latestIds.has(m.id))
+          const next = [...older, ...latest, ...pending]
+          const same = next.length === prev.length && next.every((m, i) => m.id === prev[i].id)
+          return same ? prev : next
+        })
+        const newest = latest[latest.length - 1]?.created_at
+        if (newest) { try { localStorage.setItem(`lounge_last_seen_${userId}`, newest) } catch (_) {} }
+      } catch (_) {
+        // offline — next tick or the 'online' event retries
+      } finally {
+        inFlight = false
+      }
+    }
+    const t = setInterval(sync, 15_000)
+    const reconnectIfDown = () => { if (!connectedRef.current) setReconnectTick(n => n + 1) }
+    const onVisible = () => { if (document.visibilityState === 'visible') { sync(); reconnectIfDown() } }
+    const onOnline = () => { sync(); reconnectIfDown() }
+    document.addEventListener('visibilitychange', onVisible)
+    window.addEventListener('online', onOnline)
+    return () => {
+      clearInterval(t)
+      document.removeEventListener('visibilitychange', onVisible)
+      window.removeEventListener('online', onOnline)
+    }
+  }, [userId])
 
   const loadMore = useCallback(async () => {
     if (loadingMore || !hasMore || !messages.length) return
