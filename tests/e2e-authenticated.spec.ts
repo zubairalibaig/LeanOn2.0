@@ -138,7 +138,7 @@ test.describe('Listener: 3-step application form in a real browser', () => {
     try {
       await login(page, LISTENER_PHONE, LISTENER_OTP, { listenerMode: true })
       const userId = await authUserId(context)
-  
+
       // A previous run leaves this test user with a pending/approved application,
       // which the form (rightly) refuses to reopen. Send it back to "needs fix"
       // WITH "new selfie required", so the run also proves the selfie reset works.
@@ -149,7 +149,7 @@ test.describe('Listener: 3-step application form in a real browser', () => {
         })
         expect(reset.ok(), `reset failed: ${await reset.text()}`).toBeTruthy()
       }
-  
+
       await page.goto('/become-listener')
       const agree = page.getByRole('checkbox')
       // isVisible() doesn't wait — the intent screen renders after an auth check.
@@ -158,14 +158,14 @@ test.describe('Listener: 3-step application form in a real browser', () => {
         await page.getByRole('button', { name: /I agree/ }).click()
       }
       await expect(page.locator('.section-title', { hasText: 'About you' })).toBeVisible({ timeout: 20_000 })
-  
+
       // Chips are toggles and a resubmission pre-fills them — set, don't flip.
       const chip = (label: string) => page.getByRole('button', { name: label, exact: true })
       const setChip = async (label: string, on: boolean) => {
         const isOn = /\bsel\b/.test((await chip(label).getAttribute('class')) ?? '')
         if (isOn !== on) await chip(label).click()
       }
-  
+
       // ── Step 1 ──
       await page.getByPlaceholder('Your full name').fill('Test Listener') // form allows letters only
       await page.locator('textarea').first().fill('Automated end-to-end test listener profile, here to listen with care.')
@@ -176,17 +176,17 @@ test.describe('Listener: 3-step application form in a real browser', () => {
       })
       await page.locator('input[type=file]').setInputFiles({ name: 'me.jpg', mimeType: 'image/jpeg', buffer: Buffer.from(jpeg, 'base64') })
       await expect(page.getByAltText('Your display photo')).toBeVisible()
-  
+
       await page.getByRole('button', { name: /Take a selfie|Retake selfie/ }).click()
       await page.getByRole('button', { name: /Take Photo/ }).click({ timeout: 20_000 })
       await expect(page.getByText('Selfie saved privately')).toBeVisible({ timeout: 30_000 })
-  
+
       for (const p of TAGLINE_PHRASES) if (!ONBOARDING.tagline_phrases.includes(p)) await setChip(p, false)
       for (const p of ONBOARDING.tagline_phrases) await setChip(p, true)
       await page.getByPlaceholder(/I moved to a new city/).fill(ONBOARDING.lived_experience)
       await setChip('Loneliness 🌙', true)
       await page.getByRole('button', { name: /Next: Your background/ }).click()
-  
+
       // ── Step 2 ──
       await expect(page.locator('.section-title', { hasText: 'Your background' })).toBeVisible({ timeout: 30_000 })
       const selects = page.locator('select')
@@ -201,7 +201,7 @@ test.describe('Listener: 3-step application form in a real browser', () => {
       await selects.nth(5).selectOption(ONBOARDING.heard_from)
       for (const q of SCREENING_QUIZ) await page.locator(`input[name="quiz-${q.id}"]`).nth(q.correct).check()
       await page.getByRole('button', { name: /Next: Rate/ }).click()
-  
+
       // ── Step 3 ──
       await expect(page.locator('.section-title', { hasText: 'Rate & payment details' })).toBeVisible()
       await page.getByLabel('Birth month').selectOption('6')
@@ -214,10 +214,10 @@ test.describe('Listener: 3-step application form in a real browser', () => {
       await page.getByPlaceholder('e.g. SBIN0001234').fill('HDFC0001234')
       await page.getByPlaceholder('12-digit Aadhaar').fill('234567890124')
       await page.getByRole('button', { name: /Submit application/ }).click()
-  
+
       // Success screen or the status page — either proves the server accepted it.
       await expect(page.getByText(/submitted|under review|pending/i).first()).toBeVisible({ timeout: 30_000 })
-        await expect(page.locator('.error-box')).toHaveCount(0)
+      await expect(page.locator('.error-box')).toHaveCount(0)
     } finally {
       await context.close()
       await browser.close()
