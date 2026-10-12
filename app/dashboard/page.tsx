@@ -518,8 +518,10 @@ export default function DashboardPage() {
         .then(r => r.json().catch(() => ({})))
         .then(body => {
           // The server says it hasn't expired yet — put it back on screen.
-          if (body?.error === 'not_expired' && userIdForAlertsRef.current) {
-            checkPendingRequest(userIdForAlertsRef.current)
+          if (body?.error === 'not_expired') {
+            // Use the server's remaining time — recomputing from this device's
+            // clock is what declared it expired in the first place.
+            surfaceIncoming(s, Math.max(10, Math.ceil((Number(body.retryInMs) || 0) / 1000) + 5))
             return
           }
           showToast('Session request expired — seeker has been refunded.', 'info')
@@ -568,7 +570,9 @@ export default function DashboardPage() {
         surfaceIncoming(s)
       })
       .subscribe()
-    checkPendingRequest(listenerId)
+    // After the clock sync, so a phone with a fast clock doesn't treat a fresh
+    // request as already expired.
+    syncServerClock().then(() => checkPendingRequest(listenerId))
   }
 
   function dismissIncoming() {
@@ -581,7 +585,8 @@ export default function DashboardPage() {
   async function loadData() {
    try {
     const { data: { user: u }, error: authError } = await sb.auth.getUser()
-    if (authError) { setLoadError('Connection problem — please retry.'); return } // transient: don't bounce to OTP
+    // Transient failure: stay put. No session at all = genuinely signed out.
+    if (authError && authError.name !== 'AuthSessionMissingError') { setLoadError('Connection problem — please retry.'); return }
     if (!u) { router.push('/auth?redirect=/dashboard'); return }
     setUser(u)
     userIdForAlertsRef.current = u.id
@@ -1041,7 +1046,12 @@ export default function DashboardPage() {
                       dismissIncoming()
                     }
                   } catch {
-                    showToast('Network error — could not accept session.', 'error')
+                    // The countdown was stopped for the accept; don't leave the
+                    // modal ringing with a frozen timer. Re-show it if still pending.
+                    showToast('Network error — could not accept session. Try again.', 'error')
+                    const lid = userIdForAlertsRef.current
+                    dismissIncoming()
+                    if (lid) checkPendingRequest(lid)
                   } finally {
                     setRespondingIncoming(false)
                   }

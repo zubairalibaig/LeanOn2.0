@@ -121,13 +121,21 @@ export async function POST(req: NextRequest) {
     // booked while the listener was mid-session could never be seen (the alert
     // popup stays quiet inside a session) and counted as a missed request.
     {
-      const { data: activeSessions } = await sb
+      const { data: openRows } = await sb
         .from('sessions')
-        .select('id')
+        .select('id, status, started_at, duration_mins')
         .eq('listener_id', listenerId)
         .in('status', ['active', 'pending'])
-        .limit(1)
-      if (activeSessions && activeSessions.length > 0) {
+        .limit(5)
+      // For free trials, ignore an 'active' session long past its booked end —
+      // one both sides abandoned, which only the nightly cron closes. Paid
+      // bookings keep the strict check: the DB allows one active paid session.
+      const now = Date.now()
+      const abandoned = (r: { status: string; started_at: string | null; duration_mins: number }) =>
+        r.status === 'active' && !!r.started_at
+        && now > new Date(r.started_at).getTime() + (Number(r.duration_mins) + 10) * 60_000
+      const blocking = (openRows ?? []).filter(r => !(effectivelyFree && abandoned(r as { status: string; started_at: string | null; duration_mins: number })))
+      if (blocking.length > 0) {
         return NextResponse.json({ error: 'listener_busy', message: 'This listener is in a session right now. Please try again shortly.' }, { status: 409 })
       }
     }

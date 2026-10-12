@@ -82,6 +82,7 @@ export default function ListenerPresence() {
   useEffect(() => {
     let cancelled = false
     let identified = false
+    let identifiedUserId: string | null = null
     let retry: ReturnType<typeof setTimeout> | null = null
     const identify = async () => {
       if (cancelled || identified) return
@@ -89,7 +90,8 @@ export default function ListenerPresence() {
       try {
         const { data: { user }, error } = await sb.auth.getUser()
         if (cancelled) return
-        if (error) { retry = setTimeout(identify, 10_000); return }
+        // No session at all is "signed out", not a network blip — don't retry.
+        if (error && error.name !== 'AuthSessionMissingError') { retry = setTimeout(identify, 10_000); return }
         if (!user) return
         setUserId(user.id)
         const { data: lp, error: lpErr } = await sb
@@ -100,6 +102,7 @@ export default function ListenerPresence() {
         if (cancelled) return
         if (lpErr) { retry = setTimeout(identify, 10_000); return }
         identified = true
+        identifiedUserId = user.id
         if (!lp) return
         const active = lp.is_approved && !lp.is_suspended && lp.is_active !== false
         setIsListener(!!active)
@@ -112,8 +115,14 @@ export default function ListenerPresence() {
     identify()
     const onVis = () => { if (document.visibilityState === 'visible') identify() }
     document.addEventListener('visibilitychange', onVis)
-    const { data: { subscription } } = sb.auth.onAuthStateChange(event => {
-      if (event === 'SIGNED_IN') { identified = false; identify() }
+    // auth-js re-emits SIGNED_IN on every tab focus; only a different account
+    // needs re-identifying. Re-reading is_available on each focus raced the
+    // "Go online" toggle and could flip the UI (and alerts) off.
+    const { data: { subscription } } = sb.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session?.user?.id && session.user.id !== identifiedUserId) {
+        identified = false
+        identify()
+      }
     })
     return () => {
       cancelled = true
@@ -217,7 +226,7 @@ export default function ListenerPresence() {
       })
       .subscribe()
 
-    check()
+    syncServerClock().then(check)
     const iv = setInterval(check, 30_000)
     const onVis = () => { if (document.visibilityState === 'visible') check() }
     document.addEventListener('visibilitychange', onVis)

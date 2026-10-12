@@ -435,7 +435,16 @@ function SessionContent() {
     const isSeeker = userIdRef.current !== null && listenerId !== null && userIdRef.current !== listenerId
     const deadline = new Date(requestCreatedAt).getTime() + REQUEST_RESPONSE_WINDOW_MS
     let fired = false
+    let attempts = 0
     let rearm: ReturnType<typeof setTimeout> | null = null
+    // Back off between retries; give up after a few (the server expires the
+    // request itself on the next booking or the nightly cleanup).
+    const retryLater = (ms?: number) => {
+      attempts++
+      if (attempts > 6) return
+      const backoff = [5_000, 10_000, 30_000, 60_000, 120_000, 300_000][attempts - 1]
+      rearm = setTimeout(() => { fired = false }, Math.max(1000, ms ?? backoff))
+    }
     syncServerClock()
     const tick = () => {
       const left = Math.max(0, Math.round((deadline - serverNow()) / 1000))
@@ -454,13 +463,15 @@ function SessionContent() {
               rearm = setTimeout(() => { fired = false }, Math.max(1000, Number(body.retryInMs) || 5000))
               return
             }
+            // Not allowed / not found: retrying won't help; the status poll decides.
+            if (res.status === 401 || res.status === 403 || res.status === 404) return
             if (res.ok || body?.status === 'cancelled') { setSessionStatus('cancelled'); return }
             // Already handled (e.g. accepted at the last second) or a transient
             // error: stay on 'pending' so the 4s status poll moves the page to the
             // real state — never show "not accepted" for a session that is live.
-            if (!body?.status) rearm = setTimeout(() => { fired = false }, 5000)
+            if (!body?.status) retryLater()
           })
-          .catch(() => { fired = false })
+          .catch(() => retryLater())
       }
     }
     tick()
