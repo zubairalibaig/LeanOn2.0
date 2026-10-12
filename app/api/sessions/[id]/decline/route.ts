@@ -49,11 +49,10 @@ export async function POST(
   // A timeout counts against the listener (recordMissedRequest can set them
   // offline), so a SEEKER's claim must be backed by the full window — otherwise
   // anyone could book, "time out" early, and knock a listener offline for free.
-  // The listener's own countdown gets 30s of clock-skew slack.
+  // The listener's own countdown gets 5s of clock-skew slack (see below).
   const ageMs = Date.now() - new Date(session.created_at as string).getTime()
-  // Listener gets 30s of clock-skew slack; seeker gets none — they control the
-  // clock on their end and 2s slack let a seeker claim timeout early, triggering
-  // recordMissedRequest and potentially knocking a listener offline.
+  // Listener gets 5s of clock-skew slack; seeker gets none — a seeker must not be
+  // able to claim a timeout early and trigger recordMissedRequest.
   // A "timeout" sent before the window has actually passed (device clock ahead,
   // or a countdown that drifted) must NOT cancel the request — it used to cancel
   // anyway, just under another label, so listeners lost requests they never saw.

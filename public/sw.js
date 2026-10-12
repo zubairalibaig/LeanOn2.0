@@ -98,8 +98,13 @@ self.addEventListener('notificationclick', (event) => {
   event.waitUntil((async () => {
     const list = (await self.clients.matchAll({ type: 'window', includeUncontrolled: true }))
       .filter((c) => c.url.indexOf(self.location.origin) === 0)
-    // Prefer a window already on the target page, then any LeanOn window.
-    const c = list.find((w) => w.url === target) || list[0]
+    const isRequest = event.notification.data && event.notification.data.type === 'session_request'
+    const inSessionPage = (w) => new URL(w.url).pathname.indexOf('/session/') === 0
+    // Prefer a window already on the target page, then any LeanOn window. For a
+    // new request, never use a session page: it can't show the accept popup, and
+    // the only window being an old session page made the tap do nothing.
+    const candidates = isRequest ? list.filter((w) => !inSessionPage(w)) : list
+    const c = candidates.find((w) => w.url === target) || candidates[0]
     if (c) {
       // Focus FIRST: the browser only allows focus for a few seconds after the
       // tap, and navigate() waits for the new page to load — on a slow phone

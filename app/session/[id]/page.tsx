@@ -441,7 +441,9 @@ function SessionContent() {
     // request itself on the next booking or the nightly cleanup).
     const retryLater = (ms?: number) => {
       attempts++
-      if (attempts > 6) return
+      // Out of retries: show the outcome rather than a frozen 0s. The server
+      // expires and refunds the request on the next booking or nightly cleanup.
+      if (attempts > 6) { setSessionStatus('cancelled'); return }
       const backoff = [5_000, 10_000, 30_000, 60_000, 120_000, 300_000][attempts - 1]
       rearm = setTimeout(() => { fired = false }, Math.max(1000, ms ?? backoff))
     }
@@ -477,7 +479,21 @@ function SessionContent() {
     tick()
     const iv = setInterval(tick, 1000)
     return () => { clearInterval(iv); if (rearm) clearTimeout(rearm) }
-  }, [sessionStatus, requestCreatedAt, listenerId, sessionId])
+  }, [sessionStatus, requestCreatedAt, listenerId, sessionId, userId])
+
+  // Tell the global alert layer (ListenerPresence) whether this session is live:
+  // it stays quiet during a session but must alert again once it has ended.
+  useEffect(() => {
+    const live = !ended && sessionStatus !== 'cancelled'
+    const w = window as Window & { __leanonSessionLive?: boolean }
+    w.__leanonSessionLive = live
+    window.dispatchEvent(new CustomEvent('leanon:session-live', { detail: live }))
+  }, [ended, sessionStatus])
+  useEffect(() => () => {
+    // Leaving the page: the next /session page starts as live until it reports.
+    delete (window as Window & { __leanonSessionLive?: boolean }).__leanonSessionLive
+    window.dispatchEvent(new CustomEvent('leanon:session-live', { detail: true }))
+  }, [])
 
   // Back button guard — intercept popstate (Item 17)
   useEffect(() => {

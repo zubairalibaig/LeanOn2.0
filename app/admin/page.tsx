@@ -2520,11 +2520,13 @@ export default function AdminPage() {
                               : <span className="badge badge-gray">{s.status}</span>}
                           {s.request_push && (() => {
                             const p = s.request_push
-                            const ok = p.delivered > 0
-                            const text = !p.configured ? 'Alert: server not set up'
-                              : p.devices === 0 ? 'Alert: listener has no device'
-                              : ok ? `Alert sent to ${p.delivered}/${p.devices} device${p.devices === 1 ? '' : 's'}`
-                              : `Alert failed: ${p.errors[0] || 'unknown'}`
+                            const delivered = Number(p.delivered) || 0
+                            const devices = Number(p.devices) || 0
+                            const ok = delivered > 0
+                            const text = p.configured === false ? 'Alert: server not set up'
+                              : devices === 0 ? 'Alert: listener has no device'
+                              : ok ? `Alert sent to ${delivered}/${devices} device${devices === 1 ? '' : 's'}`
+                              : `Alert failed: ${p.errors?.[0] || 'unknown'}`
                             return <div style={{ fontSize: 11, fontWeight: 700, marginTop: 4, color: ok ? 'var(--teal)' : 'var(--red)' }}>{ok ? '🔔' : '🔕'} {text}</div>
                           })()}
                           {unsettledIds.has(s.id) && (

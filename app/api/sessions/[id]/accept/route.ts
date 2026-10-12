@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
 import { REQUEST_RESPONSE_WINDOW_MS } from '@/lib/constants'
-import { recordMissedRequest } from '@/lib/listener-presence'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const REQUEST_TTL_MS = REQUEST_RESPONSE_WINDOW_MS
@@ -109,6 +108,6 @@ async function expireSession(
       logger.error('accept/expire: refund failed', { sessionId, error: error.message })
     }
   }
-  // After the refund — see recordMissedRequest.
-  await recordMissedRequest(sb, { listenerId: session.listener_id, sessionId })
+  // No recordMissedRequest here: the listener DID respond, just after the
+  // window — counting it as a miss could set an attentive listener offline.
 }

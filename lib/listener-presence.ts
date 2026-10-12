@@ -26,7 +26,9 @@ type Sb = ReturnType<typeof createAdminClient>
 
 export { STALE_HEARTBEAT_MINS, AWAY_WITH_ALERTS_MINS }
 
-export async function sweepStaleListeners(sb: Sb): Promise<void> {
+// `onlyUserId` limits the sweep to one listener — used at booking so a listener
+// who left without push alerts isn't booked into a 3-minute dead wait.
+export async function sweepStaleListeners(sb: Sb, onlyUserId?: string): Promise<void> {
   const now = Date.now()
   const staleCutoff = new Date(now - STALE_HEARTBEAT_MINS * 60_000).toISOString()
   const awayCutoff = new Date(now - AWAY_WITH_ALERTS_MINS * 60_000).toISOString()
@@ -35,24 +37,25 @@ export async function sweepStaleListeners(sb: Sb): Promise<void> {
   // clause containing an ISO timestamp, which once left ghosts online forever.
   try {
     // 1. Online with no heartbeat at all.
-    const { error: e1 } = await sb.from('listener_profiles')
+    const scoped = <Q extends { eq: (c: string, v: string) => Q }>(q: Q): Q => onlyUserId ? q.eq('user_id', onlyUserId) : q
+    const { error: e1 } = await scoped(sb.from('listener_profiles')
       .update({ is_available: false })
       .eq('is_available', true)
-      .is('last_heartbeat_at', null)
+      .is('last_heartbeat_at', null))
     if (e1) logger.warn('sweep(null-hb) failed', { error: e1.message })
 
     // 2. Past the away window — everyone, alerts or not.
-    const { error: e2 } = await sb.from('listener_profiles')
+    const { error: e2 } = await scoped(sb.from('listener_profiles')
       .update({ is_available: false })
       .eq('is_available', true)
-      .lt('last_heartbeat_at', awayCutoff)
+      .lt('last_heartbeat_at', awayCutoff))
     if (e2) logger.warn('sweep(away) failed', { error: e2.message })
 
     // 3. Between 15 min and the away window: offline unless push can reach them.
-    const { data: stale, error: e3 } = await sb.from('listener_profiles')
+    const { data: stale, error: e3 } = await scoped(sb.from('listener_profiles')
       .select('user_id')
       .eq('is_available', true)
-      .lt('last_heartbeat_at', staleCutoff)
+      .lt('last_heartbeat_at', staleCutoff))
       .limit(500)
     if (e3) { logger.warn('sweep(stale read) failed', { error: e3.message }); return }
     const ids = ((stale ?? []) as { user_id: string }[]).map(r => r.user_id)
@@ -102,7 +105,7 @@ export async function recordMissedRequest(sb: Sb, args: { listenerId: string; se
     if (!row?.is_available) return
 
     const staleCutoff = new Date(Date.now() - STALE_HEARTBEAT_MINS * 60_000).toISOString()
-    const away = !row.last_heartbeat_at || row.last_heartbeat_at < staleCutoff
+    const away = !row.last_heartbeat_at || new Date(row.last_heartbeat_at).getTime() < new Date(staleCutoff).getTime()
 
     let secondInARow = false
     if (!away) {

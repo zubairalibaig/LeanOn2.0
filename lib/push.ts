@@ -1,5 +1,5 @@
 import type { createAdminClient } from '@/lib/supabase-server'
-import { sendWebPush, type WebPushMessage } from '@/lib/firebase-admin'
+import { sendWebPush, getFirebaseAdmin, type WebPushMessage } from '@/lib/firebase-admin'
 import { logger } from '@/lib/logger'
 
 type Sb = ReturnType<typeof createAdminClient>
@@ -49,6 +49,8 @@ const REACHABLE_WITHIN_DAYS = 3
 export async function pushReachableUserIds(sb: Sb, userIds: string[]): Promise<Set<string>> {
   const reachable = new Set<string>()
   if (userIds.length === 0) return reachable
+  // No server push credentials → nobody can be reached by push, whatever tokens exist.
+  if (!getFirebaseAdmin()) return reachable
   const since = new Date(Date.now() - REACHABLE_WITHIN_DAYS * 24 * 60 * 60_000).toISOString()
   const { data: rows, error } = await sb.from('push_tokens').select('user_id')
     .in('user_id', userIds).gte('last_seen_at', since)

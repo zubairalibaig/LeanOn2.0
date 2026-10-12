@@ -220,7 +220,7 @@ export default function DashboardPage() {
   const [loungeAnnouncementDismissed, setLoungeAnnouncementDismissed] = useState(true)
   const [countdown, setCountdown] = useState(60)
   // How long the listener has to answer, in sync with the seeker's server-side
-  // 5-minute auto-cancel window. Previously the dashboard auto-declined after
+  // 3-minute auto-cancel window. Previously the dashboard auto-declined after
   // just 60s — so a listener who stepped away for 90s lost the request (and the
   // seeker got refunded) even though the seeker was still waiting for up to 5
   // minutes. countdownMax tracks the window this specific request started with,
@@ -375,7 +375,7 @@ export default function DashboardPage() {
   // Safety-net poll: receiving a paid request is revenue-critical, so we don't
   // rely on the realtime INSERT event alone (websockets drop, subscriptions
   // race the insert). Every 20s while online and idle, re-check for a pending
-  // request. Guaranteed to surface it well within the 5-minute accept window.
+  // request. Guaranteed to surface it well within the 3-minute accept window.
   useEffect(() => {
     if (!avail || !user?.id) return
     const iv = setInterval(async () => {
@@ -495,7 +495,7 @@ export default function DashboardPage() {
     incomingIdRef.current = s.id
     setIncomingSession(s)
     startRequestAlert(s)
-    // Default to the time remaining in the seeker's 5-minute window, derived
+    // Default to the time remaining in the seeker's 3-minute window, derived
     // from created_at, so a request delivered live gets the FULL window and one
     // recovered by catch-up gets whatever is left — never a hardcoded 60s.
     const remaining = secsLeft ?? (() => {
@@ -510,13 +510,13 @@ export default function DashboardPage() {
       setIncomingSession(null)
       stopRequestAlert()
       // Auto-decline so the seeker gets an immediate refund instead of waiting
-      // for their own 5-minute timeout to fire.
+      // for their own 3-minute timeout to fire.
       fetch(`/api/sessions/${expiredId}/decline`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reason: 'timeout' }),
       })
-        .then(r => r.json().catch(() => ({})))
-        .then(body => {
+        .then(async r => ({ ok: r.ok, body: await r.json().catch(() => ({})) }))
+        .then(({ ok, body }) => {
           // The server says it hasn't expired yet — put it back on screen.
           if (body?.error === 'not_expired') {
             // Use the server's remaining time — recomputing from this device's
@@ -524,7 +524,7 @@ export default function DashboardPage() {
             surfaceIncoming(s, Math.max(10, Math.ceil((Number(body.retryInMs) || 0) / 1000) + 5))
             return
           }
-          showToast('Session request expired — seeker has been refunded.', 'info')
+          if (ok) showToast('Session request expired — seeker has been refunded.', 'info')
         })
         .catch(() => {})
     }, remaining)
@@ -534,24 +534,29 @@ export default function DashboardPage() {
   // wasn't subscribed (page just loaded, tab was backgrounded, socket blipped).
   // Without this, a request is only ever delivered by the live INSERT event —
   // so any subscription-timing race drops it silently and the listener never
-  // sees it. The 5-minute validity window matches the seeker's auto-cancel.
+  // sees it. The 3-minute validity window matches the seeker's auto-cancel.
   async function checkPendingRequest(listenerId: string) {
     if (incomingIdRef.current) return // already showing one
-    const { data } = await sb
+    const pendingQuery = (cols: string) => sb
       .from('sessions')
-      .select('id, duration_mins, session_type, amount_held, platform_fee, seeker_id, created_at, status, service_fee_rate')
+      .select(cols)
       .eq('listener_id', listenerId)
       .eq('status', 'pending')
       .order('created_at', { ascending: false })
       .limit(1)
-    const row = data?.[0]
+    const base = 'id, duration_mins, session_type, amount_held, platform_fee, seeker_id, created_at, status'
+    let { data, error } = await pendingQuery(`${base}, service_fee_rate`)
+    // service_fee_rate is migration 062 — if the live DB lacks it, the whole read
+    // fails and no pending request is ever recovered. Retry without it.
+    if (error) ({ data, error } = await pendingQuery(base))
+    const row = (data as unknown as Record<string, unknown>[] | null)?.[0]
     if (!row) return
     const ageSecs = Math.floor((serverNow() - new Date(row.created_at as string).getTime()) / 1000)
     const remaining = RESPONSE_WINDOW_SECS - ageSecs // seeker auto-cancels when the window lapses
     if (remaining <= 5) return // about to expire — don't bother surfacing
     // Give the listener the FULL remaining window (was capped at 60s, which
-    // auto-declined the seeker far earlier than their own 5-minute timeout).
-    surfaceIncoming(row as IncomingSession & { status?: string }, remaining)
+    // auto-declined the seeker far earlier than their own 3-minute timeout).
+    surfaceIncoming(row as unknown as IncomingSession & { status?: string }, remaining)
   }
 
   // Realtime INSERT for new requests + an immediate catch-up query for any that
@@ -949,9 +954,93 @@ export default function DashboardPage() {
   const nextTierAt      = 200
   const progressPct     = Math.min(100, Math.round((totalSessions / nextTierAt) * 100))
 
+  // Rendered on every screen (including loading/error) — a request can arrive
+  // before the dashboard finishes loading, and ringing without an Accept
+  // button is worse than no alert.
+  const incomingModal = incomingSession ? (
+    <div className="modal-overlay">
+      <div className="modal-card" onClick={e => e.stopPropagation()}>
+        <div className="modal-icon">📞</div>
+        <div className="modal-title2">New session request!</div>
+        <div className="modal-sub">Someone wants to connect with you right now.</div>
+        <div className="countdown-bar">
+          <div className="countdown-fill" style={{ width: `${(countdown / countdownMax) * 100}%` }} />
+        </div>
+        <div className="modal-detail">
+          <div className="modal-detail-item">
+            <div className="modal-detail-label">Duration</div>
+            <div className="modal-detail-value">{incomingSession.duration_mins ?? '—'} min</div>
+          </div>
+          <div className="modal-detail-item">
+            <div className="modal-detail-label">Type</div>
+            <div className="modal-detail-value" style={{ textTransform: 'capitalize' }}>{incomingSession.session_type ?? '—'}</div>
+          </div>
+          <div className="modal-detail-item">
+            <div className="modal-detail-label">You earn</div>
+            <div className="modal-detail-value">
+              {incomingSession.amount_held ? `₹${estimateListenerTakeHome(incomingSession, profile?.rate_per_min, incomingSession.service_fee_rate ?? profile?.custom_service_fee_rate)}` : 'Free trial'}
+            </div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
+          <button
+            className="btn-join-session"
+            style={{ flex: 2, marginBottom: 0 }}
+            disabled={respondingIncoming}
+            onClick={async () => {
+              if (!incomingSession) return
+              // Stop the countdown first: if it hit 0 mid-request it fired an
+              // auto-decline that raced (and beat) this accept.
+              if (countdownRef.current) { clearInterval(countdownRef.current); countdownRef.current = null }
+              setRespondingIncoming(true)
+              try {
+                const res = await fetch(`/api/sessions/${incomingSession.id}/accept`, { method: 'POST' })
+                if (res.ok) {
+                  const sess = incomingSession
+                  dismissIncoming()
+                  router.push(`/session/${sess.id}?name=You&duration=${sess.duration_mins}&type=${sess.session_type ?? 'text'}`)
+                } else {
+                  const body = await res.json().catch(() => ({}))
+                  showToast(body.message || body.error || 'Could not accept — it may have expired.', 'error')
+                  dismissIncoming()
+                }
+              } catch {
+                // The countdown was stopped for the accept; don't leave the
+                // modal ringing with a frozen timer. Re-show it if still pending.
+                showToast('Network error — could not accept session. Try again.', 'error')
+                const lid = userIdForAlertsRef.current
+                dismissIncoming()
+                if (lid) checkPendingRequest(lid)
+              } finally {
+                setRespondingIncoming(false)
+              }
+            }}
+          >
+            {respondingIncoming ? '…' : `✅ Accept (${countdown >= 60 ? `${Math.floor(countdown / 60)}:${String(countdown % 60).padStart(2, '0')}` : `${countdown}s`})`}
+          </button>
+          <button
+            className="btn-dismiss"
+            style={{ flex: 1, background: '#FFF5F5', color: '#E53935', border: '1.5px solid #FFCDD2' }}
+            disabled={respondingIncoming}
+            onClick={async () => {
+              if (!incomingSession) return
+              const sess = incomingSession
+              dismissIncoming()
+              try { await fetch(`/api/sessions/${sess.id}/decline`, { method: 'POST' }) } catch { /* ignore */ }
+              showToast('Request declined — seeker refunded.', 'info')
+            }}
+          >
+            ✗ Decline
+          </button>
+        </div>
+      </div>
+    </div>
+  ) : null
+
   if (loading) return (
     <>
       <style>{S}</style>
+      {incomingModal}
       <div className="page">
         <div className="topbar"><h1>My Dashboard</h1></div>
         <div className="stats-grid">
@@ -964,6 +1053,7 @@ export default function DashboardPage() {
   if (loadError) return (
     <>
       <style>{S}</style>
+      {incomingModal}
       <div className="page">
         <div className="topbar"><h1>My Dashboard</h1></div>
         <div className="not-listener">
@@ -980,6 +1070,7 @@ export default function DashboardPage() {
   if (!profile) return (
     <>
       <style>{S}</style>
+      {incomingModal}
       <div className="page">
         <div className="topbar"><h1>My Dashboard</h1></div>
         <div className="not-listener">
@@ -998,85 +1089,7 @@ export default function DashboardPage() {
       <style>{S}</style>
 
       {/* Incoming session modal */}
-      {incomingSession && (
-        <div className="modal-overlay" onClick={dismissIncoming}>
-          <div className="modal-card" onClick={e => e.stopPropagation()}>
-            <div className="modal-icon">📞</div>
-            <div className="modal-title2">New session request!</div>
-            <div className="modal-sub">Someone wants to connect with you right now.</div>
-            <div className="countdown-bar">
-              <div className="countdown-fill" style={{ width: `${(countdown / countdownMax) * 100}%` }} />
-            </div>
-            <div className="modal-detail">
-              <div className="modal-detail-item">
-                <div className="modal-detail-label">Duration</div>
-                <div className="modal-detail-value">{incomingSession.duration_mins ?? '—'} min</div>
-              </div>
-              <div className="modal-detail-item">
-                <div className="modal-detail-label">Type</div>
-                <div className="modal-detail-value" style={{ textTransform: 'capitalize' }}>{incomingSession.session_type ?? '—'}</div>
-              </div>
-              <div className="modal-detail-item">
-                <div className="modal-detail-label">You earn</div>
-                <div className="modal-detail-value">
-                  {incomingSession.amount_held ? `₹${estimateListenerTakeHome(incomingSession, profile?.rate_per_min, incomingSession.service_fee_rate ?? profile?.custom_service_fee_rate)}` : 'Free trial'}
-                </div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
-              <button
-                className="btn-join-session"
-                style={{ flex: 2, marginBottom: 0 }}
-                disabled={respondingIncoming}
-                onClick={async () => {
-                  if (!incomingSession) return
-                  // Stop the countdown first: if it hit 0 mid-request it fired an
-                  // auto-decline that raced (and beat) this accept.
-                  if (countdownRef.current) { clearInterval(countdownRef.current); countdownRef.current = null }
-                  setRespondingIncoming(true)
-                  try {
-                    const res = await fetch(`/api/sessions/${incomingSession.id}/accept`, { method: 'POST' })
-                    if (res.ok) {
-                      const sess = incomingSession
-                      dismissIncoming()
-                      router.push(`/session/${sess.id}?name=You&duration=${sess.duration_mins}&type=${sess.session_type ?? 'text'}`)
-                    } else {
-                      const body = await res.json().catch(() => ({}))
-                      showToast(body.message || body.error || 'Could not accept — it may have expired.', 'error')
-                      dismissIncoming()
-                    }
-                  } catch {
-                    // The countdown was stopped for the accept; don't leave the
-                    // modal ringing with a frozen timer. Re-show it if still pending.
-                    showToast('Network error — could not accept session. Try again.', 'error')
-                    const lid = userIdForAlertsRef.current
-                    dismissIncoming()
-                    if (lid) checkPendingRequest(lid)
-                  } finally {
-                    setRespondingIncoming(false)
-                  }
-                }}
-              >
-                {respondingIncoming ? '…' : `✅ Accept (${countdown >= 60 ? `${Math.floor(countdown / 60)}:${String(countdown % 60).padStart(2, '0')}` : `${countdown}s`})`}
-              </button>
-              <button
-                className="btn-dismiss"
-                style={{ flex: 1, background: '#FFF5F5', color: '#E53935', border: '1.5px solid #FFCDD2' }}
-                disabled={respondingIncoming}
-                onClick={async () => {
-                  if (!incomingSession) return
-                  const sess = incomingSession
-                  dismissIncoming()
-                  try { await fetch(`/api/sessions/${sess.id}/decline`, { method: 'POST' }) } catch { /* ignore */ }
-                  showToast('Request declined — seeker refunded.', 'info')
-                }}
-              >
-                ✗ Decline
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {incomingModal}
 
       {/* Edit profile bottom sheet */}
       {showEdit && (

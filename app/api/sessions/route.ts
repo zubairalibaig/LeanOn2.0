@@ -10,6 +10,7 @@ import { notifySessionComplete } from '@/lib/notify'
 import { logger } from '@/lib/logger'
 import { sendPushToUser } from '@/lib/push'
 import { expireStalePendingRequests } from '@/lib/expire-pending'
+import { sweepStaleListeners } from '@/lib/listener-presence'
 
 const VALID_SESSION_TYPES = ['text', 'voice'] as const
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -81,6 +82,10 @@ export async function POST(req: NextRequest) {
     // BEFORE the availability read: expiring a missed request can auto-offline the
     // listener (recordMissedRequest), and this booking must see that.
     await expireStalePendingRequests(sb, { listenerId, seekerId: user.id })
+    // Same rule browse uses: a listener with no recent heartbeat and no working
+    // push alert is offline. Applied here too so a stale tab or direct link
+    // can't book someone who can't be reached.
+    await sweepStaleListeners(sb, listenerId)
 
     // Verify listener is active and available (server-side — client-side check is not enough)
     // custom_service_fee_rate was added in migration 062. If the migration hasn't run yet

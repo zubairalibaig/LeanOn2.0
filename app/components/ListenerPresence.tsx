@@ -73,7 +73,23 @@ export default function ListenerPresence() {
   const pathRef = useRef(pathname)
   useEffect(() => { pathRef.current = pathname }, [pathname])
 
-  const skip = SKIP_PREFIXES.some(p => pathname === p || pathname.startsWith(p + '/'))
+  // On /session/* stay quiet only while that session is live. Once it has ended
+  // the listener is bookable again, and the end screen used to be a blind spot
+  // (no popup, no heartbeat). The session page announces its state.
+  const [sessionLive, setSessionLive] = useState(true)
+  useEffect(() => {
+    const w = window as Window & { __leanonSessionLive?: boolean }
+    if (typeof w.__leanonSessionLive === 'boolean') setSessionLive(w.__leanonSessionLive)
+    const onState = (e: Event) => setSessionLive((e as CustomEvent<boolean>).detail)
+    window.addEventListener('leanon:session-live', onState)
+    return () => window.removeEventListener('leanon:session-live', onState)
+  }, [])
+  const sessionLiveRef = useRef(sessionLive)
+  useEffect(() => { sessionLiveRef.current = sessionLive }, [sessionLive])
+  const onSessionPath = pathname === '/session' || pathname.startsWith('/session/')
+  const skip = onSessionPath
+    ? sessionLive
+    : SKIP_PREFIXES.some(p => pathname === p || pathname.startsWith(p + '/'))
 
   // ── Identify the viewer once. Anonymous visitors bail immediately. ──────────
   // A single failed read used to switch alerts off for the whole visit (no popup,
@@ -103,7 +119,7 @@ export default function ListenerPresence() {
         if (lpErr) { retry = setTimeout(identify, 10_000); return }
         identified = true
         identifiedUserId = user.id
-        if (!lp) return
+        if (!lp) { setIsListener(false); setAvailable(null); return }
         const active = lp.is_approved && !lp.is_suspended && lp.is_active !== false
         setIsListener(!!active)
         setTextRate(lp.rate_per_min != null ? Number(lp.rate_per_min) : null)
@@ -113,7 +129,26 @@ export default function ListenerPresence() {
       }
     }
     identify()
-    const onVis = () => { if (document.visibilityState === 'visible') identify() }
+    // Returning to the tab: pick up "Go online/offline" done on another tab or
+    // device. Ignored if a toggle on this page is in flight, so it can't undo it.
+    const refreshAvailability = async () => {
+      if (!identifiedUserId) return
+      const seq = toggleSeqRef.current
+      if (seq % 2 === 1) return
+      const { data, error } = await sb.from('listener_profiles')
+        .select('is_available, is_approved, is_suspended, is_active')
+        .eq('user_id', identifiedUserId)
+        .maybeSingle()
+      if (cancelled || error || !data || seq !== toggleSeqRef.current) return
+      const active = data.is_approved && !data.is_suspended && data.is_active !== false
+      setIsListener(!!active)
+      setAvailable(active ? !!data.is_available : null)
+    }
+    const onVis = () => {
+      if (document.visibilityState !== 'visible') return
+      if (identified) refreshAvailability()
+      else identify()
+    }
     document.addEventListener('visibilitychange', onVis)
     // auth-js re-emits SIGNED_IN on every tab focus; only a different account
     // needs re-identifying. Re-reading is_available on each focus raced the
@@ -122,6 +157,12 @@ export default function ListenerPresence() {
       if (event === 'SIGNED_IN' && session?.user?.id && session.user.id !== identifiedUserId) {
         identified = false
         identify()
+      } else if (event === 'SIGNED_OUT') {
+        identified = false
+        identifiedUserId = null
+        setUserId(null)
+        setIsListener(false)
+        setAvailable(null)
       }
     })
     return () => {
@@ -175,7 +216,10 @@ export default function ListenerPresence() {
     if (expiryTimerRef.current) clearTimeout(expiryTimerRef.current)
     expiryTimerRef.current = setTimeout(() => {
       if (incomingIdRef.current === s.id) clearIncoming()
-    }, Math.max(5_000, REQUEST_RESPONSE_WINDOW_SECS * 1000 - ageMs))
+    // At least 30s on screen: if this device's clock couldn't be corrected, a
+    // too-short timer would hide a live request. The 30s status check removes it
+    // as soon as the request is no longer pending.
+    }, Math.max(30_000, REQUEST_RESPONSE_WINDOW_SECS * 1000 - ageMs))
     // Via the service worker: `new Notification()` throws on Android Chrome.
     if (document.visibilityState !== 'visible') {
       showLocalNotification('🔔 New session request', {
@@ -273,7 +317,7 @@ export default function ListenerPresence() {
   useEffect(() => {
     if (!isListener || available !== true) return
 
-    const isSessionPage = () => pathRef.current === '/session' || pathRef.current.startsWith('/session/')
+    const isSessionPage = () => (pathRef.current === '/session' || pathRef.current.startsWith('/session/')) && sessionLiveRef.current
 
     const ping = () => {
       if (isSessionPage()) return
