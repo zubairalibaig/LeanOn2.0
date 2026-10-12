@@ -185,7 +185,7 @@ export default function PayToTalkOnlineIndiaPage() {
             </div>
             <div className="price-box us">
               <div className="label">LeanOn</div>
-              <div className="amount">From ₹160</div>
+              <div className="amount">₹160 example</div>
               <div className="detail">Example: 15 min at ₹10/min + ₹10 platform fee<br />Peer listener, not clinical care</div>
               <div className="free-badge">First 5 min free once/account</div>
             </div>
