@@ -147,7 +147,7 @@ export default function SomeoneToTalkToPage() {
         {/* Hero */}
         <div className="hero">
           <p className="tag">Peer Support · Someone to Talk To India</p>
-          <h1>Need Someone to Talk To? <em>Real Listeners</em>, Available Now in India</h1>
+          <h1>Need Someone to Talk To? <em>Real Peer Listeners</em> in India</h1>
           <p className="lead">Sometimes you need to say it out loud to another human being. LeanOn lets you browse screened peer listeners for one-to-one text or voice conversations about relationship stress, family pressure, work, loneliness or a difficult day. No advance appointment is needed; a conversation starts when an available listener accepts.</p>
         </div>
 
@@ -178,7 +178,7 @@ export default function SomeoneToTalkToPage() {
           <p>The difference between being heard by someone who understands from lived experience versus someone who simply has sympathy is profound. LeanOn listeners are selected based on personal experience with the challenges they support. When they say &quot;I understand&quot; — they mean it in the most literal sense possible.</p>
 
           <h3>Complete Freedom to Be Honest</h3>
-          <p>Because the listener has no stake in your life — no shared history, no social consequence, no opinion to protect — you can say exactly what you feel without editing yourself. That level of honesty is rare and genuinely healing. For many people it is the first time they have ever said out loud what they have been carrying inside.</p>
+          <p>Because the listener has no stake in your life — no shared history, no social consequence, no opinion to protect — you can say exactly what you feel without editing yourself. That level of honesty can feel easier when the listener is outside your personal circle. For many people it is the first time they have ever said out loud what they have been carrying inside.</p>
 
           <h3>Present and Fully Attentive</h3>
           <p>In a LeanOn session, the listener&apos;s sole role is to be present with you. No distractions, no split attention, no rushing to their own thoughts. Just focused, full attention on what you are sharing — which is something most of us rarely experience even from the people closest to us.</p>
@@ -224,7 +224,7 @@ export default function SomeoneToTalkToPage() {
           <h3>Browse Listeners</h3>
           <p>Go to <a href="/browse" style={{color:'var(--teal)',fontWeight:700}}>Browse Listeners</a> and read through peer profiles. Each listener shares their personal experience, the topics they support, and their availability. Taking a few minutes to find someone whose experience resonates with yours makes a real difference to the quality of the conversation.</p>
 
-          <h3>Start Instantly</h3>
+          <h3>Request a Session</h3>
           <p>One free introductory session of up to 5 minutes is available per account. Choose an available listener and send a request; the session can begin when they accept. If you continue later, review the exact price before starting a paid session.</p>
 
           <h3>Say What You Need to Say</h3>
@@ -242,7 +242,7 @@ export default function SomeoneToTalkToPage() {
           </div>
         </div>
 
-        {/* CTA */}        {/* CTA */}
+        {/* CTA */}
         <div className="cta-card">
           <h2>Find Someone Who Is Available</h2>
           <p>Browse actual listener profiles and see who is online. Availability can change throughout the day; your session starts when a listener accepts your request.</p>
