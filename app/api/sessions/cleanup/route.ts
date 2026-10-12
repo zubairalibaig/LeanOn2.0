@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
-import { recordMissedRequest } from '@/lib/listener-presence'
+import { expireStalePendingRequests } from '@/lib/expire-pending'
 import { settleSession, abandonedSessionEnd } from '@/lib/session-billing'
 import { applySettlement } from '@/lib/settlement-ledger'
-import { REQUEST_RESPONSE_WINDOW_MS } from '@/lib/constants'
 
 // POST — clean up sessions that have been "active" past their scheduled end time.
 // Called by Vercel cron job (daily at 02:00 UTC).
@@ -108,64 +107,13 @@ export async function POST(req: Request) {
     cleaned++
   }
 
-  // Cancel stale pending sessions (stuck in 'pending' past the response window — refund seeker)
-  const { data: stalePending } = await sb
-    .from('sessions')
-    .select('id, seeker_id, listener_id, amount_held')
-    .eq('status', 'pending')
-    .lt('created_at', new Date(Date.now() - REQUEST_RESPONSE_WINDOW_MS).toISOString())
-
-  let staleCancelled = 0
-  for (const s of stalePending ?? []) {
-    const { data: cancelled } = await sb
-      .from('sessions')
-      .update({ status: 'cancelled', ended_at: new Date().toISOString(), cancel_reason: 'timed_out' })
-      .eq('id', s.id)
-      .eq('status', 'pending')
-      .select()
-      .single()
-
-    if (!cancelled) continue
-
-    // Refund held amount back to seeker
-    if ((s.amount_held as number) > 0) {
-      const { error: refundErr } = await sb.rpc('credit_wallet', {
-        p_user_id: s.seeker_id,
-        p_amount: s.amount_held,
-      })
-      if (refundErr) {
-        logger.error('cleanup: stale pending refund failed', { sessionId: s.id, seekerId: s.seeker_id })
-      } else {
-        await sb.from('wallet_transactions').insert({
-          user_id: s.seeker_id,
-          amount: s.amount_held,
-          type: 'refund',
-          description: 'Refund — listener did not respond',
-          session_id: s.id,
-        })
-        // Notify the seeker so they know the request lapsed and was refunded
-        await sb.from('notifications').insert({
-          user_id: s.seeker_id,
-          type: 'session_cancelled',
-          title: 'No response from listener',
-          body: 'Your request timed out and your wallet has been fully refunded. Try another listener anytime.',
-          action_url: '/browse',
-        }).then(() => {}, () => {})
-        staleCancelled++
-      }
-    } else {
-      staleCancelled++
-    }
-    // After the refund. Only acts on requests that expired just now — cleanup
-    // mostly finds hours-old ones, which say nothing about the listener today.
-    await recordMissedRequest(sb, { listenerId: s.listener_id as string, sessionId: s.id as string })
-  }
+  // Requests nobody answered within the response window — cancel + refund.
+  const staleCancelled = await expireStalePendingRequests(sb)
 
   logger.info('Session cleanup complete', {
     cleaned,
     checked: (orphans ?? []).length,
     staleCancelled,
-    stalePendingChecked: (stalePending ?? []).length,
   })
   return NextResponse.json({ cleaned, checked: (orphans ?? []).length, staleCancelled })
 }

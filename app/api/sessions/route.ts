@@ -9,6 +9,7 @@ import { applySettlement } from '@/lib/settlement-ledger'
 import { notifySessionComplete } from '@/lib/notify'
 import { logger } from '@/lib/logger'
 import { sendPushToUser } from '@/lib/push'
+import { expireStalePendingRequests } from '@/lib/expire-pending'
 
 const VALID_SESSION_TYPES = ['text', 'voice'] as const
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -109,6 +110,10 @@ export async function POST(req: NextRequest) {
     if (!lp.is_available) {
       return NextResponse.json({ error: 'listener_offline', message: 'This listener is currently offline.' }, { status: 400 })
     }
+
+    // A request nobody answered must not keep the listener "busy" (or the seeker
+    // "already in a session") until the nightly cleanup — expire it now.
+    await expireStalePendingRequests(sb, { listenerId, seekerId: user.id })
 
     // Block paid sessions if listener already has any active session (free trial or paid)
     if (!effectivelyFree) {
