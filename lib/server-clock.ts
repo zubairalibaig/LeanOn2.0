@@ -16,12 +16,17 @@ export function syncServerClock(): Promise<void> {
       const res = await fetch('/manifest.json', { method: 'HEAD', cache: 'no-store' })
       const t1 = Date.now()
       const header = res.headers.get('date')
-      const server = header ? Date.parse(header) : NaN
-      if (Number.isNaN(server)) return
-      // The Date header has 1-second resolution: assume mid-second, and ignore
-      // offsets too small to matter.
+      const generated = header ? Date.parse(header) : NaN
+      if (Number.isNaN(generated)) return
+      // A CDN-cached response keeps the Date it was generated with and reports
+      // how long it has been cached in Age — the current server time is Date + Age.
+      const age = Number(res.headers.get('age') ?? 0)
+      const server = generated + (Number.isFinite(age) && age > 0 ? age * 1000 : 0)
+      // Date has 1-second resolution: assume mid-second.
       const est = server + 500 - (t0 + t1) / 2
-      offsetMs = Math.abs(est) > 2000 ? est : 0
+      // Ignore offsets too small to matter, and implausibly large ones (a stale
+      // header we can't correct) — falling back to the device clock.
+      offsetMs = Math.abs(est) > 2000 && Math.abs(est) < 6 * 60 * 60_000 ? est : 0
     } catch {
       syncing = null // retry on the next call
     }
