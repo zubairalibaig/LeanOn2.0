@@ -41,7 +41,7 @@ const faqSchema = {
       name: 'Is there anything cheaper that still involves a real human?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. Trained peer support sits between free helplines and clinical therapy. On LeanOn, your first 5 minutes are free, and paid sessions are charged by the minute at the selected listener’s per-minute rate, plus a flat ₹10 platform fee. A 15-minute conversation starts at around ₹160. You are speaking to a real, verified human being with lived experience of something similar — not a bot and not a script. Peer listeners are not licensed therapists and do not provide clinical treatment.',
+        text: 'Yes. Trained peer support sits between free helplines and clinical therapy. On LeanOn, your first 5 minutes are free, and paid sessions are charged by the minute at the selected listener’s per-minute rate, plus a flat ₹10 platform fee. For example, 15 minutes with a listener charging ₹10/min costs ₹160 including the flat ₹10 platform fee. You are speaking to a real, verified human being with lived experience of something similar — not a bot and not a script. Peer listeners are not licensed therapists and do not provide clinical treatment.',
       },
     },
     {
@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'What exactly does a LeanOn session cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Sessions are 15, 30 or 45 minutes and are billed per minute at the selected listener’s per-minute rate, plus a flat ₹10 platform fee per paid session. A 15-minute session starts at around ₹160. One introductory session of up to 5 minutes is free per account. You add money to a wallet before a session, and any unused wallet balance is fully refundable.',
+        text: 'Sessions are 15, 30 or 45 minutes and are billed per minute at the selected listener’s per-minute rate, plus a flat ₹10 platform fee per paid session. For example, 15 minutes with a listener charging ₹10/min costs ₹160 including the flat ₹10 platform fee. One introductory session of up to 5 minutes is free per account. You add money to a wallet before a session, and any unused wallet balance is fully refundable.',
       },
     },
   ],
@@ -171,7 +171,7 @@ export default function OnlineCounsellingCostPage() {
           <p>AI chat apps are cheap or free, always awake, and never judgemental. They can be a reasonable place to journal or to structure a thought at 3 a.m. But it is worth being plain about the limit: an AI is not a human being. It has never lost a parent, failed an exam, ended a relationship, or moved to a city where it knew nobody. Simulated empathy is not the same as a person who has actually been where you are and says so.</p>
 
           <h3>LeanOn Peer Support — rates set by each listener</h3>
-          <p>On LeanOn, paid sessions are billed per minute at the selected listener’s per-minute rate, plus a flat ₹10 platform fee per paid session. A 15-minute session starts at around ₹160. One introductory session of up to 5 minutes is free per account. You top up a wallet before a session, and any unused balance is fully refundable. LeanOn listeners are trained peers with lived experience, not licensed clinicians — which is exactly why the price is different, and also why it is not a replacement for clinical care.</p>
+          <p>On LeanOn, paid sessions are billed per minute at the selected listener’s per-minute rate, plus a flat ₹10 platform fee per paid session. For example, 15 minutes with a listener charging ₹10/min costs ₹160 including the flat ₹10 platform fee. One introductory session of up to 5 minutes is free per account. You top up a wallet before a session, and any unused balance is fully refundable. LeanOn listeners are trained peers with lived experience, not licensed clinicians — which is exactly why the price is different, and also why it is not a replacement for clinical care.</p>
         </div>
 
         {/* Decision framework */}
@@ -250,7 +250,7 @@ export default function OnlineCounsellingCostPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">What exactly does a LeanOn session cost?</div>
-            <div className="faq-a">Sessions are 15, 30 or 45 minutes, billed per minute at the selected listener’s per-minute rate, plus a flat ₹10 platform fee per paid session. A 15-minute session starts at around ₹160. One introductory session of up to 5 minutes is free per account. You add money to a wallet beforehand, and any unused balance is fully refundable.</div>
+            <div className="faq-a">Sessions are 15, 30 or 45 minutes, billed per minute at the selected listener’s per-minute rate, plus a flat ₹10 platform fee per paid session. For example, 15 minutes with a listener charging ₹10/min costs ₹160 including the flat ₹10 platform fee. One introductory session of up to 5 minutes is free per account. You add money to a wallet beforehand, and any unused balance is fully refundable.</div>
           </div>
         </div>
 
