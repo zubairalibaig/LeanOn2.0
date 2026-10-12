@@ -250,7 +250,7 @@ export default function OnlineCounsellingCostPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">What exactly does a LeanOn session cost?</div>
-            <div className="faq-a">Sessions are 15, 30 or 45 minutes, billed per minute at the listener's own rate of ₹8 to ₹25 per minute, plus a flat ₹10 platform fee per paid session. A 15-minute session starts at around ₹160. One introductory session of up to 5 minutes is free per account. You add money to a wallet beforehand, and any unused balance is fully refundable.</div>
+            <div className="faq-a">Sessions are 15, 30 or 45 minutes, billed per minute at the selected listener’s per-minute rate, plus a flat ₹10 platform fee per paid session. A 15-minute session starts at around ₹160. One introductory session of up to 5 minutes is free per account. You add money to a wallet beforehand, and any unused balance is fully refundable.</div>
           </div>
         </div>
 
