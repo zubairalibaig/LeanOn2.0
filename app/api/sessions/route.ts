@@ -19,7 +19,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 // SECURITY: auth required — user context for auth check, admin client for atomic DB operations
 export async function POST(req: NextRequest) {
   try {
-    const { listenerId, durationMins, sessionType } = await req.json()
+    const { listenerId, durationMins, sessionType, replacesSessionId } = await req.json()
 
     const userSb = createServerSupabaseClient()
     const { data: { user } } = await userSb.auth.getUser()
@@ -38,6 +38,9 @@ export async function POST(req: NextRequest) {
     if (!VALID_SESSION_TYPES.includes(sessionType)) {
       return NextResponse.json({ error: 'Invalid session type' }, { status: 400 })
     }
+    if (replacesSessionId !== undefined && (typeof replacesSessionId !== 'string' || !UUID_RE.test(replacesSessionId))) {
+      return NextResponse.json({ error: 'Invalid request to replace' }, { status: 400 })
+    }
 
     // 5 session-starts per minute per user — prevents spam booking
     if (!checkRateLimit(`session:${user.id}`, 5, 60_000)) {
@@ -46,6 +49,28 @@ export async function POST(req: NextRequest) {
 
     const sb     = createAdminClient()
     const isFree = durationMins === FREE_SESSION_MINS
+
+    // "Talk to someone available now" on the waiting screen: book this listener
+    // INSTEAD of the seeker's own pending request. Every check below runs first;
+    // the old request is only released right before the new one is created, so
+    // a booking that can't go through never costs the seeker their request.
+    let replacing: { id: string; amount_held: number; is_free_trial: boolean } | null = null
+    if (replacesSessionId) {
+      const { data: old } = await sb.from('sessions')
+        .select('id, seeker_id, listener_id, status, amount_held, is_free_trial')
+        .eq('id', replacesSessionId)
+        .maybeSingle()
+      if (!old || old.seeker_id !== user.id) {
+        return NextResponse.json({ error: 'Request not found' }, { status: 404 })
+      }
+      if (old.status !== 'pending') {
+        return NextResponse.json({ error: 'original_not_pending', status: old.status, message: 'Your request was already answered.' }, { status: 409 })
+      }
+      if (old.listener_id === listenerId) {
+        return NextResponse.json({ error: 'same_listener' }, { status: 400 })
+      }
+      replacing = { id: old.id as string, amount_held: Number(old.amount_held) || 0, is_free_trial: !!old.is_free_trial }
+    }
 
     // Block suspended/banned seekers from booking any sessions
     const { data: seekerRow } = await sb.from('users').select('is_suspended').eq('id', user.id).single()
@@ -146,13 +171,15 @@ export async function POST(req: NextRequest) {
     }
 
     // Multi-device guard: seeker cannot start two sessions simultaneously
-    const { data: seekerActive } = await sb
+    const { data: seekerActiveRows } = await sb
       .from('sessions')
       .select('id')
       .eq('seeker_id', user.id)
       .in('status', ['active', 'pending'])
-      .limit(1)
-    if (seekerActive && seekerActive.length > 0) {
+      .limit(2)
+    // The request being replaced doesn't count — any OTHER open session does.
+    const seekerActive = (seekerActiveRows ?? []).filter(r => !(replacing && r.id === replacing.id))
+    if (seekerActive && seekerActive.length > 0 && !(replacing && seekerActive[0].id === replacing.id)) {
       return NextResponse.json({ error: 'already_in_session', message: 'You already have a session in progress. Please finish or cancel it before starting a new one.', sessionId: seekerActive[0].id }, { status: 409 })
     }
 
@@ -195,6 +222,39 @@ export async function POST(req: NextRequest) {
     // Note: balance check, seeker-active-session check, and listener-busy check are
     // all handled atomically inside the create_session RPC (migration 002).
     // The pre-checks above serve as early-exit optimizations; the RPC is the authoritative check.
+
+    if (replacing) {
+      // Money check before letting go of the old request: its hold comes back first.
+      if (total > 0) {
+        const { data: bal } = await sb.from('users').select('wallet_balance').eq('id', user.id).single()
+        const available = Number(bal?.wallet_balance ?? 0) + (replacing.is_free_trial ? 0 : replacing.amount_held)
+        if (available < total) {
+          return NextResponse.json({ error: 'insufficient_balance', required: total }, { status: 400 })
+        }
+      }
+      const now = new Date().toISOString()
+      const { data: released } = await sb.from('sessions')
+        .update({ status: 'cancelled', ended_at: now, responded_at: now, cancel_reason: 'seeker_cancelled' })
+        .eq('id', replacing.id)
+        .eq('status', 'pending')
+        .select('id')
+        .maybeSingle()
+      if (!released) {
+        // The first listener accepted (or it expired) a moment ago — keep that outcome.
+        return NextResponse.json({ error: 'original_not_pending', message: 'Your request was already answered.' }, { status: 409 })
+      }
+      if (replacing.amount_held > 0 && !replacing.is_free_trial) {
+        const { error: refundErr } = await sb.rpc('credit_wallet', { p_user_id: user.id, p_amount: replacing.amount_held })
+        if (refundErr) {
+          logger.error('Session POST (switch): refund of replaced request failed — RECONCILIATION NEEDED', { sessionId: replacing.id, seekerId: user.id, amount: replacing.amount_held, error: refundErr.message })
+          return NextResponse.json({ error: 'switch_failed', message: 'Your request was cancelled but we could not book the new listener. Your refund is being processed — please contact support if it does not arrive.' }, { status: 500 })
+        }
+        await sb.from('wallet_transactions').insert({
+          user_id: user.id, amount: replacing.amount_held, type: 'refund',
+          description: 'Refund — request cancelled', session_id: replacing.id,
+        }).then(() => {}, (e) => logger.error('Session POST (switch): refund ledger insert failed', { sessionId: replacing!.id, error: String(e) }))
+      }
+    }
 
     const agoraChannel = `lo_${crypto.randomUUID()}`
 

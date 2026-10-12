@@ -6,7 +6,7 @@ import { createBrowserClient } from '@supabase/ssr'
 import { showToast } from '@/lib/toast'
 import ReportModal from '@/app/components/ReportModal'
 import { SESSION_DURATIONS, MESSAGE_REACTIONS, REQUEST_RESPONSE_WINDOW_MS, PLATFORM_FEE, sessionRatePerMin } from '@/lib/constants'
-import { getBookingPriceDisplay } from '@/lib/geo-pricing'
+import { getBookingPriceDisplay, isNriCountry, NRI_INR_EQUIV } from '@/lib/geo-pricing'
 
 // ── CRITICAL FIX 1: Create client ONCE outside component
 // Previously inside component = new WebSocket on every render
@@ -503,8 +503,15 @@ function SessionContent() {
       const { data, error } = await supabase.from('sessions').select('request_push').eq('id', sessionId).maybeSingle()
       if (stopped) return
       if (error) { stopped = true; return } // column not there yet — keep the neutral wording
-      const rp = (data as { request_push?: { delivered?: number } | null } | null)?.request_push
-      if (rp) { setAlertStatus(Number(rp.delivered) > 0 ? 'delivered' : 'not_delivered'); stopped = true }
+      const rp = (data as { request_push?: { delivered?: number; devices?: number; configured?: boolean } | null } | null)?.request_push
+      if (rp) {
+        // Only claim "may be away" when we know a device existed and the alert
+        // failed. A listener with no push device is on the dashboard heartbeat —
+        // likely present — so stay neutral rather than steer the seeker away.
+        if (Number(rp.delivered) > 0) setAlertStatus('delivered')
+        else if (rp.configured !== false && Number(rp.devices) > 0) setAlertStatus('not_delivered')
+        stopped = true
+      }
       else if (tries >= 5) stopped = true
     }
     read()
@@ -515,63 +522,99 @@ function SessionContent() {
 
   const waitedSecs = requestSecsLeft === null ? 0 : Math.round(REQUEST_RESPONSE_WINDOW_MS / 1000) - requestSecsLeft
   const showAlternatives = isWaitingSeeker && (alertStatus === 'not_delivered' || waitedSecs >= 60)
+  const [walletBalance, setWalletBalance] = useState<number | null>(null)
   useEffect(() => {
-    if (!showAlternatives || alternatives !== null) return
+    if (!showAlternatives) return
     let cancelled = false
-    Promise.all([
-      fetch('/api/listeners').then(r => (r.ok ? r.json() : null)).catch(() => null),
-      fetch('/api/auth/profile').then(r => (r.ok ? r.json() : null)).catch(() => null),
-    ]).then(([list, me]) => {
+    const load = async () => {
+      const [list, me, trials] = await Promise.all([
+        fetch('/api/listeners', { cache: 'no-store' }).then(r => (r.ok ? r.json() : null)).catch(() => null),
+        fetch('/api/auth/profile').then(r => (r.ok ? r.json() : null)).catch(() => null),
+        // Listeners this seeker already had their free intro with can't give another.
+        sessionIsFreeTrial && userId
+          ? supabase.from('sessions').select('listener_id').eq('seeker_id', userId).eq('is_free_trial', true).eq('status', 'completed')
+              .then(({ data }) => new Set(((data ?? []) as { listener_id: string }[]).map(r => r.listener_id)))
+          : Promise.resolve(new Set<string>()),
+      ])
       if (cancelled) return
-      setAccountCountry((me as { account_country?: string } | null)?.account_country ?? null)
-      const rows = (Array.isArray(list) ? list : (list as { listeners?: unknown[] } | null)?.listeners ?? []) as AltListener[]
+      const prof = me as { account_country?: string; wallet_balance?: number } | null
+      setAccountCountry(prof?.account_country ?? null)
+      if (prof?.wallet_balance != null) setWalletBalance(Number(prof.wallet_balance))
+      if (!list) return // keep the last good list on a failed refresh
+      const rows = ((list as { listeners?: unknown[] }).listeners ?? []) as AltListener[]
       setAlternatives(rows
-        .filter(l => l.is_available && !l.is_in_session && l.user_id !== listenerId && l.user_id !== userId)
+        .filter(l => l.is_available && !l.is_in_session && l.user_id !== listenerId && l.user_id !== userId && !trials.has(l.user_id))
         .slice(0, 3))
-    })
-    return () => { cancelled = true }
-  }, [showAlternatives, alternatives, listenerId, userId])
+    }
+    load()
+    // Who's online changes — refresh while the section is showing.
+    const iv = setInterval(load, 30_000)
+    return () => { cancelled = true; clearInterval(iv) }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showAlternatives, listenerId, userId, sessionIsFreeTrial])
 
-  function altPrice(l: AltListener): string {
-    if (sessionIsFreeTrial) return 'Free 5-min intro'
-    const dur = reqDuration ?? durationMins
+  const switchDuration = reqDuration ?? (sessionIsFreeTrial ? 5 : durationMins)
+  function altInrCost(l: AltListener): number | null {
+    if (sessionIsFreeTrial) return 0
     const rate = Number(l.rate_per_min)
-    if (!Number.isFinite(rate) || rate <= 0) return `${dur} min`
-    const inr = sessionRatePerMin(rate, isVoice ? 'voice' : 'text') * dur + PLATFORM_FEE
-    return `${getBookingPriceDisplay(inr, accountCountry, dur).primary} · ${dur} min`
+    if (!Number.isFinite(rate) || rate <= 0) return null
+    // Overseas seekers pay the flat NRI price (same rule as /api/sessions).
+    const nri = isNriCountry(accountCountry) ? NRI_INR_EQUIV[switchDuration as 15 | 30 | 45] : undefined
+    if (nri) return nri
+    return sessionRatePerMin(rate, isVoice ? 'voice' : 'text') * switchDuration + PLATFORM_FEE
+  }
+  // The current hold comes back when switching, so it counts towards the new price.
+  function altAffordable(l: AltListener): boolean {
+    const cost = altInrCost(l)
+    if (cost === null || cost === 0 || walletBalance === null) return true
+    return walletBalance + (sessionIsFreeTrial ? 0 : (sessionAmountHeld ?? 0)) >= cost
   }
 
-  // Release this request (full refund) and book the other listener with the same
-  // length and type. Anything unusual — wallet short, trial not available with
-  // them — falls back to their profile, where the normal booking flow takes over.
+  function altPrice(l: AltListener): string {
+    if (sessionIsFreeTrial) return `Free ${switchDuration}-min intro`
+    const inr = altInrCost(l)
+    if (inr === null) return `${switchDuration} min`
+    return `${getBookingPriceDisplay(inr, accountCountry, switchDuration).primary} · ${switchDuration} min`
+  }
+
+  // Book the other listener INSTEAD of this request, in one server call: every
+  // check runs first and this request is only released if the new booking can
+  // go ahead. On any failure the seeker keeps waiting for the first listener.
   async function switchTo(l: AltListener) {
     if (switchingTo || !sessionId) return
     setSwitchingTo(l)
     const type = isVoice ? 'voice' : 'text'
-    const dur = sessionIsFreeTrial ? 5 : (reqDuration ?? durationMins)
     const name = l.users?.name ?? 'Listener'
     try {
-      const dec = await fetch(`/api/sessions/${sessionId}/decline`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
-      if (!dec.ok) {
-        const body = await dec.json().catch(() => ({}))
-        if (body?.status === 'active') { setSwitchingTo(null); return } // they just accepted — the status poll takes over
-        if (body?.status !== 'cancelled') { setSwitchingTo(null); showToast('Could not switch right now — please try again.', 'error'); return }
-      }
       const res = await fetch('/api/sessions', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ listenerId: l.user_id, durationMins: dur, sessionType: type }),
+        body: JSON.stringify({ listenerId: l.user_id, durationMins: switchDuration, sessionType: type, replacesSessionId: sessionId }),
       })
       const data = await res.json().catch(() => ({}))
       if (res.ok && data?.sessionId) {
-        window.location.assign(`/session/${data.sessionId}?name=${encodeURIComponent(name)}&duration=${dur}&type=${type}`)
+        window.location.assign(`/session/${data.sessionId}?name=${encodeURIComponent(name)}&duration=${switchDuration}&type=${type}`)
         return
       }
-      window.location.assign(`/listener/${l.user_id}?type=${type}${sessionIsFreeTrial ? '' : '&from=trial'}`)
+      setSwitchingTo(null)
+      const reason = data?.error
+      if (reason === 'original_not_pending') return // first listener answered — the status poll takes over
+      if (reason === 'listener_busy' || reason === 'listener_offline' || reason === 'listener_unavailable') {
+        setAlternatives(prev => (prev ? prev.filter(x => x.user_id !== l.user_id) : prev))
+        showToast(`${name} just became unavailable — your request to ${resolvedListenerName} is still waiting.`, 'info')
+      } else if (reason === 'insufficient_balance') {
+        showToast(`Not enough in your wallet for ${name}. Your request to ${resolvedListenerName} is still waiting.`, 'error')
+      } else if (reason === 'free_trial_used') {
+        setAlternatives(prev => (prev ? prev.filter(x => x.user_id !== l.user_id) : prev))
+        showToast(data?.message || 'A free intro isn’t available with this listener.', 'error')
+      } else {
+        showToast(data?.message || 'Could not switch right now. Your request is still waiting.', 'error')
+      }
     } catch {
       setSwitchingTo(null)
-      showToast('Network error — please try again.', 'error')
+      showToast('Network error — your request is still waiting.', 'error')
     }
   }
+
 
   // Tell the global alert layer (ListenerPresence) whether this session is live:
   // it stays quiet during a session but must alert again once it has ended.
@@ -1411,7 +1454,7 @@ function SessionContent() {
           <div className="end-screen">
             <div className="end-icon">💬</div>
             <h2 className="end-h">Connecting you to {switchingTo.users?.name ?? 'a listener'}…</h2>
-            <p className="end-p">Your earlier request was cancelled and fully refunded.</p>
+            <p className="end-p">Switching your request — one moment.</p>
           </div>
         </div>
       </>
@@ -1460,7 +1503,7 @@ function SessionContent() {
                     <div style={{ height: '100%', width: `${progressPct}%`, background: 'var(--teal, #1A8FA0)', transition: 'width 1s linear' }} />
                   </div>
                   <div style={{ fontSize: 12, color: 'var(--gray)', fontWeight: 700, marginTop: 6 }}>
-                    {fmtTimer(requestSecsLeft)} left · your money is on hold and fully refunded if they don&apos;t respond
+                    {fmtTimer(requestSecsLeft)} left · {sessionIsFreeTrial ? 'your free intro isn\u2019t used up if they don\u2019t respond' : 'your money is on hold and fully refunded if they don\u2019t respond'}
                   </div>
                 </div>
               )}
@@ -1484,17 +1527,28 @@ function SessionContent() {
                           🟢 Online · {altPrice(l)}{l.specialty_tags?.length ? ` · ${l.specialty_tags.slice(0, 2).join(', ')}` : ''}
                         </div>
                       </div>
-                      <button
-                        onClick={() => switchTo(l)}
-                        disabled={!!switchingTo}
-                        style={{ background: 'var(--orange, #FF9933)', color: 'white', border: 'none', borderRadius: 50, padding: '9px 14px', fontFamily: 'inherit', fontWeight: 800, fontSize: 13, cursor: 'pointer', flexShrink: 0 }}
-                      >
-                        Talk now
-                      </button>
+                      {altAffordable(l) ? (
+                        <button
+                          onClick={() => switchTo(l)}
+                          disabled={!!switchingTo}
+                          aria-label={`Talk now with ${l.users?.name ?? 'this listener'}`}
+                          style={{ background: 'var(--orange, #FF9933)', color: 'white', border: 'none', borderRadius: 50, padding: '9px 14px', fontFamily: 'inherit', fontWeight: 800, fontSize: 13, cursor: switchingTo ? 'default' : 'pointer', opacity: switchingTo ? 0.5 : 1, flexShrink: 0 }}
+                        >
+                          Talk now
+                        </button>
+                      ) : (
+                        <a
+                          href={`/listener/${l.user_id}?type=${isVoice ? 'voice' : 'text'}`}
+                          aria-label={`View ${l.users?.name ?? 'listener'} — top-up needed`}
+                          style={{ border: '1.5px solid var(--border, #D5EEF6)', color: 'var(--navy)', borderRadius: 50, padding: '8px 12px', fontWeight: 800, fontSize: 12, textDecoration: 'none', flexShrink: 0 }}
+                        >
+                          Top-up needed
+                        </a>
+                      )}
                     </div>
                   ))}
                   <div style={{ fontSize: 11, color: 'var(--gray)', fontWeight: 600, marginTop: 4 }}>
-                    Choosing someone else cancels this request first — you&apos;re refunded in full.
+                    {sessionIsFreeTrial ? 'Choosing someone else replaces this request.' : 'Choosing someone else replaces this request — its hold is refunded in full.'}
                   </div>
                 </div>
               )}
