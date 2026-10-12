@@ -193,7 +193,15 @@ export function scoreQuiz(raw: unknown): QuizResult {
 
 export const WHY_MIN_WORDS = 100
 export const WHY_MAX_WORDS = 300
-export const wordCount = (s: string) => (s.trim().match(/\S+/g) ?? []).length
+// A word must contain a letter or digit (any script): emoji, dashes and lone
+// punctuation don't count, so an answer can't be padded to the minimum. Commas,
+// semicolons and zero-width spaces separate words too ("listen,care" is 2 words).
+const HAS_LETTER_OR_DIGIT = new RegExp('[\\p{L}\\p{N}]', 'u')
+export const wordCount = (s: string) =>
+  s.replace(/[\u200B-\u200D\uFEFF]/g, ' ')
+    .split(/[\s,;]+/)
+    .filter(t => HAS_LETTER_OR_DIGIT.test(t))
+    .length
 
 export const LIVED_MIN_CHARS = 50
 export const LIVED_MAX_CHARS = 600

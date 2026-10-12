@@ -200,6 +200,25 @@ const BIRTH_YEARS = Array.from(
   (_, i) => CURRENT_YEAR - MIN_LISTENER_AGE - i,
 )
 
+const NO_INCOME_ACK_KEY = 'leanon_listener_noincome_ack'
+
+// Same message in every language listeners can choose (lib/constants LANGUAGES).
+// Kept short and literal on purpose.
+const NO_INCOME_NOTICE: { lang: string; code: string; rtl?: boolean; text: string }[] = [
+  { lang: 'English', code: 'en', text: 'LeanOn is new. Very few people use it yet. You may get few or no sessions. There is no salary, no minimum and no guaranteed income. LeanOn is not a job.' },
+  { lang: 'हिंदी (Hindi)', code: 'hi', text: 'LeanOn नया है। अभी बहुत कम लोग इसका इस्तेमाल करते हैं। आपको बहुत कम या कोई भी सेशन नहीं मिल सकता। कोई वेतन, न्यूनतम या गारंटीड कमाई नहीं है। LeanOn नौकरी नहीं है।' },
+  { lang: 'தமிழ் (Tamil)', code: 'ta', text: 'LeanOn புதியது. இப்போது மிகச் சிலரே இதைப் பயன்படுத்துகின்றனர். உங்களுக்கு மிகக் குறைவான அமர்வுகள் அல்லது ஒன்றுமே கிடைக்காமல் போகலாம். சம்பளம், குறைந்தபட்ச வருமானம் அல்லது உத்தரவாத வருமானம் எதுவும் இல்லை. LeanOn ஒரு வேலை அல்ல.' },
+  { lang: 'తెలుగు (Telugu)', code: 'te', text: 'LeanOn కొత్తది. ఇప్పుడు చాలా తక్కువ మంది మాత్రమే దీన్ని వాడుతున్నారు. మీకు చాలా తక్కువ సెషన్లు రావచ్చు, లేదా ఒక్కటి కూడా రాకపోవచ్చు. జీతం, కనీస ఆదాయం లేదా హామీ ఆదాయం ఏదీ లేదు. LeanOn ఉద్యోగం కాదు.' },
+  { lang: 'ಕನ್ನಡ (Kannada)', code: 'kn', text: 'LeanOn ಹೊಸದು. ಈಗ ತುಂಬಾ ಕಡಿಮೆ ಜನರು ಮಾತ್ರ ಇದನ್ನು ಬಳಸುತ್ತಿದ್ದಾರೆ. ನಿಮಗೆ ತುಂಬಾ ಕಡಿಮೆ ಸೆಷನ್‌ಗಳು ಸಿಗಬಹುದು ಅಥವಾ ಒಂದೂ ಸಿಗದಿರಬಹುದು. ಸಂಬಳ, ಕನಿಷ್ಠ ಆದಾಯ ಅಥವಾ ಖಚಿತ ಆದಾಯ ಇಲ್ಲ. LeanOn ಉದ್ಯೋಗವಲ್ಲ.' },
+  { lang: 'മലയാളം (Malayalam)', code: 'ml', text: 'LeanOn പുതിയതാണ്. ഇപ്പോൾ വളരെ കുറച്ചു പേർ മാത്രമേ ഇത് ഉപയോഗിക്കുന്നുള്ളൂ. നിങ്ങൾക്ക് വളരെ കുറച്ച് സെഷനുകൾ മാത്രമോ ഒന്നുമോ ലഭിക്കാതിരിക്കാം. ശമ്പളമോ മിനിമം വരുമാനമോ ഉറപ്പുള്ള വരുമാനമോ ഇല്ല. LeanOn ഒരു ജോലിയല്ല.' },
+  { lang: 'मराठी (Marathi)', code: 'mr', text: 'LeanOn नवीन आहे. सध्या खूप कमी लोक ते वापरतात. तुम्हाला खूप कमी किंवा एकही सेशन मिळणार नाही, असे होऊ शकते. पगार, किमान किंवा खात्रीशीर उत्पन्न नाही. LeanOn ही नोकरी नाही.' },
+  { lang: 'বাংলা (Bengali)', code: 'bn', text: 'LeanOn নতুন। এখন খুব কম মানুষ এটি ব্যবহার করেন। আপনি খুব কম সেশন পেতে পারেন, বা একটিও না পেতে পারেন। কোনো বেতন, ন্যূনতম বা নিশ্চিত আয় নেই। LeanOn কোনো চাকরি নয়।' },
+  { lang: 'ગુજરાતી (Gujarati)', code: 'gu', text: 'LeanOn નવું છે. હાલમાં બહુ ઓછા લોકો તેનો ઉપયોગ કરે છે. તમને બહુ ઓછા સેશન મળે અથવા એક પણ ન મળે એવું બની શકે. કોઈ પગાર, ન્યૂનતમ કે ગેરંટીવાળી કમાણી નથી. LeanOn નોકરી નથી.' },
+  { lang: 'ਪੰਜਾਬੀ (Punjabi)', code: 'pa', text: 'LeanOn ਨਵਾਂ ਹੈ। ਹਾਲੇ ਬਹੁਤ ਘੱਟ ਲੋਕ ਇਸਨੂੰ ਵਰਤਦੇ ਹਨ। ਤੁਹਾਨੂੰ ਬਹੁਤ ਘੱਟ ਸੈਸ਼ਨ ਮਿਲ ਸਕਦੇ ਹਨ, ਜਾਂ ਇੱਕ ਵੀ ਨਹੀਂ। ਕੋਈ ਤਨਖਾਹ, ਘੱਟੋ-ਘੱਟ ਜਾਂ ਪੱਕੀ ਆਮਦਨ ਨਹੀਂ ਹੈ। LeanOn ਨੌਕਰੀ ਨਹੀਂ ਹੈ।' },
+  { lang: 'ଓଡ଼ିଆ (Odia)', code: 'or', text: 'LeanOn ନୂଆ। ଏବେ ବହୁତ କମ୍ ଲୋକ ଏହାକୁ ବ୍ୟବହାର କରନ୍ତି। ଆପଣ ବହୁତ କମ୍ ସେସନ୍ ପାଇପାରନ୍ତି, କିମ୍ବା ଗୋଟିଏ ବି ନ ପାଇପାରନ୍ତି। କୌଣସି ଦରମା, ସର୍ବନିମ୍ନ କିମ୍ବା ନିଶ୍ଚିତ ଆୟ ନାହିଁ। LeanOn ଚାକିରି ନୁହେଁ।' },
+  { lang: 'اردو (Urdu)', code: 'ur', rtl: true, text: 'LeanOn نیا ہے۔ ابھی بہت کم لوگ اسے استعمال کرتے ہیں۔ ہو سکتا ہے آپ کو بہت کم سیشن ملیں، یا ایک بھی نہ ملے۔ کوئی تنخواہ، کم از کم یا یقینی آمدنی نہیں ہے۔ LeanOn نوکری نہیں ہے۔' },
+]
+
 export default function BecomeListenerPage() {
   const router  = useRouter()
   const sb      = createClient()
@@ -261,6 +280,12 @@ export default function BecomeListenerPage() {
   // auth redirect so the landing page is not shown again on return.
   const [agreementChecked, setAgreementChecked] = useState(false)
   const [showLanding, setShowLanding] = useState(false)
+  // Page 2 of sign-up: "LeanOn is new — no guaranteed earnings — not a job",
+  // acknowledged before sign-in.
+  const [showNoIncome, setShowNoIncome] = useState(false)
+  const [noIncomeChecked, setNoIncomeChecked] = useState(false)
+  // Open page 2 at the top (the landing page is long; its scroll position carried over).
+  useEffect(() => { if (showNoIncome) window.scrollTo(0, 0) }, [showNoIncome])
 
   // Phone verification now happens ONCE at sign-in via the MSG91 widget on /auth.
   // The in-form OTP flow (signInWithOtp / verifyOtp) is permanently dead —
@@ -363,9 +388,18 @@ export default function BecomeListenerPage() {
   useEffect(() => {
     if (SHOW_NEW_LISTENER_ONBOARDING) {
       let agreed = false
-      try { agreed = sessionStorage.getItem('leanon_listener_agreed') === '1' } catch { /* private mode */ }
+      let noIncomeAck = false
+      try {
+        agreed = sessionStorage.getItem('leanon_listener_agreed') === '1'
+        noIncomeAck = sessionStorage.getItem(NO_INCOME_ACK_KEY) === '1'
+      } catch { /* private mode */ }
       if (!agreed) {
         setShowLanding(true)
+        setGuardChecked(true)
+        return
+      }
+      if (!noIncomeAck) {
+        setShowNoIncome(true)
         setGuardChecked(true)
         return
       }
@@ -637,6 +671,57 @@ export default function BecomeListenerPage() {
   // redirected to /auth (widget sign-in), and signed-in ones need the phone
   // pre-filled + OTP step skipped. Rendering the form early would flash the
   // now-dead in-form OTP UI.
+  // ── Sign-up page 2: no guaranteed earnings, not a job ────────────────────
+  if (guardChecked && showNoIncome) return (
+    <>
+      <style>{S}</style>
+      <div className="page">
+        <div className="topbar">
+          <button className="back" onClick={() => { setShowNoIncome(false); setShowLanding(true); window.scrollTo(0, 0) }} aria-label="Back">←</button>
+        </div>
+        <div className="hero-card" style={{marginBottom:16}}>
+          <h1>LeanOn is not a job 🙏</h1>
+          <p>Please read this in your language before you sign in.</p>
+        </div>
+        <div style={{background:'white',border:'1.5px solid var(--border)',borderRadius:20,padding:'6px 18px',marginBottom:16}}>
+          {NO_INCOME_NOTICE.map(n => (
+            <div key={n.lang} lang={n.code} dir={n.rtl ? 'rtl' : 'ltr'} style={{padding:'12px 0',borderBottom:'1px solid #EEF4F7',textAlign:n.rtl ? 'right' : 'left'}}>
+              <div style={{fontSize:11,fontWeight:800,color:'var(--teal)',textTransform:'uppercase',letterSpacing:'.05em',marginBottom:4}} dir="ltr">{n.lang}</div>
+              <div style={{fontSize:14,color:'var(--navy)',fontWeight:600,lineHeight:1.65}}>{n.text}</div>
+            </div>
+          ))}
+        </div>
+        <div
+          className={`agree-box${noIncomeChecked ? ' checked' : ''}`}
+          onClick={() => setNoIncomeChecked(c => !c)}
+          role="checkbox"
+          aria-checked={noIncomeChecked}
+          tabIndex={0}
+          onKeyDown={e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setNoIncomeChecked(c => !c) } }}
+          style={{background:'white',border:`2px solid ${noIncomeChecked ? 'var(--orange)' : 'var(--border)'}`,borderRadius:16,padding:'18px 20px',marginBottom:20,display:'flex',gap:14,alignItems:'flex-start',cursor:'pointer'}}
+        >
+          <div style={{width:22,height:22,border:`2px solid ${noIncomeChecked ? 'var(--orange)' : 'var(--border)'}`,background:noIncomeChecked ? 'var(--orange)' : 'white',color:'white',borderRadius:6,flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,marginTop:2}}>{noIncomeChecked ? '✓' : ''}</div>
+          <div style={{fontSize:13,color:'var(--navy)',fontWeight:700,lineHeight:1.6}}>
+            I understand that LeanOn is new, I may get few or no sessions, there is no minimum or guaranteed income, and LeanOn is not a job.
+          </div>
+        </div>
+        <button
+          className="btn"
+          disabled={!noIncomeChecked}
+          onClick={() => {
+            try { sessionStorage.setItem(NO_INCOME_ACK_KEY, '1') } catch { /* private mode */ }
+            setShowNoIncome(false)
+            setGuardChecked(false)
+            runAuthGuard()
+          }}
+        >
+          I understand — no guaranteed earnings, not a job →
+        </button>
+        <a href="/"><button className="btn-ghost" style={{marginTop:10}}>Not now</button></a>
+      </div>
+    </>
+  )
+
   // ── New onboarding landing page ──────────────────────────────────────────
   if (guardChecked && showLanding) return (
     <>
@@ -665,6 +750,14 @@ export default function BecomeListenerPage() {
         <div className="hero-card" style={{marginBottom:20}}>
           <h1>Before you apply 🎧</h1>
           <p>Read this carefully. LeanOn listeners make a real difference — but this role is not for everyone.</p>
+        </div>
+
+        <div role="note" style={{background:'#FFF1F0',border:'2px solid #FF8A80',borderRadius:20,padding:'18px 20px',marginBottom:16}}>
+          <div style={{fontSize:16,fontWeight:900,color:'#B3261E',marginBottom:6}}>⚠️ Please read first</div>
+          <div style={{fontSize:14,color:'#5A2420',fontWeight:700,lineHeight:1.6}}>
+            LeanOn is very new and has very few users right now. You may get few or no sessions.
+            There is <u>no minimum and no guaranteed income</u>. <strong>LeanOn is not a job.</strong>
+          </div>
         </div>
 
         <div className="landing-section">
@@ -723,8 +816,8 @@ export default function BecomeListenerPage() {
           onClick={() => {
             try { sessionStorage.setItem('leanon_listener_agreed', '1') } catch { /* private mode */ }
             setShowLanding(false)
-            setGuardChecked(false)
-            runAuthGuard()
+            setShowNoIncome(true)
+            window.scrollTo(0, 0)
           }}
         >
           I agree — Continue to apply →
@@ -1121,7 +1214,7 @@ export default function BecomeListenerPage() {
               onChange={e => { setWhy(e.target.value); if (fieldErrors.why) setFieldErrors(f => ({...f, why: ''})) }}
             />
             {(() => { const wc = wordCount(why); return (
-              <div className={`char-count${wc > 0 && (wc < WHY_MIN_WORDS || wc > WHY_MAX_WORDS) ? ' warn' : ''}`}>{wc} words{wc < WHY_MIN_WORDS && wc > 0 ? ` (${WHY_MIN_WORDS - wc} more needed)` : ''}</div>
+              <div className={`char-count${wc > 0 && (wc < WHY_MIN_WORDS || wc > WHY_MAX_WORDS) ? ' warn' : ''}`}>{wc} words{wc < WHY_MIN_WORDS && wc > 0 ? ` (${WHY_MIN_WORDS - wc} more needed)` : wc > WHY_MAX_WORDS ? ` (${wc - WHY_MAX_WORDS} too many)` : ''}</div>
             )})()}
             {fieldErrors.why && <span className="field-err">{fieldErrors.why}</span>}
 
