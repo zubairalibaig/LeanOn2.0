@@ -3,8 +3,8 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Pay to Talk to Someone Online India — Real Listener, ₹160/Session | LeanOn',
-  description: 'Pay to talk to a real peer listener in India — not an AI, not an astrologer. ₹160 for a full 15-minute session. First 5 min free. Anonymous.',
+  title: 'Pay to Talk to Someone Online in India | LeanOn Peer Support',
+  description: 'Pay to talk to a real peer listener in India. One free 5-minute introduction per account; prices depend on listener rate, with a 15-minute example at ₹160.',
   keywords: [
     'pay to talk to someone online india', 'pay per minute chat india', 'paid chat online india',
     'pay someone to listen india', 'pay to vent online india', 'talk to someone online india paid',
@@ -15,8 +15,8 @@ export const metadata: Metadata = {
     languages: { 'en-IN': 'https://www.leanon.app/pay-to-talk-online-india' },
   },
   openGraph: {
-    title: 'Pay to Talk — A Real Person Who Listens, Not a Prediction',
-    description: 'Pay to talk to a real peer listener in India — not an AI, not an astrologer. ₹160 for a full 15-minute session. First 5 min free. Anonymous.',
+    title: 'Pay to Talk to a Real Person Online | LeanOn',
+    description: 'Pay to talk to a real peer listener in India. One free 5-minute introduction per account; prices depend on listener rate, with a 15-minute example at ₹160.',
     url: 'https://www.leanon.app/pay-to-talk-online-india',
     siteName: 'LeanOn',
     type: 'article',
@@ -32,7 +32,7 @@ const faqSchema = {
       name: 'Is it worth paying to talk to someone?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes — and you probably already are, just inefficiently. If you have ever spent ₹500 on an AstroTalk call or paid for a chat app subscription, you were already paying to have someone listen. LeanOn makes that explicit and affordable: ₹160 for a full 15-minute session with a screened peer listener.',
+        text: 'Whether paying is worthwhile depends on what you need. LeanOn is for people who want a real person to listen, not an AI response or an astrology prediction. One introductory session of up to 5 minutes is free per account. Paid sessions are priced by the selected listener’s rate and duration, plus a flat ₹10 platform fee; the price is shown before you start.',
       },
     },
     {
@@ -40,7 +40,7 @@ const faqSchema = {
       name: 'How much does it cost per minute to talk on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn works out to about ₹10 per minute for a 15-minute session at ₹160 — compared to ₹10–50 per minute on AstroTalk. Your first 5-minute session free, so you can try before you pay anything.',
+        text: 'In India, the session total is the selected listener’s per-minute rate × session length, plus a flat ₹10 platform fee. For example, 15 minutes at ₹10/min costs ₹160; another listener rate changes the total. One introductory session of up to 5 minutes is free per account. See https://www.leanon.app/pricing for current details.',
       },
     },
     {
@@ -48,7 +48,7 @@ const faqSchema = {
       name: 'Is it anonymous?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Fully. LeanOn never shares your name, phone number, or personal details with listeners. You sign in with your phone for billing purposes, but your listener only sees a display name you choose.',
+        text: 'LeanOn uses phone OTP for sign-in, but your phone number is not shown to listeners; you can use a display name. This does not mean you are anonymous to the platform. Read the Privacy Policy for details about data handling, AI moderation and your choices.',
       },
     },
     {
@@ -155,12 +155,10 @@ export default function PayToTalkOnlineIndiaPage() {
 
         <h1>Pay to Talk — A Real Person Who Listens, Not a Prediction</h1>
         <p className="lead">
-          If you have ever spent ₹500–1500 on AstroTalk just because you needed someone to hear you out,
-          you were doing the right thing — just at the wrong price. LeanOn is the honest version: pay to
-          talk to a real screened peer listener, no astrology wrapped around it, at a third of the cost.
+          If you want a real person to listen rather than an AI response or a prediction, LeanOn offers one-to-one conversations with screened peer listeners. It is peer support, not therapy or clinical care. Your first introductory session of up to 5 minutes is free once per account; check the displayed price before starting a paid session.
         </p>
 
-        <a href="/auth" className="cta-hero">Start talking — first 5 min free →</a>
+        <a href="/auth" className="cta-hero">Try your free 5-minute introduction →</a>
 
         <div className="card">
           <h2>You&apos;re already paying to be heard. It&apos;s completely normal.</h2>
@@ -170,12 +168,10 @@ export default function PayToTalkOnlineIndiaPage() {
             on the other end who will listen without judgment.
           </p>
           <p>
-            Paying for that is not weakness — it&apos;s the same logic as paying for a gym or a good meal.
-            You are investing in feeling better. The only problem is that astrology apps charge ₹10–50 per
-            minute and wrap the thing you actually need in something you didn&apos;t ask for.
+            Paying for a conversation is a personal choice. LeanOn serves a different need from astrology or prediction services: a real peer listener focused on hearing you out, without making predictions or providing clinical treatment.
           </p>
           <p>
-            LeanOn strips it back to what it is: a real person, trained to listen, available now.
+            LeanOn focuses on a real person trained in peer listening. Browse the live directory to see who is currently available; a session begins when a listener accepts your request.
           </p>
         </div>
 
@@ -184,14 +180,14 @@ export default function PayToTalkOnlineIndiaPage() {
           <div className="price-row">
             <div className="price-box them">
               <div className="label">AstroTalk</div>
-              <div className="amount">₹10–50/min</div>
-              <div className="detail">Typical call: ₹500–1500<br />Astrologer + predictions bundled in</div>
+              <div className="amount">Rates vary</div>
+              <div className="detail">Service and pricing depend on the platform</div>
             </div>
             <div className="price-box us">
               <div className="label">LeanOn</div>
-              <div className="amount">₹160/session</div>
-              <div className="detail">Full 15 minutes (~₹10/min)<br />Trained peer listener, no predictions</div>
-              <div className="free-badge">First 5 min free</div>
+              <div className="amount">From ₹160</div>
+              <div className="detail">Example: 15 min at ₹10/min + ₹10 platform fee<br />Peer listener, not clinical care</div>
+              <div className="free-badge">First 5 min free once/account</div>
             </div>
           </div>
         </div>
@@ -214,8 +210,8 @@ export default function PayToTalkOnlineIndiaPage() {
             </li>
             <li>
               <div>
-                <strong>Available now</strong>
-                <p>Browse who is online. Pick someone whose bio feels right. Start in under a minute.</p>
+                <strong>Check live availability</strong>
+                <p>Browse who is online and send a session request. The conversation starts when a listener accepts.</p>
               </div>
             </li>
           </ul>
@@ -239,18 +235,18 @@ export default function PayToTalkOnlineIndiaPage() {
               </tr>
               <tr>
                 <td>Price per minute</td>
-                <td className="tick">~₹10/min</td>
-                <td>₹10–50/min</td>
+                <td className="tick">Varies by listener</td>
+                <td>Varies by platform</td>
               </tr>
               <tr>
                 <td>First session cost</td>
-                <td className="tick">Free (5 min)</td>
+                <td className="tick">Free once per account (5 min)</td>
                 <td>Varies, often paid</td>
               </tr>
               <tr>
-                <td>Anonymous</td>
-                <td className="tick">Private</td>
-                <td>Usually requires profile</td>
+                <td>Phone number shown to listener?</td>
+                <td className="tick">No; display name is shown</td>
+                <td>Depends on platform</td>
               </tr>
               <tr>
                 <td>No unsolicited advice</td>
@@ -278,7 +274,7 @@ export default function PayToTalkOnlineIndiaPage() {
         <div className="cta">
           <h2>Ready to talk to a real person?</h2>
           <p>No astrologer. No AI. Just someone who is there to listen.</p>
-          <a href="/auth" className="btn-white">Start talking — first 5 min free →</a><br />
+          <a href="/auth" className="btn-white">Try your free 5-minute introduction →</a><br />
           <a href="/browse" className="btn-orange">Browse listeners →</a>
         </div>
 
@@ -286,19 +282,15 @@ export default function PayToTalkOnlineIndiaPage() {
           <h2>Frequently asked questions</h2>
           <div className="faq-item">
             <h3>Is it worth paying to talk to someone?</h3>
-            <p>Yes — and you probably already are, just inefficiently. If you have ever spent ₹500 on an AstroTalk
-              call or paid for a chat app subscription, you were already paying to have someone listen. LeanOn makes
-              that explicit and affordable: ₹160 for a full 15-minute session with a screened peer listener.</p>
+            <p>Whether paying is worthwhile depends on what you need. LeanOn is for people who want a real person to listen, not an AI response or prediction. One introductory session of up to 5 minutes is free per account. Paid sessions are priced according to the selected listener’s rate and duration, plus a flat ₹10 platform fee; you see the price before starting.</p>
           </div>
           <div className="faq-item">
             <h3>How much does it cost per minute?</h3>
-            <p>LeanOn works out to about ₹10 per minute for a 15-minute session at ₹160 — compared to ₹10–50 per
-              minute on AstroTalk. Your first 5-minute session free, so you can try before you pay anything.</p>
+            <p>In India, the total is the selected listener’s rate per minute × session length, plus a flat ₹10 platform fee. For example, 15 minutes at ₹10/min costs ₹160; the total changes with the listener’s rate. One introductory session of up to 5 minutes is free per account. See <a href="/pricing">current pricing</a>.</p>
           </div>
           <div className="faq-item">
             <h3>Is it anonymous?</h3>
-            <p>Fully. LeanOn never shares your name, phone number, or personal details with listeners. You sign in
-              with your phone for billing purposes, but your listener only sees a display name you choose.</p>
+            <p>You sign in using phone OTP, but your phone number is not shown to listeners; you can use a display name. This does not mean you are anonymous to the platform. Review the <a href="/privacy">Privacy Policy</a> for details.</p>
           </div>
           <div className="faq-item">
             <h3>What can I talk about?</h3>
