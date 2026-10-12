@@ -196,7 +196,7 @@ export default function VentToSomeoneOnlinePage() {
           <h3>What they will do</h3>
           <p>Listen without interrupting. Reflect back what they hear so you feel received. Stay with you through the uncomfortable parts without flinching. Follow your lead on what you need — more space, a question, a reflection.</p>
           <h3>What they will not do</h3>
-          <p>They will not give you unsolicited advice. They will not tell you what you should have done. They will not judge the person you are venting about, or build a case against them, or accidentally take sides. They will not share anything you say. They will not bring their own problems into it. They are there entirely for you — and that is the whole job.</p>
+          <p>They will not give you unsolicited advice. They will not tell you what you should have done. They will not judge the person you are venting about, or build a case against them, or accidentally take sides. They are expected to respect the privacy of the session. Read our <a href="/privacy" style={{color:'var(--teal)',fontWeight:700}}>Privacy Policy</a> for how platform data and safety moderation work. They will not bring their own problems into it. They are there entirely for you — and that is the whole job.</p>
         </div>
 
         <div className="section">
