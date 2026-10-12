@@ -1,5 +1,6 @@
 'use client'
 export const dynamic = 'force-dynamic'
+import { syncServerClock, serverNow } from '@/lib/server-clock'
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
@@ -226,6 +227,7 @@ export default function DashboardPage() {
   // so the progress bar fills correctly regardless of catch-up remaining time.
   const [countdownMax, setCountdownMax] = useState(RESPONSE_WINDOW_SECS)
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const userIdForAlertsRef = useRef<string | null>(null)
   const channelRef   = useRef<ReturnType<typeof sb.channel> | null>(null)
   // Tracks the id of the request currently shown in the modal, so the live
   // realtime event and the catch-up query never clobber or duplicate each other.
@@ -356,6 +358,13 @@ export default function DashboardPage() {
         // a request that arrived meanwhile never fired an INSERT event. Re-query
         // pending requests on foreground to recover it.
         if (user?.id) checkPendingRequest(user.id)
+        // A request still on screen may have been cancelled while we were away.
+        const shownId = incomingIdRef.current
+        if (shownId) {
+          sb.from('sessions').select('status').eq('id', shownId).maybeSingle().then(({ data: cur }) => {
+            if (cur && (cur as { status: string }).status !== 'pending' && incomingIdRef.current === shownId) dismissIncoming()
+          })
+        }
       }
     }
     document.addEventListener('visibilitychange', handleVis)
@@ -460,18 +469,20 @@ export default function DashboardPage() {
   }
 
   function startCountdown(onExpire: () => void, initialSecs = RESPONSE_WINDOW_SECS) {
+    // Counts down to a fixed deadline: phones pause timers in the background,
+    // and a tick-counting timer showed time left on an already-expired request.
+    const deadline = serverNow() + initialSecs * 1000
     setCountdown(initialSecs)
     setCountdownMax(initialSecs)
     if (countdownRef.current) clearInterval(countdownRef.current)
     countdownRef.current = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(countdownRef.current!)
-          onExpire()
-          return 0
-        }
-        return prev - 1
-      })
+      const left = Math.max(0, Math.ceil((deadline - serverNow()) / 1000))
+      setCountdown(left)
+      if (left <= 0) {
+        clearInterval(countdownRef.current!)
+        countdownRef.current = null
+        onExpire()
+      }
     }, 1000)
   }
 
@@ -490,7 +501,7 @@ export default function DashboardPage() {
     const remaining = secsLeft ?? (() => {
       const createdAt = (s as { created_at?: string }).created_at
       if (!createdAt) return RESPONSE_WINDOW_SECS
-      const ageSecs = Math.floor((Date.now() - new Date(createdAt).getTime()) / 1000)
+      const ageSecs = Math.floor((serverNow() - new Date(createdAt).getTime()) / 1000)
       return Math.max(10, RESPONSE_WINDOW_SECS - ageSecs)
     })()
     startCountdown(() => {
@@ -503,8 +514,17 @@ export default function DashboardPage() {
       fetch(`/api/sessions/${expiredId}/decline`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reason: 'timeout' }),
-      }).catch(() => {})
-      showToast('Session request expired — seeker has been refunded.', 'info')
+      })
+        .then(r => r.json().catch(() => ({})))
+        .then(body => {
+          // The server says it hasn't expired yet — put it back on screen.
+          if (body?.error === 'not_expired' && userIdForAlertsRef.current) {
+            checkPendingRequest(userIdForAlertsRef.current)
+            return
+          }
+          showToast('Session request expired — seeker has been refunded.', 'info')
+        })
+        .catch(() => {})
     }, remaining)
   }
 
@@ -524,12 +544,31 @@ export default function DashboardPage() {
       .limit(1)
     const row = data?.[0]
     if (!row) return
-    const ageSecs = Math.floor((Date.now() - new Date(row.created_at as string).getTime()) / 1000)
+    const ageSecs = Math.floor((serverNow() - new Date(row.created_at as string).getTime()) / 1000)
     const remaining = RESPONSE_WINDOW_SECS - ageSecs // seeker auto-cancels when the window lapses
     if (remaining <= 5) return // about to expire — don't bother surfacing
     // Give the listener the FULL remaining window (was capped at 60s, which
     // auto-declined the seeker far earlier than their own 5-minute timeout).
     surfaceIncoming(row as IncomingSession & { status?: string }, remaining)
+  }
+
+  // Realtime INSERT for new requests + an immediate catch-up query for any that
+  // arrived before the channel was live.
+  function subscribeIncoming(listenerId: string) {
+    if (channelRef.current) sb.removeChannel(channelRef.current)
+    channelRef.current = sb.channel(`dashboard-incoming-${listenerId}`)
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'sessions',
+        filter: `listener_id=eq.${listenerId}`,
+      }, (payload) => {
+        const s = payload.new as IncomingSession & { status?: string }
+        if (s.status && s.status !== 'pending') return
+        surfaceIncoming(s)
+      })
+      .subscribe()
+    checkPendingRequest(listenerId)
   }
 
   function dismissIncoming() {
@@ -541,9 +580,15 @@ export default function DashboardPage() {
 
   async function loadData() {
    try {
-    const { data: { user: u } } = await sb.auth.getUser()
+    const { data: { user: u }, error: authError } = await sb.auth.getUser()
+    if (authError) { setLoadError('Connection problem — please retry.'); return } // transient: don't bounce to OTP
     if (!u) { router.push('/auth?redirect=/dashboard'); return }
     setUser(u)
+    userIdForAlertsRef.current = u.id
+    syncServerClock()
+    // Request alerts FIRST: a listener who tapped a notification must see the
+    // request even if a later dashboard query fails or is slow.
+    subscribeIncoming(u.id)
 
     // Two separate queries instead of users!inner join — an RLS or join failure
     // on users must not silently filter out the profile row and show the
@@ -663,27 +708,6 @@ export default function DashboardPage() {
       } catch (_) { /* localStorage blocked */ }
     }
 
-    if (channelRef.current) sb.removeChannel(channelRef.current)
-    const channel = sb.channel(`dashboard-incoming-${u.id}`)
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'sessions',
-        filter: `listener_id=eq.${u.id}`,
-      }, (payload) => {
-        const s = payload.new as IncomingSession & { status?: string }
-        // Only surface genuine pending requests (ignore any non-pending inserts)
-        if (s.status && s.status !== 'pending') return
-        surfaceIncoming(s)
-      })
-      .subscribe()
-    channelRef.current = channel
-
-    // Catch-up for any request that arrived before the channel finished
-    // subscribing (the INSERT event only fires for rows created AFTER the
-    // subscription is live — this closes that race so paid + free requests
-    // both reach the listener reliably).
-    checkPendingRequest(u.id)
    } catch (err) {
      console.error('Dashboard load error:', err)
      setLoadError('Something went wrong loading your dashboard. Please retry.')
@@ -1001,6 +1025,9 @@ export default function DashboardPage() {
                 disabled={respondingIncoming}
                 onClick={async () => {
                   if (!incomingSession) return
+                  // Stop the countdown first: if it hit 0 mid-request it fired an
+                  // auto-decline that raced (and beat) this accept.
+                  if (countdownRef.current) { clearInterval(countdownRef.current); countdownRef.current = null }
                   setRespondingIncoming(true)
                   try {
                     const res = await fetch(`/api/sessions/${incomingSession.id}/accept`, { method: 'POST' })

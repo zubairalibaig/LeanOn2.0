@@ -1,4 +1,5 @@
 'use client'
+import { syncServerClock, serverNow } from '@/lib/server-clock'
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
@@ -434,8 +435,10 @@ function SessionContent() {
     const isSeeker = userIdRef.current !== null && listenerId !== null && userIdRef.current !== listenerId
     const deadline = new Date(requestCreatedAt).getTime() + REQUEST_RESPONSE_WINDOW_MS
     let fired = false
+    let rearm: ReturnType<typeof setTimeout> | null = null
+    syncServerClock()
     const tick = () => {
-      const left = Math.max(0, Math.round((deadline - Date.now()) / 1000))
+      const left = Math.max(0, Math.round((deadline - serverNow()) / 1000))
       setRequestSecsLeft(left)
       if (left <= 0 && isSeeker && !fired) {
         fired = true
@@ -443,13 +446,26 @@ function SessionContent() {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ reason: 'timeout' }),
         })
-          .catch(() => {})
-          .finally(() => setSessionStatus('cancelled'))
+          .then(async res => {
+            const body = await res.json().catch(() => ({}))
+            // Server says the window isn't over yet (this device's clock is ahead):
+            // keep waiting and try again when it is.
+            if (body?.error === 'not_expired') {
+              rearm = setTimeout(() => { fired = false }, Math.max(1000, Number(body.retryInMs) || 5000))
+              return
+            }
+            if (res.ok || body?.status === 'cancelled') { setSessionStatus('cancelled'); return }
+            // Already handled (e.g. accepted at the last second) or a transient
+            // error: stay on 'pending' so the 4s status poll moves the page to the
+            // real state — never show "not accepted" for a session that is live.
+            if (!body?.status) rearm = setTimeout(() => { fired = false }, 5000)
+          })
+          .catch(() => { fired = false })
       }
     }
     tick()
     const iv = setInterval(tick, 1000)
-    return () => clearInterval(iv)
+    return () => { clearInterval(iv); if (rearm) clearTimeout(rearm) }
   }, [sessionStatus, requestCreatedAt, listenerId, sessionId])
 
   // Back button guard — intercept popstate (Item 17)

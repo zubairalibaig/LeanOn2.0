@@ -54,8 +54,18 @@ export async function POST(
   // Listener gets 30s of clock-skew slack; seeker gets none — they control the
   // clock on their end and 2s slack let a seeker claim timeout early, triggering
   // recordMissedRequest and potentially knocking a listener offline.
+  // A "timeout" sent before the window has actually passed (device clock ahead,
+  // or a countdown that drifted) must NOT cancel the request — it used to cancel
+  // anyway, just under another label, so listeners lost requests they never saw.
+  const slackMs = isListener ? 5_000 : 0
+  if (body?.reason === 'timeout' && ageMs < REQUEST_RESPONSE_WINDOW_MS - slackMs) {
+    return NextResponse.json({
+      error: 'not_expired',
+      retryInMs: REQUEST_RESPONSE_WINDOW_MS - slackMs - ageMs,
+      status: 'pending',
+    }, { status: 409 })
+  }
   const timedOut = body?.reason === 'timeout'
-    && ageMs >= REQUEST_RESPONSE_WINDOW_MS - (isListener ? 30_000 : 0)
   const cancelReason = timedOut ? 'timed_out' : isListener ? 'declined' : 'seeker_cancelled'
 
   // Atomically cancel (optimistic lock on status='pending' → refund fires once)

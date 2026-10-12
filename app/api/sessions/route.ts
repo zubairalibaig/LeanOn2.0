@@ -117,8 +117,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'listener_offline', message: 'This listener is currently offline.' }, { status: 400 })
     }
 
-    // Block paid sessions if listener already has any active session (free trial or paid)
-    if (!effectivelyFree) {
+    // One request/session at a time per listener — free trials included. A trial
+    // booked while the listener was mid-session could never be seen (the alert
+    // popup stays quiet inside a session) and counted as a missed request.
+    {
       const { data: activeSessions } = await sb
         .from('sessions')
         .select('id')

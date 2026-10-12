@@ -1,4 +1,5 @@
 'use client'
+import { syncServerClock, serverNow } from '@/lib/server-clock'
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
@@ -75,23 +76,51 @@ export default function ListenerPresence() {
   const skip = SKIP_PREFIXES.some(p => pathname === p || pathname.startsWith(p + '/'))
 
   // ── Identify the viewer once. Anonymous visitors bail immediately. ──────────
+  // A single failed read used to switch alerts off for the whole visit (no popup,
+  // no heartbeat → "away" → auto-offline). Now a transient failure is retried,
+  // and identification re-runs when the tab returns or the user signs in.
   useEffect(() => {
     let cancelled = false
-    sb.auth.getUser().then(async ({ data: { user } }) => {
-      if (cancelled || !user) return
-      setUserId(user.id)
-      const { data: lp } = await sb
-        .from('listener_profiles')
-        .select('is_approved, is_available, is_suspended, is_active, rate_per_min')
-        .eq('user_id', user.id)
-        .maybeSingle()
-      if (cancelled || !lp) return
-      const active = lp.is_approved && !lp.is_suspended && lp.is_active !== false
-      setIsListener(!!active)
-      setTextRate(lp.rate_per_min != null ? Number(lp.rate_per_min) : null)
-      if (active) setAvailable(!!lp.is_available)
-    }).catch(() => {})
-    return () => { cancelled = true }
+    let identified = false
+    let retry: ReturnType<typeof setTimeout> | null = null
+    const identify = async () => {
+      if (cancelled || identified) return
+      if (retry) { clearTimeout(retry); retry = null }
+      try {
+        const { data: { user }, error } = await sb.auth.getUser()
+        if (cancelled) return
+        if (error) { retry = setTimeout(identify, 10_000); return }
+        if (!user) return
+        setUserId(user.id)
+        const { data: lp, error: lpErr } = await sb
+          .from('listener_profiles')
+          .select('is_approved, is_available, is_suspended, is_active, rate_per_min')
+          .eq('user_id', user.id)
+          .maybeSingle()
+        if (cancelled) return
+        if (lpErr) { retry = setTimeout(identify, 10_000); return }
+        identified = true
+        if (!lp) return
+        const active = lp.is_approved && !lp.is_suspended && lp.is_active !== false
+        setIsListener(!!active)
+        setTextRate(lp.rate_per_min != null ? Number(lp.rate_per_min) : null)
+        if (active) { setAvailable(!!lp.is_available); syncServerClock() }
+      } catch {
+        if (!cancelled) retry = setTimeout(identify, 10_000)
+      }
+    }
+    identify()
+    const onVis = () => { if (document.visibilityState === 'visible') identify() }
+    document.addEventListener('visibilitychange', onVis)
+    const { data: { subscription } } = sb.auth.onAuthStateChange(event => {
+      if (event === 'SIGNED_IN') { identified = false; identify() }
+    })
+    return () => {
+      cancelled = true
+      if (retry) clearTimeout(retry)
+      document.removeEventListener('visibilitychange', onVis)
+      subscription.unsubscribe()
+    }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   function ring() {
@@ -133,7 +162,7 @@ export default function ListenerPresence() {
     ringTimerRef.current = setInterval(ring, 3000)
     // Stop ringing when the request window closes — otherwise the popup rang
     // every 3s forever for a request the seeker had already given up on.
-    const ageMs = s.created_at ? Date.now() - new Date(s.created_at).getTime() : 0
+    const ageMs = s.created_at ? serverNow() - new Date(s.created_at).getTime() : 0
     if (expiryTimerRef.current) clearTimeout(expiryTimerRef.current)
     expiryTimerRef.current = setTimeout(() => {
       if (incomingIdRef.current === s.id) clearIncoming()
@@ -172,7 +201,7 @@ export default function ListenerPresence() {
         .limit(1)
       const row = data?.[0]
       if (!row || cancelled) return
-      const ageSecs = Math.floor((Date.now() - new Date(row.created_at as string).getTime()) / 1000)
+      const ageSecs = Math.floor((serverNow() - new Date(row.created_at as string).getTime()) / 1000)
       if (REQUEST_RESPONSE_WINDOW_SECS - ageSecs <= 5) return  // about to expire — don't surface
       surface(row as unknown as Incoming)
     }

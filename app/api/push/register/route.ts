@@ -39,14 +39,16 @@ export async function POST(req: NextRequest) {
     user_agent: (req.headers.get('user-agent') ?? '').slice(0, 300),
     last_seen_at: new Date().toISOString(),
   }, { onConflict: 'token' })
-  if (tokErr && !/push_tokens/.test(tokErr.message ?? '') && tokErr.code !== '42P01' && tokErr.code !== 'PGRST205') {
+  const tableMissing = tokErr?.code === '42P01' || tokErr?.code === 'PGRST205'
+  if (tokErr && !tableMissing) {
     logger.warn('push register: push_tokens upsert failed', { userId: user.id, error: tokErr.message })
   }
 
   // Legacy single-token column — still read as a fallback (lib/push.ts).
   const { error } = await sb.from('users').update({ fcm_token }).eq('id', user.id)
-  if (error) {
-    logger.error('FCM token save error', { userId: user.id, error: error.message })
+  if (error) logger.error('FCM token save error', { userId: user.id, error: error.message })
+  // The device is registered if either store took the token.
+  if (error && tokErr) {
     return NextResponse.json({ error: 'Failed to save token' }, { status: 500 })
   }
 
