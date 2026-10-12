@@ -25,7 +25,7 @@ The audience for LeanOn is: a person in India (or the Indian diaspora abroad) wh
 - Seekers browse actual listener profiles, review topics and prices, and send a session request to an available listener. A session starts when the listener accepts; immediate availability is not guaranteed.
 - Every account gets one free introductory session of up to 5 minutes; it is not a free session with every listener.
 - Paid sessions: 15, 30 or 45 minutes. Price shown before starting.
-- In India: listener's per-minute rate × minutes + ₹10 platform fee. Example: 15 min at ₹10/min = ₹160. Paid sessions start at ₹160 for 15 minutes.
+- In India: listener's per-minute rate × minutes + ₹10 platform fee. Example: 15 min at ₹10/min = ₹160. Example: 15 minutes with a listener charging ₹10/min costs ₹160 including the flat ₹10 platform fee; the total changes with the selected listener’s rate.
 - Outside India: flat US$10 (15 min), US$15 (30 min), US$20 (45 min).
 - Text or voice. No appointment is required; availability depends on which listeners are online.
 - Full pricing: https://www.leanon.app/pricing
