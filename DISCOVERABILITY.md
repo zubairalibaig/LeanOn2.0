@@ -7,6 +7,32 @@
 
 ---
 
+## Round 14 — Conversion-first SEO, AEO and GEO (2026-10-13)
+
+**Scope:** Improve existing pages with commercial/support intent instead of creating more keyword URLs. The objective is qualified seeker traffic and paid-session conversion, not raw page count.
+
+### Changes in this pass
+- `/support/someone-to-talk-to`: removed sample listener cards with fictional names and biographies. Direct users to the live listener directory, make the introductory session rule and price calculation explicit, and avoid promising immediate availability.
+- `/vent-to-someone-online`: added an answer-first summary with how the service works, the one-per-account free introduction, a worked pricing example, and direct links to pricing, trust and the live directory. Updated FAQPage answers so structured answers match visible copy; removed unsupported physiological outcome claims and absolute privacy promises.
+- `/pay-to-talk-online-india`: sharpened the high-intent page while removing unsupported competitor price comparisons and fixed-price claims. It now explains the price formula, labels ₹160 as an example at a ₹10/min listener rate, and distinguishes display-name sign-in from anonymity to the platform.
+- `/online-counselling-india-cost`, `/blog/posts/therapy-cost-india.ts`, and `/faq`: harmonised the price formula and free-introduction rule; removed the incorrect statement that listeners keep 100% of their rate from the seeker-facing cost page.
+- `public/llms.txt` and `public/llms-full.txt`: described the actual session request / listener acceptance flow, one free introduction per account, and price examples. This gives answer engines a consistent source for pricing, audience fit and product limits.
+
+### Rules to preserve
+- Do not publish invented listener names, bios, reviews, online states, conversion numbers or availability guarantees.
+- Treat ₹160 as a worked example for a listener charging ₹10/min (15 × ₹10 + ₹10 platform fee), not a universal fixed price. A different selected listener rate changes the total; price is shown before a paid session starts.
+- Describe availability as dependent on which listeners are online and accept the request.
+- State that LeanOn is peer support, not therapy or crisis care. Do not promise outcomes, absolute anonymity, or absolute confidentiality beyond the published privacy practices.
+- Keep the existing 60-day pause on new keyword pages. Improve pages already receiving impressions and strengthen genuine internal links to `/pricing`, `/trust` and `/browse`.
+
+### Post-deploy verification (not completed by a source-code change)
+1. Run the production build and available tests; review the Vercel preview before merging.
+2. Deploy, then run `node scripts/indexnow.mjs` as documented in `SEO-PLAYBOOK.md`.
+3. In Search Console, inspect and test the canonical high-intent URLs (`/pricing`, `/pay-to-talk-online-india`, `/online-counselling-india-cost`, `/support/someone-to-talk-to`, `/vent-to-someone-online`). Track non-brand clicks, landing-page CTR and eventual paying-session conversions.
+4. For GEO, continue off-site distribution only where the recommendations can be authentic: transparent founder/product profiles, useful answers in relevant communities where promotion is permitted, and legitimate directory listings. Do not fabricate reviews or buy unqualified links.
+
+---
+
 ## Round 13 — Strategy validation: stop adding pages, fix trust, go off-site (2026-09-24)
 
 **Situation:** 414 public pages (about 490 added since June) and a flood of listener sign-ups, but
