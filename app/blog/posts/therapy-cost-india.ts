@@ -19,7 +19,7 @@ export const post = {
   <li><strong>Clinical psychologist or therapist:</strong> roughly ₹1,500 to ₹4,000 per session. Senior practitioners in metros sit at the upper end of that range, and sometimes above it.</li>
   <li><strong>Online therapy platforms:</strong> broadly similar to in-person rates — commonly ₹1,000 to ₹3,000 per session. Online delivery removes travel, not the cost of the clinician&apos;s time.</li>
   <li><strong>Government helplines:</strong> completely free, 24/7. NIMHANS runs a national helpline at <strong>080-46110007</strong>, and Tele-MANAS is reachable at <strong>14416</strong>. These are staffed, real, and cost nothing.</li>
-  <li><strong>LeanOn peer support:</strong> listeners set their own per-minute rate, plus a flat ₹10 platform fee per session. A 15-minute session starts at around ₹160. One introductory session of up to 5 minutes is free per account. Any unused wallet balance is fully refundable.</li>
+  <li><strong>LeanOn peer support:</strong> listeners set their own per-minute rate, plus a flat ₹10 platform fee per session. For example, a 15-minute session with a listener charging ₹10/min costs ₹160 including the flat ₹10 platform fee. One introductory session of up to 5 minutes is free per account. Any unused wallet balance is fully refundable.</li>
 </ul>
 
 <p>Those are the headline figures. But the headline figures are not the whole picture, and the gap between them and what people actually end up spending is where most budgets break.</p>
@@ -80,9 +80,9 @@ export const post = {
 
 <p>The third is that you pay by the minute for what you actually use, rather than buying a fixed fifty-minute hour whether you need it or not. Some evenings you need twenty minutes. Some evenings you need five. One introductory session of up to 5 minutes is free per account, so you can try the service before deciding whether to pay for a longer session. And if you top up your wallet and do not use it, the unused balance is fully refundable. We would rather refund you than hold your money hostage.</p>
 
-<h2>What ₹160 Actually Buys</h2>
+<h2>Example: ₹160 for a 15-Minute Conversation</h2>
 
-<p>Roughly the price of two coffees gets you a full fifteen-minute, one-on-one conversation with a verified human being who has lived through something similar to what you are dealing with. No appointment. No waitlist. Available at 3am on a Tuesday if that is when it hits. You can use a display name, though phone OTP sign-in is required. Unused wallet balance is refundable.</p>
+<p>At a listener rate of ₹10/min, ₹160 covers a 15-minute, one-to-one conversation with a screened peer listener, including the flat ₹10 platform fee. The total changes with the selected listener’s rate, and the price is shown before you start. No advance appointment is needed; a session begins when an available listener accepts. You can use a display name, though phone OTP sign-in is required. Unused wallet balance is refundable.</p>
 
 <p>It is not therapy, and we are not going to pretend otherwise. What it is, is the difference between processing something out loud with someone who genuinely gets it, and lying awake running the same loop for the ninth night. For a very large share of what people carry, that difference is the whole thing — and <strong>affordable emotional support India</strong> should not be a contradiction in terms.</p>
 
