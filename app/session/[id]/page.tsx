@@ -377,6 +377,7 @@ function SessionContent() {
         if (data?.status) setSessionStatus(data.status)
         if (data?.created_at) setRequestCreatedAt(data.created_at as string)
         if (typeof data?.is_free_trial === 'boolean') setSessionIsFreeTrial(data.is_free_trial)
+        if (data?.duration_mins) setReqDuration(Number(data.duration_mins))
         if (data?.amount_held != null) setSessionAmountHeld(Number(data.amount_held))
         if (data?.platform_fee != null) setSessionPlatformFee(Number(data.platform_fee))
         // Only sync the timer for sessions that have actually started. A pending
@@ -480,6 +481,97 @@ function SessionContent() {
     const iv = setInterval(tick, 1000)
     return () => { clearInterval(iv); if (rearm) clearTimeout(rearm) }
   }, [sessionStatus, requestCreatedAt, listenerId, sessionId, userId])
+
+  // ── Waiting-screen helpers (seeker side) ─────────────────────────────────
+  // 1. Was the listener's phone actually alerted? /api/sessions POST records the
+  //    push outcome on the row (sessions.request_push, migration 066).
+  // 2. Offer listeners who are online right now, so a seeker who doesn't want to
+  //    wait has somewhere to go other than Cancel.
+  const [reqDuration, setReqDuration] = useState<number | null>(null)
+  const [alertStatus, setAlertStatus] = useState<'unknown' | 'delivered' | 'not_delivered'>('unknown')
+  const [alternatives, setAlternatives] = useState<AltListener[] | null>(null)
+  const [accountCountry, setAccountCountry] = useState<string | null>(null)
+  const [switchingTo, setSwitchingTo] = useState<AltListener | null>(null)
+  const isWaitingSeeker = sessionStatus === 'pending' && userId !== null && listenerId !== null && userId !== listenerId
+
+  useEffect(() => {
+    if (!isWaitingSeeker || !sessionId || alertStatus !== 'unknown') return
+    let stopped = false
+    let tries = 0
+    const read = async () => {
+      tries++
+      const { data, error } = await supabase.from('sessions').select('request_push').eq('id', sessionId).maybeSingle()
+      if (stopped) return
+      if (error) { stopped = true; return } // column not there yet — keep the neutral wording
+      const rp = (data as { request_push?: { delivered?: number } | null } | null)?.request_push
+      if (rp) { setAlertStatus(Number(rp.delivered) > 0 ? 'delivered' : 'not_delivered'); stopped = true }
+      else if (tries >= 5) stopped = true
+    }
+    read()
+    const iv = setInterval(() => { if (stopped) clearInterval(iv); else read() }, 3000)
+    return () => { stopped = true; clearInterval(iv) }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isWaitingSeeker, sessionId, alertStatus])
+
+  const waitedSecs = requestSecsLeft === null ? 0 : Math.round(REQUEST_RESPONSE_WINDOW_MS / 1000) - requestSecsLeft
+  const showAlternatives = isWaitingSeeker && (alertStatus === 'not_delivered' || waitedSecs >= 60)
+  useEffect(() => {
+    if (!showAlternatives || alternatives !== null) return
+    let cancelled = false
+    Promise.all([
+      fetch('/api/listeners').then(r => (r.ok ? r.json() : null)).catch(() => null),
+      fetch('/api/auth/profile').then(r => (r.ok ? r.json() : null)).catch(() => null),
+    ]).then(([list, me]) => {
+      if (cancelled) return
+      setAccountCountry((me as { account_country?: string } | null)?.account_country ?? null)
+      const rows = (Array.isArray(list) ? list : (list as { listeners?: unknown[] } | null)?.listeners ?? []) as AltListener[]
+      setAlternatives(rows
+        .filter(l => l.is_available && !l.is_in_session && l.user_id !== listenerId && l.user_id !== userId)
+        .slice(0, 3))
+    })
+    return () => { cancelled = true }
+  }, [showAlternatives, alternatives, listenerId, userId])
+
+  function altPrice(l: AltListener): string {
+    if (sessionIsFreeTrial) return 'Free 5-min intro'
+    const dur = reqDuration ?? durationMins
+    const rate = Number(l.rate_per_min)
+    if (!Number.isFinite(rate) || rate <= 0) return `${dur} min`
+    const inr = sessionRatePerMin(rate, isVoice ? 'voice' : 'text') * dur + PLATFORM_FEE
+    return `${getBookingPriceDisplay(inr, accountCountry, dur).primary} · ${dur} min`
+  }
+
+  // Release this request (full refund) and book the other listener with the same
+  // length and type. Anything unusual — wallet short, trial not available with
+  // them — falls back to their profile, where the normal booking flow takes over.
+  async function switchTo(l: AltListener) {
+    if (switchingTo || !sessionId) return
+    setSwitchingTo(l)
+    const type = isVoice ? 'voice' : 'text'
+    const dur = sessionIsFreeTrial ? 5 : (reqDuration ?? durationMins)
+    const name = l.users?.name ?? 'Listener'
+    try {
+      const dec = await fetch(`/api/sessions/${sessionId}/decline`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+      if (!dec.ok) {
+        const body = await dec.json().catch(() => ({}))
+        if (body?.status === 'active') { setSwitchingTo(null); return } // they just accepted — the status poll takes over
+        if (body?.status !== 'cancelled') { setSwitchingTo(null); showToast('Could not switch right now — please try again.', 'error'); return }
+      }
+      const res = await fetch('/api/sessions', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ listenerId: l.user_id, durationMins: dur, sessionType: type }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (res.ok && data?.sessionId) {
+        window.location.assign(`/session/${data.sessionId}?name=${encodeURIComponent(name)}&duration=${dur}&type=${type}`)
+        return
+      }
+      window.location.assign(`/listener/${l.user_id}?type=${type}${sessionIsFreeTrial ? '' : '&from=trial'}`)
+    } catch {
+      setSwitchingTo(null)
+      showToast('Network error — please try again.', 'error')
+    }
+  }
 
   // Tell the global alert layer (ListenerPresence) whether this session is live:
   // it stays quiet during a session but must alert again once it has ended.
@@ -1310,54 +1402,127 @@ function SessionContent() {
     )
   }
 
+  // ── Switching to another listener (this request is being released)
+  if (switchingTo) {
+    return (
+      <>
+        <style>{S}</style>
+        <div className="wrap" style={{ background: 'white' }}>
+          <div className="end-screen">
+            <div className="end-icon">💬</div>
+            <h2 className="end-h">Connecting you to {switchingTo.users?.name ?? 'a listener'}…</h2>
+            <p className="end-p">Your earlier request was cancelled and fully refunded.</p>
+          </div>
+        </div>
+      </>
+    )
+  }
+
   // ── Pending request screen (seeker waiting / listener opened the link directly)
   if (sessionStatus === 'pending') {
     const isSeeker = userId !== null && listenerId !== null && userId !== listenerId
+    const totalSecs = Math.round(REQUEST_RESPONSE_WINDOW_MS / 1000)
+    const progressPct = requestSecsLeft === null ? 0 : Math.min(100, Math.max(0, (waitedSecs / totalSecs) * 100))
+    const name = resolvedListenerName
     return (
       <>
         <style>{S}</style>
         <div className="wrap" style={{ background: 'white' }}>
           <div className="hdr">
-            <div className="av">{ini(resolvedListenerName)}</div>
+            <div className="av">{ini(name)}</div>
             <div className="hdr-info">
-              <div className="hdr-name">{resolvedListenerName}</div>
+              <div className="hdr-name">{name}</div>
               <div className="hdr-sub">⏳ Waiting for response…</div>
             </div>
           </div>
-          <div className="end-screen">
-            <div className="end-icon">⏳</div>
-            <h2 className="end-h">
-              {isSeeker ? `Waiting for ${resolvedListenerName}…` : 'Someone wants to connect'}
-            </h2>
-            <p className="end-p" style={{ marginBottom: 20 }}>
-              {isSeeker
-                ? "Your listener has been notified and usually responds within a minute. Your wallet is held — you'll be refunded in full if they don't respond in time."
-                : 'A seeker is waiting for you. Open your dashboard to accept or decline this request.'}
-            </p>
-            {isSeeker && requestSecsLeft !== null && (
-              <div className="end-duration" style={{ marginBottom: 20 }}>
-                ⏳ Auto-cancels in {fmtTimer(requestSecsLeft)}
+          {isSeeker ? (
+            <div style={{ flex: 1, overflowY: 'auto', padding: '28px 20px 20px', background: 'white', textAlign: 'center', fontFamily: "'Nunito',sans-serif" }}>
+              <div className="end-icon">⏳</div>
+              <h2 className="end-h">Waiting for {name}…</h2>
+
+              <div style={{
+                margin: '14px auto 10px', maxWidth: 380, padding: '12px 14px', borderRadius: 14, fontSize: 14, fontWeight: 700, lineHeight: 1.45,
+                background: alertStatus === 'not_delivered' ? '#FFF6E5' : alertStatus === 'delivered' ? '#E8F8EE' : '#EEF6FB',
+                color: alertStatus === 'not_delivered' ? '#9A5B00' : alertStatus === 'delivered' ? '#1E7A3E' : 'var(--navy)',
+              }}>
+                {alertStatus === 'delivered' && <>✅ Alert delivered to {name}&apos;s phone.</>}
+                {alertStatus === 'not_delivered' && <>⚠️ {name} may be away from their phone right now. You can keep waiting, or talk to someone available now.</>}
+                {alertStatus === 'unknown' && <>📨 Your request has been sent to {name}.</>}
               </div>
-            )}
-            {isSeeker ? (
+
+              <p style={{ fontSize: 14, color: 'var(--gray)', fontWeight: 600, margin: '0 auto 16px', maxWidth: 380 }}>
+                Listeners usually respond within 1–2 minutes.
+              </p>
+
+              {requestSecsLeft !== null && (
+                <div style={{ maxWidth: 380, margin: '0 auto 6px' }}>
+                  <div style={{ height: 8, borderRadius: 8, background: '#E3EEF4', overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${progressPct}%`, background: 'var(--teal, #1A8FA0)', transition: 'width 1s linear' }} />
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--gray)', fontWeight: 700, marginTop: 6 }}>
+                    {fmtTimer(requestSecsLeft)} left · your money is on hold and fully refunded if they don&apos;t respond
+                  </div>
+                </div>
+              )}
+
+              {showAlternatives && (alternatives === null || alternatives.length > 0) && (
+                <div style={{ maxWidth: 380, margin: '22px auto 0', textAlign: 'left' }}>
+                  <div style={{ fontSize: 15, fontWeight: 900, color: 'var(--navy)', marginBottom: 10 }}>Talk to someone available now</div>
+                  {alternatives === null ? (
+                    <div style={{ fontSize: 13, color: 'var(--gray)', fontWeight: 600 }}>Finding listeners who are online…</div>
+                  ) : alternatives.map(l => (
+                    <div key={l.user_id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', border: '1.5px solid #D5EEF6', borderRadius: 14, marginBottom: 8 }}>
+                      {l.users?.avatar_url
+                        ? <img src={l.users.avatar_url} alt="" style={{ width: 44, height: 44, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                        : <div className="av" style={{ flexShrink: 0 }}>{ini(l.users?.name ?? 'L')}</div>}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontWeight: 800, color: 'var(--navy)', fontSize: 14 }}>
+                          {l.users?.name ?? 'Listener'}
+                          {l.rating ? <span style={{ color: '#F5A623', fontWeight: 700, marginLeft: 6 }}>★ {Number(l.rating).toFixed(1)}</span> : null}
+                        </div>
+                        <div style={{ fontSize: 12, color: 'var(--gray)', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          🟢 Online · {altPrice(l)}{l.specialty_tags?.length ? ` · ${l.specialty_tags.slice(0, 2).join(', ')}` : ''}
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => switchTo(l)}
+                        disabled={!!switchingTo}
+                        style={{ background: 'var(--orange, #FF9933)', color: 'white', border: 'none', borderRadius: 50, padding: '9px 14px', fontFamily: 'inherit', fontWeight: 800, fontSize: 13, cursor: 'pointer', flexShrink: 0 }}
+                      >
+                        Talk now
+                      </button>
+                    </div>
+                  ))}
+                  <div style={{ fontSize: 11, color: 'var(--gray)', fontWeight: 600, marginTop: 4 }}>
+                    Choosing someone else cancels this request first — you&apos;re refunded in full.
+                  </div>
+                </div>
+              )}
+
               <button
-                className="btn-done"
-                style={{ background: cancellingRequest ? '#ccc' : '#E53935' }}
                 disabled={cancellingRequest}
                 onClick={async () => {
                   setCancellingRequest(true)
                   try { await fetch(`/api/sessions/${sessionId}/decline`, { method: 'POST' }) } catch { /* ignore */ }
                   router.push('/browse')
                 }}
+                style={{ marginTop: 26, background: 'none', border: 'none', color: 'var(--gray)', fontFamily: 'inherit', fontWeight: 700, fontSize: 13, textDecoration: 'underline', cursor: 'pointer', padding: 8 }}
               >
                 {cancellingRequest ? 'Cancelling…' : 'Cancel request'}
               </button>
-            ) : (
+            </div>
+          ) : (
+            <div className="end-screen">
+              <div className="end-icon">⏳</div>
+              <h2 className="end-h">Someone wants to connect</h2>
+              <p className="end-p" style={{ marginBottom: 20 }}>
+                A seeker is waiting for you. Open your dashboard to accept or decline this request.
+              </p>
               <a href="/dashboard" className="btn-done" style={{ textDecoration: 'none', display: 'inline-block' }}>
                 Go to dashboard →
               </a>
-            )}
-          </div>
+            </div>
+          )}
           <div className="crisis-footer">
             🆘 Crisis: <a href="tel:08046110007">NIMHANS 080-46110007</a> · <a href="tel:14416">Tele-MANAS 14416</a>
           </div>
@@ -1649,6 +1814,17 @@ function SessionContent() {
       </div>
     </>
   )
+}
+
+type AltListener = {
+  user_id: string
+  is_available?: boolean
+  is_in_session?: boolean
+  rate_per_min?: number | null
+  rating?: number | null
+  total_sessions?: number | null
+  specialty_tags?: string[] | null
+  users?: { name?: string | null; avatar_url?: string | null } | null
 }
 
 export default function SessionPage() {
