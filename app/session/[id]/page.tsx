@@ -431,6 +431,9 @@ function SessionContent() {
   // refund the moment the window lapses (the daily cron is only a backstop).
   // Re-evaluates each second so the displayed countdown stays in sync.
   const [requestSecsLeft, setRequestSecsLeft] = useState<number | null>(null)
+  // Set while "Talk now" is switching listeners: the old request's own timeout
+  // must not fire underneath it.
+  const switchingRef = useRef(false)
   useEffect(() => {
     if (sessionStatus !== 'pending' || !requestCreatedAt) { setRequestSecsLeft(null); return }
     const isSeeker = userIdRef.current !== null && listenerId !== null && userIdRef.current !== listenerId
@@ -452,7 +455,7 @@ function SessionContent() {
     const tick = () => {
       const left = Math.max(0, Math.round((deadline - serverNow()) / 1000))
       setRequestSecsLeft(left)
-      if (left <= 0 && isSeeker && !fired) {
+      if (left <= 0 && isSeeker && !fired && !switchingRef.current) {
         fired = true
         fetch(`/api/sessions/${sessionId}/decline`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -492,6 +495,7 @@ function SessionContent() {
   const [alternatives, setAlternatives] = useState<AltListener[] | null>(null)
   const [accountCountry, setAccountCountry] = useState<string | null>(null)
   const [switchingTo, setSwitchingTo] = useState<AltListener | null>(null)
+  const [switchReleased, setSwitchReleased] = useState(false)
   const isWaitingSeeker = sessionStatus === 'pending' && userId !== null && listenerId !== null && userId !== listenerId
 
   useEffect(() => {
@@ -583,27 +587,46 @@ function SessionContent() {
   async function switchTo(l: AltListener) {
     if (switchingTo || !sessionId) return
     setSwitchingTo(l)
+    switchingRef.current = true
     const type = isVoice ? 'voice' : 'text'
     const name = l.users?.name ?? 'Listener'
+    const book = async (replace: boolean) => {
+      const ctrl = new AbortController()
+      const t = setTimeout(() => ctrl.abort(), 20_000)
+      try {
+        const res = await fetch('/api/sessions', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: ctrl.signal,
+          body: JSON.stringify({ listenerId: l.user_id, durationMins: switchDuration, sessionType: type, ...(replace ? { replacesSessionId: sessionId } : {}) }),
+        })
+        return { res, data: await res.json().catch(() => ({})) }
+      } finally { clearTimeout(t) }
+    }
+    const done = () => { switchingRef.current = false; setSwitchingTo(null) }
     try {
-      const res = await fetch('/api/sessions', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ listenerId: l.user_id, durationMins: switchDuration, sessionType: type, replacesSessionId: sessionId }),
-      })
-      const data = await res.json().catch(() => ({}))
+      let { res, data } = await book(true)
+      if (!res.ok && data?.error === 'original_not_pending') {
+        // The first request ended a moment ago. Accepted → the status poll takes
+        // the seeker into that session. Expired/cancelled → book the new listener
+        // directly, which is what the seeker just asked for.
+        const { data: cur } = await supabase.from('sessions').select('status').eq('id', sessionId).maybeSingle()
+        if ((cur as { status?: string } | null)?.status !== 'cancelled') { done(); return }
+        ;({ res, data } = await book(false))
+      }
       if (res.ok && data?.sessionId) {
         window.location.assign(`/session/${data.sessionId}?name=${encodeURIComponent(name)}&duration=${switchDuration}&type=${type}`)
         return
       }
-      setSwitchingTo(null)
+      done()
       const reason = data?.error
-      if (reason === 'original_not_pending') return // first listener answered — the status poll takes over
       // Rarely the new booking fails AFTER the server released this request (the
       // other listener got busy in that instant). Check before saying it's waiting.
       const { data: cur } = await supabase.from('sessions').select('status').eq('id', sessionId).maybeSingle()
       if (cur && (cur as { status: string }).status !== 'pending') {
+        setSwitchReleased(true)
         setSessionStatus((cur as { status: string }).status)
-        showToast(`${name} couldn't be booked just now. Your earlier request was cancelled${sessionIsFreeTrial ? '' : ' and refunded'} — please choose a listener again.`, 'error')
+        showToast(reason === 'switch_failed' && data?.message
+          ? data.message
+          : `${name} couldn't be booked just now. Your earlier request was cancelled${sessionIsFreeTrial ? '' : ' and refunded'} — please choose a listener again.`, 'error')
         return
       }
       if (reason === 'listener_busy' || reason === 'listener_offline' || reason === 'listener_unavailable') {
@@ -618,10 +641,19 @@ function SessionContent() {
         showToast(data?.message || 'Could not switch right now. Your request is still waiting.', 'error')
       }
     } catch {
-      setSwitchingTo(null)
-      showToast('Network error — your request is still waiting.', 'error')
+      done()
+      // Timed out or offline: the server may or may not have switched. Show the truth.
+      const { data: cur } = await supabase.from('sessions').select('status').eq('id', sessionId).maybeSingle()
+      if (cur && (cur as { status: string }).status !== 'pending') {
+        setSwitchReleased(true)
+        setSessionStatus((cur as { status: string }).status)
+        showToast('Connection problem while switching. Your earlier request was cancelled — check your sessions or choose a listener again.', 'error')
+      } else {
+        showToast('Network error — your request is still waiting.', 'error')
+      }
     }
   }
+
 
 
   // Tell the global alert layer (ListenerPresence) whether this session is live:
@@ -1608,9 +1640,11 @@ function SessionContent() {
           </div>
           <div className="end-screen">
             <div className="end-icon">😔</div>
-            <h2 className="end-h">Request not accepted</h2>
+            <h2 className="end-h">{switchReleased ? 'Request cancelled' : 'Request not accepted'}</h2>
             <p className="end-p">
-              This request wasn&apos;t accepted in time. Your wallet has been fully refunded — no charge.
+              {switchReleased
+                ? `Your request was cancelled${sessionIsFreeTrial ? '' : ' and your wallet refunded'}. Please choose a listener again.`
+                : 'This request wasn\u2019t accepted in time. Your wallet has been fully refunded — no charge.'}
             </p>
             <a href="/browse" className="btn-done" style={{ textDecoration: 'none', display: 'inline-block' }}>
               Browse other listeners →

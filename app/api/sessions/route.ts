@@ -51,9 +51,12 @@ export async function POST(req: NextRequest) {
     const isFree = durationMins === FREE_SESSION_MINS
 
     // "Talk to someone available now" on the waiting screen: book this listener
-    // INSTEAD of the seeker's own pending request. Every check below runs first;
-    // the old request is only released right before the new one is created, so
-    // a booking that can't go through never costs the seeker their request.
+    // INSTEAD of the seeker's own pending request. Every check below runs first
+    // and the old request is only released right before the new one is created,
+    // so the usual failures (busy, offline, trial, wallet) leave it untouched.
+    // Not atomic: if someone else takes the new listener between the checks and
+    // create_session, the old request is already cancelled + refunded and the
+    // client tells the seeker to choose again.
     let replacing: { id: string; amount_held: number; is_free_trial: boolean } | null = null
     if (replacesSessionId) {
       const { data: old } = await sb.from('sessions')
@@ -249,10 +252,11 @@ export async function POST(req: NextRequest) {
           logger.error('Session POST (switch): refund of replaced request failed — RECONCILIATION NEEDED', { sessionId: replacing.id, seekerId: user.id, amount: replacing.amount_held, error: refundErr.message })
           return NextResponse.json({ error: 'switch_failed', message: 'Your request was cancelled but we could not book the new listener. Your refund is being processed — please contact support if it does not arrive.' }, { status: 500 })
         }
-        await sb.from('wallet_transactions').insert({
+        const { error: txErr } = await sb.from('wallet_transactions').insert({
           user_id: user.id, amount: replacing.amount_held, type: 'refund',
           description: 'Refund — request cancelled', session_id: replacing.id,
-        }).then(() => {}, (e) => logger.error('Session POST (switch): refund ledger insert failed', { sessionId: replacing!.id, error: String(e) }))
+        })
+        if (txErr) logger.error('Session POST (switch): refund ledger insert failed (audit gap)', { sessionId: replacing.id, error: txErr.message })
       }
     }
 

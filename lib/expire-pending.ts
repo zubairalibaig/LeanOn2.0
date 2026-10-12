@@ -50,13 +50,14 @@ export async function expireStalePendingRequests(
       if (refundErr) {
         logger.error('expireStalePendingRequests: refund failed — RECONCILIATION NEEDED', { sessionId: s.id, seekerId: s.seeker_id, amount: s.amount_held, error: refundErr.message })
       } else {
-        await sb.from('wallet_transactions').insert({
+        const { error: txErr } = await sb.from('wallet_transactions').insert({
           user_id: s.seeker_id,
           amount: s.amount_held,
           type: 'refund',
           description: 'Refund — listener did not respond',
           session_id: s.id,
-        }).then(() => {}, () => {})
+        })
+        if (txErr) logger.error('expireStalePendingRequests: refund ledger insert failed (audit gap)', { sessionId: s.id, error: txErr.message })
         await sb.from('notifications').insert({
           user_id: s.seeker_id,
           type: 'session_cancelled',

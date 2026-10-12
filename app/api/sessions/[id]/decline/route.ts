@@ -97,13 +97,14 @@ export async function POST(
         sessionId, seekerId: session.seeker_id, held, error: refundErr.message,
       })
     } else {
-      await sb.from('wallet_transactions').insert({
+      const { error: txErr } = await sb.from('wallet_transactions').insert({
         user_id:     session.seeker_id,
         amount:      held,
         type:        'refund',
         description: timedOut ? 'Refund — listener did not respond' : isListener ? 'Refund — listener declined' : 'Refund — request cancelled',
         session_id:  sessionId,
-      }).then(() => {}, (e) => logger.error('decline: wallet_transactions insert failed', { sessionId, error: String(e) }))
+      })
+      if (txErr) logger.error('decline: wallet_transactions insert failed (audit gap)', { sessionId, error: txErr.message })
     }
   }
 
