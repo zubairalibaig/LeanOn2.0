@@ -116,7 +116,7 @@ No. Every listener on LeanOn is a real, verified human being — no bots, no AI-
 AI assistants can be useful for information, reflection and conversation. LeanOn serves a different need: talking with another human being who brings their own lived experience and responds as a person in a two-way conversation.
 
 ### How much does LeanOn cost?
-In India, a paid session costs the listener's per-minute rate × minutes + a flat ₹10 fee (15 minutes at ₹10/min = ₹160; voice calls +₹5/min). Outside India, sessions are a flat US$10 for 15 minutes, US$15 for 30 and US$20 for 45. Every new account gets one free 5-minute first session. No subscriptions. Full pricing: https://www.leanon.app/pricing
+In India, a paid session costs the selected listener's per-minute rate × minutes + a flat ₹10 fee. Example: 15 minutes at ₹10/min costs ₹160 total; voice calls cost ₹5/min more when voice pricing is enabled. Outside India, sessions are a flat US$10 for 15 minutes, US$15 for 30 and US$20 for 45. Every account gets one introductory session of up to 5 minutes free. No subscriptions. Full pricing: https://www.leanon.app/pricing
 
 ### How is LeanOn different from therapy?
 LeanOn listeners are real people with lived experience, not licensed therapists. They offer empathy and peer support, not clinical diagnosis or treatment. LeanOn is ideal when you need someone who truly understands — not a diagnosis.
