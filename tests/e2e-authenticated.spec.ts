@@ -23,7 +23,7 @@
  * All tests skip cleanly when the env vars are absent.
  */
 
-import { test, expect, Page, BrowserContext } from '@playwright/test'
+import { test, expect, Page, BrowserContext, chromium } from '@playwright/test'
 import { createClient } from '@supabase/supabase-js'
 import { TAGLINE_PHRASES, TIME_SLOTS, PRIOR_EXPERIENCE, SCREENING_QUIZ, labelOf } from '../lib/listener-onboarding'
 
@@ -124,15 +124,19 @@ test.describe('Seeker: login survives navigation (middleware regression)', () =>
 // selfie step.
 test.describe('Listener: 3-step application form in a real browser', () => {
   test.skip(!LISTENER_PHONE || !LISTENER_OTP, 'TEST_LISTENER_PHONE / TEST_LISTENER_OTP not set')
-  test.use({
-    permissions: ['camera'],
-    launchOptions: { args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'] },
-  })
   test.setTimeout(180_000)
 
-  test('fills and submits every step', async ({ page, context, browserName }) => {
+  test('fills and submits every step', async ({ browserName }) => {
     test.skip(browserName !== 'chromium', 'fake camera flags are Chromium-only')
-    await login(page, LISTENER_PHONE, LISTENER_OTP, { listenerMode: true })
+    // Launch a dedicated Chromium instance for this camera-only test instead of
+    // calling test.use() inside describe (Playwright rejects that configuration).
+    const browser = await chromium.launch({
+      args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'],
+    })
+    const context = await browser.newContext({ permissions: ['camera'] })
+    const page = await context.newPage()
+    try {
+      await login(page, LISTENER_PHONE, LISTENER_OTP, { listenerMode: true })
     const userId = await authUserId(context)
 
     // A previous run leaves this test user with a pending/approved application,
@@ -213,7 +217,11 @@ test.describe('Listener: 3-step application form in a real browser', () => {
 
     // Success screen or the status page — either proves the server accepted it.
     await expect(page.getByText(/submitted|under review|pending/i).first()).toBeVisible({ timeout: 30_000 })
-    await expect(page.locator('.error-box')).toHaveCount(0)
+      await expect(page.locator('.error-box')).toHaveCount(0)
+    } finally {
+      await context.close()
+      await browser.close()
+    }
   })
 })
 
