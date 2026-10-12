@@ -233,7 +233,7 @@ export default function SomeoneToTalkToPage() {
 
         <div className="section">
           <h2>Browse real peer listeners</h2>
-          <p>Use the live directory to see actual approved listener profiles, their lived-experience topics, languages, ratings and current availability. We do not display example names or invented profiles here; what you see in the directory is the source to use when choosing someone.</p>
+          <p>Use the live directory to review listener introductions, lived-experience topics, languages, ratings and current availability. Choose based on the details shown in each real profile and whether the listener is currently available.</p>
           <p>One 5-minute introductory session is free per account. In India, paid pricing depends on the listener&apos;s rate and session length, plus a flat ₹10 platform fee. For example, 15 minutes at ₹10/min costs ₹160.</p>
           <div className="related" style={{marginTop:16}}>
             <a href="/browse" className="related-link">Browse real listeners →</a>
@@ -248,7 +248,7 @@ export default function SomeoneToTalkToPage() {
           <p>Browse actual listener profiles and see who is online. Availability can change throughout the day; your session starts when a listener accepts your request.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse listeners — first 5 minutes free →</button></a>
-            <a href="/browse"><button className="btn-secondary">Browse Listeners First</button></a>
+            <a href="/pricing"><button className="btn-secondary">See session prices</button></a>
           </div>
         </div>
 
