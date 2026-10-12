@@ -66,7 +66,7 @@ const faqs = [
     items: [
       {
         q: 'How much does LeanOn cost?',
-        a: 'Your first 5-minute session is free. After that, in India you pay the listener\'s own per-minute rate for 15, 30 or 45 minutes, plus a flat ₹10 platform fee — for example, 15 minutes with a ₹10/min listener costs ₹160 and 30 minutes costs ₹310. Voice calls are ₹5/min more than text. Outside India, sessions are a flat US$10 for 15 minutes, US$15 for 30 and US$20 for 45. Full details: leanon.app/pricing.',
+        a: 'One introductory session of up to 5 minutes is free per account. In India, the total is the selected listener\'s per-minute rate × session length, plus a flat ₹10 platform fee; for example, 15 minutes at ₹10/min costs ₹160 and 30 minutes costs ₹310. Voice calls are ₹5/min more than text when voice pricing is enabled. Outside India, sessions are US$10 for 15 minutes, US$15 for 30 and US$20 for 45. See leanon.app/pricing for details.',
       },
       {
         q: 'How does the wallet work?',
