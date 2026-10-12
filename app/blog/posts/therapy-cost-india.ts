@@ -88,6 +88,6 @@ export const post = {
 
 <p>The case for <strong>peer support India</strong> is not that it beats professional care. It is that between a free crisis helpline and a ₹30,000 treatment course there was, until recently, almost nothing — and that most emotional difficulty lives precisely in that gap. Empathy from someone who has been there is not a lesser product. It is simply a different one, priced at what it actually costs to provide.</p>
 
-<p>If that sounds like what you need, you can <a href="/browse">browse peer listeners</a> and see who has lived something close to your situation — your first introductory session of up to five minutes is free once per account. If you would rather understand the pricing, refunds, and privacy rules in detail first, that is all set out in our <a href="/faq">FAQ</a>. And if you are in crisis right now, please call NIMHANS on 080-46110007 or Tele-MANAS on 14416 before anything else.</p>
+<p>If that sounds like what you need, you can <a href="/browse">browse peer listeners</a> and see who has lived something close to your situation — your first introductory session of up to five minutes is free once per account. If you would rather understand the exact session prices first, see <a href="/pricing">LeanOn pricing</a>; privacy and refund details are in our <a href="/faq">FAQ</a>. And if you are in crisis right now, please call NIMHANS on 080-46110007 or Tele-MANAS on 14416 before anything else.</p>
   `.trim(),
 }
