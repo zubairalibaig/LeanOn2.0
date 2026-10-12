@@ -76,6 +76,12 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // A request nobody answered must not keep the listener "busy" (or the seeker
+    // "already in a session") until the nightly cleanup — expire it now. Runs
+    // BEFORE the availability read: expiring a missed request can auto-offline the
+    // listener (recordMissedRequest), and this booking must see that.
+    await expireStalePendingRequests(sb, { listenerId, seekerId: user.id })
+
     // Verify listener is active and available (server-side — client-side check is not enough)
     // custom_service_fee_rate was added in migration 062. If the migration hasn't run yet
     // the column is missing and Supabase returns an error, not just a null row — which
@@ -110,10 +116,6 @@ export async function POST(req: NextRequest) {
     if (!lp.is_available) {
       return NextResponse.json({ error: 'listener_offline', message: 'This listener is currently offline.' }, { status: 400 })
     }
-
-    // A request nobody answered must not keep the listener "busy" (or the seeker
-    // "already in a session") until the nightly cleanup — expire it now.
-    await expireStalePendingRequests(sb, { listenerId, seekerId: user.id })
 
     // Block paid sessions if listener already has any active session (free trial or paid)
     if (!effectivelyFree) {
