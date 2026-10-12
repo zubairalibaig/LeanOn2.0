@@ -3,8 +3,8 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Vent to Someone Online — Real Human, Anonymous, Available Now | LeanOn',
-  description: 'Need to vent to someone who will actually listen? LeanOn connects you with a real peer listener in India — not an AI, not a bot, not your family. Say what you need to say.',
+  title: 'Vent to Someone Online in India | Real Human Peer Support | LeanOn',
+  description: 'Need to vent to someone who will listen? LeanOn connects you with screened peer listeners. One free 5-minute introduction per account; paid India sessions from ₹160 for 15 minutes at a ₹10/min listener rate.',
   keywords: [
     'vent to someone online India', 'online venting India',
     'talk to someone to vent India', 'vent online anonymously India',
@@ -17,8 +17,8 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: 'https://www.leanon.app/vent-to-someone-online', languages: { 'en-IN': 'https://www.leanon.app/vent-to-someone-online' } },
   openGraph: {
-    title: 'Vent to Someone Online — Real Human, Anonymous, Available Now | LeanOn',
-    description: 'Need to vent to someone who will actually listen? LeanOn connects you with a real peer listener in India — not an AI, not a bot, not your family. Say what you need to say.',
+    title: 'Vent to Someone Online in India | Real Human Peer Support | LeanOn',
+    description: 'Need to vent to someone who will listen? LeanOn connects you with screened peer listeners. One free 5-minute introduction per account; paid India sessions from ₹160 for 15 minutes at a ₹10/min listener rate.',
     url: 'https://www.leanon.app/vent-to-someone-online',
     siteName: 'LeanOn',
     type: 'article',
@@ -33,17 +33,17 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'What is online venting and does it work?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Online venting is the act of expressing accumulated emotion — frustration, anger, sadness, overwhelm — to another person through a digital platform. Research consistently shows that externalising emotion (saying it out loud or in writing to someone who receives it) reduces its physiological weight. On LeanOn, you vent to a real human being who is trained to listen, which is meaningfully different from journaling or talking to an AI.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Online venting means expressing what is frustrating, upsetting or overwhelming you to another person through text or voice. Some people find it helpful to put thoughts into words and feel heard, although it does not solve every problem or replace professional care when that is needed. LeanOn connects people with screened peer listeners for everyday emotional support, not clinical treatment.' },
     },
     {
       '@type': 'Question',
       name: 'Why vent to a stranger online instead of a friend?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Because friends come with complications. They have opinions about your situation, they may take sides, they might tell someone else, and they have feelings about what you tell them that you then have to manage. A peer listener on LeanOn is a dedicated, confidential space — they are there entirely for you, with no social overhead, no judgment, and no consequences.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'A listener is outside your family, workplace and friend group, which can make it easier to talk about a sensitive situation. LeanOn listeners are screened peers who aim to listen without judgment. You can use a display name, but sign-in still requires a phone number; read the Privacy Policy and avoid sharing details you are not comfortable disclosing.' },
     },
     {
       '@type': 'Question',
       name: 'Is venting online in India safe and private?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. On LeanOn, you do not share your real name or contact details. The session is end-to-end private. Listeners sign confidentiality agreements. You can speak freely about anyone in your life — your boss, your partner, your in-laws — without any risk of it reaching them.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'LeanOn uses phone OTP for sign-in, but your phone number is not shown to listeners; you can use a display name. Text messages are not stored after session completion by default and voice calls are not recorded. Automated AI moderation is used for safety, and flagged content may be reviewed by the safety team. Review the Privacy Policy for details and avoid sharing identifying details you do not want to disclose.' },
     },
     {
       '@type': 'Question',
@@ -59,6 +59,16 @@ const faqSchema = {
       '@type': 'Question',
       name: 'What makes LeanOn different from just texting a friend to vent?',
       acceptedAnswer: { '@type': 'Answer', text: 'Three things: confidentiality (your listener has no connection to your life and no interest in sharing what you say), no social debt (you are not creating a situation where someone now worries about you, has an opinion, or expects an update), and trained presence (listeners are practised in actually receiving what you say without redirecting, one-upping, or immediately solving).' },
+    },
+    {
+      '@type': 'Question',
+      name: 'How much does a vent session cost on LeanOn?',
+      acceptedAnswer: { '@type': 'Answer', text: 'One introductory session of up to 5 minutes is free per account. In India, paid sessions are priced at the selected listener’s per-minute rate multiplied by the duration, plus a flat ₹10 platform fee. For example, 15 minutes at ₹10/min costs ₹160. The exact price is shown before you start; see https://www.leanon.app/pricing.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I talk to someone immediately?',
+      acceptedAnswer: { '@type': 'Answer', text: 'You can browse the live listener directory and send a request to someone shown as available. A conversation starts when the listener accepts; immediate availability is not guaranteed and can change throughout the day.' },
     },
   ],
 }
@@ -149,6 +159,12 @@ export default function VentToSomeoneOnlinePage() {
         </div>
 
         <div className="section">
+          <h2>Quick answer: vent to someone online in India</h2>
+          <p>LeanOn connects you with screened peer listeners for one-to-one text or voice conversations. One introductory session of up to 5 minutes is free per account. In India, paid sessions are charged at the selected listener&apos;s rate per minute × session length, plus a flat ₹10 platform fee. For example, 15 minutes at ₹10/min costs ₹160. Availability depends on which listeners are online and accept your request.</p>
+          <p><a href="/pricing" style={{color:'var(--teal)',fontWeight:800}}>See current pricing</a> · <a href="/trust" style={{color:'var(--teal)',fontWeight:800}}>Read about trust and safety</a> · <a href="/browse" style={{color:'var(--teal)',fontWeight:800}}>Browse real listeners</a></p>
+        </div>
+
+        <div className="section">
           <h2>The Problem With Venting to People You Know</h2>
           <p>The moment you tell a friend something difficult, you have taken on a second job: managing their reaction. They worry. They have opinions. They may share it with someone else. They might say something that makes you regret telling them. They will bring it up again later at a moment you do not expect.</p>
           <p>Even the best people in your life are not clean receivers. They are filters — their own histories, biases, and emotional investments shape what they hear and how they respond. Sometimes that is valuable. Often, when you just need to get something out, it is an obstacle.</p>
@@ -157,8 +173,8 @@ export default function VentToSomeoneOnlinePage() {
 
         <div className="section">
           <h2>What Actually Happens When You Vent to a Listener</h2>
-          <p>There is a specific physiological mechanism behind why being heard helps. When you carry an unexpressed emotion, your nervous system keeps processing it — looping, activating, looking for resolution. Language is one of the primary ways humans process and encode experience. Speaking something to a present, receptive person closes the loop in a way that thinking alone cannot.</p>
-          <p>When you vent to a LeanOn listener, you are not just getting it off your chest in a metaphorical sense. You are completing a cognitive and emotional processing cycle. The thing stops circling. The pressure drops. You can think again — and respond to the rest of your day from that clearer state rather than from underneath it.</p>
+          <p>Putting a problem into words can help some people organise what happened and decide what they need next. Other times, you may simply want someone to hear you before you decide what to do. Responses differ from person to person, and venting is not a treatment or a guarantee that distress will go away.</p>
+          <p>A LeanOn peer listener offers a focused human conversation. You can explain the situation in your own words, ask to be heard without advice, or think aloud about what might help. If you need clinical assessment or treatment, a qualified mental health professional is the right support.</p>
         </div>
 
         <div className="section">
@@ -195,14 +211,14 @@ export default function VentToSomeoneOnlinePage() {
 
         <div className="cta-card">
           <h2>Ready to say it out loud?</h2>
-          <p>A real listener is available right now. No appointment. No intake form. Just say what you need to say.</p>
+          <p>Browse listener profiles and see current availability. No advance appointment is needed; your conversation begins when an available listener accepts.</p>
           <a href="/browse" className="btn-cta">Start a vent session →</a>
         </div>
 
         <div className="section">
           <h2>You Might Also Find This Helpful</h2>
           <div className="related">
-            <a href="/need-to-vent-right-now">Vent right now →</a>
+            <a href="/pricing">Session pricing →</a>
             <a href="/support/need-to-vent">Need to vent →</a>
             <a href="/support/anonymous-support">Anonymous support →</a>
             <a href="/chat-with-real-person">Chat with real person →</a>
