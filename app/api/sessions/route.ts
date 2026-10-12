@@ -298,6 +298,12 @@ export async function POST(req: NextRequest) {
       if (push.delivered === 0) {
         logger.warn('session request push not delivered', { sessionId, listenerId, ...push })
       }
+      // Keep the outcome on the session so admin can see whether the listener
+      // was alerted. Column from migration 066 — ignore the error until it's run.
+      await sb.from('sessions')
+        .update({ request_push: { at: new Date().toISOString(), configured: push.configured, devices: push.devices, delivered: push.delivered, errors: push.errors.slice(0, 5) } })
+        .eq('id', sessionId)
+        .then(() => {}, () => {})
     } catch (fcmErr) {
       logger.error('FCM push failed (non-critical):', { error: fcmErr instanceof Error ? fcmErr.message : String(fcmErr) })
     }

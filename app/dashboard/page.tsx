@@ -320,7 +320,7 @@ export default function DashboardPage() {
       if (d.ok) showToast('Test alert sent. Switch to another app — it should arrive within a few seconds.', 'success')
       else if (d.reason === 'no_device') showToast('This device is not registered for alerts yet — tap "Turn on alerts".', 'error')
       else if (d.reason === 'not_configured') showToast('Alerts are not set up on the server yet. Please tell LeanOn support.', 'error')
-      else showToast(d.error || 'The test alert could not be sent. Try again in a minute.', 'error')
+      else showToast(d.error || `The test alert could not be sent${Array.isArray(d.errors) && d.errors.length ? ` (${d.errors[0]})` : ''}. Please screenshot this and send it to LeanOn support.`, 'error')
     } finally { setTestingAlert(false) }
   }
 

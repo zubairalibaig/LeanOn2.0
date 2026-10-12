@@ -99,16 +99,24 @@ export async function GET(req: NextRequest) {
       }
     }
 
+    // Separate read so the tab keeps working before migration 066 adds the column.
+    const pushMap: Record<string, unknown> = {}
+    if (sessionIds.length > 0) {
+      const { data: pushRows, error: pushErr } = await sb.from('sessions').select('id, request_push').in('id', sessionIds)
+      if (!pushErr) for (const r of (pushRows ?? []) as { id: string; request_push: unknown }[]) pushMap[r.id] = r.request_push ?? null
+    }
+
     const sessions = (data ?? []).map((s: { id: string; platform_fee?: number }) => {
       const e = earningsMap[s.id]
+      const withPush = { ...s, request_push: pushMap[s.id] ?? null }
       return e
         ? {
-            ...s,
+            ...withPush,
             // service fee = combined_le_platform_fee − seeker's flat ₹10
             listener_service_fee: e.listener_service_fee - (s.platform_fee ?? 0),
             listener_net_amount:  e.listener_net_amount,
           }
-        : { ...s, listener_service_fee: null, listener_net_amount: null }
+        : { ...withPush, listener_service_fee: null, listener_net_amount: null }
     })
 
     return NextResponse.json({ sessions, total: count ?? 0, page })

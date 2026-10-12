@@ -69,6 +69,7 @@ type SessionRow = {
   listener_net_amount?: number | null
   // Non-null for NRI sessions only (set at booking from listener_profiles.rate_per_min)
   listener_rate_per_min?: number | null
+  request_push?: { configured: boolean; devices: number; delivered: number; errors: string[] } | null
 }
 type TranscriptMsg = { id: string; sender_id: string; content: string; created_at: string; is_flagged?: boolean }
 type ReportRow = {
@@ -2517,6 +2518,15 @@ export default function AdminPage() {
                             : s.status === 'completed'
                               ? <span className="badge badge-green">Completed</span>
                               : <span className="badge badge-gray">{s.status}</span>}
+                          {s.request_push && (() => {
+                            const p = s.request_push
+                            const ok = p.delivered > 0
+                            const text = !p.configured ? 'Alert: server not set up'
+                              : p.devices === 0 ? 'Alert: listener has no device'
+                              : ok ? `Alert sent to ${p.delivered}/${p.devices} device${p.devices === 1 ? '' : 's'}`
+                              : `Alert failed: ${p.errors[0] || 'unknown'}`
+                            return <div style={{ fontSize: 11, fontWeight: 700, marginTop: 4, color: ok ? 'var(--teal)' : 'var(--red)' }}>{ok ? '🔔' : '🔕'} {text}</div>
+                          })()}
                           {unsettledIds.has(s.id) && (
                             <div style={{ marginTop: 4 }}>
                               <button
