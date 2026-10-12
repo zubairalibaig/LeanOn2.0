@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Online Counselling Cost in India (2026): Full Price Comparison | LeanOn',
-  description: 'Compare therapy, free helplines and online peer support costs in India. See how LeanOn pricing works, when peer support fits, and what to expect before paying.' ,
+  description: 'Compare therapy, free helplines and online peer support costs in India. See how LeanOn pricing works, when peer support fits, and what to expect before paying.',
   alternates: { canonical: 'https://www.leanon.app/online-counselling-india-cost', languages: { 'en-IN': 'https://www.leanon.app/online-counselling-india-cost' } },
   keywords: 'online counselling cost India, therapy price India, how much does therapy cost India, affordable counselling India, cheapest online emotional support India, online therapy cost comparison India, peer support price India, leanon pricing',
   openGraph: {
     title: 'Online Counselling Cost in India (2026): Full Price Comparison | LeanOn',
-    description: 'Compare therapy, free helplines and online peer support costs in India. See how LeanOn pricing works, when peer support fits, and what to expect before paying.' ,
+    description: 'Compare therapy, free helplines and online peer support costs in India. See how LeanOn pricing works, when peer support fits, and what to expect before paying.',
     url: 'https://www.leanon.app/online-counselling-india-cost',
     siteName: 'LeanOn',
     type: 'article',
@@ -41,7 +41,7 @@ const faqSchema = {
       name: 'Is there anything cheaper that still involves a real human?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. Trained peer support sits between free helplines and clinical therapy. On LeanOn, your first 5 minutes are free, and paid sessions are charged by the minute at the selected listener’s per-minute rate, plus a flat ₹10 platform fee. For example, 15 minutes with a listener charging ₹10/min costs ₹160 including the flat ₹10 platform fee. You are speaking to a real, verified human being with lived experience of something similar — not a bot and not a script. Peer listeners are not licensed therapists and do not provide clinical treatment.',
+        text: 'Yes. Trained peer support sits between free helplines and clinical therapy. On LeanOn, one introductory session of up to 5 minutes is free per account, and paid sessions are charged by the minute at the selected listener’s per-minute rate, plus a flat ₹10 platform fee. For example, 15 minutes with a listener charging ₹10/min costs ₹160 including the flat ₹10 platform fee. You are speaking to a real, verified human being with lived experience of something similar — not a bot and not a script. Peer listeners are not licensed therapists and do not provide clinical treatment.',
       },
     },
     {
@@ -242,7 +242,7 @@ export default function OnlineCounsellingCostPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is there anything cheaper that still involves a real human?</div>
-            <div className="faq-a">Yes. Trained peer support sits between free helplines and clinical therapy. On LeanOn, paid sessions are charged by the minute at the selected listener’s per-minute rate, plus a flat ₹10 platform fee. A 15-minute conversation starts at around ₹160, with a real verified human who has lived something similar. One introductory session of up to 5 minutes is free per account. Peer listeners are not licensed therapists and do not provide clinical treatment.</div>
+            <div className="faq-a">Yes. Trained peer support sits between free helplines and clinical therapy. On LeanOn, paid sessions are charged by the minute at the selected listener’s per-minute rate, plus a flat ₹10 platform fee. For example, a 15-minute conversation with a listener charging ₹10/min costs ₹160 including the flat ₹10 platform fee, with a real screened peer listener who brings relevant lived experience. One introductory session of up to 5 minutes is free per account. Peer listeners are not licensed therapists and do not provide clinical treatment.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is free support good enough?</div>
