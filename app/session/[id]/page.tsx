@@ -598,6 +598,14 @@ function SessionContent() {
       setSwitchingTo(null)
       const reason = data?.error
       if (reason === 'original_not_pending') return // first listener answered — the status poll takes over
+      // Rarely the new booking fails AFTER the server released this request (the
+      // other listener got busy in that instant). Check before saying it's waiting.
+      const { data: cur } = await supabase.from('sessions').select('status').eq('id', sessionId).maybeSingle()
+      if (cur && (cur as { status: string }).status !== 'pending') {
+        setSessionStatus((cur as { status: string }).status)
+        showToast(`${name} couldn't be booked just now. Your earlier request was cancelled${sessionIsFreeTrial ? '' : ' and refunded'} — please choose a listener again.`, 'error')
+        return
+      }
       if (reason === 'listener_busy' || reason === 'listener_offline' || reason === 'listener_unavailable') {
         setAlternatives(prev => (prev ? prev.filter(x => x.user_id !== l.user_id) : prev))
         showToast(`${name} just became unavailable — your request to ${resolvedListenerName} is still waiting.`, 'info')
