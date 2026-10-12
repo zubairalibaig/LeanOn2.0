@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Vent to Someone Online in India | Real Human Peer Support | LeanOn',
-  description: 'Need to vent to someone who will listen? LeanOn connects you with screened peer listeners. One free 5-minute introduction per account; paid India sessions from ₹160 for 15 minutes at a ₹10/min listener rate.',
+  description: 'Need to vent to someone who will listen? LeanOn connects you with screened peer listeners. One free 5-minute introduction per account; example: 15 minutes at ₹10/min costs ₹160 including the ₹10 platform fee.',
   keywords: [
     'vent to someone online India', 'online venting India',
     'talk to someone to vent India', 'vent online anonymously India',
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.leanon.app/vent-to-someone-online', languages: { 'en-IN': 'https://www.leanon.app/vent-to-someone-online' } },
   openGraph: {
     title: 'Vent to Someone Online in India | Real Human Peer Support | LeanOn',
-    description: 'Need to vent to someone who will listen? LeanOn connects you with screened peer listeners. One free 5-minute introduction per account; paid India sessions from ₹160 for 15 minutes at a ₹10/min listener rate.',
+    description: 'Need to vent to someone who will listen? LeanOn connects you with screened peer listeners. One free 5-minute introduction per account; example: 15 minutes at ₹10/min costs ₹160 including the ₹10 platform fee.',
     url: 'https://www.leanon.app/vent-to-someone-online',
     siteName: 'LeanOn',
     type: 'article',
