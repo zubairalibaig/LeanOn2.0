@@ -152,7 +152,7 @@ export default function VentToSomeoneOnlinePage() {
         </div>
 
         <div className="hero">
-          <p className="badge">Real Human · Not AI · Anonymous</p>
+          <p className="badge">Real Human · Not AI · Display-name sign-in</p>
           <h1>Vent to Someone Who Will <em>Actually Listen</em></h1>
           <p className="lead">Not someone who will tell you what to do. Not someone who will take sides. Not someone who will bring it up later. Just someone who will hear it — all of it — without judgment.</p>
           <a href="/browse" className="cta-hero">Start a vent session →</a>
