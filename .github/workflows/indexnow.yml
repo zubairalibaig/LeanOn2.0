@@ -20,4 +20,7 @@ jobs:
         with:
           node-version: '20'
       - name: Submit URLs to IndexNow
-        run: node scripts/indexnow.mjs ${{ github.event.inputs.paths }}
+        env:
+          PATHS: ${{ github.event.inputs.paths }}
+        # Input passed via env (not interpolated into the script) and split on spaces.
+        run: node scripts/indexnow.mjs $PATHS
