@@ -272,6 +272,8 @@ export default function DashboardPage() {
   const [pushRegistered, setPushRegistered] = useState<boolean | null>(null)
   const [alertStatus, setAlertStatus] = useState<AlertStatus | null>(null)
   const [testingAlert, setTestingAlert] = useState(false)
+  // Outcome of the last test alert, shown in the alerts card (toasts vanish too fast for setup steps).
+  const [testResult, setTestResult] = useState<{ ok: boolean; text: string } | null>(null)
 
   // Heartbeat that also re-syncs the button with the database. The sweep
   // (away too long, no phone alerts) or a missed request can set a listener
@@ -311,15 +313,50 @@ export default function DashboardPage() {
     else showToast('Could not turn on alerts on this device.', 'error')
   }
 
+  // 'shown' = arrived and the browser displayed it; 'refused' = arrived but the
+  // browser wouldn't display it; 'none' = never arrived within ms.
+  function waitForTestPush(ms: number): Promise<'shown' | 'refused' | 'none'> {
+    return new Promise(resolve => {
+      if (!('serviceWorker' in navigator)) return resolve('none')
+      const onMsg = (e: MessageEvent) => {
+        if (e.data?.type === 'leanon-test-push-received') { cleanup(); resolve(e.data.shown === false ? 'refused' : 'shown') }
+      }
+      const timer = setTimeout(() => { cleanup(); resolve('none') }, ms)
+      function cleanup() { clearTimeout(timer); navigator.serviceWorker.removeEventListener('message', onMsg) }
+      navigator.serviceWorker.addEventListener('message', onMsg)
+    })
+  }
+
   async function sendTestAlert() {
     setTestingAlert(true)
+    setTestResult(null)
     try {
       const ok = await registerPushNotifications().catch(() => false)
       setPushRegistered(ok)
       if (!ok) { showToast('This device could not register for alerts. Tap "Try again" on the alerts card.', 'error'); return }
+      // Listen BEFORE sending: public/sw.js posts this message when the test
+      // push reaches this browser (even if the OS then hides the banner).
+      const arrived = waitForTestPush(20_000)
       const res = await fetch('/api/push/test', { method: 'POST' }).catch(() => null)
       const d = await res?.json().catch(() => ({})) ?? {}
-      if (d.ok) showToast('Test alert sent. Switch to another app — it should arrive within a few seconds.', 'success')
+      if (d.ok) {
+        showToast('Test alert sent — watch for it now.', 'success')
+        const outcome = await arrived
+        const desktop = !/Android|iPhone|iPad|Mobi/i.test(navigator.userAgent)
+        if (outcome === 'refused') {
+          setTestResult({ ok: false, text: desktop
+            ? 'The test alert reached this browser, but Chrome refused to show it. Allow notifications for LeanOn (click the icon left of the address bar → Site settings → Notifications → Allow) and for Chrome itself in your computer\'s notification settings.'
+            : 'The test alert reached this phone, but it wasn\'t allowed to show. Turn on notifications: Settings → Apps → Chrome (or LeanOn) → Notifications.' })
+        } else if (outcome === 'shown') {
+          setTestResult({ ok: true, text: desktop
+            ? 'The test alert reached this browser. No pop-up? Your computer is hiding it — Windows: Settings → System → Notifications (Google Chrome on, Do not disturb off). Mac: System Settings → Notifications → Google Chrome → Allow, style "Alerts", and Focus off.'
+            : 'The test alert reached this phone. No pop-up? Check Settings → Apps → Chrome (or LeanOn) → Notifications are on and Do not disturb is off.' })
+        } else {
+          setTestResult({ ok: false, text: desktop
+            ? 'The test alert didn\'t reach this browser within 20 seconds. Keep Chrome running (Chrome → Settings → System → "Continue running background apps"), check your internet, then tap "Send a test alert" again.'
+            : 'The test alert didn\'t reach this phone within 20 seconds. Set Chrome (or LeanOn) to "Unrestricted" battery use: Settings → Apps → Chrome → Battery, then try again.' })
+        }
+      }
       else if (d.reason === 'no_device') showToast('This device is not registered for alerts yet — tap "Turn on alerts".', 'error')
       else if (d.reason === 'not_configured') showToast('Alerts are not set up on the server yet. Please tell LeanOn support.', 'error')
       else showToast(d.error || `The test alert could not be sent${Array.isArray(d.errors) && d.errors.length ? ` (${d.errors[0]})` : ''}. Please screenshot this and send it to LeanOn support.`, 'error')
@@ -1314,9 +1351,13 @@ export default function DashboardPage() {
                 <div style={{fontWeight:800, color:'#276749', marginBottom:2}}>🔔 Phone alerts are on for this device</div>
                 <div>You can switch to other apps — you stay online for up to {AWAY_WITH_ALERTS_MINS / 60} hours and every request rings this phone. If a request goes unanswered while you&apos;re away, we set you offline so seekers aren&apos;t left waiting.</div>
                 <button onClick={sendTestAlert} disabled={testingAlert} style={{marginTop:8, background:'white', border:'1.5px solid #B7EBC6', color:'#276749', borderRadius:50, padding:'6px 14px', fontWeight:800, fontSize:12, cursor:'pointer', fontFamily:'inherit'}}>
-                  {testingAlert ? 'Sending…' : 'Send a test alert'}
+                  {testingAlert ? 'Checking…' : 'Send a test alert'}
                 </button>
-                <div style={{marginTop:6, fontSize:11.5, color:'var(--gray)'}}>Test alert not arriving? Set your browser (or the LeanOn app) to &quot;Unrestricted&quot; battery use: Settings → Apps → Chrome → Battery.</div>
+                {testResult ? (
+                  <div style={{marginTop:8, fontSize:12, lineHeight:1.5, padding:'8px 10px', borderRadius:10, background: testResult.ok ? '#E6F6EC' : '#FFF1F0', color: testResult.ok ? '#22543D' : '#9B2C2C'}}>{testResult.text}</div>
+                ) : (
+                  <div style={{marginTop:6, fontSize:11.5, color:'var(--gray)'}}>After a test, LeanOn tells you here whether the alert reached this device and what to change if it didn&apos;t pop up.</div>
+                )}
               </>
             ) : (
               <>

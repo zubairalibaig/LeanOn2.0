@@ -87,7 +87,17 @@ self.addEventListener('push', (event) => {
     timestamp: Date.now(),
     data: { url: data.url || '/dashboard', type: data.type || '', sessionId: data.sessionId || '' },
   }
-  event.waitUntil(self.registration.showNotification(title, options))
+  event.waitUntil((async () => {
+    let shown = true
+    try { await self.registration.showNotification(title, options) } catch { shown = false }
+    // Test alerts: tell open LeanOn pages the push reached this browser, so the
+    // dashboard can say "arrived, but your computer/phone hid the banner"
+    // instead of a vague "not arriving" (notification muted at the OS level).
+    if (data.type === 'test') {
+      const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+      wins.forEach((w) => w.postMessage({ type: 'leanon-test-push-received', shown }))
+    }
+  })())
 })
 
 // Tap → focus an open LeanOn window and move it to the target page, or open a
