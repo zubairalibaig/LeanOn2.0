@@ -65,7 +65,7 @@ const faqSchema = {
       name: 'How is peer support different from counselling?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Counselling is typically delivered by a licensed professional — a psychologist, psychotherapist, or certified counsellor — who is trained to diagnose and treat mental health conditions. Peer support is delivered by someone with lived experience who has training in active listening and supportive conversation, but is not a licensed professional. Counselling is clinical; peer support is human connection from someone who has been there.',
+        text: 'Counselling is typically delivered by a licensed professional — a psychologist, psychotherapist, or certified counsellor — who is screened and expected to diagnose and treat mental health conditions. Peer support is delivered by someone with lived experience who has training in active listening and supportive conversation, but is not a licensed professional. Counselling is clinical; peer support is human connection from someone who has been there.',
       },
     },
   ],
@@ -309,7 +309,7 @@ export default function BestPeerSupportAppIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How is peer support different from counselling?</div>
-            <div className="faq-a">Counselling is typically delivered by a licensed professional trained to diagnose and treat mental health conditions. Peer support is delivered by someone with lived experience trained in active listening. Counselling is clinical; peer support is human connection from someone who has been there.</div>
+            <div className="faq-a">Counselling is typically delivered by a licensed professional trained to diagnose and treat mental health conditions. Peer support is delivered by someone with lived experience screened for active listening. Counselling is clinical; peer support is human connection from someone who has been there.</div>
           </div>
         </div>
 

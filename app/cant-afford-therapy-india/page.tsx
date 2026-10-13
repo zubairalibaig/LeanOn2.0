@@ -215,7 +215,7 @@ export default function CantAffordTherapyIndiaPage() {
 
         <div className="section">
           <h2>What Peer Support Is and What It Costs</h2>
-          <p>LeanOn connects you with peer listeners — real people with lived experience of emotional difficulty, trained in active listening and peer support frameworks. They are not therapists. They are also not just someone who is willing to talk to you. The training and vetting process matters.</p>
+          <p>LeanOn connects you with peer listeners — real people with lived experience of emotional difficulty, screened for active listening and peer support frameworks. They are not therapists. They are also not just someone who is willing to talk to you. The training and vetting process matters.</p>
 
           <h3>What You Get in a Session</h3>
           <ul>

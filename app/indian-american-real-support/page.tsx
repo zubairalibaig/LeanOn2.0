@@ -293,7 +293,7 @@ export default function IndianAmericanRealSupportPage() {
           </p>
           <p>
             This is significantly more affordable than therapy — and you get someone with actual
-            lived South Asian experience, not just clinical training. Available 24/7, no appointment needed.
+            lived South Asian experience, not just clinical training. No appointment needed — see who is online now.
           </p>
         </div>
 
@@ -330,9 +330,9 @@ export default function IndianAmericanRealSupportPage() {
 
         <div className="related">
           <a href="/india-talk-to-real-person">Talk to a real person India →</a>
-          <a href="/desi-usa-support">Desi support in the USA →</a>
+          <a href="/usa">Desi support in the USA →</a>
           <a href="/talk-to-human-instead-of-chatgpt">Real person, not AI →</a>
-          <a href="/usa-nri-support">NRI support USA →</a>
+          <a href="/usa">NRI support USA →</a>
         </div>
 
         <div className="disclaimer">

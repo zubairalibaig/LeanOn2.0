@@ -15,12 +15,12 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'What time can I connect from Edmonton?', acceptedAnswer: { '@type': 'Answer', text: 'Edmonton (MST) is 12.5 hours behind IST. 7am Edmonton = 7:30pm India. Early mornings before work or university are a good time — Indian listeners are available in their evening.' } },
   { '@type': 'Question', name: 'I\'m a University of Alberta student feeling isolated. Is LeanOn right for me?', acceptedAnswer: { '@type': 'Answer', text: 'Absolutely. Indian university students navigating Edmonton winters, academic pressure, and the social difficulty of building a life in a new city are among the people LeanOn was built for. Listeners understand the student experience — the homesickness, the financial stress, the academic pressure — without judgment.' } },
   { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription required.' } },
-  { '@type': 'Question', name: 'Edmonton is not as famous as Vancouver or Toronto. Does that affect what I can talk about?', acceptedAnswer: { '@type': 'Answer', text: 'No. Listeners are trained to understand NRI experience broadly, and the fact that Edmonton is less well-known outside Alberta doesn\'t limit what you can discuss. The isolation of being in a less-famous city — including the way it\'s invisible in Indian diaspora conversations — is something worth talking about.' } },
+  { '@type': 'Question', name: 'Edmonton is not as famous as Vancouver or Toronto. Does that affect what I can talk about?', acceptedAnswer: { '@type': 'Answer', text: 'No. Listeners are screened and expected to understand NRI experience broadly, and the fact that Edmonton is less well-known outside Alberta doesn\'t limit what you can discuss. The isolation of being in a less-famous city — including the way it\'s invisible in Indian diaspora conversations — is something worth talking about.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
   { '@type': 'ListItem', position: 3, name: 'Indians in Edmonton', item: 'https://www.leanon.app/indians-in-edmonton' },
 ] }
 
@@ -72,7 +72,7 @@ export default function IndiansInEdmontonPage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="https://www.leanon.app/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Indians in Edmonton</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Indians in Edmonton</span></nav>
         <div className="hero">
           <p className="badge">Indians in Edmonton &middot; Northern Alberta &middot; Canada</p>
           <h1>-40°C in January. <em>The cold that doesn&rsquo;t just mean weather.</em></h1>

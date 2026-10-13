@@ -48,7 +48,7 @@ const faqSchema = {
       name: 'How does talking to a listener help with loneliness?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Loneliness shrinks when someone genuinely listens. LeanOn listeners are trained to give you their full attention, ask questions that help you feel seen, and hold space without judgment. Just one real conversation can break the cycle of isolation.',
+        text: 'Loneliness shrinks when someone genuinely listens. LeanOn listeners are screened and expected to give you their full attention, ask questions that help you feel seen, and hold space without judgment. Just one real conversation can break the cycle of isolation.',
       },
     },
     {
@@ -183,7 +183,7 @@ export default function LonelinessSupportPage() {
           <h2>How a conversation with a peer listener helps</h2>
           <p>Loneliness shrinks when someone genuinely listens. Not to solve your problems. Not to give you
             advice. Just to be present with you, hear you out, and make you feel less alone in your own head.</p>
-          <p>LeanOn listeners are trained to do exactly this — to ask gentle questions, to reflect back what
+          <p>LeanOn listeners are screened and expected to do exactly this — to ask gentle questions, to reflect back what
             they hear, and to make you feel like you matter. Because you do.</p>
         </div>
 
@@ -221,7 +221,7 @@ export default function LonelinessSupportPage() {
           </div>
           <div className="faq-item">
             <h3>How does talking to a listener help with loneliness?</h3>
-            <p>Loneliness shrinks when someone genuinely listens. LeanOn listeners are trained to give you their
+            <p>Loneliness shrinks when someone genuinely listens. LeanOn listeners are screened and expected to give you their
               full attention, ask questions that help you feel seen, and hold space without judgment. Just one
               real conversation can break the cycle of isolation.</p>
           </div>

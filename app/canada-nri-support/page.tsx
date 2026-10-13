@@ -11,13 +11,13 @@ export const metadata: Metadata = {
     'indian diaspora support canada', 'missing india canada', 'nri homesick canada',
   ],
   alternates: {
-    canonical: 'https://www.leanon.app/canada-nri-support',
-    languages: { 'en-CA': 'https://www.leanon.app/canada-nri-support' },
+    canonical: 'https://www.leanon.app/canada',
+    languages: { 'en-CA': 'https://www.leanon.app/canada' },
   },
   openGraph: {
     title: 'Emotional Support for NRIs in Canada | LeanOn',
     description: 'Missing home is not weakness. Rebuilding everything from scratch is exhausting. LeanOn peer listeners are here for the hard parts of the NRI journey.',
-    url: 'https://www.leanon.app/canada-nri-support',
+    url: 'https://www.leanon.app/canada',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -75,7 +75,7 @@ const breadcrumbSchema = {
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'NRI Support Canada', item: 'https://www.leanon.app/canada-nri-support' },
+    { '@type': 'ListItem', position: 2, name: 'NRI Support Canada', item: 'https://www.leanon.app/canada' },
   ],
 }
 
@@ -243,7 +243,7 @@ export default function CanadaNriSupportPage() {
           <a href="/canada-loneliness">Loneliness in Canada →</a>
           <a href="/canada-winter-loneliness">First winter in Canada →</a>
           <a href="/canada-immigration-stress">Immigration anxiety →</a>
-          <a href="/desi-canada-support">Desi community support →</a>
+          <a href="/canada">Desi community support →</a>
           <a href="/canada-empathy-listener">Empathy listener →</a>
           <a href="/canada-talk-to-someone">Someone to talk to →</a>
         </div>

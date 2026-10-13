@@ -20,7 +20,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
   { '@type': 'ListItem', position: 3, name: 'Indians in Washington DC', item: 'https://www.leanon.app/indians-in-washington-dc' },
 ] }
 
@@ -72,7 +72,7 @@ export default function IndiansInWashingtonDCPage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="https://www.leanon.app/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Indians in Washington DC</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Indians in Washington DC</span></nav>
         <div className="hero">
           <p className="badge">Indians in DC &middot; Fairfax &middot; Ashburn &middot; Northern Virginia</p>
           <h1>Fairfax, Ashburn, Herndon. <em>Little India. Big silence.</em></h1>
@@ -97,14 +97,14 @@ export default function IndiansInWashingtonDCPage() {
         <div className="section">
           <h2>The Community That Sees Everything</h2>
           <p>The Northern Virginia Indian community is famously tight-knit. The temple committees, the cultural associations, the Diwali galas at the Marriott, the school parent networks where the Indian parents all know each other — it is a warm and supportive community, and it is one where news travels fast. You can be surrounded by hundreds of Indians every weekend and have no one you can actually talk to, because everyone knows your family, your career, your parents back in India.</p>
-          <p>This is why LeanOn exists. Not a replacement for community — but a space outside it. A trained Indian peer listener who knows nothing about your career, your family, or your standing in the Fairfax Indian community. Someone who will just listen. Washington DC (EST) is 10.5 hours behind IST. 8am in DC is 6:30pm in India — before the commute, listeners are available.</p>
+          <p>This is why LeanOn exists. Not a replacement for community — but a space outside it. A screened Indian peer listener who knows nothing about your career, your family, or your standing in the Fairfax Indian community. Someone who will just listen. Washington DC (EST) is 10.5 hours behind IST. 8am in DC is 6:30pm in India — before the commute, listeners are available.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>Living near power doesn&rsquo;t mean you have someone to talk to.</h2><p>Real Indian peer listener. Understands the DMV Indian experience. Completely anonymous. First 5 minutes free. From US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
-          <a href="/nri-support">NRI support &rarr;</a>
-          <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
+          <a href="/usa-loneliness">NRI loneliness USA &rarr;</a>
           <a href="/nri-anxiety-abroad">NRI anxiety abroad &rarr;</a>
           <a href="/nri-mental-health">NRI mental health &rarr;</a>
         </div></div>

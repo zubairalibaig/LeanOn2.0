@@ -12,13 +12,13 @@ export const metadata: Metadata = {
     'nri feeling alone usa', 'emotional support indian community usa',
   ],
   alternates: {
-    canonical: 'https://www.leanon.app/usa-nri-support',
-    languages: { 'en-US': 'https://www.leanon.app/usa-nri-support' },
+    canonical: 'https://www.leanon.app/usa',
+    languages: { 'en-US': 'https://www.leanon.app/usa' },
   },
   openGraph: {
     title: 'Emotional Support for NRIs in the USA — Talk to Someone Indian',
     description: 'The NRI emotional experience is specific and heavy. LeanOn peer listeners are Indian, they understand the context, and they are available whenever you need to talk.',
-    url: 'https://www.leanon.app/usa-nri-support',
+    url: 'https://www.leanon.app/usa',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'Is LeanOn available 24 hours a day for NRIs in different US time zones?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn listeners are available 24/7 — whether you are on the East Coast, West Coast, or anywhere in between. The late-night hours when India is sleeping and you are alone with your thoughts are exactly when LeanOn is there.',
+        text: 'Yes. LeanOn listeners are based in India, so availability follows Indian time — whether you are on the East Coast, West Coast, or anywhere in between. The late-night hours when India is sleeping and you are alone with your thoughts are exactly when LeanOn is there.',
       },
     },
     {
@@ -76,7 +76,7 @@ const breadcrumbSchema = {
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'NRI Support USA', item: 'https://www.leanon.app/usa-nri-support' },
+    { '@type': 'ListItem', position: 2, name: 'NRI Support USA', item: 'https://www.leanon.app/usa' },
   ],
 }
 
@@ -175,7 +175,7 @@ export default function UsaNriSupportPage() {
           <h2>🌙 When India is sleeping and the quiet gets too loud</h2>
           <p>It is 11 PM in California. India is in the morning rush. You cannot call home right now.
             Your American friends are asleep. You are alone with everything you are feeling.</p>
-          <p>LeanOn listeners are available around the clock — including 11 PM on the West Coast
+          <p>LeanOn listeners are available on Indian time — including 11 PM on the West Coast
             or 2 AM on the East Coast. You do not have to wait until morning.</p>
           <a href="/browse" className="cta-night">Find a listener now →</a>
         </div>
@@ -227,21 +227,21 @@ export default function UsaNriSupportPage() {
           </div>
           <div className="faq-item">
             <h3>Is LeanOn available 24 hours a day for NRIs in different US time zones?</h3>
-            <p>Yes. LeanOn listeners are available 24/7 — East Coast, West Coast, any time of day or night.
+            <p>Yes. LeanOn listeners are based in India, so availability follows Indian time — East Coast or West Coast — check who is online now (listeners are in India) of day or night.
               The late-night hours when India is sleeping are exactly when LeanOn is there.</p>
           </div>
           <div className="faq-item">
             <h3>How much does a LeanOn session cost in the USA?</h3>
             <p>Sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first
-              5 minutes free — once per listener.</p>
+              5 minutes free — one free session per account.</p>
           </div>
         </div>
 
         <div className="related">
           <a href="/usa-loneliness">Feeling lonely in the USA →</a>
-          <a href="/usa-h1b-visa-stress">H-1B visa stress →</a>
+          <a href="/nri-h1b-visa-stress">H-1B visa stress →</a>
           <a href="/usa-empathy-listener">Empathy listener →</a>
-          <a href="/desi-usa-support">Desi community support →</a>
+          <a href="/usa">Desi community support →</a>
           <a href="/usa-talk-to-someone">Someone to talk to →</a>
           <a href="/usa-therapy-alternative">Therapy alternative →</a>
         </div>

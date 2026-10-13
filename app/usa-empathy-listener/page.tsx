@@ -186,7 +186,7 @@ export default function UsaEmpathyListenerPage() {
             Asking gentle questions. Reflecting back what they hear. Not rushing to fix anything.</p>
           <p>By the end of even a 15-minute session, something shifts. The weight feels more manageable.
             You feel less alone. Sometimes that is all you needed.</p>
-          <p>Sessions start at <strong>$10 for 15 minutes</strong>. First 5 minutes free — once per listener.</p>
+          <p>Sessions start at <strong>$10 for 15 minutes</strong>. First 5 minutes free — one free session per account.</p>
         </div>
 
         <div className="card">
@@ -228,7 +228,7 @@ export default function UsaEmpathyListenerPage() {
           <div className="faq-item">
             <h3>What does a session cost from the USA?</h3>
             <p>Sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first
-              5 minutes free — once per listener. No subscription required.</p>
+              5 minutes free — one free session per account. No subscription required.</p>
           </div>
           <div className="faq-item">
             <h3>Is LeanOn confidential?</h3>
@@ -239,11 +239,11 @@ export default function UsaEmpathyListenerPage() {
 
         <div className="related">
           <a href="/usa-loneliness">Feeling lonely in the USA →</a>
-          <a href="/usa-nri-support">NRI emotional support →</a>
+          <a href="/usa">NRI emotional support →</a>
           <a href="/usa-talk-to-someone">Someone to talk to →</a>
           <a href="/usa-rant-to-someone">Need to rant? →</a>
-          <a href="/desi-usa-support">Desi community support →</a>
-          <a href="/indian-american-loneliness">Indian-American loneliness →</a>
+          <a href="/usa">Desi community support →</a>
+          <a href="/usa-loneliness">Indian-American loneliness →</a>
         </div>
 
         <div className="disclaimer">

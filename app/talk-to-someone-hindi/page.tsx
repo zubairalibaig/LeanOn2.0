@@ -97,7 +97,7 @@ export default function TalkToSomeoneHindiPage() {
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>Apni baat, apni bhasha mein.</h2><p>Hindi-speaking peer listeners. India-based. Available now. First 5 minutes free.</p><a href="/browse" className="btn-cta">Listener dhundhe &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
-          <a href="/nri-support">NRI support &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
           <a href="/indian-diaspora-support">Indian diaspora support &rarr;</a>
           <a href="/support/someone-to-talk-to">Talk to someone online &rarr;</a>
           <a href="/someone-to-talk-to">Someone to talk to &rarr;</a>

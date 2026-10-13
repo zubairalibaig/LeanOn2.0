@@ -44,7 +44,7 @@ const faqSchema = {
       name: 'Is LeanOn cheaper than GetCompanion?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn sessions start at ₹160 for 15 minutes, and your very first 5 minutes with each new listener are completely free — no wallet top-up needed. Both platforms use per-minute billing from a wallet, but LeanOn\'s free trial lets you find the right listener before spending anything.',
+        text: 'LeanOn sessions start at ₹160 for 15 minutes, and your very first 5-minute session is completely free (one per account) — no wallet top-up needed. Both platforms use per-minute billing from a wallet, but LeanOn\'s free trial lets you find the right listener before spending anything.',
       },
     },
     {
@@ -253,8 +253,8 @@ export default function GetCompanionAlternativePage() {
             if you are an NRI dealing with homesickness or cultural isolation.
           </p>
           <p>
-            <strong>You want to try before you pay.</strong> LeanOn gives you a free 5-minute session
-            with every new listener. No wallet top-up, no commitment. Find the right person first.
+            <strong>You want to try before you pay.</strong> LeanOn gives you one free 5-minute session
+            (one per account). No wallet top-up, no commitment.
           </p>
           <p>
             <strong>You prefer text over meeting a stranger.</strong> Some people find it easier to
@@ -305,9 +305,9 @@ export default function GetCompanionAlternativePage() {
           </div>
           <div className="faq-item">
             <h3>Is LeanOn cheaper than GetCompanion?</h3>
-            <p>LeanOn sessions start at &#8377;160 for 15 minutes. Your first 5 minutes with
-              each new listener are free &mdash; no wallet top-up needed. Both platforms use
-              per-minute billing, but LeanOn&apos;s free trial lets you find the right fit first.</p>
+            <p>LeanOn sessions start at &#8377;160 for 15 minutes. Your first 5-minute session
+              is free (one per account) &mdash; no wallet top-up needed. Both platforms use
+              per-minute billing, but LeanOn&apos;s free trial lets you try it first.</p>
           </div>
           <div className="faq-item">
             <h3>Do I need to meet someone in person?</h3>

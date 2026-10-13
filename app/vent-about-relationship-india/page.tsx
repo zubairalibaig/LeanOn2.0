@@ -38,7 +38,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Will the listener give me advice about my relationship?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Not unless you ask. Peer listeners on LeanOn are trained to listen and reflect — not to advise, judge, or tell you what to do. If you open with "I just need to say this, I don\'t want advice," that is exactly what you will get. The default mode is receive and reflect, not fix and recommend.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Not unless you ask. Peer listeners on LeanOn are screened and expected to listen and reflect — not to advise, judge, or tell you what to do. If you open with "I just need to say this, I don\'t want advice," that is exactly what you will get. The default mode is receive and reflect, not fix and recommend.' },
     },
     {
       '@type': 'Question',
@@ -140,7 +140,7 @@ export default function VentAboutRelationshipIndiaPage() {
           <h2>The Difference Between Venting and Advice-Seeking</h2>
           <p>When you vent, you are not looking for a solution. You are reducing internal pressure. There is something sitting inside that needs to move from inside to outside &mdash; through words, to a real person who can receive them.</p>
           <p>Most people in your life jump straight to advice when you bring something up about your relationship. They suggest what you should say, what you should do, whether you should leave, whether you are overreacting. That advice is not really for you &mdash; it is for them. People are uncomfortable with unresolved emotion, and advice is how they manage their own discomfort.</p>
-          <p>A peer listener is trained differently. Their job is not to fix. It is to receive. They reflect back what they hear, they confirm that they understand, and they do not steer you toward a conclusion. After fifteen minutes of that, most people feel significantly lighter &mdash; not because anything has changed, but because the pressure has somewhere to go.</p>
+          <p>A peer listener listens differently. Their job is not to fix. It is to receive. They reflect back what they hear, they confirm that they understand, and they do not steer you toward a conclusion. After fifteen minutes of that, most people feel significantly lighter &mdash; not because anything has changed, but because the pressure has somewhere to go.</p>
         </div>
 
         <div className="section">

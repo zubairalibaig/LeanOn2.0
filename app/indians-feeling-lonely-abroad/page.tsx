@@ -20,7 +20,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
   { '@type': 'ListItem', position: 3, name: 'Indians Feeling Lonely Abroad', item: 'https://www.leanon.app/indians-feeling-lonely-abroad' },
 ] }
 
@@ -72,7 +72,7 @@ export default function IndiansLonelyAbroadPage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="https://www.leanon.app/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Indians Feeling Lonely Abroad</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Indians Feeling Lonely Abroad</span></nav>
         <div className="hero">
           <p className="badge">Indian Loneliness Abroad &middot; Immigrant Life &middot; Peer Support</p>
           <h1>Indians Feeling Lonely Abroad — <em>You&rsquo;re Not Ungrateful. You&rsquo;re Human.</em></h1>
@@ -101,11 +101,11 @@ export default function IndiansLonelyAbroadPage() {
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>The loneliness that doesn&rsquo;t need to be earned by suffering.</h2><p>Real peer listener. No judgment. Already understands the immigrant weight. First 5 minutes free, from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
-          <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>
+          <a href="/usa-loneliness">NRI loneliness USA &rarr;</a>
           <a href="/nri-loneliness-uk">NRI loneliness UK &rarr;</a>
           <a href="/nri-loneliness-canada">NRI loneliness Canada &rarr;</a>
           <a href="/nri-lonely">NRI lonely &rarr;</a>
-          <a href="/nri-support">NRI support &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
           <a href="/nri-mental-health">NRI mental health &rarr;</a>
           <a href="/nri-homesick">NRI homesick &rarr;</a>
           <a href="/nri-identity-crisis">NRI identity crisis &rarr;</a>

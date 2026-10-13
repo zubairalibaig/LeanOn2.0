@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'What is the difference between a counsellor and a peer listener?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'A counsellor or therapist is a licensed mental health professional who can diagnose and treat conditions. A peer listener is a real person with lived experience who is trained to listen, hold space, and provide support — but does not diagnose or prescribe. Peer support is for everyday emotional weight. Professional counselling is for clinical conditions. LeanOn provides peer support.',
+        text: 'A counsellor or therapist is a licensed mental health professional who can diagnose and treat conditions. A peer listener is a real person with lived experience who is screened and expected to listen, hold space, and provide support — but does not diagnose or prescribe. Peer support is for everyday emotional weight. Professional counselling is for clinical conditions. LeanOn provides peer support.',
       },
     },
     {
@@ -210,7 +210,7 @@ export default function PaidCounsellingIndiaPage() {
           <h2>What You Get with a LeanOn Session</h2>
           <ul>
             <li><strong>1:1 voice call</strong> with a real human peer listener — not a bot, not a form</li>
-            <li><strong>Trained peer listener</strong> with lived experience in the area you want to discuss</li>
+            <li><strong>Screened peer listener</strong> with lived experience in the area you want to discuss</li>
             <li><strong>Private</strong> — first name only, no photo, no social account required</li>
             <li><strong>No waitlist</strong> — browse available listeners and start in minutes</li>
             <li><strong>Pay as you go</strong> — recharge when you want, use when you need it</li>

@@ -20,7 +20,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
   { '@type': 'ListItem', position: 3, name: 'NRI Dating UK', item: 'https://www.leanon.app/nri-dating-uk' },
 ] }
 
@@ -72,7 +72,7 @@ export default function NriDatingUkPage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Dating UK</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Dating UK</span></nav>
         <div className="hero">
           <p className="badge">NRI Dating UK &middot; British Desi &middot; Indian Relationships</p>
           <h1>British Indian dating. <em>The gap between what you want and what&rsquo;s expected.</em></h1>
@@ -90,13 +90,13 @@ export default function NriDatingUkPage() {
         <div className="section">
           <h2>What You Actually Need to Say</h2>
           <p>British Indian dating has its own specific things that go unsaid. The white partner you have been with for two years and your parents still don&rsquo;t know about. The Indian match your parents love and you feel nothing for. The community gossip that someone saw you out with someone &ldquo;inappropriate.&rdquo; The loneliness of wanting a relationship that works in both worlds and not finding it. The grief of knowing your parents&rsquo; happiness and your own may be in conflict.</p>
-          <p>UK afternoons (2–4pm GMT/BST) are Indian evenings (7:30–9:30pm IST) — a natural window when listeners are available. No appointment needed. Anonymous. Completely private from the Leicester, Birmingham, or London Indian community. First 5 minutes free — once per listener.</p>
+          <p>UK afternoons (2–4pm GMT/BST) are Indian evenings (7:30–9:30pm IST) — a natural window when listeners are available. No appointment needed. Anonymous. Completely private from the Leicester, Birmingham, or London Indian community. First 5 minutes free — one free session per account.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>Both cultures understood. No explanation needed.</h2><p>Real Indian peer listener. Gets British Indian dating complexity. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
-          <a href="/indians-in-uk">Indians in UK &rarr;</a>
+          <a href="/uk">Indians in UK &rarr;</a>
           <a href="/nri-marriage-uk">NRI marriage UK &rarr;</a>
           <a href="/nri-loneliness-uk">NRI loneliness UK &rarr;</a>
           <a href="/nri-relationship-problems">NRI relationship problems &rarr;</a>

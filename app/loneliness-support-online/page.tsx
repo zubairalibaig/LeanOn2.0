@@ -12,9 +12,9 @@ export const metadata: Metadata = {
 
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
   { '@type': 'Question', name: 'Can talking to someone online really help with loneliness?', acceptedAnswer: { '@type': 'Answer', text: 'Yes — genuine human connection, even through text, reduces the acute feeling of being unseen. LeanOn listeners are real people who give you their full attention. Being truly heard by another person changes something, even in a short conversation.' } },
-  { '@type': 'Question', name: 'What if I am surrounded by people but still feel lonely?', acceptedAnswer: { '@type': 'Answer', text: 'This is one of the most common and most painful forms of loneliness. Being physically around people is not the same as being truly known or seen by them. LeanOn listeners are specifically trained to be genuinely present — which is exactly what superficial social contact fails to provide.' } },
+  { '@type': 'Question', name: 'What if I am surrounded by people but still feel lonely?', acceptedAnswer: { '@type': 'Answer', text: 'This is one of the most common and most painful forms of loneliness. Being physically around people is not the same as being truly known or seen by them. LeanOn listeners are selected to be genuinely present — which is exactly what superficial social contact fails to provide.' } },
   { '@type': 'Question', name: 'Is there a specific reason I need to be lonely to use LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'No. You do not need a diagnosis or a specific event. Feeling lonely is sufficient reason to reach out. LeanOn is for anyone who needs to be heard.' } },
-  { '@type': 'Question', name: 'Will the listener judge me for being lonely?', acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn listeners are trained to listen without judgment. Loneliness is one of the most common human experiences. There is nothing to be judged for.' } },
+  { '@type': 'Question', name: 'Will the listener judge me for being lonely?', acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn listeners are screened and expected to listen without judgment. Loneliness is one of the most common human experiences. There is nothing to be judged for.' } },
   { '@type': 'Question', name: 'How do I start?', acceptedAnswer: { '@type': 'Answer', text: 'Browse listeners who are currently online. Choose someone whose profile resonates with you. Start a session — no appointment, no form. The first 5 minutes are free.' } },
 ] }
 
@@ -115,7 +115,7 @@ export default function LonelinessSupportOnlinePage() {
         <div className="section">
           <h2>Why Being Heard Changes Something</h2>
           <p>Loneliness is fundamentally about invisibility &mdash; the sense that no one is genuinely registering your presence, your inner life, your specific reality. The antidote is not more social activity. It is genuine human contact: someone paying real attention, acknowledging what you share, being actually present.</p>
-          <p>LeanOn listeners are trained in active listening. They do not try to fix your loneliness with advice or silver linings. They are present while you talk. That experience of being genuinely received by another person &mdash; even a stranger, especially a stranger &mdash; shifts something that social noise cannot.</p>
+          <p>LeanOn listeners are screened for active listening. They do not try to fix your loneliness with advice or silver linings. They are present while you talk. That experience of being genuinely received by another person &mdash; even a stranger, especially a stranger &mdash; shifts something that social noise cannot.</p>
         </div>
         <div className="section">
           <h2>Available Right Now. No Reason Required.</h2>

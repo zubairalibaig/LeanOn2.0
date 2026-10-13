@@ -12,13 +12,13 @@ export const metadata: Metadata = {
     'desi american feeling lost', 'indian american cultural identity support',
   ],
   alternates: {
-    canonical: 'https://www.leanon.app/indian-american-loneliness',
-    languages: { 'en-US': 'https://www.leanon.app/indian-american-loneliness' },
+    canonical: 'https://www.leanon.app/usa-loneliness',
+    languages: { 'en-US': 'https://www.leanon.app/usa-loneliness' },
   },
   openGraph: {
     title: 'Indian-American Loneliness — The In-Between Feeling',
     description: 'Not fully Indian, not fully American. That in-between space can be profoundly lonely. LeanOn peer listeners understand this identity without needing it explained.',
-    url: 'https://www.leanon.app/indian-american-loneliness',
+    url: 'https://www.leanon.app/usa-loneliness',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -76,7 +76,7 @@ const breadcrumbSchema = {
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Indian-American Loneliness', item: 'https://www.leanon.app/indian-american-loneliness' },
+    { '@type': 'ListItem', position: 2, name: 'Indian-American Loneliness', item: 'https://www.leanon.app/usa-loneliness' },
   ],
 }
 
@@ -239,9 +239,9 @@ export default function IndianAmericanLonelinessPage() {
 
         <div className="related">
           <a href="/usa-loneliness">Feeling lonely in the USA →</a>
-          <a href="/desi-usa-support">Desi community support →</a>
+          <a href="/usa">Desi community support →</a>
           <a href="/usa-empathy-listener">Empathy listener →</a>
-          <a href="/usa-nri-support">NRI emotional support →</a>
+          <a href="/usa">NRI emotional support →</a>
           <a href="/usa-talk-to-someone">Someone to talk to →</a>
           <a href="/usa-therapy-alternative">Therapy alternative →</a>
         </div>

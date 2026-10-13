@@ -238,11 +238,11 @@ export default function CanadaImmigrationStressPage() {
 
         <div className="related">
           <a href="/canada-loneliness">Loneliness in Canada →</a>
-          <a href="/canada-nri-support">NRI emotional support →</a>
+          <a href="/canada">NRI emotional support →</a>
           <a href="/canada-rant-to-someone">Need to rant? →</a>
           <a href="/canada-talk-to-someone">Someone to talk to →</a>
           <a href="/toronto-loneliness">Lonely in Toronto →</a>
-          <a href="/desi-canada-support">Desi community support →</a>
+          <a href="/canada">Desi community support →</a>
         </div>
 
         <div className="disclaimer">

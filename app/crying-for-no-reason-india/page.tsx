@@ -82,7 +82,7 @@ export default function CryingForNoReasonIndiaPage() {
         <div className="section">
           <h2>What To Do With It</h2>
           <p>The most useful thing is not to push it down again. Something is trying to surface. A conversation with someone who will listen without trying to fix it or explain it away can help you find out what it is.</p>
-          <p>LeanOn listeners are trained to hold space for exactly this kind of conversation &mdash; where you do not know where to start, where the feelings are not yet formed into words, where you just need someone present while you figure out what is actually happening.</p>
+          <p>LeanOn listeners are screened and expected to hold space for exactly this kind of conversation &mdash; where you do not know where to start, where the feelings are not yet formed into words, where you just need someone present while you figure out what is actually happening.</p>
         </div>
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>Something is asking for your attention. Let someone help you hear it.</h2><p>Anonymous peer support. No judgment. From ₹160. First 5 minutes free.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>

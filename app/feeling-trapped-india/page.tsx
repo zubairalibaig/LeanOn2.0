@@ -43,7 +43,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'What kind of situations does LeanOn help with?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Any situation where you are carrying something you cannot say out loud to the people in your life. Trapped in a marriage but cannot leave because of family pressure, finances, or children. Trapped in a job you hate but cannot quit. Trapped in a family dynamic that is slowly eroding you. Trapped in expectations you never agreed to. These are all conversations LeanOn listeners are trained to hold.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Any situation where you are carrying something you cannot say out loud to the people in your life. Trapped in a marriage but cannot leave because of family pressure, finances, or children. Trapped in a job you hate but cannot quit. Trapped in a family dynamic that is slowly eroding you. Trapped in expectations you never agreed to. These are all conversations LeanOn listeners are screened and expected to hold.' },
     },
     {
       '@type': 'Question',

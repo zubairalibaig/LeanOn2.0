@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support for Gulf NRIs — Talk to Someone Indian | LeanOn',
-  description: 'Gulf NRIs carry a unique emotional weight — far from family, building a future, often alone. LeanOn connects you with a trained Indian peer listener in your language, any time.',
+  description: 'Gulf NRIs carry a unique emotional weight — far from family, building a future, often alone. LeanOn connects you with a screened Indian peer listener in your language, any time.',
   keywords: [
     'Gulf NRI emotional support', 'NRI support Gulf', 'Indian expat Gulf support',
     'talk to someone Indian Gulf', 'Gulf NRI mental health', 'NRI loneliness Gulf',
@@ -176,8 +176,8 @@ export default function GulfNriSupportPage() {
         <div className="night-box">
           <h2>🌙 Across the Gulf — someone is always awake to listen</h2>
           <p>Whether you are in Dubai, Riyadh, Kuwait City, Muscat, Doha, or Manama — LeanOn
-            listeners are available 24/7. No appointments. Talk in your language whenever you need.</p>
-          <p>First 5 minutes free — once per listener. Start right now.</p>
+            listeners are online daily on Indian time. No appointments. Talk in your language when someone is online.</p>
+          <p>First 5 minutes free — one free session per account. Start right now.</p>
           <a href="/browse" className="cta-night">Find an Indian listener now →</a>
         </div>
 
@@ -196,14 +196,14 @@ export default function GulfNriSupportPage() {
             <li>UAE: AED 37 / AED 55 / AED 74 for 15/30/45 min</li>
             <li>Kuwait: KD 4 / KD 5 / KD 7 for 15/30/45 min</li>
             <li>Oman: OMR 4 / OMR 6 / OMR 8 for 15/30/45 min</li>
-            <li>First 5 minutes free — once per listener</li>
+            <li>First 5 minutes free — one free session per account</li>
           </ul>
           <p style={{ marginTop: '12px' }}>Anonymous. No subscription. Available in Saudi Arabia, Qatar, and Bahrain too.</p>
         </div>
 
         <div className="cta">
           <h2>Someone is ready to listen — right now</h2>
-          <p>For Indians across the entire Gulf region — in your language, 24/7, anonymously.</p>
+          <p>For Indians across the entire Gulf region — in your language, on Indian time, anonymously.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>

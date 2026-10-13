@@ -68,7 +68,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is peer emotional support different from therapy?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Therapy is delivered by licensed mental health professionals for clinical diagnosis and treatment. Peer support is delivered by trained individuals with lived experience — real people who have personally navigated the same challenges. Both are valuable, but serve different needs. Peer support is ideal when you need to feel understood by someone who has been there.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Therapy is delivered by licensed mental health professionals for clinical diagnosis and treatment. Peer support is delivered by screened individuals with lived experience — real people who have personally navigated the same challenges. Both are valuable, but serve different needs. Peer support is ideal when you need to feel understood by someone who has been there.' },
     },
     {
       '@type': 'Question',

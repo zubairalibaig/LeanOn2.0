@@ -48,7 +48,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Will the listener tell me what to do or just listen?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Only what you ask for. Peer listeners on LeanOn are trained to listen without advising, fixing, or judging. If you open with \'I just need to vent, I don\'t want advice\' — that is what you will get. Your lead, your pace.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Only what you ask for. Peer listeners on LeanOn are screened and expected to listen without advising, fixing, or judging. If you open with \'I just need to vent, I don\'t want advice\' — that is what you will get. Your lead, your pace.' },
     },
     {
       '@type': 'Question',

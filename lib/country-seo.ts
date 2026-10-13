@@ -39,7 +39,7 @@ export const COUNTRY_SEO: CountrySeoData[] = [
   {
     slug: 'usa', country: 'United States', regionCode: 'US', audience: 'Indian and South Asian people living in the United States',
     title: 'Peer Support for Indians in the USA — Talk to Someone | LeanOn',
-    description: 'Living in the USA and need someone who understands the Indian or South Asian context? LeanOn offers private one-to-one peer support with real human listeners.',
+    description: 'Living in the USA and need someone who understands the Indian or South Asian context? LeanOn offers private one-to-one peer support with real human listeners. First 5 minutes free, then US$10 for 15 min.',
     eyebrow: 'Peer support · USA',
     intro: 'Living far from home can make some conversations surprisingly difficult. LeanOn gives Indians and South Asians in the USA a private place to talk to a real person — without turning every difficult day into a therapy appointment.',
     localAngle: 'Talk about homesickness, family expectations from a distance, relationship pressure, work stress, cultural differences, visa uncertainty or simply the feeling that you cannot explain your experience to people around you. You can choose a listener based on language, topic and lived experience.',
@@ -55,7 +55,7 @@ export const COUNTRY_SEO: CountrySeoData[] = [
   {
     slug: 'uk', country: 'United Kingdom', regionCode: 'GB', audience: 'Indian and South Asian people living in the UK',
     title: 'Peer Support for Indians in the UK — Someone to Talk To | LeanOn',
-    description: 'Need someone to talk to in the UK who understands Indian or South Asian life? LeanOn connects you with real peer listeners for private conversations.',
+    description: 'Need someone to talk to in the UK who understands Indian or South Asian life? LeanOn connects you with real peer listeners for private conversations. First 5 minutes free, then US$10 for 15 min.',
     eyebrow: 'Peer support · UK',
     intro: 'There are conversations that are easier with someone who understands where you come from. LeanOn gives Indians and South Asians in the UK a private way to talk with a real peer listener about life, relationships, family, work and loneliness.',
     localAngle: 'Whether you moved to the UK recently, grew up between cultures, or have lived there for years, you can choose a listener around the lived experience you want to discuss. The goal is simple: a real human conversation without judgement or unsolicited advice.',
@@ -71,7 +71,7 @@ export const COUNTRY_SEO: CountrySeoData[] = [
   {
     slug: 'canada', country: 'Canada', regionCode: 'CA', audience: 'Indian and South Asian people living in Canada',
     title: 'Peer Support for Indians in Canada — Talk to a Real Listener | LeanOn',
-    description: 'Indian or South Asian in Canada and need someone to talk to? LeanOn offers private one-to-one peer support with real human listeners.',
+    description: 'Indian or South Asian in Canada and need someone to talk to? LeanOn offers private one-to-one peer support with real human listeners. First 5 minutes free, then US$10 for 15 min.',
     eyebrow: 'Peer support · Canada',
     intro: 'Moving countries can change who you can call when something is weighing on you. LeanOn gives Indians and South Asians in Canada a private place to talk to a real person who understands the cultural context behind the words.',
     localAngle: 'Talk about homesickness, immigration or work uncertainty, relationships, family expectations, loneliness, cultural adjustment or the everyday pressure of building a life away from India. Choose someone whose lived experience resonates with yours.',
@@ -87,7 +87,7 @@ export const COUNTRY_SEO: CountrySeoData[] = [
   {
     slug: 'australia', country: 'Australia', regionCode: 'AU', audience: 'Indian and South Asian people living in Australia',
     title: 'Peer Support for Indians in Australia — Someone to Talk To | LeanOn',
-    description: 'Need someone to talk to in Australia who understands Indian or South Asian life? Connect with real peer listeners on LeanOn.',
+    description: 'Need someone to talk to in Australia who understands Indian or South Asian life? Connect with real peer listeners on LeanOn. First 5 minutes free, then US$10 for 15 min.',
     eyebrow: 'Peer support · Australia',
     intro: 'A busy life abroad can still feel lonely. LeanOn gives Indians and South Asians in Australia a private, one-to-one space to talk with a real peer listener about whatever is weighing on them.',
     localAngle: 'From homesickness and long-distance family relationships to work, study, dating, marriage and cultural adjustment, the right listener can make it easier to say the thing you have been holding in. Browse by lived experience and topic rather than trying to find the perfect words first.',
@@ -103,7 +103,7 @@ export const COUNTRY_SEO: CountrySeoData[] = [
   {
     slug: 'uae', country: 'United Arab Emirates', regionCode: 'AE', audience: 'Indian and South Asian people living in the UAE',
     title: 'Peer Support for Indians in the UAE — Talk to Someone | LeanOn',
-    description: 'Living in the UAE and need someone who understands the Indian or South Asian context? LeanOn connects you with real peer listeners.',
+    description: 'Living in the UAE and need someone who understands the Indian or South Asian context? LeanOn connects you with real peer listeners. First 5 minutes free, then US$10 for 15 min.',
     eyebrow: 'Peer support · UAE',
     intro: 'Life as an expatriate can be busy, social and still emotionally isolating. LeanOn gives Indians and South Asians in the UAE a private place to talk to a real person about work, relationships, family, homesickness and everyday pressure.',
     localAngle: 'Whether you are in Dubai, Abu Dhabi, Sharjah or elsewhere in the UAE, you can start with the experience rather than the diagnosis. Talk about family back home, career pressure, relationships, loneliness, cultural expectations or simply a difficult day.',
@@ -119,7 +119,7 @@ export const COUNTRY_SEO: CountrySeoData[] = [
   {
     slug: 'singapore', country: 'Singapore', regionCode: 'SG', audience: 'Indian and South Asian people living in Singapore',
     title: 'Peer Support for Indians in Singapore — Real Human Listeners | LeanOn',
-    description: 'Need someone to talk to in Singapore who understands Indian or South Asian life? LeanOn offers private one-to-one peer support.',
+    description: 'Need someone to talk to in Singapore who understands Indian or South Asian life? LeanOn offers private one-to-one peer support. First 5 minutes free, then US$10 for 15 min.',
     eyebrow: 'Peer support · Singapore',
     intro: 'You can be surrounded by people and still have no one you want to tell the whole story to. LeanOn gives Indians and South Asians in Singapore a private way to talk with a real peer listener.',
     localAngle: 'Talk about work intensity, relocation, relationships, family expectations, loneliness, cultural differences or the simple need to get something off your chest. Listener profiles help you choose someone based on lived experience and topic.',
@@ -135,7 +135,7 @@ export const COUNTRY_SEO: CountrySeoData[] = [
   {
     slug: 'malaysia', country: 'Malaysia', regionCode: 'MY', audience: 'Indian and South Asian people living in Malaysia',
     title: 'Peer Support for Indians in Malaysia — Someone to Talk To | LeanOn',
-    description: 'Indian or South Asian in Malaysia and need someone to talk to? LeanOn connects you with real peer listeners for private conversations.',
+    description: 'Indian or South Asian in Malaysia and need someone to talk to? LeanOn connects you with real peer listeners for private conversations. First 5 minutes free, then US$10 for 15 min.',
     eyebrow: 'Peer support · Malaysia',
     intro: 'Sometimes the hardest part is not the problem itself — it is finding someone you feel comfortable telling. LeanOn gives Indians and South Asians in Malaysia a private place to talk with a real listener.',
     localAngle: 'Use LeanOn for homesickness, family pressure, relationships, work stress, identity, cultural expectations or simply a conversation when you do not want to burden the people close to you. Choose a listener by lived experience and topic.',
@@ -151,7 +151,7 @@ export const COUNTRY_SEO: CountrySeoData[] = [
   {
     slug: 'kuwait', country: 'Kuwait', regionCode: 'KW', audience: 'Indian and South Asian people living in Kuwait',
     title: 'Peer Support for Indians in Kuwait — Talk to a Real Person | LeanOn',
-    description: 'Living in Kuwait and need someone who understands Indian or South Asian life? LeanOn connects you with real peer listeners for private support conversations.',
+    description: 'Living in Kuwait and need someone who understands Indian or South Asian life? LeanOn connects you with real peer listeners for private support conversations. First 5 minutes free, then US$10 for 15 min.',
     eyebrow: 'Peer support · Kuwait',
     intro: 'Expatriate life can mean carrying work pressure, family expectations and homesickness without wanting to explain everything to the people around you. LeanOn gives Indians and South Asians in Kuwait a private place to talk to a real listener.',
     localAngle: 'Talk about work and shift-life pressure, family back home, relationships, marriage decisions, loneliness or simply something you need to get off your chest. The conversation starts with a human listener, not a diagnosis or a script.',
@@ -167,7 +167,7 @@ export const COUNTRY_SEO: CountrySeoData[] = [
   {
     slug: 'oman', country: 'Oman', regionCode: 'OM', audience: 'Indian and South Asian people living in Oman',
     title: 'Peer Support for Indians in Oman — Talk to Someone | LeanOn',
-    description: 'Living in Oman and need someone who understands Indian or South Asian life abroad? LeanOn connects you with real peer listeners for private conversations.',
+    description: 'Living in Oman and need someone who understands Indian or South Asian life abroad? LeanOn connects you with real peer listeners for private conversations. First 5 minutes free, then US$10 for 15 min.',
     eyebrow: 'Peer support · Oman',
     intro: 'Living abroad can make ordinary problems harder to talk about. LeanOn gives Indians and South Asians in Oman a private way to speak with a real peer listener about homesickness, work, relationships, family and everyday pressure.',
     localAngle: 'Whether you are in Muscat, Salalah, Sohar or elsewhere in Oman, you can talk about distance from family, expatriate work life, marriage and relationship pressure, cultural adjustment or simply needing someone to listen. Choose by lived experience and topic.',

@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'NRI Support for Indians in Kuwait | Emotional Support Online | LeanOn',
-  description: 'Emotional support for Indians living and working in Kuwait. Talk anonymously to a trained Indian peer listener who understands the Gulf expat experience. Free trial.',
+  description: 'Emotional support for Indians living and working in Kuwait. Talk anonymously to a screened Indian peer listener who understands the Gulf expat experience. Free trial.',
   keywords: [
     'NRI support Kuwait', 'Indian expat Kuwait emotional support', 'Indian in Kuwait feeling lonely',
     'Kuwait Indian mental health', 'Gulf NRI support', 'Indians working in Kuwait',
@@ -34,7 +34,7 @@ const faqSchema = {
       name: 'Is there emotional support available for Indians in Kuwait?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn connects you with trained Indian peer listeners who understand the NRI and Gulf expat experience. Sessions are anonymous, available 24/7, and start with a free 5 minutes. No appointment needed.',
+        text: 'Yes. LeanOn connects you with screened Indian peer listeners who understand the NRI and Gulf expat experience. Sessions are anonymous, online daily on Indian time, and start with a free 5 minutes. No appointment needed.',
       },
     },
     {
@@ -81,7 +81,7 @@ export default function KuwaitNriSupportPage() {
         </h1>
 
         <p style={{ fontSize: '1.05rem', color: '#444', lineHeight: 1.7, marginBottom: 32 }}>
-          Life in Kuwait has a particular weight to it — long working hours, distance from family, the pressure of being the one who is "settled abroad," and a loneliness that can be hard to name when you are surrounded by people. LeanOn gives you a trained Indian peer listener who understands this from the inside. Anonymous, available any hour, in your language.
+          Life in Kuwait has a particular weight to it — long working hours, distance from family, the pressure of being the one who is "settled abroad," and a loneliness that can be hard to name when you are surrounded by people. LeanOn gives you a screened Indian peer listener who understands this from the inside. Anonymous, available any hour, in your language.
         </p>
 
         <a href="/browse" style={{ display: 'inline-block', background: '#0F4867', color: '#fff', padding: '14px 28px', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: '1rem', marginBottom: 48 }}>

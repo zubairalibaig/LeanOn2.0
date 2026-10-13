@@ -53,7 +53,7 @@ export default function AnonymousSupportPage() {
         <div className="card">
           <h2>Why anonymous support works</h2>
           <p>Research on mental health helplines and peer support platforms consistently shows that anonymity increases honest disclosure. When you know your words won't be traced back to you, you can say what you actually feel — not what you think is appropriate.</p>
-          <p>LeanOn listeners are trained to create a non-judgmental space where you can be completely honest. They won't tell your family, your employer, or your doctor. What you share stays between you and your listener.</p>
+          <p>LeanOn listeners are screened and expected to create a non-judgmental space where you can be completely honest. They won't tell your family, your employer, or your doctor. What you share stays between you and your listener.</p>
         </div>
 
         <div className="card">

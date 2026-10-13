@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Vent to a Real Person Online in the UK — Safe, Anonymous, Human | LeanOn',
-  description: 'LeanOn has real human listeners available 24/7 in the UK — anonymous, judgment-free, starting with 5 free minutes. No AI, no waiting list. £8 for 15 min.',
+  description: 'LeanOn has real human listeners online daily on Indian time in the UK — anonymous, judgment-free, starting with 5 free minutes. No AI, no waiting list. £8 for 15 min.',
   keywords: [
     'vent to real person UK', 'someone to vent to online UK', 'anonymous venting UK',
     'talk to someone online UK', 'vent anonymously UK', 'real person to vent to UK',
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Vent to a Real Person Online in the UK — Safe, Anonymous, Human | LeanOn',
-    description: 'Sometimes the very British thing to do is not to say anything. That is the problem. LeanOn — real humans, 24/7, anonymous, first 5 min free.',
+    description: 'Sometimes the very British thing to do is not to say anything. That is the problem. LeanOn — real humans, on Indian time, anonymous, first 5 min free.',
     url: 'https://www.leanon.app/uk-vent-real-person',
     siteName: 'LeanOn',
     type: 'article',
@@ -60,7 +60,7 @@ const faqSchema = {
       name: 'Where can I vent to someone anonymously in the UK?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn has real human listeners available 24/7 in the UK — anonymous, judgment-free, and starting with 5 free minutes. No AI, just a real person ready to hear you out.',
+        text: 'LeanOn has real human listeners online daily on Indian time in the UK — anonymous, judgment-free, and starting with 5 free minutes. No AI, just a real person ready to hear you out.',
       },
     },
     {
@@ -76,7 +76,7 @@ const faqSchema = {
       name: 'Is it safe to vent to a stranger online in the UK?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: "LeanOn listeners are trained, vetted real humans. Sessions are private. You don't need to share your name, location, or any personal details.",
+        text: "LeanOn listeners are screened, vetted real humans. Sessions are private. You don't need to share your name, location, or any personal details.",
       },
     },
     {
@@ -281,7 +281,7 @@ export default function UKVentRealPersonPage() {
 
         <div className="cta">
           <h2>Say it out loud to someone who&apos;ll actually hear you.</h2>
-          <p>Anonymous. Human. 24/7. First 5 minutes free. £8 / £12 / £16 for 15, 30, 45 min.</p>
+          <p>Anonymous. Human. On Indian time. First 5 minutes free. £8 / £12 / £16 for 15, 30, 45 min.</p>
           <a href="/browse" className="btn-white">Browse real listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -290,7 +290,7 @@ export default function UKVentRealPersonPage() {
           <h2>Frequently asked questions</h2>
           <div className="faq-item">
             <h3>Where can I vent to someone anonymously in the UK?</h3>
-            <p>LeanOn has real human listeners available 24/7 in the UK — anonymous, judgment-free,
+            <p>LeanOn has real human listeners online daily on Indian time in the UK — anonymous, judgment-free,
               and starting with 5 free minutes. No AI, just a real person ready to hear you out.</p>
           </div>
           <div className="faq-item">
@@ -300,7 +300,7 @@ export default function UKVentRealPersonPage() {
           </div>
           <div className="faq-item">
             <h3>Is it safe to vent to a stranger online in the UK?</h3>
-            <p>LeanOn listeners are trained, vetted real humans. Sessions are private. You
+            <p>LeanOn listeners are screened, vetted real humans. Sessions are private. You
               don&apos;t need to share your name, location, or any personal details.</p>
           </div>
           <div className="faq-item">
@@ -324,8 +324,7 @@ export default function UKVentRealPersonPage() {
         </div>
 
         <div className="disclaimer">
-          ⚠️ If you&apos;re in crisis or thinking about self-harm, please call{' '}
-          <strong>Samaritans: 116 123</strong> (free, 24/7).<br />
+          ⚠️ If you&apos;re in crisis or thinking about self-harm, please contact your local emergency services right away. In India: <strong>NIMHANS 080-46110007</strong> · <strong>Tele-MANAS 14416</strong>.<br />
           LeanOn is peer support — not a substitute for professional mental health care or emergency services.
         </div>
       </div>

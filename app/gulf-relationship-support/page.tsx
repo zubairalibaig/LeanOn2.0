@@ -178,7 +178,7 @@ export default function GulfRelationshipSupportPage() {
           <h2>💬 After a difficult call, who do you turn to?</h2>
           <p>The moments after a hard conversation with your partner or family are often the loneliest.
             The argument still unresolved. The flat too quiet. No one nearby who understands the full story.</p>
-          <p>LeanOn listeners are available 24/7 — to hear you out, without taking sides, in your language.</p>
+          <p>LeanOn listeners are based in India, so availability follows Indian time — to hear you out, without taking sides, in your language.</p>
           <a href="/browse" className="cta-night">Find an Indian listener now →</a>
         </div>
 
@@ -198,14 +198,14 @@ export default function GulfRelationshipSupportPage() {
             <li>UAE: AED 37 / AED 55 / AED 74 for 15/30/45 min</li>
             <li>Kuwait: KD 4 / KD 5 / KD 7 for 15/30/45 min</li>
             <li>Oman: OMR 4 / OMR 6 / OMR 8 for 15/30/45 min</li>
-            <li>First 5 minutes free — once per listener</li>
+            <li>First 5 minutes free — one free session per account</li>
           </ul>
           <p style={{ marginTop: '12px' }}>Anonymous. No subscription. Available in Saudi Arabia, Qatar, and Bahrain too.</p>
         </div>
 
         <div className="cta">
           <h2>You deserve to be heard — all of it</h2>
-          <p>Available 24/7 for Indians across the Gulf — anonymously, in your language.</p>
+          <p>Listeners online daily (Indian time) for Indians across the Gulf — anonymously, in your language.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>

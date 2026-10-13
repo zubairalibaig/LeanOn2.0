@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Feeling Lonely in the UK? You\'re Not the Only One. | LeanOn',
-  description: 'Living in the UK but feeling completely alone — far from family, grey skies, no one who really gets it. LeanOn connects you with a real Indian peer listener, available 24/7.',
+  description: 'Living in the UK but feeling completely alone — far from family, grey skies, no one who really gets it. LeanOn connects you with a real Indian peer listener, online daily on Indian time.',
   keywords: [
     'feeling lonely in the uk', 'loneliness uk indians', 'lonely in uk nri', 'south asian loneliness uk',
     'indian living in uk lonely', 'missing family uk', 'uk loneliness support', 'talk to someone uk',
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Feeling Lonely in the UK — Talk to Someone Who Understands',
-    description: 'Grey skies, far from home, no one who really gets it. LeanOn peer listeners are available 24/7 — real humans, not bots.',
+    description: 'Grey skies, far from home, no one who really gets it. LeanOn peer listeners are online daily on Indian time — real humans, not bots.',
     url: 'https://www.leanon.app/uk-loneliness',
     siteName: 'LeanOn',
     type: 'article',
@@ -56,7 +56,7 @@ const faqSchema = {
       name: 'How much does a session with a LeanOn listener cost from the UK?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Your first 5 minutes are completely free — no card needed upfront. After that, paid sessions are £8 for 15 minutes, £12 for 30 minutes, or £16 for 45 minutes. All listeners are peer-trained Indians who understand the NRI experience.',
+        text: 'Your first 5 minutes are completely free — no card needed upfront. After that, paid sessions are £8 for 15 minutes, £12 for 30 minutes, or £16 for 45 minutes. All listeners are screened Indians who understand the NRI experience.',
       },
     },
     {
@@ -239,7 +239,7 @@ export default function UkLonelinessPage() {
         </div>
 
         <div className="related">
-          <a href="/uk-nri-support">NRI emotional support UK →</a>
+          <a href="/uk">NRI emotional support UK →</a>
           <a href="/uk-winter-loneliness">Winter loneliness UK →</a>
           <a href="/london-loneliness">Lonely in London →</a>
           <a href="/uk-mental-health-south-asian">South Asian mental health →</a>

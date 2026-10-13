@@ -81,7 +81,7 @@ const faqSchema = {
       name: 'What is LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn is an Indian peer support platform that connects people with real human listeners — trained, vetted individuals who listen without judgment, available 24/7 across India and internationally.',
+        text: 'LeanOn is an Indian peer support platform that connects people with real human listeners — screened, vetted individuals who listen without judgment, available 24/7 across India and internationally.',
       },
     },
     {
@@ -286,7 +286,7 @@ export default function IndiaHumanSupportVsAIPage() {
           <h2>What is LeanOn?</h2>
           <p>
             LeanOn is an Indian peer support platform that connects people with real human listeners —
-            trained, vetted individuals who listen without judgment, available 24/7 across India and
+            screened, vetted individuals who listen without judgment, available 24/7 across India and
             internationally. Unlike AI chatbots, LeanOn listeners are real humans with genuine lived
             experience of Indian life.
           </p>
@@ -315,7 +315,7 @@ export default function IndiaHumanSupportVsAIPage() {
           </div>
           <div className="faq-item">
             <h3>What is LeanOn?</h3>
-            <p>LeanOn is an Indian peer support platform that connects people with real human listeners — trained, vetted individuals who listen without judgment, available 24/7 across India and internationally.</p>
+            <p>LeanOn is an Indian peer support platform that connects people with real human listeners — screened, vetted individuals who listen without judgment, available 24/7 across India and internationally.</p>
           </div>
           <div className="faq-item">
             <h3>Is AI good for mental health support in India?</h3>

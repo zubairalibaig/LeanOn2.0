@@ -155,7 +155,7 @@ export default function AstroYogiAlternativePage() {
 
         <div className="section">
           <h2>What LeanOn Does Differently</h2>
-          <p>No predictions. No system imposed on your experience. A peer listener is trained to follow your thread, not to interpret it through a framework. The conversation goes where you need it to go.</p>
+          <p>No predictions. No system imposed on your experience. A peer listener is screened and expected to follow your thread, not to interpret it through a framework. The conversation goes where you need it to go.</p>
           <p>And because there are no predictions, there is no false certainty. No &ldquo;your Saturn return will end in November&rdquo; that creates either false hope or false fear. Just an honest conversation about where you are now.</p>
         </div>
 

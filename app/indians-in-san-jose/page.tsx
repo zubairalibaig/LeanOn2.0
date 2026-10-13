@@ -11,16 +11,16 @@ export const metadata: Metadata = {
 }
 
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
-  { '@type': 'Question', name: 'Do LeanOn listeners understand the Silicon Valley Indian experience?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners are based in India and are trained to understand the NRI experience — including the specific pressures of Bay Area tech life: H1B anxiety, layoff fear, the overachiever identity, and the loneliness that comes with working 60-hour weeks in a city that measures you by your company and title.' } },
+  { '@type': 'Question', name: 'Do LeanOn listeners understand the Silicon Valley Indian experience?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners are based in India and are screened and expected to understand the NRI experience — including the specific pressures of Bay Area tech life: H1B anxiety, layoff fear, the overachiever identity, and the loneliness that comes with working 60-hour weeks in a city that measures you by your company and title.' } },
   { '@type': 'Question', name: 'What timezone does San Jose connect from?', acceptedAnswer: { '@type': 'Answer', text: 'San Jose (PST) is 13.5 hours behind IST. 7am San Jose = 8:30pm India. Before your morning standup, Indian listeners are available in their evening. Early mornings before work are a good time to connect.' } },
   { '@type': 'Question', name: 'Will my employer or colleagues know I used LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn is completely anonymous — phone number and first name only. Nothing is shared with your company, your manager, your HR department, or anyone in your Bay Area community.' } },
   { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription, no commitment.' } },
-  { '@type': 'Question', name: 'Is this different from talking to a friend or family in India?', acceptedAnswer: { '@type': 'Answer', text: 'Listeners are trained to listen without judgment and without advice unless you ask. Unlike family, they won\'t worry about you, tell others, or try to fix your situation. You can say exactly what\'s on your mind.' } },
+  { '@type': 'Question', name: 'Is this different from talking to a friend or family in India?', acceptedAnswer: { '@type': 'Answer', text: 'Listeners are screened and expected to listen without judgment and without advice unless you ask. Unlike family, they won\'t worry about you, tell others, or try to fix your situation. You can say exactly what\'s on your mind.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
   { '@type': 'ListItem', position: 3, name: 'Indians in San Jose', item: 'https://www.leanon.app/indians-in-san-jose' },
 ] }
 
@@ -72,7 +72,7 @@ export default function IndiansInSanJosePage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="https://www.leanon.app/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Indians in San Jose</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Indians in San Jose</span></nav>
         <div className="hero">
           <p className="badge">Indians in San Jose &middot; Silicon Valley &middot; South Bay</p>
           <h1>100,000 Indians in the Valley. <em>Still lonely.</em></h1>
@@ -103,8 +103,8 @@ export default function IndiansInSanJosePage() {
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>The Valley is full of Indians. Talk to one who will actually listen.</h2><p>Real peer listener based in India. Understands the Silicon Valley Indian experience. Anonymous. First 5 minutes free. From US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
-          <a href="/nri-support">NRI support &rarr;</a>
-          <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
+          <a href="/usa-loneliness">NRI loneliness USA &rarr;</a>
           <a href="/indians-in-bay-area">Indians in Bay Area &rarr;</a>
           <a href="/nri-anxiety-abroad">NRI anxiety abroad &rarr;</a>
         </div></div>

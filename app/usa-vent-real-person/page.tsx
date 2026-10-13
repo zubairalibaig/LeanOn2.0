@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Vent to a Real Person Online in the US — Anonymous, Human | LeanOn',
-  description: 'LeanOn lets you vent to a real human listener in the US — 24/7, anonymous, first 5 minutes free. No AI, no judgment. $10 for 15 min, $15 for 30 min.',
+  description: 'LeanOn lets you vent to a real human listener in the US — on Indian time, anonymous, first 5 minutes free. No AI, no judgment. $10 for 15 min, $15 for 30 min.',
   keywords: [
     'vent to real person USA', 'anonymous venting online USA', 'someone to talk to in America',
     'vent online USA', 'talk to someone USA', 'real human listener America',
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Vent to a Real Person Online in the US — Anonymous, Human | LeanOn',
-    description: "You've got a lot on your mind. A real human is ready to listen. LeanOn — anonymous, available 24/7, first 5 min free.",
+    description: "You've got a lot on your mind. A real human is ready to listen. LeanOn — anonymous, online daily on Indian time, first 5 min free.",
     url: 'https://www.leanon.app/usa-vent-real-person',
     siteName: 'LeanOn',
     type: 'article',
@@ -60,7 +60,7 @@ const faqSchema = {
       name: 'Where can I vent to someone online in the US?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn lets you vent to a real human listener — available 24/7, completely anonymous, first 5 minutes free. No AI, no judgment, just a real person ready to hear you out.',
+        text: 'LeanOn lets you vent to a real human listener — online daily on Indian time, completely anonymous, first 5 minutes free. No AI, no judgment, just a real person ready to hear you out.',
       },
     },
     {
@@ -269,7 +269,7 @@ export default function USAVentRealPersonPage() {
 
         <div className="cta">
           <h2>Say it out loud to someone who&apos;ll actually hear you.</h2>
-          <p>Anonymous. Human. 24/7. First 5 minutes free. $10 / $15 / $20 for 15, 30, 45 min.</p>
+          <p>Anonymous. Human. On Indian time. First 5 minutes free. $10 / $15 / $20 for 15, 30, 45 min.</p>
           <a href="/browse" className="btn-white">Browse real listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -278,7 +278,7 @@ export default function USAVentRealPersonPage() {
           <h2>Frequently asked questions</h2>
           <div className="faq-item">
             <h3>Where can I vent to someone online in the US?</h3>
-            <p>LeanOn lets you vent to a real human listener — available 24/7, completely anonymous,
+            <p>LeanOn lets you vent to a real human listener — online daily on Indian time, completely anonymous,
               first 5 minutes free. No AI, no judgment, just a real person ready to hear you out.</p>
           </div>
           <div className="faq-item">
@@ -314,8 +314,7 @@ export default function USAVentRealPersonPage() {
         </div>
 
         <div className="disclaimer">
-          ⚠️ If you&apos;re in crisis or experiencing suicidal thoughts, please call or text{' '}
-          <strong>988 (Suicide &amp; Crisis Lifeline)</strong>.<br />
+          ⚠️ If you&apos;re in crisis or experiencing suicidal thoughts, please contact your local emergency services right away. In India: <strong>NIMHANS 080-46110007</strong> · <strong>Tele-MANAS 14416</strong>.<br />
           LeanOn is peer support — not a substitute for professional mental health care or emergency services.
         </div>
       </div>

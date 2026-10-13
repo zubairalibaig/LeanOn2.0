@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 }
 
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
-  { '@type': 'Question', name: 'Do LeanOn listeners understand the dependent spouse experience?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Listeners are trained to understand the NRI experience, including the specific weight of being a dependent visa spouse — the identity loss, the career disruption, the isolation of a new country with no independent network, and the complex emotional dynamic of being entirely dependent on one person.' } },
+  { '@type': 'Question', name: 'Do LeanOn listeners understand the dependent spouse experience?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Listeners are screened and expected to understand the NRI experience, including the specific weight of being a dependent visa spouse — the identity loss, the career disruption, the isolation of a new country with no independent network, and the complex emotional dynamic of being entirely dependent on one person.' } },
   { '@type': 'Question', name: 'I feel resentful toward my partner even though I love them. Can I talk about this?', acceptedAnswer: { '@type': 'Answer', text: 'Yes, and this is one of the most common experiences listeners hear from dependent spouses. Love and resentment can coexist — the resentment of having given up your career, your city, your friends for someone else\'s opportunity, even when you made the choice willingly. Listeners hold this without judgment.' } },
   { '@type': 'Question', name: 'I don\'t have work authorisation in this country. Does that affect what I can talk about?', acceptedAnswer: { '@type': 'Answer', text: 'No — you can talk about anything. The specific anxiety of not having work authorisation, of having your identity tied to your partner\'s visa status, of waiting for an EAD card or a work permit, is something listeners understand and can hold.' } },
   { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
@@ -20,7 +20,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
   { '@type': 'ListItem', position: 3, name: 'NRI Spouse Support', item: 'https://www.leanon.app/nri-spouse-support' },
 ] }
 
@@ -72,7 +72,7 @@ export default function NriSpouseSupportPage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="https://www.leanon.app/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Spouse Support</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Spouse Support</span></nav>
         <div className="hero">
           <p className="badge">NRI Spouse &middot; Dependent Visa &middot; H4 &middot; Identity Abroad</p>
           <h1>You moved for love. <em>Now you&rsquo;re not sure who you are.</em></h1>
@@ -103,7 +103,7 @@ export default function NriSpouseSupportPage() {
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-marriage-usa">NRI marriage USA &rarr;</a>
           <a href="/nri-marriage-uk">NRI marriage UK &rarr;</a>
-          <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>
+          <a href="/usa-loneliness">NRI loneliness USA &rarr;</a>
           <a href="/nri-identity-crisis">NRI identity crisis &rarr;</a>
         </div></div>
         <div className="crisis"><strong>In a crisis?</strong> NIMHANS: 080-46110007 &nbsp;&middot;&nbsp; Tele-MANAS: 14416 &nbsp;&middot;&nbsp; Both free, 24/7.</div>

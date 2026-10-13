@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Loneliness Support for Indians in Kuwait | LeanOn',
-  description: 'Feeling lonely and isolated in Kuwait? LeanOn connects Indian expats with a trained Indian peer listener — in your language, any time, starting with a free 5-minute trial.',
+  description: 'Feeling lonely and isolated in Kuwait? LeanOn connects Indian expats with a screened Indian peer listener — in your language, any time, starting with a free 5-minute trial.',
   keywords: [
     'loneliness support Kuwait Indian', 'lonely in Kuwait Indian', 'Indian expat Kuwait lonely',
     'emotional support Kuwait Indians', 'talk to someone Kuwait', 'Kuwait NRI loneliness',
@@ -174,7 +174,7 @@ export default function KuwaitLonelinessPage() {
 
         <div className="night-box">
           <h2>🌙 Alone in Kuwait City tonight?</h2>
-          <p>LeanOn listeners are available 24/7. The time difference between Kuwait and India is small —
+          <p>LeanOn listeners are based in India, so availability follows Indian time. The time difference between Kuwait and India is small —
             which means Indian listeners are awake and ready whenever you need to talk, day or night.</p>
           <p>First 5 minutes are completely free. No card needed to start.</p>
           <a href="/browse" className="cta-night">Find an Indian listener now →</a>
@@ -193,14 +193,14 @@ export default function KuwaitLonelinessPage() {
             <li>15-minute session — KD 4</li>
             <li>30-minute session — KD 5</li>
             <li>45-minute session — KD 7</li>
-            <li>First 5 minutes free — once per listener</li>
+            <li>First 5 minutes free — one free session per account</li>
           </ul>
           <p style={{ marginTop: '12px' }}>No subscription. Anonymous. Pay only for what you use.</p>
         </div>
 
         <div className="cta">
           <h2>Someone is ready to listen — right now</h2>
-          <p>For Indians across Kuwait — available 24/7, in your language.</p>
+          <p>For Indians across Kuwait — online daily on Indian time, in your language.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>

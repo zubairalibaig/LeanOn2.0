@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Empathy Listener for Indians in Malaysia | LeanOn',
-  description: 'Feeling unheard in Malaysia? LeanOn connects Indian expats with trained empathy listeners who speak Tamil, Hindi, and more — and understand your cultural world from the inside.',
+  description: 'Feeling unheard in Malaysia? LeanOn connects Indian expats with screened empathy listeners who speak Tamil, Hindi, and more — and understand your cultural world from the inside.',
   keywords: [
     'empathy listener malaysia', 'feel heard malaysia', 'someone who understands malaysia indian',
     'active listener malaysia', 'emotional support malaysia expat', 'feeling unheard malaysia',
@@ -34,7 +34,7 @@ const faqSchema = {
       name: 'What makes an empathy listener different from a regular conversation partner?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'An empathy listener\'s entire purpose is to understand your experience — not to respond, not to advise, not to share their own perspective. LeanOn listeners are trained in active listening, reflective questioning, and validating your emotions without judgment. You feel heard at a depth that most conversations never reach.',
+        text: 'An empathy listener\'s entire purpose is to understand your experience — not to respond, not to advise, not to share their own perspective. LeanOn listeners are screened for active listening, reflective questioning, and validating your emotions without judgment. You feel heard at a depth that most conversations never reach.',
       },
     },
     {
@@ -50,7 +50,7 @@ const faqSchema = {
       name: 'Can I talk to a Tamil-speaking empathy listener?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn has Tamil-speaking empathy listeners available 24/7. You can also find listeners who speak Hindi, Telugu, Malayalam, Kannada, Bengali, and English. Browse listener profiles to find the right match.',
+        text: 'Yes. LeanOn has Tamil-speaking empathy listeners online daily on Indian time. You can also find listeners who speak Hindi, Telugu, Malayalam, Kannada, Bengali, and English. Browse listener profiles to find the right match.',
       },
     },
     {
@@ -183,7 +183,7 @@ export default function MalaysiaEmpathyListenerPage() {
           <p>There is a particular relief that comes from feeling truly understood. Not just heard.
             Understood. Your listener reflects back what you said and something in you relaxes —
             because finally, someone gets it.</p>
-          <p>LeanOn empathy listeners are trained to create exactly this experience. One conversation
+          <p>LeanOn empathy listeners are screened and expected to create exactly this experience. One conversation
             can shift how you carry something that has felt heavy for a long time.</p>
           <a href="/browse" className="cta-night">Find a listener now →</a>
         </div>
@@ -219,7 +219,7 @@ export default function MalaysiaEmpathyListenerPage() {
 
         <div className="cta">
           <h2>Feel truly heard — maybe for the first time in a while</h2>
-          <p>Real Indian listeners. Tamil, Hindi, and more. Full attention. 24/7.</p>
+          <p>Real Indian listeners. Tamil, Hindi, and more. Full attention. On Indian time.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -229,7 +229,7 @@ export default function MalaysiaEmpathyListenerPage() {
           <div className="faq-item">
             <h3>What makes an empathy listener different from a regular conversation partner?</h3>
             <p>An empathy listener&apos;s entire purpose is to understand your experience — not to respond
-              or advise. LeanOn listeners are trained in active listening and reflective questioning.
+              or advise. LeanOn listeners are screened for active listening and reflective questioning.
               You feel heard at a depth that most conversations never reach.</p>
           </div>
           <div className="faq-item">
@@ -240,7 +240,7 @@ export default function MalaysiaEmpathyListenerPage() {
           </div>
           <div className="faq-item">
             <h3>Can I talk to a Tamil-speaking empathy listener?</h3>
-            <p>Yes. LeanOn has Tamil-speaking empathy listeners available 24/7. You can also find
+            <p>Yes. LeanOn has Tamil-speaking empathy listeners online daily on Indian time. You can also find
               listeners who speak Hindi, Telugu, Malayalam, Kannada, Bengali, and English.</p>
           </div>
           <div className="faq-item">

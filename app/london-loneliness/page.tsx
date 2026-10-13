@@ -200,7 +200,7 @@ export default function LondonLonelinessPage() {
 
         <div className="cta">
           <h2>A real human is ready to talk right now</h2>
-          <p>Indian listeners who understand London and the NRI experience. Anonymous, 24/7.</p>
+          <p>Indian listeners who understand London and the NRI experience. Private, no appointment.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -236,7 +236,7 @@ export default function LondonLonelinessPage() {
 
         <div className="related">
           <a href="/uk-loneliness">Loneliness support UK →</a>
-          <a href="/uk-nri-support">NRI support UK →</a>
+          <a href="/uk">NRI support UK →</a>
           <a href="/uk-talk-to-someone">Talk to someone UK →</a>
           <a href="/uk-winter-loneliness">Winter loneliness UK →</a>
           <a href="/british-indian-support">British Indian identity →</a>

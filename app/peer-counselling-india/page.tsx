@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'Is peer counselling the same as therapy?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'No. A licensed therapist or counsellor in India has a formal degree in psychology or counselling and is trained to diagnose and treat mental health conditions. A peer counsellor has lived experience and training in active listening and supportive conversation, but is not a licensed mental health professional. Peer counselling is for everyday emotional support — loneliness, burnout, relationship stress, family pressure — not for clinical treatment.',
+        text: 'No. A licensed therapist or counsellor in India has a formal degree in psychology or counselling and is screened and expected to diagnose and treat mental health conditions. A peer counsellor has lived experience and training in active listening and supportive conversation, but is not a licensed mental health professional. Peer counselling is for everyday emotional support — loneliness, burnout, relationship stress, family pressure — not for clinical treatment.',
       },
     },
     {
@@ -158,13 +158,13 @@ export default function PeerCounsellingIndiaPage() {
         <div className="hero">
           <p className="tag">Peer Counselling · India · No Appointment Needed</p>
           <h1>Peer counselling. From someone <em>who has been there.</em></h1>
-          <p className="lead">Not a licensed therapist. Not an AI. A real person who has personally lived through something like what you are carrying — trained to listen, available now, and affordable. Peer counselling on LeanOn starts at ₹160/session, with the first 5 minutes free.</p>
+          <p className="lead">Not a licensed therapist. Not an AI. A real person who has personally lived through something like what you are carrying — screened for listening, available now, and affordable. Peer counselling on LeanOn starts at ₹160/session, with the first 5 minutes free.</p>
         </div>
 
         {/* What is peer counselling */}
         <div className="section">
           <h2>What Is Peer Counselling?</h2>
-          <p>Peer counselling is emotional support from someone with lived experience. A peer counsellor is not a licensed psychologist or therapist — they have not done a clinical degree, and they do not diagnose conditions or provide treatment. What they have is something different: they have personally been through a version of what you are facing, and they have trained specifically in active listening, holding space, and supportive conversation.</p>
+          <p>Peer counselling is emotional support from someone with lived experience. A peer counsellor is not a licensed psychologist or therapist — they have not done a clinical degree, and they do not diagnose conditions or provide treatment. What they have is something different: they have personally been through a version of what you are facing, and they are screened specifically for active listening, holding space, and supportive conversation.</p>
           <p>The word &quot;counselling&quot; in peer counselling means something different from therapy. It is closer in spirit to &quot;someone you can talk to who has been there&quot; than to the clinical process of a professional consultation.</p>
 
           <h3>Peer Counsellors vs Licensed Therapists</h3>
@@ -201,7 +201,7 @@ export default function PeerCounsellingIndiaPage() {
                 </tr>
                 <tr className="highlight-row">
                   <td className="col-label">LeanOn peer counselling</td>
-                  <td>Trained peer listener with lived experience</td>
+                  <td>Screened peer listener with lived experience</td>
                   <td>₹160/session (first 5 min free)</td>
                   <td>No — available now</td>
                 </tr>
@@ -251,7 +251,7 @@ export default function PeerCounsellingIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is peer counselling the same as therapy?</div>
-            <div className="faq-a">No. A licensed therapist or counsellor has a formal degree in psychology and is trained to diagnose and treat mental health conditions. A peer counsellor has lived experience and training in active listening, but is not a licensed mental health professional. Peer counselling is for everyday emotional support — loneliness, burnout, relationship stress, family pressure — not for clinical treatment.</div>
+            <div className="faq-a">No. A licensed therapist or counsellor has a formal degree in psychology and is screened and expected to diagnose and treat mental health conditions. A peer counsellor has lived experience and training in active listening, but is not a licensed mental health professional. Peer counselling is for everyday emotional support — loneliness, burnout, relationship stress, family pressure — not for clinical treatment.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does peer counselling cost in India?</div>

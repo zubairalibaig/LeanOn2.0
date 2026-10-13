@@ -48,7 +48,7 @@ const serviceSchema = {
       {
         '@type': 'Offer',
         name: 'Free 5-minute introductory session',
-        description: 'One free 5-minute session per new account — text or voice, no payment required.',
+        description: 'One free 5-minute session per account — text or voice, no payment required.',
         price: '0',
         priceCurrency: 'INR',
       },
@@ -65,6 +65,34 @@ const serviceSchema = {
         name: '15-minute peer support session (International)',
         description: '15-minute text or voice session for Indians abroad (NRI).',
         price: '10',
+        priceCurrency: 'USD',
+        eligibleRegion: [
+          { '@type': 'Country', name: 'United States' },
+          { '@type': 'Country', name: 'United Kingdom' },
+          { '@type': 'Country', name: 'Canada' },
+          { '@type': 'Country', name: 'United Arab Emirates' },
+          { '@type': 'Country', name: 'Australia' },
+        ],
+      },
+      {
+        '@type': 'Offer',
+        name: '30-minute peer support session (International)',
+        description: '30-minute text or voice session for Indians abroad (NRI).',
+        price: '15',
+        priceCurrency: 'USD',
+        eligibleRegion: [
+          { '@type': 'Country', name: 'United States' },
+          { '@type': 'Country', name: 'United Kingdom' },
+          { '@type': 'Country', name: 'Canada' },
+          { '@type': 'Country', name: 'United Arab Emirates' },
+          { '@type': 'Country', name: 'Australia' },
+        ],
+      },
+      {
+        '@type': 'Offer',
+        name: '45-minute peer support session (International)',
+        description: '45-minute text or voice session for Indians abroad (NRI).',
+        price: '20',
         priceCurrency: 'USD',
         eligibleRegion: [
           { '@type': 'Country', name: 'United States' },

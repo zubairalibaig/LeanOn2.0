@@ -64,7 +64,7 @@ const faqSchema = {
       name: 'Is LeanOn a substitute for therapy?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn is peer support, not therapy. Our listeners are trained to hold space and listen deeply — they are not mental health professionals. If you are experiencing serious mental health challenges, please also consider speaking with a licensed therapist or counsellor.',
+        text: 'LeanOn is peer support, not therapy. Our listeners are screened and expected to hold space and listen deeply — they are not mental health professionals. If you are experiencing serious mental health challenges, please also consider speaking with a licensed therapist or counsellor.',
       },
     },
   ],
@@ -204,7 +204,7 @@ export default function CanadaLonelinessPage() {
 
         <div className="cta">
           <h2>Someone is ready to listen right now</h2>
-          <p>Anonymous, affordable, available 24/7. Made for exactly this.</p>
+          <p>Anonymous, affordable, online daily on Indian time. Made for exactly this.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -234,18 +234,18 @@ export default function CanadaLonelinessPage() {
           </div>
           <div className="faq-item">
             <h3>Is LeanOn a substitute for therapy?</h3>
-            <p>LeanOn is peer support, not therapy. Our listeners are trained to hold space and listen deeply.
+            <p>LeanOn is peer support, not therapy. Our listeners are screened and expected to hold space and listen deeply.
               For serious mental health challenges, please also consider a licensed professional.</p>
           </div>
         </div>
 
         <div className="related">
           <a href="/canada-winter-loneliness">First winter in Canada →</a>
-          <a href="/canada-nri-support">NRI emotional support →</a>
+          <a href="/canada">NRI emotional support →</a>
           <a href="/toronto-loneliness">Lonely in Toronto →</a>
           <a href="/canada-talk-to-someone">Someone to talk to in Canada →</a>
           <a href="/canada-immigration-stress">Immigration anxiety →</a>
-          <a href="/desi-canada-support">Desi community support →</a>
+          <a href="/canada">Desi community support →</a>
         </div>
 
         <div className="disclaimer">

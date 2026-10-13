@@ -20,7 +20,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
   { '@type': 'ListItem', position: 3, name: 'Indian Student UK', item: 'https://www.leanon.app/indian-student-uk' },
 ] }
 
@@ -72,7 +72,7 @@ export default function IndianStudentUkPage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" className="nav-logo" alt="LeanOn" /></a><a href="https://www.leanon.app/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Indian Student UK</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Indian Student UK</span></nav>
         <div className="hero">
           <p className="badge">Indian Student &middot; UK &middot; London &amp; Beyond</p>
           <h1>You came to London for a degree. <em>Nobody prepared you for this weight.</em></h1>
@@ -103,7 +103,7 @@ export default function IndianStudentUkPage() {
         <div className="cta-card"><h2>The real student experience deserves to be heard.</h2><p>A peer listener who understands India, the UK, and the gap between them. First 5 minutes free. Sessions from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-student-support">Indian student abroad &rarr;</a>
-          <a href="/indians-in-uk">Indians in UK &rarr;</a>
+          <a href="/uk">Indians in UK &rarr;</a>
           <a href="/nri-loneliness-uk">NRI loneliness UK &rarr;</a>
           <a href="/indian-student-canada">Indian student Canada &rarr;</a>
         </div></div>

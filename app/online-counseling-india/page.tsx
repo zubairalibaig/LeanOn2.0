@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Online Counseling India — Affordable Emotional Support Without a Therapist | LeanOn',
-  description: 'Looking for online counseling in India? LeanOn connects you with peer listeners from ₹160 per 15-minute session — trained, confidential, available now. No appointment, no therapist fees.',
+  description: 'Looking for online counseling in India? LeanOn connects you with peer listeners from ₹160 per 15-minute session — screened, confidential, available now. No appointment, no therapist fees.',
   keywords: [
     'online counseling India', 'online counselling India', 'affordable online counseling India',
     'emotional support online India', 'talk to someone online India', 'online therapy India cheap',
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Online Counseling India — Affordable Emotional Support Without a Therapist | LeanOn',
-    description: 'Looking for online counseling in India? LeanOn connects you with peer listeners from ₹160 per 15-minute session — trained, confidential, available now. No appointment, no therapist fees.',
+    description: 'Looking for online counseling in India? LeanOn connects you with peer listeners from ₹160 per 15-minute session — screened, confidential, available now. No appointment, no therapist fees.',
     url: 'https://www.leanon.app/online-counseling-india',
     siteName: 'LeanOn',
     type: 'article',
@@ -35,7 +35,7 @@ const faqSchema = {
       name: 'Is LeanOn a substitute for therapy?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'No, and we are honest about that. LeanOn is peer support — real humans with lived experience, trained to listen. It is not therapy, does not involve diagnosis, and does not replace professional mental health treatment. If you are dealing with a clinical condition like severe depression, OCD, or trauma, please see a licensed therapist. LeanOn fills the large gap between "I need to talk to someone" and "I need clinical intervention" — a gap that most people fall into most of the time.',
+        text: 'No, and we are honest about that. LeanOn is peer support — real humans with lived experience, screened for listening. It is not therapy, does not involve diagnosis, and does not replace professional mental health treatment. If you are dealing with a clinical condition like severe depression, OCD, or trauma, please see a licensed therapist. LeanOn fills the large gap between "I need to talk to someone" and "I need clinical intervention" — a gap that most people fall into most of the time.',
       },
     },
     {
@@ -59,7 +59,7 @@ const faqSchema = {
       name: 'Will anyone know I used LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'No. You can use LeanOn without sharing your real name. There is no formal record of your sessions, no diagnosis, no file that follows you. Listeners sign confidentiality agreements and are trained not to share what they hear. Your privacy is treated seriously — LeanOn is designed from the ground up to be a space where you can speak freely without any social or professional consequences.',
+        text: 'No. You can use LeanOn without sharing your real name. There is no formal record of your sessions, no diagnosis, no file that follows you. Listeners sign confidentiality agreements and are bound not to share what they hear. Your privacy is treated seriously — LeanOn is designed from the ground up to be a space where you can speak freely without any social or professional consequences.',
       },
     },
     {
@@ -162,7 +162,7 @@ export default function OnlineCounselingIndiaPage() {
         <div className="hero">
           <p className="badge">Peer Support · Available Now · Anonymous</p>
           <h1>Online Counseling India — <em>Without the ₹5,000 Fee</em></h1>
-          <p className="lead">Most people searching for online counseling in India are not looking for a diagnosis. They need someone to talk to — real, trained, confidential, and affordable. LeanOn is that: peer listeners available now, from ₹160 for 15 minutes.</p>
+          <p className="lead">Most people searching for online counseling in India are not looking for a diagnosis. They need someone to talk to — real, screened, confidential, and affordable. LeanOn is that: peer listeners available now, from ₹160 for 15 minutes.</p>
           <a href="/browse" className="cta-hero">Browse listeners now →</a>
         </div>
 

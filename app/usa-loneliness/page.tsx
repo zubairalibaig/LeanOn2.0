@@ -65,7 +65,7 @@ const faqSchema = {
       name: 'What if I just want to talk and not be judged?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'That is exactly what LeanOn is for. No diagnosis, no advice unless you ask, no judgment. Just a warm, attentive human on the other side — available 24/7, even at 2 AM when the time zone gap to India feels widest.',
+        text: 'That is exactly what LeanOn is for. No diagnosis, no advice unless you ask, no judgment. Just a warm, attentive human on the other side — online daily on Indian time, even at 2 AM when the time zone gap to India feels widest.',
       },
     },
   ],
@@ -176,7 +176,7 @@ export default function UsaLonelinessPage() {
           <h2>🌙 It hits hardest at 11 PM when India is sleeping</h2>
           <p>You want to call someone but it is 9:30 AM in Mumbai and they are rushing to work.
             You do not want to be a burden. So you scroll your phone until you fall asleep, alone with it.</p>
-          <p>LeanOn listeners are available 24/7, including late at night US time. You do not need to wait for morning.</p>
+          <p>LeanOn listeners are based in India, so availability follows Indian time — check who is online now US time. You do not need to wait for morning.</p>
           <a href="/browse" className="cta-night">Find a listener online now →</a>
         </div>
 
@@ -225,7 +225,7 @@ export default function UsaLonelinessPage() {
           <div className="faq-item">
             <h3>How much does LeanOn cost in the USA?</h3>
             <p>Sessions start at $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first
-              5 minutes free — once per listener — far more accessible than $200/hour therapy.</p>
+              5 minutes free — one free session per account — far more accessible than $200/hour therapy.</p>
           </div>
           <div className="faq-item">
             <h3>Can I talk in Hindi or my regional language?</h3>
@@ -235,17 +235,17 @@ export default function UsaLonelinessPage() {
           <div className="faq-item">
             <h3>What if I just want to talk without being judged?</h3>
             <p>That is exactly what LeanOn is for. No diagnosis, no advice unless you ask, no judgment.
-              Just a warm human on the other side — available 24/7.</p>
+              Just a warm human on the other side — online daily on Indian time.</p>
           </div>
         </div>
 
         <div className="related">
-          <a href="/usa-nri-support">Emotional support for NRIs →</a>
-          <a href="/usa-h1b-visa-stress">H-1B visa stress →</a>
+          <a href="/usa">Emotional support for NRIs →</a>
+          <a href="/nri-h1b-visa-stress">H-1B visa stress →</a>
           <a href="/usa-talk-to-someone">Someone to talk to in the USA →</a>
-          <a href="/indian-american-loneliness">Indian-American loneliness →</a>
+          <a href="/usa-loneliness">Indian-American loneliness →</a>
           <a href="/usa-rant-to-someone">Need to rant? →</a>
-          <a href="/desi-usa-support">Desi community support →</a>
+          <a href="/usa">Desi community support →</a>
         </div>
 
         <div className="disclaimer">

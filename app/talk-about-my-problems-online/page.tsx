@@ -201,7 +201,7 @@ export default function TalkAboutMyProblemsOnlinePage() {
           <p>You can say things here that you genuinely cannot say anywhere else.</p>
 
           <h3>And no advice, unless you want it</h3>
-          <p>Listeners on LeanOn are trained to follow your lead. If you say &quot;I do not want advice, I just need to vent&quot; — that is what happens. If you want them to reflect back what they are hearing, they will. If you want a question to help you think, you can ask. You set the terms.</p>
+          <p>Listeners on LeanOn are screened and expected to follow your lead. If you say &quot;I do not want advice, I just need to vent&quot; — that is what happens. If you want them to reflect back what they are hearing, they will. If you want a question to help you think, you can ask. You set the terms.</p>
         </div>
 
         <div className="section">

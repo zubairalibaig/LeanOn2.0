@@ -4,20 +4,20 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support for NRIs in the UK — Talk to Someone Indian | LeanOn',
-  description: 'Missing home. Carrying the NRI pressure alone. Video calls not enough. LeanOn connects NRIs in the UK with Indian peer listeners who understand life abroad, available 24/7.',
+  description: 'Missing home. Carrying the NRI pressure alone. Video calls not enough. LeanOn connects NRIs in the UK with Indian peer listeners who understand life abroad, online daily on Indian time.',
   keywords: [
     'nri support uk', 'emotional support nri uk', 'indian abroad uk support', 'nri loneliness uk',
     'missing home uk', 'nri mental health uk', 'talk to someone indian uk', 'indian listener uk',
     'nri emotional wellbeing uk', 'overseas indian support',
   ],
   alternates: {
-    canonical: 'https://www.leanon.app/uk-nri-support',
-    languages: { 'en-GB': 'https://www.leanon.app/uk-nri-support' },
+    canonical: 'https://www.leanon.app/uk',
+    languages: { 'en-GB': 'https://www.leanon.app/uk' },
   },
   openGraph: {
     title: 'Emotional Support for NRIs in the UK — Talk to Someone Indian',
-    description: 'Missing home, carrying NRI pressure alone, video calls not enough. LeanOn connects you with Indian peer listeners available 24/7.',
-    url: 'https://www.leanon.app/uk-nri-support',
+    description: 'Missing home, carrying NRI pressure alone, video calls not enough. LeanOn connects you with Indian peer listeners in India.',
+    url: 'https://www.leanon.app/uk',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -32,7 +32,7 @@ const faqSchema = {
       name: 'What kind of support does LeanOn offer NRIs in the UK?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn connects you with peer-trained Indian listeners who are available 24/7 for real conversations. You can talk about anything — missing home, work stress, relationship pressures, loneliness, identity confusion, or simply the unnamed heaviness that comes with being far from where you grew up. Sessions are private and judgment-free.',
+        text: 'LeanOn connects you with screened Indian listeners who are online daily on Indian time for real conversations. You can talk about anything — missing home, work stress, relationship pressures, loneliness, identity confusion, or simply the unnamed heaviness that comes with being far from where you grew up. Sessions are private and judgment-free.',
       },
     },
     {
@@ -75,7 +75,7 @@ const breadcrumbSchema = {
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'NRI Support UK', item: 'https://www.leanon.app/uk-nri-support' },
+    { '@type': 'ListItem', position: 2, name: 'NRI Support UK', item: 'https://www.leanon.app/uk' },
   ],
 }
 

@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'Can I just vent to a LeanOn listener without wanting advice?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'That is exactly what LeanOn is built for. Listeners are trained to follow your lead — if you want to vent without advice, they will listen without redirecting. They will ask what you need at the start and then hold that space for you.',
+        text: 'That is exactly what LeanOn is built for. Listeners are screened and expected to follow your lead — if you want to vent without advice, they will listen without redirecting. They will ask what you need at the start and then hold that space for you.',
       },
     },
     {
@@ -196,7 +196,7 @@ export default function MalaysiaRantPage() {
 
         <div className="card">
           <h2>Session pricing for Malaysia</h2>
-          <p>Pay in Malaysian ringgit. First 5 minutes free — once per listener.</p>
+          <p>Pay in Malaysian ringgit. First 5 minutes free — one free session per account.</p>
           <div className="pricing-grid">
             <div className="price-card">
               <div className="dur">15 min</div>
@@ -216,7 +216,7 @@ export default function MalaysiaRantPage() {
 
         <div className="cta">
           <h2>Get it all out — right now</h2>
-          <p>Real Indian listeners. Tamil, Hindi, and more. No judgment. 24/7.</p>
+          <p>Real Indian listeners. Tamil, Hindi, and more. No judgment. On Indian time.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>

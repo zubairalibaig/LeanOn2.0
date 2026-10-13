@@ -202,7 +202,7 @@ export default function RelationshipAdvicePage() {
             <li>
               <div>
                 <strong>Say exactly what is on your mind</strong>
-                <p>Listeners are trained to ask open questions and truly hear you — not to give unsolicited advice
+                <p>Listeners are screened and expected to ask open questions and truly hear you — not to give unsolicited advice
                   or tell you to leave/stay.</p>
               </div>
             </li>
@@ -219,7 +219,7 @@ export default function RelationshipAdvicePage() {
           <h2>Why not just talk to a friend?</h2>
           <p>Friends mean well, but they also have opinions, history, and emotions of their own. They may side
             with your partner, tell your mutual friends, or feel awkward next time they see you both.</p>
-          <p>LeanOn listeners are trained to be neutral. They have no stake in the outcome. Their only job is
+          <p>LeanOn listeners are screened and expected to be neutral. They have no stake in the outcome. Their only job is
             to help you feel heard — and that changes everything.</p>
         </div>
 

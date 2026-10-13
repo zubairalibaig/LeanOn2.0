@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 }
 
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
-  { '@type': 'Question', name: 'Do LeanOn listeners understand second generation identity?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners understand the NRI experience broadly and are specifically trained to hold the in-between identity — the ABCD/BBCD experience, the cultural code-switching, the sense of not fully belonging to either the Western world you grew up in or the Indian world your parents come from.' } },
+  { '@type': 'Question', name: 'Do LeanOn listeners understand second generation identity?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners understand the NRI experience broadly and are selected to hold the in-between identity — the ABCD/BBCD experience, the cultural code-switching, the sense of not fully belonging to either the Western world you grew up in or the Indian world your parents come from.' } },
   { '@type': 'Question', name: 'I feel like a fraud at Indian community events. Is that normal?', acceptedAnswer: { '@type': 'Answer', text: 'Very normal. Many second-generation Indians describe feeling like performers at their own community\'s events — going through motions of Indian identity that feel both genuine and hollow. Listeners can hold this complexity without trying to resolve it for you.' } },
   { '@type': 'Question', name: 'I don\'t speak my parents\' mother tongue well. I feel guilty about it. Can I talk about this?', acceptedAnswer: { '@type': 'Answer', text: 'Yes, and you won\'t be judged. The language guilt — feeling like you\'ve failed your heritage by not speaking Tamil, Gujarati, Telugu, Punjabi, Hindi fluently — is one of the most common things second-generation Indians carry. Sessions are conducted in English.' } },
   { '@type': 'Question', name: 'How much does a session cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription required.' } },
@@ -20,7 +20,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
   { '@type': 'ListItem', position: 3, name: 'Second Generation NRI', item: 'https://www.leanon.app/nri-second-generation' },
 ] }
 
@@ -72,7 +72,7 @@ export default function NriSecondGenerationPage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="https://www.leanon.app/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Second Generation NRI</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Second Generation NRI</span></nav>
         <div className="hero">
           <p className="badge">Second Generation &middot; ABCD &middot; BBCD &middot; In-Between Identity</p>
           <h1>Too Indian for here. <em>Too Western for there.</em></h1>
@@ -104,7 +104,7 @@ export default function NriSecondGenerationPage() {
         <div className="cta-card"><h2>Both worlds are yours. Talk to someone who gets that.</h2><p>Real Indian peer listener. Understands second-generation identity. Anonymous. First 5 minutes free. From US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-identity-crisis">NRI identity crisis &rarr;</a>
-          <a href="/nri-support">NRI support &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
           <a href="/arranged-marriage-nri">Arranged marriage NRI &rarr;</a>
           <a href="/nri-mental-health">NRI mental health &rarr;</a>
         </div></div>

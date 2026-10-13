@@ -43,7 +43,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is this different from therapy?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. A therapist is a licensed professional working toward a clinical outcome over structured sessions. A peer listener is someone with lived experience who is trained to listen actively without advising. If you need a 15-minute call to say what happened in your relationship before the afternoon gets going, a peer listener is the right fit. You do not need a clinical framework for everyday emotional pressure.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. A therapist is a licensed professional working toward a clinical outcome over structured sessions. A peer listener is someone with lived experience who is screened and expected to listen actively without advising. If you need a 15-minute call to say what happened in your relationship before the afternoon gets going, a peer listener is the right fit. You do not need a clinical framework for everyday emotional pressure.' },
     },
     {
       '@type': 'Question',
@@ -140,7 +140,7 @@ export default function RelationshipAdviceVsVentingIndiaPage() {
           <h2>The Pressure of Unsolicited Advice</h2>
           <p>When someone gives you advice about your relationship that you did not ask for, notice what happens. You either feel dismissed &mdash; like your experience is a problem to be solved rather than something worth hearing &mdash; or you feel obligated to defend your position, which means you are now managing the conversation instead of being in it.</p>
           <p>This happens because advice is not primarily for you. It is for the person giving it. When someone is uncomfortable with an unresolved emotional situation, giving advice is how they manage their own discomfort. They are not necessarily wrong about the advice. But their timing &mdash; before you have said what you need to say &mdash; is almost always off.</p>
-          <p>Most people have advice ready before the person in front of them has finished speaking. A peer listener is trained to resist that. Their job is to hear it fully before doing anything with it.</p>
+          <p>Most people have advice ready before the person in front of them has finished speaking. A peer listener is screened and expected to resist that. Their job is to hear it fully before doing anything with it.</p>
         </div>
 
         <div className="section">

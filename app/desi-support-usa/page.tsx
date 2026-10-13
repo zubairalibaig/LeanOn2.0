@@ -6,8 +6,8 @@ export const metadata: Metadata = {
   title: 'Desi Support Online for Indians in the USA | Talk to Someone Who Gets It | LeanOn',
   description: 'In New Jersey, Bay Area, or Houston? LeanOn connects desi Americans with peer listeners in India who understand the ABD/ABCD experience and the pressure of it all.',
   keywords: ['desi support usa', 'indian support america', 'abcd mental health', 'desi mental health usa', 'indian american emotional support', 'talk to someone indian usa', 'nri support america', 'new jersey indian support'],
-  alternates: { canonical: 'https://www.leanon.app/desi-support-usa' },
-  openGraph: { title: 'Desi Support Online for Indians in the USA | Talk to Someone Who Gets It | LeanOn', description: 'In New Jersey, Bay Area, or Houston? LeanOn connects desi Americans with peer listeners in India who understand the ABD/ABCD experience and the pressure of it all.', url: 'https://www.leanon.app/desi-support-usa', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
+  alternates: { canonical: 'https://www.leanon.app/usa' },
+  openGraph: { title: 'Desi Support Online for Indians in the USA | Talk to Someone Who Gets It | LeanOn', description: 'In New Jersey, Bay Area, or Houston? LeanOn connects desi Americans with peer listeners in India who understand the ABD/ABCD experience and the pressure of it all.', url: 'https://www.leanon.app/usa', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
 }
 
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
@@ -20,7 +20,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'Desi Support for Indians in the USA', item: 'https://www.leanon.app/desi-support-usa' },
+  { '@type': 'ListItem', position: 2, name: 'Desi Support for Indians in the USA', item: 'https://www.leanon.app/usa' },
 ] }
 
 const S = `
@@ -97,7 +97,7 @@ export default function DesiSupportUsaPage() {
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>You don&rsquo;t have to explain the desi context.</h2><p>A real Indian peer listener who already gets it. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
-          <a href="/nri-support">NRI support &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
           <a href="/nri-mental-health">NRI mental health &rarr;</a>
           <a href="/indian-diaspora-support">Indian diaspora support &rarr;</a>
           <a href="/support/someone-to-talk-to">Talk to someone online &rarr;</a>

@@ -32,7 +32,7 @@ const faqSchema = {
       name: 'Can I just rant without being given advice?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Absolutely. You can tell your LeanOn listener upfront — "I just need to vent, I am not looking for advice right now." Listeners are trained to follow your lead. If you want to be heard without solutions being thrown at you, that is exactly what you will get.',
+        text: 'Absolutely. You can tell your LeanOn listener upfront — "I just need to vent, I am not looking for advice right now." Listeners are screened and expected to follow your lead. If you want to be heard without solutions being thrown at you, that is exactly what you will get.',
       },
     },
     {
@@ -64,7 +64,7 @@ const faqSchema = {
       name: 'Will the listener judge me for what I say?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'No. LeanOn listeners are trained to listen without judgment. Whatever you are feeling — frustration, resentment, regret, anger — you can say it freely. This is a space where you do not have to manage other people\'s reactions to your emotions.',
+        text: 'No. LeanOn listeners are screened and expected to listen without judgment. Whatever you are feeling — frustration, resentment, regret, anger — you can say it freely. This is a space where you do not have to manage other people\'s reactions to your emotions.',
       },
     },
   ],
@@ -174,7 +174,7 @@ export default function CanadaRantPage() {
           <h2>😤 No advice. No silver linings. Just someone who listens.</h2>
           <p>How many times have you started to share something real and someone immediately said
             &quot;at least you have X&quot; or &quot;just think positive&quot;? It makes you feel worse, not better.</p>
-          <p>LeanOn listeners are trained to NOT do that. You can rant, cry, repeat yourself, circle back.
+          <p>LeanOn listeners are screened and expected to NOT do that. You can rant, cry, repeat yourself, circle back.
             They will stay with you through all of it — without rushing you toward resolution.</p>
           <a href="/browse" className="cta-night">Find a listener online now →</a>
         </div>
@@ -210,7 +210,7 @@ export default function CanadaRantPage() {
           <h2>Frequently asked questions</h2>
           <div className="faq-item">
             <h3>Can I just rant without being given advice?</h3>
-            <p>Absolutely. Tell your listener upfront — &quot;I just need to vent.&quot; Listeners are trained to
+            <p>Absolutely. Tell your listener upfront — &quot;I just need to vent.&quot; Listeners are screened and expected to
               follow your lead and will not push solutions on you if you do not want them.</p>
           </div>
           <div className="faq-item">
@@ -229,7 +229,7 @@ export default function CanadaRantPage() {
           </div>
           <div className="faq-item">
             <h3>Will the listener judge me for what I say?</h3>
-            <p>No. LeanOn listeners are trained to listen without judgment. Whatever you are feeling —
+            <p>No. LeanOn listeners are screened and expected to listen without judgment. Whatever you are feeling —
               frustration, resentment, regret, anger — you can say it freely here.</p>
           </div>
         </div>
@@ -239,8 +239,8 @@ export default function CanadaRantPage() {
           <a href="/canada-immigration-stress">Immigration anxiety →</a>
           <a href="/canada-talk-to-someone">Someone to talk to →</a>
           <a href="/canada-empathy-listener">Empathy listener →</a>
-          <a href="/desi-canada-support">Desi community support →</a>
-          <a href="/canada-nri-support">NRI emotional support →</a>
+          <a href="/canada">Desi community support →</a>
+          <a href="/canada">NRI emotional support →</a>
         </div>
 
         <div className="disclaimer">

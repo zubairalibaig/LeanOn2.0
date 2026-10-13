@@ -73,7 +73,7 @@ const faqSchema = {
       name: 'Is it okay to vent to a stranger online in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn listeners are trained, vetted humans who hold space without judgment. Sessions are anonymous — you don\'t need to share your real name or location.',
+        text: 'Yes. LeanOn listeners are screened, vetted humans who hold space without judgment. Sessions are anonymous — you don\'t need to share your real name or location.',
       },
     },
     {
@@ -248,7 +248,7 @@ export default function IndiaVentToRealPersonPage() {
             you are from. LeanOn sessions are completely anonymous — your privacy is protected.
           </p>
           <p>
-            LeanOn listeners are trained to hold space without judgment. No advice unless you ask for it.
+            LeanOn listeners are screened and expected to hold space without judgment. No advice unless you ask for it.
             No &quot;but have you tried&quot;. Just someone fully present with what you are feeling.
           </p>
         </div>
@@ -292,7 +292,7 @@ export default function IndiaVentToRealPersonPage() {
           </div>
           <div className="faq-item">
             <h3>Is it okay to vent to a stranger online in India?</h3>
-            <p>Yes. LeanOn listeners are trained, vetted humans who hold space without judgment. Sessions are anonymous — you don&apos;t need to share your real name or location.</p>
+            <p>Yes. LeanOn listeners are screened, vetted humans who hold space without judgment. Sessions are anonymous — you don&apos;t need to share your real name or location.</p>
           </div>
           <div className="faq-item">
             <h3>What happens when I vent to an AI vs a real person?</h3>

@@ -35,7 +35,7 @@ const faqSchema = {
       name: 'Will the listener judge my family or take sides?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'No. Peer listeners on LeanOn are trained to be present with you — not to evaluate your family or render a verdict on who is right. You can share honestly about what your family is doing and how it is making you feel, and your listener will hold space for that without turning it into a trial. Many listeners have personally navigated complicated family dynamics in India and will understand the nuance.',
+        text: 'No. Peer listeners on LeanOn are screened and expected to be present with you — not to evaluate your family or render a verdict on who is right. You can share honestly about what your family is doing and how it is making you feel, and your listener will hold space for that without turning it into a trial. Many listeners have personally navigated complicated family dynamics in India and will understand the nuance.',
       },
     },
     {
@@ -213,7 +213,7 @@ export default function FamilyPressureIndiaPage() {
         <div className="section">
           <h2>Finding a Space Outside the System</h2>
           <p>What you need — and what is genuinely hard to find — is a space that is completely outside the system of relationships that creates the pressure. Not a friend who knows your family. Not a relative with their own stake in the situation. Not a therapist who might have their own cultural frameworks that do not apply to your specific family dynamic.</p>
-          <p>LeanOn peer listeners are trained to hold complexity without resolving it into simple verdicts. They understand, from lived experience, what Indian family dynamics actually feel like from the inside — not as an academic concept but as something they have personally navigated.</p>
+          <p>LeanOn peer listeners are screened and expected to hold complexity without resolving it into simple verdicts. They understand, from lived experience, what Indian family dynamics actually feel like from the inside — not as an academic concept but as something they have personally navigated.</p>
           <p>Many listeners have their own experiences with:</p>
           <ul>
             <li>Career pressure and the terror of deviating from the expected path</li>

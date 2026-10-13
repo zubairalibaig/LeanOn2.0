@@ -41,7 +41,7 @@ const faqSchema = {
       name: 'What is the difference between a therapist and a peer listener?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'A therapist is a licensed mental health professional who can diagnose and treat conditions using clinical methods. A peer listener is a real person with lived experience who is trained to listen without judgment and provide human support — not diagnose or prescribe. Therapists on Amaha or Practo are suitable for clinical needs. LeanOn peer listeners are for everyday emotional support.',
+        text: 'A therapist is a licensed mental health professional who can diagnose and treat conditions using clinical methods. A peer listener is a real person with lived experience who is screened and expected to listen without judgment and provide human support — not diagnose or prescribe. Therapists on Amaha or Practo are suitable for clinical needs. LeanOn peer listeners are for everyday emotional support.',
       },
     },
     {
@@ -220,7 +220,7 @@ export default function InnerhourAlternativePage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">What is the difference between a therapist and a peer listener?</div>
-            <div className="faq-a">A therapist is a licensed professional who can diagnose and treat conditions. A peer listener has lived experience and is trained to listen without judgment — not to diagnose or prescribe. Therapists on Amaha or Practo are for clinical needs. LeanOn peer listeners are for everyday emotional support.</div>
+            <div className="faq-a">A therapist is a licensed professional who can diagnose and treat conditions. A peer listener has lived experience and is screened and expected to listen without judgment — not to diagnose or prescribe. Therapists on Amaha or Practo are for clinical needs. LeanOn peer listeners are for everyday emotional support.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">When should I choose peer support over therapy?</div>

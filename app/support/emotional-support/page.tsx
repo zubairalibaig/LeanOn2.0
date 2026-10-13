@@ -32,7 +32,7 @@ const faqSchema = {
       name: 'How does online emotional support work on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'You browse peer listeners, pick someone whose lived experience resonates with yours, and start a session via text or voice. The listener is a real person who has been through similar challenges and is trained to offer empathetic, non-judgmental support. Sessions start instantly with no booking required, and a short trial session is available for new users.',
+        text: 'You browse peer listeners, pick someone whose lived experience resonates with yours, and start a session via text or voice. The listener is a real person who has been through similar challenges and is screened and expected to offer empathetic, non-judgmental support. Sessions start instantly with no booking required, and a short trial session is available for new users.',
       },
     },
     {

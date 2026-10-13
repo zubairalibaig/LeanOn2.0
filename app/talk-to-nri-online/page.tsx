@@ -6,8 +6,8 @@ export const metadata: Metadata = {
   title: 'Talk to an NRI Online | Find Someone Who Understands the Immigrant Life | LeanOn',
   description: 'Want to talk to an actual NRI — not a chatbot, not a professional — just someone who gets what immigrant life feels like from the inside? LeanOn connects you.',
   keywords: ['talk to nri online', 'talk to indian abroad', 'connect with nri', 'nri to talk to', 'find nri to talk to', 'indian immigrant to talk to'],
-  alternates: { canonical: 'https://www.leanon.app/talk-to-nri-online' },
-  openGraph: { title: 'Talk to an NRI Online | Find Someone Who Understands the Immigrant Life | LeanOn', description: 'Want to talk to an actual NRI — not a chatbot, not a professional — just someone who gets what immigrant life feels like from the inside? LeanOn connects you.', url: 'https://www.leanon.app/talk-to-nri-online', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
+  alternates: { canonical: 'https://www.leanon.app/indian-emotional-support-abroad' },
+  openGraph: { title: 'Talk to an NRI Online | Find Someone Who Understands the Immigrant Life | LeanOn', description: 'Want to talk to an actual NRI — not a chatbot, not a professional — just someone who gets what immigrant life feels like from the inside? LeanOn connects you.', url: 'https://www.leanon.app/indian-emotional-support-abroad', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
 }
 
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
@@ -15,13 +15,13 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Can I specifically talk to someone who has lived abroad?', acceptedAnswer: { '@type': 'Answer', text: 'Listener profiles share their background and areas of lived experience. You can browse and choose someone whose specific experience matches what you want to talk about — whether that\'s life in the UK, the US, Canada, or elsewhere.' } },
   { '@type': 'Question', name: 'Can I talk in Hindi or my regional language?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Many listeners are comfortable in Hindi and other Indian languages. Check individual listener profiles for language preferences.' } },
   { '@type': 'Question', name: 'Is my conversation private?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Sessions are private — only your phone number and first name are used to create your account. Nothing is shared with your family, community, or anyone else.' } },
-  { '@type': 'Question', name: 'How much does it cost to talk to an NRI online?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free — once per listener. Sessions continue from US$10 for 15 minutes. No subscription, no commitment.' } },
+  { '@type': 'Question', name: 'How much does it cost to talk to an NRI online?', acceptedAnswer: { '@type': 'Answer', text: 'First 5 minutes free — one free session per account. Sessions continue from US$10 for 15 minutes. No subscription, no commitment.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
-  { '@type': 'ListItem', position: 3, name: 'Talk to an NRI Online', item: 'https://www.leanon.app/talk-to-nri-online' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
+  { '@type': 'ListItem', position: 3, name: 'Talk to an NRI Online', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
 ] }
 
 const S = `
@@ -72,7 +72,7 @@ export default function TalkToNriOnlinePage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="https://www.leanon.app/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Talk to an NRI Online</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Talk to an NRI Online</span></nav>
         <div className="hero">
           <p className="badge">NRI Connection &middot; Indian Immigrant Life &middot; Peer Support</p>
           <h1>Talk to an NRI Online — Someone Who <em>Already Knows</em> Your World</h1>
@@ -101,14 +101,14 @@ export default function TalkToNriOnlinePage() {
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>Skip the preamble. Start where it matters.</h2><p>Real Indian peer listener. Understands the immigrant world from the inside. First 5 minutes free.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
-          <a href="/nri-support">NRI support &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
           <a href="/nri-mental-health">NRI mental health &rarr;</a>
           <a href="/nri-homesick">NRI homesick &rarr;</a>
           <a href="/nri-anxiety-abroad">NRI anxiety abroad &rarr;</a>
-          <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>
+          <a href="/usa-loneliness">NRI loneliness USA &rarr;</a>
           <a href="/nri-loneliness-uk">NRI loneliness UK &rarr;</a>
           <a href="/nri-loneliness-canada">NRI loneliness Canada &rarr;</a>
-          <a href="/indians-in-uk">Indians in UK &rarr;</a>
+          <a href="/uk">Indians in UK &rarr;</a>
           <a href="/indians-in-toronto">Indians in Toronto &rarr;</a>
         </div></div>
         <div className="crisis"><strong>In a crisis?</strong> NIMHANS: 080-46110007 &nbsp;&middot;&nbsp; Tele-MANAS: 14416 &nbsp;&middot;&nbsp; Both free, 24/7.</div>

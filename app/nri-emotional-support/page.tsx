@@ -6,8 +6,8 @@ export const metadata: Metadata = {
   title: 'NRI Emotional Support | Someone to Talk to When It All Gets Heavy | LeanOn',
   description: 'NRI emotional support from peers who understand — not a helpline, not a professional, just a real human who has been through the same immigrant weight.',
   keywords: ['nri emotional support', 'emotional support for nri', 'indian immigrant emotional support', 'nri support online', 'desi emotional support', 'nri help'],
-  alternates: { canonical: 'https://www.leanon.app/nri-emotional-support' },
-  openGraph: { title: 'NRI Emotional Support | Someone to Talk to When It All Gets Heavy | LeanOn', description: 'NRI emotional support from peers who understand — not a helpline, not a professional, just a real human who has been through the same immigrant weight.', url: 'https://www.leanon.app/nri-emotional-support', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
+  alternates: { canonical: 'https://www.leanon.app/indian-emotional-support-abroad' },
+  openGraph: { title: 'NRI Emotional Support | Someone to Talk to When It All Gets Heavy | LeanOn', description: 'NRI emotional support from peers who understand — not a helpline, not a professional, just a real human who has been through the same immigrant weight.', url: 'https://www.leanon.app/indian-emotional-support-abroad', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
 }
 
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
@@ -20,8 +20,8 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
-  { '@type': 'ListItem', position: 3, name: 'NRI Emotional Support', item: 'https://www.leanon.app/nri-emotional-support' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
+  { '@type': 'ListItem', position: 3, name: 'NRI Emotional Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
 ] }
 
 const S = `
@@ -72,7 +72,7 @@ export default function NriEmotionalSupportPage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="https://www.leanon.app/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Emotional Support</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Emotional Support</span></nav>
         <div className="hero">
           <p className="badge">NRI Emotional Support &middot; Indian Immigrant Life &middot; Peer Listener</p>
           <h1>NRI Emotional Support — <em>Not a Helpline. A Human.</em></h1>
@@ -102,11 +102,11 @@ export default function NriEmotionalSupportPage() {
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>The weight you have been carrying quietly.</h2><p>Real peer listener. Understands NRI life. No judgment. First 5 minutes free, from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
-          <a href="/nri-support">NRI support &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
           <a href="/nri-mental-health">NRI mental health &rarr;</a>
           <a href="/nri-homesick">NRI homesick &rarr;</a>
           <a href="/nri-anxiety-abroad">NRI anxiety abroad &rarr;</a>
-          <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>
+          <a href="/usa-loneliness">NRI loneliness USA &rarr;</a>
           <a href="/nri-loneliness-uk">NRI loneliness UK &rarr;</a>
           <a href="/nri-loneliness-canada">NRI loneliness Canada &rarr;</a>
           <a href="/nri-identity-crisis">NRI identity crisis &rarr;</a>

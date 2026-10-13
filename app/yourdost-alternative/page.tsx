@@ -48,7 +48,7 @@ const faqSchema = {
       name: 'What if I just need to vent, not get counseling?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'That is exactly what LeanOn is designed for. Sometimes you do not need a diagnosis or a treatment plan — you just need someone to hear you out without judgment. Our peer listeners are trained to hold space, ask gentle questions, and help you feel understood. No clinical notes, no homework, no advice you did not ask for.',
+        text: 'That is exactly what LeanOn is designed for. Sometimes you do not need a diagnosis or a treatment plan — you just need someone to hear you out without judgment. Our peer listeners are screened and expected to hold space, ask gentle questions, and help you feel understood. No clinical notes, no homework, no advice you did not ask for.',
       },
     },
     {
@@ -290,7 +290,7 @@ export default function YourDOSTAlternativePage() {
             <h3>What if I just need to vent, not get counseling?</h3>
             <p>That is exactly what LeanOn is designed for. Sometimes you do not need a diagnosis or a
               treatment plan — you just need someone to hear you out without judgment. Our peer listeners
-              are trained to hold space and help you feel understood. No clinical notes, no homework,
+              are screened and expected to hold space and help you feel understood. No clinical notes, no homework,
               no unsolicited advice.</p>
           </div>
           <div className="faq-item">

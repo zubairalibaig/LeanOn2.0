@@ -234,9 +234,9 @@ export default function UsaRelationshipAdvicePage() {
 
         <div className="related">
           <a href="/usa-loneliness">Feeling lonely in the USA →</a>
-          <a href="/usa-nri-support">Emotional support for NRIs →</a>
+          <a href="/usa">Emotional support for NRIs →</a>
           <a href="/usa-empathy-listener">Empathy listener USA →</a>
-          <a href="/desi-usa-support">Desi community support →</a>
+          <a href="/usa">Desi community support →</a>
           <a href="/usa-talk-to-someone">Someone to talk to →</a>
           <a href="/usa-rant-to-someone">Need to rant? →</a>
         </div>

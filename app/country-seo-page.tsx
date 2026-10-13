@@ -23,15 +23,15 @@ export default function CountrySeoPage({ data }: { data: CountrySeoData }) {
     <main className="min-h-screen bg-white text-[#0F4867]"><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="mx-auto max-w-3xl px-5 py-8 sm:px-8 sm:py-12">
         <nav className="mb-8 flex items-center justify-between" aria-label="Primary"><a href="/" className="text-2xl font-black tracking-tight">Lean<span className="text-[#1A8FA0]">On</span></a><a href="/auth" className="rounded-full bg-[#1A8FA0] px-5 py-2.5 text-sm font-extrabold text-white">Open LeanOn</a></nav>
-        <div className="mb-5 text-sm font-bold text-[#1A8FA0]">{data.eyebrow}</div><h1 className="mb-5 text-3xl font-black leading-tight sm:text-5xl">{data.title}</h1><p className="mb-7 text-lg leading-8 text-slate-600">{data.intro}</p><a href="/browse" className="mb-10 inline-flex rounded-full bg-[#FF9933] px-7 py-3.5 font-extrabold text-white">Find someone to talk to →</a>
+        <div className="mb-5 text-sm font-bold text-[#1A8FA0]">{data.eyebrow}</div><h1 className="mb-5 text-3xl font-black leading-tight sm:text-5xl">{data.title.replace(/\s*\|\s*LeanOn.*$/, '')}</h1><p className="mb-7 text-lg leading-8 text-slate-600">{data.intro}</p><a href="/browse" className="mb-10 inline-flex rounded-full bg-[#FF9933] px-7 py-3.5 font-extrabold text-white">Find someone to talk to →</a>
         <section className="mb-8 rounded-3xl border border-[#D5EEF6] bg-[#F0F8FC] p-6 sm:p-8"><h2 className="mb-3 text-xl font-black">Built for real life in {data.country}</h2><p className="leading-7 text-slate-600">{data.localAngle}</p></section>
         <section className="mb-8"><h2 className="mb-4 text-2xl font-black">What can you talk about?</h2><ul className="grid gap-3 sm:grid-cols-2">{data.situations.map(item => <li key={item} className="rounded-2xl border border-slate-200 p-4 text-slate-700">{item}</li>)}</ul></section>
         <section className="mb-8 rounded-3xl bg-[#0F4867] p-6 text-white sm:p-8">
           <h2 className="mb-4 text-2xl font-black">A simple path from needing support to talking</h2>
           <ol className="space-y-4 text-white/90">
             <li><span className="mr-2 font-black text-[#FF9933]">1.</span>Browse listener profiles and look for relevant lived experience, topics and availability.</li>
-            <li><span className="mr-2 font-black text-[#FF9933]">2.</span>Start one free 5-minute introductory session with a new listener.</li>
-            <li><span className="mr-2 font-black text-[#FF9933]">3.</span>If you want to continue, paid session pricing is shown before you start. Paid sessions currently start at {data.slug === 'india' ? '₹160' : 'US$10'} for 15 minutes.</li>
+            <li><span className="mr-2 font-black text-[#FF9933]">2.</span>Your first 5-minute session is free — one free session per account.</li>
+            <li><span className="mr-2 font-black text-[#FF9933]">3.</span>If you want to continue, the price is shown before you start: {data.slug === 'india' ? 'paid sessions start at ₹160 for 15 minutes' : 'US$10 for 15 minutes, US$15 for 30, US$20 for 45'}.{data.slug === 'india' ? '' : ' Listeners are in India, so availability follows Indian time — browse to see who is online now.'}</li>
             <li><span className="mr-2 font-black text-[#FF9933]">4.</span>Choose text or voice and continue only if the conversation feels useful.</li>
           </ol>
           <a href="/browse" className="mt-7 inline-flex rounded-full bg-[#FF9933] px-6 py-3 font-extrabold text-white">Browse listeners →</a>

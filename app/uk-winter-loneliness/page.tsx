@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Winter Loneliness in the UK — When the Dark Sets In | LeanOn',
-  description: 'Short days, grey skies, SAD, and the particular isolation of a UK winter as an Indian far from home. LeanOn peer listeners are available 24/7 — including the long dark evenings of November.',
+  description: 'Short days, grey skies, SAD, and the particular isolation of a UK winter as an Indian far from home. LeanOn peer listeners are online daily on Indian time — including the long dark evenings of November.',
   keywords: [
     'winter loneliness uk', 'sad seasonal affective disorder uk indians', 'uk winter depression',
     'november blues uk', 'winter isolation uk south asian', 'dark evenings uk loneliness',
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Winter Loneliness in the UK — When the Dark Sets In',
-    description: 'Short days, grey skies, and the isolation of a UK winter far from home. LeanOn peer listeners are available 24/7.',
+    description: 'Short days, grey skies, and the isolation of a UK winter far from home. LeanOn peer listeners are online daily on Indian time.',
     url: 'https://www.leanon.app/uk-winter-loneliness',
     siteName: 'LeanOn',
     type: 'article',
@@ -195,7 +195,7 @@ export default function UkWinterLonelinessPage() {
             <li>30 minutes — £12</li>
             <li>45 minutes — £16</li>
           </ul>
-          <p style={{ marginTop: '12px' }}>Available 24/7 — including the long dark evenings when you need it most.</p>
+          <p style={{ marginTop: '12px' }}>Listeners online daily (Indian time) — including the long dark evenings when you need it most.</p>
         </div>
 
         <div className="cta">
@@ -238,7 +238,7 @@ export default function UkWinterLonelinessPage() {
         <div className="related">
           <a href="/uk-loneliness">Loneliness support UK →</a>
           <a href="/london-loneliness">Lonely in London →</a>
-          <a href="/uk-nri-support">NRI support UK →</a>
+          <a href="/uk">NRI support UK →</a>
           <a href="/uk-mental-health-south-asian">South Asian mental health →</a>
           <a href="/uk-talk-to-someone">Talk to someone UK →</a>
           <a href="/british-indian-support">British Indian identity →</a>

@@ -6,8 +6,8 @@ export const metadata: Metadata = {
   title: 'Emotional Support for Indians in the UK | Talk to Someone Who Gets It | LeanOn',
   description: 'In London, Birmingham, or Leicester? LeanOn connects you with peer listeners in India who understand the British Indian experience — caught between two worlds.',
   keywords: ['indians in uk support', 'british indian mental health', 'indian support london', 'desi support uk', 'indian loneliness uk', 'talk to someone indian uk', 'british indian emotional support'],
-  alternates: { canonical: 'https://www.leanon.app/indians-in-uk' },
-  openGraph: { title: 'Emotional Support for Indians in the UK | Talk to Someone Who Gets It | LeanOn', description: 'In London, Birmingham, or Leicester? LeanOn connects you with peer listeners in India who understand the British Indian experience — caught between two worlds.', url: 'https://www.leanon.app/indians-in-uk', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
+  alternates: { canonical: 'https://www.leanon.app/uk' },
+  openGraph: { title: 'Emotional Support for Indians in the UK | Talk to Someone Who Gets It | LeanOn', description: 'In London, Birmingham, or Leicester? LeanOn connects you with peer listeners in India who understand the British Indian experience — caught between two worlds.', url: 'https://www.leanon.app/uk', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
 }
 
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
@@ -20,7 +20,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'Emotional Support for Indians in the UK', item: 'https://www.leanon.app/indians-in-uk' },
+  { '@type': 'ListItem', position: 2, name: 'Emotional Support for Indians in the UK', item: 'https://www.leanon.app/uk' },
 ] }
 
 const S = `
@@ -97,7 +97,7 @@ export default function IndiansInUkPage() {
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>You don&rsquo;t have to carry both worlds alone.</h2><p>A real Indian peer listener. Understands the British Indian experience. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
-          <a href="/nri-support">NRI support &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
           <a href="/nri-mental-health">NRI mental health &rarr;</a>
           <a href="/indian-diaspora-support">Indian diaspora support &rarr;</a>
           <a href="/support/loneliness">Loneliness support &rarr;</a>

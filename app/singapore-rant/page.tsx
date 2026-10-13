@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'Is it okay to just rant to a LeanOn listener?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Absolutely. You do not need a mental health crisis to talk to a listener. Sometimes you just need to get it out — the frustrating meeting, the boss who never gives credit, the day that would not end. LeanOn listeners are trained to hold space while you vent, without interrupting or redirecting.',
+        text: 'Absolutely. You do not need a mental health crisis to talk to a listener. Sometimes you just need to get it out — the frustrating meeting, the boss who never gives credit, the day that would not end. LeanOn listeners are screened and expected to hold space while you vent, without interrupting or redirecting.',
       },
     },
     {
@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'What if I just want to talk about work stress without being told to quit?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'That is exactly what LeanOn is for. Our listeners are trained to NOT give unsolicited advice. They will ask what you need at the start — just to vent, or also to think through options — and then follow your lead.',
+        text: 'That is exactly what LeanOn is for. Our listeners are screened and expected to NOT give unsolicited advice. They will ask what you need at the start — just to vent, or also to think through options — and then follow your lead.',
       },
     },
     {
@@ -194,7 +194,7 @@ export default function SingaporeRantPage() {
 
         <div className="card">
           <h2>Session pricing for Singapore</h2>
-          <p>Pay in Singapore dollars. First 5 minutes free — once per listener.</p>
+          <p>Pay in Singapore dollars. First 5 minutes free — one free session per account.</p>
           <div className="pricing-grid">
             <div className="price-card">
               <div className="dur">15 min</div>
@@ -214,7 +214,7 @@ export default function SingaporeRantPage() {
 
         <div className="cta">
           <h2>Get it all out — right now</h2>
-          <p>Real Indian listeners. No judgment. 24/7 availability.</p>
+          <p>Real Indian listeners. No judgment. availability on Indian time.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -224,7 +224,7 @@ export default function SingaporeRantPage() {
           <div className="faq-item">
             <h3>Is it okay to just rant to a LeanOn listener?</h3>
             <p>Absolutely. You do not need a crisis to talk. Sometimes you just need to get it all out.
-              LeanOn listeners are trained to hold space while you vent, without interrupting or redirecting.</p>
+              LeanOn listeners are screened and expected to hold space while you vent, without interrupting or redirecting.</p>
           </div>
           <div className="faq-item">
             <h3>Why talk to a stranger instead of a friend?</h3>
@@ -234,7 +234,7 @@ export default function SingaporeRantPage() {
           </div>
           <div className="faq-item">
             <h3>What if I just want to vent without being told to quit?</h3>
-            <p>That is exactly what LeanOn is for. Listeners are trained to not give unsolicited advice.
+            <p>That is exactly what LeanOn is for. Listeners are screened and expected to not give unsolicited advice.
               They will ask what you need at the start and then follow your lead.</p>
           </div>
           <div className="faq-item">

@@ -32,7 +32,7 @@ const faqSchema = {
       name: 'What is an empathy listener?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'An empathy listener is a trained peer who gives you their full, undivided attention — not to fix your problem, but to truly hear you. They reflect back what they understand, ask thoughtful questions, and make you feel genuinely seen. The goal is connection, not advice.',
+        text: 'An empathy listener is a screened peer who gives you their full, undivided attention — not to fix your problem, but to truly hear you. They reflect back what they understand, ask thoughtful questions, and make you feel genuinely seen. The goal is connection, not advice.',
       },
     },
     {
@@ -236,8 +236,8 @@ export default function CanadaEmpathyListenerPage() {
 
         <div className="related">
           <a href="/canada-talk-to-someone">Someone to talk to →</a>
-          <a href="/desi-canada-support">Desi community support →</a>
-          <a href="/canada-nri-support">NRI emotional support →</a>
+          <a href="/canada">Desi community support →</a>
+          <a href="/canada">NRI emotional support →</a>
           <a href="/canada-loneliness">Loneliness in Canada →</a>
           <a href="/canada-rant-to-someone">Need to rant? →</a>
           <a href="/canada-immigration-stress">Immigration anxiety →</a>

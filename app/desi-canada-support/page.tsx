@@ -11,13 +11,13 @@ export const metadata: Metadata = {
     'desi canada emotional support', 'brown community canada support', 'desi loneliness canada',
   ],
   alternates: {
-    canonical: 'https://www.leanon.app/desi-canada-support',
-    languages: { 'en-CA': 'https://www.leanon.app/desi-canada-support' },
+    canonical: 'https://www.leanon.app/canada',
+    languages: { 'en-CA': 'https://www.leanon.app/canada' },
   },
   openGraph: {
     title: 'Support for the Desi Community in Canada | LeanOn',
     description: 'Being desi in Canada is a particular kind of in-between. LeanOn peer listeners understand both worlds — and will not ask you to explain your culture before being heard.',
-    url: 'https://www.leanon.app/desi-canada-support',
+    url: 'https://www.leanon.app/canada',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -75,7 +75,7 @@ const breadcrumbSchema = {
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Desi Community Support Canada', item: 'https://www.leanon.app/desi-canada-support' },
+    { '@type': 'ListItem', position: 2, name: 'Desi Community Support Canada', item: 'https://www.leanon.app/canada' },
   ],
 }
 
@@ -240,7 +240,7 @@ export default function DesiCanadaSupportPage() {
         <div className="related">
           <a href="/canada-loneliness">Loneliness in Canada →</a>
           <a href="/canada-empathy-listener">Empathy listener →</a>
-          <a href="/canada-nri-support">NRI emotional support →</a>
+          <a href="/canada">NRI emotional support →</a>
           <a href="/toronto-loneliness">Lonely in Toronto →</a>
           <a href="/canada-rant-to-someone">Need to rant? →</a>
           <a href="/canada-talk-to-someone">Someone to talk to →</a>

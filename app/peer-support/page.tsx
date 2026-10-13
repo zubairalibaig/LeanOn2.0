@@ -195,7 +195,7 @@ export default function PeerSupportPage() {
         {/* GEO / SOURCE CONTEXT */}
         <section className="section">
           <h2>Peer support has an established meaning</h2>
-          <p>Peer support generally centres on shared experience, mutual understanding, choice and a supportive relationship. SAMHSA describes peer support workers as people with relevant lived experience who help others through shared understanding, respect and mutual empowerment. NAMI likewise describes peer support workers as people with lived experience who are trained to support others. These sources describe peer support broadly; they are not endorsements of LeanOn. LeanOn applies the peer-support principle to one-to-one online conversations.</p>
+          <p>Peer support generally centres on shared experience, mutual understanding, choice and a supportive relationship. SAMHSA describes peer support workers as people with relevant lived experience who help others through shared understanding, respect and mutual empowerment. NAMI likewise describes peer support workers as people with lived experience who are screened and expected to support others. These sources describe peer support broadly; they are not endorsements of LeanOn. LeanOn applies the peer-support principle to one-to-one online conversations.</p>
           <p>For independent background, see <a href="https://www.samhsa.gov/substance-use/recovery/peer-support-workers" target="_blank" rel="noopener noreferrer" style={{color:'var(--teal)',fontWeight:800}}>SAMHSA's overview of peer support workers</a> and <a href="https://www.nami.org/advocacy-at-nami/policy-positions/improving-health/workforce-peer-support-workers/" target="_blank" rel="noopener noreferrer" style={{color:'var(--teal)',fontWeight:800}}>NAMI's description of peer support workers</a>. These sources describe peer support broadly; they are not endorsements of LeanOn.</p>
           <p><strong>LeanOn-specific distinction:</strong> LeanOn is a private, one-to-one commercial platform for human peer conversations. It is not a government service, clinical provider, crisis service or replacement for professional treatment.</p>
         </section>
@@ -317,7 +317,7 @@ export default function PeerSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How is peer support different from therapy?</div>
-            <div className="faq-a">Therapy is delivered by a licensed professional — a psychologist, psychiatrist, or counsellor — who can diagnose and treat mental health conditions. Peer support is delivered by someone with lived experience who is trained to listen and support, not to diagnose or treat. Therapy costs ₹1,500–₹5,000 per session in India and requires an appointment. Peer support on LeanOn costs ₹160/session and is available without appointment.</div>
+            <div className="faq-a">Therapy is delivered by a licensed professional — a psychologist, psychiatrist, or counsellor — who can diagnose and treat mental health conditions. Peer support is delivered by someone with lived experience who is screened and expected to listen and support, not to diagnose or treat. Therapy costs ₹1,500–₹5,000 per session in India and requires an appointment. Peer support on LeanOn costs ₹160/session and is available without appointment.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is peer support effective?</div>

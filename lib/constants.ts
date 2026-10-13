@@ -44,7 +44,8 @@ export const VOICE_PRICING_FROM    = Date.parse('2026-09-24T04:55:00Z')
 export const sessionRatePerMin = (textRate: number, type: 'text' | 'voice') =>
   type === 'voice' && VOICE_PRICING_ENABLED ? textRate + VOICE_RATE_PREMIUM : textRate
 export const FREE_SESSION_MINS  = 5
-// Each user gets N free 5-min trials, ONE per listener (so they can try the
+// Each user gets N free 5-min trials (N = MAX_FREE_TRIALS, now 1 — so one per
+// account in practice), at most ONE per listener (so they can try the
 // product before paying). Reduced 5 → 3 (2026-08-11) → 2 → 1 (2026-09-13):
 // multiple free trials let users satisfy casual "need to vent" needs without
 // ever reaching the paywall — at 2 trials, 101/104 free users never recharged.

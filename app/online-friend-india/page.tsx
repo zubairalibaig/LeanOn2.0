@@ -30,7 +30,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is this like making a friend on the internet?',
-      acceptedAnswer: { '@type': 'Answer', text: 'It is a real human connection but with a different structure. You are not building a long-term social relationship. You are having a genuine, unfiltered conversation with a real person who is specifically trained to listen without judgment. The connection can be deep without the social baggage that comes with online friendships &mdash; no obligation, no drama, no social dynamics.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'It is a real human connection but with a different structure. You are not building a long-term social relationship. You are having a genuine, unfiltered conversation with a real person who is selected to listen without judgment. The connection can be deep without the social baggage that comes with online friendships &mdash; no obligation, no drama, no social dynamics.' },
     },
     {
       '@type': 'Question',
@@ -134,7 +134,7 @@ export default function OnlineFriendIndiaPage() {
         <div className="section">
           <h2>What Online Friendship Looks Like on LeanOn</h2>
           <p>A 1:1 voice call with a real Indian person. Your choice of listener, based on their background and what you need. The first 5 minutes are free, so you know the connection before committing.</p>
-          <p>The listener is trained in active listening &mdash; they are not there to talk about themselves, not there to advise, not there to steer. They are there to hear you. Fully. Without the social dynamics that make honest conversation so hard with people you know.</p>
+          <p>The listener is screened for active listening &mdash; they are not there to talk about themselves, not there to advise, not there to steer. They are there to hear you. Fully. Without the social dynamics that make honest conversation so hard with people you know.</p>
         </div>
 
         <div className="section">

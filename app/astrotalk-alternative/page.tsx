@@ -64,7 +64,7 @@ const faqSchema = {
       name: 'Do LeanOn listeners give advice or predictions?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'No. LeanOn listeners are trained to listen, not to advise or predict. They ask questions, reflect back what they hear, and help you feel understood — without telling you what to do.',
+        text: 'No. LeanOn listeners are screened and expected to listen, not to advise or predict. They ask questions, reflect back what they hear, and help you feel understood — without telling you what to do.',
       },
     },
   ],
@@ -167,7 +167,7 @@ export default function AstroTalkAlternativePage() {
             to hear them out. The astrologer becomes a conversation partner by default.
           </p>
           <p>
-            The problem is that astrologers are trained to give predictions — not to listen. LeanOn was built
+            The problem is that astrologers are screened and expected to give predictions — not to listen. LeanOn was built
             to fill that gap: screened peer listeners who are there specifically to hear you, not to tell you
             what the stars say.
           </p>
@@ -191,7 +191,7 @@ export default function AstroTalkAlternativePage() {
               </tr>
               <tr>
                 <td>Who you talk to</td>
-                <td className="tick">Trained peer listeners</td>
+                <td className="tick">Screened peer listeners</td>
                 <td>Astrologers / tarot readers</td>
               </tr>
               <tr>
@@ -211,7 +211,7 @@ export default function AstroTalkAlternativePage() {
               </tr>
               <tr>
                 <td>Judgment-free</td>
-                <td className="tick">Yes — listeners are trained to not advise</td>
+                <td className="tick">Yes — listeners are screened and expected to not advise</td>
                 <td>Varies by astrologer</td>
               </tr>
               <tr>
@@ -286,7 +286,7 @@ export default function AstroTalkAlternativePage() {
           </div>
           <div className="faq-item">
             <h3>Do LeanOn listeners give advice or predictions?</h3>
-            <p>No. LeanOn listeners are trained to listen, not to advise or predict. They ask questions, reflect back
+            <p>No. LeanOn listeners are screened and expected to listen, not to advise or predict. They ask questions, reflect back
               what they hear, and help you feel understood — without telling you what to do.</p>
           </div>
         </div>

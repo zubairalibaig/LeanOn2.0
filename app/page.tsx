@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'LeanOn — Real Human Peer Support | Talk to a Listener in India',
   description: 'Need someone to talk to? LeanOn connects people in India and Indians abroad with real human peer listeners for private one-to-one conversations by text or voice. Start with a free 5-minute introduction; paid sessions start at ₹160 for 15 minutes in India.',
-  alternates: { canonical: 'https://www.leanon.app', languages: { 'en-IN': 'https://www.leanon.app', 'en-US': 'https://www.leanon.app', 'en-GB': 'https://www.leanon.app' } },
+  alternates: { canonical: 'https://www.leanon.app' },
   keywords: [
     'leanon', 'lean on', 'LeanOn', 'lean on app',
     'someone to talk to', 'talk to someone online', 'talk to a real person online',
@@ -43,7 +43,7 @@ const faqSchema = {
     { '@type': 'Question', name: 'What topics can I talk about on LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'Listeners on LeanOn specialise in loneliness, work stress, career confusion, relationships, grief and loss, student pressure, startup journey, breakups, anxiety, and more. If you just need someone to lean on with no specific topic, that\'s fine too.' } },
     { '@type': 'Question', name: 'Is LeanOn an AI or are the listeners real people?', acceptedAnswer: { '@type': 'Answer', text: 'Every listener on LeanOn is a real, verified human being — no bots, no AI-generated responses, no scripts. Listeners apply to join, go through identity verification and a screening assessment on active listening, boundaries and crisis referral before their first session. When you talk to someone on LeanOn, there is a real person on the other side of the conversation.' } },
     { '@type': 'Question', name: 'Can ChatGPT or AI chatbots replace talking to a real person?', acceptedAnswer: { '@type': 'Answer', text: 'AI assistants can be useful for information, reflection and conversation. LeanOn serves a different need: talking with another human being. A peer listener can bring their own lived experience and respond as a person in a two-way conversation.' } },
-    { '@type': 'Question', name: 'Can Indians living abroad use LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn has dedicated support for Indians and South Asians living abroad, including the USA, UK, Canada, Australia, UAE and other countries. You can talk privately with a real peer listener by text or voice.' } },
+    { '@type': 'Question', name: 'Can Indians living abroad use LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn has dedicated support for Indians and South Asians living abroad, including the USA, UK, Canada, Australia, UAE and other countries. You can talk privately with a real peer listener by text or voice. Outside India, sessions are a flat US$10 for 15 minutes, US$15 for 30 and US$20 for 45 (shown in your local currency in the app); your first 5-minute session is free. Listeners are in India, so availability follows Indian time.' } },
     { '@type': 'Question', name: 'Where can I talk to a real person online when I feel lonely?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn (leanon.app) connects you with real human peer listeners for private one-to-one conversations by text or voice. You can browse listener profiles, start with a free 5-minute introduction, and choose someone who has lived experience with what you are going through. Paid sessions start at ₹160 for 15 minutes.' } },
     { '@type': 'Question', name: 'What is an affordable alternative to therapy in India?', acceptedAnswer: { '@type': 'Answer', text: 'While therapy in India typically costs ₹1,500 to ₹5,000 per session, peer support through LeanOn starts at ₹160 for 15 minutes. Peer support is not a replacement for therapy — it is a complementary option for everyday emotional needs like loneliness, relationship stress, work pressure, and difficult days. For clinical needs, consult a qualified mental health professional.' } },
     { '@type': 'Question', name: 'How is LeanOn different from talking to ChatGPT or an AI?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn provides conversations with real human beings who bring their own lived experience. AI assistants provide generated responses. Both have valid uses: AI is useful for information, brainstorming, and reflection. LeanOn is useful when the person specifically wants another human being to listen — for emotional connection rather than information.' } },
@@ -317,7 +317,7 @@ export default function Home() {
           <a href="/auth" className="btn-primary">Start your 5-min chat</a>
           <a href="/browse" className="btn-outline">Browse peer listeners</a>
         </div>
-        <p className="hero-note">Private one-to-one conversation · No appointment · Paid sessions from ₹160</p>
+        <p className="hero-note">Private one-to-one conversation · No appointment · Paid sessions from ₹160 in India, US$10 abroad</p>
       </section>
 
       {/* TOPICS */}
@@ -488,6 +488,10 @@ export default function Home() {
               <div className="pa">{item.p}</div>
             </div>
           ))}
+        </div>
+        <div className="fee-note">
+          <span>🌍</span>
+          <span><strong>Living outside India?</strong> Sessions are a flat US$10 for 15 minutes, US$15 for 30 and US$20 for 45 — shown in your local currency when you book. Listeners are in India, so availability follows Indian time. <a href="/indian-emotional-support-abroad" style={{ fontWeight: 800 }}>Support for Indians abroad →</a></span>
         </div>
         <div className="fee-note">
           <span>💡</span>

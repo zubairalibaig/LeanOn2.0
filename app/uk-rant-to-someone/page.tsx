@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Need to Rant? Talk to Someone in the UK — No Judgment | LeanOn',
-  description: 'Work stress, microaggressions, NHS exhaustion, finance burnout — sometimes you just need to let it all out. LeanOn gives you a real human to rant to, 24/7, no judgment.',
+  description: 'Work stress, microaggressions, NHS exhaustion, finance burnout — sometimes you just need to let it all out. LeanOn gives you a real human to rant to, on Indian time, no judgment.',
   keywords: [
     'rant to someone uk', 'vent to someone uk', 'need to rant uk', 'talk about work stress uk',
     'venting support uk indians', 'microaggressions uk talk', 'nhs work stress talk',
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Need to Rant? Someone in the UK Will Listen — No Judgment',
-    description: 'Work stress, microaggressions, burnout — sometimes you just need to let it out. LeanOn peer listeners are available 24/7.',
+    description: 'Work stress, microaggressions, burnout — sometimes you just need to let it out. LeanOn peer listeners are online daily on Indian time.',
     url: 'https://www.leanon.app/uk-rant-to-someone',
     siteName: 'LeanOn',
     type: 'article',
@@ -32,7 +32,7 @@ const faqSchema = {
       name: 'Is it okay to just rant to a LeanOn listener?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes, completely. You do not need a structured problem or a neat question. You can just start talking — let it all out, as messy and frustrated as it actually is. Listeners are trained to receive that without shutting it down, steering you, or making you feel silly for being upset.',
+        text: 'Yes, completely. You do not need a structured problem or a neat question. You can just start talking — let it all out, as messy and frustrated as it actually is. Listeners are screened and expected to receive that without shutting it down, steering you, or making you feel silly for being upset.',
       },
     },
     {
@@ -56,7 +56,7 @@ const faqSchema = {
       name: 'Why might ranting to a stranger be better than to a friend?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Friends can be wonderful, but they also have history with you, opinions, and their own limits. A stranger who is trained to listen will not get bored, will not try to one-up your problems, will not tell your other friends, and will not secretly judge you. That kind of safety makes it easier to say what you actually mean.',
+        text: 'Friends can be wonderful, but they also have history with you, opinions, and their own limits. A stranger who is screened and expected to listen will not get bored, will not try to one-up your problems, will not tell your other friends, and will not secretly judge you. That kind of safety makes it easier to say what you actually mean.',
       },
     },
     {
@@ -201,7 +201,7 @@ export default function UkRantToSomeonePage() {
 
         <div className="cta">
           <h2>Say what you actually mean, to someone who will actually hear it</h2>
-          <p>Real Indian listeners. 24/7. No judgment, ever.</p>
+          <p>Real Indian listeners. On Indian time. No judgment, ever.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -211,7 +211,7 @@ export default function UkRantToSomeonePage() {
           <div className="faq-item">
             <h3>Is it okay to just rant to a LeanOn listener?</h3>
             <p>Yes, completely. You can just start talking — let it all out, as messy and frustrated as it
-              actually is. Listeners are trained to receive that without shutting it down or making you feel
+              actually is. Listeners are screened and expected to receive that without shutting it down or making you feel
               silly for being upset.</p>
           </div>
           <div className="faq-item">
@@ -226,7 +226,7 @@ export default function UkRantToSomeonePage() {
           </div>
           <div className="faq-item">
             <h3>Why might ranting to a stranger be better than to a friend?</h3>
-            <p>A stranger who is trained to listen will not get bored, will not try to one-up your problems,
+            <p>A stranger who is screened and expected to listen will not get bored, will not try to one-up your problems,
               will not tell your other friends, and will not secretly judge you. That kind of safety makes it
               easier to say what you actually mean.</p>
           </div>
@@ -241,7 +241,7 @@ export default function UkRantToSomeonePage() {
           <a href="/uk-empathy-listener">Empathy listener UK →</a>
           <a href="/uk-loneliness">Loneliness support UK →</a>
           <a href="/uk-mental-health-south-asian">South Asian mental health →</a>
-          <a href="/uk-nri-support">NRI support UK →</a>
+          <a href="/uk">NRI support UK →</a>
           <a href="/london-loneliness">Lonely in London →</a>
         </div>
 

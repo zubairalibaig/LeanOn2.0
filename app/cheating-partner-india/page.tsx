@@ -155,7 +155,7 @@ export default function CheatingPartnerIndiaPage() {
         <div className="section">
           <h2>What a Neutral Listener Offers</h2>
           <p>A LeanOn listener has no stake in what you decide. They are not going to tell you to leave or to stay. They are not going to tell you how they would feel in your situation. They are going to listen while you figure out what you are actually feeling underneath the shock.</p>
-          <p>They are trained to hold space for complexity. For the part of you that is furious and the part that still loves them. For the grief and the anger at the same time. They do not rush you to resolution. They just stay present with wherever you are.</p>
+          <p>They are screened and expected to hold space for complexity. For the part of you that is furious and the part that still loves them. For the grief and the anger at the same time. They do not rush you to resolution. They just stay present with wherever you are.</p>
           <p>After that conversation, most people describe feeling less alone. More able to think. Like something has shifted slightly, even though nothing external has changed. That is the function of being genuinely heard.</p>
         </div>
 

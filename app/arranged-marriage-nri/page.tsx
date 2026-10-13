@@ -20,7 +20,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
   { '@type': 'ListItem', position: 3, name: 'Arranged Marriage NRI', item: 'https://www.leanon.app/arranged-marriage-nri' },
 ] }
 
@@ -72,7 +72,7 @@ export default function ArrangedMarriageNriPage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Arranged Marriage NRI</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Arranged Marriage NRI</span></nav>
         <div className="hero">
           <p className="badge">Arranged Marriage &middot; NRI Pressure &middot; Desi Abroad</p>
           <h1>Everyone has an opinion. <em>No one is asking how you actually feel.</em></h1>
@@ -90,7 +90,7 @@ export default function ArrangedMarriageNriPage() {
         <div className="section">
           <h2>Before You Make a Life Decision Under Pressure</h2>
           <p>Arranged marriages happen under time pressure, social pressure, and emotional pressure. The combination makes it genuinely difficult to know what you actually want. The fear of disappointing your parents. The guilt about your own desires. The pressure of the community watching. The sense that everyone else has figured this out and you are the only one struggling.</p>
-          <p>Talking to a real Indian peer listener — who has heard many of these stories and genuinely understands the cultural forces at play — before you make a decision can create space. Not to give you the answer, but to help you hear yourself. Sessions are anonymous and completely private. First 5 minutes free — once per listener.</p>
+          <p>Talking to a real Indian peer listener — who has heard many of these stories and genuinely understands the cultural forces at play — before you make a decision can create space. Not to give you the answer, but to help you hear yourself. Sessions are anonymous and completely private. First 5 minutes free — one free session per account.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
@@ -98,7 +98,7 @@ export default function ArrangedMarriageNriPage() {
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-marriage-usa">NRI marriage USA &rarr;</a>
           <a href="/nri-relationship-problems">NRI relationship problems &rarr;</a>
-          <a href="/nri-support">NRI support &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
           <a href="/nri-dating-usa">NRI dating USA &rarr;</a>
         </div></div>
         <div className="crisis"><strong>In a crisis?</strong> NIMHANS: 080-46110007 &nbsp;&middot;&nbsp; Tele-MANAS: 14416 &nbsp;&middot;&nbsp; Both free, 24/7.</div>

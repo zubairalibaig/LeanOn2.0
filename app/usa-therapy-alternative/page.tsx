@@ -245,10 +245,10 @@ export default function UsaTherapyAlternativePage() {
         <div className="related">
           <a href="/usa-loneliness">Feeling lonely in the USA →</a>
           <a href="/usa-empathy-listener">Empathy listener →</a>
-          <a href="/usa-nri-support">NRI emotional support →</a>
+          <a href="/usa">NRI emotional support →</a>
           <a href="/usa-talk-to-someone">Someone to talk to →</a>
-          <a href="/usa-h1b-visa-stress">H-1B visa stress →</a>
-          <a href="/desi-usa-support">Desi community support →</a>
+          <a href="/nri-h1b-visa-stress">H-1B visa stress →</a>
+          <a href="/usa">Desi community support →</a>
         </div>
 
         <div className="disclaimer">

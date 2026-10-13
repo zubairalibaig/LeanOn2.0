@@ -15,12 +15,12 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'What time can I call from Los Angeles?', acceptedAnswer: { '@type': 'Answer', text: 'Los Angeles (PST) is 13.5 hours behind IST. 7am in LA = 8:30pm in India. Early mornings, before the commute, Indian listeners are in their evening and available. Weekend mornings also work well.' } },
   { '@type': 'Question', name: 'Is it confidential from my community?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. LeanOn uses phone number and first name only. Sessions are private and nothing is shared with your Artesia temple community, your Cerritos family network, or anyone else in your LA circle.' } },
   { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription required.' } },
-  { '@type': 'Question', name: 'I feel like I don\'t fully belong to either world — Indian or American. Can listeners understand this?', acceptedAnswer: { '@type': 'Answer', text: 'This is one of the most common things LeanOn listeners hear from NRIs. The in-between feeling — too Indian for LA, too LA for India — is real, and listeners are trained to hold that complexity without trying to resolve it or give you an answer.' } },
+  { '@type': 'Question', name: 'I feel like I don\'t fully belong to either world — Indian or American. Can listeners understand this?', acceptedAnswer: { '@type': 'Answer', text: 'This is one of the most common things LeanOn listeners hear from NRIs. The in-between feeling — too Indian for LA, too LA for India — is real, and listeners are screened and expected to hold that complexity without trying to resolve it or give you an answer.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
   { '@type': 'ListItem', position: 3, name: 'Indians in Los Angeles', item: 'https://www.leanon.app/indians-in-los-angeles' },
 ] }
 
@@ -72,7 +72,7 @@ export default function IndiansInLosAngelesPage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="https://www.leanon.app/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Indians in Los Angeles</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Indians in Los Angeles</span></nav>
         <div className="hero">
           <p className="badge">Indians in Los Angeles &middot; Artesia &middot; Cerritos &middot; South Bay</p>
           <h1>Little India in Artesia. <em>Big loneliness everywhere else.</em></h1>
@@ -103,8 +103,8 @@ export default function IndiansInLosAngelesPage() {
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>In a city of millions, talk to one person who actually listens.</h2><p>Real Indian peer listener. Understands the desi LA experience — from Artesia to Silicon Beach. Anonymous. First 5 minutes free. From US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
-          <a href="/nri-support">NRI support &rarr;</a>
-          <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
+          <a href="/usa-loneliness">NRI loneliness USA &rarr;</a>
           <a href="/nri-identity-crisis">NRI identity crisis &rarr;</a>
           <a href="/nri-anxiety-abroad">NRI anxiety abroad &rarr;</a>
         </div></div>

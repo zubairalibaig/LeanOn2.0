@@ -188,7 +188,7 @@ export default function OverthinkingSupportPage() {
           <p>Overthinking does not keep office hours. It peaks exactly when there is no one left to call and everyone you know is asleep. LeanOn listeners are available 24/7, so on the nights when you are staring at the ceiling and the loop is winning, there is a real person you can reach in a couple of minutes.</p>
 
           <h3>No Judgment, No Advice You Did Not Ask For</h3>
-          <p>Most people, with the best intentions, respond to overthinking by trying to fix it — do not worry, it is nothing, just sleep. It rarely helps, and it often adds a quiet shame for still being stuck. LeanOn listeners are trained to listen with empathy first. They will not tell you your worry is silly, and they will not hand you solutions you never asked for. You get to say the whole thing, uninterrupted, to someone who is genuinely there for it.</p>
+          <p>Most people, with the best intentions, respond to overthinking by trying to fix it — do not worry, it is nothing, just sleep. It rarely helps, and it often adds a quiet shame for still being stuck. LeanOn listeners are screened and expected to listen with empathy first. They will not tell you your worry is silly, and they will not hand you solutions you never asked for. You get to say the whole thing, uninterrupted, to someone who is genuinely there for it.</p>
         </div>
 
         {/* Listener cards */}

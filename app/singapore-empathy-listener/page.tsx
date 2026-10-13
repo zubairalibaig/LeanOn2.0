@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Empathy Listening for Indians in Singapore | LeanOn',
-  description: 'Feeling unheard in Singapore? LeanOn connects Indian expats with trained empathy listeners who speak your language, understand your cultural context, and give you their full, undivided attention.',
+  description: 'Feeling unheard in Singapore? LeanOn connects Indian expats with screened empathy listeners who speak your language, understand your cultural context, and give you their full, undivided attention.',
   keywords: [
     'empathy listener singapore', 'feel heard singapore', 'someone who understands singapore indian',
     'active listener singapore', 'emotional support singapore expat', 'feeling unheard singapore',
@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'What is empathy listening and how is it different from regular conversation?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Empathy listening means the listener\'s whole focus is on understanding your experience — not waiting for their turn to speak, not thinking about advice, not half-distracted. LeanOn listeners are specifically trained in active listening, reflective questioning, and creating space where you feel genuinely understood, not just heard.',
+        text: 'Empathy listening means the listener\'s whole focus is on understanding your experience — not waiting for their turn to speak, not thinking about advice, not half-distracted. LeanOn listeners are specifically screened for active listening, reflective questioning, and creating space where you feel genuinely understood, not just heard.',
       },
     },
     {
@@ -170,7 +170,7 @@ export default function SingaporeEmpathyListenerPage() {
             relate everything back to themselves.</p>
           <p>Empathy listening is different. It means the listener&apos;s whole focus is on understanding
             your experience — not just the facts, but how it feels to be you right now. LeanOn listeners
-            are trained specifically in this.</p>
+            are screened specifically for this.</p>
           <ul className="checklist">
             <li>They ask questions to understand deeper, not to redirect the conversation.</li>
             <li>They reflect back what they hear so you feel truly understood.</li>
@@ -221,7 +221,7 @@ export default function SingaporeEmpathyListenerPage() {
 
         <div className="cta">
           <h2>Feel truly heard — maybe for the first time in a while</h2>
-          <p>Real Indian listeners. Your language. Full attention. 24/7.</p>
+          <p>Real Indian listeners. Your language. Full attention. On Indian time.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>

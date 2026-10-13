@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Talk to Someone Online in Kuwait | LeanOn',
-  description: 'Need a real person to talk to in Kuwait? LeanOn connects Indian expats with screened peer listeners 24/7 — in Hindi, Tamil, Malayalam and more. First 5 minutes free.',
+  description: 'Need a real person to talk to in Kuwait? LeanOn connects Indian expats with screened peer listeners in India — in Hindi, Tamil, Malayalam and more. First 5 minutes free.',
   keywords: [
     'talk to someone online kuwait', 'someone to talk to kuwait', 'need to talk kuwait',
     'online chat support kuwait', 'talk to a person kuwait', 'emotional support online kuwait',
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Talk to Someone Online in Kuwait — Real Indian Listeners | LeanOn',
-    description: 'Need a real person to talk to in Kuwait? LeanOn connects Indian expats with peer listeners 24/7 — in your language, with no judgment.',
+    description: 'Need a real person to talk to in Kuwait? LeanOn connects Indian expats with peer listeners in India — in your language, with no judgment.',
     url: 'https://www.leanon.app/kuwait-talk-to-someone',
     siteName: 'LeanOn',
     type: 'article',
@@ -35,7 +35,7 @@ const faqSchema = {
       name: 'Can I talk to someone in Kuwait right now?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn listeners are available 24/7 across time zones. No appointment needed, no waiting list. Browse listeners who are online now and start a conversation immediately.',
+        text: 'Yes. LeanOn listeners are based in India, so availability follows Indian time — check who is online now. No appointment needed, no waiting list. Browse listeners who are online now and start a conversation immediately.',
       },
     },
     {
@@ -90,7 +90,7 @@ export default function KuwaitTalkToSomeonePage() {
         </h1>
 
         <p style={{ fontSize: '1.05rem', color: '#444', lineHeight: 1.7, marginBottom: 32 }}>
-          Kuwait can be isolating — especially late at night when there is nobody to call, or when what you are carrying is too heavy to explain to your family back home. LeanOn connects you with trained Indian peer listeners who understand the Gulf expat experience. Anonymous, available 24/7, in your language.
+          Kuwait can be isolating — especially late at night when there is nobody to call, or when what you are carrying is too heavy to explain to your family back home. LeanOn connects you with screened Indian peer listeners who understand the Gulf expat experience. Anonymous, online daily on Indian time, in your language.
         </p>
 
         <a href="/browse" style={{ display: 'inline-block', background: '#0F4867', color: '#fff', padding: '14px 28px', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: '1rem', marginBottom: 48 }}>

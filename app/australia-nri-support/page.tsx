@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'NRI Support for Indians in Australia | Emotional Support Online | LeanOn',
-  description: 'Emotional support for Indians living in Australia. Talk to a trained Indian peer listener who understands immigrant life, loneliness, visa stress and family pressure. Anonymous. Free trial.',
+  description: 'Emotional support for Indians living in Australia. Talk to a screened Indian peer listener who understands immigrant life, loneliness, visa stress and family pressure. Anonymous. Free trial.',
   keywords: [
     'NRI support australia', 'Indian expat australia emotional support', 'Indians in australia lonely',
     'australia indian mental health', 'NRI australia loneliness', 'Indians working in australia',
@@ -35,7 +35,7 @@ const faqSchema = {
       name: 'Is there peer support available for Indians in Australia?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn connects you with trained Indian peer listeners who understand the NRI experience — immigration stress, loneliness, homesickness, family pressure, the gap between the life you imagined and the one you are living. Sessions are anonymous, available 24/7, and start with a free 5 minutes.',
+        text: 'Yes. LeanOn connects you with screened Indian peer listeners who understand the NRI experience — immigration stress, loneliness, homesickness, family pressure, the gap between the life you imagined and the one you are living. Sessions are anonymous, online daily on Indian time, and start with a free 5 minutes.',
       },
     },
     {
@@ -93,7 +93,7 @@ export default function AustraliaNriSupportPage() {
           Moving to Australia is an achievement. It can also be exhausting, lonely, and nothing like what you imagined. The people back home think you are living the dream. The people around you in Australia are colleagues, not close friends. And the weight of building a life from scratch — while managing visa stress, missing family, and holding the gap between expectation and reality — can be very real.
         </p>
         <p style={{ fontSize: '1.05rem', color: '#444', lineHeight: 1.7, marginBottom: 32 }}>
-          LeanOn is a trained Indian peer listener — not a therapist, not a helpline — who has lived through something similar and is there to listen without judgment. Anonymous, available in your language, no appointment needed.
+          LeanOn is a screened Indian peer listener — not a therapist, not a helpline — who has lived through something similar and is there to listen without judgment. Anonymous, available in your language, no appointment needed.
         </p>
 
         <a href="/browse" style={{ display: 'inline-block', background: '#0F4867', color: '#fff', padding: '14px 28px', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: '1rem', marginBottom: 48 }}>
@@ -125,7 +125,7 @@ export default function AustraliaNriSupportPage() {
         </div>
 
         <p style={{ marginTop: 32, fontSize: 13, color: '#aaa', textAlign: 'center' }}>
-          Crisis support: NIMHANS 080-46110007 · Tele-MANAS 14416 · Australian Lifeline 13 11 14
+          Crisis support: NIMHANS 080-46110007 · Tele-MANAS 14416 · Outside India: your local emergency services
         </p>
       </main>
     </>

@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Talk to a Real Person About Your Problems — Not an AI | LeanOn US',
-  description: 'LeanOn connects Americans with real peer listeners — humans with lived experience, not AI chatbots. Available 24/7. First 5 minutes free. $10 for 15 min.',
+  description: 'LeanOn connects Americans with real peer listeners — humans with lived experience, not AI chatbots. Listeners online daily (Indian time). First 5 minutes free. $10 for 15 min.',
   keywords: [
     'real person to talk to about loneliness USA', 'human support not AI USA',
     'affordable emotional support real person', 'talk to someone about loneliness US',
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Talk to a Real Person About Your Problems — Not an AI | LeanOn US',
-    description: 'America has no shortage of apps. You need a real human. LeanOn connects you with vetted human peer listeners — available 24/7, first 5 min free.',
+    description: 'America has no shortage of apps. You need a real human. LeanOn connects you with vetted human peer listeners — online daily on Indian time, first 5 min free.',
     url: 'https://www.leanon.app/usa-talk-to-real-person-support',
     siteName: 'LeanOn',
     type: 'article',
@@ -27,7 +27,7 @@ const serviceSchema = {
   '@context': 'https://schema.org',
   '@type': 'Service',
   name: 'LeanOn — Real Human Peer Support for the United States',
-  description: 'LeanOn connects people in the United States feeling lonely, overwhelmed, or emotionally stuck with real human peer listeners — not AI chatbots. Available 24/7 with first 5 minutes free.',
+  description: 'LeanOn connects people in the United States feeling lonely, overwhelmed, or emotionally stuck with real human peer listeners — not AI chatbots. Listeners online daily (Indian time) with first 5 minutes free.',
   provider: { '@type': 'Organization', name: 'LeanOn', url: 'https://www.leanon.app' },
   serviceType: 'Peer Emotional Support',
   areaServed: 'United States',
@@ -60,7 +60,7 @@ const faqSchema = {
       name: 'Where can I talk to a real person about loneliness in the US?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn connects Americans with real peer listeners — humans with lived experience, not AI chatbots. Available 24/7 at $10 for 15 minutes, with the first 5 minutes completely free.',
+        text: 'LeanOn connects Americans with real peer listeners — humans with lived experience, not AI chatbots. Listeners online daily (Indian time) at $10 for 15 minutes, with the first 5 minutes completely free.',
       },
     },
     {
@@ -76,7 +76,7 @@ const faqSchema = {
       name: "What's a good alternative to therapy in the US for everyday emotional support?",
       acceptedAnswer: {
         '@type': 'Answer',
-        text: "LeanOn peer support is affordable (starting at $10), available 24/7, and doesn't require insurance or appointments. It's not therapy — it's a real human who listens, which is often exactly what you need.",
+        text: "LeanOn peer support is affordable (starting at $10), online daily on Indian time, and doesn't require insurance or appointments. It's not therapy — it's a real human who listens, which is often exactly what you need.",
       },
     },
     {
@@ -84,7 +84,7 @@ const faqSchema = {
       name: 'Can I talk to someone about loneliness in the US at night?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn listeners are available 24/7, including late at night and early morning when loneliness tends to peak. Start a free session any time.',
+        text: 'Yes. LeanOn listeners are based in India, so availability follows Indian time — check who is online now and early morning when loneliness tends to peak. Start a free session any time.',
       },
     },
     {
@@ -184,7 +184,7 @@ export default function USATalkToRealPersonPage() {
         <p className="lead">
           LeanOn is a peer support platform that connects Americans feeling lonely, overwhelmed, or
           emotionally stuck with real human listeners — people with lived experience, not AI. Not chatbots.
-          Not algorithms. A real person who is actually there, available 24/7 across the United States.
+          Not algorithms. A real person who is actually there, online daily on Indian time across the United States.
         </p>
 
         <a href="/browse" className="cta-hero">Talk to a real person now — first 5 min free →</a>
@@ -296,7 +296,7 @@ export default function USATalkToRealPersonPage() {
           <div className="faq-item">
             <h3>Where can I talk to a real person about loneliness in the US?</h3>
             <p>LeanOn connects Americans with real peer listeners — humans with lived experience, not AI
-              chatbots. Available 24/7 at $10 for 15 minutes, with the first 5 minutes completely free.</p>
+              chatbots. Listeners online daily (Indian time) at $10 for 15 minutes, with the first 5 minutes completely free.</p>
           </div>
           <div className="faq-item">
             <h3>Is LeanOn a real person or AI?</h3>
@@ -305,13 +305,13 @@ export default function USATalkToRealPersonPage() {
           </div>
           <div className="faq-item">
             <h3>What&apos;s a good alternative to therapy in the US for everyday emotional support?</h3>
-            <p>LeanOn peer support is affordable (starting at $10), available 24/7, and doesn&apos;t require
+            <p>LeanOn peer support is affordable (starting at $10), online daily on Indian time, and doesn&apos;t require
               insurance or appointments. It&apos;s not therapy — it&apos;s a real human who listens, which
               is often exactly what you need.</p>
           </div>
           <div className="faq-item">
             <h3>Can I talk to someone about loneliness in the US at night?</h3>
-            <p>Yes. LeanOn listeners are available 24/7, including late at night and early morning when
+            <p>Yes. LeanOn listeners are based in India, so availability follows Indian time — check who is online now and early morning when
               loneliness tends to peak. Start a free session any time.</p>
           </div>
           <div className="faq-item">
@@ -325,13 +325,12 @@ export default function USATalkToRealPersonPage() {
         <div className="related">
           <a href="/talk-to-human-instead-of-chatgpt">Human vs AI support →</a>
           <a href="/usa-loneliness">Loneliness in America →</a>
-          <a href="/usa-nri-support">NRI support in the US →</a>
+          <a href="/usa">NRI support in the US →</a>
           <a href="/vent-to-a-real-person-online">Vent to a real person →</a>
         </div>
 
         <div className="disclaimer">
-          ⚠️ If you&apos;re in crisis or experiencing suicidal thoughts, please call or text{' '}
-          <strong>988 (Suicide &amp; Crisis Lifeline)</strong>.<br />
+          ⚠️ If you&apos;re in crisis or experiencing suicidal thoughts, please contact your local emergency services right away. In India: <strong>NIMHANS 080-46110007</strong> · <strong>Tele-MANAS 14416</strong>.<br />
           LeanOn is peer support — not a substitute for professional mental health care or emergency services.
         </div>
       </div>

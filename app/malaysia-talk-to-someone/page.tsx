@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Talk to Someone Online in Malaysia | LeanOn',
-  description: 'Need a real person to talk to in Malaysia? LeanOn connects Indian expats with screened peer listeners 24/7 — in Tamil, Hindi, Telugu, and more. First 5 minutes free.',
+  description: 'Need a real person to talk to in Malaysia? LeanOn connects Indian expats with screened peer listeners in India — in Tamil, Hindi, Telugu, and more. First 5 minutes free.',
   keywords: [
     'talk to someone online malaysia', 'someone to talk to malaysia', 'need to talk malaysia',
     'online chat support malaysia', 'talk to a person malaysia', 'emotional support online malaysia',
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Talk to Someone Online in Malaysia — Real Indian Listeners | LeanOn',
-    description: 'Need a real person to talk to in Malaysia? LeanOn connects Indian expats with peer listeners 24/7 — in Tamil, Hindi, and your language, with no judgment.',
+    description: 'Need a real person to talk to in Malaysia? LeanOn connects Indian expats with peer listeners in India — in Tamil, Hindi, and your language, with no judgment.',
     url: 'https://www.leanon.app/malaysia-talk-to-someone',
     siteName: 'LeanOn',
     type: 'article',
@@ -34,7 +34,7 @@ const faqSchema = {
       name: 'Can I talk to someone in Malaysia right now?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn listeners are available 24/7. No appointment needed, no waiting list. Browse the listeners who are online and start talking immediately.',
+        text: 'Yes. LeanOn listeners are based in India, so availability follows Indian time. No appointment needed, no waiting list. Browse the listeners who are online and start talking immediately.',
       },
     },
     {
@@ -50,7 +50,7 @@ const faqSchema = {
       name: 'Can I talk to a Tamil-speaking listener from Malaysia?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn has Tamil-speaking listeners available around the clock. You can also talk in Hindi, Telugu, Malayalam, Kannada, Bengali, or English. Browse listener profiles to find one who speaks your language.',
+        text: 'Yes. LeanOn has Tamil-speaking listeners available on Indian time. You can also talk in Hindi, Telugu, Malayalam, Kannada, Bengali, or English. Browse listener profiles to find one who speaks your language.',
       },
     },
     {
@@ -216,7 +216,7 @@ export default function MalaysiaTalkToSomeonePage() {
 
         <div className="cta">
           <h2>A real person is ready to talk right now</h2>
-          <p>Anonymous, 24/7, real Indian listeners in your language.</p>
+          <p>Private, no appointment, real Indian listeners in your language.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -225,7 +225,7 @@ export default function MalaysiaTalkToSomeonePage() {
           <h2>Frequently asked questions</h2>
           <div className="faq-item">
             <h3>Can I talk to someone in Malaysia right now?</h3>
-            <p>Yes. LeanOn listeners are available 24/7. No appointment needed. Browse online listeners
+            <p>Yes. LeanOn listeners are based in India, so availability follows Indian time. No appointment needed. Browse online listeners
               and start talking immediately.</p>
           </div>
           <div className="faq-item">

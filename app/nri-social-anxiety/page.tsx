@@ -13,14 +13,14 @@ export const metadata: Metadata = {
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
   { '@type': 'Question', name: 'Is LeanOn a substitute for professional support for social anxiety?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is peer support — not a substitute for professional help. If social anxiety is significantly affecting your daily life, professional support is worth exploring. LeanOn is a space to be heard by someone who understands the NRI-specific layers without judgment, which can be a valuable complement to professional support or a first step toward it.' } },
   { '@type': 'Question', name: 'Can listeners understand accent anxiety specifically?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Accent anxiety — the fear of being judged, mimicked, or dismissed because of how you speak — is something many NRIs carry, and listeners understand it as a real and specific burden, not a trivial vanity.' } },
-  { '@type': 'Question', name: 'I\'m exhausted by always being "the Indian one" in every room. Can I talk about this?', acceptedAnswer: { '@type': 'Answer', text: 'Absolutely. The exhaustion of being the representative of your entire country — answering questions about India, being the diversity in every team photo, having your food and culture treated as curiosity — is a real weight. Listeners are trained to hold this without minimising it.' } },
+  { '@type': 'Question', name: 'I\'m exhausted by always being "the Indian one" in every room. Can I talk about this?', acceptedAnswer: { '@type': 'Answer', text: 'Absolutely. The exhaustion of being the representative of your entire country — answering questions about India, being the diversity in every team photo, having your food and culture treated as curiosity — is a real weight. Listeners are screened and expected to hold this without minimising it.' } },
   { '@type': 'Question', name: 'How much does it cost?', acceptedAnswer: { '@type': 'Answer', text: 'Your first session is free (5 minutes). After that, sessions start at US$10 for 15 minutes. No subscription.' } },
   { '@type': 'Question', name: 'My social anxiety is worse at Indian community events than at work. Is that unusual?', acceptedAnswer: { '@type': 'Answer', text: 'Not at all. Many NRIs find that Indian community events — where they feel they should belong — produce more anxiety than their Western work environment, because the expectations are higher and the judgment feels more personal. This is a common experience and worth talking about.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
   { '@type': 'ListItem', position: 3, name: 'NRI Social Anxiety', item: 'https://www.leanon.app/nri-social-anxiety' },
 ] }
 
@@ -72,7 +72,7 @@ export default function NriSocialAnxietyPage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="https://www.leanon.app/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Social Anxiety</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Social Anxiety</span></nav>
         <div className="hero">
           <p className="badge">NRI Social Anxiety &middot; Accent &middot; Belonging &middot; Identity</p>
           <h1>It&rsquo;s not just nerves. <em>It&rsquo;s everything at once.</em></h1>
@@ -104,7 +104,7 @@ export default function NriSocialAnxietyPage() {
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-anxiety-abroad">NRI anxiety abroad &rarr;</a>
           <a href="/nri-identity-crisis">NRI identity crisis &rarr;</a>
-          <a href="/nri-support">NRI support &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
           <a href="/nri-mental-health">NRI mental health &rarr;</a>
         </div></div>
         <div className="crisis"><strong>In a crisis?</strong> NIMHANS: 080-46110007 &nbsp;&middot;&nbsp; Tele-MANAS: 14416 &nbsp;&middot;&nbsp; Both free, 24/7.</div>

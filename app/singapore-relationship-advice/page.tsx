@@ -214,7 +214,7 @@ export default function SingaporeRelationshipAdvicePage() {
 
         <div className="cta">
           <h2>Talk it out — in your language</h2>
-          <p>Real Indian listeners. Hindi, Tamil, Telugu, and more. Available 24/7.</p>
+          <p>Real Indian listeners. Hindi, Tamil, Telugu, and more. Listeners online daily (Indian time).</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>

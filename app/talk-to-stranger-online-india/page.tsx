@@ -35,7 +35,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is it safe to talk to a stranger online in India?',
-      acceptedAnswer: { '@type': 'Answer', text: 'On LeanOn, yes. Unlike random chat apps, LeanOn listeners are vetted, trained, and bound by a confidentiality agreement. They are not random strangers — they are peer listeners who have applied, been reviewed, and specifically trained to hold space for difficult conversations. You can be anonymous; they are accountable.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'On LeanOn, yes. Unlike random chat apps, LeanOn listeners are vetted, trained, and bound by a confidentiality agreement. They are not random strangers — they are peer listeners who have applied, been reviewed, and selected to hold space for difficult conversations. You can be anonymous; they are accountable.' },
     },
     {
       '@type': 'Question',
@@ -50,7 +50,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'How is LeanOn different from random stranger chat apps?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Completely different. Random chat apps connect you with unvetted strangers whose intentions are unknown. LeanOn is a platform specifically for emotional support — every listener has been reviewed, trained in active listening and supportive conversation, and has agreed to maintain your confidentiality. You are not talking to a random person. You are talking to someone who chose this role and knows how to hold it.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Completely different. Random chat apps connect you with unvetted strangers whose intentions are unknown. LeanOn is a platform specifically for emotional support — every listener has been reviewed, screened for active listening and supportive conversation, and has agreed to maintain your confidentiality. You are not talking to a random person. You are talking to someone who chose this role and knows how to hold it.' },
     },
     {
       '@type': 'Question',
@@ -161,7 +161,7 @@ export default function TalkToStrangerOnlineIndiaPage() {
           <h2>Why a Stranger? The Train Conversation Phenomenon</h2>
           <p>There is a reason people tell things to strangers on trains that they have not told their closest friends. Something about the combination of presence and no-consequences creates a different kind of honesty. You can say the unedited version. You can say the thing that makes you look bad. You can express the feeling you would normally soften for an audience who knows you.</p>
           <p>The conversation ends and you go your separate ways. But something has shifted — the thing you were carrying is lighter. This is not a bug in how humans work. It is a feature that most people never deliberately access.</p>
-          <p>LeanOn makes that conversation available, on demand, with someone who has specifically trained to hold it.</p>
+          <p>LeanOn makes that conversation available, on demand, with someone who has selected to hold it.</p>
         </div>
 
         <div className="section">

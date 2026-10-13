@@ -39,7 +39,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'What if I just need someone to listen and not give advice?',
-      acceptedAnswer: { '@type': 'Answer', text: 'That is exactly what peer listeners on LeanOn are trained to do: listen. Not advise, not fix, not steer. If you open a session and say "I just need someone to hear me right now" — that is what you will get. You lead the conversation.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'That is exactly what peer listeners on LeanOn are screened and expected to do: listen. Not advise, not fix, not steer. If you open a session and say "I just need someone to hear me right now" — that is what you will get. You lead the conversation.' },
     },
     {
       '@type': 'Question',

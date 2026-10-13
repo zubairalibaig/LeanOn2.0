@@ -209,7 +209,7 @@ export default function INeedProfessionalHelpIndiaPage() {
           <p>This page would not be honest if it told you LeanOn is a substitute for professional care. It is not. If you have been carrying things for years — numbness since your teenage years, the effects of a difficult childhood, a depression that is affecting your ability to function — you need, and deserve, a trained professional. A therapist or psychologist who can work with you over time, who has the clinical tools to help you process what you are carrying at a structural level.</p>
           <p>But here is what LeanOn is:</p>
           <ul>
-            <li>A real person, available now, who has navigated their own hard experiences and is trained to listen without judgment</li>
+            <li>A real person, available now, who has navigated their own hard experiences and is screened and expected to listen without judgment</li>
             <li>A space to say things out loud that you have never said — to have them witnessed by another human being without being dismissed, fixed, or alarmed</li>
             <li>A way to feel less alone in what you are carrying while you work toward professional support</li>
             <li>A conversation that often helps people clarify what they are experiencing, and what they want to say when they get to a therapist</li>

@@ -86,7 +86,7 @@ export default function OnlineEmotionalSupportPage() {
           <h2>What Online Emotional Support Actually Means</h2>
           <p>Emotional support is not advice. It is not problem-solving. It is not diagnosis. It is having someone genuinely present while you say the things you have been holding &mdash; someone who receives what you share without immediately trying to fix or reframe it.</p>
           <p>This is harder to find than it sounds. Most people in your life &mdash; family, friends, partners &mdash; get uncomfortable when you stay in the feeling too long. They try to help by offering solutions, silver linings, or context. Which is kind. But it is not the same as being heard.</p>
-          <p>LeanOn peer listeners are specifically trained in active listening. Their job in a session is not to fix you or advise you &mdash; it is to be genuinely present while you talk. That difference in intent changes everything.</p>
+          <p>LeanOn peer listeners are specifically screened for active listening. Their job in a session is not to fix you or advise you &mdash; it is to be genuinely present while you talk. That difference in intent changes everything.</p>
         </div>
         <div className="section">
           <h2>The Three Things LeanOn Is Built On</h2>

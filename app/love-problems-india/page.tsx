@@ -40,7 +40,7 @@ const faqSchema = {
       name: 'What will the listener tell me to do about my love problem?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Nothing — and that is the point. LeanOn listeners are not coaches or advisors. They are trained to ask open questions and help you hear your own thoughts more clearly. By the end of the session, the clarity you feel will have come from you, not from someone else\'s opinion about your relationship.',
+        text: 'Nothing — and that is the point. LeanOn listeners are not coaches or advisors. They are screened and expected to ask open questions and help you hear your own thoughts more clearly. By the end of the session, the clarity you feel will have come from you, not from someone else\'s opinion about your relationship.',
       },
     },
     {
@@ -244,7 +244,7 @@ export default function LoveProblemsIndiaPage() {
           <div className="faq-item">
             <h3>What will the listener tell me to do about my love problem?</h3>
             <p>Nothing — and that is the point. LeanOn listeners are not coaches or advisors. They
-              are trained to ask open questions and help you hear your own thoughts more clearly.
+              are screened and expected to ask open questions and help you hear your own thoughts more clearly.
               By the end of the session, the clarity you feel will have come from you, not from
               someone else&apos;s opinion about your relationship.</p>
           </div>

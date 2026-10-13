@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Someone to Talk to in the UK — Real Human, Not a Bot',
-    description: 'Not AI. A real Indian person who will listen to whatever is on your mind. Available 24/7.',
+    description: 'Not AI. A real Indian person who will listen to whatever is on your mind. Listeners online daily (Indian time).',
     url: 'https://www.leanon.app/uk-talk-to-someone',
     siteName: 'LeanOn',
     type: 'article',
@@ -40,7 +40,7 @@ const faqSchema = {
       name: 'What can I talk about with a LeanOn listener?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Anything. Loneliness, work stress, relationship issues, family pressure, identity, sadness, anxiety, anger, or just an undifferentiated "I do not feel good and I need to say it out loud." There is no topic that is too small or too heavy. Listeners are trained to hold space for all of it.',
+        text: 'Anything. Loneliness, work stress, relationship issues, family pressure, identity, sadness, anxiety, anger, or just an undifferentiated "I do not feel good and I need to say it out loud." There is no topic that is too small or too heavy. Listeners are screened and expected to hold space for all of it.',
       },
     },
     {
@@ -151,7 +151,7 @@ export default function UkTalkToSomeonePage() {
         <h1>Not a Bot. Not a Script.<br />A Real Person Who Will Actually Listen.</h1>
         <p className="lead">
           There are plenty of apps that offer AI conversations. LeanOn is not one of them. Every session is
-          with a real, peer-trained Indian human who is there entirely for you — no script, no agenda,
+          with a real, screened Indian human who is there entirely for you — no script, no agenda,
           no algorithm making sense of your feelings.
         </p>
 
@@ -183,7 +183,7 @@ export default function UkTalkToSomeonePage() {
           <h2>🌙 Available whenever you need it</h2>
           <p>2 AM in your flat. Sunday afternoon when the quiet gets heavy. After a hard week at work
             when you finally have a moment to breathe — and realise how depleted you are.</p>
-          <p>LeanOn listeners are available 24/7. Right now, someone is ready to talk.</p>
+          <p>LeanOn listeners are based in India, so availability follows Indian time. Right now, someone is ready to talk.</p>
           <a href="/browse" className="cta-night">Find a listener online now →</a>
         </div>
 
@@ -200,7 +200,7 @@ export default function UkTalkToSomeonePage() {
 
         <div className="cta">
           <h2>A real conversation is one tap away</h2>
-          <p>Indian peer listeners, available 24/7. Anonymous and confidential.</p>
+          <p>Indian peer listeners, online daily on Indian time. Anonymous and confidential.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -237,7 +237,7 @@ export default function UkTalkToSomeonePage() {
           <a href="/uk-loneliness">Loneliness support UK →</a>
           <a href="/uk-empathy-listener">Empathy listener UK →</a>
           <a href="/uk-rant-to-someone">Need to rant? →</a>
-          <a href="/uk-nri-support">NRI support UK →</a>
+          <a href="/uk">NRI support UK →</a>
           <a href="/london-loneliness">Lonely in London →</a>
           <a href="/uk-mental-health-south-asian">South Asian mental health →</a>
         </div>

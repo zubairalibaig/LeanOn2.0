@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Talk to Someone Online in UAE & Dubai | LeanOn',
-  description: 'Need a real person to talk to in the UAE or Dubai? LeanOn connects Indian expats with screened peer listeners 24/7 — in Hindi, Tamil, Malayalam and more. First 5 minutes free.',
+  description: 'Need a real person to talk to in the UAE or Dubai? LeanOn connects Indian expats with screened peer listeners in India — in Hindi, Tamil, Malayalam and more. First 5 minutes free.',
   keywords: [
     'talk to someone online UAE', 'someone to talk to dubai', 'need to talk UAE',
     'online chat support dubai', 'talk to a person UAE', 'emotional support online UAE',
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Talk to Someone Online in UAE & Dubai — Real Indian Listeners | LeanOn',
-    description: 'Need a real person to talk to in the UAE? LeanOn connects Indian expats with peer listeners 24/7 — in your language, with no judgment.',
+    description: 'Need a real person to talk to in the UAE? LeanOn connects Indian expats with peer listeners in India — in your language, with no judgment.',
     url: 'https://www.leanon.app/uae-talk-to-someone',
     siteName: 'LeanOn',
     type: 'article',
@@ -36,7 +36,7 @@ const faqSchema = {
       name: 'Can I talk to someone in the UAE right now?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn listeners are available 24/7 across time zones. No appointment needed, no waiting list. Browse listeners who are online and start talking immediately — the first 5 minutes are free.',
+        text: 'Yes. LeanOn listeners are based in India, so availability follows Indian time — check who is online now. No appointment needed, no waiting list. Browse listeners who are online and start talking immediately — the first 5 minutes are free.',
       },
     },
     {
@@ -91,7 +91,7 @@ export default function UAETalkToSomeonePage() {
         </h1>
 
         <p style={{ fontSize: '1.05rem', color: '#444', lineHeight: 1.7, marginBottom: 32 }}>
-          The UAE has one of the largest Indian communities in the world — and yet the loneliness that comes with expat life can still feel very real, very late at night, when there is nobody to call who truly understands. LeanOn gives you a trained Indian peer listener who gets the Dubai and Abu Dhabi experience from the inside. Anonymous, in your language, available now.
+          The UAE has one of the largest Indian communities in the world — and yet the loneliness that comes with expat life can still feel very real, very late at night, when there is nobody to call who truly understands. LeanOn gives you a screened Indian peer listener who gets the Dubai and Abu Dhabi experience from the inside. Anonymous, in your language, available now.
         </p>
 
         <a href="/browse" style={{ display: 'inline-block', background: '#0F4867', color: '#fff', padding: '14px 28px', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: '1rem', marginBottom: 48 }}>

@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 const faq = [
   ['What is human companionship online?', 'It is a way to have a private conversation or spend time with another person online when you want human connection. LeanOn focuses on one-to-one peer conversations by text or voice.'],
   ['Is LeanOn a companionship app?', 'LeanOn is a peer-support and human-connection platform. It connects people with real peer listeners for private conversations, rather than dating or romantic companionship.'],
-  ['How much does LeanOn cost?', 'You can start with one free 5-minute introduction with each new listener. Paid sessions currently start at ₹160 for 15 minutes.'],
+  ['How much does LeanOn cost?', 'You can start with one free 5-minute introduction (one per account). Paid sessions currently start at ₹160 for 15 minutes.'],
   ['Is this therapy?', 'No. LeanOn listeners are not licensed therapists or counsellors. LeanOn provides peer support and human conversation, not diagnosis or clinical treatment.'],
   ['Can I talk about loneliness or relationship problems?', 'Yes. People use peer conversations for loneliness, relationship difficulties, work stress, grief, homesickness, overthinking and other everyday situations where they want someone to listen.'],
 ]
@@ -43,7 +43,7 @@ export default function HumanCompanionshipOnlineIndia() {
       <h1 style={{fontSize:'clamp(32px,6vw,52px)',lineHeight:1.1,margin:'12px 0 20px'}}>Human companionship online in India — when you want a real person to talk to</h1>
       <p style={{fontSize:19,color:'#496878'}}>Sometimes you do not need dating, therapy or another AI reply. You simply want another person who will listen and stay in the conversation.</p>
       <p>LeanOn connects you with real human peer listeners for private one-to-one conversations by text or voice. You can talk about loneliness, a difficult relationship, work stress, homesickness, grief, overthinking or whatever is weighing on you.</p>
-      <p><strong>Start with one free 5-minute introduction with a new listener.</strong> If the conversation feels useful, paid sessions start at ₹160 for 15 minutes. There is no subscription.</p>
+      <p><strong>Start with one free 5-minute introduction (one per account).</strong> If the conversation feels useful, paid sessions start at ₹160 for 15 minutes. There is no subscription.</p>
       <p><a href="/browse" style={{display:'inline-block',padding:'14px 24px',background:'#FF9933',color:'#fff',borderRadius:28,fontWeight:800,textDecoration:'none'}}>Browse listeners →</a></p>
       <h2>What LeanOn is — and is not</h2>
       <ul><li><strong>Real person:</strong> you are talking with a human peer listener, not a chatbot.</li><li><strong>Private conversation:</strong> choose text or voice for one-to-one support.</li><li><strong>Peer support:</strong> listeners offer lived-experience-based support and listening.</li><li><strong>Not therapy:</strong> LeanOn does not provide diagnosis, psychotherapy or clinical treatment.</li><li><strong>Not dating:</strong> the service is for human conversation and peer support, not romantic or sexual services.</li></ul>

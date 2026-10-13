@@ -56,7 +56,7 @@ const faqSchema = {
       name: 'What can I talk about?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Anything that is on your mind — relationship stress, family pressure, work anxiety, loneliness, confusion, grief, or just needing to vent. LeanOn listeners are trained to hold space without judging or advising. You do not need a big reason to reach out.',
+        text: 'Anything that is on your mind — relationship stress, family pressure, work anxiety, loneliness, confusion, grief, or just needing to vent. LeanOn listeners are screened and expected to hold space without judging or advising. You do not need a big reason to reach out.',
       },
     },
   ],
@@ -295,7 +295,7 @@ export default function PayToTalkOnlineIndiaPage() {
           <div className="faq-item">
             <h3>What can I talk about?</h3>
             <p>Anything that is on your mind — relationship stress, family pressure, work anxiety, loneliness,
-              confusion, grief, or just needing to vent. Listeners are trained to hold space without judging or
+              confusion, grief, or just needing to vent. Listeners are screened and expected to hold space without judging or
               advising. You do not need a big reason to reach out.</p>
           </div>
         </div>

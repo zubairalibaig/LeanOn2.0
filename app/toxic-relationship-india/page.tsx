@@ -163,7 +163,7 @@ export default function ToxicRelationshipIndiaPage() {
         <div className="section">
           <h2>How a Neutral Listener Helps</h2>
           <p>Sometimes just saying things out loud to someone who is carefully listening is enough to create clarity. You describe a pattern. The listener reflects it back. Suddenly you hear it from the outside for the first time. That clarity does not require a diagnosis or a label. It just requires being genuinely heard.</p>
-          <p>LeanOn listeners are trained in this kind of listening. They will not push you toward conclusions. They will not label your relationship for you. They will help you find your own clarity at your own pace.</p>
+          <p>LeanOn listeners are screened for this kind of listening. They will not push you toward conclusions. They will not label your relationship for you. They will help you find your own clarity at your own pace.</p>
         </div>
 
         <div className="section">

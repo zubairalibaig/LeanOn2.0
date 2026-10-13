@@ -40,7 +40,7 @@ const faqSchema = {
       name: 'Is it okay to talk to a peer listener about relationship problems?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Absolutely. Peer listeners are not therapists — they are not there to diagnose or fix your relationship. But they are trained to listen without judgment, help you process your feelings, and simply be present with you when you need to think out loud. Sometimes just saying it all out loud to someone who is not involved helps enormously.',
+        text: 'Absolutely. Peer listeners are not therapists — they are not there to diagnose or fix your relationship. But they are screened and expected to listen without judgment, help you process your feelings, and simply be present with you when you need to think out loud. Sometimes just saying it all out loud to someone who is not involved helps enormously.',
       },
     },
     {
@@ -176,13 +176,13 @@ export default function UkRelationshipAdvicePage() {
           <p>Sometimes the most helpful thing is not someone telling you what to do. It is someone
             listening without an agenda — who is not your mum, your friend who knows your ex,
             or someone with a strong opinion about what you should do next.</p>
-          <p>LeanOn listeners are trained to give you space to think out loud without steering you anywhere.</p>
+          <p>LeanOn listeners are screened and expected to give you space to think out loud without steering you anywhere.</p>
           <a href="/browse" className="cta-night">Find a listener now →</a>
         </div>
 
         <div className="card">
           <h2>This is not couples counselling — it is a real conversation</h2>
-          <p>LeanOn listeners are peer-trained Indians who understand the South Asian relationship context.
+          <p>LeanOn listeners are screened Indians who understand the South Asian relationship context.
             They are not therapists or relationship coaches. They are people who will sit with you,
             hear your side, and make you feel less alone in whatever you are working through.</p>
           <p>Sessions are private. No one from your community will know you spoke to anyone.</p>
@@ -216,7 +216,7 @@ export default function UkRelationshipAdvicePage() {
           </div>
           <div className="faq-item">
             <h3>Is it okay to talk to a peer listener about relationship problems?</h3>
-            <p>Absolutely. Listeners are trained to listen without judgment and help you process your feelings.
+            <p>Absolutely. Listeners are screened and expected to listen without judgment and help you process your feelings.
               Sometimes just saying it all out loud to someone who is not involved helps enormously.</p>
           </div>
           <div className="faq-item">
@@ -238,7 +238,7 @@ export default function UkRelationshipAdvicePage() {
         <div className="related">
           <a href="/uk-loneliness">Loneliness support UK →</a>
           <a href="/british-indian-support">British Indian identity →</a>
-          <a href="/uk-nri-support">NRI support UK →</a>
+          <a href="/uk">NRI support UK →</a>
           <a href="/uk-empathy-listener">Empathy listening UK →</a>
           <a href="/uk-talk-to-someone">Talk to someone UK →</a>
           <a href="/uk-mental-health-south-asian">South Asian mental health →</a>

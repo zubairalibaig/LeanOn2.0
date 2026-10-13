@@ -65,7 +65,7 @@ const faqSchema = {
       name: 'Can I talk to a listener in the middle of the night from UAE?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn listeners are available 24/7. The UAE–India time difference (IST is 1.5 hours ahead of UAE time) means Indian listeners are awake and available even during UAE night hours. You are never left alone with your thoughts.',
+        text: 'Yes. LeanOn listeners are based in India, so availability follows Indian time. The UAE–India time difference (IST is 1.5 hours ahead of UAE time) means Indian listeners are awake and available even during UAE night hours. You are never left alone with your thoughts.',
       },
     },
   ],
@@ -175,7 +175,7 @@ export default function UAELonelinessPage() {
         <div className="night-box">
           <h2>🌙 Alone at night in Dubai, Abu Dhabi, or Sharjah?</h2>
           <p>After the workday ends, the loneliness can hit hardest. No family nearby. No one to just sit
-            with. LeanOn listeners are available 24/7 — including late UAE nights when India is still awake
+            with. LeanOn listeners are based in India, so availability follows Indian time — including late UAE nights when India is still awake
             and our listeners are ready.</p>
           <p>Start talking right now. First 5 minutes are free, no questions asked.</p>
           <a href="/browse" className="cta-night">Find an Indian listener now →</a>
@@ -204,7 +204,7 @@ export default function UAELonelinessPage() {
 
         <div className="cta">
           <h2>Someone is ready to listen right now</h2>
-          <p>Anonymous, affordable, available 24/7 — for Indians across the UAE.</p>
+          <p>Anonymous, affordable, online daily on Indian time — for Indians across the UAE.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -233,7 +233,7 @@ export default function UAELonelinessPage() {
           </div>
           <div className="faq-item">
             <h3>Can I talk to a listener at night from the UAE?</h3>
-            <p>Yes — LeanOn listeners are available 24/7. Indian listeners are awake and available even during
+            <p>Yes — LeanOn listeners are based in India, so availability follows Indian time. Indian listeners are awake and available even during
               UAE night hours. You are never left alone with your thoughts.</p>
           </div>
         </div>

@@ -4,11 +4,11 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Peer Support for Anxiety in India | Talk Anonymously | LeanOn',
-  description: 'Manage anxiety with peer support. Talk to a trained listener anonymously on LeanOn. Available 24/7. Available across India.',
+  description: 'Manage anxiety with peer support. Talk to a screened listener anonymously on LeanOn. Available 24/7. Available across India.',
   alternates: { canonical: 'https://www.leanon.app/support/anxiety', languages: { 'en-IN': 'https://www.leanon.app/support/anxiety' } },
   openGraph: {
     title: 'Peer Support for Anxiety in India | Talk Anonymously | LeanOn',
-    description: 'Manage anxiety with peer support. Talk to a trained listener anonymously on LeanOn. Available 24/7. Available across India.',
+    description: 'Manage anxiety with peer support. Talk to a screened listener anonymously on LeanOn. Available 24/7. Available across India.',
     url: 'https://www.leanon.app/support/anxiety',
     siteName: 'LeanOn',
     type: 'article',
@@ -48,7 +48,7 @@ const faqSchema = {
       name: 'Can talking about anxiety make it worse?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'In a safe, non-judgmental environment, talking about anxiety generally helps rather than hurts. Putting feelings into words (a process psychologists call "affect labelling") can reduce the intensity of anxious feelings. LeanOn listeners are trained to hold space without feeding spirals or catastrophising.',
+        text: 'In a safe, non-judgmental environment, talking about anxiety generally helps rather than hurts. Putting feelings into words (a process psychologists call "affect labelling") can reduce the intensity of anxious feelings. LeanOn listeners are screened and expected to hold space without feeding spirals or catastrophising.',
       },
     },
     {
@@ -243,7 +243,7 @@ export default function AnxietySupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Can talking about anxiety make it worse?</div>
-            <div className="faq-a">In a safe, non-judgmental environment, talking about anxiety generally helps rather than hurts. Putting feelings into words can reduce the intensity of anxious feelings. LeanOn listeners are trained to hold space without feeding spirals or catastrophising.</div>
+            <div className="faq-a">In a safe, non-judgmental environment, talking about anxiety generally helps rather than hurts. Putting feelings into words can reduce the intensity of anxious feelings. LeanOn listeners are screened and expected to hold space without feeding spirals or catastrophising.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">What if my anxiety is severe — should I use LeanOn?</div>

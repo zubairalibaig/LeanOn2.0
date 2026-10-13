@@ -6,8 +6,8 @@ export const metadata: Metadata = {
   title: 'NRI Loneliness in the USA | The Quiet Isolation of Indian Life in America | LeanOn',
   description: 'The loneliness of being Indian in America is different — it\'s not just missing home. It\'s the immigrant weight, the performance, the unsaid. Talk to someone who gets it.',
   keywords: ['nri loneliness usa', 'indian loneliness america', 'lonely indian in usa', 'nri isolation america', 'immigrant loneliness india usa', 'missing india usa', 'nri homesickness america'],
-  alternates: { canonical: 'https://www.leanon.app/nri-loneliness-usa' },
-  openGraph: { title: 'NRI Loneliness in the USA | The Quiet Isolation of Indian Life in America | LeanOn', description: 'The loneliness of being Indian in America is different — it\'s not just missing home. It\'s the immigrant weight, the performance, the unsaid. Talk to someone who gets it.', url: 'https://www.leanon.app/nri-loneliness-usa', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
+  alternates: { canonical: 'https://www.leanon.app/usa-loneliness' },
+  openGraph: { title: 'NRI Loneliness in the USA | The Quiet Isolation of Indian Life in America | LeanOn', description: 'The loneliness of being Indian in America is different — it\'s not just missing home. It\'s the immigrant weight, the performance, the unsaid. Talk to someone who gets it.', url: 'https://www.leanon.app/usa-loneliness', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
 }
 
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
@@ -20,8 +20,8 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
-  { '@type': 'ListItem', position: 3, name: 'NRI Loneliness USA', item: 'https://www.leanon.app/nri-loneliness-usa' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
+  { '@type': 'ListItem', position: 3, name: 'NRI Loneliness USA', item: 'https://www.leanon.app/usa-loneliness' },
 ] }
 
 const S = `
@@ -72,7 +72,7 @@ export default function NriLonelinessUsaPage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Loneliness USA</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Loneliness USA</span></nav>
         <div className="hero">
           <p className="badge">NRI Loneliness &middot; USA &middot; Indian Immigrant Life</p>
           <h1>You have a life here. <em>It just doesn&rsquo;t always feel like home.</em></h1>
@@ -90,14 +90,14 @@ export default function NriLonelinessUsaPage() {
         <div className="section">
           <h2>Why It&rsquo;s Harder to Name Than It Looks</h2>
           <p>NRI loneliness is particularly hard to name because it comes wrapped in privilege. You chose to come here. You have a good job. You live in a better house than most. Your children go to excellent schools. The people who sacrificed to get you here would be confused and hurt to hear that you feel lonely. The guilt of feeling lonely in the middle of a good life is one of the most common things Indian peer listeners at LeanOn hear.</p>
-          <p>The thing that helps is simply being heard by someone who gets it — without the guilt, without the gratitude calculation, without having to justify the feeling. A real Indian peer listener, in India. Anonymous. Private. First 5 minutes free — once per listener.</p>
+          <p>The thing that helps is simply being heard by someone who gets it — without the guilt, without the gratitude calculation, without having to justify the feeling. A real Indian peer listener, in India. Anonymous. Private. First 5 minutes free — one free session per account.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>The loneliness that doesn&rsquo;t need to be justified.</h2><p>Real Indian peer listener. Understands NRI loneliness completely. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
-          <a href="/desi-support-usa">Desi support USA &rarr;</a>
-          <a href="/nri-support">NRI support &rarr;</a>
+          <a href="/usa">Desi support USA &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
           <a href="/nri-homesick">NRI homesick &rarr;</a>
           <a href="/indian-diaspora-mental-health">Indian diaspora support &rarr;</a>
         </div></div>

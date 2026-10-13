@@ -41,7 +41,7 @@ const faqSchema = {
       name: 'Are the listeners women too?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Many of our listeners are women — some of whom have lived through exactly the kinds of experiences that bring people to LeanOn. You can browse listener profiles and choose someone whose experience resonates with yours. All listeners sign confidentiality agreements and are trained in active listening.',
+        text: 'Many of our listeners are women — some of whom have lived through exactly the kinds of experiences that bring people to LeanOn. You can browse listener profiles and choose someone whose experience resonates with yours. All listeners sign confidentiality agreements and are screened for active listening.',
       },
     },
     {

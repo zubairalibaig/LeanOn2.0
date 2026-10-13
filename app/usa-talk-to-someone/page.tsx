@@ -171,7 +171,7 @@ export default function UsaTalkToSomeonePage() {
           <h2>🕐 Available at any hour — for when the need hits</h2>
           <p>Emotional needs do not arrive at office hours. They arrive at 11 PM on a Tuesday when
             India is asleep, you cannot sleep, and everything is just too much.</p>
-          <p>LeanOn listeners are available 24/7. You can open the app right now, browse who is online,
+          <p>LeanOn listeners are based in India, so availability follows Indian time. You can open the app right now, browse who is online,
             and be in a session within minutes.</p>
           <a href="/browse" className="cta-night">Find a listener online now →</a>
         </div>
@@ -225,7 +225,7 @@ export default function UsaTalkToSomeonePage() {
           <div className="faq-item">
             <h3>How much does LeanOn cost from the USA?</h3>
             <p>Sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first
-              5 minutes free — once per listener.</p>
+              5 minutes free — one free session per account.</p>
           </div>
           <div className="faq-item">
             <h3>Are LeanOn listeners Indian?</h3>
@@ -238,9 +238,9 @@ export default function UsaTalkToSomeonePage() {
           <a href="/usa-loneliness">Feeling lonely in the USA →</a>
           <a href="/usa-empathy-listener">Empathy listener →</a>
           <a href="/usa-rant-to-someone">Need to rant? →</a>
-          <a href="/usa-nri-support">NRI emotional support →</a>
+          <a href="/usa">NRI emotional support →</a>
           <a href="/usa-therapy-alternative">Therapy alternative →</a>
-          <a href="/desi-usa-support">Desi community support →</a>
+          <a href="/usa">Desi community support →</a>
         </div>
 
         <div className="disclaimer">

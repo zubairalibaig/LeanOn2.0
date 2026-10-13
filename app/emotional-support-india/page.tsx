@@ -4,15 +4,15 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support India — Real People, Real Understanding | LeanOn',
-  description: 'Sometimes you need emotional support, not solutions. Trained peer listeners in India. Anonymous, from ₹160.',
+  description: 'Sometimes you need emotional support, not solutions. Screened peer listeners in India. Anonymous, from ₹160.',
   keywords: ['emotional support India', 'emotional support online India', 'need emotional support India', 'where to get emotional support India', 'emotional support person India'],
   alternates: { canonical: 'https://www.leanon.app/support/emotional-support', languages: { 'en-IN': 'https://www.leanon.app/support/emotional-support' } },
-  openGraph: { title: 'Emotional Support India — Real People, Real Understanding | LeanOn', description: 'Sometimes you need emotional support, not solutions. Trained peer listeners in India. Anonymous, from ₹160.', url: 'https://www.leanon.app/support/emotional-support', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
+  openGraph: { title: 'Emotional Support India — Real People, Real Understanding | LeanOn', description: 'Sometimes you need emotional support, not solutions. Screened peer listeners in India. Anonymous, from ₹160.', url: 'https://www.leanon.app/support/emotional-support', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
 }
 
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
     {'@type': 'Question', name: 'Is emotional support the same as therapy?', acceptedAnswer: {'@type': 'Answer', text: 'No. Therapy is a clinical service provided by licensed professionals. It involves diagnosis, treatment planning, and specific evidence-based interventions. Emotional support &mdash; the kind LeanOn provides &mdash; is peer-based, non-clinical, and focused on being heard rather than treated. Many people benefit from both.'}},
-    {'@type': 'Question', name: 'Who provides emotional support on LeanOn?', acceptedAnswer: {'@type': 'Answer', text: 'Real people &mdash; screened peer listeners with lived experience. They are not AI, not therapists, and not volunteers. They are compensated for their time and trained in active listening and supportive conversation.'}},
+    {'@type': 'Question', name: 'Who provides emotional support on LeanOn?', acceptedAnswer: {'@type': 'Answer', text: 'Real people &mdash; screened peer listeners with lived experience. They are not AI, not therapists, and not volunteers. They are compensated for their time and screened for active listening and supportive conversation.'}},
     {'@type': 'Question', name: 'How much does it cost?', acceptedAnswer: {'@type': 'Answer', text: 'Sessions start at ₹160. First 5 minutes free. No subscription.'}},
     {'@type': 'Question', name: 'Is it anonymous?', acceptedAnswer: {'@type': 'Answer', text: 'Yes. First name only. Listener bound by confidentiality agreement.'}}
 ] }
@@ -82,7 +82,7 @@ export default function EmotionalSupportIndiaPage() {
         </div>
         <div className="section">
           <h2>Why LeanOn Listeners Are Different</h2>
-          <p>LeanOn listeners are trained specifically in the skills that make emotional support possible: active listening, reflecting without steering, genuine curiosity, and the capacity to hold complexity without rushing to resolution. They have also been through difficult things themselves &mdash; which means they understand what being heard in a hard moment actually requires.</p>
+          <p>LeanOn listeners are screened specifically for the skills that make emotional support possible: active listening, reflecting without steering, genuine curiosity, and the capacity to hold complexity without rushing to resolution. They have also been through difficult things themselves &mdash; which means they understand what being heard in a hard moment actually requires.</p>
           <p>Sessions are anonymous, available immediately, and start at ₹160. First 5 minutes are free.</p>
         </div>
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>

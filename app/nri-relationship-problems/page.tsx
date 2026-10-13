@@ -20,7 +20,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
   { '@type': 'ListItem', position: 3, name: 'NRI Relationship Problems', item: 'https://www.leanon.app/nri-relationship-problems' },
 ] }
 
@@ -72,7 +72,7 @@ export default function NriRelationshipProblemsPage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Relationship Problems</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Relationship Problems</span></nav>
         <div className="hero">
           <p className="badge">NRI Relationships &middot; Cultural Mismatch &middot; Desi Abroad</p>
           <h1>Two people. Two cultures. <em>The gap nobody warned you about.</em></h1>
@@ -90,7 +90,7 @@ export default function NriRelationshipProblemsPage() {
         <div className="section">
           <h2>When There Is Nobody Safe to Talk To</h2>
           <p>One of the loneliest aspects of NRI relationship problems is having no one safe to talk to. You cannot tell your parents — they have opinions that would make things worse, or they would worry, or they would tell other family members. You cannot tell your Indian community friends — it goes in the gossip circuit. You cannot tell your non-Indian friends — they don&rsquo;t have the cultural framework to understand. You are alone with the weight of it.</p>
-          <p>LeanOn is built for exactly this gap. A real Indian peer listener in India — outside your social network entirely, inside the cultural context completely — who can hear what you are actually carrying. Anonymous. Private. No appointment. First 5 minutes free — once per listener.</p>
+          <p>LeanOn is built for exactly this gap. A real Indian peer listener in India — outside your social network entirely, inside the cultural context completely — who can hear what you are actually carrying. Anonymous. Private. No appointment. First 5 minutes free — one free session per account.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
@@ -98,7 +98,7 @@ export default function NriRelationshipProblemsPage() {
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-marriage-usa">NRI marriage USA &rarr;</a>
           <a href="/nri-dating-usa">NRI dating USA &rarr;</a>
-          <a href="/nri-support">NRI support &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
           <a href="/indian-diaspora-mental-health">Indian diaspora support &rarr;</a>
         </div></div>
         <div className="crisis"><strong>In a crisis?</strong> NIMHANS: 080-46110007 &nbsp;&middot;&nbsp; Tele-MANAS: 14416 &nbsp;&middot;&nbsp; Both free, 24/7.</div>

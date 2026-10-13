@@ -48,7 +48,7 @@ const faqSchema = {
       name: 'How is peer support different from therapy?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Therapy is clinical — it involves licensed professionals, diagnosis, and structured treatment. Peer support is human — it involves real people who have been through difficult experiences and are trained to listen without judgment. Peer support is particularly useful when you need to be heard and understood rather than treated or diagnosed, and it is far more accessible and affordable as a first step.',
+        text: 'Therapy is clinical — it involves licensed professionals, diagnosis, and structured treatment. Peer support is human — it involves real people who have been through difficult experiences and are screened and expected to listen without judgment. Peer support is particularly useful when you need to be heard and understood rather than treated or diagnosed, and it is far more accessible and affordable as a first step.',
       },
     },
     {
@@ -213,7 +213,7 @@ export default function SomeoneToTalkToPage() {
           <p>Clinical therapy and peer support are different services, so price is not a like-for-like comparison. On LeanOn, one 5-minute introductory session is free per account. In India, a paid session costs the selected listener&apos;s per-minute rate multiplied by the session length, plus a flat ₹10 platform fee. For example, 15 minutes at ₹10/min costs ₹160. Check <a href="/pricing" style={{color:'var(--teal)',fontWeight:700}}>current pricing</a>; the exact price is displayed before you start.</p>
 
           <h3>Complementary, Not Competing</h3>
-          <p>Many people use peer support alongside therapy — as a way to process between clinical sessions, access support when a therapist is not available, or take a meaningful first step before they are ready for formal treatment. LeanOn listeners are trained to recognise when someone might benefit from professional care and will gently say so when that appears to be the case.</p>
+          <p>Many people use peer support alongside therapy — as a way to process between clinical sessions, access support when a therapist is not available, or take a meaningful first step before they are ready for formal treatment. LeanOn listeners are screened and expected to recognise when someone might benefit from professional care and will gently say so when that appears to be the case.</p>
         </div>
 
         {/* Getting Started */}
@@ -269,7 +269,7 @@ export default function SomeoneToTalkToPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How is peer support different from therapy?</div>
-            <div className="faq-a">Therapy is clinical — licensed professionals, diagnosis, and structured treatment. Peer support is human — real people with lived experience, trained to listen without judgment. Peer support is especially useful when you need to be heard rather than treated, and it is far more accessible and affordable as a first step.</div>
+            <div className="faq-a">Therapy is clinical — licensed professionals, diagnosis, and structured treatment. Peer support is human — real people with lived experience, screened for listening without judgment. Peer support is especially useful when you need to be heard rather than treated, and it is far more accessible and affordable as a first step.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">How quickly can I talk to someone on LeanOn?</div>

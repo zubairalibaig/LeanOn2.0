@@ -20,7 +20,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
   { '@type': 'ListItem', position: 3, name: 'NRI Dating Canada', item: 'https://www.leanon.app/nri-dating-canada' },
 ] }
 
@@ -72,7 +72,7 @@ export default function NriDatingCanadaPage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="https://www.leanon.app/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Dating Canada</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Dating Canada</span></nav>
         <div className="hero">
           <p className="badge">NRI Dating Canada &middot; Desi Dating &middot; Indian Abroad</p>
           <h1>NRI Dating in Canada — <em>Love, But Complicated</em></h1>
@@ -105,8 +105,8 @@ export default function NriDatingCanadaPage() {
           <a href="/arranged-marriage-nri">Arranged marriage NRI &rarr;</a>
           <a href="/nri-relationship-advice">NRI relationship advice &rarr;</a>
           <a href="/indians-in-toronto">Indians in Toronto &rarr;</a>
-          <a href="/nri-support">NRI support &rarr;</a>
-          <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
+          <a href="/usa-loneliness">NRI loneliness USA &rarr;</a>
           <a href="/nri-identity-crisis">NRI identity crisis &rarr;</a>
         </div></div>
         <div className="crisis"><strong>In a crisis?</strong> NIMHANS: 080-46110007 &nbsp;&middot;&nbsp; Tele-MANAS: 14416 &nbsp;&middot;&nbsp; Both free, 24/7.</div>

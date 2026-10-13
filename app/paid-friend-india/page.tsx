@@ -136,7 +136,7 @@ export default function PaidFriendIndiaPage() {
         <div className="hero">
           <p className="badge">Peer Support &middot; India &middot; From &#8377;160</p>
           <h1>Not a therapist. Not a bot. <em>Someone who actually listens</em> &mdash; like a friend.</h1>
-          <p className="lead">A good friend would listen without judgment, without unsolicited advice, without making it about themselves. LeanOn listeners are trained to be exactly that &mdash; available when your actual friends can&apos;t be.</p>
+          <p className="lead">A good friend would listen without judgment, without unsolicited advice, without making it about themselves. LeanOn listeners are screened and expected to be exactly that &mdash; available when your actual friends can&apos;t be.</p>
           <a href="/browse" className="cta-hero">Find a listener &rarr;</a>
         </div>
 
@@ -144,7 +144,7 @@ export default function PaidFriendIndiaPage() {
           <h2>What Is a Paid Friend?</h2>
           <p>The concept of paying someone to listen &mdash; or to spend time with you &mdash; is not new. In Japan, the &ldquo;rent-a-friend&rdquo; industry has existed for decades, with people hiring &ldquo;client partners&rdquo; to accompany them to events, provide company, or simply listen. The industry is enormous and mainstream there.</p>
           <p>In India, the concept is arriving in a different form. Not companionship for events, but emotional support through conversation. The need is the same: a real human being, without agenda, who will give you their full attention and genuinely hear you.</p>
-          <p>LeanOn is not &ldquo;rent a friend&rdquo; in the companionship sense. It is peer emotional support &mdash; a trained listener who holds space for your experience without judging, steering, or advising. Closer to the best version of a friend who actually listens than to a therapist or a companion service.</p>
+          <p>LeanOn is not &ldquo;rent a friend&rdquo; in the companionship sense. It is peer emotional support &mdash; a screened listener who holds space for your experience without judging, steering, or advising. Closer to the best version of a friend who actually listens than to a therapist or a companion service.</p>
         </div>
 
         <div className="section">

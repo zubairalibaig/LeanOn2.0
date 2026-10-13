@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'What is the difference between venting and peer support?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Venting is releasing pressure. Peer support is doing that with someone who is trained to hold space and reflect — so the release has somewhere to go and you come away with perspective as well as relief. LeanOn peer support is structured venting with someone who has been there.',
+        text: 'Venting is releasing pressure. Peer support is doing that with someone who is screened and expected to hold space and reflect — so the release has somewhere to go and you come away with perspective as well as relief. LeanOn peer support is structured venting with someone who has been there.',
       },
     },
     {

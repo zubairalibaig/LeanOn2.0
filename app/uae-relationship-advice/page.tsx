@@ -41,7 +41,7 @@ const faqSchema = {
       name: 'Is LeanOn a counselling service or a therapy service?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn is peer support — trained listeners who give you a safe, non-judgmental space to talk. They are not therapists or counsellors, but sometimes what you need most is not a clinical session — it is someone to truly hear you out and help you think clearly.',
+        text: 'LeanOn is peer support — screened listeners who give you a safe, non-judgmental space to talk. They are not therapists or counsellors, but sometimes what you need most is not a clinical session — it is someone to truly hear you out and help you think clearly.',
       },
     },
     {
@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'Can I talk about my marriage problems without being judged?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Absolutely. LeanOn listeners are trained to listen without judgment, without taking sides, and without moralising. Your marriage, your choices, your pain — all of it is held with respect and care.',
+        text: 'Absolutely. LeanOn listeners are screened and expected to listen without judgment, without taking sides, and without moralising. Your marriage, your choices, your pain — all of it is held with respect and care.',
       },
     },
     {
@@ -176,7 +176,7 @@ export default function UAERelationshipAdvicePage() {
           <h2>💬 After a difficult call home, who do you talk to?</h2>
           <p>The hardest moments often come right after hanging up — the argument still unresolved,
             the silence in the flat too loud, no one nearby who understands the full picture.</p>
-          <p>LeanOn listeners are available 24/7. Talk through what just happened with someone who
+          <p>LeanOn listeners are based in India, so availability follows Indian time. Talk through what just happened with someone who
             will listen without taking sides and without judgment.</p>
           <a href="/browse" className="cta-night">Find an Indian listener now →</a>
         </div>
@@ -201,7 +201,7 @@ export default function UAERelationshipAdvicePage() {
             <li>15-minute session — AED 37</li>
             <li>30-minute session — AED 55</li>
             <li>45-minute session — AED 74</li>
-            <li>First 5 minutes free — once per listener</li>
+            <li>First 5 minutes free — one free session per account</li>
           </ul>
           <p style={{ marginTop: '12px' }}>Anonymous. No subscription. Talk in Hindi, Tamil, Telugu, Malayalam, or any Indian language.</p>
         </div>
@@ -222,7 +222,7 @@ export default function UAERelationshipAdvicePage() {
           </div>
           <div className="faq-item">
             <h3>Is LeanOn a counselling or therapy service?</h3>
-            <p>LeanOn is peer support — trained listeners who give you a safe, non-judgmental space to talk.
+            <p>LeanOn is peer support — screened listeners who give you a safe, non-judgmental space to talk.
               Not therapists, but sometimes what you need most is someone to truly hear you out.</p>
           </div>
           <div className="faq-item">

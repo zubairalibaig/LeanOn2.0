@@ -20,7 +20,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
   { '@type': 'ListItem', position: 3, name: 'H1B Visa Stress', item: 'https://www.leanon.app/nri-h1b-visa-stress' },
 ] }
 
@@ -72,7 +72,7 @@ export default function NriH1bVisaStressPage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" className="nav-logo" alt="LeanOn" /></a><a href="https://www.leanon.app/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>H1B Visa Stress</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>H1B Visa Stress</span></nav>
         <div className="hero">
           <p className="badge">H1B Visa &middot; Immigration Anxiety &middot; Green Card Wait</p>
           <h1>You built a life here. <em>And you do not fully own it yet.</em></h1>
@@ -105,7 +105,7 @@ export default function NriH1bVisaStressPage() {
           <a href="/nri-workplace-stress">NRI workplace stress &rarr;</a>
           <a href="/telugu-nri-support">Telugu NRI support &rarr;</a>
           <a href="/nri-burnout">NRI burnout &rarr;</a>
-          <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>
+          <a href="/usa-loneliness">NRI loneliness USA &rarr;</a>
         </div></div>
         <div className="crisis"><strong>In a crisis?</strong> NIMHANS: 080-46110007 &nbsp;&middot;&nbsp; Tele-MANAS: 14416 &nbsp;&middot;&nbsp; Both free, 24/7.</div>
       </div>

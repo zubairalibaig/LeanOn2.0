@@ -33,7 +33,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Can I say anything?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Within reason, yes. You can say things that are unfair, that are angry, that are confused, that you are not proud of, that you have been too ashamed to say out loud before. LeanOn listeners are trained to receive these without judgment. If something you say raises a concern about your safety, the listener will gently mention professional resources, but they will not otherwise react with alarm or judgment.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Within reason, yes. You can say things that are unfair, that are angry, that are confused, that you are not proud of, that you have been too ashamed to say out loud before. LeanOn listeners are screened and expected to receive these without judgment. If something you say raises a concern about your safety, the listener will gently mention professional resources, but they will not otherwise react with alarm or judgment.' },
     },
     {
       '@type': 'Question',

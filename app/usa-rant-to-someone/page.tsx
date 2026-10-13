@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'Can I just rant to a LeanOn listener without wanting advice?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Absolutely. You can tell a listener upfront: "I just need to vent, please do not give advice." LeanOn listeners are trained to hold space, not fix problems. Sometimes being heard without being judged is exactly what you need.',
+        text: 'Absolutely. You can tell a listener upfront: "I just need to vent, please do not give advice." LeanOn listeners are screened and expected to hold space, not fix problems. Sometimes being heard without being judged is exactly what you need.',
       },
     },
     {
@@ -210,7 +210,7 @@ export default function UsaRantToSomeonePage() {
           <div className="faq-item">
             <h3>Can I just rant to a LeanOn listener without wanting advice?</h3>
             <p>Absolutely. You can tell a listener upfront: &quot;I just need to vent, please do not give advice.&quot;
-              LeanOn listeners are trained to hold space, not fix problems.</p>
+              LeanOn listeners are screened and expected to hold space, not fix problems.</p>
           </div>
           <div className="faq-item">
             <h3>Is it okay to complain about American work culture?</h3>
@@ -230,17 +230,17 @@ export default function UsaRantToSomeonePage() {
           <div className="faq-item">
             <h3>What does a session cost for NRIs in the USA?</h3>
             <p>Sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first
-              5 minutes free — once per listener.</p>
+              5 minutes free — one free session per account.</p>
           </div>
         </div>
 
         <div className="related">
-          <a href="/usa-h1b-visa-stress">H-1B visa stress →</a>
+          <a href="/nri-h1b-visa-stress">H-1B visa stress →</a>
           <a href="/usa-loneliness">Feeling lonely in the USA →</a>
           <a href="/usa-talk-to-someone">Someone to talk to →</a>
           <a href="/usa-empathy-listener">Empathy listener →</a>
-          <a href="/usa-nri-support">NRI emotional support →</a>
-          <a href="/desi-usa-support">Desi community support →</a>
+          <a href="/usa">NRI emotional support →</a>
+          <a href="/usa">Desi community support →</a>
         </div>
 
         <div className="disclaimer">

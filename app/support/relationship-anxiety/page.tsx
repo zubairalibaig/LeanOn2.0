@@ -35,7 +35,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Can I talk about my partner to a listener without it being unfair to them?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Your experience of the relationship is yours to talk about. You are not putting your partner on trial — you are processing your own feelings. Peer listeners are trained to hear one side of a relationship without judging the absent person, and a session stays focused on what you are experiencing rather than a verdict on your partner.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Your experience of the relationship is yours to talk about. You are not putting your partner on trial — you are processing your own feelings. Peer listeners are screened and expected to hear one side of a relationship without judging the absent person, and a session stays focused on what you are experiencing rather than a verdict on your partner.' },
     },
     {
       '@type': 'Question',

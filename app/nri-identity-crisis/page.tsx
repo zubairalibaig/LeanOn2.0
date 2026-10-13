@@ -19,7 +19,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
   { '@type': 'ListItem', position: 3, name: 'NRI Identity Crisis', item: 'https://www.leanon.app/nri-identity-crisis' },
 ] }
 
@@ -71,7 +71,7 @@ export default function NriIdentityCrisisPage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Identity Crisis</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Identity Crisis</span></nav>
         <div className="hero">
           <p className="badge">NRI Identity &middot; Dual Culture &middot; Desi Abroad</p>
           <h1>Too Indian there. <em>Not Indian enough here.</em></h1>
@@ -89,14 +89,14 @@ export default function NriIdentityCrisisPage() {
         <div className="section">
           <h2>When the Question Becomes &ldquo;Who Am I?&rdquo;</h2>
           <p>For many NRIs, the identity question deepens over time rather than resolving. The longer you are abroad, the more the India you carry is the India you left — not the one that has continued changing. You miss a place that partly no longer exists. You carry values that India has partly moved on from. And the abroad-self you have built is not quite the Indian self your family sees.</p>
-          <p>The question &ldquo;who am I?&rdquo; in this context is genuine and weighty. A real Indian peer listener at LeanOn can sit with you in that question — not to resolve it, which would be dishonest, but to hear you explore it. Sometimes naming the in-between is itself a kind of relief. Sessions are anonymous and private. First 5 minutes free — once per listener.</p>
+          <p>The question &ldquo;who am I?&rdquo; in this context is genuine and weighty. A real Indian peer listener at LeanOn can sit with you in that question — not to resolve it, which would be dishonest, but to hear you explore it. Sometimes naming the in-between is itself a kind of relief. Sessions are anonymous and private. First 5 minutes free — one free session per account.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>The in-between, understood.</h2><p>Real Indian peer listener. Gets the NRI dual-identity experience. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/second-generation-indian-usa">Second gen Indian USA &rarr;</a>
-          <a href="/nri-support">NRI support &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
           <a href="/indian-diaspora-mental-health">Indian diaspora support &rarr;</a>
           <a href="/nri-homesick">NRI homesick &rarr;</a>
         </div></div>

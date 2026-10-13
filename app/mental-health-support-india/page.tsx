@@ -187,7 +187,7 @@ export default function MentalHealthSupportIndiaPage() {
         {/* A different kind of support */}
         <div className="section">
           <h2>A Different Kind of Support</h2>
-          <p>LeanOn is a peer support platform. Every listener on LeanOn is a real person who has lived through something relevant to the conversations they take. They are trained in active listening, supportive conversation, and knowing when to refer someone to professional help.</p>
+          <p>LeanOn is a peer support platform. Every listener on LeanOn is a real person who has lived through something relevant to the conversations they take. They are screened for active listening, supportive conversation, and knowing when to refer someone to professional help.</p>
           <p>This is not therapy. LeanOn does not claim otherwise. It is for the gap between &quot;I am struggling and need to talk&quot; and &quot;I need clinical treatment&quot; — which is where most people who need support actually are.</p>
         </div>
 
@@ -244,7 +244,7 @@ export default function MentalHealthSupportIndiaPage() {
           <div className="stat-pill"><em>₹160</em>/session</div>
           <div className="stat-pill">First <em>5 min free</em></div>
           <div className="stat-pill"><em>Anonymous</em></div>
-          <div className="stat-pill">30+ <em>trained listeners</em></div>
+          <div className="stat-pill">30+ <em>screened listeners</em></div>
           <div className="stat-pill"><em>24/7</em> available</div>
         </div>
 

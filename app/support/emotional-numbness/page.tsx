@@ -189,7 +189,7 @@ export default function EmotionalNumbnessPage() {
         <div className="section">
           <h2>You Don&apos;t Need to Understand It to Start</h2>
           <p>You do not need to have a clear diagnosis, a coherent narrative of how this happened, or a sense of what you need from a conversation. You do not need to be in crisis. You do not need to be sure that talking will help.</p>
-          <p>You can start with: &quot;I have been feeling numb for a very long time and I don&apos;t really know what to do with that.&quot; That is enough. A LeanOn listener is trained to meet you in the uncertainty — to help you find language for what you are experiencing, to sit with you in the flatness without needing to immediately fix or explain it.</p>
+          <p>You can start with: &quot;I have been feeling numb for a very long time and I don&apos;t really know what to do with that.&quot; That is enough. A LeanOn listener is screened and expected to meet you in the uncertainty — to help you find language for what you are experiencing, to sit with you in the flatness without needing to immediately fix or explain it.</p>
           <p>The numbness did not develop overnight. It will not resolve overnight either. But the first honest conversation — the first time you say this to someone who actually hears it — is where something, slowly, begins.</p>
         </div>
 

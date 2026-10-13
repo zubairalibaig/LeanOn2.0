@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'Can I talk about racism and microaggressions on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. Carrying racial microaggressions alone is exhausting — the constant low-level friction, the comments you are not sure how to respond to, the situations where you question whether what happened was actually what it looked like. Listeners are trained to hold space for this without minimising it or over-dramatising it.',
+        text: 'Yes. Carrying racial microaggressions alone is exhausting — the constant low-level friction, the comments you are not sure how to respond to, the situations where you question whether what happened was actually what it looked like. Listeners are screened and expected to hold space for this without minimising it or over-dramatising it.',
       },
     },
     {
@@ -202,7 +202,7 @@ export default function BritishIndianSupportPage() {
 
         <div className="cta">
           <h2>You do not have to translate yourself here</h2>
-          <p>Indian listeners who understand British Indian life. Anonymous, private, 24/7.</p>
+          <p>Indian listeners who understand British Indian life. Anonymous, private, on Indian time.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -226,7 +226,7 @@ export default function BritishIndianSupportPage() {
           </div>
           <div className="faq-item">
             <h3>Can I talk about racism and microaggressions?</h3>
-            <p>Yes. Carrying microaggressions alone is exhausting. Listeners are trained to hold space for
+            <p>Yes. Carrying microaggressions alone is exhausting. Listeners are screened and expected to hold space for
               this without minimising it or over-dramatising it.</p>
           </div>
           <div className="faq-item">
@@ -237,7 +237,7 @@ export default function BritishIndianSupportPage() {
 
         <div className="related">
           <a href="/uk-mental-health-south-asian">South Asian mental health →</a>
-          <a href="/uk-nri-support">NRI support UK →</a>
+          <a href="/uk">NRI support UK →</a>
           <a href="/uk-loneliness">Loneliness support UK →</a>
           <a href="/uk-relationship-advice">Relationship support UK →</a>
           <a href="/uk-empathy-listener">Empathy listener UK →</a>

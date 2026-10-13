@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
     {'@type': 'Question', name: 'How is sasural stress different from general in-law stress?', acceptedAnswer: {'@type': 'Answer', text: 'Sasural stress in India has a specific cultural texture: the saas-bahu dynamic, the expectation that the bahu will adjust, the public performance of family harmony, and the social cost of appearing to struggle. These are specific enough that the person you talk to benefits from understanding this context.'}},
-    {'@type': 'Question', name: 'Can a peer listener understand sasural dynamics?', acceptedAnswer: {'@type': 'Answer', text: 'Yes. LeanOn listeners come from backgrounds that include this experience, and are trained to listen to it without either dismissing it or amplifying it. They understand the cultural context without requiring you to explain it from scratch.'}},
+    {'@type': 'Question', name: 'Can a peer listener understand sasural dynamics?', acceptedAnswer: {'@type': 'Answer', text: 'Yes. LeanOn listeners come from backgrounds that include this experience, and are screened and expected to listen to it without either dismissing it or amplifying it. They understand the cultural context without requiring you to explain it from scratch.'}},
     {'@type': 'Question', name: 'How much does it cost?', acceptedAnswer: {'@type': 'Answer', text: 'Sessions start at ₹160. First 5 minutes free.'}}
 ] }
 

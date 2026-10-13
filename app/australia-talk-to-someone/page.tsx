@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Talk to Someone Online in Australia | Indian Expat Support | LeanOn',
-  description: 'Need a real person to talk to in Australia? LeanOn connects Indian expats with screened peer listeners 24/7 — in Hindi, Tamil, Telugu, Malayalam and more. First 5 minutes free.',
+  description: 'Need a real person to talk to in Australia? LeanOn connects Indian expats with screened peer listeners in India — in Hindi, Tamil, Telugu, Malayalam and more. First 5 minutes free.',
   keywords: [
     'talk to someone online australia', 'someone to talk to australia indian', 'need to talk australia expat',
     'online chat support australia indian', 'emotional support australia indian',
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Talk to Someone Online in Australia — Real Indian Peer Listeners | LeanOn',
-    description: 'Need a real person to talk to in Australia? LeanOn connects Indian expats with peer listeners 24/7 — in your language, anonymously.',
+    description: 'Need a real person to talk to in Australia? LeanOn connects Indian expats with peer listeners in India — in your language, anonymously.',
     url: 'https://www.leanon.app/australia-talk-to-someone',
     siteName: 'LeanOn',
     type: 'article',
@@ -36,7 +36,7 @@ const faqSchema = {
       name: 'Can I talk to someone in Australia right now?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn listeners are available 24/7 across time zones. No appointment, no waiting list. The first 5 minutes of your account are free. Browse who is online and start a conversation immediately.',
+        text: 'Yes. LeanOn listeners are based in India, so availability follows Indian time — check who is online now. No appointment, no waiting list. The first 5 minutes of your account are free. Browse who is online and start a conversation immediately.',
       },
     },
     {
@@ -125,7 +125,7 @@ export default function AustraliaTalkToSomeonePage() {
         </div>
 
         <p style={{ marginTop: 32, fontSize: 13, color: '#aaa', textAlign: 'center' }}>
-          Crisis support: NIMHANS 080-46110007 · Tele-MANAS 14416 · Australian Lifeline 13 11 14
+          Crisis support: NIMHANS 080-46110007 · Tele-MANAS 14416 · Outside India: your local emergency services
         </p>
       </main>
     </>

@@ -4,11 +4,11 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Grief & Loss Peer Support India | LeanOn',
-  description: 'Navigate grief and loss with compassionate peer support. Talk anonymously to a trained listener. Available 24/7.',
+  description: 'Navigate grief and loss with compassionate peer support. Talk anonymously to a screened listener. Available 24/7.',
   alternates: { canonical: 'https://www.leanon.app/support/grief', languages: { 'en-IN': 'https://www.leanon.app/support/grief' } },
   openGraph: {
     title: 'Grief & Loss Peer Support India | LeanOn',
-    description: 'Navigate grief and loss with compassionate peer support. Talk anonymously to a trained listener. Available 24/7.',
+    description: 'Navigate grief and loss with compassionate peer support. Talk anonymously to a screened listener. Available 24/7.',
     url: 'https://www.leanon.app/support/grief',
     siteName: 'LeanOn',
     type: 'article',

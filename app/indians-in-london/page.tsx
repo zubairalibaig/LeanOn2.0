@@ -20,7 +20,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
   { '@type': 'ListItem', position: 3, name: 'Indians in London', item: 'https://www.leanon.app/indians-in-london' },
 ] }
 
@@ -72,7 +72,7 @@ export default function IndiansInLondonPage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="https://www.leanon.app/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Indians in London</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Indians in London</span></nav>
         <div className="hero">
           <p className="badge">Indians in London &middot; Wembley &middot; Southall &middot; East Ham</p>
           <h1>A million Indians in London. <em>Still couldn&rsquo;t find the right person to talk to.</em></h1>
@@ -104,7 +104,7 @@ export default function IndiansInLondonPage() {
         <div className="cta-card"><h2>The most Indian city outside India. Still worth talking.</h2><p>Real Indian peer listener. Understands the British Indian London experience. Anonymous. First 5 minutes free. From US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-loneliness-uk">NRI loneliness UK &rarr;</a>
-          <a href="/indians-in-uk">Indians in UK &rarr;</a>
+          <a href="/uk">Indians in UK &rarr;</a>
           <a href="/nri-marriage-uk">NRI marriage UK &rarr;</a>
           <a href="/nri-anxiety-abroad">NRI anxiety abroad &rarr;</a>
         </div></div>

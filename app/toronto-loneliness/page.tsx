@@ -243,9 +243,9 @@ export default function TorontoLonelinessPage() {
         <div className="related">
           <a href="/canada-loneliness">Loneliness in Canada →</a>
           <a href="/canada-winter-loneliness">First winter in Canada →</a>
-          <a href="/canada-nri-support">NRI emotional support →</a>
+          <a href="/canada">NRI emotional support →</a>
           <a href="/canada-talk-to-someone">Someone to talk to →</a>
-          <a href="/desi-canada-support">Desi community support →</a>
+          <a href="/canada">Desi community support →</a>
           <a href="/canada-immigration-stress">Immigration anxiety →</a>
         </div>
 

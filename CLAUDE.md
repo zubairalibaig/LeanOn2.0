@@ -103,7 +103,10 @@
   Recruitment pages are listed in `lib/seo-noindex.ts` (`NOINDEX_PATHS` + `AI_BLOCKED_PATHS`,
   used by `app/robots.ts`); a new recruitment page must be added to both.
 - Prices in copy must match `/pricing`, which reads `lib/constants.ts` / `lib/geo-pricing.ts`.
-  Overseas pages quote US$10/15/20, never ₹160. Only ONE free 5-minute session per account.
+  Overseas pages quote US$10/15/20 (or the same price in local currency as the app shows it —
+  `lib/geo-pricing.ts`, e.g. £8/12/16), never ₹160. Only ONE free 5-minute session per account —
+  never "per listener". Listeners are in India: never claim 24/7 availability to overseas
+  visitors ("availability follows Indian time"). Listeners are screened, never "trained".
 - Near-duplicate pages are merged via `lib/seo-redirects.json` (308). Don't mass-generate
   templated keyword pages; Google declined most of the last batch.
 - After deploying public-page changes, run `node scripts/indexnow.mjs` (Bing → ChatGPT search).

@@ -34,7 +34,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Can peer support help with relationship anxiety generally?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Relationship anxiety — the persistent worry that something is wrong, that you will be abandoned, that you are not enough — is one of the most common topics on LeanOn. Listeners are trained to hold this kind of conversation without either dismissing the anxiety or amplifying it.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Relationship anxiety — the persistent worry that something is wrong, that you will be abandoned, that you are not enough — is one of the most common topics on LeanOn. Listeners are screened and expected to hold this kind of conversation without either dismissing the anxiety or amplifying it.' },
     },
     {
       '@type': 'Question',

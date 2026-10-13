@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Feeling Lonely in Singapore? Talk to an Indian Listener — LeanOn',
-    description: 'Missing home. Working hard. Feeling unseen. LeanOn connects Indian expats in Singapore with real peer listeners who understand your world — 24/7, in your language.',
+    description: 'Missing home. Working hard. Feeling unseen. LeanOn connects Indian expats in Singapore with real peer listeners who understand your world — on Indian time, in your language.',
     url: 'https://www.leanon.app/singapore-loneliness',
     siteName: 'LeanOn',
     type: 'article',
@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'Can I talk to an Indian listener from Singapore?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn listeners are based in India and available 24/7. You can talk in Hindi, Tamil, Telugu, Malayalam, Kannada, Bengali, or English. Sessions start from S$14 for 15 minutes, with the first 5 minutes free to try.',
+        text: 'Yes. LeanOn listeners are based in India and online daily on Indian time. You can talk in Hindi, Tamil, Telugu, Malayalam, Kannada, Bengali, or English. Sessions start from S$14 for 15 minutes, with the first 5 minutes free to try.',
       },
     },
     {
@@ -217,7 +217,7 @@ export default function SingaporeLonelinessPage() {
 
         <div className="cta">
           <h2>Someone who gets it is online right now</h2>
-          <p>Real Indian listeners. Your language. Available 24/7.</p>
+          <p>Real Indian listeners. Your language. Listeners online daily (Indian time).</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -238,7 +238,7 @@ export default function SingaporeLonelinessPage() {
           </div>
           <div className="faq-item">
             <h3>Can I talk to an Indian listener from Singapore?</h3>
-            <p>Yes. LeanOn listeners are available 24/7 and speak Hindi, Tamil, Telugu, Malayalam, Kannada,
+            <p>Yes. LeanOn listeners are based in India, so availability follows Indian time and speak Hindi, Tamil, Telugu, Malayalam, Kannada,
               Bengali, and English. Sessions start from S$14 for 15 minutes, with the first 5 minutes free.</p>
           </div>
           <div className="faq-item">

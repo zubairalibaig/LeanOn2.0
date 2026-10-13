@@ -25,7 +25,7 @@ const faqSchema = {
       name: 'Is LeanOn like BetterHelp?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn and BetterHelp both provide online emotional support, but they are quite different. BetterHelp connects you with licensed US therapists via subscription (~$280/month). LeanOn connects you with trained Indian peer listeners via pay-per-session (from ₹160). LeanOn is peer support, not licensed therapy. If you need clinical treatment, see a professional. If you need a real human conversation without the ₹20,000/month price tag, LeanOn is built for you.',
+        text: 'LeanOn and BetterHelp both provide online emotional support, but they are quite different. BetterHelp connects you with licensed US therapists via subscription (~$280/month). LeanOn connects you with screened Indian peer listeners via pay-per-session (from ₹160). LeanOn is peer support, not licensed therapy. If you need clinical treatment, see a professional. If you need a real human conversation without the ₹20,000/month price tag, LeanOn is built for you.',
       },
     },
     {
@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'What is 7 Cups and how does LeanOn compare?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: '7 Cups offers free peer listening by volunteers alongside paid professional therapy. LeanOn offers paid peer listening by trained Indian listeners with lived experience — the key difference is the cultural context and the quality of the listener training. LeanOn listeners understand Indian family dynamics, work culture, and social pressures. 7 Cups listeners are mostly Western.',
+        text: '7 Cups offers free peer listening by volunteers alongside paid professional therapy. LeanOn offers paid peer listening by screened Indian listeners with lived experience — the key difference is the cultural context and the quality of the listener training. LeanOn listeners understand Indian family dynamics, work culture, and social pressures. 7 Cups listeners are mostly Western.',
       },
     },
     {
@@ -234,11 +234,11 @@ export default function BetterhelpAlternativeIndiaPage() {
           <h2>Frequently Asked Questions</h2>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn like BetterHelp?</div>
-            <div className="faq-a">Both provide online emotional support, but they are different. BetterHelp connects you with licensed US therapists via subscription (~$280/month). LeanOn connects you with trained Indian peer listeners via pay-per-session (from ₹160). LeanOn is peer support, not licensed therapy.</div>
+            <div className="faq-a">Both provide online emotional support, but they are different. BetterHelp connects you with licensed US therapists via subscription (~$280/month). LeanOn connects you with screened Indian peer listeners via pay-per-session (from ₹160). LeanOn is peer support, not licensed therapy.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">What is 7 Cups and how does LeanOn compare?</div>
-            <div className="faq-a">7 Cups offers free peer listening by volunteers. LeanOn offers paid peer listening by trained Indian listeners with lived experience. The key differences are cultural context and listener quality. LeanOn listeners understand Indian family dynamics and social pressures.</div>
+            <div className="faq-a">7 Cups offers free peer listening by volunteers. LeanOn offers paid peer listening by screened Indian listeners with lived experience. The key differences are cultural context and listener quality. LeanOn listeners understand Indian family dynamics and social pressures.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is there a free option on LeanOn?</div>

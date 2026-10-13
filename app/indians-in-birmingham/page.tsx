@@ -19,7 +19,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
   { '@type': 'ListItem', position: 3, name: 'Indians in Birmingham', item: 'https://www.leanon.app/indians-in-birmingham' },
 ] }
 
@@ -71,7 +71,7 @@ export default function IndiansInBirminghamPage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Indians in Birmingham</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Indians in Birmingham</span></nav>
         <div className="hero">
           <p className="badge">Indians in Birmingham &middot; Handsworth &middot; Soho Road</p>
           <h1>Soho Road to Handsworth. <em>You know this community. Do they know you?</em></h1>
@@ -89,15 +89,15 @@ export default function IndiansInBirminghamPage() {
         <div className="section">
           <h2>The Birmingham Indian Experience: What Goes Unsaid</h2>
           <p>The British Indian experience in Birmingham has its own particular weight. The identity question: British or Indian, and what does each mean? The generational gap between parents who came here with nothing and children who have everything but feel something is missing. The community&rsquo;s views on marriage, on mental health, on what is acceptable to say and what must be kept private.</p>
-          <p>Birmingham (GMT/BST) is 5.5 hours behind IST in winter (4.5 hours in summer). 3pm in Birmingham is 8:30pm in India — a natural afternoon window when India is in the evening. A real Indian listener is available, no appointment needed. The sessions are anonymous and completely private from the Handsworth and Soho Road community. First 5 minutes free — once per listener.</p>
+          <p>Birmingham (GMT/BST) is 5.5 hours behind IST in winter (4.5 hours in summer). 3pm in Birmingham is 8:30pm in India — a natural afternoon window when India is in the evening. A real Indian listener is available, no appointment needed. The sessions are anonymous and completely private from the Handsworth and Soho Road community. First 5 minutes free — one free session per account.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>Outside the community. Inside the culture.</h2><p>Real Indian peer listener. Understands British Indian community dynamics. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
-          <a href="/indians-in-uk">Indians in UK &rarr;</a>
+          <a href="/uk">Indians in UK &rarr;</a>
           <a href="/nri-loneliness-uk">NRI loneliness UK &rarr;</a>
-          <a href="/nri-support">NRI support &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
           <a href="/indians-in-leicester">Indians in Leicester &rarr;</a>
         </div></div>
         <div className="crisis"><strong>In a crisis?</strong> NIMHANS: 080-46110007 &nbsp;&middot;&nbsp; Tele-MANAS: 14416 &nbsp;&middot;&nbsp; Both free, 24/7.</div>

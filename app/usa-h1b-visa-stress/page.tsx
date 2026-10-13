@@ -12,13 +12,13 @@ export const metadata: Metadata = {
     'tech layoff h1b stress',
   ],
   alternates: {
-    canonical: 'https://www.leanon.app/usa-h1b-visa-stress',
-    languages: { 'en-US': 'https://www.leanon.app/usa-h1b-visa-stress' },
+    canonical: 'https://www.leanon.app/nri-h1b-visa-stress',
+    languages: { 'en-US': 'https://www.leanon.app/nri-h1b-visa-stress' },
   },
   openGraph: {
     title: 'H-1B Visa Stress — When Your Job is Also Your Visa',
     description: 'You are not just afraid of losing a job. You are afraid of losing your entire life in the USA. That fear deserves to be heard. LeanOn listeners understand H-1B reality.',
-    url: 'https://www.leanon.app/usa-h1b-visa-stress',
+    url: 'https://www.leanon.app/nri-h1b-visa-stress',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -76,7 +76,7 @@ const breadcrumbSchema = {
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'H-1B Visa Stress', item: 'https://www.leanon.app/usa-h1b-visa-stress' },
+    { '@type': 'ListItem', position: 2, name: 'H-1B Visa Stress', item: 'https://www.leanon.app/nri-h1b-visa-stress' },
   ],
 }
 
@@ -241,7 +241,7 @@ export default function UsaH1bVisaStressPage() {
         <div className="related">
           <a href="/usa-rant-to-someone">Need to rant? →</a>
           <a href="/usa-loneliness">Feeling lonely in the USA →</a>
-          <a href="/usa-nri-support">NRI emotional support →</a>
+          <a href="/usa">NRI emotional support →</a>
           <a href="/usa-empathy-listener">Empathy listener →</a>
           <a href="/usa-talk-to-someone">Someone to talk to →</a>
           <a href="/usa-therapy-alternative">Therapy alternative →</a>

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Loneliness Support for Indians in Malaysia — LeanOn',
-    description: 'Navigating life in Malaysia as an Indian expat can be isolating. LeanOn connects you with real Indian peer listeners 24/7 — in your language, with your context understood.',
+    description: 'Navigating life in Malaysia as an Indian expat can be isolating. LeanOn connects you with real Indian peer listeners on Indian time — in your language, with your context understood.',
     url: 'https://www.leanon.app/malaysia-loneliness',
     siteName: 'LeanOn',
     type: 'article',
@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'Can I talk to someone in Tamil from Malaysia?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn has Tamil-speaking listeners available 24/7. You can also find listeners who speak Hindi, Telugu, Malayalam, Kannada, Bengali, and English. Sessions start from RM 45 for 15 minutes, with the first 5 minutes free.',
+        text: 'Yes. LeanOn has Tamil-speaking listeners online daily on Indian time. You can also find listeners who speak Hindi, Telugu, Malayalam, Kannada, Bengali, and English. Sessions start from RM 45 for 15 minutes, with the first 5 minutes free.',
       },
     },
     {
@@ -217,7 +217,7 @@ export default function MalaysiaLonelinessPage() {
 
         <div className="cta">
           <h2>Someone who gets it is online right now</h2>
-          <p>Real Indian listeners. Tamil, Hindi, and more. Available 24/7.</p>
+          <p>Real Indian listeners. Tamil, Hindi, and more. Listeners online daily (Indian time).</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -238,7 +238,7 @@ export default function MalaysiaLonelinessPage() {
           </div>
           <div className="faq-item">
             <h3>Can I talk to someone in Tamil from Malaysia?</h3>
-            <p>Yes. LeanOn has Tamil-speaking listeners available 24/7. Sessions start from RM 45 for
+            <p>Yes. LeanOn has Tamil-speaking listeners online daily on Indian time. Sessions start from RM 45 for
               15 minutes, with the first 5 minutes free.</p>
           </div>
           <div className="faq-item">

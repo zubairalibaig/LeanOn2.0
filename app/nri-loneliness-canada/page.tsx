@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'Is what I\'m feeling normal for Indians in Canada?', acceptedAnswer: { '@type': 'Answer', text: 'Very. The transition to Canadian life — the quiet streets, the transactional friendships, the isolation in winter — hits many Indians hard in the first few years. It is not weakness. It is a real adjustment that very few people talk about honestly.' } },
   { '@type': 'Question', name: 'I have friends here. Why do I still feel alone?', acceptedAnswer: { '@type': 'Answer', text: 'Because cultural understanding goes deeper than friendship. You can have a full social life and still feel unseen. Our listeners have heard this from hundreds of people — having friends here does not automatically fill the particular gap that comes from being Indian abroad.' } },
   { '@type': 'Question', name: 'What if I don\'t want to tell my family back home?', acceptedAnswer: { '@type': 'Answer', text: 'That is exactly why LeanOn exists — an anonymous conversation you control completely. You sign up with only a phone number. No one in your family or network back home or in Canada knows.' } },
-  { '@type': 'Question', name: 'Is this different from a hotline or crisis line?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. This is not a crisis service. It is peer support — a calm, judgment-free conversation with a trained Indian listener. For actual emergencies, please contact local emergency services.' } },
+  { '@type': 'Question', name: 'Is this different from a hotline or crisis line?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. This is not a crisis service. It is peer support — a calm, judgment-free conversation with a screened Indian listener. For actual emergencies, please contact local emergency services.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -97,7 +97,7 @@ export default function NriLonelinessCanadaPage() {
         <div className="cta-card"><h2>The loneliness is real. So is the support.</h2><p>A real Indian peer listener who understands the Canada experience. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/punjabi-support-canada">Punjabi support Canada &rarr;</a>
-          <a href="/nri-support">NRI support &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
           <a href="/nri-mental-health">NRI mental health &rarr;</a>
           <a href="/support/loneliness">Loneliness support &rarr;</a>
         </div></div>

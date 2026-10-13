@@ -135,7 +135,7 @@ export default function EmpathyIndiaPage() {
         <div className="hero">
           <p className="badge">Empathy &middot; Peer Support &middot; India</p>
           <h1>Empathy isn&apos;t a word. It&apos;s a feeling. <em>You&apos;ll know it when you find it.</em></h1>
-          <p className="lead">You&apos;ve talked to people who listened but didn&apos;t really get it. Empathy is different &mdash; it&apos;s when someone feels with you, not just for you. That&apos;s what every LeanOn listener is trained to offer.</p>
+          <p className="lead">You&apos;ve talked to people who listened but didn&apos;t really get it. Empathy is different &mdash; it&apos;s when someone feels with you, not just for you. That&apos;s what every LeanOn listener is screened and expected to offer.</p>
           <a href="/browse" className="cta-hero">Find an empathetic listener &rarr;</a>
         </div>
 

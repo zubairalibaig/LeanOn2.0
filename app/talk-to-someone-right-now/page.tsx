@@ -173,7 +173,7 @@ export default function TalkToSomeoneRightNowPage() {
           <p>Being clear about this matters, especially right now.</p>
 
           <h3>It is a real human with lived experience</h3>
-          <p>Not a bot, not a script, not an AI pretending to care. Every listener is a trained peer who has been through something difficult themselves and chose to sit with other people going through it. They are not therapists and they will not diagnose you — what they offer is empathy and undivided attention.</p>
+          <p>Not a bot, not a script, not an AI pretending to care. Every listener is a screened peer who has been through something difficult themselves and chose to sit with other people going through it. They are not therapists and they will not diagnose you — what they offer is empathy and undivided attention.</p>
 
           <h3>There is no appointment and no waitlist</h3>
           <p>You do not book a slot three weeks out. You open the directory and talk to whoever is available. That is the whole process.</p>

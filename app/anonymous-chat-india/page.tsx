@@ -43,7 +43,7 @@ const faqSchema = {
       name: 'Is anonymous chat on LeanOn safe?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn\'s listeners are screened, trained in active listening, and reviewed by the platform before going live. They sign confidentiality agreements and are held to strict conduct standards. Unlike random chat apps where you have no idea who you are speaking to, every listener on LeanOn is a verified real person. Your anonymity is protected, and the person on the other end has been vetted.',
+        text: 'Yes. LeanOn\'s listeners are screened, screened for active listening, and reviewed by the platform before going live. They sign confidentiality agreements and are held to strict conduct standards. Unlike random chat apps where you have no idea who you are speaking to, every listener on LeanOn is a verified real person. Your anonymity is protected, and the person on the other end has been vetted.',
       },
     },
     {

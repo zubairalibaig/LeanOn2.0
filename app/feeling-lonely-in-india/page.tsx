@@ -59,7 +59,7 @@ export default function FeelingLonelyInIndiaPage() {
         <div className="card">
           <h2>What helps with loneliness</h2>
           <p>Research consistently shows that feeling genuinely heard and understood is one of the most powerful antidotes to loneliness. Not advice. Not being told to &ldquo;look on the bright side.&rdquo; Just someone who sits with you in it without trying to fix it.</p>
-          <p>LeanOn&apos;s peer listeners have personally experienced loneliness. They know what it feels like to be surrounded by people and still feel completely alone. They are not trained to give advice — they are trained to listen and reflect back what they hear, without judgment.</p>
+          <p>LeanOn&apos;s peer listeners have personally experienced loneliness. They know what it feels like to be surrounded by people and still feel completely alone. They are not trained to give advice — they are screened and expected to listen and reflect back what they hear, without judgment.</p>
         </div>
 
         <div className="card">

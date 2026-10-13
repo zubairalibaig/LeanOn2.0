@@ -20,7 +20,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
   { '@type': 'ListItem', position: 3, name: 'NRI Dating USA', item: 'https://www.leanon.app/nri-dating-usa' },
 ] }
 
@@ -72,7 +72,7 @@ export default function NriDatingUsaPage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Dating USA</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Dating USA</span></nav>
         <div className="hero">
           <p className="badge">NRI Dating &middot; Indian-American &middot; Desi Love Life</p>
           <h1>Dating apps. Family pressure. <em>Two completely different instructions for your love life.</em></h1>
@@ -90,14 +90,14 @@ export default function NriDatingUsaPage() {
         <div className="section">
           <h2>What People Actually Need to Say</h2>
           <p>The things people actually need to say about NRI dating are not the things that fit into a casual conversation with friends. "I&rsquo;m afraid that if I date the person I want, it will destroy my relationship with my parents." "I&rsquo;ve been on the apps for two years and I&rsquo;m starting to feel like something is wrong with me." "I&rsquo;m in a relationship I can&rsquo;t tell anyone about and it&rsquo;s exhausting." "My parents have a shortlist and I don&rsquo;t know how to say no without breaking their hearts."</p>
-          <p>These are real. A LeanOn listener will hear them — really hear them — without judgement, without advice you didn&rsquo;t ask for, and without the community gossip risk. Sessions are anonymous and completely private. First 5 minutes free — once per listener.</p>
+          <p>These are real. A LeanOn listener will hear them — really hear them — without judgement, without advice you didn&rsquo;t ask for, and without the community gossip risk. Sessions are anonymous and completely private. First 5 minutes free — one free session per account.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>Someone who understands both instructions.</h2><p>Real Indian peer listener. Gets the NRI dating experience. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/nri-marriage-usa">NRI marriage USA &rarr;</a>
-          <a href="/desi-support-usa">Desi support USA &rarr;</a>
+          <a href="/usa">Desi support USA &rarr;</a>
           <a href="/nri-relationship-problems">NRI relationship problems &rarr;</a>
           <a href="/second-generation-indian-usa">Second gen Indian USA &rarr;</a>
         </div></div>

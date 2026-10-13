@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Talk to Someone Online in Singapore | LeanOn',
-  description: 'Need a real person to talk to in Singapore? LeanOn connects Indian expats with screened peer listeners 24/7 — in Hindi, Tamil, Telugu, and more. First 5 minutes free.',
+  description: 'Need a real person to talk to in Singapore? LeanOn connects Indian expats with screened peer listeners in India — in Hindi, Tamil, Telugu, and more. First 5 minutes free.',
   keywords: [
     'talk to someone online singapore', 'someone to talk to singapore', 'need to talk singapore',
     'online chat support singapore', 'talk to a person singapore', 'emotional support online singapore',
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Talk to Someone Online in Singapore — Real Indian Listeners | LeanOn',
-    description: 'Need a real person to talk to? LeanOn connects Indian expats in Singapore with peer listeners 24/7 — in your language, with your cultural context understood.',
+    description: 'Need a real person to talk to? LeanOn connects Indian expats in Singapore with peer listeners in India — in your language, with your cultural context understood.',
     url: 'https://www.leanon.app/singapore-talk-to-someone',
     siteName: 'LeanOn',
     type: 'article',
@@ -34,7 +34,7 @@ const faqSchema = {
       name: 'Can I talk to someone in Singapore right now?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn listeners are available 24/7. You can start a session any time of day or night — no appointment, no waiting list. Just browse available listeners and start talking.',
+        text: 'Yes. LeanOn listeners are based in India, so availability follows Indian time. You can start a session any time of day or night — no appointment, no waiting list. Just browse available listeners and start talking.',
       },
     },
     {
@@ -216,7 +216,7 @@ export default function SingaporeTalkToSomeonePage() {
 
         <div className="cta">
           <h2>A real person is ready to talk right now</h2>
-          <p>Anonymous, available 24/7, Indian listeners, your language.</p>
+          <p>Anonymous, online daily on Indian time, Indian listeners, your language.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -225,7 +225,7 @@ export default function SingaporeTalkToSomeonePage() {
           <h2>Frequently asked questions</h2>
           <div className="faq-item">
             <h3>Can I talk to someone in Singapore right now?</h3>
-            <p>Yes. LeanOn listeners are available 24/7. No appointment, no waiting list. Just browse
+            <p>Yes. LeanOn listeners are based in India, so availability follows Indian time. No appointment, no waiting list. Just browse
               available listeners and start talking.</p>
           </div>
           <div className="faq-item">

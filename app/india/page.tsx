@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: data.title,
   description: data.description,
   keywords: data.searchTerms,
-  alternates: { canonical: 'https://www.leanon.app/india', languages: { 'en-IN': 'https://www.leanon.app/india', 'x-default': 'https://www.leanon.app/india' } },
+  alternates: { canonical: 'https://www.leanon.app/india' },
   openGraph: { title: data.title, description: data.description, url: 'https://www.leanon.app/india', type: 'website', siteName: 'LeanOn' },
 }
 export default function Page() {

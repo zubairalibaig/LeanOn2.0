@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Empathy Friend India — Talk to Someone Who Actually Listens | LeanOn',
-  description: 'Find an empathetic listener online in India. Real people, trained in active listening, available from ₹160. Not a therapist. Not a bot. A human.',
+  description: 'Find an empathetic listener online in India. Real people, screened for active listening, available from ₹160. Not a therapist. Not a bot. A human.',
   keywords: ['empathy friend india', 'empathetic listener online india', 'compassionate listener online india', 'trained listener india', 'non-judgmental support india', 'online peer support india', 'peer mentoring india', 'community support india'],
   alternates: { canonical: 'https://www.leanon.app/empathy-friend-india', languages: { 'en-IN': 'https://www.leanon.app/empathy-friend-india' } },
   openGraph: {
     title: 'Empathy Friend India — Talk to Someone Who Actually Listens | LeanOn',
-    description: 'Find an empathetic listener online in India. Real people, trained in active listening, available from ₹160. Not a therapist. Not a bot. A human.',
+    description: 'Find an empathetic listener online in India. Real people, screened for active listening, available from ₹160. Not a therapist. Not a bot. A human.',
     url: 'https://www.leanon.app/empathy-friend-india',
     siteName: 'LeanOn',
     type: 'website',
@@ -25,7 +25,7 @@ const faqSchema = {
       name: 'What is an empathy friend?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'An empathy friend is someone who listens without judgment, reflects back what you are saying without trying to fix or advise, and creates a space where you feel genuinely heard. On LeanOn, peer listeners are trained in active listening and empathetic presence — they hold space rather than jumping to solutions.',
+        text: 'An empathy friend is someone who listens without judgment, reflects back what you are saying without trying to fix or advise, and creates a space where you feel genuinely heard. On LeanOn, peer listeners are screened for active listening and empathetic presence — they hold space rather than jumping to solutions.',
       },
     },
     {
@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'Is this therapy?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'No. LeanOn is peer support, not therapy. Listeners are not licensed mental health professionals. They are real people with lived experience who are trained to listen, hold space, and support — not to diagnose or treat. If you need clinical care, please see a qualified professional.',
+        text: 'No. LeanOn is peer support, not therapy. Listeners are not licensed mental health professionals. They are real people with lived experience who are screened and expected to listen, hold space, and support — not to diagnose or treat. If you need clinical care, please see a qualified professional.',
       },
     },
     {
@@ -142,7 +142,7 @@ export default function EmpathyFriendIndiaPage() {
         <div className="hero">
           <p className="tag">Empathetic Listener · India · From ₹160</p>
           <h1>Sometimes you don&apos;t need advice. <em>You need someone who actually listens.</em></h1>
-          <p className="lead">Not a therapist. Not a bot. Not a friend who will make it about themselves. A real human being who is trained to listen — to reflect, hold space, and be present with you without judgment.</p>
+          <p className="lead">Not a therapist. Not a bot. Not a friend who will make it about themselves. A real human being who is screened and expected to listen — to reflect, hold space, and be present with you without judgment.</p>
         </div>
 
         <div className="section">
@@ -209,7 +209,7 @@ export default function EmpathyFriendIndiaPage() {
           <h2>Frequently Asked Questions</h2>
           <div className="faq-item">
             <div className="faq-q">What is an empathy friend?</div>
-            <div className="faq-a">An empathy friend is someone who listens without judgment, reflects back what you are saying without trying to fix or advise, and creates a space where you feel genuinely heard. On LeanOn, peer listeners are trained in active listening and empathetic presence.</div>
+            <div className="faq-a">An empathy friend is someone who listens without judgment, reflects back what you are saying without trying to fix or advise, and creates a space where you feel genuinely heard. On LeanOn, peer listeners are screened for active listening and empathetic presence.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">How do I find an empathetic listener online in India?</div>

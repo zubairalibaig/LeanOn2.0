@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support for Indians in Oman | LeanOn',
-  description: 'Feeling lonely or overwhelmed in Oman? LeanOn connects Indian expats with a trained Indian peer listener — in your language, 24/7, starting with a free 5-minute trial.',
+  description: 'Feeling lonely or overwhelmed in Oman? LeanOn connects Indian expats with a screened Indian peer listener — in your language, on Indian time, starting with a free 5-minute trial.',
   keywords: [
     'emotional support Oman Indian', 'lonely in Oman Indian', 'Indian expat Oman loneliness',
     'talk to someone Oman', 'Oman NRI support', 'feeling isolated Oman',
@@ -176,7 +176,7 @@ export default function OmanLonelinessPage() {
 
         <div className="night-box">
           <h2>🌙 Late night in Muscat, Salalah, or Sohar?</h2>
-          <p>LeanOn listeners are available 24/7. India and Oman share a very similar time zone —
+          <p>LeanOn listeners are based in India, so availability follows Indian time. India and Oman share a very similar time zone —
             which means Indian listeners are awake and available whenever you need them.</p>
           <p>Start with a free 5 minutes. No payment required to begin.</p>
           <a href="/browse" className="cta-night">Find an Indian listener now →</a>
@@ -196,14 +196,14 @@ export default function OmanLonelinessPage() {
             <li>15-minute session — OMR 4</li>
             <li>30-minute session — OMR 6</li>
             <li>45-minute session — OMR 8</li>
-            <li>First 5 minutes free — once per listener</li>
+            <li>First 5 minutes free — one free session per account</li>
           </ul>
           <p style={{ marginTop: '12px' }}>Anonymous. No subscription. Pay only for what you use.</p>
         </div>
 
         <div className="cta">
           <h2>Someone is listening — right now</h2>
-          <p>Available 24/7 for Indians across Oman — in your language, anonymously.</p>
+          <p>Listeners online daily (Indian time) for Indians across Oman — in your language, anonymously.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>

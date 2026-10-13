@@ -6,8 +6,8 @@ export const metadata: Metadata = {
   title: 'Support for NRIs & Indians Abroad | Talk to Someone Who Gets It | LeanOn',
   description: 'Feeling disconnected abroad? LeanOn connects you with Indian peer listeners who understand the NRI experience — family pressure, cultural isolation, and the longing for home.',
   keywords: ['nri support', 'indian support abroad', 'talk to someone indian', 'nri emotional support', 'indian diaspora support', 'nri loneliness', 'indian abroad support'],
-  alternates: { canonical: 'https://www.leanon.app/nri-support' },
-  openGraph: { title: 'Support for NRIs & Indians Abroad | Talk to Someone Who Gets It | LeanOn', description: 'Feeling disconnected abroad? LeanOn connects you with Indian peer listeners who understand the NRI experience — family pressure, cultural isolation, and the longing for home.', url: 'https://www.leanon.app/nri-support', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
+  alternates: { canonical: 'https://www.leanon.app/indian-emotional-support-abroad' },
+  openGraph: { title: 'Support for NRIs & Indians Abroad | Talk to Someone Who Gets It | LeanOn', description: 'Feeling disconnected abroad? LeanOn connects you with Indian peer listeners who understand the NRI experience — family pressure, cultural isolation, and the longing for home.', url: 'https://www.leanon.app/indian-emotional-support-abroad', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
 }
 
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
@@ -20,7 +20,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'Support for NRIs & Indians Abroad', item: 'https://www.leanon.app/nri-support' },
+  { '@type': 'ListItem', position: 2, name: 'Support for NRIs & Indians Abroad', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
 ] }
 
 const S = `

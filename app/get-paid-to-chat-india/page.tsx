@@ -89,7 +89,7 @@ export default function GetPaidToChatIndia() {
 
         <div className="section">
           <h2>What a LeanOn listener actually does</h2>
-          <p>A listener is a trained peer supporter — someone who uses their own lived experience to hold space for people going through loneliness, grief, anxiety, burnout, relationship pain, or career confusion. The core skill is empathy: truly hearing someone, without judgement, without rushing to fix.</p>
+          <p>A listener is a screened peer supporter — someone who uses their own lived experience to hold space for people going through loneliness, grief, anxiety, burnout, relationship pain, or career confusion. The core skill is empathy: truly hearing someone, without judgement, without rushing to fix.</p>
           <p>Every application is personally reviewed. We look for emotional maturity, a genuine desire to help, and the ability to hold a difficult conversation with care. This is meaningful, skilled work — and we pay for it accordingly.</p>
           <p>Sessions are 5 to 45 minutes. You set your own hours and your own rate. Earnings are credited to your wallet after each session and paid out via UPI.</p>
         </div>

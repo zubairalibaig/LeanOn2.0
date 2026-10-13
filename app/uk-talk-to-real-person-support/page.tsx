@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Talk to a Real Person About Your Problems — Not an AI | LeanOn UK',
-  description: 'LeanOn connects people in the UK with real peer listeners — humans with lived experience, not AI chatbots. Available 24/7, first 5 minutes free. From £8 for 15 min.',
+  description: 'LeanOn connects people in the UK with real peer listeners — humans with lived experience, not AI chatbots. Listeners online daily (Indian time), first 5 minutes free. From £8 for 15 min.',
   keywords: [
     'talk to real person UK', 'human support not AI UK', 'someone to talk to in the UK',
     'real person emotional support UK', 'alternative to therapy UK', 'peer support UK',
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Talk to a Real Person About Your Problems — Not an AI | LeanOn UK',
-    description: "You don't need another app. You need a real human who listens. LeanOn — vetted human peer listeners, available 24/7, first 5 min free.",
+    description: "You don't need another app. You need a real human who listens. LeanOn — vetted human peer listeners, online daily on Indian time, first 5 min free.",
     url: 'https://www.leanon.app/uk-talk-to-real-person-support',
     siteName: 'LeanOn',
     type: 'article',
@@ -27,7 +27,7 @@ const serviceSchema = {
   '@context': 'https://schema.org',
   '@type': 'Service',
   name: 'LeanOn — Real Human Peer Support for the United Kingdom',
-  description: 'LeanOn connects people in the United Kingdom feeling lonely, overwhelmed, or emotionally stuck with real human peer listeners — not AI chatbots. Available 24/7, first 5 minutes free, no NHS waiting list.',
+  description: 'LeanOn connects people in the United Kingdom feeling lonely, overwhelmed, or emotionally stuck with real human peer listeners — not AI chatbots. Listeners online daily (Indian time), first 5 minutes free, no NHS waiting list.',
   provider: { '@type': 'Organization', name: 'LeanOn', url: 'https://www.leanon.app' },
   serviceType: 'Peer Emotional Support',
   areaServed: 'United Kingdom',
@@ -60,7 +60,7 @@ const faqSchema = {
       name: 'Where can I find a real person to talk to about loneliness in the UK?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn connects people in the UK with real peer listeners — humans with lived experience, not AI chatbots. Available 24/7, first 5 minutes free, starting at £8 for 15 minutes.',
+        text: 'LeanOn connects people in the UK with real peer listeners — humans with lived experience, not AI chatbots. Listeners online daily (Indian time), first 5 minutes free, starting at £8 for 15 minutes.',
       },
     },
     {
@@ -84,7 +84,7 @@ const faqSchema = {
       name: 'Can I talk to someone about loneliness in the UK late at night?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: "Yes. LeanOn listeners are available 24/7. Late nights and early mornings when loneliness is hardest — that's exactly when LeanOn is there.",
+        text: "Yes. LeanOn listeners are based in India, so availability follows Indian time. Late nights and early mornings when loneliness is hardest — that's exactly when LeanOn is there.",
       },
     },
     {
@@ -296,7 +296,7 @@ export default function UKTalkToRealPersonPage() {
           <div className="faq-item">
             <h3>Where can I find a real person to talk to about loneliness in the UK?</h3>
             <p>LeanOn connects people in the UK with real peer listeners — humans with lived experience,
-              not AI chatbots. Available 24/7, first 5 minutes free, starting at £8 for 15 minutes.</p>
+              not AI chatbots. Listeners online daily (Indian time), first 5 minutes free, starting at £8 for 15 minutes.</p>
           </div>
           <div className="faq-item">
             <h3>Is there an affordable alternative to therapy in the UK for emotional support?</h3>
@@ -311,7 +311,7 @@ export default function UKTalkToRealPersonPage() {
           </div>
           <div className="faq-item">
             <h3>Can I talk to someone about loneliness in the UK late at night?</h3>
-            <p>Yes. LeanOn listeners are available 24/7. Late nights and early mornings when loneliness
+            <p>Yes. LeanOn listeners are based in India, so availability follows Indian time. Late nights and early mornings when loneliness
               is hardest — that&apos;s exactly when LeanOn is there.</p>
           </div>
           <div className="faq-item">
@@ -324,14 +324,13 @@ export default function UKTalkToRealPersonPage() {
 
         <div className="related">
           <a href="/uk-loneliness">Loneliness in the UK →</a>
-          <a href="/uk-nri-support">NRI support in the UK →</a>
+          <a href="/uk">NRI support in the UK →</a>
           <a href="/talk-to-human-instead-of-chatgpt">Human vs AI support →</a>
           <a href="/vent-to-a-real-person-online">Vent to a real person →</a>
         </div>
 
         <div className="disclaimer">
-          ⚠️ If you&apos;re in crisis or thinking about self-harm, please call{' '}
-          <strong>Samaritans: 116 123</strong> (free, 24/7).<br />
+          ⚠️ If you&apos;re in crisis or thinking about self-harm, please contact your local emergency services right away. In India: <strong>NIMHANS 080-46110007</strong> · <strong>Tele-MANAS 14416</strong>.<br />
           LeanOn is peer support — not a substitute for professional mental health care or emergency services.
         </div>
       </div>

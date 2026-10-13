@@ -146,7 +146,7 @@ export default function VisakhapatnamPage() {
         <div className="section">
           <h2>How LeanOn Works in Visakhapatnam</h2>
           <p>Browse listener profiles at <a href="/browse" style={{color:'var(--teal)',fontWeight:700}}>leanon.app/browse</a>. Choose a listener whose background resonates with your situation. Start a session &mdash; the first 5 minutes are free. Sessions start at &#8377;160 for 15 minutes, available any time, from your phone.</p>
-          <p>The listener is a real Indian person, trained in active listening. They have no connection to your family, your employer, or your community. What you say stays in the session.</p>
+          <p>The listener is a real Indian person, screened for active listening. They have no connection to your family, your employer, or your community. What you say stays in the session.</p>
         </div>
         <div className="section">
           <h2>Frequently Asked Questions</h2>

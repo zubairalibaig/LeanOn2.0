@@ -31,7 +31,7 @@ const data: ReadyToTalkLandingData = {
   "why": [
     "LeanOn is built around one-to-one peer support. It is not positioned as therapy, counselling or an AI companion.",
     "You choose a listener rather than receiving a generic response. The goal is a human conversation where you can talk, vent, reflect or simply not feel alone for a while.",
-    "You can start without committing to a long programme: one free 5-minute introduction is available with each new listener, followed by paid time only if you choose to continue."
+    "You can start without committing to a long programme: one free 5-minute introduction is available per account, followed by paid time only if you choose to continue."
   ],
   "fitTitle": "A conversation may be useful when…",
   "fit": [
@@ -53,7 +53,7 @@ const data: ReadyToTalkLandingData = {
     },
     {
       "q": "How much does it cost?",
-      "a": "New seekers can start with one free 5-minute introductory session with each new listener. Paid sessions currently start at ₹160 for 15 minutes, with the applicable price shown before you continue."
+      "a": "New seekers can start with one free 5-minute introductory session (one per account). Paid sessions currently start at ₹160 for 15 minutes, with the applicable price shown before you continue."
     },
     {
       "q": "Do I have to explain everything before starting?",

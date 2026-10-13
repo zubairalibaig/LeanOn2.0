@@ -160,7 +160,7 @@ export default function EmotionalAbuseIndiaPage() {
         <div className="section">
           <h2>Who You Can Talk To</h2>
           <p>You cannot always talk to family &mdash; they are often inside the same system, or they will tell you to adjust. You may not be ready for a therapist. You may not want the social consequences of telling friends.</p>
-          <p>A LeanOn listener is a trained peer with no connection to your life. They will not judge. They will not tell you to adjust. They will not tell anyone. They will just listen while you say what you have been holding.</p>
+          <p>A LeanOn listener is a screened peer with no connection to your life. They will not judge. They will not tell you to adjust. They will not tell anyone. They will just listen while you say what you have been holding.</p>
           <p>That act of being genuinely heard &mdash; by someone with no stake in the outcome &mdash; is often the beginning of clarity.</p>
         </div>
 

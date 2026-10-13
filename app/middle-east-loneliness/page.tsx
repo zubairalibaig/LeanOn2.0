@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Middle East Loneliness Support for Indians — Talk in Your Language',
-    description: 'Far from home in the Middle East and feeling the weight of it? LeanOn peer listeners are Indian, speak your language, and are available 24/7. First 5 minutes free.',
+    description: 'Far from home in the Middle East and feeling the weight of it? LeanOn peer listeners are Indian, speak your language, and are online daily on Indian time. First 5 minutes free.',
     url: 'https://www.leanon.app/middle-east-loneliness',
     siteName: 'LeanOn',
     type: 'article',
@@ -42,7 +42,7 @@ const faqSchema = {
       name: 'How does LeanOn help with loneliness?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Loneliness shrinks when someone genuinely listens. LeanOn listeners are trained to give you their full attention, ask questions that make you feel seen, and hold space without judgment. A single real conversation can break the cycle of isolation — even temporarily.',
+        text: 'Loneliness shrinks when someone genuinely listens. LeanOn listeners are screened and expected to give you their full attention, ask questions that make you feel seen, and hold space without judgment. A single real conversation can break the cycle of isolation — even temporarily.',
       },
     },
     {
@@ -58,7 +58,7 @@ const faqSchema = {
       name: 'What does LeanOn cost across the Middle East?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'From the UAE: AED 37/55/74 for 15/30/45 min. Kuwait: KD 4/5/7. Oman: OMR 4/6/8. Available everywhere in the Middle East — Saudi Arabia, Qatar, Bahrain, and beyond. First 5 minutes free — once per listener.',
+        text: 'From the UAE: AED 37/55/74 for 15/30/45 min. Kuwait: KD 4/5/7. Oman: OMR 4/6/8. Available everywhere in the Middle East — Saudi Arabia, Qatar, Bahrain, and beyond. First 5 minutes free — one free session per account.',
       },
     },
     {
@@ -195,14 +195,14 @@ export default function MiddleEastLonelinessPage() {
             <li>UAE: AED 37 / AED 55 / AED 74 for 15/30/45 min</li>
             <li>Kuwait: KD 4 / KD 5 / KD 7 for 15/30/45 min</li>
             <li>Oman: OMR 4 / OMR 6 / OMR 8 for 15/30/45 min</li>
-            <li>First 5 minutes free — once per listener</li>
+            <li>First 5 minutes free — one free session per account</li>
           </ul>
           <p style={{ marginTop: '12px' }}>Also available in Saudi Arabia, Qatar, and Bahrain. Anonymous and no subscription required.</p>
         </div>
 
         <div className="cta">
           <h2>Someone is ready to listen — right now</h2>
-          <p>For Indians across the entire Middle East — available 24/7, in your language.</p>
+          <p>For Indians across the entire Middle East — online daily on Indian time, in your language.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -227,7 +227,7 @@ export default function MiddleEastLonelinessPage() {
           <div className="faq-item">
             <h3>What does LeanOn cost across the Middle East?</h3>
             <p>UAE: AED 37/55/74. Kuwait: KD 4/5/7. Oman: OMR 4/6/8. Available in Saudi Arabia, Qatar, and
-              Bahrain too. First 5 minutes free — once per listener.</p>
+              Bahrain too. First 5 minutes free — one free session per account.</p>
           </div>
           <div className="faq-item">
             <h3>Is LeanOn available late at night from the Middle East?</h3>

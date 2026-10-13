@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Mental Health Support for South Asians in the UK',
-    description: 'Breaking the taboo around mental health in South Asian communities in the UK. Peer listeners who understand your culture, available 24/7.',
+    description: 'Breaking the taboo around mental health in South Asian communities in the UK. Peer listeners who understand your culture, online daily on Indian time.',
     url: 'https://www.leanon.app/uk-mental-health-south-asian',
     siteName: 'LeanOn',
     type: 'article',
@@ -200,7 +200,7 @@ export default function UkMentalHealthSouthAsianPage() {
 
         <div className="cta">
           <h2>You are allowed to ask for support</h2>
-          <p>South Asian peer listeners in the UK — available 24/7, completely confidential.</p>
+          <p>South Asian peer listeners in the UK — online daily on Indian time, completely confidential.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -239,7 +239,7 @@ export default function UkMentalHealthSouthAsianPage() {
           <a href="/uk-loneliness">Loneliness support UK →</a>
           <a href="/uk-empathy-listener">Empathy listener UK →</a>
           <a href="/british-indian-support">British Indian identity →</a>
-          <a href="/uk-nri-support">NRI support UK →</a>
+          <a href="/uk">NRI support UK →</a>
           <a href="/uk-talk-to-someone">Talk to someone UK →</a>
           <a href="/uk-rant-to-someone">Need to rant? →</a>
         </div>

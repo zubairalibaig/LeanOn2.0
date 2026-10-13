@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'Is it possible to talk about work stress on LeanOn without it becoming career advice?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes — and this is specifically what LeanOn peer listeners are trained to offer. Not career coaching, not advice about what to do, not a to-do list. A real person who listens to what you are actually experiencing — the stress, the exhaustion, the feeling of being invisible at home while performing perfectly at work — and receives it without trying to fix it.',
+        text: 'Yes — and this is specifically what LeanOn peer listeners are screened and expected to offer. Not career coaching, not advice about what to do, not a to-do list. A real person who listens to what you are actually experiencing — the stress, the exhaustion, the feeling of being invisible at home while performing perfectly at work — and receives it without trying to fix it.',
       },
     },
     {

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
     {'@type': 'Question', name: 'Is it okay to just vent without wanting advice?', acceptedAnswer: {'@type': 'Answer', text: 'Yes. Many sessions on LeanOn are exactly this &mdash; someone needed to say what they were carrying and be heard. No advice, no solutions. Just genuine listening. That is a complete and valuable use of peer support.'}},
-    {'@type': 'Question', name: 'How is this different from just talking to a friend?', acceptedAnswer: {'@type': 'Answer', text: 'Friends have their own responses, their own tiredness, their own opinions. A trained listener\'s job is to receive what you are saying fully, without their own stuff getting in the way. The result feels different &mdash; more received, less managed.'}},
+    {'@type': 'Question', name: 'How is this different from just talking to a friend?', acceptedAnswer: {'@type': 'Answer', text: 'Friends have their own responses, their own tiredness, their own opinions. A screened listener\'s job is to receive what you are saying fully, without their own stuff getting in the way. The result feels different &mdash; more received, less managed.'}},
     {'@type': 'Question', name: 'How much does it cost?', acceptedAnswer: {'@type': 'Answer', text: 'Sessions start at ₹160. First 5 minutes free.'}}
 ] }
 

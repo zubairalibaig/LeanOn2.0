@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'What is an empathy listener and how is it different from a therapist?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'An empathy listener is a trained peer who gives you their full, undivided attention — without judgment, without trying to fix you, and without clinical distance. They reflect what they hear, ask gentle questions, and help you feel genuinely seen. A therapist works on diagnosis and treatment. An empathy listener works on connection and being truly heard.',
+        text: 'An empathy listener is a screened peer who gives you their full, undivided attention — without judgment, without trying to fix you, and without clinical distance. They reflect what they hear, ask gentle questions, and help you feel genuinely seen. A therapist works on diagnosis and treatment. An empathy listener works on connection and being truly heard.',
       },
     },
     {
@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'How much does a session cost from the Gulf?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'From the UAE: AED 37 for 15 min, AED 55 for 30 min, AED 74 for 45 min. From Kuwait: KD 4 / KD 5 / KD 7. From Oman: OMR 4 / OMR 6 / OMR 8. First 5 minutes are free — once per listener.',
+        text: 'From the UAE: AED 37 for 15 min, AED 55 for 30 min, AED 74 for 45 min. From Kuwait: KD 4 / KD 5 / KD 7. From Oman: OMR 4 / OMR 6 / OMR 8. First 5 minutes are free — one free session per account.',
       },
     },
     {
@@ -178,8 +178,8 @@ export default function MiddleEastEmpathyListenerPage() {
           <h2>💬 What genuine empathy feels like</h2>
           <p>When someone truly listens — when they ask &quot;what do you mean by that?&quot; and &quot;how did
             that make you feel?&quot; — something shifts. You do not just feel lighter. You feel real again.
-            That is what LeanOn listeners are trained to give you.</p>
-          <p>Available 24/7. In your language. From anywhere in the Gulf.</p>
+            That is what LeanOn listeners are screened and expected to give you.</p>
+          <p>Listeners online daily (Indian time). In your language. From anywhere in the Gulf.</p>
           <a href="/browse" className="cta-night">Find an empathy listener now →</a>
         </div>
 
@@ -198,7 +198,7 @@ export default function MiddleEastEmpathyListenerPage() {
             <li>UAE: AED 37 / AED 55 / AED 74 for 15/30/45 min</li>
             <li>Kuwait: KD 4 / KD 5 / KD 7 for 15/30/45 min</li>
             <li>Oman: OMR 4 / OMR 6 / OMR 8 for 15/30/45 min</li>
-            <li>First 5 minutes free — once per listener</li>
+            <li>First 5 minutes free — one free session per account</li>
           </ul>
         </div>
 
@@ -213,7 +213,7 @@ export default function MiddleEastEmpathyListenerPage() {
           <h2>Frequently asked questions</h2>
           <div className="faq-item">
             <h3>What is an empathy listener and how is it different from a therapist?</h3>
-            <p>An empathy listener is a trained peer who gives you full, undivided attention without judgment.
+            <p>An empathy listener is a screened peer who gives you full, undivided attention without judgment.
               A therapist works on diagnosis and treatment. An empathy listener works on connection — helping
               you feel genuinely seen and heard.</p>
           </div>

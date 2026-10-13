@@ -38,7 +38,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'What if I can\'t explain why I\'m overwhelmed?',
-      acceptedAnswer: { '@type': 'Answer', text: 'That is more common than you might think — and it is completely fine. Overwhelm often does not have one clean cause. It is the accumulation of many small things over time. You do not need to know the reason, and you do not need to arrive with an explanation. You can say "I don\'t even know where to start" — and that is a fine place to start. Listeners on LeanOn are trained to sit with ambiguity and help you find the shape of what you\'re carrying.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'That is more common than you might think — and it is completely fine. Overwhelm often does not have one clean cause. It is the accumulation of many small things over time. You do not need to know the reason, and you do not need to arrive with an explanation. You can say "I don\'t even know where to start" — and that is a fine place to start. Listeners on LeanOn are screened and expected to sit with ambiguity and help you find the shape of what you\'re carrying.' },
     },
     {
       '@type': 'Question',

@@ -97,8 +97,8 @@ export default function NriLonelinessUkPage() {
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>The loneliness you cannot quite name has a name.</h2><p>A real Indian peer listener who understands. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
-          <a href="/indians-in-uk">Indians in the UK &rarr;</a>
-          <a href="/nri-support">NRI support &rarr;</a>
+          <a href="/uk">Indians in the UK &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
           <a href="/nri-mental-health">NRI mental health &rarr;</a>
           <a href="/indian-diaspora-support">Indian diaspora support &rarr;</a>
         </div></div>

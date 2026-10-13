@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Talk to Someone Online in Oman | LeanOn',
-  description: 'Need a real person to talk to in Oman? LeanOn connects Indian expats in Muscat and across Oman with screened peer listeners 24/7 — in your language. First 5 minutes free.',
+  description: 'Need a real person to talk to in Oman? LeanOn connects Indian expats in Muscat and across Oman with screened peer listeners in India — in your language. First 5 minutes free.',
   keywords: [
     'talk to someone online oman', 'someone to talk to oman', 'need to talk oman',
     'online chat support oman', 'talk to a person oman', 'emotional support oman indian',
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Talk to Someone Online in Oman — Real Indian Listeners | LeanOn',
-    description: 'Need a real person to talk to in Oman? LeanOn connects Indian expats with peer listeners 24/7 — in your language, with no judgment.',
+    description: 'Need a real person to talk to in Oman? LeanOn connects Indian expats with peer listeners in India — in your language, with no judgment.',
     url: 'https://www.leanon.app/oman-talk-to-someone',
     siteName: 'LeanOn',
     type: 'article',
@@ -34,7 +34,7 @@ const faqSchema = {
       name: 'Can I talk to someone in Oman right now?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn listeners are available 24/7. No appointment needed. Browse listeners who are online and start a conversation immediately — the first 5 minutes of your account are free.',
+        text: 'Yes. LeanOn listeners are based in India, so availability follows Indian time. No appointment needed. Browse listeners who are online and start a conversation immediately — the first 5 minutes of your account are free.',
       },
     },
     {

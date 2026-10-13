@@ -19,7 +19,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
   { '@type': 'ListItem', position: 3, name: 'NRI Anxiety Abroad', item: 'https://www.leanon.app/nri-anxiety-abroad' },
 ] }
 
@@ -71,7 +71,7 @@ export default function NriAnxietyAbroadPage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Anxiety Abroad</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Anxiety Abroad</span></nav>
         <div className="hero">
           <p className="badge">NRI Anxiety &middot; Immigration Stress &middot; Desi Abroad</p>
           <h1>The H-1B. The performance. The family back home watching. <em>No wonder you&rsquo;re anxious.</em></h1>
@@ -89,15 +89,15 @@ export default function NriAnxietyAbroadPage() {
         <div className="section">
           <h2>What You Need Is to Be Heard</h2>
           <p>There are very few places where NRI anxiety can be voiced honestly. Your manager cannot hear it — your job depends on seeming fine. Your parents cannot hear it — they would worry or feel responsible. Your Indian community friends are performing the same fine-ness. The result is a private anxiety carried alone.</p>
-          <p>A real Indian peer listener at LeanOn can hear all of this — the visa fear, the performance pressure, the family expectation, the quiet question underneath — without judgment, without advice you didn&rsquo;t ask for, and without telling you to be grateful. Listeners are available when India is in the evening (morning US time, afternoon UK time). Anonymous. First 5 minutes free — once per listener.</p>
+          <p>A real Indian peer listener at LeanOn can hear all of this — the visa fear, the performance pressure, the family expectation, the quiet question underneath — without judgment, without advice you didn&rsquo;t ask for, and without telling you to be grateful. Listeners are available when India is in the evening (morning US time, afternoon UK time). Anonymous. First 5 minutes free — one free session per account.</p>
         </div>
 
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>The NRI anxiety, finally heard.</h2><p>Real Indian peer listener. Understands visa, performance, and family pressure. First 5 minutes free. From US$10.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
-          <a href="/nri-support">NRI support &rarr;</a>
-          <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>
-          <a href="/desi-support-usa">Desi support USA &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
+          <a href="/usa-loneliness">NRI loneliness USA &rarr;</a>
+          <a href="/usa">Desi support USA &rarr;</a>
           <a href="/nri-identity-crisis">NRI identity &rarr;</a>
         </div></div>
         <div className="crisis"><strong>In a crisis?</strong> NIMHANS: 080-46110007 &nbsp;&middot;&nbsp; Tele-MANAS: 14416 &nbsp;&middot;&nbsp; Both free, 24/7.</div>

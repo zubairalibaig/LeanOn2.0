@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'Is talking to a real person online safe and anonymous in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. On LeanOn, you do not need to share your name, city, or any personal details. Listeners are verified, trained in active listening, and sign confidentiality agreements. Sessions are private by design. You can talk about anything — your family, your relationship, your darkest thoughts — without fear of judgment or disclosure.',
+        text: 'Yes. On LeanOn, you do not need to share your name, city, or any personal details. Listeners are verified, screened for active listening, and sign confidentiality agreements. Sessions are private by design. You can talk about anything — your family, your relationship, your darkest thoughts — without fear of judgment or disclosure.',
       },
     },
     {
@@ -243,7 +243,7 @@ export default function ChatWithRealPersonPage() {
           <p>No appointment, no waitlist. Click &ldquo;Talk now&rdquo; and your session begins within seconds. You can talk via text or voice — whatever feels most natural.</p>
 
           <h3>Step 3: Be Heard</h3>
-          <p>Your listener is trained in active listening and guided by their own lived experience. You are not getting scripted responses — you are having a real conversation with someone who genuinely cares about what you are going through.</p>
+          <p>Your listener is screened for active listening and guided by their own lived experience. You are not getting scripted responses — you are having a real conversation with someone who genuinely cares about what you are going through.</p>
 
           <h3>Available 24/7 Across India</h3>
           <p>Listeners are available all day, every day — including at 2 AM when most professional services are closed and the weight of feeling alone is heaviest. No insurance required, no prescription needed, no judgement.</p>

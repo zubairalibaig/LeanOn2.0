@@ -209,7 +209,7 @@ export default function SupportHubPage() {
         {/* Intro section */}
         <div className="intro-section">
           <h2>Why Peer Support Works</h2>
-          <p>Unlike therapy, peer support connects you with real people who have lived through similar challenges. On LeanOn, listeners are verified, trained in active listening, and available 24/7 — including at 2 AM when professional help is not reachable. Sessions start at ₹160 with a short trial session available for new users.</p>
+          <p>Unlike therapy, peer support connects you with real people who have lived through similar challenges. On LeanOn, listeners are verified, screened for active listening, and available 24/7 — including at 2 AM when professional help is not reachable. Sessions start at ₹160 with a short trial session available for new users.</p>
         </div>
 
         {/* CTA */}

@@ -65,7 +65,7 @@ const faqSchema = {
       name: 'What if I just want to talk — no specific problem, just feeling low?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'That is exactly what LeanOn is for. You do not need a crisis or a defined problem. Feeling low, empty, or disconnected is a perfectly valid reason to reach out. LeanOn listeners are trained to sit with you in those moments without judgment.',
+        text: 'That is exactly what LeanOn is for. You do not need a crisis or a defined problem. Feeling low, empty, or disconnected is a perfectly valid reason to reach out. LeanOn listeners are screened and expected to sit with you in those moments without judgment.',
       },
     },
   ],
@@ -203,7 +203,7 @@ export default function DubaiLonelinessPage() {
 
         <div className="cta">
           <h2>Someone is ready to listen — right now</h2>
-          <p>Anonymous, affordable, available 24/7 for Indians in Dubai and across the UAE.</p>
+          <p>Anonymous, affordable, online daily on Indian time for Indians in Dubai and across the UAE.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>

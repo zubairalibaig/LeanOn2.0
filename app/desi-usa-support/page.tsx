@@ -12,13 +12,13 @@ export const metadata: Metadata = {
     'desi emotional health usa', 'desi american talk to someone',
   ],
   alternates: {
-    canonical: 'https://www.leanon.app/desi-usa-support',
-    languages: { 'en-US': 'https://www.leanon.app/desi-usa-support' },
+    canonical: 'https://www.leanon.app/usa',
+    languages: { 'en-US': 'https://www.leanon.app/usa' },
   },
   openGraph: {
     title: 'Support for the Desi Community in the USA — When No One Understands',
     description: 'The desi emotional experience in America is specific. LeanOn peer listeners are from the community — no explaining, no blank looks, just warmth and understanding.',
-    url: 'https://www.leanon.app/desi-usa-support',
+    url: 'https://www.leanon.app/usa',
     siteName: 'LeanOn',
     type: 'article',
   },
@@ -76,7 +76,7 @@ const breadcrumbSchema = {
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'Desi Support USA', item: 'https://www.leanon.app/desi-usa-support' },
+    { '@type': 'ListItem', position: 2, name: 'Desi Support USA', item: 'https://www.leanon.app/usa' },
   ],
 }
 
@@ -237,10 +237,10 @@ export default function DesiUsaSupportPage() {
         </div>
 
         <div className="related">
-          <a href="/indian-american-loneliness">Indian-American loneliness →</a>
+          <a href="/usa-loneliness">Indian-American loneliness →</a>
           <a href="/usa-loneliness">Feeling lonely in the USA →</a>
           <a href="/usa-empathy-listener">Empathy listener →</a>
-          <a href="/usa-nri-support">NRI emotional support →</a>
+          <a href="/usa">NRI emotional support →</a>
           <a href="/usa-rant-to-someone">Need to rant? →</a>
           <a href="/usa-therapy-alternative">Therapy alternative →</a>
         </div>

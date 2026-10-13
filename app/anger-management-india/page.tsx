@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'What if I say something awful?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn listeners are trained to hold space without reactivity. They will not judge you for what you say in a session — that is the point. You can express the actual version of how you feel, not the acceptable summary.',
+        text: 'LeanOn listeners are screened and expected to hold space without reactivity. They will not judge you for what you say in a session — that is the point. You can express the actual version of how you feel, not the acceptable summary.',
       },
     },
     {
@@ -187,7 +187,7 @@ export default function AngerManagementIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">What if I say something awful?</div>
-            <div className="faq-a">LeanOn listeners are trained to hold space without reactivity. They will not judge you for what you say in a session. You can express the actual version of how you feel.</div>
+            <div className="faq-a">LeanOn listeners are screened and expected to hold space without reactivity. They will not judge you for what you say in a session. You can express the actual version of how you feel.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is this anger management therapy?</div>

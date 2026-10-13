@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'NRI Support for Indians in Oman | Emotional Support Online | LeanOn',
-  description: 'Emotional support for Indians living and working in Oman. Talk anonymously to a trained Indian peer listener who understands the Gulf expat experience. Free trial.',
+  description: 'Emotional support for Indians living and working in Oman. Talk anonymously to a screened Indian peer listener who understands the Gulf expat experience. Free trial.',
   keywords: [
     'NRI support Oman', 'Indian expat Oman emotional support', 'Indians in Oman lonely',
     'Oman Indian mental health', 'Gulf NRI support Oman', 'Indians working in Oman',
@@ -34,7 +34,7 @@ const faqSchema = {
       name: 'Is there emotional support available for Indians in Oman?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn connects you with trained Indian peer listeners who understand Gulf expat life. Sessions are anonymous, available 24/7, and start with a free 5 minutes. No appointment needed.',
+        text: 'Yes. LeanOn connects you with screened Indian peer listeners who understand Gulf expat life. Sessions are anonymous, online daily on Indian time, and start with a free 5 minutes. No appointment needed.',
       },
     },
     {

@@ -25,7 +25,7 @@ const faqSchema = {
       name: 'Is LeanOn safe for teenagers?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn is designed to be safe and anonymous. Listeners are trained, sessions are confidential, and there is no sharing of information with parents or schools. For anyone in crisis, LeanOn always refers to professional helplines: NIMHANS (080-46110007) and Tele-MANAS (14416).',
+        text: 'Yes. LeanOn is designed to be safe and anonymous. Listeners are screened, sessions are confidential, and there is no sharing of information with parents or schools. For anyone in crisis, LeanOn always refers to professional helplines: NIMHANS (080-46110007) and Tele-MANAS (14416).',
       },
     },
     {
@@ -179,7 +179,7 @@ export default function TeenMentalHealthIndiaPage() {
           <h2>Frequently Asked Questions</h2>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn safe for teenagers?</div>
-            <div className="faq-a">Yes. LeanOn is anonymous and confidential. Listeners are trained, sessions are private, and no information is shared with parents or schools. For anyone in crisis, LeanOn always refers to NIMHANS (080-46110007) and Tele-MANAS (14416).</div>
+            <div className="faq-a">Yes. LeanOn is anonymous and confidential. Listeners are screened, sessions are private, and no information is shared with parents or schools. For anyone in crisis, LeanOn always refers to NIMHANS (080-46110007) and Tele-MANAS (14416).</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Will my parents know?</div>

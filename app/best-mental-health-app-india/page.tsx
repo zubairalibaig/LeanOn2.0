@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'What is the difference between a peer listener and a therapist?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'A therapist is a licensed mental health professional who can diagnose and treat conditions using clinical methods. A peer listener is a real person with lived experience who is trained to listen and provide human support — not to diagnose or prescribe. Therapists are for clinical needs. Peer listeners are for the emotional weight most people carry day to day.',
+        text: 'A therapist is a licensed mental health professional who can diagnose and treat conditions using clinical methods. A peer listener is a real person with lived experience who is screened and expected to listen and provide human support — not to diagnose or prescribe. Therapists are for clinical needs. Peer listeners are for the emotional weight most people carry day to day.',
       },
     },
     {

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Someone to Talk to in Canada — Real Human, Not a Chatbot | LeanOn',
-    description: 'When you need to talk, you need a real person. LeanOn peer listeners are available 24/7 — warm, trained, and genuinely present.',
+    description: 'When you need to talk, you need a real person. LeanOn peer listeners are online daily on Indian time — warm, trained, and genuinely present.',
     url: 'https://www.leanon.app/canada-talk-to-someone',
     siteName: 'LeanOn',
     type: 'article',
@@ -199,7 +199,7 @@ export default function CanadaTalkToSomeonePage() {
             <li>CA$14 for 15 min &nbsp;·&nbsp; CA$21 for 30 min &nbsp;·&nbsp; CA$28 for 45 min</li>
             <li>Real humans every time — we do not use AI in sessions</li>
             <li>Anonymous — your name and story are yours</li>
-            <li>Available 24/7 across all of Canada</li>
+            <li>Listeners online daily (Indian time) across all of Canada</li>
           </ul>
         </div>
 
@@ -243,8 +243,8 @@ export default function CanadaTalkToSomeonePage() {
           <a href="/canada-loneliness">Loneliness in Canada →</a>
           <a href="/canada-empathy-listener">Empathy listener →</a>
           <a href="/canada-rant-to-someone">Need to rant? →</a>
-          <a href="/canada-nri-support">NRI emotional support →</a>
-          <a href="/desi-canada-support">Desi community support →</a>
+          <a href="/canada">NRI emotional support →</a>
+          <a href="/canada">Desi community support →</a>
           <a href="/canada-immigration-stress">Immigration anxiety →</a>
         </div>
 

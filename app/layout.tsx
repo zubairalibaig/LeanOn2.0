@@ -14,7 +14,7 @@ const GA_ID = process.env.NEXT_PUBLIC_GA_ID
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.leanon.app'),
-  title: { default: 'LeanOn — Real Human Peer Support Online | India & Indian Diaspora', template: '%s | LeanOn — Real Human Peer Support' },
+  title: { default: 'LeanOn — Real Human Peer Support Online | India & Indian Diaspora', template: '%s' },
   description: 'Talk to a real human peer listener when you want someone to hear you. LeanOn offers private, pseudonymous text and voice peer support for people seeking empathy, emotional support and human connection in India and supported countries.',
   manifest: '/manifest.json',
   icons: { icon: '/logo.png', apple: '/logo.png' },
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'LeanOn' }], creator: 'LeanOn', publisher: 'LeanOn',
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-snippet': -1, 'max-image-preview': 'large' } },
-  alternates: { canonical: 'https://www.leanon.app', languages: { 'en':'https://www.leanon.app','en-IN':'https://www.leanon.app','en-US':'https://www.leanon.app','en-GB':'https://www.leanon.app','en-CA':'https://www.leanon.app','en-AE':'https://www.leanon.app','en-OM':'https://www.leanon.app','en-KW':'https://www.leanon.app','en-SG':'https://www.leanon.app','en-MY':'https://www.leanon.app','en-AU':'https://www.leanon.app','x-default':'https://www.leanon.app' } },
+  alternates: { canonical: 'https://www.leanon.app' },
   openGraph: { type:'website', locale:'en_US', siteName:'LeanOn', title:'LeanOn — Real Human Peer Support Online | India & Indian Diaspora', description:'Talk to a real human peer listener through private text or voice conversations. LeanOn focuses on peer support, empathy, emotional support and human connection.', images:[{url:'/icon-512.png',width:512,height:512,alt:'LeanOn — Real Human Peer Support Online'}] },
   twitter: { card:'summary_large_image', site:'@leanonapp', title:'LeanOn — Real Human Peer Support Online', description:'Talk to a real human peer listener when you want someone to hear you. Private text and voice conversations.', images:['/icon-512.png'] },
   verification: { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? undefined },

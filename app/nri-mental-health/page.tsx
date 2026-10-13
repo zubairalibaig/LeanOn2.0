@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'What timezone do sessions run on?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn listeners are available 24/7. There is no fixed timezone — you browse available listeners at the time you want to talk and start immediately. This makes it accessible from the US, UK, UAE, Canada, Australia, or anywhere else.',
+        text: 'LeanOn listeners are based in India, so availability follows Indian time. There is no fixed timezone — you browse available listeners at the time you want to talk and start immediately. This makes it accessible from the US, UK, UAE, Canada, Australia, or anywhere else.',
       },
     },
   ],
@@ -186,7 +186,7 @@ export default function NriMentalHealthPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">What timezone do sessions run on?</div>
-            <div className="faq-a">LeanOn listeners are available 24/7. There is no fixed timezone — you browse available listeners at the time you want to talk and start immediately. This makes it accessible from the US, UK, UAE, Canada, Australia, or anywhere else.</div>
+            <div className="faq-a">LeanOn listeners are based in India, so availability follows Indian time. There is no fixed timezone — you browse available listeners at the time you want to talk and start immediately. This makes it accessible from the US, UK, UAE, Canada, Australia, or anywhere else.</div>
           </div>
         </div>
 

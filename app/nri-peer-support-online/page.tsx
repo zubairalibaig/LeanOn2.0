@@ -6,8 +6,8 @@ export const metadata: Metadata = {
   title: 'NRI Peer Support Online | Talk to an NRI Who Has Been Through It | LeanOn',
   description: 'NRI peer support from people who\'ve actually lived the immigrant experience — not professionals, real peers. Available now, no appointment.',
   keywords: ['nri peer support', 'nri peer support online', 'nri peer listener', 'nri peer counselling', 'indian immigrant peer support', 'desi peer support'],
-  alternates: { canonical: 'https://www.leanon.app/nri-peer-support-online' },
-  openGraph: { title: 'NRI Peer Support Online | Talk to an NRI Who Has Been Through It | LeanOn', description: 'NRI peer support from people who\'ve actually lived the immigrant experience — not professionals, real peers. Available now, no appointment.', url: 'https://www.leanon.app/nri-peer-support-online', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
+  alternates: { canonical: 'https://www.leanon.app/indian-emotional-support-abroad' },
+  openGraph: { title: 'NRI Peer Support Online | Talk to an NRI Who Has Been Through It | LeanOn', description: 'NRI peer support from people who\'ve actually lived the immigrant experience — not professionals, real peers. Available now, no appointment.', url: 'https://www.leanon.app/indian-emotional-support-abroad', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
 }
 
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
@@ -20,8 +20,8 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/nri-support' },
-  { '@type': 'ListItem', position: 3, name: 'NRI Peer Support Online', item: 'https://www.leanon.app/nri-peer-support-online' },
+  { '@type': 'ListItem', position: 2, name: 'NRI Support', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
+  { '@type': 'ListItem', position: 3, name: 'NRI Peer Support Online', item: 'https://www.leanon.app/indian-emotional-support-abroad' },
 ] }
 
 const S = `
@@ -72,7 +72,7 @@ export default function NriPeerSupportOnlinePage() {
       <style>{S}</style>
       <nav className="nav"><a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a><a href="https://www.leanon.app/browse"><button className="btn-nav">Find a listener</button></a></nav>
       <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/nri-support">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Peer Support Online</span></nav>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><a href="/indian-emotional-support-abroad">NRI Support</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>NRI Peer Support Online</span></nav>
         <div className="hero">
           <p className="badge">NRI Peer Support &middot; Indian Immigrant Life &middot; Lived Experience</p>
           <h1>NRI Peer Support — From Someone Who <em>Has Actually Been There</em></h1>
@@ -102,11 +102,11 @@ export default function NriPeerSupportOnlinePage() {
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>No preamble needed. They already know.</h2><p>Real NRI peer listener. Lived experience. No appointment. First 5 minutes free, from US$10.</p><a href="https://www.leanon.app/browse" className="btn-cta">Find a peer listener &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
-          <a href="/nri-support">NRI support &rarr;</a>
+          <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
           <a href="/nri-mental-health">NRI mental health &rarr;</a>
           <a href="/nri-homesick">NRI homesick &rarr;</a>
           <a href="/nri-anxiety-abroad">NRI anxiety abroad &rarr;</a>
-          <a href="/nri-loneliness-usa">NRI loneliness USA &rarr;</a>
+          <a href="/usa-loneliness">NRI loneliness USA &rarr;</a>
           <a href="/nri-loneliness-uk">NRI loneliness UK &rarr;</a>
           <a href="/nri-loneliness-canada">NRI loneliness Canada &rarr;</a>
           <a href="/nri-identity-crisis">NRI identity crisis &rarr;</a>

@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Empathy Listening for South Asians in the UK | LeanOn',
-  description: 'Feeling unheard? Talk to someone who understands your culture, your language, and what it means to be South Asian in the UK. LeanOn empathy listeners are available 24/7.',
+  description: 'Feeling unheard? Talk to someone who understands your culture, your language, and what it means to be South Asian in the UK. LeanOn empathy listeners are online daily on Indian time.',
   keywords: [
     'empathy listener uk south asian', 'someone who understands me uk', 'feeling unheard uk',
     'south asian listener uk', 'talk in hindi uk', 'cultural empathy support uk',
@@ -32,7 +32,7 @@ const faqSchema = {
       name: 'What is empathy listening and why does it matter?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Empathy listening means being fully present with someone — not planning your next response, not looking for solutions, not thinking about something else. Just genuinely taking in what the other person is saying and reflecting it back so they feel seen. It is rarer than it sounds, and it is what LeanOn listeners are specifically trained to do.',
+        text: 'Empathy listening means being fully present with someone — not planning your next response, not looking for solutions, not thinking about something else. Just genuinely taking in what the other person is saying and reflecting it back so they feel seen. It is rarer than it sounds, and it is what LeanOn listeners are selected to do.',
       },
     },
     {
@@ -176,7 +176,7 @@ export default function UkEmpathyListenerPage() {
           <p>There is a particular kind of relief that comes from saying something out loud and having
             someone truly receive it. Not respond to it with a solution. Not reframe it. Just hear it,
             acknowledge it, and hold space for how it actually feels.</p>
-          <p>That is what LeanOn empathy listeners are trained to do.</p>
+          <p>That is what LeanOn empathy listeners are screened and expected to do.</p>
           <a href="/browse" className="cta-night">Find a listener now →</a>
         </div>
 
@@ -200,7 +200,7 @@ export default function UkEmpathyListenerPage() {
 
         <div className="cta">
           <h2>Be heard — fully, without translation</h2>
-          <p>Indian listeners who understand the NRI experience. Available 24/7.</p>
+          <p>Indian listeners who understand the NRI experience. Listeners online daily (Indian time).</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -211,7 +211,7 @@ export default function UkEmpathyListenerPage() {
             <h3>What is empathy listening?</h3>
             <p>Empathy listening means being fully present — not planning your next response, not looking for
               solutions. Just genuinely taking in what you are saying and reflecting it back so you feel seen.
-              It is rarer than it sounds, and it is what LeanOn listeners are specifically trained to do.</p>
+              It is rarer than it sounds, and it is what LeanOn listeners are selected to do.</p>
           </div>
           <div className="faq-item">
             <h3>Why does it matter that the listener understands South Asian culture?</h3>
@@ -238,7 +238,7 @@ export default function UkEmpathyListenerPage() {
         <div className="related">
           <a href="/uk-talk-to-someone">Talk to someone UK →</a>
           <a href="/uk-loneliness">Loneliness support UK →</a>
-          <a href="/uk-nri-support">NRI support UK →</a>
+          <a href="/uk">NRI support UK →</a>
           <a href="/british-indian-support">British Indian identity →</a>
           <a href="/uk-mental-health-south-asian">South Asian mental health →</a>
           <a href="/uk-rant-to-someone">Need to rant? →</a>

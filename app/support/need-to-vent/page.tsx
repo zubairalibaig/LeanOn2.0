@@ -58,7 +58,7 @@ const faqSchema = {
       name: 'Will a LeanOn listener give me advice when I vent?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Only if you ask for it. Peer listeners are trained in active listening, which means their job is to hear you — not to advise you, fix you, or steer you to a conclusion. If you want to vent without receiving opinions, say so at the start. Your listener will follow your lead.',
+        text: 'Only if you ask for it. Peer listeners are screened for active listening, which means their job is to hear you — not to advise you, fix you, or steer you to a conclusion. If you want to vent without receiving opinions, say so at the start. Your listener will follow your lead.',
       },
     },
     {

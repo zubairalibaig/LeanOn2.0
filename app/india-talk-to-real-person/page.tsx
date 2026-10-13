@@ -28,7 +28,7 @@ const serviceSchema = {
   '@context': 'https://schema.org',
   '@type': 'Service',
   name: 'LeanOn Peer Support — India',
-  description: 'LeanOn is an Indian peer support platform that connects people with real human listeners — trained, vetted individuals with lived experience of Indian life, available 24/7.',
+  description: 'LeanOn is an Indian peer support platform that connects people with real human listeners — screened, vetted individuals with lived experience of Indian life, available 24/7.',
   provider: {
     '@type': 'Organization',
     name: 'LeanOn',

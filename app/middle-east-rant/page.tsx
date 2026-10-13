@@ -34,7 +34,7 @@ const faqSchema = {
       name: 'Can I use LeanOn just to vent — without wanting advice?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes, absolutely. LeanOn listeners are trained to listen first — not to fix, advise, or redirect. If you just need to get it all out, say so at the start and your listener will simply hold space for you.',
+        text: 'Yes, absolutely. LeanOn listeners are screened and expected to listen first — not to fix, advise, or redirect. If you just need to get it all out, say so at the start and your listener will simply hold space for you.',
       },
     },
     {
@@ -58,7 +58,7 @@ const faqSchema = {
       name: 'How much does it cost to talk to a listener from the Gulf?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'From the UAE, sessions cost AED 37 for 15 min, AED 55 for 30 min, and AED 74 for 45 min. From Kuwait: KD 4 for 15 min, KD 5 for 30 min, KD 7 for 45 min. From Oman: OMR 4 for 15 min, OMR 6 for 30 min, OMR 8 for 45 min. First 5 minutes free — once per listener.',
+        text: 'From the UAE, sessions cost AED 37 for 15 min, AED 55 for 30 min, and AED 74 for 45 min. From Kuwait: KD 4 for 15 min, KD 5 for 30 min, KD 7 for 45 min. From Oman: OMR 4 for 15 min, OMR 6 for 30 min, OMR 8 for 45 min. First 5 minutes free — one free session per account.',
       },
     },
     {
@@ -177,7 +177,7 @@ export default function MiddleEastRantPage() {
         <div className="night-box">
           <h2>🔥 Something just happened and you need to talk right now</h2>
           <p>Whether it was today at work, a call that went badly, a decision that does not feel right —
-            LeanOn listeners are available around the clock. You do not have to wait until it passes.</p>
+            LeanOn listeners are available on Indian time. You do not have to wait until it passes.</p>
           <p>Start talking in your language. First 5 minutes are free, no payment needed to begin.</p>
           <a href="/browse" className="cta-night">Find a listener right now →</a>
         </div>
@@ -186,7 +186,7 @@ export default function MiddleEastRantPage() {
           <h2>A listener who just listens — no unsolicited advice</h2>
           <p>The most frustrating thing about venting to someone is when they immediately try to fix it,
             minimise it, or tell you what you should have done differently.</p>
-          <p>LeanOn listeners are trained to listen first. If you just want to get it all out, tell your
+          <p>LeanOn listeners are screened and expected to listen first. If you just want to get it all out, tell your
             listener that at the start — and they will hold that space for you, fully and patiently,
             without jumping in with solutions you did not ask for.</p>
         </div>
@@ -200,7 +200,7 @@ export default function MiddleEastRantPage() {
 
         <div className="cta">
           <h2>Let it out. You will feel lighter.</h2>
-          <p>Available 24/7, in your language, from anywhere in the Gulf.</p>
+          <p>Listeners online daily (Indian time), in your language, from anywhere in the Gulf.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -225,12 +225,12 @@ export default function MiddleEastRantPage() {
           <div className="faq-item">
             <h3>How much does it cost to talk from the Gulf?</h3>
             <p>UAE: AED 37 / AED 55 / AED 74 for 15/30/45 min. Kuwait: KD 4 / KD 5 / KD 7.
-              Oman: OMR 4 / OMR 6 / OMR 8. First 5 minutes free — once per listener.</p>
+              Oman: OMR 4 / OMR 6 / OMR 8. First 5 minutes free — one free session per account.</p>
           </div>
           <div className="faq-item">
             <h3>What if I do not know what to say — I just feel overwhelmed?</h3>
             <p>Just start. LeanOn listeners will follow your lead patiently. Sometimes just starting is
-              the hardest part — and they are trained to help you through that.</p>
+              the hardest part — and they are screened and expected to help you through that.</p>
           </div>
         </div>
 

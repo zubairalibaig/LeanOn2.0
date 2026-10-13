@@ -184,7 +184,7 @@ export default function PeerSupportOnlineIndiaPage() {
           <p>Peer support lives in that gap. It is the thing that helps most for day-to-day emotional weight: the accumulation of stress, the feeling of falling behind, the loneliness that does not show up on the outside, the things you cannot say to anyone in your actual life.</p>
 
           <h3>Professional Distance Can Get in the Way</h3>
-          <p>A therapist is trained to stay clinically neutral. That neutrality is valuable in treatment. But sometimes it creates distance at the exact moment you need closeness. A peer listener has been there. They bring warmth alongside skill, and they are not trying to be your professional — they are trying to be the person you needed when you were where they were.</p>
+          <p>A therapist is screened and expected to stay clinically neutral. That neutrality is valuable in treatment. But sometimes it creates distance at the exact moment you need closeness. A peer listener has been there. They bring warmth alongside skill, and they are not trying to be your professional — they are trying to be the person you needed when you were where they were.</p>
 
           <h3>Peer Support Is Available Right Now</h3>
           <p>The people who need to talk rarely need to talk at 11am on a Tuesday. They need to talk at 11pm on a Sunday, or at 6am before a meeting that has kept them up all night. Peer support on LeanOn is available at those hours — no appointment, no waitlist, no requirement to explain yourself before the conversation starts.</p>
