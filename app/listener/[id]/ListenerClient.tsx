@@ -10,6 +10,7 @@ import { EDUCATION_LEVELS, EDUCATION_FIELDS, labelOf } from '@/lib/listener-onbo
 
 type ListenerProfile = {
   id: string
+  voice_disabled?: boolean
   user_id: string
   name: string
   bio: string
@@ -148,6 +149,7 @@ export default function ListenerClient({ id }: { id: string }) {
       .then(json => {
         if (json.profile) {
           const lp = json.profile
+          if (lp.voice_disabled === true) setType('text')
           setListener({
             ...lp,
             name: (lp.users as {name:string}|null)?.name || 'Listener',
@@ -434,9 +436,11 @@ export default function ListenerClient({ id }: { id: string }) {
               <button className={`type-btn${type==='text'?' sel':''}`} onClick={()=>setType('text')}>
                 💬 Text{VOICE_PRICING_ENABLED && !isNriCountry(accountCountry) ? ` · ₹${sessionRatePerMin(Number(listener.rate_per_min), 'text')}/min` : ''}
               </button>
-              <button className={`type-btn${type==='voice'?' sel':''}`} onClick={()=>setType('voice')}>
-                📞 Voice{VOICE_PRICING_ENABLED && !isNriCountry(accountCountry) ? ` · ₹${sessionRatePerMin(Number(listener.rate_per_min), 'voice')}/min` : ''}
-              </button>
+              {!listener.voice_disabled && (
+                <button className={`type-btn${type==='voice'?' sel':''}`} onClick={()=>setType('voice')}>
+                  📞 Voice{VOICE_PRICING_ENABLED && !isNriCountry(accountCountry) ? ` · ₹${sessionRatePerMin(Number(listener.rate_per_min), 'voice')}/min` : ''}
+                </button>
+              )}
             </div>
             <div className="book-opts">
               {([5,15,30,45] as const).map(d => {

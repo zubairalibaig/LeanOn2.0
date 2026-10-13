@@ -171,6 +171,16 @@ export async function GET(req: NextRequest) {
       }
     }
 
+    // Per-listener "no voice calls" switch (migration 067). Separate read: before
+    // the migration runs the column is missing and this is simply skipped.
+    {
+      const { data: noVoice, error: nvErr } = await sb.from('listener_profiles').select('user_id').eq('voice_disabled', true)
+      if (!nvErr) {
+        const off = new Set(((noVoice ?? []) as { user_id: string }[]).map(r => r.user_id))
+        listeners.forEach(l => { (l as Record<string, unknown>).voice_disabled = off.has((l as Record<string, unknown>).user_id as string) })
+      }
+    }
+
     const onlineCount = listeners.filter(l => l.is_available).length
 
     return NextResponse.json({ listeners }, {

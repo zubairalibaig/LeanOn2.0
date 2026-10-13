@@ -547,7 +547,7 @@ function SessionContent() {
       if (!list) return // keep the last good list on a failed refresh
       const rows = ((list as { listeners?: unknown[] }).listeners ?? []) as AltListener[]
       setAlternatives(rows
-        .filter(l => l.is_available && !l.is_in_session && l.user_id !== listenerId && l.user_id !== userId && !trials.has(l.user_id))
+        .filter(l => l.is_available && !l.is_in_session && l.user_id !== listenerId && l.user_id !== userId && !trials.has(l.user_id) && !(isVoice && l.voice_disabled))
         .slice(0, 3))
     }
     load()
@@ -1921,6 +1921,7 @@ type AltListener = {
   total_sessions?: number | null
   specialty_tags?: string[] | null
   users?: { name?: string | null; avatar_url?: string | null } | null
+  voice_disabled?: boolean
 }
 
 export default function SessionPage() {

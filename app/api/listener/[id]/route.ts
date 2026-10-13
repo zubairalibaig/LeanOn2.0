@@ -64,5 +64,9 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     }
   }
 
-  return NextResponse.json({ profile: { ...lp, ...extras, is_in_session: Boolean(is_in_session) } })
+  // Per-listener "no voice calls" switch (migration 067) — tolerate the column being absent.
+  const { data: vd, error: vdErr } = await admin.from('listener_profiles').select('voice_disabled').eq('user_id', id).maybeSingle()
+  const voice_disabled = !vdErr && (vd as { voice_disabled?: boolean } | null)?.voice_disabled === true
+
+  return NextResponse.json({ profile: { ...lp, ...extras, is_in_session: Boolean(is_in_session), voice_disabled } })
 }

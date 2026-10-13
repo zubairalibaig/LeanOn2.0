@@ -144,6 +144,7 @@ function initialsColor(name: string): string {
 
 type Listener = {
   id: string
+  voice_disabled?: boolean
   user_id: string
   name: string
   bio: string
@@ -879,7 +880,8 @@ function BrowseContent() {
           const isNew = !(l.rating > 0) && !(l.total_sessions > 0)
           const textRate  = sessionRatePerMin(Number(l.rate_per_min), 'text')
           const voiceRate = sessionRatePerMin(Number(l.rate_per_min), 'voice')
-          const priceCaption = VOICE_PRICING_ENABLED ? `Text ₹${textRate}/min · Call ₹${voiceRate}/min` : `₹${textRate}/min · text or call`
+          const noVoice = l.voice_disabled === true
+          const priceCaption = noVoice ? `Text ₹${textRate}/min` : VOICE_PRICING_ENABLED ? `Text ₹${textRate}/min · Call ₹${voiceRate}/min` : `₹${textRate}/min · text or call`
           const goodFor = (l.specialty_tags||[]).slice(0,2).map(t => tagInfo(t)?.label || t)
           const langs = (l.languages_spoken||[]).slice(0,2).map(lid => {
             const label = LANGUAGES.find(x=>x.id===lid)?.label || lid
@@ -929,12 +931,14 @@ function BrowseContent() {
               {l.is_available && !inSession ? (
                 <>
                   <div className="mode-btns">
-                    <button className="btn-mode text" aria-label={`Text conversation with ${l.name}, ₹${textRate} per minute`} onClick={() => go('text')}>
+                    <button className={`btn-mode text${noVoice ? ' full' : ''}`} aria-label={`Text conversation with ${l.name}, ₹${textRate} per minute`} onClick={() => go('text')}>
                       <span className="bl"><MessageCircle size={16} aria-hidden /> Text</span><small>₹{textRate}/min</small>
                     </button>
-                    <button className="btn-mode voice" aria-label={`Voice call with ${l.name}, ₹${voiceRate} per minute`} onClick={() => go('voice')}>
-                      <span className="bl"><Phone size={16} aria-hidden /> Call</span><small>₹{voiceRate}/min</small>
-                    </button>
+                    {!noVoice && (
+                      <button className="btn-mode voice" aria-label={`Voice call with ${l.name}, ₹${voiceRate} per minute`} onClick={() => go('voice')}>
+                        <span className="bl"><Phone size={16} aria-hidden /> Call</span><small>₹{voiceRate}/min</small>
+                      </button>
+                    )}
                   </div>
                   {trialAvailable && <div className="card-caption free"><Gift size={14} aria-hidden /> First 5 min free</div>}
                 </>
