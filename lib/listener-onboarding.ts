@@ -194,12 +194,15 @@ export function scoreQuiz(raw: unknown): QuizResult {
 export const WHY_MIN_WORDS = 100
 export const WHY_MAX_WORDS = 300
 // A word must contain a letter or digit (any script): emoji, dashes and lone
-// punctuation don't count, so an answer can't be padded to the minimum. Commas,
-// semicolons and zero-width spaces separate words too ("listen,care" is 2 words).
+// punctuation don't count, so an answer can't be padded to the minimum.
+// Commas, semicolons and the Urdu comma separate words ("listen,care" = 2), but
+// not inside numbers ("1,000" = 1). Invisible zero-width spaces are removed —
+// not treated as gaps, which let one word be split into many unseen. ZWJ/ZWNJ
+// are kept: they are part of real words in several Indian scripts.
 const HAS_LETTER_OR_DIGIT = new RegExp('[\\p{L}\\p{N}]', 'u')
 export const wordCount = (s: string) =>
-  s.replace(/[\u200B-\u200D\uFEFF]/g, ' ')
-    .split(/[\s,;]+/)
+  s.replace(/[\u200B\u2060\uFEFF]/g, '')
+    .split(/[\s;\u060C]+|,(?!\d)/)
     .filter(t => HAS_LETTER_OR_DIGIT.test(t))
     .length
 
@@ -257,7 +260,7 @@ export function parseOnboarding(body: Record<string, unknown>):
   const why = typeof body.why === 'string' ? body.why.trim() : ''
   const wc = wordCount(why)
   if (wc < WHY_MIN_WORDS || wc > WHY_MAX_WORDS)
-    return { error: `"Why do you want to be a listener?" must be ${WHY_MIN_WORDS}–${WHY_MAX_WORDS} words (you wrote ${wc}).` }
+    return { error: `"Why do you want to be a listener?" must be ${WHY_MIN_WORDS}–${WHY_MAX_WORDS} words (you wrote ${wc}; emoji and punctuation don't count as words).` }
   if (why.length > 4000) return { error: 'Your answer is too long.' }
   const heard_from = pick(HEARD_FROM, body.heard_from)
   if (!heard_from) return { error: 'Please tell us how you heard about LeanOn.' }

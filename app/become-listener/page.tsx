@@ -206,13 +206,13 @@ const NO_INCOME_ACK_KEY = 'leanon_listener_noincome_ack'
 // Kept short and literal on purpose.
 const NO_INCOME_NOTICE: { lang: string; code: string; rtl?: boolean; text: string }[] = [
   { lang: 'English', code: 'en', text: 'LeanOn is new. Very few people use it yet. You may get few or no sessions. There is no salary, no minimum and no guaranteed income. LeanOn is not a job.' },
-  { lang: 'हिंदी (Hindi)', code: 'hi', text: 'LeanOn नया है। अभी बहुत कम लोग इसका इस्तेमाल करते हैं। आपको बहुत कम या कोई भी सेशन नहीं मिल सकता। कोई वेतन, न्यूनतम या गारंटीड कमाई नहीं है। LeanOn नौकरी नहीं है।' },
-  { lang: 'தமிழ் (Tamil)', code: 'ta', text: 'LeanOn புதியது. இப்போது மிகச் சிலரே இதைப் பயன்படுத்துகின்றனர். உங்களுக்கு மிகக் குறைவான அமர்வுகள் அல்லது ஒன்றுமே கிடைக்காமல் போகலாம். சம்பளம், குறைந்தபட்ச வருமானம் அல்லது உத்தரவாத வருமானம் எதுவும் இல்லை. LeanOn ஒரு வேலை அல்ல.' },
+  { lang: 'हिंदी (Hindi)', code: 'hi', text: 'LeanOn नया है। अभी बहुत कम लोग इसका इस्तेमाल करते हैं। ऐसा हो सकता है कि आपको बहुत कम सेशन मिलें, या एक भी न मिले। कोई वेतन, न्यूनतम या गारंटीड कमाई नहीं है। LeanOn नौकरी नहीं है।' },
+  { lang: 'தமிழ் (Tamil)', code: 'ta', text: 'LeanOn புதியது. இப்போது மிகச் சிலரே இதைப் பயன்படுத்துகின்றனர். உங்களுக்கு மிகக் குறைவான அமர்வுகளே கிடைக்கலாம், அல்லது ஒன்றுமே கிடைக்காமல் போகலாம். சம்பளம், குறைந்தபட்ச வருமானம் அல்லது உத்தரவாத வருமானம் எதுவும் இல்லை. LeanOn ஒரு வேலை அல்ல.' },
   { lang: 'తెలుగు (Telugu)', code: 'te', text: 'LeanOn కొత్తది. ఇప్పుడు చాలా తక్కువ మంది మాత్రమే దీన్ని వాడుతున్నారు. మీకు చాలా తక్కువ సెషన్లు రావచ్చు, లేదా ఒక్కటి కూడా రాకపోవచ్చు. జీతం, కనీస ఆదాయం లేదా హామీ ఆదాయం ఏదీ లేదు. LeanOn ఉద్యోగం కాదు.' },
   { lang: 'ಕನ್ನಡ (Kannada)', code: 'kn', text: 'LeanOn ಹೊಸದು. ಈಗ ತುಂಬಾ ಕಡಿಮೆ ಜನರು ಮಾತ್ರ ಇದನ್ನು ಬಳಸುತ್ತಿದ್ದಾರೆ. ನಿಮಗೆ ತುಂಬಾ ಕಡಿಮೆ ಸೆಷನ್‌ಗಳು ಸಿಗಬಹುದು ಅಥವಾ ಒಂದೂ ಸಿಗದಿರಬಹುದು. ಸಂಬಳ, ಕನಿಷ್ಠ ಆದಾಯ ಅಥವಾ ಖಚಿತ ಆದಾಯ ಇಲ್ಲ. LeanOn ಉದ್ಯೋಗವಲ್ಲ.' },
-  { lang: 'മലയാളം (Malayalam)', code: 'ml', text: 'LeanOn പുതിയതാണ്. ഇപ്പോൾ വളരെ കുറച്ചു പേർ മാത്രമേ ഇത് ഉപയോഗിക്കുന്നുള്ളൂ. നിങ്ങൾക്ക് വളരെ കുറച്ച് സെഷനുകൾ മാത്രമോ ഒന്നുമോ ലഭിക്കാതിരിക്കാം. ശമ്പളമോ മിനിമം വരുമാനമോ ഉറപ്പുള്ള വരുമാനമോ ഇല്ല. LeanOn ഒരു ജോലിയല്ല.' },
-  { lang: 'मराठी (Marathi)', code: 'mr', text: 'LeanOn नवीन आहे. सध्या खूप कमी लोक ते वापरतात. तुम्हाला खूप कमी किंवा एकही सेशन मिळणार नाही, असे होऊ शकते. पगार, किमान किंवा खात्रीशीर उत्पन्न नाही. LeanOn ही नोकरी नाही.' },
-  { lang: 'বাংলা (Bengali)', code: 'bn', text: 'LeanOn নতুন। এখন খুব কম মানুষ এটি ব্যবহার করেন। আপনি খুব কম সেশন পেতে পারেন, বা একটিও না পেতে পারেন। কোনো বেতন, ন্যূনতম বা নিশ্চিত আয় নেই। LeanOn কোনো চাকরি নয়।' },
+  { lang: 'മലയാളം (Malayalam)', code: 'ml', text: 'LeanOn പുതിയതാണ്. ഇപ്പോൾ വളരെ കുറച്ചു പേർ മാത്രമേ ഇത് ഉപയോഗിക്കുന്നുള്ളൂ. നിങ്ങൾക്ക് വളരെ കുറച്ച് സെഷനുകൾ മാത്രം ലഭിച്ചേക്കാം, അല്ലെങ്കിൽ ഒന്നും ലഭിക്കാതിരിക്കാം. ശമ്പളമോ മിനിമം വരുമാനമോ ഉറപ്പുള്ള വരുമാനമോ ഇല്ല. LeanOn ഒരു ജോലിയല്ല.' },
+  { lang: 'मराठी (Marathi)', code: 'mr', text: 'LeanOn नवीन आहे. सध्या खूप कमी लोक ते वापरतात. तुम्हाला खूप कमी सेशन मिळू शकतात, किंवा एकही मिळणार नाही. पगार, किमान किंवा खात्रीशीर उत्पन्न नाही. LeanOn ही नोकरी नाही.' },
+  { lang: 'বাংলা (Bengali)', code: 'bn', text: 'LeanOn নতুন। এখন খুব কম মানুষ এটি ব্যবহার করেন। আপনি খুব কম সেশন পেতে পারেন, বা একটিও না-ও পেতে পারেন। কোনো বেতন, ন্যূনতম বা নিশ্চিত আয় নেই। LeanOn কোনো চাকরি নয়।' },
   { lang: 'ગુજરાતી (Gujarati)', code: 'gu', text: 'LeanOn નવું છે. હાલમાં બહુ ઓછા લોકો તેનો ઉપયોગ કરે છે. તમને બહુ ઓછા સેશન મળે અથવા એક પણ ન મળે એવું બની શકે. કોઈ પગાર, ન્યૂનતમ કે ગેરંટીવાળી કમાણી નથી. LeanOn નોકરી નથી.' },
   { lang: 'ਪੰਜਾਬੀ (Punjabi)', code: 'pa', text: 'LeanOn ਨਵਾਂ ਹੈ। ਹਾਲੇ ਬਹੁਤ ਘੱਟ ਲੋਕ ਇਸਨੂੰ ਵਰਤਦੇ ਹਨ। ਤੁਹਾਨੂੰ ਬਹੁਤ ਘੱਟ ਸੈਸ਼ਨ ਮਿਲ ਸਕਦੇ ਹਨ, ਜਾਂ ਇੱਕ ਵੀ ਨਹੀਂ। ਕੋਈ ਤਨਖਾਹ, ਘੱਟੋ-ਘੱਟ ਜਾਂ ਪੱਕੀ ਆਮਦਨ ਨਹੀਂ ਹੈ। LeanOn ਨੌਕਰੀ ਨਹੀਂ ਹੈ।' },
   { lang: 'ଓଡ଼ିଆ (Odia)', code: 'or', text: 'LeanOn ନୂଆ। ଏବେ ବହୁତ କମ୍ ଲୋକ ଏହାକୁ ବ୍ୟବହାର କରନ୍ତି। ଆପଣ ବହୁତ କମ୍ ସେସନ୍ ପାଇପାରନ୍ତି, କିମ୍ବା ଗୋଟିଏ ବି ନ ପାଇପାରନ୍ତି। କୌଣସି ଦରମା, ସର୍ବନିମ୍ନ କିମ୍ବା ନିଶ୍ଚିତ ଆୟ ନାହିଁ। LeanOn ଚାକିରି ନୁହେଁ।' },
@@ -225,6 +225,8 @@ export default function BecomeListenerPage() {
   const [step, setStep]   = useState(1)
   const [name, setName]   = useState('')
   const [guardChecked, setGuardChecked] = useState(false)
+  // A connection problem while checking the session — show Retry, never bounce to sign-in.
+  const [guardError, setGuardError] = useState(false)
   const [alreadyRegistered, setAlreadyRegistered] = useState(false)
   const [permanentlyRejected, setPermanentlyRejected] = useState(false)
   const [rejectedNotes, setRejectedNotes] = useState<string | null>(null)
@@ -285,7 +287,13 @@ export default function BecomeListenerPage() {
   const [showNoIncome, setShowNoIncome] = useState(false)
   const [noIncomeChecked, setNoIncomeChecked] = useState(false)
   // Open page 2 at the top (the landing page is long; its scroll position carried over).
-  useEffect(() => { if (showNoIncome) window.scrollTo(0, 0) }, [showNoIncome])
+  useEffect(() => {
+    if (!showNoIncome) return
+    // Jump, don't glide: the site's smooth scrolling otherwise animates through
+    // the long landing page.
+    const r = requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior }))
+    return () => cancelAnimationFrame(r)
+  }, [showNoIncome])
 
   // Phone verification now happens ONCE at sign-in via the MSG91 widget on /auth.
   // The in-form OTP flow (signInWithOtp / verifyOtp) is permanently dead —
@@ -339,8 +347,11 @@ export default function BecomeListenerPage() {
   // and either shows the form or redirects. Called from both the useEffect
   // (returning visitors who already agreed) and the landing Continue button.
   async function runAuthGuard() {
+    setGuardError(false)
     try {
-      const { data: { user } } = await sb.auth.getUser()
+      const { data: { user }, error: authError } = await sb.auth.getUser()
+      // Transient failure: stay here with a Retry. No session at all = signed out.
+      if (authError && authError.name !== 'AuthSessionMissingError') { setGuardError(true); return }
       if (!user || !user.phone) {
         router.replace('/auth?mode=listener&redirect=/become-listener')
         return
@@ -376,8 +387,8 @@ export default function BecomeListenerPage() {
       }
       setGuardChecked(true)
     } catch {
-      router.replace('/auth?mode=listener&redirect=/become-listener')
-      setGuardChecked(true)
+      // Network/DB hiccup — not a sign-out. Offer Retry instead of the OTP screen.
+      setGuardError(true)
     }
   }
 
@@ -386,25 +397,36 @@ export default function BecomeListenerPage() {
   // resubmit, so blocking on the mere existence of a listener_profiles row
   // would make resubmission a dead end.
   useEffect(() => {
-    if (SHOW_NEW_LISTENER_ONBOARDING) {
-      let agreed = false
-      let noIncomeAck = false
-      try {
-        agreed = sessionStorage.getItem('leanon_listener_agreed') === '1'
-        noIncomeAck = sessionStorage.getItem(NO_INCOME_ACK_KEY) === '1'
-      } catch { /* private mode */ }
-      if (!agreed) {
-        setShowLanding(true)
-        setGuardChecked(true)
-        return
+    (async () => {
+      if (SHOW_NEW_LISTENER_ONBOARDING) {
+        let agreed = false
+        let noIncomeAck = false
+        try {
+          agreed = sessionStorage.getItem('leanon_listener_agreed') === '1'
+          noIncomeAck = sessionStorage.getItem(NO_INCOME_ACK_KEY) === '1'
+        } catch { /* private mode */ }
+        if (!agreed || !noIncomeAck) {
+          // Someone who already applied (pending, resubmitting, approved) has seen
+          // the intro pages — route them straight to where they belong.
+          try {
+            const { data: { user } } = await sb.auth.getUser()
+            if (user) {
+              const [{ data: lpRow }, { data: appRow }] = await Promise.all([
+                sb.from('listener_profiles').select('id').eq('user_id', user.id).maybeSingle(),
+                sb.from('listener_applications').select('status').eq('user_id', user.id).maybeSingle(),
+              ])
+              if (lpRow || appRow) { runAuthGuard(); return }
+            }
+          } catch { /* fall through to the intro pages */ }
+          if (!agreed) setShowLanding(true)
+          else setShowNoIncome(true)
+          setGuardChecked(true)
+          return
+        }
       }
-      if (!noIncomeAck) {
-        setShowNoIncome(true)
-        setGuardChecked(true)
-        return
-      }
-    }
-    runAuthGuard()
+      runAuthGuard()
+    })()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Use raw input for the live preview — validation blocks invalid values on submit.
@@ -455,7 +477,7 @@ export default function BecomeListenerPage() {
     if (timeSlots.length === 0) fe.timeSlots = 'Select at least one time slot'
     if (priorExp.length === 0) fe.priorExp = 'Select your listening experience (or "None yet")'
     const wc = wordCount(why)
-    if (wc < WHY_MIN_WORDS || wc > WHY_MAX_WORDS) fe.why = `Write ${WHY_MIN_WORDS}–${WHY_MAX_WORDS} words (currently ${wc})`
+    if (wc < WHY_MIN_WORDS || wc > WHY_MAX_WORDS) fe.why = `Write ${WHY_MIN_WORDS}–${WHY_MAX_WORDS} words (currently ${wc} — emoji and punctuation don't count)`
     if (!heardFrom) fe.heardFrom = 'Tell us how you heard about LeanOn'
     if (linkedin.trim() && !isValidLinkedIn(linkedin)) fe.linkedin = 'Enter a LinkedIn profile URL (linkedin.com/in/…) or leave blank'
     if (SCREENING_QUIZ.some(q => quiz[q.id] === undefined)) fe.quiz = 'Please answer every situation question'
@@ -681,7 +703,7 @@ export default function BecomeListenerPage() {
         </div>
         <div className="hero-card" style={{marginBottom:16}}>
           <h1>LeanOn is not a job 🙏</h1>
-          <p>Please read this in your language before you sign in.</p>
+          <p>Please read this in your language before you continue.</p>
         </div>
         <div style={{background:'white',border:'1.5px solid var(--border)',borderRadius:20,padding:'6px 18px',marginBottom:16}}>
           {NO_INCOME_NOTICE.map(n => (
@@ -802,7 +824,7 @@ export default function BecomeListenerPage() {
           role="checkbox"
           aria-checked={agreementChecked}
           tabIndex={0}
-          onKeyDown={e => { if (e.key === ' ' || e.key === 'Enter') setAgreementChecked(c => !c) }}
+          onKeyDown={e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setAgreementChecked(c => !c) } }}
         >
           <div className="agree-check">{agreementChecked ? '✓' : ''}</div>
           <div className="agree-text">
@@ -834,7 +856,12 @@ export default function BecomeListenerPage() {
       <div className="page">
         <div className="topbar"><a href="/" className="back">←</a></div>
         <div style={{ textAlign: 'center', padding: '64px 20px', fontFamily: "'Nunito',sans-serif", fontWeight: 600, color: '#5A7A8A' }}>
-          Loading…
+          {guardError ? (
+            <>
+              <div style={{ marginBottom: 16 }}>Connection problem — please try again.</div>
+              <button className="btn" onClick={() => runAuthGuard()}>Retry</button>
+            </>
+          ) : 'Loading…'}
         </div>
       </div>
     </>
@@ -898,7 +925,7 @@ export default function BecomeListenerPage() {
         <div className="success">
           <div className="success-icon">🎉</div>
           <h2>Application submitted!</h2>
-          <p>We&apos;ll review your profile within 24 hours and notify you on {phone}. Once approved, you&apos;ll go live and start earning.</p>
+          <p>We&apos;ll review your profile within 24 hours and let you know in the LeanOn app. Once approved, your profile goes live for seekers.</p>
           <a href="/become-listener/status"><button className="btn" style={{marginTop:28}}>Check application status →</button></a>
         </div>
       </div>
