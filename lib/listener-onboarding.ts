@@ -202,7 +202,7 @@ export const WHY_MAX_WORDS = 300
 const HAS_LETTER_OR_DIGIT = new RegExp('[\\p{L}\\p{N}]', 'u')
 export const wordCount = (s: string) =>
   s.replace(/[\u200B\u2060\uFEFF]/g, '')
-    .split(/[\s;\u060C]+|,(?!\d)/)
+    .split(/[\s;\u060C\u0964\u0965\u06D4]+|,(?!\d)/)
     .filter(t => HAS_LETTER_OR_DIGIT.test(t))
     .length
 
@@ -261,7 +261,8 @@ export function parseOnboarding(body: Record<string, unknown>):
   const wc = wordCount(why)
   if (wc < WHY_MIN_WORDS || wc > WHY_MAX_WORDS)
     return { error: `"Why do you want to be a listener?" must be ${WHY_MIN_WORDS}–${WHY_MAX_WORDS} words (you wrote ${wc}; emoji and punctuation don't count as words).` }
-  if (why.length > 4000) return { error: 'Your answer is too long.' }
+  // Indian scripts use several characters per word — 300 words can pass 4000.
+  if (why.length > 9000) return { error: 'Your answer is too long.' }
   const heard_from = pick(HEARD_FROM, body.heard_from)
   if (!heard_from) return { error: 'Please tell us how you heard about LeanOn.' }
   const li = typeof body.linkedin_url === 'string' ? body.linkedin_url.trim() : ''

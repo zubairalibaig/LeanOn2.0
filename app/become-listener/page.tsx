@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, LISTENER_SERVICE_FEE_RATE, VOICE_PRICING_ENABLED, VOICE_RATE_PREMIUM, LANGUAGES, MONTHS, MIN_LISTENER_AGE, MAX_LISTENER_AGE, ageFromBirth } from '@/lib/constants'
 import { createClient } from '@/lib/supabase'
@@ -211,11 +211,11 @@ const NO_INCOME_NOTICE: { lang: string; code: string; rtl?: boolean; text: strin
   { lang: 'తెలుగు (Telugu)', code: 'te', text: 'LeanOn కొత్తది. ఇప్పుడు చాలా తక్కువ మంది మాత్రమే దీన్ని వాడుతున్నారు. మీకు చాలా తక్కువ సెషన్లు రావచ్చు, లేదా ఒక్కటి కూడా రాకపోవచ్చు. జీతం, కనీస ఆదాయం లేదా హామీ ఆదాయం ఏదీ లేదు. LeanOn ఉద్యోగం కాదు.' },
   { lang: 'ಕನ್ನಡ (Kannada)', code: 'kn', text: 'LeanOn ಹೊಸದು. ಈಗ ತುಂಬಾ ಕಡಿಮೆ ಜನರು ಮಾತ್ರ ಇದನ್ನು ಬಳಸುತ್ತಿದ್ದಾರೆ. ನಿಮಗೆ ತುಂಬಾ ಕಡಿಮೆ ಸೆಷನ್‌ಗಳು ಸಿಗಬಹುದು ಅಥವಾ ಒಂದೂ ಸಿಗದಿರಬಹುದು. ಸಂಬಳ, ಕನಿಷ್ಠ ಆದಾಯ ಅಥವಾ ಖಚಿತ ಆದಾಯ ಇಲ್ಲ. LeanOn ಉದ್ಯೋಗವಲ್ಲ.' },
   { lang: 'മലയാളം (Malayalam)', code: 'ml', text: 'LeanOn പുതിയതാണ്. ഇപ്പോൾ വളരെ കുറച്ചു പേർ മാത്രമേ ഇത് ഉപയോഗിക്കുന്നുള്ളൂ. നിങ്ങൾക്ക് വളരെ കുറച്ച് സെഷനുകൾ മാത്രം ലഭിച്ചേക്കാം, അല്ലെങ്കിൽ ഒന്നും ലഭിക്കാതിരിക്കാം. ശമ്പളമോ മിനിമം വരുമാനമോ ഉറപ്പുള്ള വരുമാനമോ ഇല്ല. LeanOn ഒരു ജോലിയല്ല.' },
-  { lang: 'मराठी (Marathi)', code: 'mr', text: 'LeanOn नवीन आहे. सध्या खूप कमी लोक ते वापरतात. तुम्हाला खूप कमी सेशन मिळू शकतात, किंवा एकही मिळणार नाही. पगार, किमान किंवा खात्रीशीर उत्पन्न नाही. LeanOn ही नोकरी नाही.' },
+  { lang: 'मराठी (Marathi)', code: 'mr', text: 'LeanOn नवीन आहे. सध्या खूप कमी लोक ते वापरतात. तुम्हाला खूप कमी सेशन मिळू शकतात, किंवा एकही मिळणार नाही, असेही होऊ शकते. पगार, किमान किंवा खात्रीशीर उत्पन्न नाही. LeanOn ही नोकरी नाही.' },
   { lang: 'বাংলা (Bengali)', code: 'bn', text: 'LeanOn নতুন। এখন খুব কম মানুষ এটি ব্যবহার করেন। আপনি খুব কম সেশন পেতে পারেন, বা একটিও না-ও পেতে পারেন। কোনো বেতন, ন্যূনতম বা নিশ্চিত আয় নেই। LeanOn কোনো চাকরি নয়।' },
   { lang: 'ગુજરાતી (Gujarati)', code: 'gu', text: 'LeanOn નવું છે. હાલમાં બહુ ઓછા લોકો તેનો ઉપયોગ કરે છે. તમને બહુ ઓછા સેશન મળે અથવા એક પણ ન મળે એવું બની શકે. કોઈ પગાર, ન્યૂનતમ કે ગેરંટીવાળી કમાણી નથી. LeanOn નોકરી નથી.' },
   { lang: 'ਪੰਜਾਬੀ (Punjabi)', code: 'pa', text: 'LeanOn ਨਵਾਂ ਹੈ। ਹਾਲੇ ਬਹੁਤ ਘੱਟ ਲੋਕ ਇਸਨੂੰ ਵਰਤਦੇ ਹਨ। ਤੁਹਾਨੂੰ ਬਹੁਤ ਘੱਟ ਸੈਸ਼ਨ ਮਿਲ ਸਕਦੇ ਹਨ, ਜਾਂ ਇੱਕ ਵੀ ਨਹੀਂ। ਕੋਈ ਤਨਖਾਹ, ਘੱਟੋ-ਘੱਟ ਜਾਂ ਪੱਕੀ ਆਮਦਨ ਨਹੀਂ ਹੈ। LeanOn ਨੌਕਰੀ ਨਹੀਂ ਹੈ।' },
-  { lang: 'ଓଡ଼ିଆ (Odia)', code: 'or', text: 'LeanOn ନୂଆ। ଏବେ ବହୁତ କମ୍ ଲୋକ ଏହାକୁ ବ୍ୟବହାର କରନ୍ତି। ଆପଣ ବହୁତ କମ୍ ସେସନ୍ ପାଇପାରନ୍ତି, କିମ୍ବା ଗୋଟିଏ ବି ନ ପାଇପାରନ୍ତି। କୌଣସି ଦରମା, ସର୍ବନିମ୍ନ କିମ୍ବା ନିଶ୍ଚିତ ଆୟ ନାହିଁ। LeanOn ଚାକିରି ନୁହେଁ।' },
+  { lang: 'ଓଡ଼ିଆ (Odia)', code: 'or', text: 'LeanOn ନୂଆ। ଏବେ ବହୁତ କମ୍ ଲୋକ ଏହାକୁ ବ୍ୟବହାର କରନ୍ତି। ଆପଣ ବହୁତ କମ୍ ସେସନ୍ ପାଇପାରନ୍ତି, କିମ୍ବା ଗୋଟିଏ ବି ନ ମିଳିପାରେ। କୌଣସି ଦରମା, ସର୍ବନିମ୍ନ କିମ୍ବା ନିଶ୍ଚିତ ଆୟ ନାହିଁ। LeanOn ଚାକିରି ନୁହେଁ।' },
   { lang: 'اردو (Urdu)', code: 'ur', rtl: true, text: 'LeanOn نیا ہے۔ ابھی بہت کم لوگ اسے استعمال کرتے ہیں۔ ہو سکتا ہے آپ کو بہت کم سیشن ملیں، یا ایک بھی نہ ملے۔ کوئی تنخواہ، کم از کم یا یقینی آمدنی نہیں ہے۔ LeanOn نوکری نہیں ہے۔' },
 ]
 
@@ -227,6 +227,10 @@ export default function BecomeListenerPage() {
   const [guardChecked, setGuardChecked] = useState(false)
   // A connection problem while checking the session — show Retry, never bounce to sign-in.
   const [guardError, setGuardError] = useState(false)
+  // The session check can finish after the visitor has already left (← back);
+  // never redirect them from wherever they went.
+  const mountedRef = useRef(true)
+  useEffect(() => () => { mountedRef.current = false }, [])
   const [alreadyRegistered, setAlreadyRegistered] = useState(false)
   const [permanentlyRejected, setPermanentlyRejected] = useState(false)
   const [rejectedNotes, setRejectedNotes] = useState<string | null>(null)
@@ -350,26 +354,38 @@ export default function BecomeListenerPage() {
     setGuardError(false)
     try {
       const { data: { user }, error: authError } = await sb.auth.getUser()
-      // Transient failure: stay here with a Retry. No session at all = signed out.
-      if (authError && authError.name !== 'AuthSessionMissingError') { setGuardError(true); return }
+      // Only a connection-type failure gets Retry. Any other auth error (no
+      // session, deleted user, revoked token) means signed out → sign in again.
+      if (authError) {
+        const transient = authError.name === 'AuthRetryableFetchError' || authError.name === 'AuthUnknownError'
+          || (typeof authError.status === 'number' && authError.status >= 500)
+        if (transient) { setGuardError(true); return }
+        await sb.auth.signOut({ scope: 'local' }).catch(() => {})
+        { if (mountedRef.current) router.replace('/auth?mode=listener&redirect=/become-listener') }
+        return
+      }
       if (!user || !user.phone) {
-        router.replace('/auth?mode=listener&redirect=/become-listener')
+        { if (mountedRef.current) router.replace('/auth?mode=listener&redirect=/become-listener') }
         return
       }
       setPhone(user.phone.replace(/\D/g, '').slice(-10))
 
-      const [{ data: existing }, { data: app }, { data: userRow }] = await Promise.all([
+      const [{ data: existing, error: lpErr }, { data: app, error: appErr }, { data: userRow }] = await Promise.all([
         sb.from('listener_profiles').select('id, is_approved').eq('user_id', user.id).maybeSingle(),
         sb.from('listener_applications').select('status, admin_notes').eq('user_id', user.id).maybeSingle(),
         sb.from('users').select('avatar_url').eq('id', user.id).maybeSingle(),
       ])
+      // supabase-js returns errors instead of throwing. A failed read must not
+      // look like "no application" — that showed an approved listener a blank
+      // form whose submission would replace their live profile.
+      if (lpErr || appErr) { setGuardError(true); return }
       const canResubmit = app?.status === 'needs_resubmission'
       if (app?.status === 'rejected') {
         setPermanentlyRejected(true)
         setRejectedNotes((app.admin_notes as string | null) || null)
         setAlreadyRegistered(true)
       } else if (existing?.is_approved) {
-        router.replace('/dashboard')
+        { if (mountedRef.current) router.replace('/dashboard') }
         return
       } else if (existing && !canResubmit) {
         setAlreadyRegistered(true)
@@ -397,7 +413,8 @@ export default function BecomeListenerPage() {
   // resubmit, so blocking on the mere existence of a listener_profiles row
   // would make resubmission a dead end.
   useEffect(() => {
-    (async () => {
+    let cancelled = false
+    ;(async () => {
       if (SHOW_NEW_LISTENER_ONBOARDING) {
         let agreed = false
         let noIncomeAck = false
@@ -411,21 +428,24 @@ export default function BecomeListenerPage() {
           try {
             const { data: { user } } = await sb.auth.getUser()
             if (user) {
-              const [{ data: lpRow }, { data: appRow }] = await Promise.all([
+              const [{ data: lpRow, error: e1 }, { data: appRow, error: e2 }] = await Promise.all([
                 sb.from('listener_profiles').select('id').eq('user_id', user.id).maybeSingle(),
                 sb.from('listener_applications').select('status').eq('user_id', user.id).maybeSingle(),
               ])
-              if (lpRow || appRow) { runAuthGuard(); return }
+              // Unsure (read failed) → let the full guard decide (it shows Retry).
+              if (lpRow || appRow || e1 || e2) { if (!cancelled) runAuthGuard(); return }
             }
           } catch { /* fall through to the intro pages */ }
+          if (cancelled) return
           if (!agreed) setShowLanding(true)
           else setShowNoIncome(true)
           setGuardChecked(true)
           return
         }
       }
-      runAuthGuard()
+      if (!cancelled) runAuthGuard()
     })()
+    return () => { cancelled = true }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -608,7 +628,7 @@ export default function BecomeListenerPage() {
       if (!accountHolder.trim()) fe.accountHolder = 'Enter the name exactly as on your bank account'
       const banke = validateBank(bank); if (banke) fe.bank = banke
       const ifsce = validateIFSC(ifsc); if (ifsce) fe.ifsc = ifsce
-      const aae = validateAadhaar(aadhaar); if (aae) fe.aadhaar = aae
+      if (!isResubmission || aadhaar.trim()) { const aae = validateAadhaar(aadhaar); if (aae) fe.aadhaar = aae }
       if (upi.trim()) { const upie = validateUPI(upi); if (upie) fe.upi = upie }
       setFieldErrors(fe)
       setShaking(true)
@@ -668,7 +688,7 @@ export default function BecomeListenerPage() {
         // Show the closed-screen instead of an inline error so the user has
         // a clear call-to-action (contact support) rather than a confusing
         // "try again" message on a form they can never resubmit.
-        if (res.status === 403) {
+        if (res.status === 403 && json.code === 'rejected') {
           setPermanentlyRejected(true)
           setRejectedNotes(json.adminNotes || null)
           setAlreadyRegistered(true)
@@ -828,7 +848,7 @@ export default function BecomeListenerPage() {
         >
           <div className="agree-check">{agreementChecked ? '✓' : ''}</div>
           <div className="agree-text">
-            I have read and understood the above. I am applying because I genuinely want to support people — not for easy money. I agree to LeanOn&apos;s <a href="/terms" style={{color:'var(--teal)'}}>Terms of Service</a> and <a href="/privacy" style={{color:'var(--teal)'}}>Privacy Policy</a>.
+            I have read and understood the above. I am applying because I genuinely want to support people — not for easy money. I agree to LeanOn&apos;s <a href="/terms" onClick={e => e.stopPropagation()} style={{color:'var(--teal)'}}>Terms of Service</a> and <a href="/privacy" onClick={e => e.stopPropagation()} style={{color:'var(--teal)'}}>Privacy Policy</a>.
           </div>
         </div>
 

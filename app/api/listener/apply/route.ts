@@ -138,7 +138,7 @@ export async function POST(req: NextRequest) {
     // Permanently rejected applicants are blocked server-side — the UI also
     // blocks them, but a crafted direct POST would otherwise bypass it.
     if (existingApp?.status === 'rejected') {
-      return NextResponse.json({ error: 'Your application has been permanently closed. Please contact support if you believe this is an error.' }, { status: 403 })
+      return NextResponse.json({ error: 'Your application has been permanently closed. Please contact support if you believe this is an error.', code: 'rejected' }, { status: 403 })
     }
 
     // 1. users row first — listener_profiles/applications FK to users(id)
