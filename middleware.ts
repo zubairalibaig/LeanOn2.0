@@ -142,11 +142,55 @@ async function refreshSessionIfLoggedIn(req: NextRequest): Promise<NextResponse>
   const res = NextResponse.next()
   if (!hasAuthCookie(req)) return res
   try {
-    await makeClient(req, res).auth.getUser()
+    const supabase = makeClient(req, res)
+    const { data: { user } } = await supabase.auth.getUser()
+    // Public pages a suspended user could still act from (book, apply, chat in
+    // the lounge) also get the suspension gate. Marketing/SEO pages don't.
+    const { pathname } = req.nextUrl
+    if (user && SUSPENSION_GATED_PUBLIC_PREFIXES.some(p => pathname.startsWith(p))) {
+      const blocked = await suspendedRedirect(req, res, supabase, user.id)
+      if (blocked) return blocked
+    }
   } catch {
     // Transient Supabase/network error — never block the page over a refresh.
   }
   return res
+}
+
+// Public (non-auth-required) pages where a signed-in suspended user must not
+// get in: booking, listener profiles, applying, and the Listener Lounge.
+const SUSPENSION_GATED_PUBLIC_PREFIXES = ['/browse', '/listener/', '/listener-lounge', '/become-listener']
+
+// Suspension gate: returns a redirect to /suspended when the signed-in user's
+// account (users.is_suspended — Suspend/Ban) OR listener profile
+// (listener_profiles.is_suspended — Suspend listener) is suspended; null otherwise.
+// Uses the anon client with the user's session: RLS users_select_own and
+// lp_select_approved (auth.uid() = user_id) let a user read their own rows.
+// Read errors return null (fail open for the page — API routes and the DB
+// enforce suspension on every action, and migration 068 revokes the session).
+// /suspended is in PUBLIC_PAGES and not gated, so no redirect loop is possible.
+async function suspendedRedirect(
+  req: NextRequest,
+  res: NextResponse,
+  supabase: ReturnType<typeof makeClient>,
+  userId: string,
+): Promise<NextResponse | null> {
+  try {
+    const [{ data: userRow }, { data: lpRow }] = await Promise.all([
+      supabase.from('users').select('is_suspended').eq('id', userId).maybeSingle(),
+      supabase.from('listener_profiles').select('is_suspended').eq('user_id', userId).maybeSingle(),
+    ])
+    if (userRow?.is_suspended === true || lpRow?.is_suspended === true) {
+      const redirect = NextResponse.redirect(new URL('/suspended', req.url))
+      // Carry refreshed session cookies so the token rotation from getUser()
+      // isn't lost (same pattern as the /auth redirect).
+      res.cookies.getAll().forEach(c => redirect.cookies.set(c))
+      return redirect
+    }
+  } catch {
+    // Transient DB error — let the request through.
+  }
+  return null
 }
 
 // Hosts that must 308 to www. Google indexed leanon.app/* and therapy.leanon.app
@@ -250,29 +294,9 @@ export async function middleware(req: NextRequest) {
     return redirect
   }
 
-  // Suspension gate: check if the authenticated user is suspended.
-  // Uses the anon client with the user's session — RLS policy users_select_own
-  // allows users to read their own row, so no service-role key needed here.
-  // Only applies to page routes (API routes pass through PUBLIC_PREFIXES above
-  // and carry their own per-route suspension checks).
-  // /suspended is in PUBLIC_PAGES so it exits before reaching this block —
-  // no redirect loop possible.
-  try {
-    const { data: userRow } = await supabase
-      .from('users')
-      .select('is_suspended')
-      .eq('id', user.id)
-      .single()
-    if (userRow?.is_suspended === true) {
-      const suspendedRedirect = NextResponse.redirect(new URL('/suspended', req.url))
-      // Carry refreshed session cookies so the token rotation from getUser()
-      // above isn't lost (same pattern as the /auth redirect below).
-      res.cookies.getAll().forEach(c => suspendedRedirect.cookies.set(c))
-      return suspendedRedirect
-    }
-  } catch {
-    // Transient DB error — let the request through; the page will handle it.
-  }
+  // Suspension gate (account OR listener-profile suspension).
+  const blocked = await suspendedRedirect(req, res, supabase, user.id)
+  if (blocked) return blocked
 
   return res
 }

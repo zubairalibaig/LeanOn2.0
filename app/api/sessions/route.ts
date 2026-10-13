@@ -11,6 +11,7 @@ import { logger } from '@/lib/logger'
 import { sendPushToUser } from '@/lib/push'
 import { expireStalePendingRequests } from '@/lib/expire-pending'
 import { sweepStaleListeners } from '@/lib/listener-presence'
+import { suspensionStatus } from '@/lib/suspension'
 
 const VALID_SESSION_TYPES = ['text', 'voice'] as const
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -75,9 +76,12 @@ export async function POST(req: NextRequest) {
       replacing = { id: old.id as string, amount_held: Number(old.amount_held) || 0, is_free_trial: !!old.is_free_trial }
     }
 
-    // Block suspended/banned seekers from booking any sessions
-    const { data: seekerRow } = await sb.from('users').select('is_suspended').eq('id', user.id).single()
-    if (seekerRow?.is_suspended) {
+    // Block suspended/banned users (account or listener suspension) from booking
+    const seekerStatus = await suspensionStatus(sb, user.id)
+    if (seekerStatus === 'error') {
+      return NextResponse.json({ error: 'Could not check your account right now. Please try again.' }, { status: 503 })
+    }
+    if (seekerStatus === 'suspended') {
       return NextResponse.json({ error: 'Your account has been suspended. Please contact support.' }, { status: 403 })
     }
 

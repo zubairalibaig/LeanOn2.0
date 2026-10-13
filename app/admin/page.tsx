@@ -738,6 +738,7 @@ export default function AdminPage() {
       } else if (action === 'force_payout') {
         toastMsg = `₹${resData.amount} payout queued — pay via UPI then mark paid in Payouts tab`
       }
+      if (typeof resData.warning === 'string') toastMsg = `⚠️ ${resData.warning}`
       showToast(toastMsg)
       // Clear the typed rejection reason and any stale ban-confirm state for
       // this user so they don't pre-fill or re-render on next review cycle.

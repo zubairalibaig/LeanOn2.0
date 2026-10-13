@@ -5,6 +5,7 @@ import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
 import { refundAcrossPayments, rupees } from '@/lib/razorpay-refund'
 import { requireAdmin, dbUserIdOrNull , ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS } from '@/lib/require-admin'
+import { syncAuthBan } from '@/lib/suspension'
 
 function getRzp() {
   return new Razorpay({
@@ -119,6 +120,8 @@ export async function GET(req: NextRequest) {
         const { data: selfieProfiles } = await sb.from('listener_profiles')
           .select('user_id')
           .eq('is_approved', true)
+          // Suspended listeners can't go live — their photo isn't reviewable.
+          .eq('is_suspended', false)
           .not('pending_avatar_url', 'is', null)
         userIdFilter = (selfieProfiles ?? []).map((p: { user_id: string }) => p.user_id)
         if (userIdFilter.length === 0) {
@@ -525,12 +528,15 @@ export async function PATCH(req: NextRequest) {
         // Promote pending_avatar_url → users.avatar_url for an already-approved listener.
         const { data: lpSelfie } = await sb
           .from('listener_profiles')
-          .select('pending_avatar_url')
+          .select('pending_avatar_url, is_suspended')
           .eq('user_id', userId)
           .maybeSingle()
         const pendingSelfie = lpSelfie?.pending_avatar_url
         if (!pendingSelfie) {
           return NextResponse.json({ error: 'No pending selfie to approve' }, { status: 400 })
+        }
+        if (lpSelfie?.is_suspended) {
+          return NextResponse.json({ error: 'This listener is suspended — reject the photo instead (or unsuspend first).' }, { status: 409 })
         }
         const { error: avErr } = await sb.from('users')
           .update({ avatar_url: pendingSelfie })
@@ -694,7 +700,6 @@ export async function PATCH(req: NextRequest) {
         if (lpSuspendErr) {
           logger.error('suspend: listener_profiles update failed — RECONCILIATION NEEDED — profile may still be live', { userId, error: lpSuspendErr.message })
         }
-        await sb.auth.admin.signOut(userId, 'global').then(() => {}, () => {})
         await sb.from('notifications').insert({
           user_id: userId,
           type: 'system',
@@ -721,7 +726,10 @@ export async function PATCH(req: NextRequest) {
         if (lpBanErr) {
           logger.error('ban: listener_profiles update failed — RECONCILIATION NEEDED — profile may still be live', { userId, error: lpBanErr.message })
         }
-        await sb.auth.admin.signOut(userId, 'global').then(() => {}, () => {})
+        // Ban the auth user now (the shared syncAuthBan below is skipped by
+        // this case's early return).
+        const banSyncErr = await syncAuthBan(sb, userId)
+        if (banSyncErr) logger.error('ban: auth ban failed — DB flags still block login/pages', { userId, error: banSyncErr })
         // Write audit log BEFORE the notification. If the audit log fails, return 500
         // without sending any notification — on retry the notification goes out exactly
         // once (after the now-successful audit write). Notification before audit log
@@ -823,8 +831,9 @@ export async function PATCH(req: NextRequest) {
       }
 
       case 'suspend_listener': {
-        // Listener-profile-only suspension — does NOT touch the users row.
-        // The person retains seeker access and their wallet is unaffected.
+        // Listener-profile suspension — does NOT touch the users row (wallet and
+        // seeker history are unaffected), but since 2026-10-13 it blocks login
+        // and all access just like an account suspension (lib/suspension.ts).
         const { error: lpErr } = await sb.from('listener_profiles')
           .update({ is_active: false, is_available: false, is_suspended: true, pending_avatar_url: null })
           .eq('user_id', userId)
@@ -836,7 +845,7 @@ export async function PATCH(req: NextRequest) {
           user_id: userId,
           type: 'system',
           title: 'Listener profile suspended',
-          body: notes || 'Your listener profile has been suspended. You can still use the app as a seeker. Contact support if you have questions.',
+          body: notes || 'Your account has been suspended. Contact support if you have questions.',
           action_url: '/contact',
         }).then(() => {}, () => {})
         break
@@ -1187,6 +1196,15 @@ export async function PATCH(req: NextRequest) {
         }
         logger.info('set_custom_fee_rate', { userId, previousRate: prevRate, newRate: rate, adminId: user!.id })
         break
+      }
+    }
+
+    // Any change to a suspension flag → mirror it onto Supabase Auth (ban/unban).
+    if (['suspend', 'unsuspend', 'unban', 'suspend_listener', 'unsuspend_listener', 'activate'].includes(action)) {
+      const banSyncErr = await syncAuthBan(sb, userId)
+      if (banSyncErr) {
+        logger.error('auth ban sync failed', { action, userId, error: banSyncErr })
+        return NextResponse.json({ ok: true, warning: `Saved, but the login block could not be updated (${banSyncErr}). Retry the action.` })
       }
     }
 

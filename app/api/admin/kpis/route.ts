@@ -129,7 +129,7 @@ export async function GET(req: NextRequest) {
 
       // index 36: approved listeners with a pending selfie awaiting review
       sb.from('listener_profiles').select('user_id', { count: 'exact', head: true })
-        .eq('is_approved', true).not('pending_avatar_url', 'is', null),
+        .eq('is_approved', true).eq('is_suspended', false).not('pending_avatar_url', 'is', null),
 
       // index 37: unique users who recharged (distinct user_id from wallet recharges)
       sb.from('wallet_transactions').select('user_id').eq('type', 'credit').ilike('description', '%recharge%'),

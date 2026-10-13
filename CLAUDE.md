@@ -133,6 +133,17 @@
 - A request that runs out of time is cancelled as `timed_out` (decline route with
   `{ reason: 'timeout' }`), never `seeker_cancelled` / `declined`.
 
+## Suspension (2026-10-13, migration 068)
+
+- **Suspended = `users.is_suspended` OR `listener_profiles.is_suspended`.** Both block login,
+  pages and actions — "Suspend listener" no longer leaves seeker access. Check with
+  `lib/suspension.ts suspensionStatus()` (fails closed on read errors), never one flag alone.
+- `auth.admin.signOut()` takes a **JWT, not a user id** — it can't log a user out by id.
+  Suspension kills logins via a Supabase Auth ban: DB trigger `sync_auth_ban()` (068, also
+  deletes `auth.sessions`) + `syncAuthBan()` after every admin suspend/unsuspend action.
+- End-user tokens can't UPDATE/DELETE `listener_profiles` or set `users.avatar_url` (068) —
+  all such writes go through server routes with the service role.
+
 ## Business invariants
 
 - Platform fee: **flat ₹10 per paid session** (`PLATFORM_FEE`), paid by the

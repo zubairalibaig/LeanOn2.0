@@ -3,6 +3,7 @@ import { createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 import { requireAdmin, dbUserIdOrNull , ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS } from '@/lib/require-admin'
+import { syncAuthBan } from '@/lib/suspension'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -97,7 +98,8 @@ export async function POST(req: NextRequest) {
       const { error: lpModErr } = await sb.from('listener_profiles')
         .update({ is_active: false, is_available: false, is_suspended: true, pending_avatar_url: null })
         .eq('user_id', target)
-      await sb.auth.admin.signOut(target, 'global').then(() => {}, () => {})
+      const banSyncErr = await syncAuthBan(sb, target)
+      if (banSyncErr) logger.error('moderate suspend: auth ban failed — DB flags still block login/pages', { target, error: banSyncErr })
       if (lpModErr) {
         logger.error('moderate suspend: listener_profiles update failed — RECONCILIATION NEEDED — profile may still be live', { target, error: lpModErr.message })
         await sb.from('admin_audit_logs').insert({

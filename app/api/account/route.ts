@@ -3,6 +3,7 @@ import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-se
 import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 import { removeAllSelfies } from '@/lib/selfie-storage'
+import { suspensionStatus } from '@/lib/suspension'
 
 // PATCH — deactivate listener profile only (keeps user account active)
 export async function PATCH() {
@@ -226,9 +227,12 @@ export async function POST() {
     // Suspended accounts may not self-delete. Without this guard, a suspended user
     // could re-authenticate via OTP, self-delete (scrubbing their phone), then
     // immediately re-register with the same phone — bypassing the suspension entirely.
-    const { data: suspendCheck } = await admin
-      .from('users').select('is_suspended').eq('id', user.id).maybeSingle()
-    if (suspendCheck?.is_suspended) {
+    // Covers the listener-only suspension too (lib/suspension.ts).
+    const suspendStatus = await suspensionStatus(admin, user.id)
+    if (suspendStatus === 'error') {
+      return NextResponse.json({ error: 'Could not check your account right now. Please try again.' }, { status: 503 })
+    }
+    if (suspendStatus === 'suspended') {
       return NextResponse.json(
         { error: 'Suspended accounts cannot be deleted. Please contact support.' },
         { status: 403 }

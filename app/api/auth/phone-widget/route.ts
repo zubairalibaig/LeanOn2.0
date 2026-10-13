@@ -4,6 +4,7 @@ import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-se
 import { checkRateLimitStrict } from '@/lib/rate-limit'
 import { ensureUserRow } from '@/lib/ensure-user-row'
 import { logger } from '@/lib/logger'
+import { suspensionStatus } from '@/lib/suspension'
 
 // Phone sign-in via the MSG91 OTP Widget.
 //
@@ -197,18 +198,17 @@ export async function POST(req: NextRequest) {
   let isNewUser = false
 
   // ── 3a. Block suspended accounts from getting a new session ─────────────────
-  // The suspend/ban action calls auth.admin.signOut globally, but the OTP widget
-  // is an external verification — it doesn't know about our DB state. A suspended
-  // user who re-does OTP would otherwise receive a fresh Supabase session, bypassing
-  // the suspension. Check BEFORE minting any session.
+  // The OTP widget is an external verification — it doesn't know about our DB
+  // state. A suspended user who re-does OTP would otherwise receive a fresh
+  // Supabase session. Check BEFORE minting any session. Covers both the account
+  // suspension/ban and the listener-only suspension (lib/suspension.ts).
   if (userId) {
-    const { data: suspendCheck, error: suspendCheckErr } = await admin
-      .from('users').select('is_suspended').eq('id', userId).maybeSingle()
-    if (suspendCheckErr) {
-      logger.error('phone-widget: suspension check DB error', { userId, error: suspendCheckErr.message })
+    const status = await suspensionStatus(admin, userId)
+    if (status === 'error') {
+      logger.error('phone-widget: suspension check DB error', { userId })
       return NextResponse.json({ error: 'Could not verify account status. Please try again.' }, { status: 503 })
     }
-    if (suspendCheck?.is_suspended) {
+    if (status === 'suspended') {
       logger.warn('phone-widget: blocked login for suspended account', { userId })
       return NextResponse.json(
         { error: 'Your account has been suspended. Please contact support to appeal.' },
@@ -267,13 +267,12 @@ export async function POST(req: NextRequest) {
           // Re-run suspension check — the earlier check at step 3a only ran
           // when findAuthUserIdByPhone returned a userId. This path sets userId
           // from the listUsers fallback scan, bypassing that check entirely.
-          const { data: suspendRetry, error: suspendRetryErr } = await admin
-            .from('users').select('is_suspended').eq('id', userId).maybeSingle()
-          if (suspendRetryErr) {
-            logger.error('phone-widget: suspension check DB error (listUsers fallback path)', { userId, error: suspendRetryErr.message })
+          const retryStatus = await suspensionStatus(admin, userId)
+          if (retryStatus === 'error') {
+            logger.error('phone-widget: suspension check DB error (listUsers fallback path)', { userId })
             return NextResponse.json({ error: 'Could not verify account status. Please try again.' }, { status: 503 })
           }
-          if (suspendRetry?.is_suspended) {
+          if (retryStatus === 'suspended') {
             logger.warn('phone-widget: blocked login for suspended account (listUsers fallback path)', { userId })
             return NextResponse.json(
               { error: 'Your account has been suspended. Please contact support to appeal.' },

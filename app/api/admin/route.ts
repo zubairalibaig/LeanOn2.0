@@ -6,6 +6,7 @@ import { logger } from '@/lib/logger'
 import { requireAdmin, ADMIN_PASSWORD_USER_ID, ADMIN_ACTION_LIMIT, ADMIN_ACTION_WINDOW_MS } from '@/lib/require-admin'
 import { razorpayxEnabled, createUpiPayout } from '@/lib/razorpayx'
 import { refundAcrossPayments, razorpayAlreadyRefunded, rupees } from '@/lib/razorpay-refund'
+import { syncAuthBan } from '@/lib/suspension'
 
 function getRzp() {
   return new Razorpay({
@@ -468,6 +469,8 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'User reactivated, but listener profile update failed. Please retry.' }, { status: 500 })
       }
     }
+    const banSyncErr = await syncAuthBan(admin, id)
+    if (banSyncErr) logger.error('reactivate_user: auth unban failed', { id, error: banSyncErr })
     await auditLog(admin, user!.id, 'reactivate_user', id)
     return NextResponse.json({ ok: true })
   }

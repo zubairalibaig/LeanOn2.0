@@ -3,6 +3,7 @@ import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-se
 import { checkRateLimit } from '@/lib/rate-limit'
 import { SELFIE_BUCKET, idVerificationSelfiePath, idVerificationDocPath } from '@/lib/selfie-storage'
 import { logger } from '@/lib/logger'
+import { suspensionStatus } from '@/lib/suspension'
 
 const MAX_BYTES = 4 * 1024 * 1024
 const TYPES = new Set(['image/jpeg', 'image/png', 'image/webp'])
@@ -38,8 +39,11 @@ export async function POST(req: NextRequest) {
 
     const admin = createAdminClient()
 
-    const { data: userRow } = await admin.from('users').select('is_suspended').eq('id', user.id).maybeSingle()
-    if (userRow?.is_suspended) {
+    const status = await suspensionStatus(admin, user.id)
+    if (status === 'error') {
+      return NextResponse.json({ error: 'Could not check your account right now. Please try again.' }, { status: 503 })
+    }
+    if (status === 'suspended') {
       return NextResponse.json({ error: 'Your account is suspended. Please contact support.' }, { status: 403 })
     }
 
