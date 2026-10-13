@@ -1,0 +1,23 @@
+# Tell Bing (which feeds ChatGPT search) and other IndexNow engines that
+# public pages changed. Run it after a deploy of SEO / public-page changes:
+#   github.com/zubairalibaig/LeanOn2.0/actions → "IndexNow ping" → Run workflow
+name: IndexNow ping
+
+on:
+  workflow_dispatch:
+    inputs:
+      paths:
+        description: 'Optional: space-separated paths (e.g. /usa /uk). Leave empty to submit the whole sitemap.'
+        required: false
+        default: ''
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Submit URLs to IndexNow
+        run: node scripts/indexnow.mjs ${{ github.event.inputs.paths }}
