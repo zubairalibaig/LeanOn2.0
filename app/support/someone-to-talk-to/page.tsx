@@ -3,12 +3,12 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Someone to Talk To in India | Real Human Peer Support | LeanOn',
-  description: 'Need someone to talk to? LeanOn connects you with screened peer listeners in India for private one-to-one conversations. Start with a free 5-minute introduction; paid sessions start at ₹160 for 15 minutes.',
+  title: 'Someone to Talk To in India | Peer Support & Pricing | LeanOn',
+  description: 'Talk one-to-one with a screened peer listener about loneliness, work stress or relationship difficulties. One free 5-minute introduction per account; example: 15 minutes at ₹10/min costs ₹160 including the ₹10 platform fee.',
   alternates: { canonical: 'https://www.leanon.app/support/someone-to-talk-to', languages: { 'en-IN': 'https://www.leanon.app/support/someone-to-talk-to' } },
   openGraph: {
     title: 'Someone to Talk To in India | LeanOn Peer Listeners',
-    description: 'Need someone to talk to? LeanOn connects you with screened peer listeners in India. Anonymous, available 24/7.',
+    description: 'Browse real peer-listener profiles and availability. One free 5-minute introduction per account; clear pay-per-session pricing, with no subscription.',
     url: 'https://www.leanon.app/support/someone-to-talk-to',
     siteName: 'LeanOn',
     type: 'article',
@@ -56,7 +56,7 @@ const faqSchema = {
       name: 'How quickly can I talk to someone on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'You can start a session within minutes. Sign up with your phone number, browse available listeners, and start a session immediately — no booking, no waiting list, no appointment required. Listeners are available 24/7 across India.',
+        text: 'Sign in with phone OTP, browse the live listener directory and send a request to an available listener. There is no advance appointment, but an immediate start depends on who is online and accepts. One 5-minute introductory session is free per account. Paid India sessions are priced at the selected listener rate × minutes plus a ₹10 platform fee; a 15-minute session at ₹10/min costs ₹160. Exact prices are shown before you begin.',
       },
     },
   ],
@@ -147,8 +147,8 @@ export default function SomeoneToTalkToPage() {
         {/* Hero */}
         <div className="hero">
           <p className="tag">Peer Support · Someone to Talk To India</p>
-          <h1>Need Someone to Talk To? <em>Real Listeners</em>, Available Now in India</h1>
-          <p className="lead">Sometimes you just need to say it out loud to another human being. LeanOn connects you with peer listeners across India who are available now — anonymous, non-judgmental, and genuinely present. No appointments. No waitlists. Available 24/7.</p>
+          <h1>Need Someone to Talk To? <em>Real Peer Listeners</em> in India</h1>
+          <p className="lead">Sometimes you need to say it out loud to another human being. LeanOn lets you browse screened peer listeners for one-to-one text or voice conversations about relationship stress, family pressure, work, loneliness or a difficult day. No advance appointment is needed; a conversation starts when an available listener accepts.</p>
         </div>
 
         {/* Why It's Hard to Find Someone to Talk To */}
@@ -178,7 +178,7 @@ export default function SomeoneToTalkToPage() {
           <p>The difference between being heard by someone who understands from lived experience versus someone who simply has sympathy is profound. LeanOn listeners are selected based on personal experience with the challenges they support. When they say &quot;I understand&quot; — they mean it in the most literal sense possible.</p>
 
           <h3>Complete Freedom to Be Honest</h3>
-          <p>Because the listener has no stake in your life — no shared history, no social consequence, no opinion to protect — you can say exactly what you feel without editing yourself. That level of honesty is rare and genuinely healing. For many people it is the first time they have ever said out loud what they have been carrying inside.</p>
+          <p>Because the listener has no stake in your life — no shared history, no social consequence, no opinion to protect — you can say exactly what you feel without editing yourself. That level of honesty can feel easier when the listener is outside your personal circle. For many people it is the first time they have ever said out loud what they have been carrying inside.</p>
 
           <h3>Present and Fully Attentive</h3>
           <p>In a LeanOn session, the listener&apos;s sole role is to be present with you. No distractions, no split attention, no rushing to their own thoughts. Just focused, full attention on what you are sharing — which is something most of us rarely experience even from the people closest to us.</p>
@@ -210,7 +210,7 @@ export default function SomeoneToTalkToPage() {
           <p>A therapist is a licensed professional who works within a clinical framework — diagnosing conditions, applying evidence-based interventions, and tracking therapeutic progress over time. That structure is exactly right for people who need clinical care. But many people do not need treatment. They need to be heard by someone who has been through something similar and come out the other side.</p>
 
           <h3>Accessibility and Affordability</h3>
-          <p>Therapy in Indian metro cities typically costs ₹1,500–₹3,000 per session, with waiting lists at good practices stretching weeks. LeanOn paid peer support starts at ₹160 for 15 minutes, with one free 5-minute introductory session per account. No appointment is required; you can browse listeners and start when someone is available.</p>
+          <p>Clinical therapy and peer support are different services, so price is not a like-for-like comparison. On LeanOn, one 5-minute introductory session is free per account. In India, a paid session costs the selected listener&apos;s per-minute rate multiplied by the session length, plus a flat ₹10 platform fee. For example, 15 minutes at ₹10/min costs ₹160. Check <a href="/pricing" style={{color:'var(--teal)',fontWeight:700}}>current pricing</a>; the exact price is displayed before you start.</p>
 
           <h3>Complementary, Not Competing</h3>
           <p>Many people use peer support alongside therapy — as a way to process between clinical sessions, access support when a therapist is not available, or take a meaningful first step before they are ready for formal treatment. LeanOn listeners are trained to recognise when someone might benefit from professional care and will gently say so when that appears to be the case.</p>
@@ -224,52 +224,31 @@ export default function SomeoneToTalkToPage() {
           <h3>Browse Listeners</h3>
           <p>Go to <a href="/browse" style={{color:'var(--teal)',fontWeight:700}}>Browse Listeners</a> and read through peer profiles. Each listener shares their personal experience, the topics they support, and their availability. Taking a few minutes to find someone whose experience resonates with yours makes a real difference to the quality of the conversation.</p>
 
-          <h3>Start Instantly</h3>
-          <p>Once you choose an available listener, you can start the free 5-minute introductory session. It gives you a chance to see whether the conversation feels right before you pay for more time.</p>
+          <h3>Request a Session</h3>
+          <p>One free introductory session of up to 5 minutes is available per account. Choose an available listener and send a request; the session can begin when they accept. If you continue later, review the exact price before starting a paid session.</p>
 
           <h3>Say What You Need to Say</h3>
           <p>Once you are in a session, just start wherever feels right. You do not need to explain everything or give context. Your listener can listen and ask questions as appropriate. There is no clinical treatment plan, homework or follow-up requirement.</p>
         </div>
 
-        {/* Listener cards */}
-        <h2 style={{fontSize:'20px',fontWeight:800,color:'var(--navy)',marginBottom:'16px'}}>Listeners you can browse Now</h2>
-        <div className="listeners-grid">
-          {[
-            {
-              emoji: '🌙',
-              name: 'Vikram',
-              tag: 'Loneliness & Isolation',
-              bio: 'Moved to Mumbai alone at 22 and spent years feeling invisible in a crowd. I know exactly what it means to need someone to talk to and have no one.'
-            },
-            {
-              emoji: '💚',
-              name: 'Shreya',
-              tag: 'Anxiety & Overthinking',
-              bio: 'Lived with anxiety that made everything feel impossible for years. Found my way through and now I help others feel less alone in the spiral.'
-            },
-            {
-              emoji: '🔆',
-              name: 'Karthik',
-              tag: 'Work Stress & Burnout',
-              bio: 'Hit complete burnout at 28 after years of pushing through. I understand what it feels like when everything that used to work stops working.'
-            },
-          ].map((l, i) => (
-            <div key={i} className="listener-card">
-              <div className="listener-avatar">{l.emoji}</div>
-              <div className="listener-name">{l.name}</div>
-              <div className="listener-tag">{l.tag}</div>
-              <p className="listener-bio">{l.bio}</p>
-            </div>
-          ))}
+        <div className="section">
+          <h2>Browse real peer listeners</h2>
+          <p>Use the live directory to review listener introductions, lived-experience topics, languages, ratings and current availability. Choose based on the details shown in each real profile and whether the listener is currently available.</p>
+          <p>One 5-minute introductory session is free per account. In India, paid pricing depends on the listener&apos;s rate and session length, plus a flat ₹10 platform fee. For example, 15 minutes at ₹10/min costs ₹160.</p>
+          <div className="related" style={{marginTop:16}}>
+            <a href="/browse" className="related-link">Browse real listeners →</a>
+            <a href="/pricing" className="related-link">See all prices →</a>
+            <a href="/trust" className="related-link">Trust &amp; safety →</a>
+          </div>
         </div>
 
         {/* CTA */}
         <div className="cta-card">
-          <h2>Someone Is Ready to Listen Right Now</h2>
-          <p>Anonymous, non-judgmental peer support available 24/7 across India. Available 24/7.</p>
+          <h2>Find Someone Who Is Available</h2>
+          <p>Browse actual listener profiles and see who is online. Availability can change throughout the day; your session starts when a listener accepts your request.</p>
           <div className="cta-btns">
-            <a href="/browse?topic=general"><button className="btn-primary">Someone is here — start free now →</button></a>
-            <a href="/browse"><button className="btn-secondary">Browse Listeners First</button></a>
+            <a href="/browse"><button className="btn-primary">Browse listeners — first 5 minutes free →</button></a>
+            <a href="/pricing"><button className="btn-secondary">See session prices</button></a>
           </div>
         </div>
 
@@ -294,7 +273,7 @@ export default function SomeoneToTalkToPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How quickly can I talk to someone on LeanOn?</div>
-            <div className="faq-a">You can start a session within minutes. Sign up with your phone number, browse available listeners, and start a session immediately — no booking, no waiting list, no appointment required. Listeners are available 24/7 across India.</div>
+            <div className="faq-a">Sign in with phone OTP, browse the live listener directory and send a request to an available listener. There is no advance appointment, but an immediate start depends on who is online and accepts. One 5-minute introductory session is free per account. Paid prices are shown before you start.</div>
           </div>
         </div>
 
@@ -318,7 +297,7 @@ export default function SomeoneToTalkToPage() {
             <a href="/love-problems-india" className="related-link">Love problems</a>
             <a href="/marriage-problems-india" className="related-link">Marriage problems</a>
             <a href="/talk-about-my-problems-online" className="related-link">Talk about my problems</a>
-            <a href="/anonymous-chat-india" className="related-link">Anonymous chat India</a>
+            <a href="/vent-to-someone-online" className="related-link">Vent to someone online</a>
             <a href="/pay-to-talk-online-india" className="related-link">Pay to talk online</a>
             <a href="/faq" className="related-link">FAQ</a>
             <a href="/browse" className="related-link">Browse All Listeners</a>

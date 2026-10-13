@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Frequently Asked Questions | LeanOn Peer Support India',
-  description: 'Find answers to common questions about LeanOn — India\'s peer emotional support platform. Learn about sessions, pricing, listeners, and more.',
+  title: 'LeanOn FAQ: Pricing, First Session & Peer Support | India',
+  description: 'How LeanOn works, what a session costs, the free 5-minute introduction, privacy and safety. Compare peer support with therapy and see prices before starting.',
   alternates: { canonical: 'https://www.leanon.app/faq', languages: { 'en-IN': 'https://www.leanon.app/faq' } },
   keywords: [
     'lean on app FAQ', 'leanon FAQ', 'what is leanon', 'lean on meaning', 'lean on someone',
@@ -16,7 +16,7 @@ const faqs = [
     items: [
       {
         q: 'What is LeanOn?',
-        a: 'LeanOn is a peer support platform — your person to lean on, available anytime. We connect people across India with verified peer listeners: real people who have personally been through what you\'re facing, whether that\'s loneliness, burnout, a breakup, grief, anxiety, or startup stress. It\'s not therapy — it\'s genuine human connection, available 24/7.',
+        a: 'LeanOn is an online peer-support platform where people can browse screened human listeners for one-to-one text or voice conversations about everyday challenges such as loneliness, work stress, relationship difficulties, grief and overthinking. It is not therapy or a crisis service. A conversation can start when a listener is available; availability varies.',
       },
       {
         q: 'What does "lean on" mean?',
@@ -28,7 +28,7 @@ const faqs = [
       },
       {
         q: 'Is LeanOn available across India?',
-        a: 'Yes — LeanOn is fully online and available across all of India. Whether you\'re in Bengaluru, Mumbai, Delhi, Chennai, Hyderabad, Pune, Kolkata, Jaipur, Ahmedabad, or a smaller town, you can access peer support anytime.',
+        a: 'LeanOn is online, so people can browse from anywhere in India, including Bengaluru, Mumbai, Delhi, Chennai, Hyderabad and smaller towns. Whether a conversation can start immediately depends on which listeners are online and available.',
       },
       {
         q: 'What topics can I talk about?',
@@ -36,7 +36,7 @@ const faqs = [
       },
       {
         q: 'How is LeanOn different from companionship apps like GetCompanion?',
-        a: 'Companionship apps connect you with trained companions for pleasant conversation and activities. LeanOn connects you with peer listeners who have personally lived through the same challenge you are facing — loneliness, burnout, a breakup, grief. The empathy comes from shared experience, not just training. LeanOn is also fully online (text and voice), available across India and 10 countries, with a free 5-minute trial.',
+        a: 'LeanOn is built around peer support: one-to-one conversations with screened listeners who bring relevant lived experience. It is not therapy or a clinical service. The first 5-minute introductory session is free once per account; after that, paid session prices are shown before you start. See the pricing page for the current India and international rates.',
       },
     ],
   },
@@ -45,15 +45,15 @@ const faqs = [
     items: [
       {
         q: 'How do I start using LeanOn?',
-        a: 'Sign up with your mobile number (OTP verified — 30 seconds). Browse peer listeners anonymously — read bios, topics, and ratings. When you\'re ready, pick a session length and start immediately. Every new listener you try comes with a free 5-minute trial — once per listener.',
+        a: 'Sign in using your phone number and OTP, then browse real listener profiles, topics, languages and availability. One introductory session of up to 5 minutes is free per account. If you choose to continue, review the displayed price and select a paid session. A session starts when an available listener accepts your request.',
       },
       {
         q: 'How does pricing work?',
-        a: 'LeanOn charges a flat fee per session. 15-minute sessions start at ₹160. Your first session is free (5 minutes) — no credit card or wallet top-up needed.',
+        a: 'One 5-minute introductory session is free per account. In India, paid sessions are priced at the listener’s rate per minute × session length, plus a flat ₹10 platform fee; for example, 15 minutes with a ₹10/min listener costs ₹160. Voice calls cost ₹5/min more than text when voice pricing is enabled. Your exact price is shown before you start. See /pricing for details.',
       },
       {
         q: 'Do I need to book in advance?',
-        a: 'No appointments needed. Sessions start instantly. Browse available listeners and begin a session in under 60 seconds.',
+        a: 'You do not need to book an appointment in advance. Browse listeners who are shown as available and send a session request; the conversation starts when the listener accepts. Availability changes, so an immediate start cannot be guaranteed.',
       },
       {
         q: 'Can I browse listeners before signing up?',
@@ -66,7 +66,7 @@ const faqs = [
     items: [
       {
         q: 'How much does LeanOn cost?',
-        a: 'Your first 5-minute session is free. After that, in India you pay the listener\'s own per-minute rate for 15, 30 or 45 minutes, plus a flat ₹10 platform fee — for example, 15 minutes with a ₹10/min listener costs ₹160 and 30 minutes costs ₹310. Voice calls are ₹5/min more than text. Outside India, sessions are a flat US$10 for 15 minutes, US$15 for 30 and US$20 for 45. Full details: leanon.app/pricing.',
+        a: 'One introductory session of up to 5 minutes is free per account. In India, the total is the selected listener\'s per-minute rate × session length, plus a flat ₹10 platform fee; for example, 15 minutes at ₹10/min costs ₹160 and 30 minutes costs ₹310. Voice calls are ₹5/min more than text when voice pricing is enabled. Outside India, sessions are US$10 for 15 minutes, US$15 for 30 and US$20 for 45. See leanon.app/pricing for details.',
       },
       {
         q: 'How does the wallet work?',
@@ -87,7 +87,7 @@ const faqs = [
     items: [
       {
         q: 'Are my conversations private?',
-        a: 'Yes. All sessions are private and confidential. LeanOn never shares your personal information or conversation content with anyone. Your name is not shown to listeners — just your first name.',
+        a: 'LeanOn uses your phone number for OTP sign-in, but it is not shown to listeners; you can use a display name. Text messages are not stored after session completion by default and voice calls are not recorded. Automated AI moderation runs for safety, and flagged content may be reviewed by the safety team. Read the Privacy Policy for details, and avoid sharing identifying information you do not want to disclose.',
       },
       {
         q: 'Is LeanOn safe?',
