@@ -2,7 +2,8 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 
 // A person is suspended when EITHER flag is set:
 //   users.is_suspended             — account suspend / ban (admin "Suspend", "Ban")
-//   listener_profiles.is_suspended — listener suspend (admin "Suspend listener")
+//   listener_profiles.is_suspended — set together with it; also legacy
+//                                    listener-only suspensions (old "Suspend listener")
 // Both mean: no login, no access. Migration 068 mirrors this in the database
 // (auth ban + session revoke via sync_auth_ban()).
 //

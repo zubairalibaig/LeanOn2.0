@@ -2225,17 +2225,39 @@ export default function AdminPage() {
                                       </button>
                                     )
                                   )}
-                                  {!isPending && !isRejected && l.is_suspended && (
-                                    <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'unsuspend_listener')}>
-                                      {busy === `unsuspend_listener:${l.user_id}` ? '…' : 'Unsuspend'}
-                                    </button>
+                                  {/* Same account-level actions as the Users tab: Suspend (reversible)
+                                      and Ban (needs Unban). Both block login and all access. A
+                                      legacy listener-only suspension (only listener_profiles flag set)
+                                      is lifted by Unsuspend too. */}
+                                  {!l.users?.phone?.startsWith('DELETE') && (
+                                    (l.is_suspended || u?.is_suspended) ? (
+                                      bannedUserIds.has(l.user_id) ? (
+                                        <button className="btn btn-red" disabled={busy !== null} onClick={() => userAction(l.user_id, 'unban')}
+                                          title="Account was banned — click to explicitly restore">
+                                          {busy === `unban:${l.user_id}` ? '…' : 'Unban'}
+                                        </button>
+                                      ) : (
+                                        <button className="btn btn-green" disabled={busy !== null} onClick={() => userAction(l.user_id, 'unsuspend')}>
+                                          {busy === `unsuspend:${l.user_id}` ? '…' : 'Unsuspend'}
+                                        </button>
+                                      )
+                                    ) : (
+                                      <>
+                                        <button className="btn btn-orange" disabled={busy !== null} onClick={() => userAction(l.user_id, 'suspend')}>
+                                          {busy === `suspend:${l.user_id}` ? '…' : 'Suspend'}
+                                        </button>
+                                        {confirmBanId === l.user_id ? (
+                                          <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
+                                            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--red)' }}>Ban this account?</span>
+                                            <button className="btn btn-red" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => { setConfirmBanId(null); userAction(l.user_id, 'ban') }}>Yes, ban</button>
+                                            <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setConfirmBanId(null)}>Cancel</button>
+                                          </span>
+                                        ) : (
+                                          <button className="btn btn-red" disabled={busy !== null} onClick={() => setConfirmBanId(l.user_id)}>Ban</button>
+                                        )}
+                                      </>
+                                    )
                                   )}
-                                  {!isPending && !isRejected && l.is_active && !l.is_suspended && (
-                                    <button className="btn btn-orange" disabled={busy !== null} onClick={() => userAction(l.user_id, 'suspend_listener')}>
-                                      {busy === `suspend_listener:${l.user_id}` ? '…' : 'Suspend listener'}
-                                    </button>
-                                  )}
-                                  {/* Account-level ban lives on the Users tab — use Suspend listener for listener-only blocks */}
                                   {l.users?.phone?.startsWith('DELETE') ? (
                                     <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--red)', opacity: 0.6 }}>Account deleted</span>
                                   ) : (

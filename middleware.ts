@@ -163,7 +163,7 @@ const SUSPENSION_GATED_PUBLIC_PREFIXES = ['/browse', '/listener/', '/listener-lo
 
 // Suspension gate: returns a redirect to /suspended when the signed-in user's
 // account (users.is_suspended — Suspend/Ban) OR listener profile
-// (listener_profiles.is_suspended — Suspend listener) is suspended; null otherwise.
+// (listener_profiles.is_suspended — set with it; legacy listener-only suspensions) is suspended; null otherwise.
 // Uses the anon client with the user's session: RLS users_select_own and
 // lp_select_approved (auth.uid() = user_id) let a user read their own rows.
 // Read errors return null (fail open for the page — API routes and the DB

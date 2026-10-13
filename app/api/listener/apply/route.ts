@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
 
     // Suspension check — a suspended user must not be able to update any profile data.
     // Both suspensions: the account one (users) and the listener-only one
-    // (listener_profiles, set by suspend_listener), which leaves seeker access on.
+    // (listener_profiles — also set alone by the removed "Suspend listener" action).
     const [{ data: userRow }, { data: lpSusp, error: lpSuspErr }] = await Promise.all([
       admin.from('users').select('is_suspended').eq('id', user.id).maybeSingle(),
       admin.from('listener_profiles').select('is_suspended').eq('user_id', user.id).maybeSingle(),

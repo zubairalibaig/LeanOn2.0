@@ -136,7 +136,8 @@
 ## Suspension (2026-10-13, migration 068)
 
 - **Suspended = `users.is_suspended` OR `listener_profiles.is_suspended`.** Both block login,
-  pages and actions — "Suspend listener" no longer leaves seeker access. Check with
+  pages and actions. Admin has two actions only: **Suspend** (undo: Unsuspend) and **Ban**
+  (undo: Unban only). The listener-only "Suspend listener" was removed. Check with
   `lib/suspension.ts suspensionStatus()` (fails closed on read errors), never one flag alone.
 - `auth.admin.signOut()` takes a **JWT, not a user id** — it can't log a user out by id.
   Suspension kills logins via a Supabase Auth ban: DB trigger `sync_auth_ban()` (068, also

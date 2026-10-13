@@ -364,7 +364,7 @@ export async function PATCH(req: NextRequest) {
   const retakeSelfie = body?.retake_selfie === true
   if (!userId || !UUID_RE.test(userId)) return NextResponse.json({ error: 'Invalid userId' }, { status: 400 })
 
-  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'unban', 'suspend_listener', 'unsuspend_listener', 'approve_listener', 'reject_listener', 'request_resubmission', 'approve_selfie', 'reject_selfie', 'restore_listener', 'rename', 'update_bank_details', 'set_custom_fee_rate', 'force_refund', 'force_payout']
+  const validActions = ['activate', 'deactivate', 'suspend', 'ban', 'unsuspend', 'unban', 'approve_listener', 'reject_listener', 'request_resubmission', 'approve_selfie', 'reject_selfie', 'restore_listener', 'rename', 'update_bank_details', 'set_custom_fee_rate', 'force_refund', 'force_payout']
   if (!action || !validActions.includes(action)) return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
 
   const sb = createAdminClient()
@@ -830,56 +830,6 @@ export async function PATCH(req: NextRequest) {
         break
       }
 
-      case 'suspend_listener': {
-        // Listener-profile suspension — does NOT touch the users row (wallet and
-        // seeker history are unaffected), but since 2026-10-13 it blocks login
-        // and all access just like an account suspension (lib/suspension.ts).
-        const { error: lpErr } = await sb.from('listener_profiles')
-          .update({ is_active: false, is_available: false, is_suspended: true, pending_avatar_url: null })
-          .eq('user_id', userId)
-        if (lpErr) {
-          logger.error('suspend_listener: listener_profiles update failed', { userId, error: lpErr.message })
-          return NextResponse.json({ error: `Failed to suspend listener profile: ${lpErr.message}` }, { status: 500 })
-        }
-        await sb.from('notifications').insert({
-          user_id: userId,
-          type: 'system',
-          title: 'Listener profile suspended',
-          body: notes || 'Your account has been suspended. Contact support if you have questions.',
-          action_url: '/contact',
-        }).then(() => {}, () => {})
-        break
-      }
-
-      case 'unsuspend_listener': {
-        // Restores listener activity only when already approved — unsuspending a
-        // rejected applicant must not put them online (they need re-approval first).
-        const { data: lp, error: lpReadErr } = await sb.from('listener_profiles')
-          .select('is_approved').eq('user_id', userId).maybeSingle()
-        if (lpReadErr) {
-          logger.error('unsuspend_listener: is_approved read failed — aborting to avoid data corruption', { userId, error: lpReadErr.message })
-          return NextResponse.json({ error: `Failed to read listener profile: ${lpReadErr.message}` }, { status: 500 })
-        }
-        const wasApproved = lp?.is_approved === true
-        const { error: lpErr } = await sb.from('listener_profiles')
-          .update({ is_suspended: false, is_active: wasApproved, is_available: false })
-          .eq('user_id', userId)
-        if (lpErr) {
-          logger.error('unsuspend_listener: listener_profiles update failed', { userId, error: lpErr.message })
-          return NextResponse.json({ error: `Failed to unsuspend listener profile: ${lpErr.message}` }, { status: 500 })
-        }
-        await sb.from('notifications').insert({
-          user_id: userId,
-          type: 'system',
-          title: 'Listener profile reinstated',
-          body: wasApproved
-            ? 'Your listener profile has been reinstated. Head to your dashboard to re-enable your availability.'
-            : 'Your listener profile suspension has been lifted, but your account needs to be re-approved before you can go live.',
-          action_url: '/dashboard',
-        }).then(() => {}, () => {})
-        break
-      }
-
       case 'deactivate': {
         const { error: uErr } = await sb.from('users').update({ is_active: false }).eq('id', userId)
         if (uErr) {
@@ -1200,7 +1150,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     // Any change to a suspension flag → mirror it onto Supabase Auth (ban/unban).
-    if (['suspend', 'unsuspend', 'unban', 'suspend_listener', 'unsuspend_listener', 'activate'].includes(action)) {
+    if (['suspend', 'unsuspend', 'unban', 'activate'].includes(action)) {
       const banSyncErr = await syncAuthBan(sb, userId)
       if (banSyncErr) {
         logger.error('auth ban sync failed', { action, userId, error: banSyncErr })
