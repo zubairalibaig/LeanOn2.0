@@ -4,6 +4,7 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { ensureUserRow } from '@/lib/ensure-user-row'
 import { logger } from '@/lib/logger'
 import { isUnlimitedTestPhone } from '@/lib/test-users'
+import { pricingCountry } from '@/lib/geo-pricing'
 
 // GET — return the caller's name, role, and wallet_balance (admin-client read, bypasses RLS).
 // Used by auth page (name check) and wallet page (initial balance load).
@@ -60,7 +61,9 @@ export async function GET() {
       is_unlimited_tester: isUnlimitedTestPhone(phone),
       // ISO country code from phone-prefix selection at signup (e.g. 'IN', 'US', 'GB').
       // Used by listener profile page for NRI vs India price display.
-      account_country: data?.account_country ?? null,
+      // Effective pricing country from the verified phone (lib/geo-pricing) —
+      // the same value /api/sessions bills with, so the price shown is the price charged.
+      account_country: pricingCountry(phone, data?.account_country ?? null),
       // True when the user is an approved listener — name editing is locked.
       // Derived server-side via admin client so RLS cannot hide it.
       is_approved_listener: isApprovedListener,

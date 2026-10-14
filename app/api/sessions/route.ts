@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { PLATFORM_FEE, FREE_SESSION_MINS, MAX_FREE_TRIALS, SESSION_DURATIONS, sessionRatePerMin, REQUEST_RESPONSE_WINDOW_SECS, serviceFeeRateAt } from '@/lib/constants'
-import { isNriCountry, NRI_INR_EQUIV } from '@/lib/geo-pricing'
+import { isNriCountry, NRI_INR_EQUIV, pricingCountry } from '@/lib/geo-pricing'
 import { isUnlimitedTestPhone } from '@/lib/test-users'
 import { settleSession } from '@/lib/session-billing'
 import { applySettlement } from '@/lib/settlement-ledger'
@@ -214,9 +214,12 @@ export async function POST(req: NextRequest) {
     // crafted request cannot claim India status to avoid NRI pricing.
     let isNriSession = false
     if (!effectivelyFree && (SESSION_DURATIONS as readonly number[]).includes(durationMins) && durationMins !== FREE_SESSION_MINS) {
+      // Country from the OTP-verified phone (lib/geo-pricing pricingCountry) —
+      // account_country alone was 'IN' for every overseas account.
       const { data: seekerCountryRow } = await sb
-        .from('users').select('account_country').eq('id', user.id).single()
-      if (isNriCountry(seekerCountryRow?.account_country) && NRI_INR_EQUIV[durationMins as 15 | 30 | 45]) {
+        .from('users').select('account_country, phone').eq('id', user.id).single()
+      const seekerPhone = seekerCountryRow?.phone ?? (user.phone ? '+' + user.phone.replace(/^\+/, '') : null)
+      if (isNriCountry(pricingCountry(seekerPhone, seekerCountryRow?.account_country)) && NRI_INR_EQUIV[durationMins as 15 | 30 | 45]) {
         isNriSession = true
       }
     }

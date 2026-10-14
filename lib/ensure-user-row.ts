@@ -1,5 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { logger } from '@/lib/logger'
+import { pricingCountry } from '@/lib/geo-pricing'
 
 type EnsureArgs = {
   id: string
@@ -45,9 +46,12 @@ export async function ensureUserRow(
   if (!error) {
     // First-time-only country write: only sets account_country when the column
     // is currently NULL — never overwrites an existing value.
-    if (accountCountry) {
+    // Stored value follows the verified phone (pricingCountry), so an overseas
+    // number can never be saved as 'IN' from the dropdown default.
+    const storedCountry = accountCountry || phone ? pricingCountry(phone ?? null, accountCountry ?? null) : null
+    if (storedCountry) {
       await admin.from('users')
-        .update({ account_country: accountCountry })
+        .update({ account_country: storedCountry })
         .eq('id', id)
         .is('account_country', null)
         .then(() => {}, (e) => logger.warn('ensureUserRow: account_country update failed', { error: String(e) }))
