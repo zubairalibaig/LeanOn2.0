@@ -9,7 +9,7 @@ import { SHOW_LISTENER_GROWTH_NOTICE, SHOW_LISTENER_PRICING_UPDATE_NOTICE } from
 import { PRICING_NOTICE } from '@/lib/listener-announcements'
 import { estimateListenerTakeHome } from '@/lib/session-billing'
 import { showToast } from '@/lib/toast'
-import { registerPushNotifications, getAlertStatus, showLocalNotification, closeLocalNotifications, type AlertStatus } from '@/lib/firebase-client'
+import { registerPushNotifications, getAlertStatus, getLastPushFailure, showLocalNotification, closeLocalNotifications, type AlertStatus } from '@/lib/firebase-client'
 import { compressImage, extForType, MAX_INPUT_BYTES } from '@/lib/compress-image'
 import Avatar from '@/app/components/Avatar'
 import { TAGLINE_PHRASES, TAGLINE_PICK, LIVED_MIN_CHARS, LIVED_MAX_CHARS } from '@/lib/listener-onboarding'
@@ -272,6 +272,10 @@ export default function DashboardPage() {
   const [pushRegistered, setPushRegistered] = useState<boolean | null>(null)
   const [alertStatus, setAlertStatus] = useState<AlertStatus | null>(null)
   const [testingAlert, setTestingAlert] = useState(false)
+  // Opened from the installed LeanOn app (Play Store / home screen) rather than
+  // a Chrome tab — notification permission is then set in the app's settings.
+  const [inInstalledApp, setInInstalledApp] = useState(false)
+  useEffect(() => { try { setInInstalledApp(window.matchMedia('(display-mode: standalone)').matches) } catch { /* ignore */ } }, [])
   // Outcome of the last test alert, shown in the alerts card (toasts vanish too fast for setup steps).
   const [testResult, setTestResult] = useState<{ ok: boolean; text: string } | null>(null)
 
@@ -1363,9 +1367,18 @@ export default function DashboardPage() {
               <>
                 <div style={{fontWeight:800, color:'#9A5B00', marginBottom:2}}>🔕 Phone alerts are off on this device</div>
                 <div style={{marginBottom:6}}>
-                  {alertStatus === 'granted' && <>Notifications are allowed, but this device couldn&apos;t register for request alerts. Check your connection and tap Try again. Until it works you go offline {STALE_HEARTBEAT_MINS} minutes after leaving LeanOn.</>}
+                  {alertStatus === 'granted' && <>Notifications are allowed, but this device couldn&apos;t register for request alerts. Check your connection and tap Try again. Until it works you go offline {STALE_HEARTBEAT_MINS} minutes after leaving LeanOn.{getLastPushFailure() && <span style={{display:'block', marginTop:4, fontSize:11, color:'var(--gray)'}}>Error: {getLastPushFailure()}</span>}</>}
                   {alertStatus === 'prompt' && <>Turn them on so requests reach you while you use other apps. Without alerts you&apos;re only reachable while LeanOn is open, and you go offline {STALE_HEARTBEAT_MINS} minutes after leaving it.</>}
-                  {alertStatus === 'denied' && <>Notifications are blocked for LeanOn. Allow them in your phone settings (Settings → Apps → Chrome or LeanOn → Notifications), then reload this page. Until then you go offline {STALE_HEARTBEAT_MINS} minutes after leaving LeanOn.</>}
+                  {alertStatus === 'denied' && (inInstalledApp ? (
+                    <>Notifications are blocked for the LeanOn app. Open your phone&apos;s <b>Settings → Apps → LeanOn → Notifications</b> and turn them on, then close and reopen LeanOn. Still blocked? Open <b>leanon.app in Chrome</b> instead, log in and tap Turn on alerts there. Until then you go offline {STALE_HEARTBEAT_MINS} minutes after leaving LeanOn.</>
+                  ) : (
+                    <>
+                      Notifications are blocked for LeanOn in your browser. Phone settings alone won&apos;t undo this — do both steps, then reload this page:
+                      <span style={{display:'block', marginTop:4}}><b>1.</b> In Chrome, tap the icon to the left of <b>leanon.app</b> in the address bar → <b>Permissions</b> (or Site settings) → <b>Notifications → Allow</b>. (Or Chrome ⋮ → Settings → Site settings → Notifications → find leanon.app → Allow.)</span>
+                      <span style={{display:'block', marginTop:2}}><b>2.</b> Phone <b>Settings → Apps → Chrome → Notifications</b> → on.</span>
+                      <span style={{display:'block', marginTop:4}}>Until then you go offline {STALE_HEARTBEAT_MINS} minutes after leaving LeanOn.</span>
+                    </>
+                  ))}
                   {alertStatus === 'ios_install' && <>On iPhone, alerts only work from the home-screen app: tap Share → Add to Home Screen, open LeanOn from there and go online. Until then keep LeanOn open while you&apos;re online.</>}
                   {alertStatus === 'unsupported' && <>This browser can&apos;t show alerts. Use Chrome on Android, or keep LeanOn open while you&apos;re online.</>}
                 </div>

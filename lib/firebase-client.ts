@@ -56,10 +56,32 @@ function readyWithin(ms: number): Promise<ServiceWorkerRegistration | null> {
  *
  * Returns true only when a token was successfully obtained and saved.
  */
+// Why the last registration on this device failed (null = it worked / not tried).
+// Shown on the dashboard and reported to the server (/api/push/register-failure)
+// so the admin can see why a listener "has no device" instead of guessing.
+let lastFailure: string | null = null
+export function getLastPushFailure(): string | null { return lastFailure }
+
+function fail(reason: string): false {
+  lastFailure = reason
+  try {
+    fetch('/api/push/register-failure', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        reason,
+        permission: typeof Notification !== 'undefined' ? Notification.permission : 'n/a',
+        standalone: isStandalone(),
+      }),
+    }).catch(() => {})
+  } catch { /* ignore */ }
+  return false
+}
+
 export async function registerPushNotifications(): Promise<boolean> {
   if (!firebaseConfigured) return false
   if (typeof window === 'undefined') return false
-  if (!('serviceWorker' in navigator) || !('Notification' in window)) return false
+  if (!('serviceWorker' in navigator) || !('Notification' in window)) return fail('unsupported_browser')
 
   if (inFlight) return inFlight
   inFlight = doRegister()
@@ -80,12 +102,14 @@ async function doRegister(): Promise<boolean> {
     // Gates out browsers without the Push API — notably iOS Safari unless the
     // site has been added to the home screen (iOS 16.4+). getToken() would
     // otherwise throw; checking first keeps the failure silent and cheap.
-    if (!(await isSupported())) return false
+    if (!(await isSupported())) return fail('unsupported_browser')
 
     const permission = Notification.permission === 'granted'
       ? 'granted'
       : await Notification.requestPermission()
-    if (permission !== 'granted') return false
+    // 'denied' here = blocked for this site in the browser, or the browser/app
+    // itself has notifications switched off in the phone's settings.
+    if (permission !== 'granted') return fail(`permission_${permission}`)
 
     // The ONE LeanOn service worker (public/sw.js) — the same file
     // ServiceWorkerRegister installs on every page load. Registering a
@@ -93,7 +117,7 @@ async function doRegister(): Promise<boolean> {
     // the two replace each other and silently dropped the push handler.
     await navigator.serviceWorker.register('/sw.js')
     const registration = await readyWithin(10_000)
-    if (!registration) return false
+    if (!registration) return fail('service_worker_not_ready')
 
     const app = getApps().length ? getApp() : initializeApp(FIREBASE_CONFIG)
     const messaging = getMessaging(app)
@@ -101,19 +125,23 @@ async function doRegister(): Promise<boolean> {
       vapidKey: VAPID_KEY,
       serviceWorkerRegistration: registration,
     })
-    if (!token) return false
+    if (!token) return fail('no_token')
 
     const res = await fetch('/api/push/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ fcm_token: token }),
     })
-    return res.ok
-  } catch {
+    if (!res.ok) return fail(`save_failed_${res.status}`)
+    lastFailure = null
+    return true
+  } catch (e) {
     // Any failure here (permission denied at the OS level, network error,
     // misconfigured Firebase project, browser quirk) is non-fatal — the
     // listener still has the in-app realtime alert while a tab is open.
-    return false
+    const code = (e as { code?: string })?.code
+    const msg = e instanceof Error ? e.message : String(e)
+    return fail(`token_error: ${(code || msg).slice(0, 160)}`)
   }
 }
 

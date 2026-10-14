@@ -52,5 +52,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to save token' }, { status: 500 })
   }
 
+  // Clear the last registration failure (migration 069; ignored if not run).
+  await sb.from('users').update({ push_last_error: null, push_last_error_at: null })
+    .eq('id', user.id).not('push_last_error', 'is', null)
+    .then(() => {}, () => {})
+
   return NextResponse.json({ ok: true })
 }

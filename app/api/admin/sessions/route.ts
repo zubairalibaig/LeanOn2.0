@@ -106,9 +106,24 @@ export async function GET(req: NextRequest) {
       if (!pushErr) for (const r of (pushRows ?? []) as { id: string; request_push: unknown }[]) pushMap[r.id] = r.request_push ?? null
     }
 
-    const sessions = (data ?? []).map((s: { id: string; platform_fee?: number }) => {
+    // Why a listener with no device never registered (migration 069; separate
+    // read so the tab keeps working before it's run).
+    const noDeviceListeners = Array.from(new Set((data ?? [])
+      .filter((s: { id: string }) => Number((pushMap[s.id] as { devices?: unknown } | null)?.devices) === 0)
+      .map((s: { listener_id?: string }) => s.listener_id)
+      .filter((v): v is string => typeof v === 'string')))
+    const pushErrMap: Record<string, { error: string; at: string | null }> = {}
+    if (noDeviceListeners.length > 0) {
+      const { data: errRows, error: errReadErr } = await sb.from('users')
+        .select('id, push_last_error, push_last_error_at').in('id', noDeviceListeners)
+      if (!errReadErr) for (const r of (errRows ?? []) as { id: string; push_last_error: string | null; push_last_error_at: string | null }[]) {
+        if (r.push_last_error) pushErrMap[r.id] = { error: r.push_last_error, at: r.push_last_error_at }
+      }
+    }
+
+    const sessions = (data ?? []).map((s: { id: string; platform_fee?: number; listener_id?: string }) => {
       const e = earningsMap[s.id]
-      const withPush = { ...s, request_push: pushMap[s.id] ?? null }
+      const withPush = { ...s, request_push: pushMap[s.id] ?? null, listener_push_error: (s.listener_id && pushErrMap[s.listener_id]) || null }
       return e
         ? {
             ...withPush,

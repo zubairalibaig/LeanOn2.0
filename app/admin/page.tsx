@@ -70,6 +70,7 @@ type SessionRow = {
   // Non-null for NRI sessions only (set at booking from listener_profiles.rate_per_min)
   listener_rate_per_min?: number | null
   request_push?: { configured: boolean; devices: number; delivered: number; errors: string[] } | null
+  listener_push_error?: { error: string; at: string | null } | null
 }
 type TranscriptMsg = { id: string; sender_id: string; content: string; created_at: string; is_flagged?: boolean }
 type ReportRow = {
@@ -2550,7 +2551,10 @@ export default function AdminPage() {
                               : devices === 0 ? 'Alert: listener has no device'
                               : ok ? `Alert sent to ${delivered}/${devices} device${devices === 1 ? '' : 's'}`
                               : `Alert failed: ${p.errors?.[0] || 'unknown'}`
-                            return <div style={{ fontSize: 11, fontWeight: 700, marginTop: 4, color: ok ? 'var(--teal)' : 'var(--red)' }}>{ok ? '🔔' : '🔕'} {text}</div>
+                            const why = devices === 0 ? s.listener_push_error : null
+                            return <div style={{ fontSize: 11, fontWeight: 700, marginTop: 4, color: ok ? 'var(--teal)' : 'var(--red)' }}>{ok ? '🔔' : '🔕'} {text}
+                              {why && <div style={{ fontWeight: 500, color: 'var(--gray)', maxWidth: 260, wordBreak: 'break-word' }}>Why: {why.error}{why.at ? ` (${new Date(why.at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })})` : ''}</div>}
+                            </div>
                           })()}
                           {unsettledIds.has(s.id) && (
                             <div style={{ marginTop: 4 }}>
