@@ -94,19 +94,26 @@ export async function registerPushNotifications(): Promise<boolean> {
 
 async function doRegister(): Promise<boolean> {
   try {
+    // Ask for permission FIRST, synchronously inside the tap that called us.
+    // It used to be asked only after the Firebase SDK had downloaded; on a slow
+    // phone that outlasted the tap's user-activation window, and browsers then
+    // hide (Chrome's quiet UI) or refuse (Firefox, Safari) the prompt — so the
+    // listener tapped "Turn on alerts" and nothing appeared. Callers that run
+    // without a tap only call this once permission is already 'granted'.
+    const permissionAsk: Promise<NotificationPermission> = Notification.permission === 'default'
+      ? Notification.requestPermission()
+      : Promise.resolve(Notification.permission)
+
     const [{ initializeApp, getApps, getApp }, { getMessaging, getToken, isSupported }] = await Promise.all([
       import('firebase/app'),
       import('firebase/messaging'),
     ])
+    const permission = await permissionAsk
 
     // Gates out browsers without the Push API — notably iOS Safari unless the
     // site has been added to the home screen (iOS 16.4+). getToken() would
     // otherwise throw; checking first keeps the failure silent and cheap.
     if (!(await isSupported())) return fail('unsupported_browser')
-
-    const permission = Notification.permission === 'granted'
-      ? 'granted'
-      : await Notification.requestPermission()
     // 'denied' here = blocked for this site in the browser, or the browser/app
     // itself has notifications switched off in the phone's settings.
     if (permission !== 'granted') return fail(`permission_${permission}`)
