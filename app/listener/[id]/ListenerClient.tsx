@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { LANGUAGES, PLATFORM_FEE, MAX_FREE_TRIALS, VOICE_PRICING_ENABLED, sessionRatePerMin } from '@/lib/constants'
 import { SHOW_LISTENER_IN_SESSION_STATUS } from '@/lib/feature-flags'
-import { isNriCountry, getBookingPriceDisplay } from '@/lib/geo-pricing'
+import { isNriCountry, getBookingPriceDisplay, sessionTotalInr } from '@/lib/geo-pricing'
 import Avatar from '@/app/components/Avatar'
 import { EDUCATION_LEVELS, EDUCATION_FIELDS, labelOf } from '@/lib/listener-onboarding'
 
@@ -224,7 +224,8 @@ export default function ListenerClient({ id }: { id: string }) {
 
   const ini  = (n:string) => n.split(' ').map((x:string)=>x[0]||'').join('').slice(0,2).toUpperCase()||'?'
   const rate = sessionRatePerMin(Number(listener.rate_per_min), type)
-  const cost = duration === 5 ? 0 : rate * duration + PLATFORM_FEE
+  // Same rule as /api/sessions: overseas = flat price, never below the Indian price.
+  const cost = duration === 5 ? 0 : sessionTotalInr(rate * duration + PLATFORM_FEE, accountCountry, duration)
 
   const ERROR_MESSAGES: Record<string, string> = {
     listener_unavailable: 'This listener is currently unavailable.',

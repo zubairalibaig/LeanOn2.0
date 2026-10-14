@@ -116,6 +116,20 @@ export function getNriDisplayPrice(
 }
 
 /**
+ * What a paid session costs, in INR — THE rule, shared by /api/sessions
+ * (billing) and every price shown in the app.
+ * India: the listener's per-minute price (indianTotal = rate × mins + ₹10 fee).
+ * NRI: the flat price (US$10/15/20 in INR), but never less than the Indian
+ * price — with a listener above ~₹37–55/min the flat price would otherwise pay
+ * the listener less than their own rate (owner decision, 2026-10-14).
+ */
+export function sessionTotalInr(indianTotal: number, country: string | null | undefined, durationMins: number): number {
+  if (!isNriCountry(country)) return indianTotal
+  const flat = NRI_INR_EQUIV[durationMins as 15 | 30 | 45]
+  return flat ? Math.max(flat, indianTotal) : indianTotal
+}
+
+/**
  * Full price line for booking UI:
  * India:  "₹310"
  * NRI:    "$10" (flat price; INR equivalent charged from wallet)
@@ -126,9 +140,10 @@ export function getBookingPriceDisplay(
   durationMins: number,
 ): { primary: string; note: string | null } {
   if (!isNriCountry(country)) return { primary: `₹${inrCost}`, note: null }
-  const nriPrice = getNriDisplayPrice(durationMins, country)
-  if (!nriPrice) return { primary: `₹${inrCost}`, note: null }
-  const inrEquiv = NRI_INR_EQUIV[durationMins as 15 | 30 | 45]
+  if (!NRI_INR_EQUIV[durationMins as 15 | 30 | 45]) return { primary: `₹${inrCost}`, note: null }
+  // Same rule as billing: flat price, or the listener's price if that's higher.
+  const inrEquiv = sessionTotalInr(inrCost, country, durationMins)
+  const nriPrice = formatNriPrice(inrEquiv, country!)
   return {
     primary: nriPrice,
     // Show exact INR amount deducted from wallet so there are no surprises

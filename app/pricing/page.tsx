@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 
 const faqs: [string, string][] = [
   ['How much does LeanOn cost in India?', `Each listener sets their own per-minute rate. A paid session costs the listener's rate × the minutes you book, plus a flat ₹${PLATFORM_FEE} platform fee. For example, 15 minutes with a ₹${EXAMPLE_RATE}/min listener costs ${inr(example(15))}. You see the exact price before you start.`],
-  ['How much does LeanOn cost outside India (for NRIs)?', `Outside India, sessions are a flat price: US$${NRI_USD_PRICES[15]} for 15 minutes, US$${NRI_USD_PRICES[30]} for 30 minutes and US$${NRI_USD_PRICES[45]} for 45 minutes, whichever listener you choose. You are billed in Indian rupees (${inr(NRI_INR_EQUIV[15])} / ${inr(NRI_INR_EQUIV[30])} / ${inr(NRI_INR_EQUIV[45])}) and your bank converts it to your currency.`],
+  ['How much does LeanOn cost outside India (for NRIs)?', `Outside India, sessions start at US$${NRI_USD_PRICES[15]} for 15 minutes, US$${NRI_USD_PRICES[30]} for 30 minutes and US$${NRI_USD_PRICES[45]} for 45 minutes. With a listener whose own rate is higher, you pay that listener's rate instead, so every listener is paid their full rate. The exact price is shown in your local currency before you book. You are billed in Indian rupees (from ${inr(NRI_INR_EQUIV[15])} / ${inr(NRI_INR_EQUIV[30])} / ${inr(NRI_INR_EQUIV[45])}) and your bank converts it to your currency.`],
   ['Is LeanOn free?', `Your first ${FREE_SESSION_MINS}-minute session is free${MAX_FREE_TRIALS === 1 ? ' (one free session per account)' : ''}. After that, you pay per session. There is no subscription and no membership fee.`],
   ...(VOICE_PRICING_ENABLED ? [['Is a voice call more expensive than text chat?', `Yes, by ₹${VOICE_RATE_PREMIUM} per minute in India. A listener charging ₹${EXAMPLE_RATE}/min for text chat charges ₹${EXAMPLE_RATE + VOICE_RATE_PREMIUM}/min for a voice call, so 15 minutes of voice costs ${inr(example(15, true))}. If a call drops and you switch to text, the extra for the unused minutes is refunded.`] as [string, string]] : []),
   ['How do I pay?', 'You add money to your LeanOn wallet (payments are processed by Razorpay) and each session is paid from the wallet. You only pay for sessions you book.'],
@@ -61,7 +61,7 @@ export default function PricingPage() {
 
       <section className="mb-8 rounded-3xl border border-slate-200 p-6">
         <h2 className="mb-2 text-2xl font-black">🌍 Outside India (NRIs &amp; Indians abroad)</h2>
-        <p className="mb-4 leading-7 text-slate-600">One flat price, whichever listener you choose. Talk to a peer listener in India who understands where you come from, in English, Hindi or your own language.</p>
+        <p className="mb-4 leading-7 text-slate-600">Simple prices from US$10, shown in your local currency before you book. Talk to a peer listener in India who understands where you come from, in English, Hindi or your own language.</p>
         <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr><th className={cell}>Length</th><th className={cell}>Price</th><th className={cell}>Billed as</th></tr></thead>
           <tbody>
             <tr><td className={cell}>{FREE_SESSION_MINS} min (first session)</td><td className={cell}><strong>Free</strong></td><td className={cell}>—</td></tr>

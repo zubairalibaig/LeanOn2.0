@@ -6,7 +6,7 @@ import { createBrowserClient } from '@supabase/ssr'
 import { showToast } from '@/lib/toast'
 import ReportModal from '@/app/components/ReportModal'
 import { SESSION_DURATIONS, MESSAGE_REACTIONS, REQUEST_RESPONSE_WINDOW_MS, PLATFORM_FEE, sessionRatePerMin } from '@/lib/constants'
-import { getBookingPriceDisplay, isNriCountry, NRI_INR_EQUIV } from '@/lib/geo-pricing'
+import { getBookingPriceDisplay, sessionTotalInr } from '@/lib/geo-pricing'
 
 // ── CRITICAL FIX 1: Create client ONCE outside component
 // Previously inside component = new WebSocket on every render
@@ -562,10 +562,8 @@ function SessionContent() {
     if (sessionIsFreeTrial) return 0
     const rate = Number(l.rate_per_min)
     if (!Number.isFinite(rate) || rate <= 0) return null
-    // Overseas seekers pay the flat NRI price (same rule as /api/sessions).
-    const nri = isNriCountry(accountCountry) ? NRI_INR_EQUIV[switchDuration as 15 | 30 | 45] : undefined
-    if (nri) return nri
-    return sessionRatePerMin(rate, isVoice ? 'voice' : 'text') * switchDuration + PLATFORM_FEE
+    // Same rule as /api/sessions: overseas = flat price, never below the Indian price.
+    return sessionTotalInr(sessionRatePerMin(rate, isVoice ? 'voice' : 'text') * switchDuration + PLATFORM_FEE, accountCountry, switchDuration)
   }
   // The current hold comes back when switching, so it counts towards the new price.
   function altAffordable(l: AltListener): boolean {
