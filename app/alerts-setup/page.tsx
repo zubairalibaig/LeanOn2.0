@@ -6,7 +6,7 @@
 // device in hand (most listeners: Chrome on Android). Shareable link: support
 // can send it to anyone whose alerts don't work.
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
 import {
@@ -28,38 +28,57 @@ export default function AlertsSetupPage() {
   const [test, setTest] = useState<TestOutcome>(null)
   const [testError, setTestError] = useState<string | null>(null)
   const [sawIt, setSawIt] = useState<null | boolean>(null)
+  // The person tapped Allow notifications but the permission is still "not
+  // decided": they closed the prompt, or Chrome silently suppressed it (it does
+  // after a few dismissals). Show the manual site-settings steps then.
+  const [promptDismissed, setPromptDismissed] = useState(false)
 
   const register = useCallback(async () => {
     setRegistering(true)
     const ok = await registerPushNotifications().catch(() => false)
     setRegistered(ok)
     setFailure(ok ? null : getLastPushFailure())
-    setStatus(getAlertStatus())
+    const st = getAlertStatus()
+    setStatus(st)
+    setPromptDismissed(!ok && st === 'prompt')
     setRegistering(false)
     return ok
   }, [])
 
   // Re-check everything — on load and whenever the person comes back from
   // their phone's Settings app.
-  const recheck = useCallback(async () => {
-    setDevice(getDeviceKind())
+  const recheck = useCallback(async (opts?: { reRegister?: boolean }) => {
     const st = getAlertStatus()
     setStatus(st)
+    if (st !== 'granted') { setRegistered(null); setTest(null); setSawIt(null) }
     const sb = createClient()
     // No stored session → logged out. (getUser() also errors when logged out,
     // so it can't tell "logged out" from a transient failure on its own.)
     const { data: { session } } = await sb.auth.getSession()
     if (!session) { setLoggedIn(false); return }
     const { data: { user }, error } = await sb.auth.getUser()
-    if (error && !user) return // transient — keep what we had, let them retry
+    if (error && !user) {
+      // Expired/revoked session → logged out; anything else is transient.
+      if (error.status === 401 || error.status === 403 || error.name === 'AuthSessionMissingError') setLoggedIn(false)
+      return
+    }
     setLoggedIn(!!user)
     // Already allowed → (re)register silently; no prompt is shown.
-    if (user && st === 'granted') await register()
+    if (user && st === 'granted' && opts?.reRegister !== false) await register()
   }, [register])
 
+  // Device is detected once; the tabs then let the person pick another set of
+  // instructions without a re-check snapping it back.
+  useEffect(() => { setDevice(getDeviceKind()) }, [])
+
+  // Coming back from Settings: re-check, but don't re-register a device that's
+  // already connected — that flickered step 3 and hid the test result just as
+  // the person returned from looking at the test notification.
+  const registeredRef = useRef<boolean | null>(null)
+  registeredRef.current = registered
   useEffect(() => {
     recheck()
-    const onVis = () => { if (document.visibilityState === 'visible') recheck() }
+    const onVis = () => { if (document.visibilityState === 'visible') recheck({ reRegister: registeredRef.current !== true }) }
     document.addEventListener('visibilitychange', onVis)
     return () => document.removeEventListener('visibilitychange', onVis)
   }, [recheck])
@@ -122,7 +141,7 @@ export default function AlertsSetupPage() {
 
         <div className="as-tabs" aria-label="Instructions for">
           {([['android_chrome', 'Android (Chrome)'], ['android_app', 'Android (LeanOn app)'], ['desktop', 'Laptop / computer'], ['iphone', 'iPhone']] as [DeviceKind, string][]).map(([k, label]) => (
-            <button key={k} className={`as-tab${device === k ? ' on' : ''}`} onClick={() => setDevice(k)}>{label}</button>
+            <button key={k} type="button" aria-pressed={device === k} className={`as-tab${device === k ? ' on' : ''}`} onClick={() => setDevice(k)}>{label}</button>
           ))}
         </div>
 
@@ -136,7 +155,9 @@ export default function AlertsSetupPage() {
               ) : status === 'not_configured' ? (
                 <>Alerts are not set up on LeanOn&apos;s server. Please tell LeanOn support.</>
               ) : (
-                <>This browser can&apos;t show alerts. On Android, open <b>leanon.app in Google Chrome</b> (not Samsung Internet, Opera, Facebook or Instagram&apos;s built-in browser) and open this page again: <b>leanon.app/alerts-setup</b>.</>
+device === 'desktop'
+                  ? <>This browser can&apos;t show alerts. Open <b>leanon.app/alerts-setup</b> in <b>Google Chrome</b>, Edge or Firefox.</>
+                  : <>This browser can&apos;t show alerts. Open <b>leanon.app/alerts-setup in Google Chrome</b> (not Samsung Internet, Opera, or the browser inside Facebook, Instagram or WhatsApp — use ⋮ → <b>Open in Chrome</b>).</>
               )}
             </div>
           )}
@@ -153,14 +174,23 @@ export default function AlertsSetupPage() {
               ) : (
                 <div><button className="as-btn" disabled={registering} onClick={register}>{registering ? 'Waiting…' : 'Allow notifications'}</button></div>
               )}
+              {promptDismissed && (
+                <div style={{ marginTop: 10 }}>
+                  Notifications weren&apos;t allowed. If no question appeared, Chrome is hiding it — allow them by hand:
+                  <BlockedSteps device={device} />
+                </div>
+              )}
             </div>
           )}
-          {s2 === 'fail' && <div className="as-body"><BlockedSteps device={device} /><button className="as-btn" onClick={recheck}>I&apos;ve done this — check again</button></div>}
+          {s2 === 'fail' && <div className="as-body"><BlockedSteps device={device} /><button className="as-btn" onClick={() => recheck()}>I&apos;ve done this — check again</button></div>}
         </div>
 
         {/* 3 — device registered */}
         <div className={`as-step ${s3}`}>
           <div className="as-head"><span className="as-icon">{icon(s3, 3)}</span>This device is connected to your account</div>
+          {s2 === 'ok' && loggedIn === null && (
+            <div className="as-body">Checking your login… <button className="as-btn ghost" style={{ marginTop: 0 }} onClick={() => recheck()}>Retry</button></div>
+          )}
           {s2 === 'ok' && loggedIn === false && (
             <div className="as-body">Log in on this device so alerts for your account come here.<div><Link className="as-btn" href="/auth?redirect=/alerts-setup">Log in</Link></div></div>
           )}
