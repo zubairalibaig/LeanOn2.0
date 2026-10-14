@@ -335,16 +335,16 @@ export default function DashboardPage() {
         const desktop = !/Android|iPhone|iPad|Mobi/i.test(navigator.userAgent)
         if (outcome === 'refused') {
           setTestResult({ ok: false, text: desktop
-            ? 'The test alert reached this browser, but Chrome refused to show it. Allow notifications for LeanOn (click the icon left of the address bar → Site settings → Notifications → Allow) and for Chrome itself in your computer\'s notification settings.'
-            : 'The test alert reached this phone, but it wasn\'t allowed to show. Turn on notifications: Settings → Apps → Chrome (or LeanOn) → Notifications.' })
+            ? 'The test alert reached this computer, but it wasn\'t allowed to show — notifications are blocked for LeanOn.'
+            : 'The test alert reached this phone, but it wasn\'t allowed to show — notifications are blocked for LeanOn.' })
         } else if (outcome === 'shown') {
           setTestResult({ ok: true, text: desktop
-            ? 'The test alert reached this browser. No pop-up? Your computer is hiding it — Windows: Settings → System → Notifications (Google Chrome on, Do not disturb off). Mac: System Settings → Notifications → Google Chrome → Allow, style "Alerts", and Focus off.'
-            : 'The test alert reached this phone. No pop-up? Check Settings → Apps → Chrome (or LeanOn) → Notifications are on and Do not disturb is off.' })
+            ? 'The test alert reached this computer. If no pop-up appeared, your computer is hiding LeanOn alerts.'
+            : 'The test alert reached this phone. If no pop-up appeared, your phone is hiding LeanOn alerts.' })
         } else {
           setTestResult({ ok: false, text: desktop
-            ? 'The test alert didn\'t reach this browser within 20 seconds. Keep Chrome running (Chrome → Settings → System → "Continue running background apps"), check your internet, then tap "Send a test alert" again.'
-            : 'The test alert didn\'t reach this phone within 20 seconds. Set Chrome (or LeanOn) to "Unrestricted" battery use: Settings → Apps → Chrome → Battery, then try again.' })
+            ? 'The test alert didn\'t reach this computer within 20 seconds.'
+            : 'The test alert didn\'t reach this phone within 20 seconds — usually battery saving is holding it back.' })
         }
       }
       else if (d.reason === 'no_device') showToast('This device is not registered for alerts yet — tap "Turn on alerts".', 'error')
@@ -1338,43 +1338,40 @@ export default function DashboardPage() {
           <div style={{background: alertStatus === 'granted' && pushRegistered !== false ? '#F0FFF4' : '#FFF8EC', border: `1.5px solid ${alertStatus === 'granted' && pushRegistered !== false ? '#B7EBC6' : '#FFD9A0'}`, borderRadius:14, padding:'12px 14px', marginBottom:18, fontSize:12.5, lineHeight:1.55, color:'#27394A'}}>
             {alertStatus === 'granted' && pushRegistered !== false ? (
               <>
-                <div style={{fontWeight:800, color:'#276749', marginBottom:2}}>🔔 Phone alerts are on for this device</div>
-                <div>You can switch to other apps — you stay online for up to {AWAY_WITH_ALERTS_MINS / 60} hours and every request rings this phone. If a request goes unanswered while you&apos;re away, we set you offline so seekers aren&apos;t left waiting.</div>
-                <button onClick={sendTestAlert} disabled={testingAlert} style={{marginTop:8, background:'white', border:'1.5px solid #B7EBC6', color:'#276749', borderRadius:50, padding:'6px 14px', fontWeight:800, fontSize:12, cursor:'pointer', fontFamily:'inherit'}}>
-                  {testingAlert ? 'Checking…' : 'Send a test alert'}
-                </button>
-                {testResult ? (
-                  <div style={{marginTop:8, fontSize:12, lineHeight:1.5, padding:'8px 10px', borderRadius:10, background: testResult.ok ? '#E6F6EC' : '#FFF1F0', color: testResult.ok ? '#22543D' : '#9B2C2C'}}>{testResult.text}</div>
-                ) : (
-                  <div style={{marginTop:6, fontSize:11.5, color:'var(--gray)'}}>After a test, LeanOn tells you here whether the alert reached this device and what to change if it didn&apos;t pop up.</div>
+                <div style={{fontWeight:800, color:'#276749', marginBottom:2}}>🔔 Request alerts are on for this device</div>
+                <div>You can switch to other apps — you stay online for up to {AWAY_WITH_ALERTS_MINS / 60} hours and every request rings this device. If a request goes unanswered while you&apos;re away, we set you offline so seekers aren&apos;t left waiting.</div>
+                <div style={{display:'flex', gap:8, flexWrap:'wrap', marginTop:10}}>
+                  <button onClick={sendTestAlert} disabled={testingAlert} style={{flex:'1 1 140px', background:'white', border:'1.5px solid #38A169', color:'#276749', borderRadius:50, padding:'9px 14px', fontWeight:800, fontSize:13, cursor:'pointer', fontFamily:'inherit'}}>
+                    {testingAlert ? 'Checking…' : 'Send a test alert'}
+                  </button>
+                  <a href="/alerts-setup" style={{flex:'1 1 140px', textAlign:'center', background:'#38A169', color:'white', borderRadius:50, padding:'9px 14px', fontWeight:800, fontSize:13, textDecoration:'none'}}>Step-by-step check</a>
+                </div>
+                {testResult && (
+                  <div style={{marginTop:10, fontSize:12.5, lineHeight:1.5, padding:'10px 12px', borderRadius:10, background: testResult.ok ? '#E6F6EC' : '#FFF1F0', color: testResult.ok ? '#22543D' : '#9B2C2C'}}>
+                    {testResult.text}
+                    <a href="/alerts-setup" style={{display:'block', marginTop:8, textAlign:'center', background: testResult.ok ? '#38A169' : '#E53E3E', color:'white', borderRadius:50, padding:'9px 14px', fontWeight:800, fontSize:13, textDecoration:'none'}}>Fix it step by step →</a>
+                  </div>
                 )}
-                <a href="/alerts-setup" style={{display:'inline-block', marginTop:6, fontSize:12, fontWeight:800, color:'#276749'}}>Step-by-step alert check →</a>
               </>
             ) : (
               <>
-                <div style={{fontWeight:800, color:'#9A5B00', marginBottom:2}}>🔕 Phone alerts are off on this device</div>
-                <div style={{marginBottom:6}}>
-                  {alertStatus === 'granted' && <>Notifications are allowed, but this device couldn&apos;t register for request alerts. Check your connection and tap Try again. Until it works you go offline {STALE_HEARTBEAT_MINS} minutes after leaving LeanOn.{getLastPushFailure() && <span style={{display:'block', marginTop:4, fontSize:11, color:'var(--gray)'}}>Error: {getLastPushFailure()}</span>}</>}
-                  {alertStatus === 'prompt' && <>Turn them on so requests reach you while you use other apps. Without alerts you&apos;re only reachable while LeanOn is open, and you go offline {STALE_HEARTBEAT_MINS} minutes after leaving it.</>}
-                  {alertStatus === 'denied' && (inInstalledApp ? (
-                    <>Notifications are blocked for the LeanOn app. Open your phone&apos;s <b>Settings → Apps → LeanOn → Notifications</b> and turn them on, then close and reopen LeanOn. Still blocked? Open <b>leanon.app in Chrome</b> instead, log in and tap Turn on alerts there. Until then you go offline {STALE_HEARTBEAT_MINS} minutes after leaving LeanOn.</>
-                  ) : (
-                    <>
-                      Notifications are blocked for LeanOn in your browser. Phone settings alone won&apos;t undo this — do both steps, then reload this page:
-                      <span style={{display:'block', marginTop:4}}><b>1.</b> In Chrome, tap the icon to the left of <b>leanon.app</b> in the address bar → <b>Permissions</b> (or Site settings) → <b>Notifications → Allow</b>. (Or Chrome ⋮ → Settings → Site settings → Notifications → find leanon.app → Allow.)</span>
-                      <span style={{display:'block', marginTop:2}}><b>2.</b> Phone <b>Settings → Apps → Chrome → Notifications</b> → on.</span>
-                      <span style={{display:'block', marginTop:4}}>Until then you go offline {STALE_HEARTBEAT_MINS} minutes after leaving LeanOn.</span>
-                    </>
-                  ))}
-                  {alertStatus === 'ios_install' && <>On iPhone, alerts only work from the home-screen app: tap Share → Add to Home Screen, open LeanOn from there and go online. Until then keep LeanOn open while you&apos;re online.</>}
-                  {alertStatus === 'unsupported' && <>This browser can&apos;t show alerts. Use Chrome on Android, or keep LeanOn open while you&apos;re online.</>}
+                <div style={{fontWeight:800, color:'#9A5B00', marginBottom:2}}>🔕 Request alerts are off on this device</div>
+                <div>
+                  {alertStatus === 'granted' && <>This device couldn&apos;t connect for request alerts.{getLastPushFailure() && <span style={{display:'block', marginTop:2, fontSize:11, color:'var(--gray)'}}>Error: {getLastPushFailure()}</span>}</>}
+                  {alertStatus === 'prompt' && <>Turn them on so requests reach you while you use other apps.</>}
+                  {alertStatus === 'denied' && <>Notifications are blocked for LeanOn {inInstalledApp ? 'in the LeanOn app' : 'in your browser'}. The step-by-step check shows exactly where to allow them.</>}
+                  {alertStatus === 'ios_install' && <>On iPhone, alerts only work from the home-screen app.</>}
+                  {alertStatus === 'unsupported' && <>This browser can&apos;t show alerts — use Chrome.</>}
+                  {' '}Until alerts work you go offline {STALE_HEARTBEAT_MINS} minutes after leaving LeanOn.
                 </div>
-                {(alertStatus === 'prompt' || alertStatus === 'granted') && (
-                  <button onClick={enableAlerts} style={{background:'#FF9933', color:'white', border:'none', borderRadius:50, padding:'7px 14px', fontWeight:800, fontSize:12, cursor:'pointer', fontFamily:'inherit'}}>
-                    {alertStatus === 'granted' ? 'Try again' : 'Turn on alerts'}
-                  </button>
-                )}
-                <a href="/alerts-setup" style={{display:'block', marginTop:8, fontSize:12.5, fontWeight:800, color:'#9A5B00'}}>Fix it step by step →</a>
+                <div style={{display:'flex', gap:8, flexWrap:'wrap', marginTop:10}}>
+                  {(alertStatus === 'prompt' || alertStatus === 'granted') && (
+                    <button onClick={enableAlerts} style={{flex:'1 1 140px', background:'white', border:'1.5px solid #FF9933', color:'#B35C00', borderRadius:50, padding:'9px 14px', fontWeight:800, fontSize:13, cursor:'pointer', fontFamily:'inherit'}}>
+                      {alertStatus === 'granted' ? 'Try again' : 'Turn on alerts'}
+                    </button>
+                  )}
+                  <a href="/alerts-setup" style={{flex:'1 1 140px', textAlign:'center', background:'#FF9933', color:'white', borderRadius:50, padding:'9px 14px', fontWeight:800, fontSize:13, textDecoration:'none'}}>Fix it step by step →</a>
+                </div>
               </>
             )}
           </div>
