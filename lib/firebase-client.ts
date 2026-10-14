@@ -214,3 +214,29 @@ export async function closeLocalNotifications(tag: string) {
     ns.forEach(n => n.close())
   } catch { /* ignore */ }
 }
+
+// Resolves when public/sw.js reports that a TEST push reached this browser:
+// 'shown' = displayed, 'refused' = arrived but the browser wouldn't display it,
+// 'none' = nothing arrived within `ms`. Start it BEFORE sending the test.
+export function waitForTestPush(ms: number): Promise<'shown' | 'refused' | 'none'> {
+  return new Promise(resolve => {
+    if (typeof navigator === 'undefined' || !('serviceWorker' in navigator)) return resolve('none')
+    const onMsg = (e: MessageEvent) => {
+      if (e.data?.type === 'leanon-test-push-received') { cleanup(); resolve(e.data.shown === false ? 'refused' : 'shown') }
+    }
+    const timer = setTimeout(() => { cleanup(); resolve('none') }, ms)
+    function cleanup() { clearTimeout(timer); navigator.serviceWorker.removeEventListener('message', onMsg) }
+    navigator.serviceWorker.addEventListener('message', onMsg)
+  })
+}
+
+// Which instructions fit this device. Most listeners use Chrome on Android.
+export type DeviceKind = 'android_chrome' | 'android_app' | 'iphone' | 'desktop' | 'other_mobile'
+export function getDeviceKind(): DeviceKind {
+  if (typeof window === 'undefined') return 'desktop'
+  const ua = navigator.userAgent
+  if (isIos()) return 'iphone'
+  if (/Android/i.test(ua)) return isStandalone() ? 'android_app' : 'android_chrome'
+  if (/Mobi/i.test(ua)) return 'other_mobile'
+  return 'desktop'
+}

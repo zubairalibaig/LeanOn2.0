@@ -9,7 +9,7 @@ import { SHOW_LISTENER_GROWTH_NOTICE, SHOW_LISTENER_PRICING_UPDATE_NOTICE } from
 import { PRICING_NOTICE } from '@/lib/listener-announcements'
 import { estimateListenerTakeHome } from '@/lib/session-billing'
 import { showToast } from '@/lib/toast'
-import { registerPushNotifications, getAlertStatus, getLastPushFailure, showLocalNotification, closeLocalNotifications, type AlertStatus } from '@/lib/firebase-client'
+import { registerPushNotifications, getAlertStatus, getLastPushFailure, waitForTestPush, showLocalNotification, closeLocalNotifications, type AlertStatus } from '@/lib/firebase-client'
 import { compressImage, extForType, MAX_INPUT_BYTES } from '@/lib/compress-image'
 import Avatar from '@/app/components/Avatar'
 import { TAGLINE_PHRASES, TAGLINE_PICK, LIVED_MIN_CHARS, LIVED_MAX_CHARS } from '@/lib/listener-onboarding'
@@ -315,20 +315,6 @@ export default function DashboardPage() {
     if (ok) showToast('Phone alerts are on for this device.', 'success')
     else if (getAlertStatus() === 'denied') showToast('Notifications are blocked for LeanOn — allow them in your phone settings.', 'error')
     else showToast('Could not turn on alerts on this device.', 'error')
-  }
-
-  // 'shown' = arrived and the browser displayed it; 'refused' = arrived but the
-  // browser wouldn't display it; 'none' = never arrived within ms.
-  function waitForTestPush(ms: number): Promise<'shown' | 'refused' | 'none'> {
-    return new Promise(resolve => {
-      if (!('serviceWorker' in navigator)) return resolve('none')
-      const onMsg = (e: MessageEvent) => {
-        if (e.data?.type === 'leanon-test-push-received') { cleanup(); resolve(e.data.shown === false ? 'refused' : 'shown') }
-      }
-      const timer = setTimeout(() => { cleanup(); resolve('none') }, ms)
-      function cleanup() { clearTimeout(timer); navigator.serviceWorker.removeEventListener('message', onMsg) }
-      navigator.serviceWorker.addEventListener('message', onMsg)
-    })
   }
 
   async function sendTestAlert() {
@@ -1362,6 +1348,7 @@ export default function DashboardPage() {
                 ) : (
                   <div style={{marginTop:6, fontSize:11.5, color:'var(--gray)'}}>After a test, LeanOn tells you here whether the alert reached this device and what to change if it didn&apos;t pop up.</div>
                 )}
+                <a href="/alerts-setup" style={{display:'inline-block', marginTop:6, fontSize:12, fontWeight:800, color:'#276749'}}>Step-by-step alert check →</a>
               </>
             ) : (
               <>
@@ -1387,6 +1374,7 @@ export default function DashboardPage() {
                     {alertStatus === 'granted' ? 'Try again' : 'Turn on alerts'}
                   </button>
                 )}
+                <a href="/alerts-setup" style={{display:'block', marginTop:8, fontSize:12.5, fontWeight:800, color:'#9A5B00'}}>Fix it step by step →</a>
               </>
             )}
           </div>
