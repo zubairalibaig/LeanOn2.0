@@ -54,10 +54,10 @@ const faqSchema = {
     },
     {
       '@type': 'Question',
-      name: 'Is peer support anonymous?',
+      name: 'How does LeanOn sign-up protect privacy?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: "LeanOn sign-up uses a phone number and first name. You do not need to use a last name, photo or social account to create the account. Sessions are intended to be private; see the Privacy and Trust pages for LeanOn's specific information practices.",
+        text: "LeanOn uses phone OTP sign-in and lets you choose a display name; no email or full legal name is required. Automated safety moderation may process session content, and flagged content may be reviewed by the team. See the Privacy Policy and Trust page for details; avoid sharing identifying information you do not want to disclose.",
       },
     },
     {
@@ -236,7 +236,7 @@ export default function PeerSupportPage() {
                   <td className="col-label">Peer support (LeanOn)</td>
                   <td>Real person with lived experience</td>
                   <td>Feeling heard, loneliness, burnout, everyday emotional weight</td>
-                  <td>₹160 / 15 min*</td>
+                  <td>₹160 / 15 min* (example)</td>
                 </tr>
                 <tr>
                   <td className="col-label">Therapy</td>
@@ -328,8 +328,8 @@ export default function PeerSupportPage() {
             <div className="faq-a">Each account gets one free introductory session of up to 5 minutes. As an example, 15 minutes with a listener charging ₹10 per minute costs ₹160 including the flat ₹10 platform fee. The final price depends on the selected listener and session type and is shown before booking. There is no subscription.</div>
           </div>
           <div className="faq-item">
-            <div className="faq-q">Is peer support anonymous?</div>
-            <div className="faq-a">Yes. On LeanOn you sign up with a phone number and a first name only. No last name, no photo, no social account required. What you share in a session stays between you and your listener.</div>
+            <div className="faq-q">How does LeanOn sign-up protect privacy?</div>
+            <div className="faq-a">LeanOn uses phone OTP sign-in and lets you choose a display name; no email or full legal name is required. Automated safety moderation may process session content and flagged content may be reviewed by the team. See the <a href="/privacy">Privacy Policy</a> and <a href="/trust">Trust &amp; Safety page</a>, and avoid sharing identifying details you do not want to disclose.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Can peer support help with anxiety or depression?</div>

@@ -236,7 +236,7 @@ export default function PeerSupportOnlineIndiaPage() {
               <tbody>
                 <tr>
                   <td className="col-label">LeanOn peer support</td>
-                  <td>Lived-experience listening, warmth, privacy, ₹160 / 15 min*, no appointment</td>
+                  <td>Lived-experience listening, warmth, privacy, ₹160 / 15 min* (example), no appointment</td>
                   <td>Clinical diagnosis or treatment</td>
                 </tr>
                 <tr>
@@ -320,15 +320,15 @@ export default function PeerSupportOnlineIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is peer support the same as therapy?</div>
-            <div className="faq-a">No. Therapy is delivered by a licensed mental health professional — a psychologist, psychiatrist, or counsellor — who can diagnose conditions and provide clinical treatment. Peer support is delivered by a trained person with lived experience, and focuses on empathy, listening, and emotional connection rather than diagnosis or treatment. Peer support is not a replacement for therapy when therapy is needed, but for everyday emotional overwhelm, burnout, relationship stress, and the weight of hard weeks, peer support is often exactly what helps — and it is far more accessible and affordable.</div>
+            <div className="faq-a">No. Therapy is professional clinical care; peer support is non-clinical and focuses on listening and shared experience. The two serve different purposes and are not substitutes for one another. LeanOn may suit people who want to talk through everyday emotional situations, but it does not diagnose or treat mental-health conditions.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">How is LeanOn&apos;s peer support different from a helpline?</div>
-            <div className="faq-a">Crisis helplines are staffed by volunteers and designed for acute emergencies — they are lifesaving resources for moments of immediate danger. LeanOn is different: it is for the weeks before a crisis, the sustained emotional weight that builds up when you have nowhere to put it. Conversations on LeanOn are longer, more personal, and more like talking to a friend who happens to understand your situation. You choose your listener based on their experience and availability, and you can return to the same person across sessions.</div>
+            <div className="faq-a">A crisis helpline is designed for urgent distress or immediate risk; LeanOn is not a crisis service. LeanOn offers paid, non-clinical peer conversations about everyday emotional situations, when an available listener accepts. If you are in immediate danger or may harm yourself, contact local emergency services or an appropriate crisis service first.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is peer support free on LeanOn?</div>
-            <div className="faq-a">New users get a free 5-minute trial session. After that, paid sessions start at around ₹160 for 15 minutes — listeners set their own rate (₹8–₹25 per minute) and LeanOn adds a flat ₹10 platform fee. That is a fraction of what a private therapy session costs in India, and sessions are availability depends on who is online and accepts; no appointment is required.</div>
+            <div className="faq-a">Each account gets one free introductory session of up to 5 minutes. As an example, 15 minutes with a listener charging ₹10/min costs ₹160 including the flat ₹10 platform fee. The exact paid total varies by listener rate and session type and is shown before booking. A session begins only when a listener is online and accepts; no appointment is required.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Can peer support help with depression or anxiety?</div>

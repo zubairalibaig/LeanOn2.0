@@ -254,7 +254,7 @@ export default function MentalHealthSupportIndiaPage() {
           <h2>Frequently Asked Questions</h2>
           <div className="faq-item">
             <div className="faq-q">What kind of mental health support is available in India?</div>
-            <div className="faq-a">Mental health support in India ranges from licensed psychiatrists and psychologists (₹1,500–₹5,000/session) to online therapy platforms (₹800–₹2,000/session), government crisis helplines (free, for emergencies), and peer support platforms like LeanOn (₹160/session, 24/7, no appointment). The right option depends on whether you need clinical diagnosis and treatment or emotional support from someone who understands your experience.</div>
+            <div className="faq-a">Options include clinical care from qualified professionals, government crisis services, and non-clinical peer support. LeanOn is a commercial peer-support platform for everyday emotional situations, not therapy or crisis care. As an India pricing example, 15 minutes with a listener charging ₹10/min costs ₹160 including the flat ₹10 platform fee; the final total varies by listener and session type and is shown before booking.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn a mental health app?</div>
@@ -262,15 +262,15 @@ export default function MentalHealthSupportIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How does peer support help mental health?</div>
-            <div className="faq-a">Peer support helps by reducing the isolation that often accompanies emotional difficulty. When you talk to someone who has personally experienced something similar to what you are going through, you feel less alone. Peer support does not treat mental health conditions clinically, but for everyday emotional weight — stress, burnout, loneliness, relationship difficulty — it provides genuine connection that clinical settings sometimes cannot.</div>
+            <div className="faq-a">Peer support offers a non-clinical way to talk with someone who brings relevant lived experience. Some people value being heard by someone who understands, but experiences vary. Peer support is not a treatment for mental-health conditions and does not replace professional care.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is mental health support free in India?</div>
-            <div className="faq-a">Government crisis lines — NIMHANS (080-46110007) and Tele-MANAS (14416) — are free and designed for people in acute distress. Most ongoing mental health support is not free. LeanOn peer support is affordable at ₹160/session, with the first 5 minutes free.</div>
+            <div className="faq-a">In India, Tele-MANAS at 14416 is a free, 24/7 government mental-health helpline. LeanOn offers one introductory session of up to 5 minutes free per account; a paid-session total depends on the selected listener and session type, and is shown before booking.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">What is the difference between mental health support and therapy?</div>
-            <div className="faq-a">Therapy is delivered by a licensed professional who can diagnose conditions and provide structured clinical treatment. Mental health support is broader — it includes peer support, helplines, and non-clinical forms of help. Therapy is right when someone needs a diagnosis or professional treatment. Peer support is right when someone needs to be heard by someone who genuinely understands.</div>
+            <div className="faq-a">Therapy is professional clinical care that may assess and treat mental-health conditions. Peer support is a non-clinical conversation focused on listening and shared experience. They serve different purposes; when you need diagnosis or treatment, speak with a qualified professional.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">How can I get immediate mental health support in India?</div>

@@ -129,8 +129,8 @@ In India, a paid session costs the selected listener's per-minute rate × minute
 ### How is LeanOn different from therapy?
 LeanOn listeners are real people with lived experience, not licensed therapists. They offer empathy and peer support, not clinical diagnosis or treatment. LeanOn is ideal when you need someone who truly understands — not a diagnosis.
 
-### Is LeanOn confidential?
-Sessions are intended to be private. LeanOn does not share conversation content. See the Privacy and Trust pages for specific information practices.
+### How does LeanOn handle privacy?
+LeanOn uses phone OTP sign-in and allows users to choose a display name; no email or full legal name is required. Automated safety moderation may process session content, and flagged content may be reviewed by the safety team. According to the Privacy Policy, text is not stored after session completion by default and voice calls are not recorded. Review the Privacy and Trust pages and avoid sharing identifying details you do not want to disclose.
 
 ### Can Indians living abroad use LeanOn?
 Yes. LeanOn has dedicated support for Indians and South Asians living abroad, including the USA, UK, Canada, Australia, UAE and other countries. You can talk privately with a real peer listener by text or voice.
