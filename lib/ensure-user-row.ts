@@ -44,16 +44,14 @@ export async function ensureUserRow(
 
   let { error } = await admin.from('users').upsert(row, { onConflict: 'id' })
   if (!error) {
-    // First-time-only country write: only sets account_country when the column
-    // is currently NULL — never overwrites an existing value.
-    // Stored value follows the verified phone (pricingCountry), so an overseas
-    // number can never be saved as 'IN' from the dropdown default.
+    // Country write. Stored value follows the verified phone (pricingCountry).
+    // Fills an empty value; and when the phone is overseas, also corrects a
+    // stored 'IN' (every overseas account had been saved as 'IN' — 2026-10-14).
+    // A real non-India choice (e.g. CA vs US for +1) is never overwritten.
     const storedCountry = accountCountry || phone ? pricingCountry(phone ?? null, accountCountry ?? null) : null
     if (storedCountry) {
-      await admin.from('users')
-        .update({ account_country: storedCountry })
-        .eq('id', id)
-        .is('account_country', null)
+      const q = admin.from('users').update({ account_country: storedCountry }).eq('id', id)
+      await (storedCountry === 'IN' ? q.is('account_country', null) : q.or('account_country.is.null,account_country.eq.IN'))
         .then(() => {}, (e) => logger.warn('ensureUserRow: account_country update failed', { error: String(e) }))
     }
     return { error: null, debug: null }
