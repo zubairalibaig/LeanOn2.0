@@ -325,7 +325,7 @@ Full dump via `db/dump-live-schema.sql`.
 | wallet_balance_non_negative | CHECK ((wallet_balance >= 0)) NOT VALID |
 | wallet_transactions wallet_transactions_pkey | PRIMARY KEY (id) |
 | wallet_transactions wallet_transactions_session_id_fkey | FOREIGN KEY (session_id) REFERENCES sessions(id) |
-| wallet_transactions wallet_transactions_type_check | CHECK ((type = ANY (ARRAY['credit','debit','refund']))) |
+| wallet_transactions wallet_transactions_type_check | CHECK ((type = ANY (ARRAY['credit','debit','refund']))) — ⚠️ migration 070 adds 'gateway_fee'; refresh after running it |
 | wallet_transactions wallet_transactions_user_id_fkey | FOREIGN KEY (user_id) REFERENCES users(id) |
 
 ### 3_INDEXES (56 total)

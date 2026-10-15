@@ -28,7 +28,9 @@ ALTER TABLE public.wallet_transactions
   DROP CONSTRAINT IF EXISTS wallet_transactions_type_check;
 ALTER TABLE public.wallet_transactions
   ADD CONSTRAINT wallet_transactions_type_check
-  CHECK (type IN ('credit', 'debit', 'refund'));
+  -- 'gateway_fee' must stay (migrations 042 / 070): dropping it silently
+  -- rejects every Razorpay fee row.
+  CHECK (type IN ('credit', 'debit', 'refund', 'gateway_fee'));
 
 ALTER TABLE public.sessions
   DROP CONSTRAINT IF EXISTS sessions_status_check;
