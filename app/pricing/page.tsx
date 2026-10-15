@@ -14,9 +14,9 @@ const example = (mins: number, voice = false) => (EXAMPLE_RATE + (voice ? VOICE_
 
 export const metadata: Metadata = {
   title: 'LeanOn Pricing — India & Abroad (NRI) | Free First Session',
-  description: `How much LeanOn costs: your first ${FREE_SESSION_MINS}-minute session is free. In India, 15 minutes at a ₹${EXAMPLE_RATE}/min listener costs ${inr(example(15))}. Abroad, sessions are a flat US$${NRI_USD_PRICES[15]} / $${NRI_USD_PRICES[30]} / $${NRI_USD_PRICES[45]} for 15 / 30 / 45 minutes. No subscription.`,
+  description: `How much LeanOn costs: your first ${FREE_SESSION_MINS}-minute session is free. In India, 15 minutes at a ₹${EXAMPLE_RATE}/min listener costs ${inr(example(15))}. Abroad, sessions start at US$${NRI_USD_PRICES[15]} / $${NRI_USD_PRICES[30]} / $${NRI_USD_PRICES[45]} for 15 / 30 / 45 minutes. No subscription.`,
   alternates: { canonical: URL },
-  openGraph: { title: 'LeanOn Pricing — India & Abroad', description: 'Free first session. Pay per session, no subscription. India: listener rate × minutes + ₹10. Abroad: flat US$10 for 15 minutes.', url: URL, siteName: 'LeanOn', type: 'website' },
+  openGraph: { title: 'LeanOn Pricing — India & Abroad', description: 'Free first session. Pay per session, no subscription. India: listener rate × minutes + ₹10. Abroad: from US$10 for 15 minutes.', url: URL, siteName: 'LeanOn', type: 'website' },
 }
 
 const faqs: [string, string][] = [

@@ -198,7 +198,7 @@ export default function UsaRelationshipAdvicePage() {
 
         <div className="cta">
           <h2>Someone is ready to listen right now</h2>
-          <p>$10 for 15 min · $15 for 30 min · $20 for 45 min · First 5 min always free.</p>
+          <p>From $10 for 15 min · $15 for 30 min · $20 for 45 min · First 5 min always free.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>

@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Affordable Therapy Alternative for Indians in the USA — LeanOn Peer Listeners',
-  description: 'Therapy in the USA costs $200/hr with a 6-week waitlist. LeanOn peer listeners are $10 for 15 minutes, available right now, and understand the Indian cultural context without explanation.',
+  description: 'Therapy in the USA costs $200/hr with a 6-week waitlist. LeanOn peer listeners start at $10 for 15 minutes, available right now, and understand the Indian cultural context without explanation.',
   keywords: [
     'therapy alternative indians usa', 'affordable therapy usa indian', 'cheap therapy alternative usa',
     'therapy too expensive usa', 'peer support instead of therapy usa', 'mental health support indians usa',
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Affordable Therapy Alternative for Indians in the USA — LeanOn Peer Listeners',
-    description: 'Therapy is $200/hr with a 6-week wait. LeanOn is $10 for 15 minutes, available now, with listeners who understand the Indian experience without needing it explained.',
+    description: 'Therapy is $200/hr with a 6-week wait. LeanOn starts at $10 for 15 minutes, available now, with listeners who understand the Indian experience without needing it explained.',
     url: 'https://www.leanon.app/usa-therapy-alternative',
     siteName: 'LeanOn',
     type: 'article',
@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'How much does LeanOn cost compared to therapy in the USA?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'A single therapy session in the USA can cost $150-$250. LeanOn sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first 5-minute session free. That is over 10 times more affordable per minute than most therapy options.',
+        text: 'A single therapy session in the USA can cost $150-$250. LeanOn sessions start at $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first 5-minute session free. That is over 10 times more affordable per minute than most therapy options.',
       },
     },
     {
@@ -184,7 +184,7 @@ export default function UsaTherapyAlternativePage() {
           <h2>What LeanOn offers that therapy often cannot</h2>
           <p>LeanOn listeners are available <strong>right now</strong> — not in six weeks.
             Many are Indian and understand the NRI experience without needing it explained.
-            Sessions are <strong>$10 for 15 minutes</strong>, <strong>$15 for 30 minutes</strong>,
+            Sessions start at <strong>$10 for 15 minutes</strong>, <strong>$15 for 30 minutes</strong>,
             and <strong>$20 for 45 minutes</strong> — with your first 5-minute session free.</p>
           <p>You do not spend your session explaining what an H-1B is, what it means to miss Diwali,
             or why your parents&apos; expectations feel so heavy. You get straight to the feelings.
@@ -205,7 +205,7 @@ export default function UsaTherapyAlternativePage() {
 
         <div className="cta">
           <h2>Someone is ready to listen right now</h2>
-          <p>$10 for 15 min · $15 for 30 min · $20 for 45 min · First 5 min always free.</p>
+          <p>From $10 for 15 min · $15 for 30 min · $20 for 45 min · First 5 min always free.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -232,7 +232,7 @@ export default function UsaTherapyAlternativePage() {
           </div>
           <div className="faq-item">
             <h3>How much does LeanOn cost compared to therapy in the USA?</h3>
-            <p>A therapy session costs $150-$250. LeanOn sessions are $10 for 15 minutes, $15 for 30 minutes,
+            <p>A therapy session costs $150-$250. LeanOn sessions start at $10 for 15 minutes, $15 for 30 minutes,
               and $20 for 45 minutes — with the first 5-minute session free.</p>
           </div>
           <div className="faq-item">

@@ -65,7 +65,7 @@ const faqSchema = {
       name: 'What does a session cost for NRIs in the USA?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first 5-minute session free. Much more accessible than formal therapy.',
+        text: 'Sessions start at $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first 5-minute session free. Much more accessible than formal therapy.',
       },
     },
   ],
@@ -186,7 +186,7 @@ export default function UsaRantToSomeonePage() {
           <p>Your friends are tired of the same conversation. Your family back home will just worry.
             Your colleagues cannot know what you are really going through. And therapy has a six-week
             waitlist and costs $200 an hour.</p>
-          <p>LeanOn listeners are available right now, at $10 for 15 minutes. You tell them upfront:
+          <p>LeanOn listeners are available right now, from $10 for 15 minutes. You tell them upfront:
             &quot;I just want to rant, no advice.&quot; They will listen — fully, attentively, without judgment.
             And sometimes that is all you need.</p>
         </div>
@@ -200,7 +200,7 @@ export default function UsaRantToSomeonePage() {
 
         <div className="cta">
           <h2>Someone is ready to listen right now</h2>
-          <p>$10 for 15 min · $15 for 30 min · $20 for 45 min · First 5 min always free.</p>
+          <p>From $10 for 15 min · $15 for 30 min · $20 for 45 min · First 5 min always free.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -229,7 +229,7 @@ export default function UsaRantToSomeonePage() {
           </div>
           <div className="faq-item">
             <h3>What does a session cost for NRIs in the USA?</h3>
-            <p>Sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first
+            <p>Sessions start at $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first
               5 minutes free — one free session per account.</p>
           </div>
         </div>

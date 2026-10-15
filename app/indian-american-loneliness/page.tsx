@@ -65,7 +65,7 @@ const faqSchema = {
       name: 'How much does LeanOn cost from the USA?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first 5-minute session free. No referral needed, no waitlist.',
+        text: 'Sessions start at $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first 5-minute session free. No referral needed, no waitlist.',
       },
     },
   ],
@@ -201,7 +201,7 @@ export default function IndianAmericanLonelinessPage() {
 
         <div className="cta">
           <h2>Someone is ready to listen right now</h2>
-          <p>$10 for 15 min · $15 for 30 min · $20 for 45 min · First 5 min always free.</p>
+          <p>From $10 for 15 min · $15 for 30 min · $20 for 45 min · First 5 min always free.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -232,7 +232,7 @@ export default function IndianAmericanLonelinessPage() {
           </div>
           <div className="faq-item">
             <h3>How much does LeanOn cost from the USA?</h3>
-            <p>Sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. First 5
+            <p>Sessions start at $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. First 5
               minutes are always free. No referral needed, no waitlist.</p>
           </div>
         </div>

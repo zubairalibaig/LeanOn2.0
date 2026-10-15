@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'What if I cannot afford therapy while dealing with this stress?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Therapy in the USA can cost $150-$250 per hour with a six-week waitlist. LeanOn sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes, with your first 5-minute session free. You can start a conversation right now.',
+        text: 'Therapy in the USA can cost $150-$250 per hour with a six-week waitlist. LeanOn sessions start at $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes, with your first 5-minute session free. You can start a conversation right now.',
       },
     },
     {
@@ -203,7 +203,7 @@ export default function UsaH1bVisaStressPage() {
 
         <div className="cta">
           <h2>Someone is ready to listen right now</h2>
-          <p>$10 for 15 min · $15 for 30 min · $20 for 45 min · First 5 min always free.</p>
+          <p>From $10 for 15 min · $15 for 30 min · $20 for 45 min · First 5 min always free.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -228,7 +228,7 @@ export default function UsaH1bVisaStressPage() {
           </div>
           <div className="faq-item">
             <h3>What if I cannot afford therapy while dealing with this stress?</h3>
-            <p>Therapy in the USA costs $150-$250 per hour with long waitlists. LeanOn sessions are
+            <p>Therapy in the USA costs $150-$250 per hour with long waitlists. LeanOn sessions start at
               $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes — first 5-minute session free.</p>
           </div>
           <div className="faq-item">

@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'What does a session cost from the USA?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first 5-minute session free. No subscription required.',
+        text: 'Sessions start at $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first 5-minute session free. No subscription required.',
       },
     },
     {
@@ -202,7 +202,7 @@ export default function UsaEmpathyListenerPage() {
 
         <div className="cta">
           <h2>Someone is ready to listen right now</h2>
-          <p>$10 for 15 min · $15 for 30 min · $20 for 45 min · First 5 min always free.</p>
+          <p>From $10 for 15 min · $15 for 30 min · $20 for 45 min · First 5 min always free.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/auth" className="btn-orange">Join free</a>
         </div>
@@ -227,7 +227,7 @@ export default function UsaEmpathyListenerPage() {
           </div>
           <div className="faq-item">
             <h3>What does a session cost from the USA?</h3>
-            <p>Sessions are $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first
+            <p>Sessions start at $10 for 15 minutes, $15 for 30 minutes, and $20 for 45 minutes. Your first
               5 minutes free — one free session per account. No subscription required.</p>
           </div>
           <div className="faq-item">

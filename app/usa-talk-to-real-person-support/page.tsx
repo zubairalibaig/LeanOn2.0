@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Talk to a Real Person About Your Problems — Not an AI | LeanOn US',
-  description: 'LeanOn connects Americans with real peer listeners — humans with lived experience, not AI chatbots. Listeners online daily (Indian time). First 5 minutes free. $10 for 15 min.',
+  description: 'LeanOn connects Americans with real peer listeners — humans with lived experience, not AI chatbots. Listeners online daily (Indian time). First 5 minutes free. From $10 for 15 min.',
   keywords: [
     'real person to talk to about loneliness USA', 'human support not AI USA',
     'affordable emotional support real person', 'talk to someone about loneliness US',
@@ -37,7 +37,7 @@ const serviceSchema = {
   },
   offers: {
     '@type': 'Offer',
-    description: 'First 5 minutes free. $10 for 15 minutes, $15 for 30 minutes, $20 for 45 minutes.',
+    description: 'First 5 minutes free. From $10 for 15 minutes, $15 for 30 minutes, $20 for 45 minutes.',
     priceCurrency: 'USD',
   },
 }
@@ -60,7 +60,7 @@ const faqSchema = {
       name: 'Where can I talk to a real person about loneliness in the US?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn connects Americans with real peer listeners — humans with lived experience, not AI chatbots. Listeners online daily (Indian time) at $10 for 15 minutes, with the first 5 minutes completely free.',
+        text: 'LeanOn connects Americans with real peer listeners — humans with lived experience, not AI chatbots. Listeners online daily (Indian time) from $10 for 15 minutes, with the first 5 minutes completely free.',
       },
     },
     {
@@ -227,7 +227,7 @@ export default function USATalkToRealPersonPage() {
             </div>
             <div className="compare-col human">
               <h3>💙 LeanOn Real Human</h3>
-              <p>First 5 min free, then $10 for 15 min — real connection that actually helps</p>
+              <p>First 5 min free, then from $10 for 15 min — real connection that actually helps</p>
             </div>
           </div>
           <div className="compare-row">
@@ -296,7 +296,7 @@ export default function USATalkToRealPersonPage() {
           <div className="faq-item">
             <h3>Where can I talk to a real person about loneliness in the US?</h3>
             <p>LeanOn connects Americans with real peer listeners — humans with lived experience, not AI
-              chatbots. Listeners online daily (Indian time) at $10 for 15 minutes, with the first 5 minutes completely free.</p>
+              chatbots. Listeners online daily (Indian time) from $10 for 15 minutes, with the first 5 minutes completely free.</p>
           </div>
           <div className="faq-item">
             <h3>Is LeanOn a real person or AI?</h3>

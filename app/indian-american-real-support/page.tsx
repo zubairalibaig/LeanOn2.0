@@ -41,7 +41,7 @@ const serviceSchema = {
   },
   offers: {
     '@type': 'Offer',
-    description: 'First 5 minutes free. $10 for 15 min, $15 for 30 min, $20 for 45 min.',
+    description: 'First 5 minutes free. From $10 for 15 min, $15 for 30 min, $20 for 45 min.',
   },
 }
 
@@ -95,7 +95,7 @@ const faqSchema = {
       name: 'How much does LeanOn cost for Indian Americans?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: '$10 for 15 minutes, $15 for 30 minutes, $20 for 45 minutes — with the first 5 minutes free. Significantly more affordable than therapy.',
+        text: 'From $10 for 15 minutes, $15 for 30 minutes, $20 for 45 minutes — with the first 5 minutes free. Significantly more affordable than therapy.',
       },
     },
   ],
@@ -289,7 +289,7 @@ export default function IndianAmericanRealSupportPage() {
           <h2>How much does it cost?</h2>
           <p>
             Your first 5 minutes are completely free — no credit card needed to start. After that:
-            $10 for 15 minutes, $15 for 30 minutes, $20 for 45 minutes.
+            from $10 for 15 minutes, $15 for 30 minutes, $20 for 45 minutes.
           </p>
           <p>
             This is significantly more affordable than therapy — and you get someone with actual
@@ -324,7 +324,7 @@ export default function IndianAmericanRealSupportPage() {
           </div>
           <div className="faq-item">
             <h3>How much does LeanOn cost for Indian Americans?</h3>
-            <p>$10 for 15 minutes, $15 for 30 minutes, $20 for 45 minutes — with the first 5 minutes free. Significantly more affordable than therapy.</p>
+            <p>From $10 for 15 minutes, $15 for 30 minutes, $20 for 45 minutes — with the first 5 minutes free. Significantly more affordable than therapy.</p>
           </div>
         </div>
 

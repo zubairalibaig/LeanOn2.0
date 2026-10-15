@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Vent to a Real Person Online in the US — Anonymous, Human | LeanOn',
-  description: 'LeanOn lets you vent to a real human listener in the US — on Indian time, anonymous, first 5 minutes free. No AI, no judgment. $10 for 15 min, $15 for 30 min.',
+  description: 'LeanOn lets you vent to a real human listener in the US — on Indian time, anonymous, first 5 minutes free. No AI, no judgment. From $10 for 15 min, $15 for 30 min.',
   keywords: [
     'vent to real person USA', 'anonymous venting online USA', 'someone to talk to in America',
     'vent online USA', 'talk to someone USA', 'real human listener America',
@@ -27,7 +27,7 @@ const serviceSchema = {
   '@context': 'https://schema.org',
   '@type': 'Service',
   name: 'LeanOn — Anonymous Venting with Real Humans in the US',
-  description: 'LeanOn lets Americans vent to real human peer listeners — private, no appointment needed, no AI. First 5 minutes free, $10 for 15 minutes.',
+  description: 'LeanOn lets Americans vent to real human peer listeners — private, no appointment needed, no AI. First 5 minutes free, then from $10 for 15 minutes.',
   provider: { '@type': 'Organization', name: 'LeanOn', url: 'https://www.leanon.app' },
   serviceType: 'Peer Emotional Support',
   areaServed: 'United States',
@@ -37,7 +37,7 @@ const serviceSchema = {
   },
   offers: {
     '@type': 'Offer',
-    description: 'First 5 minutes free. $10 for 15 minutes, $15 for 30 minutes, $20 for 45 minutes.',
+    description: 'First 5 minutes free. From $10 for 15 minutes, $15 for 30 minutes, $20 for 45 minutes.',
     priceCurrency: 'USD',
   },
 }
@@ -76,7 +76,7 @@ const faqSchema = {
       name: 'How much does it cost to vent on LeanOn in the US?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Your first 5 minutes are free. After that, $10 for 15 minutes, $15 for 30 minutes, or $20 for 45 minutes — significantly cheaper than therapy, with no insurance or appointment needed.',
+        text: 'Your first 5 minutes are free. After that, from $10 for 15 minutes, $15 for 30 minutes, or $20 for 45 minutes — significantly cheaper than therapy, with no insurance or appointment needed.',
       },
     },
     {
@@ -288,7 +288,7 @@ export default function USAVentRealPersonPage() {
           </div>
           <div className="faq-item">
             <h3>How much does it cost to vent on LeanOn in the US?</h3>
-            <p>Your first 5 minutes are free. After that, $10 for 15 minutes, $15 for 30 minutes, or
+            <p>Your first 5 minutes are free. After that, from $10 for 15 minutes, $15 for 30 minutes, or
               $20 for 45 minutes — significantly cheaper than therapy, with no insurance or appointment
               needed.</p>
           </div>

@@ -54,7 +54,7 @@ const faqs = [
   },
   {
     q: 'What does a peer support session on LeanOn cost?',
-    a: 'In India: the listener\'s per-minute rate × minutes + a flat ₹10 platform fee. At ₹10/min, a 15-minute session is ₹160. Voice calls are ₹5/min more than text. Outside India, flat rates apply: US$10 (15 min), US$15 (30 min), US$20 (45 min). Every new account receives one free 5-minute introduction.',
+    a: 'In India: the listener\'s per-minute rate × minutes + a flat ₹10 platform fee. At ₹10/min, a 15-minute session is ₹160. Voice calls are ₹5/min more than text. Outside India, prices start at US$10 (15 min), US$15 (30 min), US$20 (45 min). Every new account receives one free 5-minute introduction.',
   },
 ]
 
@@ -301,7 +301,7 @@ export default function PeerSupportIndiaGuidePage() {
           <p>Every new account receives one free 5-minute introduction. There are no subscriptions or automatic charges.</p>
           <ul>
             <li><strong>India:</strong> listener&apos;s per-minute rate × minutes + ₹10 flat platform fee. At ₹10/min: 15 min = ₹160, 30 min = ₹310, 45 min = ₹460. Voice calls: +₹5/min.</li>
-            <li><strong>Outside India:</strong> flat rates — US$10 (15 min), US$15 (30 min), US$20 (45 min).</li>
+            <li><strong>Outside India:</strong> from US$10 (15 min), US$15 (30 min), US$20 (45 min).</li>
           </ul>
           <p>Unused wallet balance is fully refundable. Full pricing: <a href="/pricing">leanon.app/pricing</a>.</p>
         </div>
