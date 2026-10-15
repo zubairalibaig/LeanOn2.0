@@ -59,7 +59,35 @@ function TalkInner() {
   const current = useRef<{ sessionId: string; startedAt: number; lastSwitchTry: number; timedOut: boolean } | null>(null)
   const busy = useRef(false)
   const alive = useRef(true)
-  useEffect(() => () => { alive.current = false }, [])
+  // gen: bumped by Cancel / a new start, so an in-flight booking from an older
+  // run can tell it's stale and withdraw its request. polling: no overlapping
+  // status checks. handedOff: the seeker went on to /session — keep the request.
+  const gen = useRef(0)
+  const polling = useRef(false)
+  const handedOff = useRef(false)
+  const starting = useRef(false)
+  const withdraw = (sessionId: string) =>
+    fetch(`/api/sessions/${sessionId}/decline`, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: '{}' }).catch(() => {})
+
+  // Leaving /talk while a request is out (tab closed, Back) withdraws it, so a
+  // listener isn't alerted for someone who's gone. Not when handing off to the
+  // session page.
+  useEffect(() => {
+    alive.current = true
+    const leave = () => {
+      const cur = current.current
+      if (cur && !handedOff.current) { current.current = null; withdraw(cur.sessionId) }
+    }
+    window.addEventListener('pagehide', leave)
+    return () => { alive.current = false; window.removeEventListener('pagehide', leave); leave() }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const goToSession = useCallback((id: string) => {
+    handedOff.current = true
+    try { sessionStorage.removeItem(CHOICE_KEY) } catch { /* ignore */ }
+    router.replace(`/session/${id}`)
+  }, [router])
 
   // How many listeners are online — shown before login, from the same public
   // list /browse uses.
@@ -106,6 +134,7 @@ function TalkInner() {
   const tryNext = useCallback(async (replace?: string): Promise<void> => {
     if (busy.current || !alive.current) return
     busy.current = true
+    const myGen = gen.current
     try {
       for (;;) {
         if (tried.current.length >= TALK_MAX_TRIES) { setPhase(replace ? p => p : { k: 'none' }); return }
@@ -128,6 +157,11 @@ function TalkInner() {
           }),
         }).catch(() => null)
         const d = res ? await res.json().catch(() => ({})) : {}
+        if (gen.current !== myGen || !alive.current) {
+          // Cancelled (or left) while this booking was in flight: withdraw it.
+          if (res?.ok && d.sessionId) withdraw(d.sessionId)
+          return
+        }
         if (res?.ok && d.sessionId) {
           current.current = { sessionId: d.sessionId, startedAt: Date.now(), lastSwitchTry: 0, timedOut: false }
           setSecsLeft(TALK_TRY_SECS)
@@ -136,8 +170,14 @@ function TalkInner() {
         }
         const err = d.error as string | undefined
         if (err === 'listener_busy' || err === 'listener_offline' || err === 'listener_unavailable' || err === 'same_listener') continue
-        if (err === 'original_not_pending') return            // the current listener just answered — the poll will see it
-        if (err === 'already_in_session' && d.sessionId) { router.replace(`/session/${d.sessionId}`); return }
+        if (err === 'original_not_pending') { tried.current.pop(); return }   // the current listener just answered — the poll will see it
+        if (err === 'already_in_session' && d.sessionId) { goToSession(d.sessionId); return }
+        if (res?.status === 429) {
+          tried.current.pop()
+          if (replace) return                                 // keep the live request; the poll retries later
+          setPhase({ k: 'error', message: 'Too many tries in a minute. Please wait a moment and tap Try again.' })
+          return
+        }
         if (err === 'free_trial_used') { queue.current = []; continue }   // reload as a paid match
         if (err === 'insufficient_balance') {
           if (replace) return                                 // keep the live request running
@@ -151,9 +191,17 @@ function TalkInner() {
     } finally {
       busy.current = false
     }
-  }, [fetchCandidates, loadCandidates, router])
+  }, [fetchCandidates, goToSession, loadCandidates, router])
 
   const start = useCallback(async (c: { topic: TalkTopicId; mode: Mode }) => {
+    if (starting.current || busy.current) return   // double tap
+    starting.current = true
+    try { await startInner(c) } finally { starting.current = false }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadCandidates, router, tryNext])
+
+  const startInner = async (c: { topic: TalkTopicId; mode: Mode }) => {
+    gen.current++
     choice.current = c
     saveChoice(c)
     const sb = createClient()
@@ -169,11 +217,13 @@ function TalkInner() {
     queue.current = []
     setPhase({ k: 'finding' })
     if (await loadCandidates()) await tryNext()
-  }, [loadCandidates, router, tryNext])
+  }
 
   // Back from login (or the wallet) with the two answers saved: go straight on.
   useEffect(() => {
     if (params.get('go') !== '1') return
+    // Consume it, so Back / a reopened tab doesn't start matching again.
+    router.replace('/talk')
     const c = readChoice()
     if (c) { setTopic(c.topic); start(c) }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -184,12 +234,15 @@ function TalkInner() {
     if (phase.k !== 'waiting') return
     const sb = createClient()
     const iv = setInterval(async () => {
+      if (polling.current || busy.current) return
       const cur = current.current
-      if (!cur || busy.current) return
+      if (!cur) { tryNext(); return }   // a request ended while a switch was in flight
+      polling.current = true
+      try {
       const { data } = await sb.from('sessions').select('status, cancel_reason').eq('id', cur.sessionId).maybeSingle()
       if (!alive.current || current.current?.sessionId !== cur.sessionId) return
       const st = (data as { status?: string } | null)?.status
-      if (st === 'active') { router.replace(`/session/${cur.sessionId}`); return }
+      if (st === 'active') { goToSession(cur.sessionId); return }
       if (st === 'cancelled' || st === 'completed') { current.current = null; tryNext(); return }
       const elapsed = (Date.now() - cur.startedAt) / 1000
       setSecsLeft(Math.max(0, Math.ceil(TALK_TRY_SECS - elapsed)))
@@ -207,15 +260,17 @@ function TalkInner() {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reason: 'timeout' }),
         }).catch(() => {})
       }
+      } finally { polling.current = false }
     }, 2500)
     return () => clearInterval(iv)
-  }, [phase.k, router, tryNext])
+  }, [phase.k, goToSession, tryNext])
 
   async function cancelRequest() {
+    gen.current++                      // an in-flight switch withdraws its own request
     const cur = current.current
     current.current = null
-    if (cur) await fetch(`/api/sessions/${cur.sessionId}/decline`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }).catch(() => {})
     setPhase({ k: 'topic' })
+    if (cur) await withdraw(cur.sessionId)
   }
 
   const t = talkTopic(topic)
@@ -295,7 +350,9 @@ function TalkInner() {
             <div className="pulse" aria-hidden>🔔</div>
             <h1 style={{ fontSize: 21 }}>Asking {phase.name}…</h1>
             <p className="sub" style={{ marginBottom: 6 }}>
-              {phase.name} has been alerted. If they can&apos;t answer, we&apos;ll ask someone else{secsLeft > 0 ? ` in ${secsLeft}s` : ''} — you don&apos;t need to do anything.
+              {secsLeft > 0
+                ? <>{phase.name} has been alerted. If they can&apos;t answer, we&apos;ll ask someone else in {secsLeft}s — you don&apos;t need to do anything.</>
+                : <>{phase.name} has been alerted and still has a little time to answer. We&apos;ll keep looking for someone else meanwhile.</>}
             </p>
             <p className="sub" style={{ fontSize: 13, marginBottom: 0 }}>
               {phase.free ? 'Free for 5 minutes.' : `${phase.priceLabel} for ${meta.current.durationMins} minutes — refunded if nobody answers. You only pay for the time you use.`}

@@ -52,12 +52,20 @@ export async function GET(req: NextRequest) {
     const durationMins = free ? 5 : 15
     const country = pricingCountry(me?.phone ?? (user.phone ? '+' + user.phone.replace(/^\+/, '') : null), me?.account_country ?? null)
 
-    const { data: online, error } = await sb.from('listener_profiles')
-      .select('user_id, rate_per_min, rating, specialty_tags, users!inner(name, phone)')
-      .eq('is_approved', true).eq('is_available', true).eq('is_suspended', false)
-      .or('is_active.eq.true,is_active.is.null')
-      .not('users.phone', 'is', null)
-      .limit(100)
+    // Same eligibility as /browse (/api/listeners), including hiding a listener
+    // whose new photo is still under review. pending_avatar_url may not exist on
+    // an old schema — retried without that filter.
+    const onlineQuery = (withPendingPhoto: boolean) => {
+      let q = sb.from('listener_profiles')
+        .select('user_id, rate_per_min, rating, specialty_tags, users!inner(name, phone)')
+        .eq('is_approved', true).eq('is_available', true).eq('is_suspended', false)
+        .or('is_active.eq.true,is_active.is.null')
+        .not('users.phone', 'is', null)
+      if (withPendingPhoto) q = q.is('pending_avatar_url', null)
+      return q.limit(100)
+    }
+    let { data: online, error } = await onlineQuery(true)
+    if (error?.message?.includes('pending_avatar_url')) ({ data: online, error } = await onlineQuery(false))
     if (error) throw error
 
     type Row = { user_id: string; rate_per_min: number | null; rating: number | null; specialty_tags: string[] | null; users: { name: string | null } }
@@ -97,7 +105,11 @@ export async function GET(req: NextRequest) {
         const a = answered.get(r.user_id) ?? 0, m = missed.get(r.user_id) ?? 0
         const reliability = (a + 1) / (a + m + 2)               // 0.5 with no history
         const topicHit = (r.specialty_tags ?? []).some(t => wanted.has(t)) ? 1 : 0
-        const score = topicHit * 2 + reliability * 2 + (Number(r.rating ?? 0) / 5) * 0.5 + Math.random() * 0.3
+        // Free trial: prefer standard-rate listeners, so "continue for 15 min"
+        // after the free 5 isn't a ₹600+ surprise (paid matches are already
+        // limited to them above).
+        const standardRate = Number(r.rate_per_min ?? 10) <= TALK_MAX_TEXT_RATE ? 1 : 0
+        const score = topicHit * 2 + reliability * 2 + standardRate * 1.5 + (Number(r.rating ?? 0) / 5) * 0.5 + Math.random() * 0.3
         const indian = sessionRatePerMin(Number(r.rate_per_min ?? 10), type) * durationMins + PLATFORM_FEE
         const inr = free ? 0 : sessionTotalInr(indian, country, durationMins)
         return {
