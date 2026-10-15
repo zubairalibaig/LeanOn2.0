@@ -4,6 +4,7 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { UUID_RE } from '@/lib/constants'
 import { voiceSwitchRefund } from '@/lib/session-billing'
 import { logger } from '@/lib/logger'
+import { NRI_INR_EQUIV, isNriCountry, pricingCountry } from '@/lib/geo-pricing'
 
 // POST /api/sessions/switch-to-text  { sessionId }
 // Either participant can fall back from a voice call to text. The session
@@ -46,7 +47,14 @@ export async function POST(req: NextRequest) {
     }
 
     const amountHeld = Number(s.amount_held)
-    const refund = voiceSwitchRefund({ ...s, amount_held: amountHeld }, Date.now())
+    // Overseas seekers never pay less than the flat price (lib/geo-pricing).
+    let floorTotal = 0
+    const flat = NRI_INR_EQUIV[s.duration_mins as 15 | 30 | 45]
+    if (flat && !s.is_free_trial) {
+      const { data: seeker } = await sb.from('users').select('phone, account_country').eq('id', s.seeker_id).maybeSingle()
+      if (isNriCountry(pricingCountry(seeker?.phone ?? null, seeker?.account_country ?? null))) floorTotal = flat
+    }
+    const refund = voiceSwitchRefund({ ...s, amount_held: amountHeld }, Date.now(), floorTotal)
 
     const { data: claimed } = await sb.from('sessions')
       .update({ session_type: 'text', amount_held: amountHeld - refund })

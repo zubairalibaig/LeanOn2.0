@@ -128,7 +128,7 @@ export function voiceSwitchRefund(s: {
   amount_held: number; platform_fee?: number | null; duration_mins: number
   is_free_trial: boolean; listener_rate_per_min?: number | null
   started_at?: string | null; created_at?: string | null
-}, nowMs: number): number {
+}, nowMs: number, floorTotal = 0): number {
   if (!VOICE_PRICING_ENABLED || s.is_free_trial || s.listener_rate_per_min == null) return 0
   if (!s.created_at || Date.parse(s.created_at) < VOICE_PRICING_FROM) return 0
   // India sessions only: amount_held − fee == rate × booked mins. NRI holds a flat price.
@@ -139,7 +139,10 @@ export function voiceSwitchRefund(s: {
   const startMs = s.started_at ? Date.parse(s.started_at) : nowMs
   const usedMins = Math.floor(Math.max(0, nowMs - startMs) / 60_000)
   const remaining = Math.max(0, s.duration_mins - usedMins)
-  return VOICE_RATE_PREMIUM * remaining
+  // floorTotal: an overseas session billed at the listener's Indian price
+  // (because it was above the flat price) must not drop below the flat price
+  // (sessionTotalInr) — the refund stops at that floor.
+  return Math.min(VOICE_RATE_PREMIUM * remaining, Math.max(0, s.amount_held - floorTotal))
 }
 
 // When did an ABANDONED session (nobody pressed "End") really end? Both apps

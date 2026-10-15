@@ -119,6 +119,7 @@ export default function ListenerClient({ id }: { id: string }) {
   const [isUnlimitedTester, setIsUnlimitedTester] = useState(false)
   // Wallet top-up context: show confirmation when arriving back from /wallet?return=
   const [fromWallet, setFromWallet] = useState(false)
+  const [pricingReady, setPricingReady] = useState(false)
   const [accountCountry, setAccountCountry] = useState<string | null>(null)
   // Offline messaging state
   const [msgCount, setMsgCount]         = useState(0)
@@ -179,6 +180,7 @@ export default function ListenerClient({ id }: { id: string }) {
       setIsUnlimitedTester(unlimited)
       // Store for geo-pricing display (NRI vs India)
       if (profileData.account_country) setAccountCountry(profileData.account_country as string)
+      setPricingReady(true)
 
       const [{data: userData}, totalTrials, listenerTrial] = await Promise.all([
         client.from('users').select('wallet_balance').eq('id', user.id).single(),
@@ -269,6 +271,9 @@ export default function ListenerClient({ id }: { id: string }) {
     // Double-click guard
     if (isBooking) return
     // Client-side balance check (skipped for unlimited testers — server makes it free)
+    // Don't book on a price computed before the pricing country loaded
+    // (an overseas seeker would see the Indian price and be charged more).
+    if (duration !== 5 && !pricingReady) return
     if (!isUnlimitedTester && duration !== 5 && balance < cost) { setShowInsufficient(true); return }
     setIsBooking(true)
     setBookError(null)
