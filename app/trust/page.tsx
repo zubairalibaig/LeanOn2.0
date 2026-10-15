@@ -3,8 +3,8 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Trust & Safety | LeanOn — Anonymous Peer Support India',
-  description: 'How LeanOn keeps you safe: anonymity, data protection, listener vetting, AI moderation, and crisis escalation. Your safety is our top priority.',
+  title: 'LeanOn Trust & Safety | Privacy, Screening and Boundaries',
+  description: 'Learn about LeanOn’s peer-listener screening, pseudonymous sign-up, automated safety moderation, reporting, privacy practices and crisis-service limits.',
   alternates: { canonical: 'https://www.leanon.app/trust' },
 }
 
@@ -70,7 +70,7 @@ export default function TrustPage() {
         <div className="hero">
           <p className="tag">Trust &amp; Safety</p>
           <h1>Your safety is our top priority</h1>
-          <p className="lead">LeanOn is built on trust. Every decision we make — from how you sign up to how we vet listeners — is designed to keep you safe, anonymous, and in control.</p>
+          <p className="lead">Trust starts with clear expectations. LeanOn offers non-clinical peer conversations; this page summarises listener screening, privacy controls and safety limits so you can decide whether the service fits your needs.</p>
         </div>
 
         <div className="section">
@@ -81,7 +81,7 @@ export default function TrustPage() {
             <li>Only your first name is ever shown to a listener</li>
             <li>No profile photos required for seekers</li>
             <li>Session content is never stored beyond what is needed for the active session</li>
-            <li>Your conversations are private — we never read or share them</li>
+            <li>Automated safety moderation may process session content; content flagged for safety may be reviewed by the team. See the Privacy Policy for details.</li>
           </ul>
           <p>You are in control of your identity on LeanOn. We built text-first specifically so that people in joint households can use the platform privately.</p>
         </div>
@@ -128,7 +128,7 @@ export default function TrustPage() {
             <li>Use the &ldquo;Report an issue&rdquo; button in any session or listener profile</li>
             <li>Block a listener to prevent future contact</li>
             <li>End the session immediately — your wallet will be refunded if the session lasted less than 1 minute</li>
-            <li>Our team reviews all reports within 24 hours</li>
+            <li>Our team reviews reports and may take appropriate action under the platform rules.</li>
           </ul>
         </div>
 

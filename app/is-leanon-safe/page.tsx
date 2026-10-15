@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Is LeanOn Safe? Privacy & Anonymity Explained',
-  description: 'Is LeanOn safe? Learn about LeanOn\'s privacy protections, anonymity features, verified listeners, reporting system, and crisis resources.',
+  title: 'LeanOn Safety & Privacy: What Users Should Know',
+  description: 'Learn how LeanOn handles phone OTP sign-in, display names, listener screening, automated safety moderation, reporting, data deletion and crisis boundaries.',
   keywords: ['is leanon safe', 'leanon privacy', 'leanon anonymity', 'leanon safety', 'peer support safety india'],
   alternates: { canonical: 'https://www.leanon.app/is-leanon-safe' },
 }
@@ -59,7 +59,7 @@ export default function IsLeanOnSafePage() {
       <div className="page">
         <a href="/" style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:14,fontWeight:700,color:'var(--gray)',marginBottom:28}}>← Back</a>
         <h1>Is LeanOn Safe? Privacy, Anonymity & Trust</h1>
-        <p className="lead">Your safety and privacy are the foundation of everything we build at LeanOn. Here is exactly how we protect you.</p>
+        <p className="lead">This page explains LeanOn’s current privacy and safety approach in plain language. No online service can promise complete anonymity or zero risk, so read the details and decide what you are comfortable sharing.</p>
 
         <div className="disclaimer">
           LeanOn provides peer emotional support, not professional therapy or clinical treatment. If you need clinical mental health care, please consult a licensed professional.
@@ -67,12 +67,12 @@ export default function IsLeanOnSafePage() {
 
         <div className="safety-grid">
           {[
-            { icon: '🔒', title: 'No full name required', desc: 'Sign up with just your mobile number. You control what name you share.' },
-            { icon: '🤫', title: 'Conversations are private', desc: 'Your sessions are never shared, sold, or used for advertising.' },
-            { icon: '✓', title: 'Verified listeners', desc: 'Every listener is manually reviewed for lived experience and empathy before approval.' },
-            { icon: '🚫', title: 'Report & block', desc: 'Instantly block or report any listener. We investigate every report within 24 hours.' },
+            { icon: '🔒', title: 'Display-name sign-up', desc: 'Use phone OTP sign-in without an email or full legal name; choose what display name and personal details to share.' },
+            { icon: '🤫', title: 'Privacy with clear limits', desc: 'Text messages are not stored after a session by default; automated safety moderation may process content and flagged content may be reviewed. See the Privacy Policy.' },
+            { icon: '✓', title: 'Screened listeners', desc: 'Applicants are identity-verified and reviewed for lived experience, listening, boundaries and referral awareness before approval.' },
+            { icon: '🚫', title: 'Report & block', desc: 'Use the in-app reporting and blocking controls to flag concerns; the team reviews reports and may take action.' },
             { icon: '🗑️', title: 'Data deletion', desc: 'You can request full account and data deletion at any time via our support channel.' },
-            { icon: '📵', title: 'No data sold', desc: 'We do not sell, share, or broker any user data with third parties. Ever.' },
+            { icon: '📵', title: 'No data sold for ads', desc: 'LeanOn says it does not sell user data. Service-provider processing and other details are explained in the Privacy Policy.' },
           ].map((s, i) => (
             <div key={i} className="safety-item">
               <div className="safety-icon">{s.icon}</div>
@@ -96,8 +96,8 @@ export default function IsLeanOnSafePage() {
         </div>
 
         <div className="cta">
-          <h2>You are safe here</h2>
-          <p>Browse listeners anonymously. Available 24/7, no appointment needed.</p>
+          <h2>Make an informed choice</h2>
+          <p>Browse profiles and choose what you share. A session starts when an available listener accepts; availability varies. LeanOn is not a crisis service.</p>
           <a href="/browse"><button className="btn">Browse listeners →</button></a>
         </div>
       </div>
