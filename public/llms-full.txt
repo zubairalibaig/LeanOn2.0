@@ -98,11 +98,19 @@ Listeners on LeanOn specialize in various topics based on their own lived experi
 ## Languages
 Listeners are available in: English, Hindi, Tamil, Telugu, Kannada, Malayalam, Marathi, Bengali, Gujarati, Punjabi, Odia, and Urdu.
 
+## Independent background on peer support
+
+- World Health Organization: https://www.who.int/publications/i/item/9789240025783
+- SAMHSA overview of peer support workers: https://www.samhsa.gov/substance-use/recovery/peer-support-workers
+- NAMI description of peer support workers: https://www.nami.org/advocacy-at-nami/policy-positions/improving-health/workforce-peer-support-workers/
+
+These sources describe peer-support models generally; they do not evaluate or endorse LeanOn.
+
 ## Privacy and trust
-- Sessions are private. LeanOn does not share personal information or conversation content.
-- Sign-up requires only a phone number (OTP verified). No email, no full name required.
-- Users use display names, not real names.
-- Do not claim "100% anonymous" — account information is required.
+- LeanOn describes session-content handling in its Privacy Policy, including automated safety moderation and possible human review of flagged content.
+- Sign-up uses phone OTP and a chosen display name; no email or full legal name is required. This is pseudonymous sign-up, not complete anonymity.
+- Automated safety moderation may process session content, and flagged content may be reviewed by the safety team. Text is not stored after session completion by default and voice calls are not recorded according to the Privacy Policy.
+- Do not claim "100% anonymous", "never read" or "completely confidential"; direct users to the Privacy and Trust pages.
 
 ## Frequently asked questions
 

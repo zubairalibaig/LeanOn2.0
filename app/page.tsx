@@ -90,7 +90,7 @@ const howToSchema = {
   '@context': 'https://schema.org',
   '@type': 'HowTo',
   name: 'How to use LeanOn for peer support',
-  description: 'Start talking to a real human peer listener on LeanOn in under 60 seconds — no appointment needed.',
+  description: 'Use LeanOn to find a real human peer listener for a non-clinical conversation; a session begins when an available listener accepts.',
   totalTime: 'PT1M',
   tool: [{ '@type': 'HowToTool', name: 'Smartphone or computer with internet access' }],
   step: [
@@ -317,7 +317,7 @@ export default function Home() {
           <a href="/auth" className="btn-primary">Start your 5-min chat</a>
           <a href="/browse" className="btn-outline">Browse peer listeners</a>
         </div>
-        <p className="hero-note">Private one-to-one conversation · No appointment · Paid sessions from ₹160 in India, US$10 abroad</p>
+        <p className="hero-note">One free 5-minute introduction per account · Availability varies · Paid prices shown before booking</p>
       </section>
 
       {/* TOPICS */}
@@ -452,7 +452,7 @@ export default function Home() {
           <div className="sl">
             {[
               {t:'Sign up to LeanOn',d:'Just your phone number. OTP verified. 30 seconds.'},
-              {t:'Browse peer listeners',d:'Filter by topic. Read bios and ratings. Browse anonymously.'},
+              {t:'Browse peer listeners',d:'Filter by topic. Read bios and ratings. Browse listener profiles and choose what you share.'},
               {t:'Pick your session length',d:'5-min trial, or choose 15 or 30 minutes.'},
               {t:'Recharge your wallet',d:'Top up ₹200, ₹500 or ₹1000. Refundable anytime.'},
               {t:'Start instantly',d:'Choose text or voice; the conversation can begin when a listener accepts your request.'},
@@ -523,7 +523,7 @@ export default function Home() {
       {/* TRUST */}
       <div className="inner">
         <div className="tg">
-          {[{i:'🔒',l:'Safe & private'},{i:'💬',l:'Text or voice'},{i:'🔄',l:'Refund anytime'},{i:'⚡',l:'Instant access'},{i:'🤝',l:'Lived experience'},{i:'⏱️',l:'Available now'}].map((t,i)=>(
+          {[{i:'🔒',l:'Safe & private'},{i:'💬',l:'Text or voice'},{i:'🔄',l:'Refund anytime'},{i:'⚡',l:'No appointment'},{i:'🤝',l:'Lived experience'},{i:'⏱️',l:'Check availability'}].map((t,i)=>(
             <div key={i} className="ti"><div className="tic">{t.i}</div><span className="tl">{t.l}</span></div>
           ))}
         </div>
