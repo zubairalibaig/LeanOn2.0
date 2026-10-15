@@ -147,7 +147,8 @@ async function refreshSessionIfLoggedIn(req: NextRequest): Promise<NextResponse>
     // Public pages a suspended user could still act from (book, apply, chat in
     // the lounge) also get the suspension gate. Marketing/SEO pages don't.
     const { pathname } = req.nextUrl
-    if (user && SUSPENSION_GATED_PUBLIC_PREFIXES.some(p => pathname.startsWith(p))) {
+    // /talk is matched exactly: many SEO pages start with '/talk-'.
+    if (user && (pathname === '/talk' || SUSPENSION_GATED_PUBLIC_PREFIXES.some(p => pathname.startsWith(p)))) {
       const blocked = await suspendedRedirect(req, res, supabase, user.id)
       if (blocked) return blocked
     }
