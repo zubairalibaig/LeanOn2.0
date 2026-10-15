@@ -152,7 +152,11 @@ export async function PUT(req: NextRequest) {
       await sb.from('wallet_transactions').insert({
         user_id:      user.id,
         amount:       gatewayFee,
-        type:         'debit',
+        // 'gateway_fee', NOT 'debit': the fee is paid on top of the recharge and
+        // never leaves the wallet. Typed 'debit' it made the admin wallet check
+        // report every recharging seeker as off by their fees (and the webhook
+        // path already wrote 'gateway_fee', so the two disagreed).
+        type:         'gateway_fee',
         description:  `Razorpay gateway fee (₹${grossPaid} charged − ₹${verifiedAmount} credited)`,
         reference_id: `gf_${razorpay_payment_id}`,
       }).then(() => {}, () => {}) // ignore conflict if webhook already recorded it
