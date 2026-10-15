@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
-import { MAX_FREE_TRIALS, PLATFORM_FEE, sessionRatePerMin } from '@/lib/constants'
-import { getBookingPriceDisplay, pricingCountry, sessionTotalInr } from '@/lib/geo-pricing'
+import { MAX_FREE_TRIALS } from '@/lib/constants'
+import { getBookingPriceDisplay, pricingCountry, quoteSession } from '@/lib/geo-pricing'
 import { isUnlimitedTestPhone } from '@/lib/test-users'
 import { sweepStaleListeners } from '@/lib/listener-presence'
 import { talkTopic, TALK_MAX_TEXT_RATE } from '@/lib/talk-match'
@@ -62,7 +62,9 @@ export async function GET(req: NextRequest) {
         .or('is_active.eq.true,is_active.is.null')
         .not('users.phone', 'is', null)
       if (withPendingPhoto) q = q.is('pending_avatar_url', null)
-      return q.limit(100)
+      // Ordered by last heartbeat; a generous cap — online listeners number in
+      // the dozens, and busy / voice filtering happens after this read.
+      return q.order('last_heartbeat_at', { ascending: false, nullsFirst: false }).limit(500)
     }
     let { data: online, error } = await onlineQuery(true)
     if (error?.message?.includes('pending_avatar_url')) ({ data: online, error } = await onlineQuery(false))
@@ -85,8 +87,18 @@ export async function GET(req: NextRequest) {
         ? sb.from('listener_profiles').select('user_id').in('user_id', ids).eq('voice_disabled', true)
         : Promise.resolve({ data: [] as { user_id: string }[], error: null }),
       sb.from('sessions').select('listener_id, status, started_at, cancel_reason')
-        .in('listener_id', ids).gte('created_at', since).limit(2000),
+        .in('listener_id', ids).gte('created_at', since)
+        .order('created_at', { ascending: false }).limit(5000),
     ])
+    // Fail CLOSED on the availability reads: if we can't tell who's busy, offer
+    // nobody (the seeker gets "try again"), rather than everybody.
+    if (busyRes.error) throw new Error(`busy read failed: ${busyRes.error.message}`)
+    // voice_disabled (migration 067) may not exist yet — that alone means "no
+    // listener has voice off". Any other failure: no voice candidates.
+    const voiceColMissing = !!voiceOffRes.error && /voice_disabled/.test(voiceOffRes.error.message ?? '')
+    if (voiceOffRes.error && !voiceColMissing) throw new Error(`voice_disabled read failed: ${voiceOffRes.error.message}`)
+    // Reliability only ranks; on failure everyone is ranked as "no history".
+    if (statsRes.error) logger.warn('talk candidates: reliability stats unavailable', { error: statsRes.error.message })
     const busy = new Set(((busyRes.data ?? []) as { listener_id: string }[]).map(r => r.listener_id))
     const voiceOff = new Set(((voiceOffRes.data ?? []) as { user_id: string }[]).map(r => r.user_id))
 
@@ -110,8 +122,8 @@ export async function GET(req: NextRequest) {
         // limited to them above).
         const standardRate = Number(r.rate_per_min ?? 10) <= TALK_MAX_TEXT_RATE ? 1 : 0
         const score = topicHit * 2 + reliability * 2 + standardRate * 1.5 + (Number(r.rating ?? 0) / 5) * 0.5 + Math.random() * 0.3
-        const indian = sessionRatePerMin(Number(r.rate_per_min ?? 10), type) * durationMins + PLATFORM_FEE
-        const inr = free ? 0 : sessionTotalInr(indian, country, durationMins)
+        // The same quote POST /api/sessions holds (lib/geo-pricing quoteSession).
+        const { indianTotal: indian, total: inr } = quoteSession(Number(r.rate_per_min ?? 10), type, durationMins, country, free)
         return {
           listenerId: r.user_id,
           name: r.users?.name ?? 'A listener',

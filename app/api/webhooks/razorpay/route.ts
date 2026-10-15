@@ -98,7 +98,12 @@ export async function POST(req: NextRequest) {
           type:         'gateway_fee',
           description:  `Razorpay gateway fee (₹${grossRs} charged − ₹${amountRs} credited)`,
           reference_id: `gf_${paymentId}`,
-        }).then(() => {}, () => {})
+        }).then(({ error }) => {
+          // 23505 = the in-app confirmation already recorded this fee (idempotent).
+          // Anything else was silently dropped before — e.g. the type CHECK
+          // rejecting 'gateway_fee' until migration 070.
+          if (error && error.code !== '23505') logger.error('Webhook: gateway fee row not recorded', { paymentId, error: error.message })
+        }, () => {})
       }
 
       logger.info('Webhook: credited wallet (idempotent)', { amountRs, gatewayFee: feeToRecord, userId, paymentId })

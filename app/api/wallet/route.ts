@@ -159,7 +159,10 @@ export async function PUT(req: NextRequest) {
         type:         'gateway_fee',
         description:  `Razorpay gateway fee (₹${grossPaid} charged − ₹${verifiedAmount} credited)`,
         reference_id: `gf_${razorpay_payment_id}`,
-      }).then(() => {}, () => {}) // ignore conflict if webhook already recorded it
+      }).then(({ error }) => {
+        // 23505 = the webhook already recorded it (idempotent); log anything else.
+        if (error && error.code !== '23505') logger.error('Wallet PUT: gateway fee row not recorded', { paymentId: razorpay_payment_id, error: error.message })
+      }, () => {})
     }
 
     const [updated, authUser] = await Promise.all([

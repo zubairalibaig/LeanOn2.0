@@ -1,3 +1,5 @@
+import { PLATFORM_FEE, sessionRatePerMin } from '@/lib/constants'
+
 // Geo-pricing utilities — NRI vs India price display and billing.
 //
 // Phase 2 (now, 2026-09-14): actual billing at flat USD rates for NRI users.
@@ -127,6 +129,20 @@ export function sessionTotalInr(indianTotal: number, country: string | null | un
   if (!isNriCountry(country)) return indianTotal
   const flat = NRI_INR_EQUIV[durationMins as 15 | 30 | 45]
   return flat ? Math.max(flat, indianTotal) : indianTotal
+}
+
+/**
+ * THE server-side price quote for a session — used by POST /api/sessions
+ * (the amount actually held) and /api/talk/candidates (the price shown before
+ * booking), so the two can't drift. `textRate` is listener_profiles.rate_per_min.
+ * Returns the per-minute rate for this mode (what settlement caps the
+ * listener's share at), the Indian total, and the total charged.
+ */
+export function quoteSession(textRate: number, sessionType: 'text' | 'voice', durationMins: number, country: string | null | undefined, free: boolean) {
+  const rate = sessionRatePerMin(textRate, sessionType)
+  const indianTotal = rate * durationMins + PLATFORM_FEE
+  const total = free ? 0 : sessionTotalInr(indianTotal, country, durationMins)
+  return { rate, indianTotal, total }
 }
 
 /**

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { PLATFORM_FEE, FREE_SESSION_MINS, MAX_FREE_TRIALS, SESSION_DURATIONS, sessionRatePerMin, REQUEST_RESPONSE_WINDOW_SECS, serviceFeeRateAt } from '@/lib/constants'
-import { isNriCountry, NRI_INR_EQUIV, pricingCountry, sessionTotalInr } from '@/lib/geo-pricing'
+import { isNriCountry, NRI_INR_EQUIV, pricingCountry, quoteSession } from '@/lib/geo-pricing'
 import { isUnlimitedTestPhone } from '@/lib/test-users'
 import { settleSession } from '@/lib/session-billing'
 import { applySettlement } from '@/lib/settlement-ledger'
@@ -229,10 +229,8 @@ export async function POST(req: NextRequest) {
     // NRI: flat price, but never below the Indian price (sessionTotalInr) — the
     // listener's share is capped at rate × mins at settlement, so they always
     // earn their full rate. Minus the ₹10 fee, which is added back below.
-    const base  = effectivelyFree ? 0 : isNriSession
-      ? sessionTotalInr(rate * durationMins + PLATFORM_FEE, seekerPricingCountry, durationMins) - PLATFORM_FEE
-      : rate * durationMins
-    const total = effectivelyFree ? 0 : base + PLATFORM_FEE
+    // Same quote /api/talk/candidates shows (lib/geo-pricing quoteSession).
+    const total = quoteSession(Number(lp.rate_per_min ?? 10), sessionType, durationMins, isNriSession ? seekerPricingCountry : 'IN', effectivelyFree).total
 
     // Note: balance check, seeker-active-session check, and listener-busy check are
     // all handled atomically inside the create_session RPC (migration 002).

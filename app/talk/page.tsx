@@ -23,12 +23,20 @@ type Phase =
   | { k: 'topic' }
   | { k: 'mode' }
   | { k: 'finding' }
+  | { k: 'confirm'; priceLabel: string; durationMins: number }
   | { k: 'waiting'; sessionId: string; name: string; tryNo: number; free: boolean; priceLabel: string }
   | { k: 'none' }
   | { k: 'wallet'; need: number; priceLabel: string }
   | { k: 'error'; message: string }
 
 const CHOICE_KEY = 'leanon_talk_choice'
+
+// Privacy-safe funnel events to Google Analytics (if configured): only the
+// topic category, mode and outcome — never anything the person typed, never
+// listener ids. GA already records the campaign (utm_*) of the visit.
+function track(event: string, params: Record<string, string | number> = {}) {
+  try { (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag?.('event', event, params) } catch { /* ignore */ }
+}
 
 function readChoice(): { topic: TalkTopicId; mode: Mode } | null {
   try {
@@ -68,12 +76,17 @@ function TalkInner() {
   const handedOff = useRef(false)
   const starting = useRef(false)
   const runStartedAt = useRef(0)          // when this search began (TALK_MAX_WAIT_SECS cap)
+  const walletBalance = useRef(0)          // from the last candidate fetch
   const withdraw = (sessionId: string) =>
     fetch(`/api/sessions/${sessionId}/decline`, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: '{}' }).catch(() => {})
 
   // Leaving /talk while a request is out (tab closed, Back) withdraws it, so a
   // listener isn't alerted for someone who's gone. Not when handing off to the
   // session page.
+  useEffect(() => {
+    track('talk_view')
+  }, [])
+
   useEffect(() => {
     alive.current = true
     const leave = () => {
@@ -87,6 +100,7 @@ function TalkInner() {
 
   const goToSession = useCallback((id: string) => {
     handedOff.current = true
+    track('talk_matched', { try_no: tried.current.length, wait_secs: Math.round((Date.now() - runStartedAt.current) / 1000), free: meta.current.free ? 1 : 0 })
     try { sessionStorage.removeItem(CHOICE_KEY) } catch { /* ignore */ }
     router.replace(`/session/${id}`)
   }, [router])
@@ -114,6 +128,7 @@ function TalkInner() {
     const d = await res.json() as { free: boolean; durationMins: number; walletBalance?: number; candidates: Candidate[] }
     meta.current = { free: d.free, durationMins: d.durationMins }
     queue.current = d.candidates
+    walletBalance.current = d.walletBalance ?? 0
     return { ok: true, walletBalance: d.walletBalance ?? 0 }
   }, [])
 
@@ -126,6 +141,7 @@ function TalkInner() {
       return false
     }
     if (!meta.current.free && queue.current.length > 0 && r.walletBalance < queue.current[0].priceInr) {
+      track('talk_wallet_short')
       setPhase({ k: 'wallet', need: queue.current[0].priceInr - r.walletBalance, priceLabel: queue.current[0].priceLabel })
       return false
     }
@@ -141,13 +157,13 @@ function TalkInner() {
     const myGen = gen.current
     try {
       for (;;) {
-        if (tried.current.length >= TALK_MAX_TRIES) { setPhase(replace ? p => p : { k: 'none' }); return }
+        if (tried.current.length >= TALK_MAX_TRIES) { if (!replace) { track("talk_no_match"); setPhase({ k: "none" }) } return }
         let next = queue.current.shift()
         if (!next) {
           if (replace) { if (!(await fetchCandidates()).ok) return }
           else if (!(await loadCandidates())) return
           next = queue.current.shift()
-          if (!next) { if (!replace) setPhase({ k: 'none' }); return }
+          if (!next) { if (!replace) { track('talk_no_match'); setPhase({ k: 'none' }) } return }
         }
         tried.current.push(next.listenerId)
         const res = await fetch('/api/sessions', {
@@ -169,6 +185,7 @@ function TalkInner() {
         if (res?.ok && d.sessionId) {
           current.current = { sessionId: d.sessionId, startedAt: Date.now(), lastSwitchTry: 0, timedOut: false }
           setSecsLeft(TALK_TRY_SECS)
+          track('talk_request', { try_no: tried.current.length })
           setPhase({ k: 'waiting', sessionId: d.sessionId, name: next.name, tryNo: tried.current.length, free: meta.current.free, priceLabel: next.priceLabel })
           return
         }
@@ -185,7 +202,9 @@ function TalkInner() {
         if (err === 'free_trial_used') { queue.current = []; continue }   // reload as a paid match
         if (err === 'insufficient_balance') {
           if (replace) return                                 // keep the live request running
-          setPhase({ k: 'wallet', need: Math.max(0, Number(d.required) || 0), priceLabel: next.priceLabel })
+          // d.required is the full price the server would hold, not the shortfall.
+          track('talk_wallet_short')
+          setPhase({ k: 'wallet', need: Math.max(0, (Number(d.required) || 0) - walletBalance.current), priceLabel: next.priceLabel })
           return
         }
         if (res?.status === 401) { router.push('/auth?redirect=' + encodeURIComponent('/talk?go=1')); return }
@@ -208,9 +227,10 @@ function TalkInner() {
     gen.current++
     choice.current = c
     saveChoice(c)
+    track('talk_start', { topic: c.topic, mode: c.mode })
     const sb = createClient()
     const { data: { session } } = await sb.auth.getSession()
-    if (!session) { router.push('/auth?redirect=' + encodeURIComponent('/talk?go=1')); return }
+    if (!session) { track('talk_login_required'); router.push('/auth?redirect=' + encodeURIComponent('/talk?go=1')); return }
     const { data: { user }, error } = await sb.auth.getUser()
     if (error && !user) {
       if (error.status === 401 || error.status === 403) { router.push('/auth?redirect=' + encodeURIComponent('/talk?go=1')); return }
@@ -219,9 +239,24 @@ function TalkInner() {
     }
     tried.current = []
     queue.current = []
+    setPhase({ k: 'finding' })
+    if (!(await loadCandidates())) return
+    if (!meta.current.free && queue.current.length > 0) {
+      // Paid: show the price and let them confirm before anyone is alerted.
+      // Prices differ slightly by listener; show the most it can be.
+      const top = queue.current.reduce((a, b) => (b.priceInr > a.priceInr ? b : a))
+      setPhase({ k: 'confirm', priceLabel: top.priceLabel, durationMins: meta.current.durationMins })
+      return
+    }
+    runStartedAt.current = Date.now()
+    await tryNext()
+  }
+
+  function confirmPaid() {
+    if (busy.current) return
     runStartedAt.current = Date.now()
     setPhase({ k: 'finding' })
-    if (await loadCandidates()) await tryNext()
+    tryNext()
   }
 
   // Back from login (or the wallet) with the two answers saved: go straight on.
@@ -256,6 +291,7 @@ function TalkInner() {
         current.current = null
         gen.current++
         withdraw(cur.sessionId)
+        track('talk_no_match')
         setPhase({ k: 'none' })
         return
       }
@@ -282,6 +318,7 @@ function TalkInner() {
   }, [phase.k, goToSession, tryNext])
 
   async function cancelRequest() {
+    track('talk_cancel', { try_no: tried.current.length })
     gen.current++                      // an in-flight switch withdraws its own request
     const cur = current.current
     current.current = null
@@ -357,13 +394,14 @@ function TalkInner() {
           <div className="card" aria-live="polite">
             <div className="pulse" aria-hidden>🤝</div>
             <h1 style={{ fontSize: 21 }}>Finding someone for you…</h1>
-            <p className="sub" style={{ marginBottom: 0 }}>Looking for a listener who&apos;s online now{t ? ` and talks about ${t.label.toLowerCase()}` : ''}.</p>
+            <p className="sub" style={{ marginBottom: 0 }}>Looking for a listener who&apos;s online now{t ? `, starting with people who talk about ${t.label.toLowerCase()}` : ''}.</p>
           </div>
         )}
 
         {phase.k === 'waiting' && (
           <div className="card" aria-live="polite">
             <div className="pulse" aria-hidden>🔔</div>
+            <div style={{ fontSize: 12.5, fontWeight: 800, color: '#7A8A96', marginBottom: 4 }}>Listener {phase.tryNo} of up to {TALK_MAX_TRIES}</div>
             <h1 style={{ fontSize: 21 }}>Asking {phase.name}…</h1>
             <p className="sub" style={{ marginBottom: 6 }}>
               {secsLeft > 0
@@ -374,6 +412,21 @@ function TalkInner() {
               {phase.free ? 'Free for 5 minutes.' : `${phase.priceLabel} for ${meta.current.durationMins} minutes — refunded if nobody answers. You only pay for the time you use.`}
             </p>
             <button className="btn ghost" onClick={cancelRequest}>Cancel</button>
+            {/* Leaving withdraws the request (see the pagehide/unmount effect). */}
+            <div><Link className="link" href="/browse">Choose someone myself →</Link></div>
+          </div>
+        )}
+
+        {phase.k === 'confirm' && (
+          <div className="card">
+            <div className="pulse" style={{ animation: 'none' }} aria-hidden>🤝</div>
+            <h1 style={{ fontSize: 21 }}>{phase.durationMins}-minute {choice.current?.mode === 'voice' ? 'call' : 'chat'}: at most {phase.priceLabel}</h1>
+            <p className="sub" style={{ marginBottom: 4 }}>
+              The amount is held from your wallet only when a listener is asked, and returned in full if nobody answers.
+              If you end early, unused minutes come back to your wallet.
+            </p>
+            <button className="btn" onClick={confirmPaid}>Find someone now</button>
+            <div><button className="link" style={{ background: 'none', border: 'none', cursor: 'pointer', font: 'inherit' }} onClick={() => setPhase({ k: 'topic' })}>Back</button></div>
           </div>
         )}
 
