@@ -48,6 +48,7 @@ function TalkInner() {
   const [topic, setTopic] = useState<TalkTopicId | null>(null)
   const [onlineCount, setOnlineCount] = useState<number | null>(null)
   const [secsLeft, setSecsLeft] = useState(TALK_TRY_SECS)
+  const [loggedIn, setLoggedIn] = useState<boolean | null>(null)
 
   // Matching state lives in refs: the poll/timer callbacks must see the latest.
   const tried = useRef<string[]>([])
@@ -89,13 +90,15 @@ function TalkInner() {
     router.replace(`/session/${id}`)
   }, [router])
 
-  // How many listeners are online — shown before login, from the same public
-  // list /browse uses.
+  // How many listeners are free right now (online and not already in a
+  // session) — shown before login, from the same public list /browse uses.
   useEffect(() => {
     fetch('/api/listeners', { cache: 'no-store' }).then(r => (r.ok ? r.json() : null)).then(d => {
-      const list = ((d as { listeners?: { is_available?: boolean }[] } | null)?.listeners ?? [])
-      if (alive.current) setOnlineCount(list.filter(l => l.is_available).length)
+      const list = ((d as { listeners?: { is_available?: boolean; is_in_session?: boolean }[] } | null)?.listeners ?? [])
+      if (alive.current) setOnlineCount(list.filter(l => l.is_available && !l.is_in_session).length)
     }).catch(() => {})
+    // Local check only (no network): decides whether to mention the phone code.
+    createClient().auth.getSession().then(({ data: { session } }) => { if (alive.current) setLoggedIn(!!session) }).catch(() => {})
   }, [])
 
   // Fetch who to try next. No screen changes here — callers decide, because
@@ -306,7 +309,7 @@ function TalkInner() {
       <div className="tk">
         {phase.k === 'topic' && (
           <>
-            {onlineCount !== null && onlineCount > 0 && <div className="live"><i />{onlineCount} listener{onlineCount === 1 ? '' : 's'} online now</div>}
+            {onlineCount !== null && onlineCount > 0 && <div className="live"><i />{onlineCount} listener{onlineCount === 1 ? '' : 's'} free right now</div>}
             <h1>What&apos;s on your mind?</h1>
             <p className="sub">Pick what&apos;s closest. We&apos;ll connect you with someone who&apos;s online now — no browsing, no appointment.</p>
             <div className="chips">
@@ -333,7 +336,7 @@ function TalkInner() {
                 <span className="e" aria-hidden>📞</span><div><b>Voice call</b><span>Talk it through out loud</span></div>
               </button>
             </div>
-            <p className="fine">Next, we&apos;ll confirm your phone number with a one-time code — then connect you straight away.</p>
+            {loggedIn === false && <p className="fine">Next, we&apos;ll confirm your phone number with a one-time code — then connect you straight away.</p>}
           </>
         )}
 
