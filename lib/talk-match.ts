@@ -24,11 +24,14 @@ export function talkTopic(id: string | null | undefined) {
 // Seekers who want a particular (or pricier) listener still use /browse.
 export const TALK_MAX_TEXT_RATE = 10
 
-// How long one listener gets before Talk now moves on to the next. The
-// listener's own request window (REQUEST_RESPONSE_WINDOW_SECS) is longer; the
-// switch cancels the request as 'seeker_cancelled', which never counts as a
-// missed request against the listener.
-export const TALK_TRY_SECS = 60
+// How long one listener gets before Talk now moves on to the next. Measured
+// 2026-10-15: median accept 10s, 90% within 28s. The listener's own request
+// window (REQUEST_RESPONSE_WINDOW_SECS) is longer; the switch cancels the
+// request as 'seeker_cancelled', which never counts as a missed request.
+export const TALK_TRY_SECS = 30
 
-// Most listeners Talk now will try in one go before offering /browse.
-export const TALK_MAX_TRIES = 5
+// The whole search stops after this long (then: Try again / See all listeners).
+export const TALK_MAX_WAIT_SECS = 300
+
+// Most listeners Talk now will try in one search (300s / 30s).
+export const TALK_MAX_TRIES = 10

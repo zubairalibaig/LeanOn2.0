@@ -15,7 +15,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase'
 import { REQUEST_RESPONSE_WINDOW_SECS } from '@/lib/constants'
-import { TALK_TOPICS, TALK_TRY_SECS, TALK_MAX_TRIES, talkTopic, type TalkTopicId } from '@/lib/talk-match'
+import { TALK_TOPICS, TALK_TRY_SECS, TALK_MAX_TRIES, TALK_MAX_WAIT_SECS, talkTopic, type TalkTopicId } from '@/lib/talk-match'
 
 type Mode = 'text' | 'voice'
 type Candidate = { listenerId: string; name: string; priceInr: number; priceLabel: string }
@@ -67,6 +67,7 @@ function TalkInner() {
   const polling = useRef(false)
   const handedOff = useRef(false)
   const starting = useRef(false)
+  const runStartedAt = useRef(0)          // when this search began (TALK_MAX_WAIT_SECS cap)
   const withdraw = (sessionId: string) =>
     fetch(`/api/sessions/${sessionId}/decline`, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: '{}' }).catch(() => {})
 
@@ -218,6 +219,7 @@ function TalkInner() {
     }
     tried.current = []
     queue.current = []
+    runStartedAt.current = Date.now()
     setPhase({ k: 'finding' })
     if (await loadCandidates()) await tryNext()
   }
@@ -249,7 +251,18 @@ function TalkInner() {
       if (st === 'cancelled' || st === 'completed') { current.current = null; tryNext(); return }
       const elapsed = (Date.now() - cur.startedAt) / 1000
       setSecsLeft(Math.max(0, Math.ceil(TALK_TRY_SECS - elapsed)))
-      if (elapsed >= TALK_TRY_SECS && tried.current.length < TALK_MAX_TRIES && Date.now() - cur.lastSwitchTry > 15_000) {
+      if (Date.now() - runStartedAt.current >= TALK_MAX_WAIT_SECS * 1000) {
+        // Searched long enough: withdraw the last request and offer the options.
+        current.current = null
+        gen.current++
+        withdraw(cur.sessionId)
+        setPhase({ k: 'none' })
+        return
+      }
+      // Don't alert a new listener in the last 15s of the search — they'd be
+      // withdrawn before they could realistically answer.
+      const searchLeftMs = TALK_MAX_WAIT_SECS * 1000 - (Date.now() - runStartedAt.current)
+      if (elapsed >= TALK_TRY_SECS && tried.current.length < TALK_MAX_TRIES && Date.now() - cur.lastSwitchTry > 15_000 && searchLeftMs > 15_000) {
         // Next listener, swapping out this request. If nobody else is free,
         // tryNext leaves this request running (the listener still has time).
         cur.lastSwitchTry = Date.now()
