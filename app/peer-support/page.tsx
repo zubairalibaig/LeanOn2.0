@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Peer Support in India | Talk to a Real Peer Listener | LeanOn',
-  description: 'What is peer support? Learn how peer support works in India, when it fits instead of therapy, and how LeanOn connects you with real peer listeners for private text or voice conversations. Paid sessions start at ₹160 for 15 minutes.',
+  description: 'Learn what peer support is, how it differs from therapy, and how LeanOn connects people with peer listeners for one-to-one text or voice conversations. One free 5-minute introduction per account; pricing varies by listener.',
   keywords: ['peer support India', 'what is peer support', 'peer listener India', 'online peer support', 'talk to a peer listener', 'peer support vs therapy'],
   alternates: { canonical: 'https://www.leanon.app/peer-support', languages: { 'en-IN': 'https://www.leanon.app/peer-support' } },
   openGraph: {
     title: 'Peer Support India — Real People, Real Conversations | LeanOn',
-    description: 'Peer support connects you with someone who has lived through what you\'re facing. Not therapy. Not AI. Real conversations on LeanOn — ₹160/session, private, no appointment.',
+    description: 'Peer support connects you with someone who brings relevant lived experience. LeanOn offers non-clinical text or voice conversations; availability and paid prices vary.',
     url: 'https://www.leanon.app/peer-support',
     siteName: 'LeanOn',
     type: 'website',
@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'How much does peer support cost in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'On LeanOn, paid peer support sessions start at ₹160 for 15 minutes in India. Your first 5-minute introductory session is free once per account, so you can see whether the conversation feels right before paying. There are no subscription fees, no membership charges, and no automatic renewals — you pay per session.',
+        text: 'On LeanOn, one introductory session of up to 5 minutes is free per account. As an example, 15 minutes with a listener charging ₹10 per minute costs ₹160 including the flat ₹10 platform fee; exact paid prices vary by listener and session type and are shown before booking. There is no subscription; you choose whether to book a paid session.',
       },
     },
     {
@@ -196,7 +196,7 @@ export default function PeerSupportPage() {
         <section className="section">
           <h2>Peer support has an established meaning</h2>
           <p>Peer support generally centres on shared experience, mutual understanding, choice and a supportive relationship. SAMHSA describes peer support workers as people with relevant lived experience who help others through shared understanding, respect and mutual empowerment. NAMI likewise describes peer support workers as people with lived experience who are screened and expected to support others. These sources describe peer support broadly; they are not endorsements of LeanOn. LeanOn applies the peer-support principle to one-to-one online conversations.</p>
-          <p>For independent background, see <a href="https://www.samhsa.gov/substance-use/recovery/peer-support-workers" target="_blank" rel="noopener noreferrer" style={{color:'var(--teal)',fontWeight:800}}>SAMHSA's overview of peer support workers</a> and <a href="https://www.nami.org/advocacy-at-nami/policy-positions/improving-health/workforce-peer-support-workers/" target="_blank" rel="noopener noreferrer" style={{color:'var(--teal)',fontWeight:800}}>NAMI's description of peer support workers</a>. These sources describe peer support broadly; they are not endorsements of LeanOn.</p>
+          <p>For independent background, see <a href="https://www.samhsa.gov/substance-use/recovery/peer-support-workers" target="_blank" rel="noopener noreferrer" style={{color:'var(--teal)',fontWeight:800}}>SAMHSA's overview of peer support workers</a>, <a href="https://www.nami.org/advocacy-at-nami/policy-positions/improving-health/workforce-peer-support-workers/" target="_blank" rel="noopener noreferrer" style={{color:'var(--teal)',fontWeight:800}}>NAMI's description of peer support workers</a>, and the <a href="https://www.who.int/publications/i/item/9789240025783" target="_blank" rel="noopener noreferrer" style={{color:'var(--teal)',fontWeight:800}}>World Health Organization's community mental-health guidance</a>. These sources describe the broader peer-support model; they do not evaluate or endorse LeanOn.</p>
           <p><strong>LeanOn-specific distinction:</strong> LeanOn is a private, one-to-one commercial platform for human peer conversations. It is not a government service, clinical provider, crisis service or replacement for professional treatment.</p>
         </section>
 
@@ -205,7 +205,7 @@ export default function PeerSupportPage() {
           <div className="stat-pill"><em>₹160</em>/session</div>
           <div className="stat-pill">First <em>5 min free</em></div>
           <div className="stat-pill"><em>No appointment</em> needed</div>
-          <div className="stat-pill"><em>Anonymous</em></div>
+          <div className="stat-pill"><em>Display-name sign-up</em></div>
           <div className="stat-pill">Screened <em>peer listeners</em></div>
         </div>
 
@@ -236,7 +236,7 @@ export default function PeerSupportPage() {
                   <td className="col-label">Peer support (LeanOn)</td>
                   <td>Real person with lived experience</td>
                   <td>Feeling heard, loneliness, burnout, everyday emotional weight</td>
-                  <td>₹160/session</td>
+                  <td>₹160 / 15 min*</td>
                 </tr>
                 <tr>
                   <td className="col-label">Therapy</td>
@@ -301,7 +301,7 @@ export default function PeerSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Start Your First Peer Support Session</h2>
-          <p>First 5 minutes are free. Anonymous. No appointment is required; availability depends on which listeners are online.</p>
+          <p>One free 5-minute introduction per account. Sign up with phone OTP and choose a display name. Availability depends on which listeners are online and accept.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse peer listeners →</button></a>
             <a href="/auth"><button className="btn-secondary">Join LeanOn →</button></a>
@@ -317,15 +317,15 @@ export default function PeerSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How is peer support different from therapy?</div>
-            <div className="faq-a">Therapy is delivered by a licensed professional — a psychologist, psychiatrist, or counsellor — who can diagnose and treat mental health conditions. Peer support is delivered by someone with lived experience who is screened and expected to listen and support, not to diagnose or treat. Therapy costs ₹1,500–₹5,000 per session in India and requires an appointment. Peer support on LeanOn costs ₹160/session and is available without appointment.</div>
+            <div className="faq-a">Therapy is delivered by a qualified professional who can assess and treat mental-health conditions. Peer support is non-clinical and focuses on listening and shared experience. The two serve different purposes and are not like-for-like substitutes. LeanOn does not require an appointment, but a session begins only when a listener is online and accepts.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is peer support effective?</div>
-            <div className="faq-a">Research consistently shows that peer support reduces feelings of isolation, improves mood, and helps people feel understood and less alone. It is most effective for everyday emotional challenges — loneliness, burnout, relationship stress, family pressure, anxiety — rather than clinical conditions. The lived experience of a peer supporter adds authenticity that professional care sometimes cannot match.</div>
+            <div className="faq-a">Peer-support models emphasise shared experience, mutuality and empowerment. The World Health Organization discusses peer support in its <a href="https://www.who.int/publications/i/item/9789240025783" target="_blank" rel="noopener noreferrer">guidance on community mental-health services</a>; that guidance is general background, not an evaluation or endorsement of LeanOn. A peer conversation may help someone feel heard, but experiences vary and peer support is not clinical treatment.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does peer support cost in India?</div>
-            <div className="faq-a">On LeanOn, peer support sessions start at about ₹160 for 15 minutes. Your first 5-minute session is free, so you can talk to a listener and decide if it feels right before you commit. There are no subscription fees, no membership charges, and no automatic renewals — you pay per session.</div>
+            <div className="faq-a">Each account gets one free introductory session of up to 5 minutes. As an example, 15 minutes with a listener charging ₹10 per minute costs ₹160 including the flat ₹10 platform fee. The final price depends on the selected listener and session type and is shown before booking. There is no subscription.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is peer support anonymous?</div>
