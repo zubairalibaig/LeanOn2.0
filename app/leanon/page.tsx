@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'LeanOn — What Is LeanOn? India\'s Peer Support Platform',
-  description: 'LeanOn (Lean On) is India\'s peer support platform. Learn what LeanOn means, how it works, who it\'s for, and why it\'s the most human alternative to therapy in India. Available 24/7.',
+  description: 'LeanOn (Lean On) is India\'s peer support platform. Learn what LeanOn means, how it works, and when non-clinical peer support may suit everyday emotional needs. Availability varies by listener.',
   alternates: { canonical: 'https://www.leanon.app/leanon' },
   keywords: [
     'LeanOn', 'leanon', 'lean on', 'lean on app', 'leanon app', 'what is leanon',
@@ -25,7 +25,7 @@ const brandSchema = {
   '@type': 'Brand',
   name: 'LeanOn',
   alternateName: ['Lean On', 'leanon', 'LeanOn App', 'leanon app'],
-  description: 'LeanOn is India\'s peer support platform — someone to lean on, anytime. Talk to real people who have lived through what you\'re facing.',
+  description: 'LeanOn is an online peer-support platform for one-to-one conversations with real people who bring relevant lived experience. A session starts when an available listener accepts.',
   url: 'https://www.leanon.app',
   logo: 'https://www.leanon.app/logo.png',
   sameAs: [
@@ -44,7 +44,7 @@ const faqSchema = {
       name: 'What is LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn is India\'s peer support platform — an app that connects people with verified peer listeners who have personally experienced the same challenges. It\'s not therapy. It\'s real human connection, available 24/7, starting at ₹0 for the first 5 minutes.',
+        text: 'LeanOn is an online peer-support platform that connects people with screened peer listeners who bring relevant lived experience. It is not therapy or clinical care. Each account gets one free introductory session of up to 5 minutes; paid prices vary by listener and session type.',
       },
     },
     {
@@ -76,7 +76,7 @@ const faqSchema = {
       name: 'How much does LeanOn cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn offers a 5-minute trial session for new users — no credit card, no wallet top-up. After that, sessions start from ₹160 for 15 minutes (listener earns ₹150, LeanOn adds a flat ₹10 fee). This is significantly more affordable than therapy, which typically costs ₹1,500–5,000 per session in India.',
+        text: 'Each account gets one free introductory session of up to 5 minutes. In India, as an example, 15 minutes with a listener charging ₹10/min costs ₹160 including the flat ₹10 platform fee. Actual totals vary by listener and session type and are shown before booking. Peer support and therapy serve different purposes.',
       },
     },
     {
@@ -189,7 +189,7 @@ export default function LeanOnBrandPage() {
         <div className="hero">
           <p className="tag">Brand · LeanOn</p>
           <h1>What Is <em>LeanOn</em>?</h1>
-          <p className="lead">LeanOn is India&apos;s peer support platform — named after the act of leaning on someone. Real humans. Real understanding. Available any time, anywhere in India. Available 24/7, no appointment needed.</p>
+          <p className="lead">LeanOn is an India-origin peer-support platform for non-clinical one-to-one conversations. Browse profiles from anywhere with internet access; availability depends on who is online and accepts.</p>
         </div>
 
         {/* The name meaning */}
@@ -225,11 +225,11 @@ export default function LeanOnBrandPage() {
             <div className="diff-card us">
               <div className="diff-title">✅ LeanOn</div>
               <div className="diff-list">
-                From ₹160 for 15 minutes<br/>
+                Example: ₹160 for 15 minutes at ₹10/min<br/>
                 Start in 60 seconds<br/>
                 Real humans with lived experience<br/>
                 Completely private<br/>
-                Available 24/7, even 2 AM
+                Check live listener availability
               </div>
             </div>
           </div>
@@ -245,7 +245,7 @@ export default function LeanOnBrandPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Lean on Someone?</h2>
-          <p>Available 24/7, no appointment needed. Someone is available right now.</p>
+          <p>No appointment is required. Check live listener availability; a conversation begins when a listener accepts.</p>
           <div className="cta-btns">
             <a href="/auth"><button className="btn-primary">Start now</button></a>
             <a href="/browse"><button className="btn-secondary">Browse peer listeners</button></a>
@@ -256,14 +256,14 @@ export default function LeanOnBrandPage() {
         <div className="section">
           <h2>Frequently Asked Questions About LeanOn</h2>
           {[
-            { q: 'What is LeanOn?', a: 'LeanOn is India\'s peer support platform — an app that connects people with verified peer listeners who have personally experienced the same challenges. It\'s not therapy. It\'s real human connection, available 24/7. Sessions start at ₹160 for 15 minutes, with a trial session for new users.' },
+            { q: 'What is LeanOn?', a: 'LeanOn is India\'s peer support platform — an app that connects people with verified peer listeners who have personally experienced the same challenges. It\'s not therapy. It\'s real human connection, availability varies. Each account gets one free 5-minute introduction; paid prices vary by listener and session type.' },
             { q: 'What does "LeanOn" mean?', a: '"LeanOn" takes its name from "lean on" — to emotionally rely on someone, to let another person support you when you\'re struggling. The platform is built on the idea that everyone deserves someone to lean on.' },
             { q: 'Why is it called LeanOn?', a: 'The name was chosen because "lean on" captures what we offer: not therapy, not AI, not advice — just someone to lean on. A real human who has been through what you\'re going through.' },
             { q: 'Is LeanOn the same as therapy?', a: 'No. LeanOn is peer support, not therapy. Listeners are verified people with lived experience — not licensed therapists. They offer genuine empathy and understanding, not clinical diagnosis.' },
             { q: 'How much does LeanOn cost?', a: 'LeanOn offers a 5-minute trial session for new users. After that, sessions start from ₹160 for 15 minutes — significantly more affordable than therapy (₹1,500–5,000/session in India).' },
             { q: 'Is LeanOn safe and private?', a: 'Yes. Phone OTP sign-up (no full name required), sessions completely private, never shares conversation content, AI moderation for safety.' },
             { q: 'How is LeanOn different from other mental health apps?', a: 'Unlike AI chatbots (not real humans) or professional therapy platforms (expensive, clinical), LeanOn offers real humans with lived experience, available instantly, at a fraction of therapy cost.' },
-            { q: 'Is LeanOn available across India?', a: 'Yes — Bengaluru, Mumbai, Delhi, Chennai, Hyderabad, Pune, Kolkata, and everywhere else. Online, 24/7.' },
+            { q: 'Is LeanOn available across India?', a: 'LeanOn is online for users in supported markets. Listener availability varies; check the profiles currently available.' },
           ].map((f, i) => (
             <div key={i} className="faq-item">
               <div className="faq-q">{f.q}</div>
@@ -307,7 +307,7 @@ export default function LeanOnBrandPage() {
             { q: 'Is LeanOn the app or the song?', a: 'LeanOn is an app — India\'s peer support platform. The song "Lean On" is by Major Lazer and DJ Snake. We share the same phrase but are entirely unrelated.' },
             { q: 'What does "lean on" mean in the LeanOn app context?', a: 'In the app, "lean on" means finding a real human you can emotionally rely on during hard times. A peer listener who has been through what you\'re going through and can offer genuine understanding — not advice, not therapy, just presence.' },
             { q: 'Is LeanOn an app review or a song?', a: 'LeanOn is a peer support app — read user reviews on our website. If you\'re looking for the "Lean On" song review, that\'s a different (and very catchy) song.' },
-            { q: 'What is "leanon app" India?', a: 'LeanOn is India\'s peer emotional support app — you can talk to real listeners about anxiety, loneliness, burnout, relationships, and more. Available 24/7, instant access.' },
+            { q: 'What is "leanon app" India?', a: 'LeanOn is India\'s peer emotional support app — you can talk to real listeners about anxiety, loneliness, burnout, relationships, and more. Check live listener availability; no appointment is required.' },
           ].map((f, i) => (
             <div key={i} className="faq-item" style={{marginTop: i === 0 ? 16 : 0}}>
               <div className="faq-q">{f.q}</div>
