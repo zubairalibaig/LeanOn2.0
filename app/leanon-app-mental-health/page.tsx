@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'LeanOn App for Mental Health India | Peer Support Platform',
-  description: 'LeanOn is India\'s peer support app for mental health. Talk to real humans who get it — anxiety, loneliness, burnout, grief. Anonymous. Affordable. Available 24/7.',
+  description: 'LeanOn is an online peer-support platform for everyday emotional needs. Talk with a screened peer listener about loneliness, relationship stress, burnout or grief. Not therapy or crisis care.',
   alternates: { canonical: 'https://www.leanon.app/leanon-app-mental-health' },
   keywords: ['leanon app mental health', 'leanon mental health India', 'peer support mental health India', 'mental health app India'],
 }
@@ -13,7 +13,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebPage',
   name: 'LeanOn App for Mental Health India',
-  description: 'India\'s peer support platform for mental health — real humans, anonymous, affordable.',
+  description: 'An online peer-support platform for non-clinical emotional support and human connection.',
   url: 'https://www.leanon.app/leanon-app-mental-health',
 }
 
@@ -48,20 +48,19 @@ export default function LeanOnAppMentalHealth() {
         <a href="/" className="back">← LeanOn Home</a>
         <h1>LeanOn App for <span>Mental Health</span> — India&apos;s Peer Support Platform</h1>
         <p className="lead">
-          LeanOn is India&apos;s peer support app for mental health — not therapy, not AI, but real humans with lived experience. Available 24/7 across India, starting at ₹0 for your first 5 minutes.
+          LeanOn is an online peer-support platform for everyday emotional needs — not therapy, diagnosis or crisis care. Talk with a real person through text or voice when a listener is available. Each account gets one free introductory session of up to 5 minutes.
         </p>
 
         <div className="section">
           <h2>What is the LeanOn app for mental health?</h2>
           <p>LeanOn is a peer emotional support platform that connects people in India with verified peer listeners — real people who have personally navigated loneliness, burnout, anxiety, grief, relationship stress, career confusion, and more.</p>
-          <p>It&apos;s not a mental health app in the clinical sense. There are no therapists, no diagnoses, and no prescription pads. LeanOn is peer support — a legitimate, evidence-backed form of support that helps people feel less alone during difficult times.</p>
-          <p>Research shows that peer support improves mental health outcomes significantly. Having someone who truly understands — because they&apos;ve been there — makes a real difference.</p>
+          <p>LeanOn offers non-clinical peer support. Listeners are not presented as therapists and do not provide clinical diagnosis or treatment. Peer-support models emphasise shared experience, listening and mutual understanding; the general model is discussed in the <a href="https://www.who.int/publications/i/item/9789240025783" target="_blank" rel="noopener noreferrer">World Health Organization’s community mental-health guidance</a>. This guidance is not an evaluation or endorsement of LeanOn.</p>
         </div>
 
         <div className="section">
           <h2>Why LeanOn works for mental health in India</h2>
-          <p>India faces a severe mental health crisis. 1 in 7 Indians experiences a mental health condition, yet fewer than 1% receive any form of support. The reasons? Stigma, cost, availability, and cultural barriers.</p>
-          <p>LeanOn addresses all of these. Sign up anonymously with just your phone number. Pay from ₹160 for a 15-minute session — a fraction of therapy costs. Available even at 2 AM when mental health struggles are often worst. Accessible in English and 11 Indian languages.</p>
+          <p>People seek different kinds of help for different reasons: clinical treatment, urgent crisis support, or a non-clinical conversation with someone who listens. Clear information about what each option can and cannot provide helps people make an informed choice.</p>
+          <p>Sign up with phone OTP without an email or full legal name, and choose a display name. In India, one example is ₹160 for 15 minutes with a listener charging ₹10 per minute, including the flat ₹10 platform fee; the actual price varies by listener and session type and is shown before booking. Language options depend on listener profiles and live availability.</p>
           <p>It&apos;s not a replacement for professional mental health care — and we&apos;re honest about that. But for the millions of Indians who need someone to talk to right now, LeanOn fills a gap that nothing else does.</p>
         </div>
 
@@ -73,12 +72,12 @@ export default function LeanOnAppMentalHealth() {
 
         <div className="section">
           <h2>Is LeanOn safe?</h2>
-          <p>Yes. LeanOn is designed with privacy and safety at its core. Your identity is protected — only your first name is ever shown to a listener. Sessions are private and never shared. AI moderation monitors for crisis signals and surfaces emergency helplines (NIMHANS: 080-46110007, Tele-MANAS: 14416) when needed. Every listener is manually verified before being approved.</p>
+          <p>LeanOn uses phone OTP sign-in and allows a display name. Automated safety moderation may process session content, and content flagged for safety may be reviewed by the team. According to the Privacy Policy, text is not stored after session completion by default and voice calls are not recorded. Applicants are identity-verified and reviewed before approval. Review the <a href="/privacy">Privacy Policy</a> and <a href="/trust">Trust &amp; Safety page</a> before deciding what to share.</p>
         </div>
 
         <div className="cta-box">
-          <h2>Try LeanOn — someone is available right now</h2>
-          <p>No credit card. No appointment. Someone is available right now.</p>
+          <h2>Explore peer support on LeanOn</h2>
+          <p>One free 5-minute introductory session per account. Check live listener availability; a session begins when a listener accepts.</p>
           <a href="/browse"><button className="btn">Browse peer listeners →</button></a>
         </div>
       </div>

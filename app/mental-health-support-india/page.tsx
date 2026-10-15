@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Mental Health Support India — Real People, Not Just Apps | LeanOn',
-  description: 'Affordable mental health support in India from real people with lived experience. Anonymous peer conversations from ₹160. No appointments. 24/7.',
+  description: 'Explore non-clinical peer support in India from real people with lived experience. One free 5-minute introduction per account; example paid pricing and safety boundaries explained.',
   keywords: ['mental health support India', 'mental health support online India', 'mental health help India', 'mental health chat India', 'online mental health support India', 'affordable mental health India'],
   alternates: { canonical: 'https://www.leanon.app/mental-health-support-india', languages: { 'en-IN': 'https://www.leanon.app/mental-health-support-india' } },
   openGraph: {
     title: 'Mental Health Support India — Real People, Not Just Apps | LeanOn',
-    description: 'Affordable mental health support in India from real people with lived experience. Anonymous peer conversations from ₹160. No appointments. 24/7.',
+    description: 'Explore non-clinical peer support in India from real people with lived experience. One free 5-minute introduction per account; example paid pricing and safety boundaries explained.',
     url: 'https://www.leanon.app/mental-health-support-india',
     siteName: 'LeanOn',
     type: 'website',
@@ -25,7 +25,7 @@ const faqSchema = {
       name: 'What kind of mental health support is available in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Mental health support in India ranges from licensed psychiatrists and psychologists (₹1,500–₹5,000/session, appointment required) to online therapy platforms (₹800–₹2,000/session), government crisis helplines (free, for emergencies), and peer support platforms like LeanOn (₹160/session, 24/7, no appointment). The right option depends on whether you need clinical diagnosis and treatment or emotional support from someone who understands your experience.',
+        text: 'Mental-health support includes clinical care from qualified professionals, government crisis services, and non-clinical peer support. LeanOn is a commercial peer-support platform for people who want a human conversation about everyday emotional situations; it is not a therapy or crisis service. In India, 15 minutes with a listener charging ₹10 per minute costs ₹160 including the flat ₹10 platform fee; the exact total varies and is shown before a paid session.',
       },
     },
     {
@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'Is mental health support free in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Government crisis lines — NIMHANS (080-46110007) and Tele-MANAS (14416) — are free and available 24/7, designed for people in acute distress. Most ongoing mental health support in India is not free: private therapy costs ₹1,500–₹5,000 per session. LeanOn peer support is affordable at ₹160/session, with the first 5 minutes free.',
+        text: 'Government crisis support and clinical treatment are different from commercial peer support. LeanOn offers one free introductory session of up to 5 minutes per account; after that, the exact paid-session price depends on the selected listener and session type. In a worked example, 15 minutes at ₹10 per minute costs ₹160 including the flat ₹10 platform fee. In India, Tele-MANAS at 14416 is a free, 24/7 government mental-health helpline; LeanOn is not a crisis service.',
       },
     },
     {
@@ -65,7 +65,7 @@ const faqSchema = {
       name: 'How can I get immediate mental health support in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'For a mental health crisis or immediate danger, call NIMHANS 080-46110007 or Tele-MANAS 14416 — both are free and available 24/7. For emotional support that is not a crisis, LeanOn peer listeners are available right now with no appointment needed. Browse at leanon.app/browse.',
+        text: 'For immediate danger or a mental-health crisis, contact local emergency services or an appropriate crisis service. In India, Tele-MANAS at 14416 is a free, 24/7 government mental-health helpline; see official Ministry of Health information. For non-crisis peer support, browse LeanOn profiles and check live availability; a conversation begins when an available listener accepts.',
       },
     },
   ],
@@ -162,26 +162,17 @@ export default function MentalHealthSupportIndiaPage() {
 
         {/* Hero */}
         <div className="hero">
-          <p className="tag">Mental Health Support · India · 24/7</p>
+          <p className="tag">Peer Support · India · Non-clinical</p>
           <h1>Mental health support that <em>actually feels human</em></h1>
-          <p className="lead">India has a mental health gap that apps and AI have not closed. Therapists cost ₹1,500–₹5,000 per session, have long waitlists, and carry the weight of stigma. AI responses are hollow. LeanOn is different: real people with lived experience, available now, from ₹160.</p>
+          <p className="lead">When you want someone to listen to the human side of a difficult day, LeanOn connects you with peer listeners for one-to-one text or voice conversations. It is not therapy, diagnosis or crisis care. Start with one free 5-minute introduction per account; after that, prices vary by listener and session type.</p>
         </div>
 
-        {/* The problem */}
+        {/* Different needs call for different support */}
         <div className="section">
-          <h2>The Problem with Mental Health Support in India</h2>
-
-          <h3>Therapy Is Out of Reach for Most People</h3>
-          <p>A single session with a qualified psychologist or counsellor in an Indian metro city costs between ₹1,500 and ₹5,000. Weekly sessions — which most therapeutic approaches require to be effective — come to ₹6,000–₹20,000 per month. For most working Indians, that is a rent payment. The system was not built for most of us.</p>
-
-          <h3>The Waitlist Problem</h3>
-          <p>Even people who can afford therapy often cannot access it quickly. Good therapists in Bengaluru, Mumbai, and Delhi have waitlists of two to six weeks. The thing that made you decide to reach out does not wait that long.</p>
-
-          <h3>Stigma Is Still Real</h3>
-          <p>In many Indian families and workplaces, seeking mental health support — especially professional support — still carries stigma. The person who needs help often cannot tell the people around them that they are seeking it. They need something anonymous.</p>
-
-          <h3>AI Feels Hollow</h3>
-          <p>Many people have tried ChatGPT or an AI chatbot for emotional support. The experience is consistent: the responses are grammatically correct, and they do not help. An AI pattern-matches on what someone who understood the feeling would say. A real person with lived experience actually knows what it feels like.</p>
+          <h2>Different kinds of support serve different needs</h2>
+          <p>Mental-health support can mean several different things. A qualified psychologist, psychiatrist or counsellor provides professional assessment and care. A crisis line can help during urgent distress. Peer support is non-clinical: it offers space to talk with someone who brings relevant lived experience and listens with empathy.</p>
+          <p>LeanOn is a paid, one-to-one peer-support platform for everyday emotional situations such as loneliness, relationship stress, work pressure, grief, homesickness and family difficulties. It does not diagnose conditions, provide treatment or replace a qualified professional.</p>
+          <p>Peer support as a model is discussed in the <a href="https://www.who.int/publications/i/item/9789240025783" target="_blank" rel="noopener noreferrer" style={{color:'var(--teal)',fontWeight:800}}>World Health Organization’s guidance on community mental-health services</a>. That publication provides general background; it is not an evaluation or endorsement of LeanOn.</p>
         </div>
 
         {/* A different kind of support */}
@@ -232,8 +223,8 @@ export default function MentalHealthSupportIndiaPage() {
             <div className="step">
               <div className="step-num">3</div>
               <div className="step-text">
-                <div className="step-title">Talk anonymously</div>
-                <div className="step-desc">No last name, no photo, no social account. Just a real conversation with someone who has lived something like what you are carrying.</div>
+                <div className="step-title">Choose what you share</div>
+                <div className="step-desc">Sign up using phone OTP without an email or full legal name, and choose a display name. Avoid sharing identifying details you do not want to disclose; automated safety moderation may process session content.</div>
               </div>
             </div>
           </div>
@@ -243,15 +234,15 @@ export default function MentalHealthSupportIndiaPage() {
         <div className="stats-row">
           <div className="stat-pill"><em>₹160</em>/session</div>
           <div className="stat-pill">First <em>5 min free</em></div>
-          <div className="stat-pill"><em>Anonymous</em></div>
-          <div className="stat-pill">30+ <em>screened listeners</em></div>
-          <div className="stat-pill"><em>24/7</em> available</div>
+          <div className="stat-pill"><em>Display-name sign-up</em></div>
+          <div className="stat-pill"><em>Screened peer listeners</em></div>
+          
         </div>
 
         {/* CTA */}
         <div className="cta-card">
           <h2>Talk to Someone Who Gets It</h2>
-          <p>Real peer listeners. No appointment. First 5 minutes free. Anonymous, available 24/7 across India from ₹160/session.</p>
+          <p>Real peer listeners for everyday emotional support. One free 5-minute introduction per account. Availability depends on who is online and accepts; paid prices are shown before booking.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse peer listeners →</button></a>
             <a href="/auth"><button className="btn-secondary">Join LeanOn →</button></a>
@@ -283,7 +274,7 @@ export default function MentalHealthSupportIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How can I get immediate mental health support in India?</div>
-            <div className="faq-a">For a mental health crisis or immediate danger, call NIMHANS 080-46110007 or Tele-MANAS 14416 — free and available 24/7. For emotional support that is not a crisis, LeanOn peer listeners are available right now with no appointment needed.</div>
+            <div className="faq-a">For a mental-health crisis or immediate danger, contact local emergency services or an appropriate crisis service. In India, Tele-MANAS at 14416 is a free, 24/7 government mental-health helpline; see official Ministry of Health information. For non-crisis peer support, check LeanOn’s live listener availability; a session begins when a listener accepts.</div>
           </div>
         </div>
 

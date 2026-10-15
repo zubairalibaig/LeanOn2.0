@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Online Emotional Support India | Talk to a Peer Listener | LeanOn',
-  description: 'Get online emotional support in India. Talk to verified peer listeners who have lived through what you\'re facing. Available 24/7, anonymous, instant access.',
+  description: 'Get non-clinical peer emotional support online in India. Talk with screened listeners by text or voice; a session starts when a listener accepts. One free 5-minute introduction per account.',
   keywords: ['online emotional support india', 'emotional support online india', 'peer emotional support india', 'talk to someone online india'],
   alternates: { canonical: 'https://www.leanon.app/online-emotional-support-india' },
 }
@@ -41,7 +41,7 @@ export default function OnlineEmotionalSupportIndiaPage() {
       <div className="page">
         <a href="/" style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:14,fontWeight:700,color:'var(--gray)',marginBottom:28}}>← Back</a>
         <h1>Online Emotional Support India — LeanOn</h1>
-        <p className="lead">India needs more ways to get emotional support — not just in metros, not just for those who can afford private therapy. LeanOn makes peer emotional support accessible, affordable, and available everywhere in India, 24/7.</p>
+        <p className="lead">LeanOn connects people in India with peer listeners for non-clinical conversations about everyday emotional situations. Browse profiles by topic and check live availability; a session begins when a listener accepts.</p>
 
         <div className="disclaimer">
           LeanOn provides peer emotional support, not professional therapy or clinical treatment. If you need clinical mental health care, please consult a licensed professional.
@@ -65,12 +65,12 @@ export default function OnlineEmotionalSupportIndiaPage() {
         <div className="card">
           <h2>Built for India&apos;s unique needs</h2>
           <p>India has unique emotional support needs: the pressure of joint family expectations, the stigma around mental health, the cost barrier to professional help, and the privacy challenges of living in shared spaces. LeanOn is designed with all of this in mind.</p>
-          <p>Text-first conversations for privacy. OTP sign-up — no full name required. Support in 12 Indian languages. UPI payments. Listeners from across India who understand regional and cultural context.</p>
+          <p>OTP sign-up without an email or full legal name; choose a display name and decide what personal details to share. Automated safety moderation may process session content; see the <a href="/privacy">Privacy Policy</a> for details. Listener language and availability depend on profiles currently online.</p>
         </div>
 
         <div className="cta">
           <h2>Start a session today</h2>
-          <p>Browse peer listeners by topic. Available 24/7.</p>
+          <p>Browse peer listeners by topic and check who is online. Availability varies; paid prices are shown before booking.</p>
           <a href="/browse"><button className="btn">Browse listeners →</button></a>
         </div>
       </div>
