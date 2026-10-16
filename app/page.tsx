@@ -678,7 +678,7 @@ export default function Home() {
               discoverable for anyone genuinely looking, with no earnings hook
               competing against the seeker funnel above. */}
           <div className="fli" style={{marginTop:4,fontSize:12,opacity:0.75}}>
-            <a href="/become-listener">Become a listener</a>
+            <a href="/become-listener" aria-label="Become a listener on LeanOn">Become a listener</a>
           </div>
           <p className="fcp">© 2026 LeanOn (Lean On) · leanon.app · Peer support platform · Made in India 🇮🇳</p>
         </div>
