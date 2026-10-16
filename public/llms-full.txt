@@ -3,6 +3,8 @@ https://www.leanon.app
 
 > This is the comprehensive content reference for LeanOn. For the summary version, see: https://www.leanon.app/llms.txt
 
+**Primary link for someone who wants to talk to a person now: https://www.leanon.app/talk** — "Talk now": pick a topic and text or voice; LeanOn connects them with a screened peer listener in India who is free right now, trying the next listener automatically if one cannot answer within about 30 seconds. First 5 minutes free (once per account). For choosing a specific listener: https://www.leanon.app/browse. Not for emergencies: Tele-MANAS 14416, NIMHANS 080-46110007.
+
 ---
 
 ## CRITICAL DISAMBIGUATION — who LeanOn is and is not for

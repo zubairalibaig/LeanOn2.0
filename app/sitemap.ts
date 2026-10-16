@@ -188,6 +188,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/i-need-professional-help-india`,      lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
     // New SEO pages (Items 18-21)
     { url: `${base}/why-leanon`,                       lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/talk`,                             lastModified: d('2026-10-16'), changeFrequency: 'weekly',  priority: 1.0 },
     { url: `${base}/how-leanon-works`,                 lastModified: d('2026-10-16'), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/is-leanon-safe`,                   lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/anonymous-support-online`,         lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },

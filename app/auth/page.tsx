@@ -394,7 +394,9 @@ export default function AuthPage() {
         }
       } catch { /* default to /become-listener */ }
     }
-    const dest = storedRedirect ? getDestination() : mode === 'listener' ? listenerDest : getDestination()
+    // A brand-new seeker with nowhere specific to go starts at Talk now — the
+    // match-first entry — rather than the full listener list.
+    const dest = storedRedirect ? getDestination() : mode === 'listener' ? listenerDest : '/talk?src=signup'
     sessionStorage.removeItem('auth_redirect')
     sessionStorage.removeItem('auth_mode')
     sessionStorage.setItem('leanon_welcome_new', '1')

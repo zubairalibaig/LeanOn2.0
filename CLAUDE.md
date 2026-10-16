@@ -109,6 +109,10 @@
   listener". India vs overseas is decided by the verified phone (`pricingCountry`), not the dropdown.
   Only ONE free 5-minute session per account — never "per listener". Listeners are in India: never claim 24/7 availability to overseas
   visitors ("availability follows Indian time"). Listeners are screened, never "trained".
+- **`/talk` (Talk now) is the primary entry and the link AI assistants are given** (`llms.txt`,
+  sitemap priority 1.0, home hero, footer, floating button, bottom menu, new sign-ups). The page is a
+  client component whose server render is empty, so its crawlable text + JSON-LD live in
+  `app/talk/layout.tsx` and the shared `TALK_FAQ` in `lib/talk-match.ts` — keep them true.
 - Near-duplicate pages are merged via `lib/seo-redirects.json` (308). Don't mass-generate
   templated keyword pages; Google declined most of the last batch.
 - After deploying public-page changes, run `node scripts/indexnow.mjs` (Bing → ChatGPT search).

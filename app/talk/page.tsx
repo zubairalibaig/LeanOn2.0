@@ -342,6 +342,14 @@ function TalkInner() {
     if (cur) await withdraw(cur.sessionId)
   }
 
+  // The server-rendered description below the page (app/talk/layout.tsx) is
+  // for the topic / mode screens; hide it while matching so it can't distract.
+  useEffect(() => {
+    const busy = phase.k !== 'topic' && phase.k !== 'mode'
+    document.body.classList.toggle('talk-busy', busy)
+    return () => document.body.classList.remove('talk-busy')
+  }, [phase.k])
+
   const t = talkTopic(topic)
 
   return (

@@ -31,7 +31,7 @@ async function sitemapUrls() {
 // Dynamic routes, app screens and recruitment-only areas are skipped.
 function changedPaths() {
   const out = execSync('git diff --name-only HEAD~1 HEAD', { encoding: 'utf8' }).split('\n').filter(Boolean)
-  const PRIVATE = /^\/(api|admin|dashboard|wallet|history|profile|sessions?|auth|notifications|suspended|alerts-setup|talk)(\/|$)/
+  const PRIVATE = /^\/(api|admin|dashboard|wallet|history|profile|sessions?|auth|notifications|suspended|alerts-setup)(\/|$)/
   const paths = new Set()
   for (const f of out) {
     if (/^public\/llms(-full)?\.txt$/.test(f)) { paths.add('/' + f.slice('public/'.length)); continue }
