@@ -84,8 +84,8 @@ export async function sweepStaleListeners(sb: Sb, onlyUserId?: string): Promise<
 const MISS_FRESH_MS = REQUEST_RESPONSE_WINDOW_MS + 2 * 60_000
 
 // Talk now (/talk) moves on to the next listener after TALK_TRY_SECS (30s) and
-// cancels the old request as 'seeker_cancelled'. When the listener had at least
-// this long and did not respond, that is a missed request too (2026-10-16: 15 of
+// cancels the old request. When the listener had at least this long and did not
+// respond, the request is stored as 'talk_unanswered' and is a missed request (2026-10-16: 15 of
 // 17 'online' listeners were away; unanswered Talk requests never counted, so an
 // away listener stayed online and was asked first by every seeker).
 export const TALK_SWITCH_MISS_SECS = 25
@@ -94,11 +94,10 @@ export const TALK_SWITCH_MISS_SECS = 25
 export function wasUnanswered(r: { status: string; cancel_reason: string | null; started_at?: string | null; responded_at?: string | null; created_at?: string | null }): boolean {
   if (r.status !== 'cancelled' || r.started_at) return false
   if (r.cancel_reason === 'timed_out') return true
-  // Withdrawn by Talk now's switch after the listener had its full turn.
-  if (r.cancel_reason === 'seeker_cancelled' && r.responded_at && r.created_at) {
-    return Date.parse(r.responded_at) - Date.parse(r.created_at) >= TALK_SWITCH_MISS_SECS * 1000
-  }
-  return false
+  // Withdrawn by Talk now's switch after the listener had its full turn. An
+  // ordinary 'seeker_cancelled' (the seeker changed their mind, left, or
+  // switched on /browse) is never the listener's miss, however long it took.
+  return r.cancel_reason === 'talk_unanswered'
 }
 const PREVIOUS_MISS_WITHIN_MS = 2 * 60 * 60_000
 

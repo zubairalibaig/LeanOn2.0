@@ -250,8 +250,12 @@ export async function POST(req: NextRequest) {
         }
       }
       const now = new Date().toISOString()
+      // Talk now moved on because this listener did not answer in their turn:
+      // stored as 'talk_unanswered' (not 'seeker_cancelled'), so wasUnanswered()
+      // can tell it from a seeker simply cancelling or switching on /browse.
+      const talkMiss = fromTalk && Date.now() - Date.parse(replacing.created_at) >= TALK_SWITCH_MISS_SECS * 1000
       const { data: released } = await sb.from('sessions')
-        .update({ status: 'cancelled', ended_at: now, responded_at: now, cancel_reason: 'seeker_cancelled' })
+        .update({ status: 'cancelled', ended_at: now, responded_at: now, cancel_reason: talkMiss ? 'talk_unanswered' : 'seeker_cancelled' })
         .eq('id', replacing.id)
         .eq('status', 'pending')
         .select('id')
@@ -266,9 +270,9 @@ export async function POST(req: NextRequest) {
       // a missed request, same rule as a timeout (away → offline; active →
       // offline on the second in a row). Only Talk now — the /browse waiting
       // screen's switch follows a request whose alert promised 3 minutes.
-      // (Recorded at the end, after the next listener's request is out, so it
-      // never delays the seeker's switch.)
-      if (fromTalk && Date.now() - Date.parse(replacing.created_at) >= TALK_SWITCH_MISS_SECS * 1000) {
+      // (Recorded at the end, after the next listener's request and push are
+      // out — awaited, because Vercel may stop un-awaited work.)
+      if (talkMiss) {
         talkMissToRecord = { listenerId: replacing.listener_id, sessionId: replacing.id }
       }
       if (replacing.amount_held > 0 && !replacing.is_free_trial) {

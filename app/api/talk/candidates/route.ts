@@ -7,6 +7,7 @@ import { isUnlimitedTestPhone } from '@/lib/test-users'
 import { sweepStaleListeners, wasUnanswered, STALE_HEARTBEAT_MINS } from '@/lib/listener-presence'
 import { talkTopic, TALK_MAX_TEXT_RATE } from '@/lib/talk-match'
 import { logger } from '@/lib/logger'
+import { expireStalePendingRequests } from '@/lib/expire-pending'
 
 export const dynamic = 'force-dynamic'
 
@@ -40,6 +41,12 @@ export async function GET(req: NextRequest) {
 
   const sb = createAdminClient()
   try {
+    // A request still 'pending' after the response window (the seeker closed
+    // the app, the listener never saw it) would count that listener as busy
+    // until the nightly cron. Expire + refund those first — the same function
+    // booking and cleanup use, locked on status so a refund never happens twice.
+    // Never stands in the way of matching: on failure they stay busy, as before.
+    await expireStalePendingRequests(sb).catch(e => logger.warn('talk candidates: expiring stale requests failed', { error: String(e) }))
     await sweepStaleListeners(sb)
 
     // Free 5 minutes if the seeker hasn't had their trial; else a paid 15.

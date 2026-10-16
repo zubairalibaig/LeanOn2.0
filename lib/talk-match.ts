@@ -29,8 +29,9 @@ export const TALK_MAX_TEXT_RATE = 10
 
 // How long one listener gets before Talk now moves on to the next. Measured
 // 2026-10-15: median accept 10s, 90% within 28s. The listener's own request
-// window (REQUEST_RESPONSE_WINDOW_SECS) is longer; the switch cancels the
-// request as 'seeker_cancelled', which never counts as a missed request.
+// window (REQUEST_RESPONSE_WINDOW_SECS) is longer. A switch after the
+// listener's full turn (TALK_SWITCH_MISS_SECS) is stored as 'talk_unanswered'
+// and counts as a missed request; an earlier one is 'seeker_cancelled'.
 export const TALK_TRY_SECS = 30
 
 // The whole search stops after this long (then: Try again / See all listeners).

@@ -165,7 +165,8 @@ function TalkInner() {
 
   // Send a request to the next listener in the queue. When `replace` is set,
   // the seeker's current pending request is swapped for the new one (refunded
-  // and cancelled as seeker_cancelled — never a "missed request" for that listener).
+  // and cancelled — as 'talk_unanswered', a missed request, once that listener
+  // had their full turn; see /api/sessions).
   const tryNext = useCallback(async (replace?: string): Promise<void> => {
     if (busy.current || !alive.current) return
     busy.current = true

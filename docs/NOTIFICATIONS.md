@@ -45,9 +45,13 @@ Read this before changing `ListenerPresence.tsx`, the dashboard's toggle,
   the listener goes offline and gets a notification and a push saying why, if
   either of these is true:
   - they were away (no heartbeat for 15+ minutes); or
-  - their previous request also timed out.
+  - their previous request also went unanswered (`wasUnanswered()`): it timed
+    out (`timed_out`), or Talk now moved on after their full turn
+    (`talk_unanswered`, since 2026-10-16). A seeker cancelling or switching on
+    /browse (`seeker_cancelled`) never counts, however long it took.
 
-  This is what keeps away mode from bringing back "ghost online" listeners.
+  A Talk now switch after the listener's full turn (`talk_unanswered`) is
+  itself a missed request and goes through the same check.
 
   Only a request that expired just now counts. Requests that sat pending for
   hours and are found later by cleanup don't. "In a row" also means within 2
@@ -125,9 +129,9 @@ Client side:
   the dashboard toggled.
 
 Known and accepted:
-- A seeker who gives up early (before 3 minutes) isn't counted as a miss, so an
-  away listener whose alerts silently fail stays online until a request fully
-  times out, or for up to 4 hours.
+- A seeker who gives up early on /browse (before 3 minutes) isn't counted as a
+  miss. (Away mode is off since 2026-10-16, so a listener with no heartbeat goes
+  offline after 15 minutes regardless.)
 - The test alert says "sent" if any of the listener's devices accepted it, not
   necessarily this one.
 
