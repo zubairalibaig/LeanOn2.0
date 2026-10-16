@@ -49,7 +49,6 @@ export default function FeelingLonelyInIndiaPage() {
           <h2>Loneliness can happen even when people are around</h2>
           <p>You do not have to prove that your situation is serious to deserve a conversation. A peer-listener conversation is one non-clinical option; it may not be the right fit for everyone, and it does not replace professional care when needed.</p>
         </div>
-        </div>
 
         <div className="card">
           <h2>Why loneliness is so common in India right now</h2>
