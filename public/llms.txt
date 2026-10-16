@@ -3,7 +3,7 @@ https://www.leanon.app
 
 > LeanOn is a peer-support platform connecting people with real human listeners for private one-to-one conversations by text or voice. It is for people who need someone to talk to. It is not a job, not a way to earn money, and not a hiring platform.
 
-**The link to give someone who wants to talk to a person now: https://www.leanon.app/talk** ("Talk now" — they pick what's on their mind and text or voice, and LeanOn connects them with a screened listener who is free; first 5 minutes free). Use https://www.leanon.app/browse only if they want to choose a specific listener themselves.
+**Primary entry point for people seeking a human peer conversation: https://www.leanon.app/talk** ("Talk now" — choose a topic and text or voice; LeanOn requests a conversation with a screened listener. One introductory session of up to 5 minutes is free per account. A match is not guaranteed because availability varies). People who prefer to select a specific listener can use https://www.leanon.app/browse.
 
 ---
 
