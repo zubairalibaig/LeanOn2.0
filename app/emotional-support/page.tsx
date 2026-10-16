@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support Online India — Complete Guide | LeanOn',
-  description: 'The complete guide to emotional support in India. Understand your options, find the right support for loneliness, anxiety, burnout, grief, relationships and more. LeanOn peer support — available 24/7.',
+  description: 'A guide to emotional support in India: understand clinical care, crisis services and non-clinical peer support for loneliness, anxiety, burnout, grief and relationship stress. LeanOn availability varies by listener.',
   alternates: { canonical: 'https://www.leanon.app/emotional-support' },
   keywords: [
     'emotional support India', 'online emotional support India', 'emotional support online',
@@ -78,7 +78,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is online emotional support anonymous in India?',
-      acceptedAnswer: { '@type': 'Answer', text: 'On LeanOn, you sign up with your phone number and first name only. Your full name is never shared. Sessions are private and confidential. This makes LeanOn ideal for people in joint families or situations where privacy is essential.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'LeanOn uses phone OTP sign-in and lets you choose a display name; no email or full legal name is required. Text messages are stored securely and may be opened by authorised administrators if reported or flagged for safety; voice calls are not recorded. See the Privacy Policy and Trust page and avoid sharing identifying details you do not want to disclose.' },
     },
   ],
 }
@@ -172,9 +172,9 @@ export default function EmotionalSupportHubPage() {
               { icon:'📚', title:'Student Stress', desc:'Exam pressure, career fear, and the weight of expectations.', href:'/support/student-stress' },
               { icon:'🧭', title:'Career Confusion', desc:'Lost at a crossroads — not knowing which way to go.', href:'/support/career-confusion' },
               { icon:'💬', title:'Relationship Stress', desc:'When the people closest to you become the source of pain.', href:'/support/relationship-stress' },
-              { icon:'🌐', title:'Anonymous Support', desc:'Talk to someone without revealing your identity.', href:'/support/anonymous-support' },
+              { icon:'🌐', title:'Anonymous Support', desc:'Talk with a peer listener under a display name; phone OTP is required.', href:'/support/anonymous-support' },
               { icon:'🙋', title:'Someone to Talk To', desc:'No specific topic — just need a real human to listen.', href:'/support/someone-to-talk-to' },
-              { icon:'💙', title:'Emotional Support', desc:'Online emotional support — available anytime, anywhere.', href:'/support/emotional-support' },
+              { icon:'💙', title:'Emotional Support', desc:'Online peer support when a listener is available.', href:'/support/emotional-support' },
             ].map((t, i) => (
               <a key={i} href={t.href} className="topic-card">
                 <div className="topic-icon">{t.icon}</div>
@@ -214,7 +214,7 @@ export default function EmotionalSupportHubPage() {
         {/* City coverage */}
         <div className="section">
           <h2>Emotional Support Across India</h2>
-          <p>LeanOn is available in every city and town across India — fully online, available 24/7. We have specific guidance for people in India&apos;s major cities:</p>
+          <p>LeanOn is online for users in supported markets; listener availability depends on who is online and accepts. We have specific guidance for people in India&apos;s major cities:</p>
           <div className="city-grid">
             {[
               { city:'Bengaluru', href:'/bengaluru' },
@@ -246,10 +246,10 @@ export default function EmotionalSupportHubPage() {
           <h2>Frequently Asked Questions</h2>
           {[
             { q:'What is emotional support?', a:'Emotional support means having someone listen, understand, and validate your feelings without judgment. Research shows it is one of the strongest predictors of mental wellbeing and recovery.' },
-            { q:'How do I get emotional support online in India?', a:'Sign up on LeanOn with your phone number (OTP, 30 seconds), browse verified peer listeners, and start a session instantly. Available 24/7. Sessions from ₹160 for 15 minutes.' },
+            { q:'How do I get emotional support online in India?', a:'Sign up with phone OTP, browse screened peer listeners, and send a request. A session begins when a listener accepts. One free 5-minute introduction per account; paid total varies by listener and mode and is shown before booking.' },
             { q:'Is peer emotional support different from therapy?', a:'Yes. Therapy is clinical — licensed professionals for diagnosis and treatment. Peer support is human — people who have lived through the same challenges. Both valuable, but for different needs.' },
             { q:'What topics does LeanOn cover?', a:'Loneliness, anxiety, burnout, grief, breakups, relationship stress, career confusion, student stress, startup challenges, and general emotional support.' },
-            { q:'Is online emotional support anonymous?', a:'On LeanOn, you sign up with your phone and first name only. Full name never shared. Sessions private and confidential — ideal for joint families and privacy-sensitive situations.' },
+            { q:'Is online emotional support anonymous?', a:'LeanOn uses phone OTP and lets you choose a display name; a full legal name is not required. Text messages are stored securely and may be opened by authorised administrators if reported or flagged for safety; voice calls are not recorded. Read the Privacy Policy and Trust page before deciding what to share.' },
           ].map((f, i) => (
             <div key={i} className="faq-item">
               <div className="faq-q">{f.q}</div>

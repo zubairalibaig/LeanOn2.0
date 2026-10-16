@@ -13,7 +13,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebPage',
   name: 'LeanOn App for Mental Health India',
-  description: 'India\'s peer support platform for mental health — real humans, anonymous, affordable.',
+  description: 'An online peer-support platform for non-clinical emotional support and human connection.',
   url: 'https://www.leanon.app/leanon-app-mental-health',
 }
 
@@ -60,8 +60,8 @@ export default function LeanOnAppMentalHealth() {
 
         <div className="section">
           <h2>Why LeanOn works for mental health in India</h2>
-          <p>India faces a severe mental health crisis. 1 in 7 Indians experiences a mental health condition, yet fewer than 1% receive any form of support. The reasons? Stigma, cost, availability, and cultural barriers.</p>
-          <p>LeanOn addresses all of these. Sign up anonymously with just your phone number. Pay from ₹160 for a 15-minute session — a fraction of therapy costs. Available even at 2 AM when mental health struggles are often worst. Accessible in English and 11 Indian languages.</p>
+          <p>People seek different kinds of help for different reasons: clinical treatment, urgent crisis support, or a non-clinical conversation with someone who listens. Clear information about what each option can and cannot provide helps people make an informed choice.</p>
+          <p>Sign up with phone OTP without an email or full legal name, and choose a display name. In India, one example is ₹160 for 15 minutes with a listener charging ₹10 per minute, including the flat ₹10 platform fee; the actual price varies by listener and text/voice mode and is shown before booking. Language options depend on listener profiles and live availability.</p>
           <p>It&apos;s not a replacement for professional mental health care — and we&apos;re honest about that. But for the millions of Indians who need someone to talk to right now, LeanOn fills a gap that nothing else does.</p>
         </div>
 
@@ -77,9 +77,9 @@ export default function LeanOnAppMentalHealth() {
         </div>
 
         <div className="cta-box">
-          <h2>Try LeanOn — someone is available right now</h2>
-          <p>No credit card. No appointment. Someone is available right now.</p>
-          <a href="/browse"><button className="btn">Browse peer listeners →</button></a>
+          <h2>Explore peer support on LeanOn</h2>
+          <p>One free 5-minute introductory session per account. Check live listener availability; a session begins when a listener accepts.</p>
+          <a href="/talk?src=seo-leanon-mental-health"><button className="btn">Talk to someone now →</button></a>
         </div>
       </div>
     </>
