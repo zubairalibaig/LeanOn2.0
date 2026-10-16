@@ -46,8 +46,9 @@ export async function POST(req: NextRequest) {
     // go offline yet — a reload, a full page load or another open LeanOn tab
     // heart-beats within 90s. Instead make the heartbeat look LEAVE_GRACE_SECS
     // short of stale, so the normal sweep takes them offline then if nobody
-    // came back. Only ever ages the timestamp (never freshens it), and never
-    // touches is_available.
+    // came back. Never touches is_available, and never brings back a heartbeat
+    // already older than that (a truly stale listener stays stale). Closing a
+    // second tab later only moves the deadline to ~3 min after THAT close.
     if (body.leaving === true) {
       const aged = new Date(Date.now() - (STALE_HEARTBEAT_MINS * 60 - LEAVE_GRACE_SECS) * 1000).toISOString()
       await sb.from('listener_profiles')
