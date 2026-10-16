@@ -56,7 +56,7 @@ const faqSchema = {
     },
     {
       '@type': 'Question',
-      name: 'Is peer support anonymous?',
+      name: 'How does privacy work on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
         text: "LeanOn sign-up uses a verified phone number, but listeners do not see it; users can choose a display name. Voice calls are not recorded. Text messages are stored, and authorised administrators may review reported or safety-flagged sessions. Read the Privacy Policy for details.",
@@ -331,7 +331,7 @@ export default function PeerSupportPage() {
             <div className="faq-a">Paid 15-minute text sessions in India start at ₹160 with a listener charging ₹10 per minute; actual price varies by listener and mode and is shown before booking. One introductory session of up to 5 minutes is free per account.</div>
           </div>
           <div className="faq-item">
-            <div className="faq-q">Is peer support anonymous?</div>
+            <div className="faq-q">How does privacy work on LeanOn?</div>
             <div className="faq-a">LeanOn requires phone-number verification, but listeners do not see your phone number and you can choose a display name. Voice calls are not recorded. Text messages are stored and authorised administrators may review reports or safety-flagged sessions. Read the Privacy Policy for details.</div>
           </div>
           <div className="faq-item">
