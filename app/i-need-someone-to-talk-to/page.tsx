@@ -45,7 +45,7 @@ const faqSchema = {
     },
     {
       '@type': 'Question',
-      name: 'Is it anonymous when I talk to someone on LeanOn?',
+      name: 'How does privacy work on LeanOn?',
       acceptedAnswer: { '@type': 'Answer', text: 'LeanOn uses phone-number verification, but listeners do not see your phone number and you can choose a display name. Voice calls are not recorded. Text messages are stored and authorised administrators may review reported or safety-flagged sessions. Read the Privacy Policy and share only details you are comfortable disclosing.' },
     },
     {
