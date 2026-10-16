@@ -271,7 +271,7 @@ export default function MentalHealthSupportIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How does peer support help mental health?</div>
-            <div className="faq-a">Peer support helps by reducing the isolation that often accompanies emotional difficulty. When you talk to someone who has personally experienced something similar to what you are going through, you feel less alone. Peer support does not treat mental health conditions clinically, but for everyday emotional weight — stress, burnout, loneliness, relationship difficulty — it provides genuine connection that clinical settings sometimes cannot.</div>
+            <div className="faq-a">Some people find it helpful to talk with someone who has relevant lived experience, while others need a different kind of support. Peer support can offer connection and shared understanding, but experiences vary and it does not diagnose or treat mental-health conditions. It should complement, not replace, professional care when that care is needed.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is mental health support free in India?</div>
@@ -279,7 +279,7 @@ export default function MentalHealthSupportIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">What is the difference between mental health support and therapy?</div>
-            <div className="faq-a">Therapy is delivered by a licensed professional who can diagnose conditions and provide structured clinical treatment. Mental health support is broader — it includes peer support, helplines, and non-clinical forms of help. Therapy is right when someone needs a diagnosis or professional treatment. Peer support is right when someone needs to be heard by someone who genuinely understands.</div>
+            <div className="faq-a">A qualified mental-health professional can assess, diagnose and treat health conditions. Peer support is a non-clinical conversation that may offer connection and shared understanding. It is not a substitute for treatment; if you are unsure what kind of help you need, speak with a qualified professional.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">How can I get immediate mental health support in India?</div>
