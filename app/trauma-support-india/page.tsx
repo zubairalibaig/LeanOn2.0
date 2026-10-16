@@ -185,7 +185,7 @@ export default function TraumaSupportIndiaPage() {
           <p>Peer support from ₹160. Anonymous, judgment-free, available now.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse listeners →</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn →</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn →</button></a>
           </div>
         </div>
 

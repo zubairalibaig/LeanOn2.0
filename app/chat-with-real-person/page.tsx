@@ -255,7 +255,7 @@ export default function ChatWithRealPersonPage() {
           <p>Your first 5 minutes are free. No credit card, no commitment. Just a real human, ready to listen — right now.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Find a Real Listener</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn Free</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn Free</button></a>
           </div>
         </div>
 

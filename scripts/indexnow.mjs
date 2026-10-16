@@ -5,6 +5,7 @@
 //   node scripts/indexnow.mjs /pricing /faq   → just these paths
 // The key file public/558002b252dcc5aa4ac94d43c11834b7.txt must be live on www.leanon.app.
 import { readFileSync } from 'fs'
+import { execSync } from 'child_process'
 
 const HOST = 'www.leanon.app'
 const KEY = '558002b252dcc5aa4ac94d43c11834b7'
@@ -25,8 +26,43 @@ async function sitemapUrls() {
   return [...urls]
 }
 
+// --changed: only public pages touched by the last commit (used after each
+// production deploy). app/<route>/page.tsx → /<route>; llms*.txt as-is.
+// Dynamic routes, app screens and recruitment-only areas are skipped.
+function changedPaths() {
+  const out = execSync('git diff --name-only HEAD~1 HEAD', { encoding: 'utf8' }).split('\n').filter(Boolean)
+  const PRIVATE = /^\/(api|admin|dashboard|wallet|history|profile|sessions?|auth|notifications|suspended|alerts-setup|talk)(\/|$)/
+  const paths = new Set()
+  for (const f of out) {
+    if (/^public\/llms(-full)?\.txt$/.test(f)) { paths.add('/' + f.slice('public/'.length)); continue }
+    const m = f.match(/^app\/(.*)page\.tsx$/)
+    if (!m) continue
+    const route = '/' + m[1].replace(/\/$/, '')
+    if (route.includes('[') || PRIVATE.test(route)) continue
+    paths.add(route === '/' ? '/' : route)
+  }
+  return [...paths]
+}
+
 const args = process.argv.slice(2)
-const urlList = args.length ? args.map(p => `https://${HOST}${p.startsWith('/') ? p : '/' + p}`) : await sitemapUrls()
+let urlList
+if (args[0] === '--changed') {
+  const paths = changedPaths()
+  if (paths.length === 0) { console.log('IndexNow: no public page changed in this deploy — nothing to submit.'); process.exit(0) }
+  urlList = paths.map(p => `https://${HOST}${p}`)
+} else {
+  urlList = args.length ? args.map(p => `https://${HOST}${p.startsWith('/') ? p : '/' + p}`) : await sitemapUrls()
+}
+console.log(`IndexNow: submitting ${urlList.length} URL(s)`)
+
+// The key file must be live for IndexNow to verify the site (403
+// SiteVerificationNotCompleted otherwise). Show what it returns.
+try {
+  const k = await fetch(`https://${HOST}/${KEY}.txt`, { redirect: 'manual' })
+  console.log(`Key file https://${HOST}/${KEY}.txt → HTTP ${k.status}${k.status === 200 ? ((await k.text()).trim() === KEY ? ' (content OK)' : ' (WRONG content)') : ''}`)
+} catch (e) { console.log(`Key file check failed: ${e}`) }
+
+let failed = false
 
 for (let i = 0; i < urlList.length; i += 10000) {
   const batch = urlList.slice(i, i + 10000)
@@ -36,5 +72,9 @@ for (let i = 0; i < urlList.length; i += 10000) {
     body: JSON.stringify({ host: HOST, key: KEY, keyLocation: `https://${HOST}/${KEY}.txt`, urlList: batch }),
   })
   // 200/202 = accepted. 403 = key file not reachable yet (deploy first). 422 = URL/host mismatch.
-  console.log(`IndexNow: ${batch.length} URLs → HTTP ${res.status} ${res.status === 200 || res.status === 202 ? 'accepted' : await res.text()}`)
+  const ok = res.status === 200 || res.status === 202
+  console.log(`IndexNow: ${batch.length} URLs → HTTP ${res.status} ${ok ? 'accepted' : await res.text()}`)
+  if (!ok) failed = true
 }
+// A refused submission must show as a failed run, not a green tick.
+if (failed) process.exit(1)

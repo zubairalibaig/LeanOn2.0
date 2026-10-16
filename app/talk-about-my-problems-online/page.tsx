@@ -140,7 +140,7 @@ export default function TalkAboutMyProblemsOnlinePage() {
           <h1>Sometimes You Just Need to <em>Say It Out Loud</em></h1>
           <p className="lead">You do not need advice. You do not need to be fixed. You just need to get it out of your head and say it to someone who will actually listen — without judging you, without telling your people, without an agenda.</p>
           <div className="cta-row">
-            <a href="/auth" className="cta-hero">Find someone to talk to →</a>
+            <a href="/talk?src=seo" className="cta-hero">Find someone to talk to →</a>
             <a href="/browse" className="cta-secondary">Browse listeners →</a>
           </div>
         </div>
@@ -218,7 +218,7 @@ export default function TalkAboutMyProblemsOnlinePage() {
           <h2>Say it out loud — someone is listening</h2>
           <p>Whatever you are carrying right now, you do not have to carry it alone. Find a real listener who is online now. First 5 minutes free.</p>
           <div className="cta-card-row">
-            <a href="/auth" className="btn-cta">Find someone to talk to →</a>
+            <a href="/talk?src=seo" className="btn-cta">Find someone to talk to →</a>
             <a href="/browse" className="btn-cta-ghost">Browse listeners →</a>
           </div>
         </div>

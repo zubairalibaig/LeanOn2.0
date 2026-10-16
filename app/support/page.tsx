@@ -218,7 +218,7 @@ export default function SupportHubPage() {
           <p>Browse all peer listeners by topic, language, or availability. Available 24/7, no appointment needed.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse All Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
       </div>

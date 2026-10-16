@@ -145,7 +145,7 @@ export default function TrustPage() {
         <div className="cta">
           <h2>Ready to start safely?</h2>
           <p>Sign up with just your phone number. No appointment needed.</p>
-          <a href="/auth"><button className="btn">Start now →</button></a>
+          <a href="/talk?src=seo"><button className="btn">Start now →</button></a>
         </div>
       </div>
     </>

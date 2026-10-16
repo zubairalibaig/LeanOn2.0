@@ -228,7 +228,7 @@ export default function RelationshipSupportPage() {
           <h2>A real person is ready to listen</h2>
           <p>Anonymous, no judgment, available now. First 5 minutes free.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/auth" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Join free</a>
         </div>
 
         <div className="card">

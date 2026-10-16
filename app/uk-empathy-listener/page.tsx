@@ -202,7 +202,7 @@ export default function UkEmpathyListenerPage() {
           <h2>Be heard — fully, without translation</h2>
           <p>Indian listeners who understand the NRI experience. Listeners online daily (Indian time).</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/auth" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Join free</a>
         </div>
 
         <div className="card">

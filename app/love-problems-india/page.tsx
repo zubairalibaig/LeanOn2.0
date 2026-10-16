@@ -153,7 +153,7 @@ export default function LoveProblemsIndiaPage() {
           will listen while you think it through out loud.
         </p>
 
-        <a href="/auth" className="cta-hero">Talk it through — first 5 min free →</a>
+        <a href="/talk?src=seo" className="cta-hero">Talk it through — first 5 min free →</a>
 
         <div className="card">
           <h2>What kind of love problems people talk about</h2>
@@ -265,7 +265,7 @@ export default function LoveProblemsIndiaPage() {
         <div className="cta">
           <h2>Ready to talk it through?</h2>
           <p>Anonymous, no judgment, available right now.</p>
-          <a href="/auth" className="btn-white">Talk it through — first 5 min free →</a><br />
+          <a href="/talk?src=seo" className="btn-white">Talk it through — first 5 min free →</a><br />
           <a href="/browse" className="btn-orange">Browse listeners →</a>
         </div>
 

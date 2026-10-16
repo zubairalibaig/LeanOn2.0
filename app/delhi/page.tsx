@@ -251,7 +251,7 @@ export default function DelhiPage() {
           <p>Browse peer listeners who understand the capital's pressures — career expectations, family obligations, relationship dynamics. Available 24/7, completely private.</p>
           <div className="cta-btns">
             <a href="/browse?city=delhi"><button className="btn-primary">Browse Delhi Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 

@@ -225,7 +225,7 @@ export default function OnlineCounsellingCostPage() {
           <p>Browse real people, see their rates upfront, and find out whether being heard helps — no appointment, no waitlist.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Listeners &amp; Rates</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 

@@ -210,7 +210,7 @@ export default function UAERelationshipAdvicePage() {
           <h2>You deserve to be heard</h2>
           <p>Whatever is happening in your relationship, you do not have to carry it alone.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/auth" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Join free</a>
         </div>
 
         <div className="card">

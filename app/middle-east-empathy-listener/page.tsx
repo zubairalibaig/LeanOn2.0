@@ -206,7 +206,7 @@ export default function MiddleEastEmpathyListenerPage() {
           <h2>You deserve to feel understood</h2>
           <p>Anonymous, affordable, available in your language — across the Gulf.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/auth" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Join free</a>
         </div>
 
         <div className="card">

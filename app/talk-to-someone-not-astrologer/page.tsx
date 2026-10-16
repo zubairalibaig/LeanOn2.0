@@ -192,7 +192,7 @@ export default function TalkToSomeoneNotAstrologerPage() {
           <p>No birth chart needed. Just a first name and whatever's actually on your mind. Available 24/7, completely private.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 

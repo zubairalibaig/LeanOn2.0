@@ -83,8 +83,11 @@ function TalkInner() {
   // Leaving /talk while a request is out (tab closed, Back) withdraws it, so a
   // listener isn't alerted for someone who's gone. Not when handing off to the
   // session page.
+  // Where the visitor came from (home hero, floating button, footer, content
+  // pages…) — set on every link into /talk, so Analytics can compare entry points.
   useEffect(() => {
-    track('talk_view')
+    track('talk_view', { src: (params.get('src') || 'direct').slice(0, 20) })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {

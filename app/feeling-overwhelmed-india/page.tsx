@@ -136,7 +136,7 @@ export default function FeelingOverwhelmedPage() {
           <p className="badge">Anonymous · No Judgment · Available 24/7</p>
           <h1>Everything Feels Like <em>Too Much</em> Right Now</h1>
           <p className="lead">It is not one big thing. It is everything — the unanswered messages, the unfinished tasks, the conversation you keep replaying, the expectations you cannot meet, the tiredness you cannot shake. It has been building quietly for a while, and now even small things feel impossible to carry.</p>
-          <a href="/auth" className="cta-hero">Talk to someone now →</a>
+          <a href="/talk?src=seo" className="cta-hero">Talk to someone now →</a>
         </div>
 
         <div className="section">
@@ -191,7 +191,7 @@ export default function FeelingOverwhelmedPage() {
           <h2>You don&apos;t have to keep carrying this alone.</h2>
           <p>A real peer listener is available right now — anonymous, judgment-free, and ready to sit with you exactly where you are. First 5 minutes are free.</p>
           <div className="cta-buttons">
-            <a href="/auth" className="btn-cta">Talk to someone now →</a>
+            <a href="/talk?src=seo" className="btn-cta">Talk to someone now →</a>
             <a href="/browse" className="btn-cta-outline">Browse listeners →</a>
           </div>
         </div>

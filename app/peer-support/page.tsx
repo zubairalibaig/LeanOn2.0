@@ -304,7 +304,7 @@ export default function PeerSupportPage() {
           <p>First 5 minutes are free. Anonymous. No appointment is required; availability depends on which listeners are online.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse peer listeners →</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn →</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn →</button></a>
           </div>
         </div>
 

@@ -99,7 +99,7 @@ export default function ResourcePage({ params }: Props) {
       <style>{S}</style>
       <nav>
         <a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a>
-        <a href="/auth"><button className="btn-nav">Get support</button></a>
+        <a href="/talk?src=seo"><button className="btn-nav">Get support</button></a>
       </nav>
       <div className="page">
         <nav className="breadcrumb" aria-label="Breadcrumb">

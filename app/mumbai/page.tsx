@@ -242,7 +242,7 @@ export default function MumbaiPage() {
           <p>Browse peer listeners who understand the real pressures of life in India's most intense city. Available right now, no commute required.</p>
           <div className="cta-btns">
             <a href="/browse?city=mumbai"><button className="btn-primary">Browse Mumbai Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 

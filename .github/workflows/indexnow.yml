@@ -1,6 +1,11 @@
 # Tell Bing (which feeds ChatGPT search) and other IndexNow engines that
-# public pages changed. Run it after a deploy of SEO / public-page changes:
-#   github.com/zubairalibaig/LeanOn2.0/actions → "IndexNow ping" → Run workflow
+# public pages changed.
+#   - Automatically after every successful PRODUCTION deploy (Vercel reports
+#     deployments to GitHub): only the public pages changed in that commit.
+#   - Weekly: the whole sitemap (catches anything a deploy-time run missed).
+#   - Manually: Actions → "IndexNow ping" → Run workflow (optional paths).
+# A run is red when IndexNow refuses the submission (e.g. 403 while it is still
+# verifying the key file public/<key>.txt).
 name: IndexNow ping
 
 on:
@@ -10,17 +15,34 @@ on:
         description: 'Optional: space-separated paths (e.g. /usa /uk). Leave empty to submit the whole sitemap.'
         required: false
         default: ''
+  deployment_status:
+  schedule:
+    - cron: '37 4 * * 1'   # Mondays 04:37 UTC (10:07 IST)
 
 jobs:
   ping:
+    # Deploy events: only successful Production deploys (not previews).
+    if: >-
+      github.event_name != 'deployment_status' ||
+      (github.event.deployment_status.state == 'success' &&
+       contains(github.event.deployment.environment, 'Production'))
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
         with:
-          node-version: '20'
+          fetch-depth: 2
+          ref: ${{ github.event.deployment.sha || github.sha }}
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
       - name: Submit URLs to IndexNow
         env:
           PATHS: ${{ github.event.inputs.paths }}
-        # Input passed via env (not interpolated into the script) and split on spaces.
-        run: node scripts/indexnow.mjs $PATHS
+          EVENT: ${{ github.event_name }}
+        # Inputs passed via env (never interpolated into the script).
+        run: |
+          if [ "$EVENT" = "deployment_status" ]; then
+            node scripts/indexnow.mjs --changed
+          else
+            node scripts/indexnow.mjs $PATHS
+          fi

@@ -167,7 +167,7 @@ export default function WorkStressIndiaPage() {
           <p>Anonymous peer support for work stress and IT burnout. From ₹160. No appointment, available now.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse listeners →</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn →</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn →</button></a>
           </div>
         </div>
 

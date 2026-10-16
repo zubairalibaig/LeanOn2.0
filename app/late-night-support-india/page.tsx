@@ -206,7 +206,7 @@ export default function LateNightSupportIndiaPage() {
       <div className="nav-wrap">
         <nav>
           <a href="/"><img src="/logo.png" alt="LeanOn" style={{ height: 44 }} /></a>
-          <a href="/auth"><button className="btn-nav">Try now</button></a>
+          <a href="/talk?src=seo"><button className="btn-nav">Try now</button></a>
         </nav>
       </div>
 
@@ -222,7 +222,7 @@ export default function LateNightSupportIndiaPage() {
           You&apos;re not the only one awake right now — and you don&apos;t have to stay alone with this.
         </p>
         <div className="hero-btns">
-          <a href="/auth"><button className="btn-primary">Find someone right now →</button></a>
+          <a href="/talk?src=seo"><button className="btn-primary">Find someone right now →</button></a>
           <a href="/browse"><button className="btn-outline">Browse available listeners</button></a>
         </div>
         <p className="hero-note">Anonymous · First 5 min free · ₹160 per session after</p>
@@ -399,7 +399,7 @@ export default function LateNightSupportIndiaPage() {
             ready to listen — even at this hour.
           </p>
           <div className="cta-btns">
-            <a href="/auth"><button className="btn-primary">Find someone right now →</button></a>
+            <a href="/talk?src=seo"><button className="btn-primary">Find someone right now →</button></a>
             <a href="/browse"><button className="btn-outline">Browse available listeners</button></a>
           </div>
         </div>

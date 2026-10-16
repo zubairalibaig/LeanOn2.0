@@ -175,7 +175,7 @@ export default function ChennaiPage() {
           <p>Browse peer listeners who understand family expectations, IT-corridor stress, and the weight of tradition. Sessions in Tamil or English. Available 24/7, completely private.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 

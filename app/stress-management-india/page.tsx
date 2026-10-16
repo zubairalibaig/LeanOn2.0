@@ -162,7 +162,7 @@ export default function StressManagementIndiaPage() {
           <p>Real peer listeners from ₹160. Anonymous, available now, no appointment needed.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse listeners →</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn →</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn →</button></a>
           </div>
         </div>
 

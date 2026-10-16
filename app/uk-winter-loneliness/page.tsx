@@ -202,7 +202,7 @@ export default function UkWinterLonelinessPage() {
           <h2>You do not have to wait for spring</h2>
           <p>Indian peer listeners, available right now. Anonymous and warm.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/auth" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Join free</a>
         </div>
 
         <div className="card">

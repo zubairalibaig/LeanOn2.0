@@ -160,7 +160,7 @@ export default function WysaAlternativePage() {
           First 5 minutes free. Completely anonymous.
         </p>
 
-        <a href="/auth" className="cta-hero">Talk to a real person → first 5 min free</a>
+        <a href="/talk?src=seo" className="cta-hero">Talk to a real person → first 5 min free</a>
 
         <div className="card">
           <h2>Why people move on from Wysa</h2>
@@ -261,7 +261,7 @@ export default function WysaAlternativePage() {
         <div className="cta">
           <h2>Ready to talk to a real person?</h2>
           <p>No AI. No scripts. Just a genuine human conversation, whenever you need it.</p>
-          <a href="/auth" className="btn-white">Talk to a real person →</a><br />
+          <a href="/talk?src=seo" className="btn-white">Talk to a real person →</a><br />
           <a href="/browse" className="btn-orange">Browse listeners →</a>
         </div>
 

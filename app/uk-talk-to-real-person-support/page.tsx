@@ -288,7 +288,7 @@ export default function UKTalkToRealPersonPage() {
           <h2>Real humans. Real support. Right now.</h2>
           <p>Browse listeners available now. First 5 minutes free. £8 / £12 / £16 for 15, 30, 45 min.</p>
           <a href="/browse" className="btn-white">Browse real listeners →</a><br />
-          <a href="/auth" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Join free</a>
         </div>
 
         <div className="card">

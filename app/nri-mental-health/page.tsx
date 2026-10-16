@@ -162,7 +162,7 @@ export default function NriMentalHealthPage() {
           <p>Indian peer listeners, available across time zones. From US$10. Anonymous.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse listeners →</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn →</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn →</button></a>
           </div>
         </div>
 

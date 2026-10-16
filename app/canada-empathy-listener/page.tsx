@@ -203,7 +203,7 @@ export default function CanadaEmpathyListenerPage() {
           <h2>Someone who gets it is ready to listen</h2>
           <p>No translation required. Just a real conversation.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/auth" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Join free</a>
         </div>
 
         <div className="card">

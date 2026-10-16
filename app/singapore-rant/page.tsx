@@ -216,7 +216,7 @@ export default function SingaporeRantPage() {
           <h2>Get it all out — right now</h2>
           <p>Real Indian listeners. No judgment. availability on Indian time.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/auth" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Join free</a>
         </div>
 
         <div className="card">

@@ -188,7 +188,7 @@ export default function ChandigarhPage() {
           <p>Browse peer listeners who understand Punjab and Haryana family dynamics. No appointments, no waitlists, available right now.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Chandigarh Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 

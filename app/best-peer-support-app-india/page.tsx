@@ -280,7 +280,7 @@ export default function BestPeerSupportAppIndiaPage() {
           <p>Browse real peer listeners by experience area. No appointment, no subscription. Talk anonymously from ₹160/session.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse peer listeners →</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn →</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn →</button></a>
           </div>
         </div>
 

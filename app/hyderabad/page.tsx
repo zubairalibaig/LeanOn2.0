@@ -251,7 +251,7 @@ export default function HyderabadPage() {
           <p>Browse peer listeners who understand relocation loneliness, WFH isolation, career confusion, and the specific emotional landscape of life in HiTech City. Available 24/7.</p>
           <div className="cta-btns">
             <a href="/browse?city=hyderabad"><button className="btn-primary">Browse Hyderabad Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 

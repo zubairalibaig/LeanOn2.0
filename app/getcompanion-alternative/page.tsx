@@ -162,7 +162,7 @@ export default function GetCompanionAlternativePage() {
           your loneliness, burnout, or heartbreak because they have been there themselves.
         </p>
 
-        <a href="/auth" className="cta-hero">Start free &mdash; talk in 2 min &rarr;</a>
+        <a href="/talk?src=seo" className="cta-hero">Start free &mdash; talk in 2 min &rarr;</a>
 
         <div className="card">
           <h2>Companionship vs lived-experience peer support</h2>
@@ -290,7 +290,7 @@ export default function GetCompanionAlternativePage() {
         <div className="cta">
           <h2>Real peer support &mdash; not just companionship</h2>
           <p>Talk to someone who has been where you are. Free to start, no app to install.</p>
-          <a href="/auth" className="btn-white">Start free &mdash; talk in 2 min &rarr;</a><br />
+          <a href="/talk?src=seo" className="btn-white">Start free &mdash; talk in 2 min &rarr;</a><br />
           <a href="/browse" className="btn-orange">Browse peer listeners &rarr;</a>
         </div>
 

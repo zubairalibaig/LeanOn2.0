@@ -238,7 +238,7 @@ export default function PeerCounsellingIndiaPage() {
           <p>Browse peer listeners by area of experience. First 5 minutes free. Private, no appointment required — check live listener availability.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse peer counsellors →</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn →</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn →</button></a>
           </div>
         </div>
 

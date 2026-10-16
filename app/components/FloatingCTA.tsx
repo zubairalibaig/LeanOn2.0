@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 
 // Signed-in app screens already have their own primary actions; a floating
 // "Start now" there just covers content.
-const HIDE_ON = ['/become-listener', '/browse', '/dashboard', '/wallet', '/history', '/profile', '/notifications', '/sessions', '/session/', '/listener/', '/admin']
+const HIDE_ON = ['/talk', '/become-listener', '/browse', '/dashboard', '/wallet', '/history', '/profile', '/notifications', '/sessions', '/session/', '/listener/', '/admin']
 
 export default function FloatingCTA() {
   const [visible, setVisible] = useState(false)
@@ -20,7 +20,7 @@ export default function FloatingCTA() {
 
   return (
     <a
-      href="/auth"
+      href="/talk?src=float"
       style={{
         position: 'fixed',
         bottom: 80,
@@ -41,10 +41,10 @@ export default function FloatingCTA() {
         whiteSpace: 'nowrap',
         animation: 'floatIn 0.3s ease',
       }}
-      aria-label="Start peer support session"
+      aria-label="Talk to someone now"
     >
       <style>{`@keyframes floatIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}`}</style>
-      <span>💬</span> Start now
+      <span>💬</span> Talk now
     </a>
   )
 }

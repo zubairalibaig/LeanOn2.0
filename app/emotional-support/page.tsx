@@ -143,7 +143,7 @@ export default function EmotionalSupportHubPage() {
 
       <nav className="nav">
         <a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a>
-        <a href="/auth"><button className="btn-nav">Get started</button></a>
+        <a href="/talk?src=seo"><button className="btn-nav">Get started</button></a>
       </nav>
 
       <div className="page">
@@ -237,7 +237,7 @@ export default function EmotionalSupportHubPage() {
           <p>Browse peer listeners across India. Someone who has been through what you&apos;re facing is available right now. Available 24/7.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Find a peer listener now</button></a>
-            <a href="/auth"><button className="btn-secondary">Start now</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Start now</button></a>
           </div>
         </div>
 

@@ -158,7 +158,7 @@ export default function AnonymousChatIndiaPage() {
           <h1>Say What You Can&apos;t Say to <em>Anyone You Know</em></h1>
           <p className="lead">Some things can&apos;t go to your partner, your best friend, or your parents. On LeanOn, you talk to a real peer listener who has no connection to your life — and what you say stays in the session. Anonymous chat with a screened human, not a stranger from the internet.</p>
           <div className="hero-cta">
-            <a href="/auth"><button className="btn-primary" style={{fontFamily:'Nunito,sans-serif'}}>Chat anonymously — first 5 min free →</button></a>
+            <a href="/talk?src=seo"><button className="btn-primary" style={{fontFamily:'Nunito,sans-serif'}}>Chat anonymously — first 5 min free →</button></a>
             <a href="/browse"><button className="btn-secondary" style={{fontFamily:'Nunito,sans-serif',background:'var(--teal)',border:'none',boxShadow:'0 4px 16px rgba(26,143,160,0.25)'}}>Browse listeners →</button></a>
           </div>
         </div>
@@ -312,7 +312,7 @@ export default function AnonymousChatIndiaPage() {
           <h2>Say It to Someone Who Will Never Tell</h2>
           <p>Your first 5 minutes are free. Use a name, use an alias — it does not matter. A real, screened listener is on the other side. What you say stays in the session.</p>
           <div className="cta-btns">
-            <a href="/auth"><button className="btn-primary">Chat anonymously — first 5 min free →</button></a>
+            <a href="/talk?src=seo"><button className="btn-primary">Chat anonymously — first 5 min free →</button></a>
             <a href="/browse"><button className="btn-secondary">Browse listeners →</button></a>
           </div>
         </div>

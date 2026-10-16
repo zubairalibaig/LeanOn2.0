@@ -157,7 +157,7 @@ export default function YourDOSTAlternativePage() {
           completely anonymously, any time of day or night. No HR, no corporate portal, no waiting list.
         </p>
 
-        <a href="/auth" className="cta-hero">Start free — talk in 2 min →</a>
+        <a href="/talk?src=seo" className="cta-hero">Start free — talk in 2 min →</a>
 
         <div className="card">
           <h2>When YourDOST is not quite right for you</h2>
@@ -267,7 +267,7 @@ export default function YourDOSTAlternativePage() {
         <div className="cta">
           <h2>Ready to talk — on your terms?</h2>
           <p>No employer involvement. No scheduling. No waiting list. Just a real person, right now.</p>
-          <a href="/auth" className="btn-white">Start free — talk in 2 min →</a><br />
+          <a href="/talk?src=seo" className="btn-white">Start free — talk in 2 min →</a><br />
           <a href="/browse" className="btn-orange">Browse peer listeners →</a>
         </div>
 

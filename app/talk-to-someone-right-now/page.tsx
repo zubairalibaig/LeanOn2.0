@@ -238,7 +238,7 @@ export default function TalkToSomeoneRightNowPage() {
           <p>See who is online right now. Anonymous, available instantly, text or voice. If nobody is online this second, leave a message and a listener will reply.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">See Who Is Online Now</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 

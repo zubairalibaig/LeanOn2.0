@@ -245,7 +245,7 @@ export default function BestMentalHealthAppIndiaPage() {
           <p>Real listeners, Indian context, anonymous, pay per session. First 5 minutes free.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse listeners →</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn →</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn →</button></a>
           </div>
         </div>
 

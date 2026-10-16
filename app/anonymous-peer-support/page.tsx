@@ -94,7 +94,7 @@ export default function AnonymousPeerSupport() {
         <div className="cta-box">
           <h2>Start anonymously — available 24/7</h2>
           <p>No name required. No judgment. Someone is online right now.</p>
-          <a href="/auth"><button className="btn">Start anonymously →</button></a>
+          <a href="/talk?src=seo"><button className="btn">Start anonymously →</button></a>
         </div>
       </div>
     </>

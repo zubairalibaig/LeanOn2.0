@@ -195,7 +195,7 @@ export default function FAQPage() {
       <style>{S}</style>
       <nav className="nav">
         <a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a>
-        <a href="/auth" style={{background:'#FF9933',color:'white',fontFamily:'Nunito,sans-serif',fontWeight:800,fontSize:14,padding:'10px 22px',borderRadius:50,border:'none',cursor:'pointer'}}>Get started</a>
+        <a href="/talk?src=seo" style={{background:'#FF9933',color:'white',fontFamily:'Nunito,sans-serif',fontWeight:800,fontSize:14,padding:'10px 22px',borderRadius:50,border:'none',cursor:'pointer'}}>Get started</a>
       </nav>
 
       <div className="wrap">
@@ -222,7 +222,7 @@ export default function FAQPage() {
           <h2>Still have questions?</h2>
           <p>We&apos;re here to help. Start a session or reach out to us directly.</p>
           <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
-            <a href="/auth"><button className="btn-cta">Start now</button></a>
+            <a href="/talk?src=seo"><button className="btn-cta">Start now</button></a>
             <a href="/contact" style={{color:'white',fontWeight:700,fontSize:15,padding:'14px 24px',display:'inline-block',opacity:0.85}}>Contact us →</a>
           </div>
         </div>

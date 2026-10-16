@@ -166,7 +166,7 @@ export default function LucknowPage() {
           <p>A real listener. Anonymous. Available now. From ₹160.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
       </div>

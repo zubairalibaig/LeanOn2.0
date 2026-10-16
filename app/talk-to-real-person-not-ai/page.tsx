@@ -270,7 +270,7 @@ export default function TalkToRealPersonPage() {
           <h2>Real humans. Real support. Right now.</h2>
           <p>Browse listeners by availability, language, and topic. First 5 minutes free.</p>
           <a href="/browse" className="btn-white">Browse real listeners →</a><br />
-          <a href="/auth" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Join free</a>
         </div>
 
         <div className="card">

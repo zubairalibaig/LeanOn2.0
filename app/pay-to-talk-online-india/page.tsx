@@ -158,7 +158,7 @@ export default function PayToTalkOnlineIndiaPage() {
           If you want a real person to listen rather than an AI response or a prediction, LeanOn offers one-to-one conversations with screened peer listeners. It is peer support, not therapy or clinical care. Your first introductory session of up to 5 minutes is free once per account; check the displayed price before starting a paid session.
         </p>
 
-        <a href="/auth" className="cta-hero">Try your free 5-minute introduction →</a>
+        <a href="/talk?src=seo" className="cta-hero">Try your free 5-minute introduction →</a>
 
         <div className="card">
           <h2>You&apos;re already paying to be heard. It&apos;s completely normal.</h2>
@@ -274,7 +274,7 @@ export default function PayToTalkOnlineIndiaPage() {
         <div className="cta">
           <h2>Ready to talk to a real person?</h2>
           <p>No astrologer. No AI. Just someone who is there to listen.</p>
-          <a href="/auth" className="btn-white">Try your free 5-minute introduction →</a><br />
+          <a href="/talk?src=seo" className="btn-white">Try your free 5-minute introduction →</a><br />
           <a href="/browse" className="btn-orange">Browse listeners →</a>
         </div>
 

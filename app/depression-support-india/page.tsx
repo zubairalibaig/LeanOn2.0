@@ -246,7 +246,7 @@ export default function DepressionSupportPage() {
           <h2>You&apos;ve Been Carrying This Long Enough</h2>
           <p>Talk to a peer listener who understands what it feels like from the inside. Anonymous. No appointment. First 5 minutes free.</p>
           <div className="cta-btns">
-            <a href="/auth"><button className="btn-primary">Talk to someone right now →</button></a>
+            <a href="/talk?src=seo"><button className="btn-primary">Talk to someone right now →</button></a>
             <a href="/browse"><button className="btn-secondary">Browse peer listeners →</button></a>
           </div>
         </div>

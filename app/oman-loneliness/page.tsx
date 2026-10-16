@@ -205,7 +205,7 @@ export default function OmanLonelinessPage() {
           <h2>Someone is listening — right now</h2>
           <p>Listeners online daily (Indian time) for Indians across Oman — in your language, anonymously.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/auth" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Join free</a>
         </div>
 
         <div className="card">

@@ -314,7 +314,7 @@ export default function Home() {
         <h1>Someone to<br /><span className="o">lean on,</span><br />right now.</h1>
         <p>Had a fight. Going through something. Need to vent before you explode. Talk one-to-one with a screened peer listener in India. Conversations are private, and no appointment is required; start when a listener is available.</p>
         <div className="hero-btns">
-          <a href="/auth" className="btn-primary">Start your 5-min chat</a>
+          <a href="/talk?src=home" className="btn-primary">Talk to someone now</a>
           <a href="/browse" className="btn-outline">Browse peer listeners</a>
         </div>
         <p className="hero-note">Private one-to-one conversation · No appointment · Paid sessions from ₹160 in India, US$10 abroad</p>
@@ -612,7 +612,7 @@ export default function Home() {
         <div className="cta-c">
           <h2>Tonight doesn&apos;t have to feel this heavy.</h2>
           <p>One breath, then one small step. A listener who gets it is a tap away — right now, no appointment.</p>
-          <a href="/auth" className="btn-cta">Start now →</a>
+          <a href="/talk?src=home" className="btn-cta">Talk to someone now →</a>
         </div>
       </div>
 

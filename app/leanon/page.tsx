@@ -177,7 +177,7 @@ export default function LeanOnBrandPage() {
 
       <nav className="nav">
         <a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a>
-        <a href="/auth"><button className="btn-nav">Get started</button></a>
+        <a href="/talk?src=seo"><button className="btn-nav">Get started</button></a>
       </nav>
 
       <div className="page">
@@ -247,7 +247,7 @@ export default function LeanOnBrandPage() {
           <h2>Ready to Lean on Someone?</h2>
           <p>Available 24/7, no appointment needed. Someone is available right now.</p>
           <div className="cta-btns">
-            <a href="/auth"><button className="btn-primary">Start now</button></a>
+            <a href="/talk?src=seo"><button className="btn-primary">Start now</button></a>
             <a href="/browse"><button className="btn-secondary">Browse peer listeners</button></a>
           </div>
         </div>

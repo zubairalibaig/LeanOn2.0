@@ -205,7 +205,7 @@ export default function CanadaWinterLonelinessPage() {
           <h2>Someone is ready to listen right now</h2>
           <p>The winter outside may be long. The wait does not have to be.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/auth" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Join free</a>
         </div>
 
         <div className="card">

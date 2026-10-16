@@ -306,7 +306,7 @@ export default function PeerSupportOnlineIndiaPage() {
           <h2>Find a Peer Listener Today</h2>
           <p>Browse listeners by experience area. First 5 minutes free. Private, no appointment, no waitlist — check live listener availability.</p>
           <div className="cta-btns">
-            <a href="/auth"><button className="btn-primary">Find a peer listener →</button></a>
+            <a href="/talk?src=seo"><button className="btn-primary">Find a peer listener →</button></a>
             <a href="/browse"><button className="btn-secondary">Browse peer listeners →</button></a>
           </div>
         </div>

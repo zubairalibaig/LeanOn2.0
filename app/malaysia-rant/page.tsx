@@ -218,7 +218,7 @@ export default function MalaysiaRantPage() {
           <h2>Get it all out — right now</h2>
           <p>Real Indian listeners. Tamil, Hindi, and more. No judgment. On Indian time.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/auth" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Join free</a>
         </div>
 
         <div className="card">

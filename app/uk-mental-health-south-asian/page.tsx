@@ -202,7 +202,7 @@ export default function UkMentalHealthSouthAsianPage() {
           <h2>You are allowed to ask for support</h2>
           <p>South Asian peer listeners in the UK — online daily on Indian time, completely confidential.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/auth" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Join free</a>
         </div>
 
         <div className="card">

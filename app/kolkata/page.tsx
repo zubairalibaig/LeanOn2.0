@@ -178,7 +178,7 @@ export default function KolkataPage() {
           <p>Browse peer listeners who understand the stay-or-leave dilemma, family expectations, and the loneliness no adda quite reaches. Sessions in Bengali, Hindi, or English. Available 24/7.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Listeners</button></a>
-            <a href="/auth"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn</button></a>
           </div>
         </div>
 

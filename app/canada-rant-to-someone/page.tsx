@@ -203,7 +203,7 @@ export default function CanadaRantPage() {
           <h2>Someone is ready to listen right now</h2>
           <p>Say the thing you have been holding back. It will feel lighter after.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/auth" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Join free</a>
         </div>
 
         <div className="card">

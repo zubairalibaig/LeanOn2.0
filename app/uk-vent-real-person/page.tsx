@@ -283,7 +283,7 @@ export default function UKVentRealPersonPage() {
           <h2>Say it out loud to someone who&apos;ll actually hear you.</h2>
           <p>Anonymous. Human. On Indian time. First 5 minutes free. £8 / £12 / £16 for 15, 30, 45 min.</p>
           <a href="/browse" className="btn-white">Browse real listeners →</a><br />
-          <a href="/auth" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Join free</a>
         </div>
 
         <div className="card">
