@@ -31,7 +31,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/press`,                            lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.6 },
     // Support hub + topic pages
     { url: `${base}/support`,                          lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.85 },
-    { url: `${base}/support/loneliness`,               lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/support/loneliness`,               lastModified: d('2026-10-17'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/support/anxiety`,                  lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/support/breakup`,                  lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/support/grief`,                    lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.85 },
@@ -117,7 +117,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/ai-chatbot-alternative`,           lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/ai-human-support`,              lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.95 },
     // High-intent immediate-need landing page
-    { url: `${base}/i-need-someone-to-talk-to`,        lastModified: d(CONTENT_UPDATED),        changeFrequency: 'weekly',  priority: 0.97 },
+    { url: `${base}/i-need-someone-to-talk-to`,        lastModified: d('2026-10-17'),           changeFrequency: 'weekly',  priority: 0.97 },
     // New support topic pages
     { url: `${base}/support/feeling-empty`,            lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/support/feeling-like-a-failure`,   lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.9 },
@@ -196,11 +196,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/online-emotional-support-india`,   lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },
     // AstroTalk-overlap + relationship + loneliness cluster
     { url: `${base}/astrotalk-alternative`,            lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
-    { url: `${base}/relationship-advice-online-india`, lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/relationship-advice-online-india`, lastModified: d('2026-10-17'),           changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/talk-to-real-person-online-india`, lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.95 },
-    { url: `${base}/support/loneliness`,         lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/support/loneliness`,         lastModified: d('2026-10-17'),           changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/alternatives-to-therapy-india`,    lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
-    { url: `${base}/feeling-lonely-in-india`,          lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/feeling-lonely-in-india`,          lastModified: d('2026-10-17'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/our-story`,                        lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.8 },
     // Competitor-alternative pages — intercepts high-intent searchers who already
     // know a competing product and are looking for something better
@@ -216,9 +216,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/peer-support-online-india`,        lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.95 },
     // Peer support keyword cluster (Round 8) — "peer support" has no LeanOn
     // result on Google; highest-priority SEO gap. Also targets AI citation.
-    { url: `${base}/peer-support`,                     lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/peer-support`,                     lastModified: d('2026-10-17'),           changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/peer-counselling-india`,           lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
-    { url: `${base}/mental-health-support-india`,      lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/mental-health-support-india`,      lastModified: d('2026-10-17'),           changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/best-peer-support-app-india`,      lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
     // AstroTalk competition cluster — intercepts searchers using astrology apps
     // for emotional support (love/marriage/relationship problems, late-night chat,
@@ -483,7 +483,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Round 21b: Real human vs AI — core AEO pages (2026-09-15)
     { url: `${base}/talk-to-human-instead-of-chatgpt`,          lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.98 },
     { url: `${base}/vent-to-a-real-person-online`,        lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.97 },
-    { url: `${base}/relationship-support-real-person`,    lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.97 },
+    { url: `${base}/relationship-support-real-person`,    lastModified: d('2026-10-17'),          changeFrequency: 'weekly', priority: 0.97 },
     { url: `${base}/emotional-support-without-ai`,        lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.97 },
     { url: `${base}/india-talk-to-real-person`,           lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.97 },
     { url: `${base}/india-vent-to-real-person`,           lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.97 },
