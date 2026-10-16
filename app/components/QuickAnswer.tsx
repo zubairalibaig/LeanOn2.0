@@ -29,6 +29,7 @@ export default function QuickAnswer({ question, answer }: { question: string; an
         ))}
       </ul>
       <a href="/talk?src=seo" style={{ display: 'inline-block', background: '#1A8FA0', color: '#fff', fontWeight: 900, fontSize: 15, padding: '11px 20px', borderRadius: 50, textDecoration: 'none' }}>Talk to someone now →</a>
+      <a href="/is-leanon-worth-it" style={{ display: 'block', marginTop: 10, color: '#1A8FA0', fontWeight: 800, fontSize: 13.5, textDecoration: 'none' }}>Is it worth it? Honest answers before you pay</a>
       <p style={{ fontSize: 12, color: '#7A8A96', margin: '12px 0 0', lineHeight: 1.6 }}>
         In crisis? Call <a href="tel:14416" style={{ color: '#C0392B', fontWeight: 800 }}>Tele-MANAS 14416</a> (free, 24/7) or{' '}
         <a href="tel:08046110007" style={{ color: '#C0392B', fontWeight: 800 }}>NIMHANS 080-46110007</a>. Updated {QUICK_ANSWER_UPDATED}.

@@ -1,14 +1,15 @@
 import type { Metadata } from 'next'
+import QuickAnswer from '@/app/components/QuickAnswer'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Grief & Loss Peer Support India | LeanOn',
-  description: 'Navigate grief and loss with compassionate peer support. Talk anonymously to a screened listener. Available 24/7.',
+  description: "Grieving and no one to talk to? Talk privately to a real peer listener in India who has lived through loss — text or voice. First 5 minutes free.",
   alternates: { canonical: 'https://www.leanon.app/support/grief', languages: { 'en-IN': 'https://www.leanon.app/support/grief' } },
   openGraph: {
     title: 'Grief & Loss Peer Support India | LeanOn',
-    description: 'Navigate grief and loss with compassionate peer support. Talk anonymously to a screened listener. Available 24/7.',
+    description: "Grieving and no one to talk to? Talk privately to a real peer listener in India who has lived through loss — text or voice. First 5 minutes free.",
     url: 'https://www.leanon.app/support/grief',
     siteName: 'LeanOn',
     type: 'article',
@@ -19,6 +20,7 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
+    { '@type': 'Question', name: "I lost someone and have no one to talk to \u2014 where can I go?", acceptedAnswer: { '@type': 'Answer', text: "Grief can feel very lonely, especially when people around you expect you to move on. LeanOn connects you with a peer listener in India who has lived through loss, for a private, unhurried text or voice conversation. They listen; they do not rush you. Your first 5 minutes are free. It is peer support, not grief therapy." } },
     {
       '@type': 'Question',
       name: 'What is the difference between normal grief and complicated grief?',
@@ -147,6 +149,7 @@ export default function GriefSupportPage() {
           <p className="tag">Peer Support · Grief & Loss</p>
           <h1>Grief Is Not a Problem to Solve. <em>It Is Love With Nowhere to Go.</em></h1>
           <p className="lead">Losing someone — or something — you loved deeply is one of the most painful human experiences. LeanOn connects you with peer listeners who have been through loss themselves and understand what it means to carry grief while continuing to live.</p>
+          <QuickAnswer question={"I lost someone and have no one to talk to \u2014 where can I go?"} answer={"Grief can feel very lonely, especially when people around you expect you to move on. LeanOn connects you with a peer listener in India who has lived through loss, for a private, unhurried text or voice conversation. They listen; they do not rush you. Your first 5 minutes are free. It is peer support, not grief therapy."} />
         </div>
 
         <div className="section">
