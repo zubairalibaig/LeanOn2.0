@@ -5,11 +5,11 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Peer Support for Loneliness in India | LeanOn',
-  description: "Feeling lonely with no one to talk to? Talk privately to a real, screened peer listener in India who is online now — text or voice, no appointment. First 5 minutes free.",
+  description: "Feeling lonely and looking for someone to talk to? LeanOn offers one-to-one text or voice conversations with screened peer listeners in India. One introductory session up to 5 minutes is free per account; availability varies. Peer support, not therapy.",
   alternates: { canonical: 'https://www.leanon.app/support/loneliness', languages: { 'en-IN': 'https://www.leanon.app/support/loneliness' } },
   openGraph: {
     title: 'Peer Support for Loneliness in India | LeanOn',
-    description: "Feeling lonely with no one to talk to? Talk privately to a real, screened peer listener in India who is online now — text or voice, no appointment. First 5 minutes free.",
+    description: "Feeling lonely and looking for someone to talk to? LeanOn offers one-to-one text or voice conversations with screened peer listeners in India. One introductory session up to 5 minutes is free per account; availability varies. Peer support, not therapy.",
     url: 'https://www.leanon.app/support/loneliness',
     siteName: 'LeanOn',
     type: 'article',
@@ -20,13 +20,13 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
-    { '@type': 'Question', name: "What can I do when I feel lonely and have no one to talk to?", acceptedAnswer: { '@type': 'Answer', text: "Talking to a real person helps. LeanOn connects you with a screened peer listener in India — someone who knows what loneliness feels like — for a private text or voice conversation with someone who is online now, with no appointment. Your first 5 minutes are free, then 15 minutes start at ₹160 in India. It is peer support, not therapy." } },
+    { '@type': 'Question', name: "What can I do when I feel lonely and have no one to talk to?", acceptedAnswer: { '@type': 'Answer', text: "Talking with another person is one way some people seek connection when they feel lonely. LeanOn lets adults in India request a one-to-one text or voice conversation with a screened peer listener. It is non-clinical peer support, not therapy. One introductory session up to 5 minutes is free per account; paid prices vary by listener and mode. Availability varies, so an immediate match is not guaranteed." } },
     {
       '@type': 'Question',
       name: 'Is feeling lonely normal in India even when surrounded by people?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Absolutely. Loneliness is about connection quality, not just physical proximity. Many Indians feel deeply lonely in joint families, crowded offices, or busy cities — because they have no one to truly talk to without judgment. This is extremely common and nothing to be ashamed of.',
+        text: 'Yes. A person can feel lonely even around family, colleagues or friends. Loneliness is about the connection someone feels, not only how many people are nearby. It is a common human experience and not a personal failure.',
       },
     },
     {
@@ -34,7 +34,7 @@ const faqSchema = {
       name: 'How can a peer listener help with loneliness?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Peer listeners on LeanOn have personally experienced loneliness — whether from relocating to a new city, remote work isolation, or feeling like an outsider in social situations. They offer a non-judgmental space to be heard and understood, which itself is one of the most powerful antidotes to loneliness.',
+        text: 'LeanOn listeners bring varied lived experiences and are screened for listening ability and boundaries. You can review profiles and choose someone whose experience seems relevant. A peer conversation may help some people feel heard, but experiences vary and it is not a treatment for a mental-health condition.',
       },
     },
     {
@@ -50,7 +50,7 @@ const faqSchema = {
       name: 'Is WFH loneliness a real problem in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. Since 2020, millions of Indians working from home have reported increased loneliness, especially those living alone or far from family. The loss of casual office interactions and commute conversations has had a surprisingly large impact on mental wellbeing.',
+        text: 'Working from home can reduce casual social contact for some people, while others value the flexibility. Whether it contributes to loneliness depends on the person's circumstances and support network.',
       },
     },
     {
@@ -150,8 +150,8 @@ export default function LonelinessSupportPage() {
         <div className="hero">
           <p className="tag">Peer Support · Loneliness</p>
           <h1>You Are Not Alone in Feeling <em>Alone</em></h1>
-          <p className="lead">Millions of people across India feel disconnected — in crowded cities, busy offices, even in their own homes. LeanOn connects you with peer listeners who have personally navigated deep loneliness and found their way through.</p>
-          <QuickAnswer question={"What can I do when I feel lonely and have no one to talk to?"} answer={"Talking to a real person helps. LeanOn connects you with a screened peer listener in India — someone who knows what loneliness feels like — for a private text or voice conversation with someone who is online now, with no appointment. Your first 5 minutes are free, then 15 minutes start at ₹160 in India. It is peer support, not therapy."} />
+          <p className="lead">Loneliness can happen in a new city, in a busy workplace, at home or even when surrounded by people. LeanOn offers non-clinical one-to-one conversations with screened peer listeners for adults who want a human conversation. It is not therapy, and availability depends on who is online.</p>
+          <QuickAnswer question={"What can I do when I feel lonely and have no one to talk to?"} answer={"Talking with another person is one way some people seek connection when they feel lonely. LeanOn lets adults in India request a one-to-one text or voice conversation with a screened peer listener. It is non-clinical peer support, not therapy. One introductory session up to 5 minutes is free per account; paid prices vary by listener and mode. Availability varies, so an immediate match is not guaranteed."} />
         </div>
 
         {/* What is loneliness */}
@@ -181,39 +181,39 @@ export default function LonelinessSupportPage() {
           <p>LeanOn is not therapy, and we are honest about that. We are peer support — real humans talking to real humans. Here is how we help:</p>
 
           <h3>Someone Who Has Actually Been There</h3>
-          <p>Our listeners have personally experienced loneliness — many of them have relocated to new cities, navigated WFH isolation, or gone through years of feeling misunderstood. They are not reading from a script. They know what it feels like.</p>
+          <p>LeanOn listeners bring varied lived experiences and are screened for listening ability and boundaries. Review profiles to see the experiences and topics they mention; listeners are peer supporters, not therapists.</p>
 
           <h3>Available When Loneliness Peaks</h3>
-          <p>Loneliness tends to be worst at night and on weekends. LeanOn listeners are available 24/7, including at 2 AM on a Sunday when you most need someone to talk to and feel like there is no one.</p>
+          <p>Some people notice loneliness more at night or on weekends. LeanOn does not guarantee 24/7 listener availability; check the current list or request a conversation, which starts when a listener accepts.</p>
 
           <h3>Private and Judgment-Free</h3>
-          <p>In Indian social contexts, admitting loneliness is often seen as shameful — a sign that you are unlikeable or socially deficient. LeanOn offers complete privacy. No one in your life needs to know. You can be honest about exactly how you feel without any social consequences.</p>
+          <p>Some people find it easier to talk outside their usual circle. LeanOn listeners do not see your phone number, and you can choose a display name. Voice calls are not recorded, but text messages are stored and authorised administrators may review reported or safety-flagged sessions. Read the Privacy Policy and share only what feels comfortable.</p>
 
           <h3>A First Step Towards Connection</h3>
-          <p>For many users, talking to a LeanOn listener is the first time they have ever said out loud how lonely they feel. That act of honesty itself is profoundly healing — and it can open the door to making other changes in your social life.</p>
+          <p>Talking about loneliness may help some people clarify what they are feeling or what kind of connection they want. Experiences vary; peer support is not treatment and does not replace professional help when it is needed.</p>
         </div>
 
         {/* Listener cards */}
-        <h2 style={{fontSize:'20px',fontWeight:800,color:'var(--navy)',marginBottom:'16px'}}>Listeners Who Understand Loneliness</h2>
+        <h2 style={{fontSize:'20px',fontWeight:800,color:'var(--navy)',marginBottom:'16px'}}>Topics You Can Talk About</h2>
         <div className="listeners-grid">
           {[
             {
-              emoji: '🌙',
-              name: 'Priya',
-              tag: 'Relocated to Bangalore',
-              bio: 'Moved from Kolkata at 24, spent two years building a life from scratch. I know the specific loneliness of a new city.'
+              emoji: '🏙️',
+              name: 'Moving to a new city',
+              tag: 'Change & adjustment',
+              bio: 'Talk about adjusting to a new place, missing familiar people or finding ways to build connection.'
             },
             {
               emoji: '💻',
-              name: 'Arjun',
-              tag: 'WFH Isolation',
-              bio: 'Worked remotely for 3 years in a city where I knew nobody. Found my way through and want to help others do the same.'
+              name: 'Working from home',
+              tag: 'Daily connection',
+              bio: 'Talk about the effect of remote work on your routine and social contact, if that is part of your experience.'
             },
             {
               emoji: '🤍',
-              name: 'Meera',
-              tag: 'Social Anxiety',
-              bio: 'Struggled with social anxiety for years — the kind that makes you want connection but terrified of people. Recovery is real.'
+              name: 'Feeling left out',
+              tag: 'Social connection',
+              bio: 'Talk about feeling disconnected even when other people are around, and what kind of support you want.'
             },
           ].map((l, i) => (
             <div key={i} className="listener-card">
@@ -228,7 +228,7 @@ export default function LonelinessSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Feel Less Alone?</h2>
-          <p>Talk to a peer listener who truly understands loneliness. Available 24/7, no appointments, no waitlists.</p>
+          <p>Talk with a screened peer listener about loneliness. No appointment is needed, but availability varies and a session starts when a listener accepts your request.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Someone is listening — start free now →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>
@@ -240,11 +240,11 @@ export default function LonelinessSupportPage() {
           <h2>Frequently Asked Questions</h2>
           <div className="faq-item">
             <div className="faq-q">Is feeling lonely normal in India even when surrounded by people?</div>
-            <div className="faq-a">Absolutely. Loneliness is about connection quality, not just physical proximity. Many Indians feel deeply lonely in joint families, crowded offices, or busy cities — because they have no one to truly talk to without judgment. This is extremely common and nothing to be ashamed of.</div>
+            <div className="faq-a">Yes. A person can feel lonely even around family, colleagues or friends. Loneliness is about the connection someone feels, not only how many people are nearby. It is a common human experience and not a personal failure.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">How can a peer listener help with loneliness?</div>
-            <div className="faq-a">Peer listeners on LeanOn have personally experienced loneliness — whether from relocating to a new city, remote work isolation, or feeling like an outsider in social situations. They offer a non-judgmental space to be heard and understood, which itself is one of the most powerful antidotes to loneliness.</div>
+            <div className="faq-a">LeanOn listeners bring varied lived experiences and are screened for listening ability and boundaries. You can review profiles and choose someone whose experience seems relevant. A peer conversation may help some people feel heard, but experiences vary and it is not a treatment for a mental-health condition.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">What is the difference between loneliness and social anxiety?</div>
@@ -256,7 +256,7 @@ export default function LonelinessSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does LeanOn peer support cost?</div>
-            <div className="faq-a">LeanOn starts at ₹160 for a 15-minute session, with a short trial session available for new users. It is significantly more affordable than therapy and available any time — including late nights when loneliness tends to peak.</div>
+            <div className="faq-a">One introductory session up to 5 minutes is free per account. Paid 15-minute text sessions in India start at ₹160 with a listener charging ₹10 per minute; actual price varies by listener and mode and is shown before booking. Availability depends on which listeners are online.</div>
           </div>
         </div>
 
