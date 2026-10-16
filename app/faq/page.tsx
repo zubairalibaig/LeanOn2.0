@@ -45,7 +45,11 @@ const faqs = [
     items: [
       {
         q: 'How do I start using LeanOn?',
-        a: 'Sign in using your phone number and OTP, then browse real listener profiles, topics, languages and availability. One introductory session of up to 5 minutes is free per account. If you choose to continue, review the displayed price and select a paid session. A session starts when an available listener accepts your request.',
+        a: 'The quickest way is Talk now at leanon.app/talk: choose text or voice, tap what is on your mind, confirm your phone number with a one-time code, and LeanOn connects you with a screened listener who is available now. One introductory session of up to 5 minutes is free per account. You can also browse listener profiles at leanon.app/browse and choose someone yourself.',
+      },
+      {
+        q: 'Is there a LeanOn app on the Play Store or App Store?',
+        a: 'You do not need to download anything: LeanOn works in any phone or computer browser at www.leanon.app. On Android, open it in Chrome and tap "Add to Home screen" to get an app icon; on iPhone, use Safari\'s Share → "Add to Home Screen". An older Play Store app called "LeanOn" (a 2024 therapist-booking app) is a different, retired product.',
       },
       {
         q: 'How does pricing work?',

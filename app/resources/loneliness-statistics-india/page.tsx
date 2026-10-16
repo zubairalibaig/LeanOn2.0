@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Loneliness Statistics in India 2026 | LeanOn Research',
-  description: 'India loneliness statistics 2026 — 330 million Indians report significant loneliness. Here\'s the data on India\'s isolation crisis and what helps.',
+  description: 'Loneliness and mental health statistics for India, with sources: Meta-Gallup (24% of adults worldwide feel lonely), WHO depression estimates, and India\'s National Mental Health Survey treatment gap — plus what helps.',
   alternates: { canonical: 'https://www.leanon.app/resources/loneliness-statistics-india' },
   keywords: ['loneliness statistics India', 'India loneliness data', 'loneliness India 2026', 'social isolation India'],
 }
@@ -13,7 +13,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: 'Loneliness Statistics in India 2026',
-  description: 'Data on India\'s loneliness crisis — 330 million affected.',
+  description: 'Sourced loneliness and mental health statistics for India.',
   url: 'https://www.leanon.app/resources/loneliness-statistics-india',
   publisher: { '@type': 'Organization', name: 'LeanOn', url: 'https://www.leanon.app' },
 }
@@ -54,7 +54,7 @@ h1{font-size:clamp(24px,5vw,36px);font-weight:900;line-height:1.15;margin-bottom
 
 export default function LonelinessStatisticsIndia() {
   const shareUrl = encodeURIComponent('https://www.leanon.app/resources/loneliness-statistics-india')
-  const shareText = encodeURIComponent('330 million Indians report significant loneliness. India\'s isolation crisis — via LeanOn')
+  const shareText = encodeURIComponent('Loneliness and mental health in India — the numbers, with sources. Via LeanOn')
 
   return (
     <>
@@ -71,12 +71,12 @@ export default function LonelinessStatisticsIndia() {
 
         <div className="stat-grid">
           {[
-            { num: '330M', label: 'Indians reporting significant loneliness', orange: true },
-            { num: '24%', label: 'Of Indian adults experience loneliness', orange: false },
-            { num: '56M', label: 'Indians estimated to have depression', orange: false },
-            { num: '29%', label: 'Higher heart disease risk from loneliness', orange: true },
-            { num: '1%', label: 'Of those who need mental health support receive it', orange: false },
-            { num: '15 cigs', label: 'Daily — equivalent health impact of chronic loneliness', orange: false },
+            { num: '24%', label: 'Of adults worldwide feel very or fairly lonely (Meta-Gallup, 142 countries, 2023)', orange: true },
+            { num: '27%', label: 'Of 19–29-year-olds worldwide feel lonely — the loneliest age group (Meta-Gallup, 2023)', orange: false },
+            { num: '56M', label: 'Indians estimated to live with depression (WHO, 2017)', orange: false },
+            { num: '28–83%', label: 'Of Indians with a mental disorder get no treatment, depending on the condition (National Mental Health Survey 2015–16)', orange: true },
+            { num: '29%', label: 'Higher heart disease risk linked to loneliness and isolation (research cited by WHO)', orange: false },
+            { num: '15 cigs', label: 'A day — the health impact of chronic loneliness, by one comparison (US Surgeon General, 2023)', orange: false },
           ].map((s, i) => (
             <div key={i} className="stat-card">
               <div className={`stat-num${s.orange ? ' orange' : ''}`}>{s.num}</div>
@@ -87,8 +87,8 @@ export default function LonelinessStatisticsIndia() {
 
         <div className="section">
           <h2>India&apos;s loneliness crisis by the numbers</h2>
-          <p>A 2023 Meta-Gallup global survey found that 24% of Indians reported experiencing significant loneliness — representing approximately 330 million people. This placed India among the most affected nations globally.</p>
-          <p>The Indian Psychiatric Society estimates that over 56 million Indians suffer from depression, a condition closely linked to chronic loneliness. Studies suggest loneliness is both a cause and consequence of depression, creating self-reinforcing cycles that are difficult to break without intervention.</p>
+          <p>The Meta-Gallup Global State of Social Connections study (2023, 142 countries) found that 24% of adults worldwide feel very or fairly lonely, and that young adults aged 19–29 are the loneliest age group. Surveys in India report a wide range — from about a third to more than half of people saying they feel lonely at least some of the time — depending on how the question is asked.</p>
+          <p>The WHO estimates that about 56 million Indians live with depression, a condition closely linked to chronic loneliness. India&apos;s National Mental Health Survey (2015–16) found that, depending on the condition, 28% to 83% of people with a mental disorder receive no treatment. Studies suggest loneliness is both a cause and consequence of depression, creating self-reinforcing cycles that are difficult to break without intervention.</p>
           <p>The WHO identifies loneliness as a significant public health threat: chronically lonely individuals have a 29% increased risk of heart disease, a 32% increased risk of stroke, and significantly elevated risk of premature death. The health impact has been compared to smoking 15 cigarettes per day.</p>
         </div>
 
