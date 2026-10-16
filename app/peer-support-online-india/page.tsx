@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'Is peer support free on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'New users get a free 5-minute trial session. After that, paid sessions start at around ₹160 for 15 minutes — listeners set their own rate (₹8–₹25 per minute) and LeanOn adds a flat ₹10 platform fee. That is a fraction of what a private therapy session costs in India, and sessions are available at any hour with no appointment needed.',
+        text: 'Each account gets one free introductory session of up to 5 minutes. As an example, 15 minutes with a listener charging ₹10/min costs ₹160 including the flat ₹10 platform fee. The exact price varies by listener and text/voice mode and is shown before booking. Availability depends on who is online and accepts. Peer support is not therapy.',
       },
     },
     {
@@ -186,8 +186,8 @@ export default function PeerSupportOnlineIndiaPage() {
           <h3>Professional Distance Can Get in the Way</h3>
           <p>A therapist is trained and expected to stay clinically neutral. That neutrality is valuable in treatment. But sometimes it creates distance at the exact moment you need closeness. A peer listener has been there. They bring warmth alongside skill, and they are not trying to be your professional — they are trying to be the person you needed when you were where they were.</p>
 
-          <h3>Peer Support Is Available Right Now</h3>
-          <p>The people who need to talk rarely need to talk at 11am on a Tuesday. They need to talk at 11pm on a Sunday, or at 6am before a meeting that has kept them up all night. Peer support on LeanOn is available at those hours — no appointment, no waitlist, no requirement to explain yourself before the conversation starts.</p>
+          <h3>Check Live Listener Availability</h3>
+          <p>Emotional needs do not always follow office hours, but LeanOn cannot guarantee a listener at every moment. Browse live profiles and send a request; a session begins only when an available listener accepts. No appointment is required.</p>
         </div>
 
         {/* How LeanOn does it */}
@@ -198,13 +198,13 @@ export default function PeerSupportOnlineIndiaPage() {
           <p>Every listener on LeanOn is a real person who has lived through something relevant to the conversations they take. They are reviewed through LeanOn&apos;s screening process — application review, identity verification, and an assessment on active listening, boundaries and when to refer to professional help — before they are made available. They are not therapists, and we are transparent about that. But they are not random volunteers either.</p>
 
           <h3>Private Conversations</h3>
-          <p>You sign up with a phone number and a first name. No last name, no photo of you, no social account required. Nothing you say is shared with anyone in your life. The conversation stays between you and your listener.</p>
+          <p>You sign up with phone OTP and can choose a display name; you do not need an email, photo or full legal name to start. Text messages are stored securely and may be opened by authorised administrators if reported or flagged for safety; voice calls are not recorded. Read the Privacy Policy and Trust page and avoid sharing identifying details you do not want to disclose.</p>
 
-          <h3>No Appointment, No Waitlist</h3>
-          <p>Listeners are available in the middle of the night, over weekends, on public holidays. Whether you are in Mumbai, Bengaluru, a small town in UP, or anywhere else in India — if you have a phone and data, peer support is available.</p>
+          <h3>No Appointment Needed; Availability Varies</h3>
+          <p>LeanOn is online, so you can check listener availability from any location in India. The number of listeners online varies by time; a conversation starts when a listener accepts your request.</p>
 
           <h3>Affordable</h3>
-          <p>A 15-minute session on LeanOn costs around ₹160. New users get a free 5-minute trial to find out whether the listener they chose actually understands them before committing to a longer session. There are no subscription traps, no membership fees, no automatic renewals.</p>
+          <p>Each account gets one free introductory session of up to 5 minutes. As an example, 15 minutes with a listener charging ₹10/min costs ₹160, including the flat ₹10 platform fee. Final pricing depends on the selected listener and text/voice mode, and is shown before booking. There are no subscriptions.</p>
         </div>
 
         {/* Who it's for */}
@@ -328,7 +328,7 @@ export default function PeerSupportOnlineIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is peer support free on LeanOn?</div>
-            <div className="faq-a">New users get a free 5-minute trial session. After that, paid sessions start at around ₹160 for 15 minutes — listeners set their own rate (₹8–₹25 per minute) and LeanOn adds a flat ₹10 platform fee. That is a fraction of what a private therapy session costs in India, and sessions are available at any hour with no appointment needed.</div>
+            <div className="faq-a">Each account gets one free introductory session of up to 5 minutes. As an example, 15 minutes with a listener charging ₹10/min costs ₹160 including the flat ₹10 platform fee. The exact paid total varies by listener rate and mode and is shown before booking. A session starts only when a listener is online and accepts; no appointment is required.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Can peer support help with depression or anxiety?</div>
