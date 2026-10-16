@@ -230,7 +230,7 @@ export default function LonelinessSupportPage() {
           <h2>Ready to Feel Less Alone?</h2>
           <p>Talk with a screened peer listener about loneliness. No appointment is needed, but availability varies and a session starts when a listener accepts your request.</p>
           <div className="cta-btns">
-            <a href="/talk?src=seo"><button className="btn-primary">Someone is listening — start free now →</button></a>
+            <a href="/talk?src=seo"><button className="btn-primary">Request a conversation — first 5 minutes free →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>
           </div>
         </div>
