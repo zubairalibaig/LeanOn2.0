@@ -60,7 +60,7 @@ export default function FeelingLonelyInIndiaPage() {
         <div className="card">
           <h2>What helps with loneliness</h2>
           <p>People experience loneliness differently. Some find it helpful to talk with someone who listens without immediately trying to solve the problem. A conversation is one possible source of connection; experiences vary and it is not a treatment for a mental-health condition.</p>
-          <p>LeanOn&apos;s peer listeners have personally experienced loneliness. They know what it feels like to be surrounded by people and still feel completely alone. They are not trained to give advice — they are screened and expected to listen and reflect back what they hear, without judgment.</p>
+          <p>LeanOn listeners bring varied lived experiences and are screened for listening ability and boundaries. You can read their profiles and choose someone whose experience feels relevant to you. They are peer supporters, not therapists, and do not provide clinical treatment.</p>
         </div>
 
         <div className="card">
