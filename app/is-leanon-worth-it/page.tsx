@@ -111,10 +111,11 @@ export default function IsLeanOnWorthItPage() {
         <h1>Is LeanOn worth it? Honest answers before you pay</h1>
         <p className="lead">The questions people ask before their first paid session — answered plainly, including when LeanOn is not the right choice.</p>
         <p className="short">
-          <strong>In short:</strong> LeanOn connects you with a real, screened peer listener in India for a private text or voice
-          conversation, without an appointment. Try the first {FREE_SESSION_MINS} minutes free; after that, 15 minutes is ₹{p15} in India
-          (US${NRI_USD_PRICES[15]} abroad), you pay only for the minutes you use, and unused wallet balance is refundable. It is peer
-          support, not therapy.
+          <strong>In short:</strong> LeanOn connects adults with a screened peer listener in India for a one-to-one text or voice
+          conversation, without an appointment. One introductory session of up to {FREE_SESSION_MINS} minutes is free per account.
+          Paid prices depend on the selected listener and mode; a 15-minute text session with a ₹{R}/min listener is ₹{p15} in India,
+          while overseas sessions start at US${NRI_USD_PRICES[15]}. You pay only for used minutes, and unused wallet balance is refundable on request.
+          LeanOn is peer support, not therapy.
         </p>
         {groups.map(g => (
           <section key={g.h}>
@@ -125,7 +126,7 @@ export default function IsLeanOnWorthItPage() {
           </section>
         ))}
         <div className="cta">
-          <p>Your first {FREE_SESSION_MINS} minutes are free — enough to know if it feels right.</p>
+          <p>Your one introductory session of up to {FREE_SESSION_MINS} minutes is free per account — enough to decide whether peer support feels right for you.</p>
           <a className="btn" href="/talk?src=seo">Talk to someone now</a>
         </div>
         <p className="fine">More: <a href="/pricing">Pricing</a> · <a href="/trust">Trust &amp; safety</a> · <a href="/how-leanon-works">How LeanOn works</a> · Updated 17 October 2026</p>
