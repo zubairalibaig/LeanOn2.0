@@ -67,7 +67,7 @@ const faqSchema = {
       name: 'Can peer support help with anxiety or depression?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Peer support is not a clinical treatment for anxiety or depression, and LeanOn does not claim otherwise. However, many people find that daily emotional weight — anxious thinking, low mood, the heaviness of a hard week — eases significantly when they can talk to someone who has been there and who listens without judgment. If you are managing a diagnosed condition, peer support works best alongside professional care, not instead of it. If you are unsure whether your experience needs clinical attention, please speak to a doctor or licensed counsellor.',
+        text: 'Peer support is not a clinical treatment for anxiety or depression, and LeanOn does not claim otherwise. Some people find it helpful to talk with someone who has relevant lived experience; others may prefer a different kind of support. Experiences vary, and peer support should complement, not replace, professional care when that care is needed.',
       },
     },
   ],
