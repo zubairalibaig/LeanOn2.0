@@ -23,6 +23,16 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      base_url:
+        description: "Deployment URL to test manually"
+        required: false
+        default: "https://www.leanon.app"
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
 
 concurrency:
   group: e2e-production
@@ -46,14 +56,47 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      # Give Vercel time to deploy the commit we are about to test
-      - name: Wait for Vercel deploy
-        if: github.event_name == 'push'
-        run: sleep 120
+      # PR tests must hit the successful Vercel preview for this head, not production.
+      - name: Resolve Vercel preview URL
+        id: preview
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          MANUAL_BASE_URL: ${{ inputs.base_url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            for attempt in $(seq 1 30); do
+              statuses="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${HEAD_SHA}/statuses")"
+              vercel_state="$(jq -r '[.[] | select(.context == "Vercel")][0].state // empty' <<< "$statuses")"
+              if [[ "$vercel_state" == "failure" || "$vercel_state" == "error" ]]; then
+                echo "Vercel deployment failed for ${HEAD_SHA}; refusing to test a stale preview." >&2
+                exit 1
+              fi
+              if [[ "$vercel_state" == "success" ]]; then
+                comments="$(gh api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments?per_page=100")"
+                preview_url="$(jq -r '[.[] | select(.user.login == "vercel[bot]") | .body | try (capture("\\[Preview\\]\\((?<url>https://[^)]+)\\)").url) catch empty] | last // empty' <<< "$comments")"
+                if [[ "$preview_url" =~ ^https://[A-Za-z0-9.-]+\\.vercel\\.app$ ]]; then
+                  echo "Using deployed PR preview: $preview_url"
+                  echo "base_url=$preview_url" >> "$GITHUB_OUTPUT"
+                  exit 0
+                fi
+              fi
+              echo "Waiting for the current Vercel preview (attempt $attempt/30)..."
+              sleep 10
+            done
+            echo "Timed out waiting for a successful Vercel preview deployment URL." >&2
+            exit 1
+          fi
+          base_url="${MANUAL_BASE_URL:-https://www.leanon.app}"
+          echo "Using manually selected URL: $base_url"
+          echo "base_url=$base_url" >> "$GITHUB_OUTPUT"
 
       - name: Run Playwright tests
         env:
-          PLAYWRIGHT_BASE_URL: https://www.leanon.app
+          PLAYWRIGHT_BASE_URL: ${{ steps.preview.outputs.base_url }}
           VERCEL_BYPASS_SECRET: ${{ secrets.VERCEL_BYPASS_SECRET }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
         run: npx playwright test --project=chromium
