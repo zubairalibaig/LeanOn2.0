@@ -3,7 +3,7 @@ import { NRI_USD_PRICES } from '@/lib/geo-pricing'
 import { TALK_MAX_TEXT_RATE } from '@/lib/talk-match'
 
 // A short, direct answer at the top of a hub page, plus the same handful of
-// facts everywhere — what AI assistants (ChatGPT via Bing, Copilot, Perplexity)
+// facts everywhere — what AI-powered search experiences (including ChatGPT Search, Copilot and Perplexity)
 // quote. Keep every claim literally true: prices from lib/constants and
 // lib/geo-pricing, listeners SCREENED (never "trained"), only Tele-MANAS and
 // NIMHANS, no listener earnings of any kind.
