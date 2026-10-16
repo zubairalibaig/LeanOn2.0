@@ -16,7 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Content pages: the date their copy last really changed. Stamping every URL
   // with the deploy date teaches Google to ignore lastmod for the whole site —
   // bump this only when page content actually changes.
-  const CONTENT_UPDATED = '2026-09-24'
+  const CONTENT_UPDATED = '2026-10-16'
   const entries: MetadataRoute.Sitemap = [
     { url: base,                                       lastModified: d(TODAY),        changeFrequency: 'daily',   priority: 1.0 },
     { url: `${base}/browse`,                           lastModified: d(TODAY),        changeFrequency: 'hourly',  priority: 0.95 },
@@ -25,7 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/faq`,                              lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/pricing`,                          lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/glossary`,                         lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${base}/privacy`,                          lastModified: d('2026-01-01'), changeFrequency: 'yearly',  priority: 0.3 },
+    { url: `${base}/privacy`,                          lastModified: d('2026-10-16'), changeFrequency: 'yearly',  priority: 0.3 },
     { url: `${base}/terms`,                            lastModified: d('2026-01-01'), changeFrequency: 'yearly',  priority: 0.3 },
     { url: `${base}/trust`,                            lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/press`,                            lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.6 },
@@ -77,7 +77,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/blog/what-it-means-to-have-someone-to-lean-on`,    lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/blog/paid-friend-vs-peer-support-india`, lastModified: d('2026-09-12'), changeFrequency: 'monthly', priority: 0.9 },
     // Brand + authority pages
-    { url: `${base}/leanon`,                           lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/leanon`,                           lastModified: d('2026-10-16'), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/emotional-support`,                lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.9 },
     // Long-tail SEO pages
     { url: `${base}/leanon-app-mental-health`,         lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
@@ -188,7 +188,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/i-need-professional-help-india`,      lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
     // New SEO pages (Items 18-21)
     { url: `${base}/why-leanon`,                       lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${base}/how-leanon-works`,                 lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/how-leanon-works`,                 lastModified: d('2026-10-16'), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/is-leanon-safe`,                   lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/anonymous-support-online`,         lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/someone-to-talk-to-at-night`,      lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },

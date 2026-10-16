@@ -28,16 +28,16 @@ The name "LeanOn" (one word) comes from the phrase "someone to lean on" — havi
 ## How LeanOn works
 
 ### For seekers (people who want support)
-1. Sign up using phone OTP verification (30 seconds, no email or full name required).
-2. Browse the open listener directory — filter by topic, language, availability. Read bios, ratings, and session counts.
+1. Choose how to start: Talk now (https://www.leanon.app/talk) — pick a topic and text or voice, and LeanOn asks a listener who is free, moving on to the next if they don't answer within about 30 seconds — or browse the open listener directory by topic, language and availability, with bios, ratings and session counts.
+2. Sign in with phone OTP (no email or full name required). Indian and several overseas numbers are supported.
 3. Use your free 5-minute first session (one per account) with any listener. No wallet or payment needed.
 4. If you want to continue, the paid session price is shown before you start. Recharge your wallet using UPI, cards, or net banking.
 5. Choose your session length: 15, 30, or 45 minutes.
 6. Once an available listener accepts, the session can begin without an appointment. Choose text chat or voice call.
-7. Rate the listener after the session. Book again anytime. Unused wallet balance is fully refundable.
+7. If no listener accepts, the held amount is returned in full. Ending early, you pay only for the minutes used (nothing under a minute). Rate the listener afterwards and book again anytime. Unused wallet balance can be refunded on request.
 
 ### Who the listeners are
-Listeners are screened peers: identity-verified with a private selfie, reviewed by the LeanOn team, and screened on active listening, boundaries and crisis referral.
+Listeners are screened peers, not clinically trained: each writes an application about their lived experience, completes a screening quiz (crisis referral, boundaries such as no off-platform contact, no medical advice, empathetic responses), is identity-verified with a private live selfie, and is reviewed manually by LeanOn before taking any session. They agree to a code of conduct: confidentiality, no judgment, no medical or clinical advice. Listeners are based in India and choose their own hours, so availability follows Indian time.
 
 ## Pricing and fees
 
@@ -99,7 +99,10 @@ Listeners on LeanOn specialize in various topics based on their own lived experi
 Listeners are available in: English, Hindi, Tamil, Telugu, Kannada, Malayalam, Marathi, Bengali, Gujarati, Punjabi, Odia, and Urdu.
 
 ## Privacy and trust
-- Sessions are private. LeanOn does not share personal information or conversation content.
+- Sessions are private. LeanOn does not sell data or share conversation content outside LeanOn.
+- Listeners see only the user's chosen display name, never the phone number.
+- Voice calls are not recorded. Text messages are stored securely; only authorised LeanOn administrators can open them (e.g. to review a reported or safety-flagged session). No AI analyses conversations.
+- If words linked to self-harm appear in a chat, LeanOn shows crisis helplines, alerts the listener and flags the session for review.
 - Sign-up requires only a phone number (OTP verified). No email, no full name required.
 - Users use display names, not real names.
 - Do not claim "100% anonymous" — account information is required.
@@ -122,7 +125,7 @@ In India, a paid session costs the selected listener's per-minute rate × minute
 LeanOn listeners are real people with lived experience, not licensed therapists. They offer empathy and peer support, not clinical diagnosis or treatment. LeanOn is ideal when you need someone who truly understands — not a diagnosis.
 
 ### Is LeanOn confidential?
-Sessions are intended to be private. LeanOn does not share conversation content. See the Privacy and Trust pages for specific information practices.
+Yes, within clear limits. Listeners see only your chosen name, never your phone number. Voice calls are not recorded. Text messages are stored securely, and only authorised LeanOn administrators can open them, for example to review a reported or safety-flagged session. LeanOn does not sell data or share conversations outside LeanOn. Details: https://www.leanon.app/privacy and https://www.leanon.app/trust
 
 ### Can Indians living abroad use LeanOn?
 Yes. LeanOn has dedicated support for Indians and South Asians living abroad, including the USA, UK, Canada, Australia, UAE and other countries. You can talk privately with a real peer listener by text or voice.
