@@ -243,8 +243,7 @@ export default function RelationshipSupportPage() {
           </div>
           <div className="faq-item">
             <h3>How does privacy work on LeanOn?</h3>
-            <p>Yes. LeanOn sessions are private. You do not need to share your name, your
-              partner&apos;s name, or any identifying information.</p>
+            <p>LeanOn uses phone-number verification, but listeners do not see your phone number and you can choose a display name. Voice calls are not recorded. Text messages are stored and authorised administrators may review reported or safety-flagged sessions. Read the Privacy Policy for details and share only information you are comfortable disclosing.</p>
           </div>
           <div className="faq-item">
             <h3>What kind of relationship issues can I discuss?</h3>
@@ -253,10 +252,8 @@ export default function RelationshipSupportPage() {
               your relationship.</p>
           </div>
           <div className="faq-item">
-            <h3>Why talk to a human listener instead of asking an AI for relationship advice?</h3>
-            <p>AI gives generic advice based on patterns in data. A LeanOn listener brings genuine empathy
-              and real human perspective — they have navigated real relationships and understand what it
-              actually feels like.</p>
+            <h3>When might you prefer a human conversation?</h3>
+            <p>Some people use AI tools to reflect or organise their thoughts; others prefer to talk to another person. LeanOn offers a non-clinical peer conversation for people who want human connection. It does not claim to be better for everyone or replace professional counselling.</p>
           </div>
         </div>
 
