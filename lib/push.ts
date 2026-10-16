@@ -91,3 +91,22 @@ export async function sendPushToUser(sb: Sb, userId: string, msg: WebPushMessage
   }
   return summary
 }
+
+// A request the listener was alerted about has been withdrawn by the seeker
+// (Talk now moved on, Cancel, left the page, or it ran out of time). Replace
+// the ringing notification on their devices — same tag — with a silent
+// "withdrawn" note that public/sw.js clears after a few seconds, so a stale
+// alert can't send them to an empty dashboard. Never throws.
+export async function sendRequestWithdrawn(sb: Sb, listenerId: string, sessionId: string): Promise<void> {
+  try {
+    await sendPushToUser(sb, listenerId, {
+      title: 'Request withdrawn',
+      body: 'The seeker was connected with someone else or cancelled. No action needed.',
+      url: '/dashboard',
+      tag: `leanon-req-${sessionId}`,
+      ttlSecs: 300,
+      urgent: false,
+      data: { sessionId, type: 'request_closed' },
+    })
+  } catch { /* best effort */ }
+}

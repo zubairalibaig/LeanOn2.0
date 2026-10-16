@@ -8,7 +8,7 @@ import { settleSession } from '@/lib/session-billing'
 import { applySettlement } from '@/lib/settlement-ledger'
 import { notifySessionComplete } from '@/lib/notify'
 import { logger } from '@/lib/logger'
-import { sendPushToUser } from '@/lib/push'
+import { sendPushToUser, sendRequestWithdrawn } from '@/lib/push'
 import { expireStalePendingRequests } from '@/lib/expire-pending'
 import { sweepStaleListeners } from '@/lib/listener-presence'
 import { suspensionStatus } from '@/lib/suspension'
@@ -20,7 +20,10 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 // SECURITY: auth required — user context for auth check, admin client for atomic DB operations
 export async function POST(req: NextRequest) {
   try {
-    const { listenerId, durationMins, sessionType, replacesSessionId } = await req.json()
+    const { listenerId, durationMins, sessionType, replacesSessionId, via } = await req.json()
+    // 'talk' = Talk now (moves on to another listener after ~30s), so the
+    // listener's alert must not promise the full response window.
+    const fromTalk = via === 'talk'
 
     const userSb = createServerSupabaseClient()
     const { data: { user } } = await userSb.auth.getUser()
@@ -58,7 +61,7 @@ export async function POST(req: NextRequest) {
     // Not atomic: if someone else takes the new listener between the checks and
     // create_session, the old request is already cancelled + refunded and the
     // client tells the seeker to choose again.
-    let replacing: { id: string; amount_held: number; is_free_trial: boolean } | null = null
+    let replacing: { id: string; amount_held: number; is_free_trial: boolean; listener_id: string } | null = null
     if (replacesSessionId) {
       const { data: old } = await sb.from('sessions')
         .select('id, seeker_id, listener_id, status, amount_held, is_free_trial')
@@ -73,7 +76,7 @@ export async function POST(req: NextRequest) {
       if (old.listener_id === listenerId) {
         return NextResponse.json({ error: 'same_listener' }, { status: 400 })
       }
-      replacing = { id: old.id as string, amount_held: Number(old.amount_held) || 0, is_free_trial: !!old.is_free_trial }
+      replacing = { id: old.id as string, amount_held: Number(old.amount_held) || 0, is_free_trial: !!old.is_free_trial, listener_id: old.listener_id as string }
     }
 
     // Block suspended/banned users (account or listener suspension) from booking
@@ -256,6 +259,8 @@ export async function POST(req: NextRequest) {
         // The first listener accepted (or it expired) a moment ago — keep that outcome.
         return NextResponse.json({ error: 'original_not_pending', message: 'Your request was already answered.' }, { status: 409 })
       }
+      // Clear the withdrawn request's alert on the first listener's phone.
+      await sendRequestWithdrawn(sb, replacing.listener_id, replacing.id)
       if (replacing.amount_held > 0 && !replacing.is_free_trial) {
         const { error: refundErr } = await sb.rpc('credit_wallet', { p_user_id: user.id, p_amount: replacing.amount_held })
         if (refundErr) {
@@ -383,7 +388,9 @@ export async function POST(req: NextRequest) {
     try {
       const push = await sendPushToUser(sb, listenerId, {
         title: '🔔 New session request',
-        body: `A seeker wants a ${durationMins}-min ${sessionType} session. Tap to accept — you have ${Math.round(REQUEST_RESPONSE_WINDOW_SECS / 60)} minutes.`,
+        body: fromTalk
+          ? `A seeker wants a ${durationMins}-min ${sessionType} session right now. Tap to accept — they're waiting.`
+          : `A seeker wants a ${durationMins}-min ${sessionType} session. Tap to accept — you have ${Math.round(REQUEST_RESPONSE_WINDOW_SECS / 60)} minutes.`,
         url: '/dashboard',
         tag: `leanon-req-${sessionId}`,
         ttlSecs: REQUEST_RESPONSE_WINDOW_SECS,

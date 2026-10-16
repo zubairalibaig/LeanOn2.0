@@ -74,6 +74,9 @@ self.addEventListener('push', (event) => {
   const n = payload.notification || {}
   const title = data.title || n.title || 'LeanOn'
   const isRequest = data.type === 'session_request'
+  // 'request_closed' replaces a withdrawn request's alert (same tag): no sound,
+  // no buzz, and it clears itself a few seconds later (see below).
+  const isClosed = data.type === 'request_closed'
   const options = {
     body: data.body || n.body || 'You have a new notification.',
     icon: '/icon-192.png',
@@ -81,9 +84,11 @@ self.addEventListener('push', (event) => {
     tag: data.tag || 'leanon-notification',
     // renotify: a second request must buzz again even if an older notification
     // with a similar tag is still in the tray.
-    renotify: true,
+    renotify: !isClosed,
+    silent: isClosed,
     requireInteraction: data.requireInteraction === '1',
-    vibrate: isRequest ? [400, 150, 400, 150, 400, 150, 800] : [200, 100, 200],
+    // Chrome rejects a silent notification that names any vibration pattern.
+    ...(isClosed ? {} : { vibrate: isRequest ? [400, 150, 400, 150, 400, 150, 800] : [200, 100, 200] }),
     timestamp: Date.now(),
     data: { url: data.url || '/dashboard', type: data.type || '', sessionId: data.sessionId || '' },
   }
@@ -93,6 +98,11 @@ self.addEventListener('push', (event) => {
     // Test alerts: tell open LeanOn pages the push reached this browser, so the
     // dashboard can say "arrived, but your computer/phone hid the banner"
     // instead of a vague "not arriving" (notification muted at the OS level).
+    if (isClosed && shown) {
+      await new Promise((r) => setTimeout(r, 8000))
+      const ns = await self.registration.getNotifications({ tag: options.tag })
+      ns.forEach((x) => x.close())
+    }
     if (data.type === 'test') {
       const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
       wins.forEach((w) => w.postMessage({ type: 'leanon-test-push-received', shown }))

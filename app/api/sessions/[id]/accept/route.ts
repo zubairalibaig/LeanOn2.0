@@ -31,7 +31,11 @@ export async function POST(
   if (!session) return NextResponse.json({ error: 'Session not found' }, { status: 404 })
   if (session.listener_id !== user.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
   if (session.status !== 'pending') {
-    return NextResponse.json({ error: 'Session is no longer pending', status: session.status }, { status: 409 })
+    // Shown to the listener as a toast — say what happened, plainly.
+    const message = session.status === 'active'
+      ? 'You already accepted this request.'
+      : 'This request was withdrawn — the seeker was connected with someone else or cancelled. No action needed.'
+    return NextResponse.json({ error: 'not_pending', message, status: session.status }, { status: 409 })
   }
 
   // If the response window already lapsed, treat accept as too-late: cancel + refund.
@@ -50,7 +54,7 @@ export async function POST(
   if (rpcErr) {
     const msg = rpcErr.message || ''
     if (msg.includes('session_not_found_or_already_handled')) {
-      return NextResponse.json({ error: 'Session no longer available' }, { status: 409 })
+      return NextResponse.json({ error: 'not_pending', message: 'This request was withdrawn — the seeker was connected with someone else or cancelled. No action needed.' }, { status: 409 })
     }
     // Unique-index violation = listener already has another active paid session
     if ((rpcErr as { code?: string }).code === '23505' || msg.includes('one_active')) {

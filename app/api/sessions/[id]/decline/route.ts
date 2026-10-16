@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
+import { sendRequestWithdrawn } from '@/lib/push'
 import { REQUEST_RESPONSE_WINDOW_MS } from '@/lib/constants'
 import { recordMissedRequest } from '@/lib/listener-presence'
 
@@ -84,6 +85,10 @@ export async function POST(
   if (!cancelled) {
     return NextResponse.json({ error: 'Session already handled' }, { status: 409 })
   }
+
+  // The seeker withdrew (Cancel / left / ran out of time): clear the ringing
+  // alert on the listener's phone so it can't lead to an empty dashboard.
+  if (!isListener) await sendRequestWithdrawn(sb, session.listener_id, sessionId)
 
   // Refund the held amount to the seeker
   const held = Number(session.amount_held) || 0

@@ -188,6 +188,7 @@ function TalkInner() {
             listenerId: next.listenerId,
             durationMins: meta.current.durationMins,
             sessionType: choice.current!.mode,
+            via: 'talk',
             ...(replace ? { replacesSessionId: replace } : {}),
           }),
         }).catch(() => null)
@@ -375,6 +376,11 @@ function TalkInner() {
         {phase.k === 'topic' && (
           <>
             {onlineCount !== null && onlineCount > 0 && <div className="live"><i />{onlineCount} listener{onlineCount === 1 ? '' : 's'} free right now</div>}
+            {onlineCount === 0 && (
+              <div className="live" style={{ background: '#FFF8EC', color: '#9A5B00' }}>
+                Everyone is busy right now — you can still try, and we&apos;ll keep looking for up to 5 minutes. Or <Link href="/browse" style={{ color: '#9A5B00', textDecoration: 'underline', marginLeft: 3 }}>see all listeners</Link>.
+              </div>
+            )}
             <h1>What&apos;s on your mind?</h1>
             <p className="sub">Pick what&apos;s closest. We&apos;ll connect you with someone who&apos;s online now — no browsing, no appointment.</p>
             <div className="chips">

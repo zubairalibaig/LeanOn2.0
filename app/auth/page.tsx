@@ -157,6 +157,8 @@ export default function AuthPage() {
   const tokenHandledRef = useRef(false) // guards double token delivery (verifyOtp cb + config.success)
 
   const [isListenerMode, setIsListenerMode] = useState(false)
+  // Came from Talk now: the seeker already chose a topic — say this is the last step.
+  const [fromTalk, setFromTalk] = useState(false)
   const [country, setCountry] = useState<Country>(DEFAULT_COUNTRY)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -250,6 +252,7 @@ export default function AuthPage() {
     if (redirect) sessionStorage.setItem('auth_redirect', redirect)
     if (mode) sessionStorage.setItem('auth_mode', mode)
     if (mode === 'listener') setIsListenerMode(true)
+    if (redirect?.startsWith('/talk')) setFromTalk(true)
 
     sb.auth.getUser().then(({ data: { user } }) => {
       if (user && !handledRef.current) {
@@ -456,11 +459,13 @@ export default function AuthPage() {
           {step === 'phone' && (
             <>
               <div className="step-icon">{isListenerMode ? '🎧' : '📱'}</div>
-              <h1>{isListenerMode ? 'Listener sign in' : "What's your mobile number?"}</h1>
+              <h1>{isListenerMode ? 'Listener sign in' : fromTalk ? 'One last step' : "What's your mobile number?"}</h1>
               <p className="subtitle">
                 {isListenerMode
                   ? 'Sign in to your listener dashboard. Same number you registered with.'
-                  : "We'll send a one-time code to verify. No spam, ever."}
+                  : fromTalk
+                    ? "Confirm your mobile number with a one-time code, and we'll connect you with a listener straight away. Your number is never shown to them."
+                    : "We'll send a one-time code to verify. No spam, ever."}
               </p>
               <label className="label">Mobile number</label>
               <div className="phone-wrap">
