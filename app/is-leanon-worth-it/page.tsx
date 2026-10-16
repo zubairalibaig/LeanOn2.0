@@ -38,7 +38,7 @@ const groups: { h: string; items: { q: string; a: string }[] }[] = [
     h: 'Is it worth the money?',
     items: [
       { q: 'How much does it cost?', a: `Your first ${FREE_SESSION_MINS} minutes are free, once per account. After that, in India, a text session with a ₹${R}/min listener is ₹${p15} for 15 minutes, ₹${p30} for 30 or ₹${p45} for 45 (including a flat ₹${PLATFORM_FEE} platform fee); voice is ₹${VOICE_RATE_PREMIUM}/min more, and some listeners charge more — the exact price is shown before you start. Outside India, sessions start at US$${NRI_USD_PRICES[15]} for 15 minutes, US$${NRI_USD_PRICES[30]} for 30 and US$${NRI_USD_PRICES[45]} for 45. No subscription.` },
-      { q: 'Is it worth paying compared with therapy?', a: 'They are different things. A therapist treats mental health conditions and costs more per session. LeanOn is for when you need to be heard tonight — a fight, a breakup, loneliness, a heavy day — by someone who gets it, without an appointment. Many people use it while waiting for therapy, or for things they do not need therapy for. Use the free 5 minutes to see if it feels right before you pay anything.' },
+      { q: 'Is it worth paying compared with therapy?', a: 'They serve different purposes. A qualified professional can assess and treat mental-health conditions. LeanOn may suit someone who wants a non-clinical conversation about loneliness, a breakup or a difficult day; it is not therapy or a replacement for professional care. One introductory session up to 5 minutes is free per account, so you can decide whether peer support feels useful before paying.' },
       { q: 'What if it does not help?', a: 'You can end a session whenever you want and you pay only for the minutes you used; the rest of the held amount goes back to your wallet straight away. If no listener accepts your request, nothing is charged.' },
     ],
   },
@@ -53,7 +53,7 @@ const groups: { h: string; items: { q: string; a: string }[] }[] = [
   {
     h: 'How does it work?',
     items: [
-      { q: 'Do I need to book an appointment?', a: 'No. Open leanon.app/talk, choose text or voice and tap what is on your mind; LeanOn asks a listener who is online now and moves to the next one if they cannot answer within about 30 seconds. Or browse listener profiles at leanon.app/browse and pick someone yourself. Listeners are in India, so availability follows Indian time.' },
+      { q: 'Do I need to book an appointment?', a: 'No appointment is needed. Open leanon.app/talk, choose text or voice and select what is on your mind; LeanOn requests a conversation with a screened listener and may try another if there is no response within about 30 seconds. You can also browse listener profiles at leanon.app/browse. A session begins only when a listener accepts, and an immediate match is not guaranteed because availability varies.' },
       { q: 'Can I talk in my language, or choose who I talk to?', a: `Often, yes. Listeners can offer ${langs} — filter by language on leanon.app/browse to see who speaks yours. Each profile shows the listener's name, languages and the topics they talk about, so you can choose someone you are comfortable with. You can also book the same listener again from their profile.` },
       { q: 'How do I pay?', a: `Top up your LeanOn wallet (${recharge}) through Razorpay; a small payment-gateway charge is added at checkout. The session amount is held only when you send a request, returned in full if nobody accepts, and anything left in your wallet can be refunded on request from the wallet page.` },
     ],
@@ -70,7 +70,7 @@ const all = groups.flatMap(g => g.items)
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
-    { '@type': 'WebPage', name: 'Is LeanOn worth it? Honest answers before you pay', url: URL, dateModified: '2026-10-16', isPartOf: { '@id': 'https://www.leanon.app/#website' }, about: { '@id': 'https://www.leanon.app/#organization' } },
+    { '@type': 'WebPage', name: 'Is LeanOn worth it? Honest answers before you pay', url: URL, dateModified: '2026-10-17', isPartOf: { '@id': 'https://www.leanon.app/#website' }, about: { '@id': 'https://www.leanon.app/#organization' } },
     { '@type': 'FAQPage', mainEntity: all.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
     { '@type': 'BreadcrumbList', itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'LeanOn', item: 'https://www.leanon.app' },
@@ -128,7 +128,7 @@ export default function IsLeanOnWorthItPage() {
           <p>Your first {FREE_SESSION_MINS} minutes are free — enough to know if it feels right.</p>
           <a className="btn" href="/talk?src=seo">Talk to someone now</a>
         </div>
-        <p className="fine">More: <a href="/pricing">Pricing</a> · <a href="/trust">Trust &amp; safety</a> · <a href="/how-leanon-works">How LeanOn works</a> · Updated 16 October 2026</p>
+        <p className="fine">More: <a href="/pricing">Pricing</a> · <a href="/trust">Trust &amp; safety</a> · <a href="/how-leanon-works">How LeanOn works</a> · Updated 17 October 2026</p>
       </main>
     </>
   )
