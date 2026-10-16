@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'Relationship Support Online India — Talk to a Peer Listener | LeanOn',
   description: 'Going through relationship problems? Talk privately with a screened peer listener in India by text or voice. LeanOn offers non-clinical peer support, not relationship counselling or therapy; availability depends on who is online.',
   keywords: [
-    'relationship advice online india', 'relationship problems india', 'talk about relationship issues india',
+    'relationship support online india', 'relationship problems india', 'talk about relationship issues india',
     'partner problems india', 'breakup support india', 'peer support relationship problems india',
     'talk to someone about relationship india', 'marriage problems india', 'relationship support online',
   ],
@@ -29,7 +29,7 @@ const faqSchema = {
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'How do I get relationship advice online in India?',
+      name: 'How can I talk about relationship problems online in India?',
       acceptedAnswer: {
         '@type': 'Answer',
         text: 'LeanOn lets you talk with a screened peer listener about relationship problems. One introductory session of up to 5 minutes is free per account. Use a display name; availability depends on which listeners are online. This is peer support, not therapy or professional relationship counselling.',
@@ -56,12 +56,12 @@ const faqSchema = {
       name: 'What kinds of relationship issues can I talk about?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Anything: fights with your partner, feeling disconnected, thinking about a breakup, dealing with a breakup, problems with your parents about your relationship, loneliness within a relationship, trust issues, long-distance struggles, arranged marriage pressures — all of it.',
+        text: 'People commonly talk about arguments, breakups, feeling disconnected, family or marriage pressure, trust concerns and long-distance relationship stress. Peer support is non-clinical; it is not professional counselling or emergency support.'
       },
     },
     {
       '@type': 'Question',
-      name: 'Is LeanOn better than searching for a relationship counsellor?',
+      name: 'How is LeanOn different from relationship counselling?',
       acceptedAnswer: {
         '@type': 'Answer',
         text: 'LeanOn may suit you if you want a non-clinical conversation with a peer listener. It is not a substitute for a qualified relationship counsellor or mental-health professional. Paid text sessions start at ₹160 for 15 minutes with a listener charging ₹10 per minute; the price varies by listener and mode. There is no guarantee a listener will be available at every moment.',
@@ -235,7 +235,7 @@ export default function RelationshipAdvicePage() {
         <div className="card">
           <h2>Frequently asked questions</h2>
           <div className="faq-item">
-            <h3>How do I get relationship advice online in India?</h3>
+            <h3>How can I talk about relationship problems online in India?</h3>
             <p>LeanOn lets you talk with a screened peer listener about relationship problems. One introductory session of up to 5 minutes is free per account. Use a display name; availability depends on which listeners are online. This is peer support, not therapy or professional relationship counselling.</p>
           </div>
           <div className="faq-item">
@@ -244,11 +244,10 @@ export default function RelationshipAdvicePage() {
           </div>
           <div className="faq-item">
             <h3>What kinds of relationship issues can I talk about?</h3>
-            <p>Anything: fights with your partner, breakups, long-distance struggles, trust issues, arranged
-              marriage pressures, feeling lonely in a relationship — all of it.</p>
+            <p>Common topics include arguments, breakups, long-distance struggles, trust concerns, marriage or family pressure, and feeling lonely in a relationship. Peer support is non-clinical and is not a substitute for professional help when needed.</p>
           </div>
           <div className="faq-item">
-            <h3>Is LeanOn better than searching for a relationship counsellor?</h3>
+            <h3>How is LeanOn different from relationship counselling?</h3>
             <p>LeanOn may suit you if you want a non-clinical conversation with a peer listener. It is not a substitute for a qualified relationship counsellor or mental-health professional. Paid text sessions start at ₹160 for 15 minutes with a listener charging ₹10 per minute; the price varies by listener and mode. There is no guarantee a listener will be available at every moment.</p>
           </div>
           <div className="faq-item">
