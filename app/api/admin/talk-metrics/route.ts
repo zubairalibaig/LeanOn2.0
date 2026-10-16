@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic'
 // A "hop" is one request to one listener. Needs migration 071; before it runs
 // this returns { ready: false }.
 type Search = { id: string; seeker_id: string; created_at: string; free: boolean | null; candidates: number | null }
-type Req = { id: string; seeker_id: string; talk_search_id: string | null; status: string; started_at: string | null; ended_at: string | null; created_at: string; is_free_trial: boolean; duration_mins: number; ended_by: string | null }
+type Req = { id: string; seeker_id: string; talk_search_id: string | null; status: string; started_at: string | null; responded_at: string | null; ended_at: string | null; created_at: string; is_free_trial: boolean; duration_mins: number; ended_by: string | null }
 
 export async function GET(req: NextRequest) {
   const { error, code, status, user } = await requireAdmin(req)
@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
     const sb = createAdminClient()
     const [searchRes, reqRes, browseRes] = await Promise.all([
       sb.from('talk_searches').select('id, seeker_id, created_at, free, candidates').gte('created_at', since).limit(10000),
-      sb.from('sessions').select('id, seeker_id, talk_search_id, status, started_at, ended_at, created_at, is_free_trial, duration_mins, ended_by')
+      sb.from('sessions').select('id, seeker_id, talk_search_id, status, started_at, responded_at, ended_at, created_at, is_free_trial, duration_mins, ended_by')
         .eq('booked_via', 'talk').gte('created_at', since).limit(20000),
       sb.from('sessions').select('id', { count: 'exact', head: true })
         .eq('booked_via', 'browse').gte('created_at', since).not('started_at', 'is', null),
@@ -57,12 +57,19 @@ export async function GET(req: NextRequest) {
 
     let matched = 0, hopsToMatchTotal = 0, unmatchedAfterRequests = 0
     const matchedSessions: Req[] = []
+    // Seconds from the first request going out to a listener accepting.
+    const connectSecs: number[] = []
     for (const s of withRequest) {
       const list = bySearch.get(s.id)!
       const idx = list.findIndex(r => !!r.started_at)
-      if (idx >= 0) { matched++; hopsToMatchTotal += idx + 1; matchedSessions.push(list[idx]) }
-      else unmatchedAfterRequests++
+      if (idx >= 0) {
+        matched++; hopsToMatchTotal += idx + 1; matchedSessions.push(list[idx])
+        const t = Date.parse(list[idx].responded_at ?? list[idx].started_at!) - Date.parse(list[0].created_at)
+        if (Number.isFinite(t) && t >= 0) connectSecs.push(t / 1000)
+      } else unmatchedAfterRequests++
     }
+    connectSecs.sort((a, b) => a - b)
+    const medianConnectSecs = connectSecs.length ? Math.round(connectSecs[Math.floor((connectSecs.length - 1) / 2)]) : null
     const hopsTotal = withRequest.reduce((n, s) => n + bySearch.get(s.id)!.length, 0)
     const completed = matchedSessions.filter(r => r.status === 'completed')
     const avgMins = completed.length
@@ -105,6 +112,7 @@ export async function GET(req: NextRequest) {
       avgHopsPerSearch: withRequest.length ? round1(hopsTotal / withRequest.length) : 0,
       matched,
       avgHopsToMatch: matched ? round1(hopsToMatchTotal / matched) : 0,
+      medianConnectSecs,
       unmatchedAfterRequests,
       completed: completed.length,
       avgMins: round1(avgMins),

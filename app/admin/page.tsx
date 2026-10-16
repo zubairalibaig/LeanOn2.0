@@ -112,7 +112,7 @@ function sessionEndLabel(s: SessionRow): { text: string; color: string; hint?: s
 type TalkMetrics = {
   ready: boolean; message?: string; days: number
   searches: number; seekers: number; nobodyFree: number; stoppedBeforeRequest: number; withRequest: number
-  hopsTotal: number; avgHopsPerSearch: number; matched: number; avgHopsToMatch: number; unmatchedAfterRequests: number
+  hopsTotal: number; avgHopsPerSearch: number; matched: number; avgHopsToMatch: number; medianConnectSecs: number | null; unmatchedAfterRequests: number
   completed: number; avgMins: number; endedBy: Record<string, number>
   freeMatchedSeekers: number; converted: number; browseStarted: number
 }
@@ -288,11 +288,12 @@ function TalkMetricsCard({ headers }: { headers: () => Record<string, string> })
           <>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {box('Searches started', m.searches, `${m.seekers} seeker${m.seekers === 1 ? '' : 's'}`)}
-              {box('Nobody free', m.nobodyFree, pct(m.nobodyFree, m.searches) + ' of searches')}
-              {box('Stopped before a request', m.stoppedBeforeRequest, 'price screen / cancel / wallet')}
-              {box('Listener accepted', m.matched, `${pct(m.matched, m.searches)} of searches · ${pct(m.matched, m.withRequest)} once asked`)}
-              {box('Hops per search', m.avgHopsPerSearch, `${m.avgHopsToMatch} to a match · ${m.hopsTotal} requests`)}
-              {box('Asked, nobody accepted', m.unmatchedAfterRequests, pct(m.unmatchedAfterRequests, m.withRequest) + ' of searches with a request')}
+              {box('Connected', m.matched, `${pct(m.matched, m.searches)} of searches`)}
+              {box('Time to connect', m.medianConnectSecs == null ? '—' : m.medianConnectSecs < 90 ? `${m.medianConnectSecs}s` : `${Math.round(m.medianConnectSecs / 60)} min`, 'median, first request → accepted')}
+              {box('Hops to connect', m.avgHopsToMatch || '—', `avg listeners asked · ${m.hopsTotal} requests in all`)}
+              {box('Nobody free', m.nobodyFree, pct(m.nobodyFree, m.searches) + ' of searches — need more listeners online')}
+              {box('Asked, nobody accepted', m.unmatchedAfterRequests, pct(m.unmatchedAfterRequests, m.withRequest) + ' of searches that asked someone')}
+              {box('Left before asking', m.stoppedBeforeRequest, 'price screen / wallet / cancelled')}
               {box('Chats completed', m.completed, `avg ${m.avgMins} min`)}
               {box('Free → paid', m.converted, `${pct(m.converted, m.freeMatchedSeekers)} of ${m.freeMatchedSeekers} free-trial seekers`)}
             </div>
@@ -2471,6 +2472,7 @@ export default function AdminPage() {
                       </th>
                       <th>Seeker</th>
                       <th>Listener</th>
+                      <th title="Talk now (/talk) or a direct booking from a listener's profile (/browse)">Booked via</th>
                       <th>Type</th>
                       <th>Duration</th>
                       <th
@@ -2501,13 +2503,13 @@ export default function AdminPage() {
                           {s.listener?.phone && <div style={{ fontSize: 11, color: 'var(--gray)' }}>{s.listener.phone}</div>}
                         </td>
                         <td>
-                          <span className="badge badge-teal">{s.session_type}</span>
                           {s.booked_via === 'talk'
-                            ? <div style={{ marginTop: 4 }}><span className="badge badge-orange" title="Booked through Talk now (/talk)">⚡ Talk now{s.talk_hop ? ` · hop ${s.talk_hop}` : ''}</span></div>
+                            ? <span className="badge badge-orange" title="Booked through Talk now (/talk). Hop = which listener this was in that search.">⚡ Talk now{s.talk_hop ? ` · hop ${s.talk_hop}` : ''}</span>
                             : s.booked_via === 'browse'
-                              ? <div style={{ marginTop: 4 }}><span className="badge badge-gray" title="Booked directly from a listener's profile (/browse)">Browse</span></div>
-                              : null}
+                              ? <span className="badge badge-gray" title="Booked directly from a listener's profile (/browse)">Browse</span>
+                              : <span style={{ fontSize: 11, color: 'var(--gray)' }} title="Booked before this was recorded (migration 071, 16 Oct 2026)">not recorded</span>}
                         </td>
+                        <td><span className="badge badge-teal">{s.session_type}</span></td>
                         <td>{(() => {
                           // Show actual elapsed time for completed/expired sessions if we have both timestamps.
                           // duration_mins is the BOOKED time; actual run-time is derived from started_at/ended_at.
