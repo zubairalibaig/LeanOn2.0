@@ -234,9 +234,9 @@ export default function EmotionalSupportHubPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Find Your Emotional Support?</h2>
-          <p>Browse peer listeners across India. Someone who has been through what you&apos;re facing is available right now. Available 24/7.</p>
+          <p>Browse peer listeners across India and check who is online. A session begins when a listener accepts your request.</p>
           <div className="cta-btns">
-            <a href="/browse"><button className="btn-primary">Find a peer listener now</button></a>
+            <a href="/talk?src=seo-emotional-support"><button className="btn-primary">Talk to someone now</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Start now</button></a>
           </div>
         </div>

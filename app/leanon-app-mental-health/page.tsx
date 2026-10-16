@@ -48,14 +48,13 @@ export default function LeanOnAppMentalHealth() {
         <a href="/" className="back">← LeanOn Home</a>
         <h1>LeanOn App for <span>Mental Health</span> — India&apos;s Peer Support Platform</h1>
         <p className="lead">
-          LeanOn is India&apos;s peer support app for mental health — not therapy, not AI, but real humans with lived experience. Available 24/7 across India, starting at ₹0 for your first 5 minutes.
+          LeanOn is an online peer-support platform for everyday emotional needs — not therapy, diagnosis or crisis care. Talk with a real person through text or voice when a listener is available. Each account gets one free introductory session of up to 5 minutes.
         </p>
 
         <div className="section">
           <h2>What is the LeanOn app for mental health?</h2>
           <p>LeanOn is a peer emotional support platform that connects people in India with verified peer listeners — real people who have personally navigated loneliness, burnout, anxiety, grief, relationship stress, career confusion, and more.</p>
-          <p>It&apos;s not a mental health app in the clinical sense. There are no therapists, no diagnoses, and no prescription pads. LeanOn is peer support — a legitimate, evidence-backed form of support that helps people feel less alone during difficult times.</p>
-          <p>Research shows that peer support improves mental health outcomes significantly. Having someone who truly understands — because they&apos;ve been there — makes a real difference.</p>
+          <p>LeanOn offers non-clinical peer support. Listeners are not presented as therapists and do not provide clinical diagnosis or treatment. Peer-support models emphasise shared experience, listening and mutual understanding; the broader model is discussed in the <a href="https://www.who.int/publications/i/item/9789240025783" target="_blank" rel="noopener noreferrer">World Health Organization’s community mental-health guidance</a>. That publication is not an evaluation or endorsement of LeanOn.</p>
         </div>
 
         <div className="section">
@@ -67,13 +66,13 @@ export default function LeanOnAppMentalHealth() {
 
         <div className="section">
           <h2>Who uses LeanOn?</h2>
-          <p>People come to LeanOn from all walks of life: students overwhelmed by exam pressure, startup founders going through their first failure, professionals experiencing burnout in high-pressure jobs, people processing grief and loss, individuals struggling with loneliness in new cities, and people who simply need someone to talk to at 2 AM.</p>
+          <p>People come to LeanOn for non-clinical conversations about everyday emotional situations: student pressure, work stress, grief, loneliness, relationship difficulties and family pressure. Listener availability varies by time.</p>
           <p>What they all have in common: they want a real human who gets it — not a bot, not a clinical professional, but someone who has been through something similar and found their way through.</p>
         </div>
 
         <div className="section">
           <h2>Is LeanOn safe?</h2>
-          <p>Yes. LeanOn is designed with privacy and safety at its core. Your identity is protected — a listener sees only the name you choose. Conversations are never shared outside LeanOn. If words linked to self-harm appear in a chat, LeanOn shows emergency helplines (NIMHANS: 080-46110007, Tele-MANAS: 14416) and flags the session for review. Every listener is manually verified before being approved.</p>
+          <p>LeanOn uses phone OTP sign-in and allows a display name. Text messages are stored securely and may be opened by authorised administrators if reported or flagged for safety; voice calls are not recorded. Applicants are identity-verified and reviewed before approval. Review the <a href="/privacy">Privacy Policy</a> and <a href="/trust">Trust &amp; Safety page</a> before deciding what to share.</p>
         </div>
 
         <div className="cta-box">
