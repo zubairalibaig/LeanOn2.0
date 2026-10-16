@@ -133,8 +133,9 @@
   `webpush` Urgency high + short TTL, data-only, dead tokens removed). `android.priority`
   does nothing for web tokens.
 - In-page alerts use `showLocalNotification()` — `new Notification()` throws on Android Chrome.
-- Presence rules live in `lib/listener-presence.ts` (15-min heartbeat; 4-hour away window
-  only with a push device; auto-offline on missed requests). Heartbeats never set
+- Presence rules live in `lib/listener-presence.ts` (15-min heartbeat → offline, push device or not;
+  auto-offline on missed requests). **Away mode (4 h online in the background with a push device) was
+  switched off 2026-10-16** — it showed away listeners as online and seekers waited on them. Heartbeats never set
   `is_available=true`; they report it back so the UI re-syncs.
 - A request that runs out of time is cancelled as `timed_out` (decline route with
   `{ reason: 'timeout' }`), never `seeker_cancelled` / `declined`.

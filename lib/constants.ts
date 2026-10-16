@@ -65,9 +65,9 @@ export const REQUEST_RESPONSE_WINDOW_SECS = 180 // 3 minutes
 export const REQUEST_RESPONSE_WINDOW_MS   = REQUEST_RESPONSE_WINDOW_SECS * 1000
 
 // Listener presence (lib/listener-presence.ts). A listener with no heartbeat for
-// STALE_HEARTBEAT_MINS goes offline — unless push alerts can reach one of their
-// devices, in which case they may stay online in the background for up to
-// AWAY_WITH_ALERTS_MINS. STALE is load-bearing: see PROJECT.md §8.2.3.
+// STALE_HEARTBEAT_MINS goes offline. STALE is load-bearing: see PROJECT.md §8.2.3.
+// AWAY_WITH_ALERTS_MINS no longer keeps anyone online (away mode switched off
+// 2026-10-16); it only bounds the sweep's 'long gone' step.
 export const STALE_HEARTBEAT_MINS  = 15
 export const AWAY_WITH_ALERTS_MINS = 240
 export const RECHARGE_AMOUNTS   = [200, 500, 1000, 2000] as const

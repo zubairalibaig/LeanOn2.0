@@ -1,5 +1,5 @@
 import type { createAdminClient } from '@/lib/supabase-server'
-import { pushReachableUserIds, sendPushToUser } from '@/lib/push'
+import { sendPushToUser } from '@/lib/push'
 import { logger } from '@/lib/logger'
 import { STALE_HEARTBEAT_MINS, AWAY_WITH_ALERTS_MINS, REQUEST_RESPONSE_WINDOW_MS } from '@/lib/constants'
 
@@ -14,6 +14,7 @@ type Sb = ReturnType<typeof createAdminClient>
 // switched to WhatsApp stopped heart-beating and was swept offline after 15
 // minutes — "I was online, then I wasn't".
 //
+// AWAY MODE — SWITCHED OFF 2026-10-16 (see step 3 of the sweep). Original note:
 // AWAY MODE (2026-09-24): a listener whose device can receive push alerts can
 // still be reached with LeanOn in the background, so they stay online for up
 // to AWAY_WITH_ALERTS_MINS without heartbeats. Two guards keep this from
@@ -51,25 +52,18 @@ export async function sweepStaleListeners(sb: Sb, onlyUserId?: string): Promise<
       .lt('last_heartbeat_at', awayCutoff))
     if (e2) logger.warn('sweep(away) failed', { error: e2.message })
 
-    // 3. Between 15 min and the away window: offline unless push can reach them.
-    const { data: stale, error: e3 } = await scoped(sb.from('listener_profiles')
-      .select('user_id')
+    // 3. No heartbeat for STALE_HEARTBEAT_MINS → offline, push device or not.
+    // AWAY MODE IS OFF (2026-10-16, owner decision): it kept listeners whose
+    // phone could get an alert online for up to 4 hours in the background —
+    // that day 15 of 17 'online' listeners were away and seekers waited on
+    // them. Back to the pre-2026-09-24 rule, which was stable: 15 minutes is
+    // still wide enough for a quick switch to another app (PROJECT.md §8.2.3 —
+    // do NOT lower it). The heartbeat is re-checked in the UPDATE itself, so a
+    // listener who came back a moment ago is not knocked offline.
+    const { error: e4 } = await scoped(sb.from('listener_profiles')
+      .update({ is_available: false })
       .eq('is_available', true)
       .lt('last_heartbeat_at', staleCutoff))
-      .limit(500)
-    if (e3) { logger.warn('sweep(stale read) failed', { error: e3.message }); return }
-    const ids = ((stale ?? []) as { user_id: string }[]).map(r => r.user_id)
-    if (ids.length === 0) return
-    const reachable = await pushReachableUserIds(sb, ids)
-    const unreachable = ids.filter(id => !reachable.has(id))
-    if (unreachable.length === 0) return
-    // Re-check the heartbeat in the UPDATE itself so a listener who came back
-    // between the read and the write is not knocked offline.
-    const { error: e4 } = await sb.from('listener_profiles')
-      .update({ is_available: false })
-      .in('user_id', unreachable)
-      .eq('is_available', true)
-      .lt('last_heartbeat_at', staleCutoff)
     if (e4) logger.warn('sweep(stale-hb) failed', { error: e4.message })
   } catch (e) {
     logger.warn('staleness sweep threw', { error: String(e) })

@@ -4,7 +4,7 @@ import { syncServerClock, serverNow } from '@/lib/server-clock'
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
-import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE, LISTENER_SERVICE_FEE_RATE, REQUEST_RESPONSE_WINDOW_SECS, VOICE_PRICING_ENABLED, VOICE_RATE_PREMIUM, AWAY_WITH_ALERTS_MINS, STALE_HEARTBEAT_MINS } from '@/lib/constants'
+import { LANGUAGES, MIN_LISTENER_RATE, MAX_LISTENER_RATE, LISTENER_SERVICE_FEE_RATE, REQUEST_RESPONSE_WINDOW_SECS, VOICE_PRICING_ENABLED, VOICE_RATE_PREMIUM, STALE_HEARTBEAT_MINS } from '@/lib/constants'
 import { SHOW_LISTENER_GROWTH_NOTICE, SHOW_LISTENER_PRICING_UPDATE_NOTICE } from '@/lib/feature-flags'
 import { PRICING_NOTICE } from '@/lib/listener-announcements'
 import { estimateListenerTakeHome } from '@/lib/session-billing'
@@ -1339,7 +1339,7 @@ export default function DashboardPage() {
             {alertStatus === 'granted' && pushRegistered !== false ? (
               <>
                 <div style={{fontWeight:800, color:'#276749', marginBottom:2}}>🔔 Request alerts are on for this device</div>
-                <div>You can switch to other apps — you stay online for up to {AWAY_WITH_ALERTS_MINS / 60} hours and every request rings this device. If a request goes unanswered while you&apos;re away, we set you offline so seekers aren&apos;t left waiting.</div>
+                <div>Requests ring this device even when you switch to another app for a moment. Keep LeanOn open while you&apos;re online: after {STALE_HEARTBEAT_MINS} minutes in the background — or a request left unanswered — you&apos;re set offline, so seekers only see listeners who are really there.</div>
                 <div style={{display:'flex', gap:8, flexWrap:'wrap', marginTop:10}}>
                   <button onClick={sendTestAlert} disabled={testingAlert} style={{flex:'1 1 140px', background:'white', border:'1.5px solid #38A169', color:'#276749', borderRadius:50, padding:'9px 14px', fontWeight:800, fontSize:13, cursor:'pointer', fontFamily:'inherit'}}>
                     {testingAlert ? 'Checking…' : 'Send a test alert'}
@@ -1362,7 +1362,7 @@ export default function DashboardPage() {
                   {alertStatus === 'denied' && <>Notifications are blocked for LeanOn {inInstalledApp ? 'in the LeanOn app' : 'in your browser'}. The step-by-step check shows exactly where to allow them.</>}
                   {alertStatus === 'ios_install' && <>On iPhone, alerts only work from the home-screen app.</>}
                   {alertStatus === 'unsupported' && <>This browser can&apos;t show alerts — use Chrome.</>}
-                  {' '}Until alerts work you go offline {STALE_HEARTBEAT_MINS} minutes after leaving LeanOn.
+                  {' '}Without alerts you only hear requests while LeanOn is open, and you go offline {STALE_HEARTBEAT_MINS} minutes after leaving it.
                 </div>
                 <div style={{display:'flex', gap:8, flexWrap:'wrap', marginTop:10}}>
                   {(alertStatus === 'prompt' || alertStatus === 'granted') && (

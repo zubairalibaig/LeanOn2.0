@@ -37,7 +37,7 @@ Read this before changing `ListenerPresence.tsx`, the dashboard's toggle,
   | Last heartbeat | Push device? | Result |
   |---|---|---|
   | under 15 min | any | online |
-  | 15 min – 4 h | yes: a `push_tokens` row seen in the last 3 days | online ("away mode") |
+  | 15 min – 4 h | yes: a `push_tokens` row seen in the last 3 days | ~~online ("away mode")~~ **offline since 2026-10-16** — away mode switched off |
   | 15 min – 4 h | no | offline |
   | over 4 h, or never | any | offline |
 
