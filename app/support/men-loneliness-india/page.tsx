@@ -65,7 +65,7 @@ const faqSchema = {
       name: 'Will I be judged for how I feel?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'No. LeanOn listeners are specifically trained not to judge. The whole point is to provide a space where you can say what is actually true — not the version you would tell your family or your male friends or your manager. You can say "I am lonely and I don\'t know why" or "I am exhausted by the pressure and I cannot say that to anyone" or "I don\'t want to get married but my family won\'t listen" — and it will be received, not evaluated.',
+        text: 'No. LeanOn listeners are chosen for their ability not to judge. The whole point is to provide a space where you can say what is actually true — not the version you would tell your family or your male friends or your manager. You can say "I am lonely and I don\'t know why" or "I am exhausted by the pressure and I cannot say that to anyone" or "I don\'t want to get married but my family won\'t listen" — and it will be received, not evaluated.',
       },
     },
   ],
@@ -223,7 +223,7 @@ export default function MenLonelinessIndiaPage() {
           <div className="card-label">What talking actually does</div>
           <h3>Not therapy. Just a real conversation.</h3>
           <p>
-            LeanOn is not therapy. Our listeners are trained people — some of them men who understand the specific
+            LeanOn is not therapy. Our listeners are screened people — some of them men who understand the specific
             pressure of being an Indian man in his 20s or 30s — who will listen without judgment, without
             making it about themselves, without giving unsolicited advice. Just a real conversation.
             Sometimes that is all you needed.

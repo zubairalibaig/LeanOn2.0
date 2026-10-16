@@ -62,7 +62,7 @@ export const post = {
 
 <p>This is what <strong>emotional support men India</strong> actually looks like when it works. Not therapy as such. Not advice-giving. Not being told what to do. Being heard, by someone who genuinely gets it, in a space that is private and free from judgment.</p>
 
-<p>Platforms like <strong>LeanOn</strong> are built with this in mind. The supporters on LeanOn are peers who have navigated difficulty themselves and trained to offer genuine presence. The conversations are private and anonymous. There is no file being kept, no diagnosis being made, no one who will tell your family or your colleagues. Just a conversation with someone who is there to listen.</p>
+<p>Platforms like <strong>LeanOn</strong> are built with this in mind. The supporters on LeanOn are peers who have navigated difficulty themselves and are chosen to offer genuine presence. The conversations are private and anonymous. There is no file being kept, no diagnosis being made, no one who will tell your family or your colleagues. Just a conversation with someone who is there to listen.</p>
 
 <h2>Finding Someone to Lean On (Without Feeling Weak)</h2>
 

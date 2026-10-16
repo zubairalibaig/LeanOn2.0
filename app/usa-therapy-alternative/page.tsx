@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'What is the difference between a peer listener and a therapist?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'A therapist is a licensed professional who provides clinical treatment. A peer listener is a trained, empathetic person who listens without judgment, holds space, and helps you feel heard. Peer support is well-documented to help with loneliness, emotional regulation, and general wellbeing — especially when formal therapy is unavailable or too expensive.',
+        text: 'A therapist is a licensed professional who provides clinical treatment. A peer listener is a screened, empathetic person who listens without judgment, holds space, and helps you feel heard. Peer support is well-documented to help with loneliness, emotional regulation, and general wellbeing — especially when formal therapy is unavailable or too expensive.',
       },
     },
     {
@@ -226,7 +226,7 @@ export default function UsaTherapyAlternativePage() {
           </div>
           <div className="faq-item">
             <h3>What is the difference between a peer listener and a therapist?</h3>
-            <p>A therapist provides clinical treatment. A peer listener is a trained, empathetic person who
+            <p>A therapist provides clinical treatment. A peer listener is a screened, empathetic person who
               listens without judgment and helps you feel heard. Peer support is well-documented to help
               with loneliness, emotional regulation, and general wellbeing.</p>
           </div>

@@ -52,7 +52,7 @@ export const FEELINGS: Feeling[] = [
       },
       {
         h: "Why talking to someone who has felt this helps",
-        p: `There is a particular relief in talking to somebody who does not need loneliness explained to them. LeanOn listeners are ordinary people, verified and trained in listening, who have lived through their own stretch of this — the first year in a new city, the marriage where you feel alone at the dinner table, the WFH months where you did not speak aloud until evening. They are not there to fix your life or hand you a five-step plan. They listen with real empathy, they ask the question nobody else asks, and they let the conversation go where it needs to. It is anonymous, so you are not managing your reputation while you talk. Sometimes being properly heard once is what breaks the loop.`,
+        p: `There is a particular relief in talking to somebody who does not need loneliness explained to them. LeanOn listeners are ordinary people, verified and screened for how well they listen, who have lived through their own stretch of this — the first year in a new city, the marriage where you feel alone at the dinner table, the WFH months where you did not speak aloud until evening. They are not there to fix your life or hand you a five-step plan. They listen with real empathy, they ask the question nobody else asks, and they let the conversation go where it needs to. It is anonymous, so you are not managing your reputation while you talk. Sometimes being properly heard once is what breaks the loop.`,
       },
     ],
     faqs: [
@@ -188,7 +188,7 @@ export const FEELINGS: Feeling[] = [
       },
       {
         q: "What if I just want to vent and not be given advice?",
-        a: `Say exactly that at the start and the listener will follow it. Venting without being interrupted by solutions is one of the most common reasons people use LeanOn, and listeners are trained to hold space rather than to problem-solve. You are allowed to use your session purely to put things down.`,
+        a: `Say exactly that at the start and the listener will follow it. Venting without being interrupted by solutions is one of the most common reasons people use LeanOn, and listeners are chosen for their ability to hold space rather than to problem-solve. You are allowed to use your session purely to put things down.`,
       },
     ],
     relatedSupport: [

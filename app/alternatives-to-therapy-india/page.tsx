@@ -113,7 +113,7 @@ export default function AlternativesToTherapyPage() {
 
         <section className="mt-8 rounded-3xl bg-[#0F4867] p-7 text-white sm:p-9">
           <h2 className="mb-4 text-2xl font-black">What if you do not want therapy but need support?</h2>
-          <p className="leading-7 text-white/85">You can want support without wanting therapy. Peer support is one non-clinical option: you talk with a trained person who brings lived experience rather than providing diagnosis or treatment. LeanOn provides this kind of one-to-one conversation by text or voice.</p>
+          <p className="leading-7 text-white/85">You can want support without wanting therapy. Peer support is one non-clinical option: you talk with a screened person who brings lived experience rather than providing diagnosis or treatment. LeanOn provides this kind of one-to-one conversation by text or voice.</p>
           <a href="/browse" className="mt-6 inline-flex rounded-full bg-[#FF9933] px-7 py-3.5 font-extrabold text-white">Browse peer listeners →</a>
         </section>
 

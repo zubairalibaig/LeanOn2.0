@@ -88,7 +88,7 @@ export const post = {
 
 <p>The obvious problem is that 2am is exactly when nobody is available. Friends are asleep, and you do not want to wake them for something you cannot even explain properly. Therapists have office hours. So you stay in the loop by default, not by choice.</p>
 
-<p>LeanOn exists for that gap. It is a <strong>peer support India</strong> platform where you can talk to verified peer listeners — people with lived experience of the same things, trained to listen without judgment — at the hours when overthinking actually peaks. Not clinicians in role, not friends with opinions and history with your family, but people who have been through their own version of this and can offer real, empathetic understanding of it.</p>
+<p>LeanOn exists for that gap. It is a <strong>peer support India</strong> platform where you can talk to verified peer listeners — people with lived experience of the same things, chosen for how well they listen without judgment — at the hours when overthinking actually peaks. Not clinicians in role, not friends with opinions and history with your family, but people who have been through their own version of this and can offer real, empathetic understanding of it.</p>
 
 <p>It is anonymous, which matters in a culture where the fear of being discussed is often the thing keeping you awake. You can say the thought you would never say to anyone who knows your parents. And you can find out what it feels like with a short trial session before deciding anything.</p>
 

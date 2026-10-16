@@ -215,7 +215,7 @@ export default function ForWomenPage() {
           than you have.
         </p>
         <p>
-          LeanOn is not therapy. It is trained peer support — real people who have lived through their own hard
+          LeanOn is not therapy. It is screened peer support — real people who have lived through their own hard
           seasons and learned to listen without fixing, without judging, and without making it about themselves.
           Sessions start at ₹160 for 15 minutes. The first 5-minute session free.
         </p>

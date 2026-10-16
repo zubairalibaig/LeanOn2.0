@@ -181,7 +181,7 @@ export default function MalaysiaRantPage() {
           <p>You are on the LRT back from the office. The day was frustrating in a hundred small ways.
             You want to tell someone — but who? Your partner is dealing with their own day. Your friends
             back home will not quite get the specifics.</p>
-          <p>LeanOn listeners are online now. Indian, trained, and ready to hear you out fully.</p>
+          <p>LeanOn listeners are online now. Indian, screened, and ready to hear you out fully.</p>
           <a href="/browse" className="cta-night">Talk to a listener now →</a>
         </div>
 

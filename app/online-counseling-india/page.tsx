@@ -197,7 +197,7 @@ export default function OnlineCounselingIndiaPage() {
 
         <div className="section">
           <h2>What a Peer Listener Is (And Is Not)</h2>
-          <p>Peer support is a specific and well-researched form of emotional support. A peer listener is someone who has personal lived experience with emotional difficulty — not a therapist reading from a textbook, but a person who has actually navigated hard things and been trained to support others doing the same.</p>
+          <p>Peer support is a specific and well-researched form of emotional support. A peer listener is someone who has personal lived experience with emotional difficulty — not a therapist reading from a textbook, but a person who has actually navigated hard things and been chosen for their ability to support others doing the same.</p>
 
           <h3>What a Peer Listener Does</h3>
           <ul>

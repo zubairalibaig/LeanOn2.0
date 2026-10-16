@@ -30,11 +30,11 @@ export const post = {
 
 <h2>Option 1: Peer Support (LeanOn)</h2>
 
-<p>Peer support — talking to someone who has navigated similar experiences and is trained to listen without judgment — is one of the most evidence-supported alternatives to therapy for common mental health concerns. Multiple studies have found that peer support produces outcomes comparable to professional counselling for mild to moderate anxiety, depression, and loneliness.</p>
+<p>Peer support — talking to someone who has navigated similar experiences and is chosen for their ability to listen without judgment — is one of the most evidence-supported alternatives to therapy for common mental health concerns. Multiple studies have found that peer support produces outcomes comparable to professional counselling for mild to moderate anxiety, depression, and loneliness.</p>
 
 <p>The mechanism makes sense: peer supporters offer something therapists often cannot — lived experience. When you are struggling with burnout, talking to someone who has genuinely been through it and emerged carries a different kind of weight than talking to someone whose understanding is academic.</p>
 
-<p><strong>LeanOn</strong> connects you with trained peer supporters across India who have personal experience of the issues they support — anxiety, loneliness, burnout, relationship stress, grief, career confusion, and more. Sessions are significantly more <strong>affordable therapy India</strong> alternatives, and many people find that peer support is not a stepping stone to therapy but the right level of support for what they are dealing with.</p>
+<p><strong>LeanOn</strong> connects you with screened peer supporters across India who have personal experience of the issues they support — anxiety, loneliness, burnout, relationship stress, grief, career confusion, and more. Sessions are significantly more <strong>affordable therapy India</strong> alternatives, and many people find that peer support is not a stepping stone to therapy but the right level of support for what they are dealing with.</p>
 
 <p>You can <a href="/browse">browse available supporters on LeanOn</a> by their areas of experience, and start a conversation that fits your schedule and budget. This is the <strong>lean on app</strong> built specifically for this gap in Indian mental health care.</p>
 

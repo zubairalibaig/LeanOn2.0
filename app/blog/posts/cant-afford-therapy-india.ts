@@ -68,7 +68,7 @@ export const post = {
 
 <h2>You Do Not Have to Choose Between Expensive and Nothing</h2>
 
-<p>That is what the market has told people — therapy or nothing. It is not accurate. Peer support is a third category that has been effective for centuries (in community, in religious contexts, in friendship) and is now available as a specific, trained, confidential service.</p>
+<p>That is what the market has told people — therapy or nothing. It is not accurate. Peer support is a third category that has been effective for centuries (in community, in religious contexts, in friendship) and is now available as a specific, screened, confidential service.</p>
 
 <p>If you cannot afford therapy, you are not out of options. You are in the majority of Indians who need support and need it to be accessible. The options exist. They are just not advertised as loudly as ₹3,000/session.</p>
 `,

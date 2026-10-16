@@ -62,7 +62,7 @@ export const post = {
 
 <p>When a woman talks to another woman who has been through a similar transition — who has felt the grief of leaving her own family after marriage, who has navigated the invisible load, who knows what it is to be at the centre of a family and somehow invisible within it — something different happens than when she talks to someone who has only ever observed this from outside. She does not have to explain the basic premises. She does not have to justify why it is hard. She is simply understood.</p>
 
-<p>This is the core of what <strong>peer support women</strong> on platforms like <strong>LeanOn</strong> makes possible. Not a therapist analysing your experience. Not a friend who means well but does not quite get it. A peer — a woman who has been there, who has come through, who is trained to listen with genuine understanding and without judgment.</p>
+<p>This is the core of what <strong>peer support women</strong> on platforms like <strong>LeanOn</strong> makes possible. Not a therapist analysing your experience. Not a friend who means well but does not quite get it. A peer — a woman who has been there, who has come through, who is chosen for their ability to listen with genuine understanding and without judgment.</p>
 
 <p>The <a href="/support/loneliness">loneliness</a> and <a href="/support/relationship-stress">relationship stress</a> that so many Indian women carry quietly have somewhere to go on LeanOn. And having somewhere to put it — having someone who truly receives it — changes something. Not the circumstances, not immediately. But the experience of carrying it alone shifts. And that shift, for many women, is where recovery begins.</p>
 

@@ -29,7 +29,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Will the listener judge me for ranting?',
-      acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn listeners are specifically trained not to judge. They know that a rant is a pressure release, not a statement of character. Whatever comes out &mdash; anger, frustration, unfairness, even things that are not entirely rational &mdash; they will receive it without evaluation. You are not being assessed. You are being heard.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn listeners are chosen for their ability not to judge. They know that a rant is a pressure release, not a statement of character. Whatever comes out &mdash; anger, frustration, unfairness, even things that are not entirely rational &mdash; they will receive it without evaluation. You are not being assessed. You are being heard.' },
     },
     {
       '@type': 'Question',

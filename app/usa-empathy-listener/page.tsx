@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'What is a peer listener and how is it different from a therapist?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'A peer listener is a trained, empathetic person who listens without judgment. They do not diagnose, prescribe, or give clinical advice — they simply hold space for you, ask thoughtful questions, and make you feel genuinely heard. Think of it as a warm human conversation, available on demand.',
+        text: 'A peer listener is a screened, empathetic person who listens without judgment. They do not diagnose, prescribe, or give clinical advice — they simply hold space for you, ask thoughtful questions, and make you feel genuinely heard. Think of it as a warm human conversation, available on demand.',
       },
     },
     {
@@ -46,10 +46,10 @@ const faqSchema = {
     },
     {
       '@type': 'Question',
-      name: 'Are LeanOn listeners trained to handle sensitive topics?',
+      name: 'How are LeanOn listeners chosen for sensitive topics?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn listeners go through onboarding to develop active listening skills, empathy, and the ability to hold space for difficult emotions — grief, anxiety, shame, relationship pain — without judgment.',
+        text: 'LeanOn listeners are screened, not clinically trained: a written application about their lived experience, a quiz on handling difficult conversations and a manual review by LeanOn. They are chosen for their ability to hold space for grief, anxiety, shame and relationship pain without judgment.',
       },
     },
     {
@@ -211,7 +211,7 @@ export default function UsaEmpathyListenerPage() {
           <h2>Frequently asked questions</h2>
           <div className="faq-item">
             <h3>What is a peer listener and how is it different from a therapist?</h3>
-            <p>A peer listener is a trained, empathetic person who listens without judgment. They do not
+            <p>A peer listener is a screened, empathetic person who listens without judgment. They do not
               diagnose or give clinical advice — they simply hold space for you and make you feel genuinely heard.</p>
           </div>
           <div className="faq-item">
@@ -221,9 +221,8 @@ export default function UsaEmpathyListenerPage() {
               to explain it. LeanOn listeners already know.</p>
           </div>
           <div className="faq-item">
-            <h3>Are LeanOn listeners trained to handle sensitive topics?</h3>
-            <p>Yes. LeanOn listeners go through onboarding to develop active listening skills and the ability
-              to hold space for difficult emotions — grief, anxiety, shame, relationship pain — without judgment.</p>
+            <h3>How are LeanOn listeners chosen for sensitive topics?</h3>
+            <p>LeanOn listeners are screened, not clinically trained: a written application about their lived experience, a quiz on handling difficult conversations and a manual review by LeanOn. They are chosen for their ability to hold space for grief, anxiety, shame and relationship pain without judgment.</p>
           </div>
           <div className="faq-item">
             <h3>What does a session cost from the USA?</h3>

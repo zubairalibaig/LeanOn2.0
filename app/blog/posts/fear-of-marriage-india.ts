@@ -54,7 +54,7 @@ export const post = {
 
 <p>The most useful thing, consistently, is naming it. Not the general fear of marriage — the specific source. &quot;I don&apos;t trust marriage because I watched my parents, and what I watched was this.&quot; Saying the specific thing, to someone who will hold it without immediately reassuring you out of it or using it to push their own agenda.</p>
 
-<p>A peer listener on LeanOn is trained to do exactly this — to hear what you are actually saying without reacting to it as a problem to solve. For many people with fear of marriage, it is the first time they have said the real thing out loud. That act alone tends to shift something: the fear becomes more visible, its source becomes clearer, and the question of what to actually do with it becomes easier to approach.</p>
+<p>A peer listener on LeanOn is there to do exactly this — to hear what you are actually saying without reacting to it as a problem to solve. For many people with fear of marriage, it is the first time they have said the real thing out loud. That act alone tends to shift something: the fear becomes more visible, its source becomes clearer, and the question of what to actually do with it becomes easier to approach.</p>
 
 <p>For deeper work on the patterns — particularly if the fear is affecting current relationships — a therapist specialising in attachment and family systems is the most effective resource. Peer support can be a useful first step toward that work, and sometimes a useful ongoing support alongside it.</p>
 

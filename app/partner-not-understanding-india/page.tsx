@@ -48,7 +48,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'How is this different from a therapist?',
-      acceptedAnswer: { '@type': 'Answer', text: 'A therapist is a licensed professional who treats mental health conditions over structured sessions. A peer listener is someone who has lived experience, trained to listen actively and support without advising. You do not need a diagnosis or a long-term treatment plan to use LeanOn. If you have been carrying the feeling of not being understood for a week and you need to say it out loud, that is what a peer listener is for.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'A therapist is a licensed professional who treats mental health conditions over structured sessions. A peer listener is someone who has lived experience, chosen for how well they listen actively and support without advising. You do not need a diagnosis or a long-term treatment plan to use LeanOn. If you have been carrying the feeling of not being understood for a week and you need to say it out loud, that is what a peer listener is for.' },
     },
     {
       '@type': 'Question',

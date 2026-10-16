@@ -35,7 +35,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is it safe to talk to a stranger online in India?',
-      acceptedAnswer: { '@type': 'Answer', text: 'On LeanOn, yes. Unlike random chat apps, LeanOn listeners are vetted, trained, and bound by a confidentiality agreement. They are not random strangers — they are peer listeners who have applied, been reviewed, and selected to hold space for difficult conversations. You can be anonymous; they are accountable.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'On LeanOn, yes. Unlike random chat apps, LeanOn listeners are screened, approved, and bound by a confidentiality agreement. They are not random strangers — they are peer listeners who have applied, been reviewed, and selected to hold space for difficult conversations. You can be anonymous; they are accountable.' },
     },
     {
       '@type': 'Question',
@@ -55,7 +55,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Will the stranger I talk to judge me?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Peer listeners on LeanOn are specifically trained in non-judgmental listening. Part of what makes them effective is the absence of judgment — they are not there to evaluate you, advise you, or form opinions about your choices. They are there to hear what you need to say and to be present with you through it. People consistently report feeling received rather than assessed.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Peer listeners on LeanOn are specifically screened for non-judgmental listening. Part of what makes them effective is the absence of judgment — they are not there to evaluate you, advise you, or form opinions about your choices. They are there to hear what you need to say and to be present with you through it. People consistently report feeling received rather than assessed.' },
     },
     {
       '@type': 'Question',

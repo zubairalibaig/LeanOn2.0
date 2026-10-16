@@ -5,7 +5,7 @@ export const dynamic = 'force-static'
 export const metadata: Metadata = {
   title: 'Empathy Friend India — Talk to Someone Who Actually Listens | LeanOn',
   description: 'Find an empathetic listener online in India. Real people, screened for active listening, available from ₹160. Not a therapist. Not a bot. A human.',
-  keywords: ['empathy friend india', 'empathetic listener online india', 'compassionate listener online india', 'trained listener india', 'non-judgmental support india', 'online peer support india', 'peer mentoring india', 'community support india'],
+  keywords: ['empathy friend india', 'empathetic listener online india', 'compassionate listener online india', 'screened listener india', 'non-judgmental support india', 'online peer support india', 'peer mentoring india', 'community support india'],
   alternates: { canonical: 'https://www.leanon.app/empathy-friend-india', languages: { 'en-IN': 'https://www.leanon.app/empathy-friend-india' } },
   openGraph: {
     title: 'Empathy Friend India — Talk to Someone Who Actually Listens | LeanOn',
@@ -41,7 +41,7 @@ const faqSchema = {
       name: 'What is active listening?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Active listening is the practice of fully focusing on what someone is saying — not planning your response, not judging, not advising — and reflecting back what you hear to let them know they have been understood. LeanOn listeners are specifically trained in this skill. The result is a conversation where you feel heard rather than managed.',
+        text: 'Active listening is the practice of fully focusing on what someone is saying — not planning your response, not judging, not advising — and reflecting back what you hear to let them know they have been understood. LeanOn listeners are specifically screened for this skill. The result is a conversation where you feel heard rather than managed.',
       },
     },
     {
@@ -198,7 +198,7 @@ export default function EmpathyFriendIndiaPage() {
 
         <div className="cta-card">
           <h2>Find Your Empathy Friend</h2>
-          <p>Real people, trained to listen, from ₹160. First 5 minutes free.</p>
+          <p>Real people, chosen for how well they listen, from ₹160. First 5 minutes free.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse listeners →</button></a>
             <a href="/auth"><button className="btn-secondary">Join LeanOn →</button></a>
@@ -217,11 +217,11 @@ export default function EmpathyFriendIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">What is active listening?</div>
-            <div className="faq-a">Active listening is the practice of fully focusing on what someone is saying — not planning your response, not judging, not advising — and reflecting back what you hear. LeanOn listeners are specifically trained in this skill.</div>
+            <div className="faq-a">Active listening is the practice of fully focusing on what someone is saying — not planning your response, not judging, not advising — and reflecting back what you hear. LeanOn listeners are specifically screened for this skill.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is this therapy?</div>
-            <div className="faq-a">No. LeanOn is peer support, not therapy. Listeners are not licensed mental health professionals. They are real people with lived experience trained to listen and hold space. If you need clinical care, please see a qualified professional.</div>
+            <div className="faq-a">No. LeanOn is peer support, not therapy. Listeners are not licensed mental health professionals. They are real people with lived experience, chosen for how well they listen and hold space. If you need clinical care, please see a qualified professional.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">What if the listener does not understand my problem?</div>

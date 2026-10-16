@@ -73,7 +73,7 @@ export default function LeanOnAppMentalHealth() {
 
         <div className="section">
           <h2>Is LeanOn safe?</h2>
-          <p>Yes. LeanOn is designed with privacy and safety at its core. Your identity is protected — only your first name is ever shown to a listener. Sessions are private and never shared. AI moderation monitors for crisis signals and surfaces emergency helplines (NIMHANS: 080-46110007, Tele-MANAS: 14416) when needed. Every listener is manually verified before being approved.</p>
+          <p>Yes. LeanOn is designed with privacy and safety at its core. Your identity is protected — a listener sees only the name you choose. Conversations are never shared outside LeanOn. If words linked to self-harm appear in a chat, LeanOn shows emergency helplines (NIMHANS: 080-46110007, Tele-MANAS: 14416) and flags the session for review. Every listener is manually verified before being approved.</p>
         </div>
 
         <div className="cta-box">

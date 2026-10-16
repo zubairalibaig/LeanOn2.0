@@ -30,7 +30,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is this safe?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners are vetted, trained, and bound by confidentiality. Sessions are private &mdash; 1:1 voice calls that nobody else can hear. Your information is protected. You share only your first name and nothing else unless you choose to.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn listeners are screened, approved by LeanOn, and bound by confidentiality. Sessions are private &mdash; 1:1 voice calls that nobody else can hear. Your information is protected. A listener sees only the name you choose, and nothing else unless you share it.' },
     },
     {
       '@type': 'Question',
@@ -135,7 +135,7 @@ export default function StrangerFriendIndiaPage() {
           <h2>Why Strangers Are Sometimes Better Than Friends for Hard Conversations</h2>
           <p>Think about what makes honest conversation so difficult with the people you know. They have opinions about the person you&apos;re talking about. They will remember what you said. They might tell someone. They have their own feelings about your situation, which colour everything they hear.</p>
           <p>The most honest conversations of people&apos;s lives often happen with someone they will never see again &mdash; a fellow passenger on a long train journey, someone at a bus stop, a chance encounter. The reason is simple: there is no social cost. Nothing you say will change how someone treats you tomorrow.</p>
-          <p>A LeanOn listener gives you this without the randomness. They are real, trained, accountable &mdash; and completely outside your social circle.</p>
+          <p>A LeanOn listener gives you this without the randomness. They are real, screened, accountable &mdash; and completely outside your social circle.</p>
         </div>
 
         <div className="section">
@@ -149,7 +149,7 @@ export default function StrangerFriendIndiaPage() {
             <li>Indian &mdash; they understand your cultural context, your family dynamics, your pressures</li>
             <li>Accountable to the platform</li>
           </ul>
-          <p>You get the freedom of a stranger conversation with the safety of a structured, trained, accountable listener.</p>
+          <p>You get the freedom of a stranger conversation with the safety of a screened, accountable listener.</p>
         </div>
 
         <div className="section">

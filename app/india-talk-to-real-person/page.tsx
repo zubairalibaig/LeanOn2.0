@@ -228,7 +228,7 @@ export default function IndiaTalkToRealPersonPage() {
             </div>
             <div className="compare-col human">
               <h3>💙 LeanOn real listener</h3>
-              <p>A real Indian human who has applied, been reviewed, and trained. They have lived through the pressures of Indian life and genuinely want to hear you.</p>
+              <p>A real Indian human who has applied, been screened and been approved. They have lived through the pressures of Indian life and genuinely want to hear you.</p>
             </div>
           </div>
           <div className="compare-row">

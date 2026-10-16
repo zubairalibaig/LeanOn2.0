@@ -274,7 +274,7 @@ export default function EmotionalSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How does online emotional support work on LeanOn?</div>
-            <div className="faq-a">You browse peer listeners, pick someone whose lived experience resonates with yours, and start a session via text or voice. The listener is a real person trained in empathetic support. Sessions start instantly with no booking required, and a short trial session is available for new users.</div>
+            <div className="faq-a">You browse peer listeners, pick someone whose lived experience resonates with yours, and start a session via text or voice. The listener is a real person screened for empathetic support. Sessions start instantly with no booking required, and a short trial session is available for new users.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is online emotional support as effective as in-person support?</div>
@@ -292,7 +292,7 @@ export default function EmotionalSupportPage() {
 
         {/* Disclaimer */}
         <div className="disclaimer">
-          <p><strong>Peer support is not a substitute for professional mental health care.</strong> LeanOn listeners are trained peers, not licensed therapists or counsellors. If you are in crisis or experiencing thoughts of self-harm, please contact a professional immediately.</p>
+          <p><strong>Peer support is not a substitute for professional mental health care.</strong> LeanOn listeners are screened peers, not licensed therapists or counsellors. If you are in crisis or experiencing thoughts of self-harm, please contact a professional immediately.</p>
           <p><strong>Crisis helplines in India:</strong> NIMHANS — <a href="tel:08046110007" style={{color:'#7A5020',fontWeight:700}}>080-46110007</a> &nbsp;|&nbsp; Tele-MANAS — <a href="tel:14416" style={{color:'#7A5020',fontWeight:700}}>14416</a> (free · 24/7 · Govt of India)</p>
         </div>
 

@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Empathy Listener for Indians in the Gulf | LeanOn',
-  description: 'Feeling unheard in the Gulf? LeanOn empathy listeners are trained Indians who give you their full attention — in your language, without judgment — so you feel genuinely understood.',
+  description: 'Feeling unheard in the Gulf? LeanOn empathy listeners are screened Indians who give you their full attention — in your language, without judgment — so you feel genuinely understood.',
   keywords: [
     'empathy listener Gulf Indian', 'feeling unheard Gulf', 'someone to understand me UAE',
     'Indian empathy support Gulf', 'peer listener Gulf Indians', 'emotional support Gulf',
@@ -152,7 +152,7 @@ export default function MiddleEastEmpathyListenerPage() {
         <h1>You Want to Be Heard.<br />Not Fixed. Not Advised. Just Heard.</h1>
         <p className="lead">
           In the Gulf, you are often surrounded by people — yet truly seen by almost none of them.
-          LeanOn empathy listeners are trained Indians who give you their full, undivided attention,
+          LeanOn empathy listeners are screened Indians who give you their full, undivided attention,
           in your own language, with genuine care. Because feeling understood is not a luxury. It is
           a basic human need.
         </p>

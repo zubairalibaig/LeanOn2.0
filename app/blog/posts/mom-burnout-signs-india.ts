@@ -66,7 +66,7 @@ The first thing that helps is naming it — saying, to someone, that you are bur
 
 This is harder than it sounds. Many mothers in India have not said it out loud to anyone, because there has not been a safe space to do so.
 
-If you need somewhere to say what is actually true — without being advised, without being judged, without it being turned into a family conversation — [LeanOn peer listeners](/browse) are trained people who will simply listen. Many of them are mothers. Many of them understand from the inside what you are carrying.
+If you need somewhere to say what is actually true — without being advised, without being judged, without it being turned into a family conversation — [LeanOn peer listeners](/browse) are screened people who will simply listen. Many of them are mothers. Many of them understand from the inside what you are carrying.
 
 Anonymous. Available now. First 5 minutes free.
   `.trim(),

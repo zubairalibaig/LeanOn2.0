@@ -66,7 +66,7 @@ export const post = {
 
 <p>LeanOn exists for exactly the gap this piece has been describing — the space between having people and having <strong>someone to talk to</strong>.</p>
 
-<p>Our listeners are verified peers, not therapists and not AI. They are real people who have lived through their own difficult stretches — loneliness, burnout, family pressure, heartbreak, moving to a city where they knew nobody — and who have trained to listen with empathy rather than advice. You can <a href="/browse">browse peer listeners</a> and pick someone whose experience actually resembles yours.</p>
+<p>Our listeners are verified peers, not therapists and not AI. They are real people who have lived through their own difficult stretches — loneliness, burnout, family pressure, heartbreak, moving to a city where they knew nobody — and who are chosen for how well they listen with empathy rather than advice. You can <a href="/browse">browse peer listeners</a> and pick someone whose experience actually resembles yours.</p>
 
 <p>It is anonymous, and first names only. Nobody in your life ever knows. Nothing you say enters your family network, your workplace, or your friend group, because your listener is connected to none of them. Sessions run 24/7, because this feeling rarely respects office hours. A short trial session is available for new users — enough to find out whether being heard feels the way you hoped.</p>
 

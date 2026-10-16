@@ -38,7 +38,7 @@ export const post = {
 
 <h2>The LeanOn Model for Venting</h2>
 
-<p>A LeanOn vent session is not therapy. It is not a long conversation about your childhood. It is a trained listener who is there, right now, to receive exactly what you need to get out — and to stay with you through it without judgment, advice, or agenda.</p>
+<p>A LeanOn vent session is not therapy. It is not a long conversation about your childhood. It is a screened listener who is there, right now, to receive exactly what you need to get out — and to stay with you through it without judgment, advice, or agenda.</p>
 
 <p>Most people who book a 15-minute session specifically to vent report that the shift happens in the first 10. The last five minutes are often the clearest thinking they&apos;ve done all day.</p>
 

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Empathy Listening for Indians in Singapore — Feel Truly Heard | LeanOn',
-    description: 'Feeling unheard is one of the deepest forms of loneliness. LeanOn empathy listeners are trained Indian peers who give you their full attention — in your language, without judgment.',
+    description: 'Feeling unheard is one of the deepest forms of loneliness. LeanOn empathy listeners are screened Indian peers who give you their full attention — in your language, without judgment.',
     url: 'https://www.leanon.app/singapore-empathy-listener',
     siteName: 'LeanOn',
     type: 'article',
@@ -156,8 +156,7 @@ export default function SingaporeEmpathyListenerPage() {
         <h1>You Want Someone Who Truly Listens.<br />Not Just Hears.</h1>
         <p className="lead">
           Feeling unheard is one of the loneliest experiences there is. You speak, people respond —
-          but you still leave the conversation feeling unseen. LeanOn empathy listeners are trained
-          Indian peers in Singapore who do one thing exceptionally well: give you their full, genuine
+          but you still leave the conversation feeling unseen. LeanOn empathy listeners are screened Indian peers, based in India, who do one thing exceptionally well: give you their full, genuine
           attention.
         </p>
 
@@ -231,7 +230,7 @@ export default function SingaporeEmpathyListenerPage() {
           <div className="faq-item">
             <h3>What is empathy listening and how is it different from regular conversation?</h3>
             <p>Empathy listening means the listener&apos;s whole focus is on understanding your experience —
-              not waiting for their turn, not thinking about advice. LeanOn listeners are trained in active
+              not waiting for their turn, not thinking about advice. LeanOn listeners are screened for active
               listening, reflective questioning, and creating space where you feel genuinely understood.</p>
           </div>
           <div className="faq-item">

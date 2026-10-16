@@ -50,7 +50,7 @@ const faqSchema = {
       name: 'Is LeanOn an AI?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'No. LeanOn is entirely human. Every listener on LeanOn is a real person — a trained peer who has been through their own struggles and genuinely wants to support others. There is no AI, no bots, no automated replies.',
+        text: 'No. LeanOn is entirely human. Every listener on LeanOn is a real person — a screened peer who has been through their own struggles and genuinely wants to support others. There is no AI, no bots, no automated replies.',
       },
     },
     {
@@ -282,7 +282,7 @@ export default function WysaAlternativePage() {
           </div>
           <div className="faq-item">
             <h3>Is LeanOn an AI?</h3>
-            <p>No. LeanOn is entirely human. Every listener on LeanOn is a real person — a trained peer who has
+            <p>No. LeanOn is entirely human. Every listener on LeanOn is a real person — a screened peer who has
               been through their own struggles and genuinely wants to support others. There is no AI, no bots,
               no automated replies.</p>
           </div>

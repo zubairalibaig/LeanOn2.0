@@ -173,7 +173,7 @@ export default function FeelingOverwhelmedPage() {
           <h2>You Don&apos;t Need to Have It Figured Out to Start Talking</h2>
           <p>One of the things that stops people from reaching out is the feeling that they do not have a clear enough reason. That they need to have a coherent story, a specific problem, a reason that justifies taking up someone&apos;s time.</p>
           <p>You do not.</p>
-          <p>It is completely fine to start a session with &quot;I don&apos;t even know where to begin.&quot; That sentence is a beginning. Listeners on LeanOn are trained for exactly this — not to rush you toward a point, not to ask you to explain yourself, but to sit with you in the not-knowing and let the shape of what you are carrying emerge at its own pace.</p>
+          <p>It is completely fine to start a session with &quot;I don&apos;t even know where to begin.&quot; That sentence is a beginning. Listeners on LeanOn are there for exactly this — not to rush you toward a point, not to ask you to explain yourself, but to sit with you in the not-knowing and let the shape of what you are carrying emerge at its own pace.</p>
           <p>You do not need to arrive with clarity. You just need to arrive.</p>
         </div>
 
@@ -189,7 +189,7 @@ export default function FeelingOverwhelmedPage() {
 
         <div className="cta-card">
           <h2>You don&apos;t have to keep carrying this alone.</h2>
-          <p>A real peer listener is available right now — anonymous, judgment-free, and trained to sit with you exactly where you are. First 5 minutes are free.</p>
+          <p>A real peer listener is available right now — anonymous, judgment-free, and ready to sit with you exactly where you are. First 5 minutes are free.</p>
           <div className="cta-buttons">
             <a href="/auth" className="btn-cta">Talk to someone now →</a>
             <a href="/browse" className="btn-cta-outline">Browse listeners →</a>

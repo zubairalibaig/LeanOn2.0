@@ -60,7 +60,7 @@ export const post = {
 
 <p>If you are in this situation, the first thing to know is that connection can be built — it just requires starting somewhere. And sometimes, the right place to start is with someone who has no prior relationship with you, no history, no stakes. Someone who can offer a clear, attentive presence precisely because they are not entangled in your life.</p>
 
-<p>This is part of what peer support platforms like <strong>LeanOn</strong> make possible. LeanOn connects you with people who have navigated difficult experiences themselves — loneliness, anxiety, burnout, grief, relationship strain — and trained to listen without judgment. There is no obligation to know them, no fear of how it will affect your social reputation. You can lean on them while you are building the other connections in your life. Or you can lean on them precisely because sometimes what you need is someone outside your circle.</p>
+<p>This is part of what peer support platforms like <strong>LeanOn</strong> make possible. LeanOn connects you with people who have navigated difficult experiences themselves — loneliness, anxiety, burnout, grief, relationship strain — and chosen for how well they listen without judgment. There is no obligation to know them, no fear of how it will affect your social reputation. You can lean on them while you are building the other connections in your life. Or you can lean on them precisely because sometimes what you need is someone outside your circle.</p>
 
 <h2>Finding Your Person to Lean On</h2>
 
@@ -70,6 +70,6 @@ export const post = {
 
 <p>Leaning on someone begins before the crisis. It begins in the ordinary conversations where you say something true instead of something comfortable. It begins in the moment you decide that being known matters more than being impressive.</p>
 
-<p>And if you need somewhere to start right now, LeanOn is there. <a href="/browse">Browse real people who are trained to listen</a>. Not therapists — peers. People who understand what it is to struggle and who have chosen to offer that understanding to others. Sometimes the most important step is simply deciding that you do not have to carry this alone. And then actually reaching out to someone who can help you carry it.</p>
+<p>And if you need somewhere to start right now, LeanOn is there. <a href="/browse">Browse real people who are chosen for their ability to listen</a>. Not therapists — peers. People who understand what it is to struggle and who have chosen to offer that understanding to others. Sometimes the most important step is simply deciding that you do not have to carry this alone. And then actually reaching out to someone who can help you carry it.</p>
   `.trim(),
 }

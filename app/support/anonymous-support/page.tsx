@@ -150,7 +150,7 @@ export default function AnonymousSupportPage() {
           <div className="privacy-badge">Your identity stays private — always</div>
           <p className="tag">Peer Support · Anonymous Emotional Support India</p>
           <h1>Anonymous Emotional Support in India — Be Heard <em>Without Fear</em></h1>
-          <p className="lead">You should not have to choose between getting support and protecting your privacy. On LeanOn, you connect with real peer listeners using only your first name — no last name, no photo, no personal details shared. Just honest conversation, completely protected.</p>
+          <p className="lead">You should not have to choose between getting support and protecting your privacy. On LeanOn, you connect with real peer listeners using only the name you choose — no last name, no photo, no personal details shared.</p>
         </div>
 
         {/* What Anonymous Support Means */}
@@ -189,7 +189,7 @@ export default function AnonymousSupportPage() {
           <p>LeanOn was built with privacy as a design principle, not an afterthought. Here is specifically how your anonymity is protected:</p>
 
           <h3>First Name Only</h3>
-          <p>When you create an account and join a session, only your first name (or the name you choose to use) is visible to your listener. No last name, no profile photo, no location, no workplace — nothing that identifies you beyond what you choose to share yourself.</p>
+          <p>When you create an account and join a session, only the name you choose to use is visible to your listener. No last name, no profile photo, no location, no workplace — nothing that identifies you beyond what you choose to share yourself.</p>
 
           <h3>Phone Number Authentication Without Exposure</h3>
           <p>LeanOn uses phone number OTP for authentication — a necessary step to maintain platform integrity. But your phone number is never shared with listeners and is stored only in encrypted form for authentication purposes.</p>
@@ -301,7 +301,7 @@ export default function AnonymousSupportPage() {
 
         {/* Disclaimer */}
         <div className="disclaimer">
-          <p><strong>Peer support is not a substitute for professional mental health care.</strong> LeanOn listeners are trained peers, not licensed therapists or counsellors. If you are in crisis or experiencing thoughts of self-harm, please contact a professional immediately.</p>
+          <p><strong>Peer support is not a substitute for professional mental health care.</strong> LeanOn listeners are screened peers, not licensed therapists or counsellors. If you are in crisis or experiencing thoughts of self-harm, please contact a professional immediately.</p>
           <p><strong>Crisis helplines in India:</strong> NIMHANS — <a href="tel:08046110007" style={{color:'#7A5020',fontWeight:700}}>080-46110007</a> &nbsp;|&nbsp; Tele-MANAS — <a href="tel:14416" style={{color:'#7A5020',fontWeight:700}}>14416</a> (free · 24/7 · Govt of India)</p>
         </div>
 

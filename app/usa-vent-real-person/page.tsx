@@ -202,7 +202,7 @@ export default function USAVentRealPersonPage() {
             neither of them fully works: what you need is to be heard by a real human being.
           </p>
           <p>
-            LeanOn gives you a real person to vent to — vetted, trained, and ready. Not in weeks. Now.
+            LeanOn gives you a real person to vent to — screened, approved, and ready. Not in weeks. Now.
           </p>
         </div>
 

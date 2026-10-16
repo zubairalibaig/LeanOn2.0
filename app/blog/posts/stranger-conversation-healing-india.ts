@@ -24,7 +24,7 @@ export const post = {
 
 <h2>What Makes a Stranger Safe</h2>
 <p>Not all strangers are equally safe for this kind of conversation. What makes the train passenger conversation work is a specific set of conditions: no shared social network, a natural endpoint to the interaction (the journey ends), and a basic sense that the person is not going to do anything harmful with what you tell them.</p>
-<p>LeanOn formalises these conditions. The listener has no connection to your social world. The session is time-limited. Confidentiality is explicit and binding. The listener is trained to receive difficult things without judgment.</p>
+<p>LeanOn formalises these conditions. The listener has no connection to your social world. The session is time-limited. Confidentiality is explicit and binding. The listener is chosen for their ability to receive difficult things without judgment.</p>
 <p>These conditions produce the same psychological effect as the best stranger conversation &mdash; but reliably, on demand, whenever you need it, rather than depending on the luck of the journey.</p>
 
 <h2>The Things That Get Said</h2>

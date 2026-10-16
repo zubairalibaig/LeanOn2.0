@@ -29,7 +29,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is LeanOn talk therapy?',
-      acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn is peer support, not clinical talk therapy. Talk therapy (psychotherapy, CBT, etc.) is delivered by licensed mental health professionals and involves clinical assessment and treatment. LeanOn peer listeners are trained real people who listen, empathise, and hold space &mdash; but they do not assess or treat. For clinical conditions, please see a professional.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn is peer support, not clinical talk therapy. Talk therapy (psychotherapy, CBT, etc.) is delivered by licensed mental health professionals and involves clinical assessment and treatment. LeanOn peer listeners are screened, real people who listen, empathise, and hold space &mdash; but they do not assess or treat. For clinical conditions, please see a professional.' },
     },
     {
       '@type': 'Question',
@@ -138,7 +138,7 @@ export default function TalkTherapyIndiaPage() {
           <h2>What Talk Therapy Actually Is</h2>
           <p>In the clinical sense, &ldquo;talk therapy&rdquo; refers to psychotherapy &mdash; structured interventions like CBT (Cognitive Behavioural Therapy), psychodynamic therapy, or person-centred counselling, delivered by licensed professionals. These are effective for clinical conditions and require trained therapists.</p>
           <p>But at a broader level, &ldquo;talk therapy&rdquo; simply means using language &mdash; talking, with a listener &mdash; to process experience. This broader category includes formal therapy but also peer support, mentoring, supportive friendships, and any conversation where being heard leads to emotional processing.</p>
-          <p>LeanOn operates in this broader category. It is not clinical therapy &mdash; listeners are trained peers, not licensed professionals. But it is talk: real voice conversations that use the mechanism of language and listener to help people process what they are carrying.</p>
+          <p>LeanOn operates in this broader category. It is not clinical therapy &mdash; listeners are screened peers, not licensed professionals. But it is talk: real voice conversations that use the mechanism of language and listener to help people process what they are carrying.</p>
         </div>
 
         <div className="section">

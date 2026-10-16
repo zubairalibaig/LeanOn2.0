@@ -56,7 +56,7 @@ const faqSchema = {
       name: 'Is LeanOn peer support or therapy?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn is peer support — not therapy. Our listeners are trained real people with lived experience, available 24/7 from ₹160. They listen without judgment. For clinical treatment, a therapist or psychiatrist is the right path. For being heard and feeling less alone right now, LeanOn is here.',
+        text: 'LeanOn is peer support — not therapy. Our listeners are screened, real people with lived experience, available 24/7 from ₹160. They listen without judgment. For clinical treatment, a therapist or psychiatrist is the right path. For being heard and feeling less alone right now, LeanOn is here.',
       },
     },
     {
@@ -229,7 +229,7 @@ export default function DontWantToGetOutOfBedPage() {
 
         <h2>Who LeanOn Listeners Are</h2>
         <p>
-          LeanOn listeners are trained people who have their own lived experience with emotional difficulty.
+          LeanOn listeners are screened people who have their own lived experience with emotional difficulty.
           Not therapists — but real humans who understand what it is like to dread the morning,
           to go through the motions, to feel like you are the only one carrying this particular weight.
         </p>

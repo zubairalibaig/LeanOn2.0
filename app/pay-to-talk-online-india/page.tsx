@@ -48,7 +48,7 @@ const faqSchema = {
       name: 'Is it anonymous?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn uses phone OTP for sign-in, but your phone number is not shown to listeners; you can use a display name. This does not mean you are anonymous to the platform. Read the Privacy Policy for details about data handling, AI moderation and your choices.',
+        text: 'LeanOn uses phone OTP for sign-in, but your phone number is not shown to listeners; you can use a display name. This does not mean you are anonymous to the platform. Read the Privacy Policy for details about data handling, safety checks and your choices.',
       },
     },
     {
@@ -171,7 +171,7 @@ export default function PayToTalkOnlineIndiaPage() {
             Paying for a conversation is a personal choice. LeanOn serves a different need from astrology or prediction services: a real peer listener focused on hearing you out, without making predictions or providing clinical treatment.
           </p>
           <p>
-            LeanOn focuses on a real person trained in peer listening. Browse the live directory to see who is currently available; a session begins when a listener accepts your request.
+            LeanOn focuses on a real, screened peer listener. Browse the live directory to see who is currently available; a session begins when a listener accepts your request.
           </p>
         </div>
 

@@ -46,7 +46,7 @@ export const post = {
 
 <h2>What Peer Listening Actually Is</h2>
 
-<p>A peer listener on LeanOn is not a therapist. They are not trying to diagnose you, fix you, or deliver clinical interventions. What they offer is something more fundamental: they have been through something like what you are going through, they were trained to listen actively rather than perform listening, and they show up for your session as a full human being rather than a response generator.</p>
+<p>A peer listener on LeanOn is not a therapist. They are not trying to diagnose you, fix you, or deliver clinical interventions. What they offer is something more fundamental: they have been through something like what you are going through, they were chosen for their ability to listen actively rather than perform listening, and they show up for your session as a full human being rather than a response generator.</p>
 
 <p>They have sat with the specific texture of grief that comes from losing a parent while being far from home. They have navigated the particular loneliness of success — the kind nobody believes in. They have been the person in the marriage who smiles at dinner parties while something is quietly dying. They know these things not from a dataset but from their life.</p>
 

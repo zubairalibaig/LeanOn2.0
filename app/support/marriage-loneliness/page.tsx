@@ -197,7 +197,7 @@ export default function MarriageLonelinessSupportPage() {
           <p>We want to be completely honest with you about this, because your marriage matters too much for vague promises.</p>
 
           <h3>LeanOn Is Not Couples Counselling or Marriage Therapy</h3>
-          <p>We do not do joint sessions, mediation, or structured marital work. Our listeners are trained peers, not licensed therapists or marriage counsellors, and a LeanOn session is not a substitute for either. What we offer is one hour of the week where you are the one being listened to.</p>
+          <p>We do not do joint sessions, mediation, or structured marital work. Our listeners are screened peers, not licensed therapists or marriage counsellors, and a LeanOn session is not a substitute for either. What we offer is one hour of the week where you are the one being listened to.</p>
 
           <h3>Our Listeners Do Not Give Relationship Advice or Take Sides</h3>
           <p>No listener will tell you to stay, to leave, to confront, or to compromise. They will not diagnose your partner from one side of the story, and they will never suggest what you should do about your marriage. Those decisions are yours, and they deserve far more context than any stranger has. What a listener offers is empathetic attention while you think out loud.</p>

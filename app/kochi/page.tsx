@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'Is LeanOn peer support different from therapy?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn is peer support, not therapy. Listeners are trained peers — not licensed therapists. More accessible (from ₹160 for 15 minutes), available 24/7, and completely anonymous. For clinical mental health concerns, professional help is always recommended.',
+        text: 'Yes. LeanOn is peer support, not therapy. Listeners are screened peers — not licensed therapists. More accessible (from ₹160 for 15 minutes), available 24/7, and completely anonymous. For clinical mental health concerns, professional help is always recommended.',
       },
     },
   ],
@@ -213,7 +213,7 @@ export default function KochiPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn peer support different from therapy?</div>
-            <div className="faq-a">Yes. LeanOn is peer support, not therapy. Listeners are trained peers — not licensed therapists. Accessible from ₹160 for 15 minutes, available 24/7, anonymous.</div>
+            <div className="faq-a">Yes. LeanOn is peer support, not therapy. Listeners are screened peers — not licensed therapists. Accessible from ₹160 for 15 minutes, available 24/7, anonymous.</div>
           </div>
         </div>
 
@@ -232,7 +232,7 @@ export default function KochiPage() {
         <div className="disclaimer">
           <p><strong>LeanOn is peer support, not a crisis service.</strong> If you are in immediate distress or having thoughts of self-harm, please reach out to a professional helpline immediately.</p>
           <p><strong>NIMHANS:</strong> <a href="tel:08046110007">080-46110007</a> &nbsp;|&nbsp; <strong>Tele-MANAS (Govt. of India):</strong> <a href="tel:14416">14416</a> (free · 24/7)</p>
-          <p>LeanOn listeners are trained peers, not licensed therapists or medical professionals.</p>
+          <p>LeanOn listeners are screened peers, not licensed therapists or medical professionals.</p>
         </div>
       </div>
     </>

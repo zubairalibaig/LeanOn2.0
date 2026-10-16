@@ -156,7 +156,7 @@ export default function AnonymousChatIndiaPage() {
           <p className="tag">Anonymous · Private · Real People</p>
           <div className="badge">No Name. No Face. No History.</div>
           <h1>Say What You Can&apos;t Say to <em>Anyone You Know</em></h1>
-          <p className="lead">Some things can&apos;t go to your partner, your best friend, or your parents. On LeanOn, you talk to a real peer listener who has no connection to your life — and what you say stays in the session. Anonymous chat with a trained human, not a stranger from the internet.</p>
+          <p className="lead">Some things can&apos;t go to your partner, your best friend, or your parents. On LeanOn, you talk to a real peer listener who has no connection to your life — and what you say stays in the session. Anonymous chat with a screened human, not a stranger from the internet.</p>
           <div className="hero-cta">
             <a href="/auth"><button className="btn-primary" style={{fontFamily:'Nunito,sans-serif'}}>Chat anonymously — first 5 min free →</button></a>
             <a href="/browse"><button className="btn-secondary" style={{fontFamily:'Nunito,sans-serif',background:'var(--teal)',border:'none',boxShadow:'0 4px 16px rgba(26,143,160,0.25)'}}>Browse listeners →</button></a>
@@ -168,7 +168,7 @@ export default function AnonymousChatIndiaPage() {
           <h2>When You Cannot Tell Anyone You Know</h2>
           <p>There is a specific kind of tension that comes with having something you cannot say out loud — not to your partner because it involves them, not to your best friend because they will tell other people, not to your parents because they will panic or judge. The thought sits inside you, getting heavier.</p>
           <p>This is exactly what anonymous chat is for. The relief of saying it to someone who has no stake in your life, no shared history with the people you are talking about, and no way to carry it back into your world. The session ends. The conversation does not follow you.</p>
-          <p>LeanOn is not a random chat app. The anonymity here is intentional — the platform is built around it. You are anonymous to your listener. What makes it different is that your listener is verified, trained, and real. You get the freedom of anonymity with the quality of a screened human being on the other end.</p>
+          <p>LeanOn is not a random chat app. The anonymity here is intentional — the platform is built around it. You are anonymous to your listener. What makes it different is that your listener is verified, screened and real. You get the freedom of anonymity with the quality of a screened human being on the other end.</p>
         </div>
 
         {/* Why anonymity matters */}
@@ -310,7 +310,7 @@ export default function AnonymousChatIndiaPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Say It to Someone Who Will Never Tell</h2>
-          <p>Your first 5 minutes are free. Use a name, use an alias — it does not matter. A real, trained listener is on the other side. What you say stays in the session.</p>
+          <p>Your first 5 minutes are free. Use a name, use an alias — it does not matter. A real, screened listener is on the other side. What you say stays in the session.</p>
           <div className="cta-btns">
             <a href="/auth"><button className="btn-primary">Chat anonymously — first 5 min free →</button></a>
             <a href="/browse"><button className="btn-secondary">Browse listeners →</button></a>

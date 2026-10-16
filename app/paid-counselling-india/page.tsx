@@ -256,7 +256,7 @@ export default function PaidCounsellingIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">What is the difference between a counsellor and a peer listener?</div>
-            <div className="faq-a">A counsellor is a licensed professional who can diagnose and treat conditions. A peer listener is a real person with lived experience trained to listen and hold space — not to diagnose or prescribe. LeanOn provides peer support, not clinical counselling.</div>
+            <div className="faq-a">A counsellor is a licensed professional who can diagnose and treat conditions. A peer listener is a real person with lived experience, chosen for how well they listen and hold space — not to diagnose or prescribe. LeanOn provides peer support, not clinical counselling.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is this covered by insurance?</div>

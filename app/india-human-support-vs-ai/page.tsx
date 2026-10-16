@@ -97,7 +97,7 @@ const faqSchema = {
       name: 'How is LeanOn different from AI chatbots?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn listeners are real humans who have applied, been reviewed, and trained. They bring lived experience, not language models. When you share your pain on LeanOn, a real person receives it.',
+        text: 'LeanOn listeners are real humans who have applied, been screened and been approved. They bring lived experience, not language models. When you share your pain on LeanOn, a real person receives it.',
       },
     },
   ],
@@ -215,7 +215,7 @@ export default function IndiaHumanSupportVsAIPage() {
             </div>
             <div className="compare-col human">
               <h3>💙 LeanOn real listener</h3>
-              <p>A real Indian human who has applied, been reviewed, and trained. Has genuinely lived through Indian family pressure, career stress, metro city loneliness, and more.</p>
+              <p>A real Indian human who has applied, been screened and been approved. Has genuinely lived through Indian family pressure, career stress, metro city loneliness, and more.</p>
             </div>
           </div>
           <div className="compare-row">
@@ -323,7 +323,7 @@ export default function IndiaHumanSupportVsAIPage() {
           </div>
           <div className="faq-item">
             <h3>How is LeanOn different from AI chatbots?</h3>
-            <p>LeanOn listeners are real humans who have applied, been reviewed, and trained. They bring lived experience, not language models. When you share your pain on LeanOn, a real person receives it.</p>
+            <p>LeanOn listeners are real humans who have applied, been screened and been approved. They bring lived experience, not language models. When you share your pain on LeanOn, a real person receives it.</p>
           </div>
         </div>
 

@@ -174,7 +174,7 @@ export default function StressManagementIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">What is the difference between venting and peer support?</div>
-            <div className="faq-a">Venting is releasing pressure. Peer support is doing that with someone trained to hold space and reflect — so the release has somewhere to go and you come away with perspective as well as relief.</div>
+            <div className="faq-a">Venting is releasing pressure. Peer support is doing that with someone chosen for their ability to hold space and reflect — so the release has somewhere to go and you come away with perspective as well as relief.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">How is this different from therapy?</div>

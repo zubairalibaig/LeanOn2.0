@@ -93,7 +93,7 @@ export default function OmanNriSupportPage() {
           There is a specific loneliness that comes with being an NRI in the Gulf: you are successful by every external measure, your family is proud, your friends back home assume you are living a good life — and you are still carrying something heavy that you cannot quite put into words or share with anyone around you.
         </p>
         <p style={{ color: '#444', lineHeight: 1.7, marginBottom: 32 }}>
-          The financial pressure is real. The distance from family is real. The isolation of not having anyone close enough to say the true thing to is real. LeanOn is designed for exactly this — not therapy, not a helpline, but a trained human listener who has lived something similar and will not minimise what you are carrying.
+          The financial pressure is real. The distance from family is real. The isolation of not having anyone close enough to say the true thing to is real. LeanOn is designed for exactly this — not therapy, not a helpline, but a screened human listener who has lived something similar and will not minimise what you are carrying.
         </p>
 
         <h2 style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: 16 }}>Frequently Asked Questions</h2>

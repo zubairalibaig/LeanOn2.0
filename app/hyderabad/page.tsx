@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'How is LeanOn different from other mental health apps available in Hyderabad?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Most mental health apps are either therapy platforms (high cost, scheduled sessions, clinical focus) or meditation apps (useful but passive). LeanOn is peer support — real humans who have been through what you are going through, trained to listen and support without judgment. Sessions start at ₹160 for 15 minutes, available instantly. It is available 24/7, accessible from anywhere, and requires no prior mental health history or diagnosis. For the everyday emotional weight of life in Hyderabad, it fills a gap that other options do not.',
+        text: 'Most mental health apps are either therapy platforms (high cost, scheduled sessions, clinical focus) or meditation apps (useful but passive). LeanOn is peer support — real humans who have been through what you are going through, chosen for how well they listen and support without judgment. Sessions start at ₹160 for 15 minutes, available instantly. It is available 24/7, accessible from anywhere, and requires no prior mental health history or diagnosis. For the everyday emotional weight of life in Hyderabad, it fills a gap that other options do not.',
       },
     },
   ],
@@ -276,7 +276,7 @@ export default function HyderabadPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How is LeanOn different from other mental health apps available in Hyderabad?</div>
-            <div className="faq-a">Most mental health apps are either therapy platforms (high cost, scheduled sessions) or meditation apps (passive). LeanOn is peer support — real humans who have been through what you are going through, trained to listen without judgment. Sessions start at ₹160 for 15 minutes, available instantly. Available 24/7, no prior mental health history needed. For the everyday emotional weight of life in Hyderabad, it fills a gap that other options do not.</div>
+            <div className="faq-a">Most mental health apps are either therapy platforms (high cost, scheduled sessions) or meditation apps (passive). LeanOn is peer support — real humans who have been through what you are going through, chosen for how well they listen without judgment. Sessions start at ₹160 for 15 minutes, available instantly. Available 24/7, no prior mental health history needed. For the everyday emotional weight of life in Hyderabad, it fills a gap that other options do not.</div>
           </div>
         </div>
 
@@ -298,7 +298,7 @@ export default function HyderabadPage() {
         <div className="disclaimer">
           <p><strong>LeanOn is peer support, not a crisis service.</strong> If you are in immediate distress or having thoughts of self-harm, please reach out to a professional helpline immediately.</p>
           <p><strong>NIMHANS:</strong> <a href="tel:08046110007">080-46110007</a> &nbsp;|&nbsp; <strong>Tele-MANAS (Govt. of India):</strong> <a href="tel:14416">14416</a> (free · 24/7)</p>
-          <p>LeanOn listeners are trained peers, not licensed therapists or medical professionals. For clinical mental health support, please consult a qualified mental health professional.</p>
+          <p>LeanOn listeners are screened peers, not licensed therapists or medical professionals. For clinical mental health support, please consult a qualified mental health professional.</p>
         </div>
       </div>
     </>

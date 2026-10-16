@@ -53,7 +53,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'What if I just want to say what happened without getting advice?',
-      acceptedAnswer: { '@type': 'Answer', text: 'That is exactly what peer listeners are trained for. Say \'I don\'t need advice, I just need to tell someone what happened\' — and that is what will happen. No fixing, no redirecting, no silver linings.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'That is exactly what peer listeners are there for. Say \'I don\'t need advice, I just need to tell someone what happened\' — and that is what will happen. No fixing, no redirecting, no silver linings.' },
     },
     {
       '@type': 'Question',

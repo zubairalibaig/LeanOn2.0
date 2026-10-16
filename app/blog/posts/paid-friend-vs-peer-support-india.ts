@@ -18,7 +18,7 @@ export const post = {
 
 <h2>What Peer Emotional Support Provides</h2>
 <p>Peer emotional support &mdash; the model LeanOn uses &mdash; is specifically about the harder conversations. Not companionship but depth. Not having dinner together but talking honestly about the thing you have not been able to say to anyone.</p>
-<p>LeanOn listeners are trained in active listening, empathetic response, and holding emotional complexity without judgment or advice. The session is not a simulation of friendship &mdash; it is a dedicated space for emotional processing. The listener is not there to be your friend. They are there to understand you, fully, for the duration of the session.</p>
+<p>LeanOn listeners are screened for active listening, empathetic response, and holding emotional complexity without judgment or advice. The session is not a simulation of friendship &mdash; it is a dedicated space for emotional processing. The listener is not there to be your friend. They are there to understand you, fully, for the duration of the session.</p>
 <p>This distinction matters. Genuine listening is a skill. It requires training. It is not the same as pleasant conversation, even warm and caring pleasant conversation.</p>
 
 <h2>Which One Addresses Your Actual Need?</h2>

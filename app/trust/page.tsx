@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Trust & Safety | LeanOn — Anonymous Peer Support India',
-  description: 'How LeanOn keeps you safe: anonymity, data protection, listener vetting, AI moderation, and crisis escalation. Your safety is our top priority.',
+  description: 'How LeanOn keeps you safe: privacy, how listeners are screened, safety checks during sessions, reporting, and crisis helplines. Peer support, not therapy.',
   alternates: { canonical: 'https://www.leanon.app/trust' },
 }
 
@@ -78,35 +78,36 @@ export default function TrustPage() {
           <p>LeanOn was designed for privacy from the ground up. Here is exactly what we collect and what we don&apos;t:</p>
           <ul>
             <li>Sign up with just your mobile number — no full name, no email required</li>
-            <li>Only your first name is ever shown to a listener</li>
+            <li>A listener sees only the name you choose — a first name or a nickname is fine</li>
             <li>No profile photos required for seekers</li>
-            <li>Session content is never stored beyond what is needed for the active session</li>
-            <li>Your conversations are private — we never read or share them</li>
+            <li>Text messages are stored securely so a session can be reviewed if it is reported or flagged for safety. Only authorised LeanOn administrators can open them</li>
+            <li>Voice calls are not recorded</li>
+            <li>We never share your conversations with anyone outside LeanOn</li>
           </ul>
           <p>You are in control of your identity on LeanOn. We built text-first specifically so that people in joint households can use the platform privately.</p>
         </div>
 
         <div className="section">
           <h2>🛡️ Listener vetting</h2>
-          <p>Every listener on LeanOn goes through a manual verification process before they can accept sessions:</p>
+          <p>Every listener is screened and approved by LeanOn before they can accept a single session:</p>
           <ul>
-            <li>Application review by our trained team</li>
-            <li>Lived experience verification — listeners must demonstrate genuine understanding of their speciality areas</li>
-            <li>Identity verification</li>
-            <li>Commitment to LeanOn&apos;s code of conduct, including confidentiality and non-judgmental support</li>
-            <li>Ongoing monitoring — sessions flagged for inappropriate content are reviewed</li>
+            <li>A written application about who they are, what they have lived through and why they want to listen</li>
+            <li>A screening quiz on how to respond in difficult conversations</li>
+            <li>A live verification selfie (camera only), checked by LeanOn and never shown publicly</li>
+            <li>Manual review of every application — many are asked to fix something or are turned down</li>
+            <li>Agreement to LeanOn&apos;s code of conduct: confidentiality, no judgement, and no medical or clinical advice</li>
+            <li>Profile photos are reviewed before they go live, and reported listeners can be suspended</li>
           </ul>
-          <p>Listeners are peer supporters, not therapists. We are transparent about this. They are screened for empathy, reliability, and genuine lived experience — not clinical credentials.</p>
+          <p>Listeners are peer supporters, not therapists, and LeanOn does not claim otherwise. They are screened — not clinically trained — for empathy, reliability and lived experience.</p>
         </div>
 
         <div className="section">
-          <h2>🤖 AI-powered moderation</h2>
-          <p>LeanOn uses AI to monitor sessions in real time for safety signals:</p>
+          <h2>🧭 Safety checks during a session</h2>
           <ul>
-            <li>Crisis keywords trigger immediate display of emergency helpline numbers (NIMHANS, Tele-MANAS)</li>
-            <li>Inappropriate content is flagged for human review</li>
-            <li>Harassment, sexual content, and abuse are automatically detected and escalated</li>
-            <li>Self-harm risk reports are escalated to our team immediately via email</li>
+            <li>If words linked to self-harm or suicide appear in a chat, LeanOn immediately shows crisis helplines (NIMHANS, Tele-MANAS)</li>
+            <li>The listener is told to take extra care, and the session is flagged for the LeanOn team to review</li>
+            <li>Helpline numbers are shown in every session, not only when something is flagged</li>
+            <li>Anything you report is reviewed by a person at LeanOn</li>
           </ul>
         </div>
 
@@ -126,8 +127,8 @@ export default function TrustPage() {
           <p>If you feel unsafe in a session at any time:</p>
           <ul>
             <li>Use the &ldquo;Report an issue&rdquo; button in any session or listener profile</li>
-            <li>Block a listener to prevent future contact</li>
-            <li>End the session immediately — your wallet will be refunded if the session lasted less than 1 minute</li>
+            <li>End the session at any time — you pay only for the minutes used, and nothing if it lasted under a minute</li>
+            <li>You never have to talk to the same listener again — you choose who you book</li>
             <li>Our team reviews all reports within 24 hours</li>
           </ul>
         </div>

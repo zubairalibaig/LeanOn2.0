@@ -33,7 +33,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'What do I do during an existential crisis?',
-      acceptedAnswer: { '@type': 'Answer', text: 'The instinct is to find an answer quickly &mdash; to resolve the question. This usually does not work. The questions are too large and too real. What actually helps is having someone who can hold the uncertainty with you &mdash; who does not panic at the questions, does not rush you toward premature resolution, and can sit in the openness without flinching. A peer listener trained in this is more useful here than an advisor or a planner.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'The instinct is to find an answer quickly &mdash; to resolve the question. This usually does not work. The questions are too large and too real. What actually helps is having someone who can hold the uncertainty with you &mdash; who does not panic at the questions, does not rush you toward premature resolution, and can sit in the openness without flinching. A peer listener who can do this is more useful here than an advisor or a planner.' },
     },
     {
       '@type': 'Question',

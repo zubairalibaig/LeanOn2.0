@@ -18,7 +18,7 @@ export const post = {
 
 <p>Peer support has been recognised for decades in mental health research as a powerful tool — not a replacement for clinical care, but a distinct and valuable complement to it. Peer support programmes in the West are used alongside professional services in hospitals, in addiction recovery, in grief care, in chronic illness management. In India, structured <strong>peer support India</strong> offerings are newer and rarer, but the need is enormous — and platforms like <strong>LeanOn</strong> are beginning to fill that gap.</p>
 
-<p>On LeanOn, peer listeners are people who have navigated their own difficult experiences — anxiety, burnout, loneliness, relationship strain, grief — and who have trained to listen without judgment. When you <a href="/browse">browse peer listeners</a> on the platform, you can see their backgrounds and areas of understanding. The connection is not clinical. It is human.</p>
+<p>On LeanOn, peer listeners are people who have navigated their own difficult experiences — anxiety, burnout, loneliness, relationship strain, grief — and who are chosen for how well they listen without judgment. When you <a href="/browse">browse peer listeners</a> on the platform, you can see their backgrounds and areas of understanding. The connection is not clinical. It is human.</p>
 
 <h2>What Is Therapy or Counselling?</h2>
 
@@ -34,7 +34,7 @@ export const post = {
 
 <p>Understanding the difference between peer support and therapy is not just an academic exercise. It has practical implications for where you direct your energy and resources when you need support.</p>
 
-<p><strong>Training and expertise.</strong> Therapists hold professional qualifications and are trained to work with clinical conditions. Peer listeners hold lived experience and are trained to listen, not to treat. This is not a hierarchy — it is a difference in purpose.</p>
+<p><strong>Training and expertise.</strong> Therapists hold professional qualifications and are trained to work with clinical conditions. Peer listeners hold lived experience and are chosen for their ability to listen, not to treat. This is not a hierarchy — it is a difference in purpose.</p>
 
 <p><strong>Cost and accessibility.</strong> Peer support, including through an <strong>emotional support app India</strong> like LeanOn, is significantly more accessible — in cost, in availability, and in the absence of stigma. You do not need to make a clinical appointment. You do not need to justify your pain as being &quot;bad enough.&quot;</p>
 

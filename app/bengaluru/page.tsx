@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'Is LeanOn peer support different from therapy or counselling?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn is peer support, not therapy. Our listeners are trained peers who have lived through the experiences they support — they are not licensed therapists. This makes it more accessible, more affordable (starting at ₹160 for 15 minutes), and available 24/7. For clinical mental health concerns, we always recommend professional help. For the day-to-day weight of modern Bengaluru life, peer support is often exactly what is needed.',
+        text: 'Yes. LeanOn is peer support, not therapy. Our listeners are screened peers who have lived through the experiences they support — they are not licensed therapists. This makes it more accessible, more affordable (starting at ₹160 for 15 minutes), and available 24/7. For clinical mental health concerns, we always recommend professional help. For the day-to-day weight of modern Bengaluru life, peer support is often exactly what is needed.',
       },
     },
   ],
@@ -189,7 +189,7 @@ export default function BengaluruPage() {
         {/* How LeanOn Works in Bengaluru */}
         <div className="section">
           <h2>How LeanOn Works in Bengaluru</h2>
-          <p>LeanOn is peer support — not therapy. That distinction matters. Our listeners are real people who have navigated the same pressures you are facing, trained to listen without judgment and support without advice-pushing.</p>
+          <p>LeanOn is peer support — not therapy. That distinction matters. Our listeners are real people who have navigated the same pressures you are facing, chosen for how well they listen without judgment and support without advice-pushing.</p>
 
           <h3>Browse and Choose Your Listener</h3>
           <p>Start by browsing listener profiles at <a href="/browse?city=bengaluru" style={{color:'var(--teal)',fontWeight:700}}>leanon.app/browse</a>. You can filter by topic — loneliness, startup burnout, career confusion, relationships — and read about each listener's personal background before you begin. No cold starts. No awkward first minutes wondering if this person gets it.</p>
@@ -283,7 +283,7 @@ export default function BengaluruPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn peer support different from therapy or counselling?</div>
-            <div className="faq-a">Yes. LeanOn is peer support, not therapy. Our listeners are trained peers who have lived through the experiences they support — not licensed therapists. This makes it more accessible, more affordable (starting at ₹160 for 15 minutes), and available 24/7. For clinical mental health concerns, we always recommend professional help. For the day-to-day weight of Bengaluru life, peer support is often exactly what is needed.</div>
+            <div className="faq-a">Yes. LeanOn is peer support, not therapy. Our listeners are screened peers who have lived through the experiences they support — not licensed therapists. This makes it more accessible, more affordable (starting at ₹160 for 15 minutes), and available 24/7. For clinical mental health concerns, we always recommend professional help. For the day-to-day weight of Bengaluru life, peer support is often exactly what is needed.</div>
           </div>
         </div>
 
@@ -305,7 +305,7 @@ export default function BengaluruPage() {
         <div className="disclaimer">
           <p><strong>LeanOn is peer support, not a crisis service.</strong> If you are in immediate distress or having thoughts of self-harm, please reach out to a professional helpline immediately.</p>
           <p><strong>NIMHANS:</strong> <a href="tel:08046110007">080-46110007</a> &nbsp;|&nbsp; <strong>Tele-MANAS (Govt. of India):</strong> <a href="tel:14416">14416</a> (free · 24/7)</p>
-          <p>LeanOn listeners are trained peers, not licensed therapists or medical professionals. For clinical mental health support, please consult a qualified mental health professional.</p>
+          <p>LeanOn listeners are screened peers, not licensed therapists or medical professionals. For clinical mental health support, please consult a qualified mental health professional.</p>
         </div>
       </div>
     </>

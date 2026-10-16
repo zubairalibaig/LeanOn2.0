@@ -50,7 +50,7 @@ const faqSchema = {
       name: 'Are LeanOn listeners real people or AI?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Real people. Every LeanOn listener is a trained human peer supporter — not a chatbot. They go through a vetting and training process before they are allowed on the platform.',
+        text: 'Real people. Every LeanOn listener is a screened human peer supporter — not a chatbot. They go through a vetting and training process before they are allowed on the platform.',
       },
     },
     {
@@ -181,13 +181,13 @@ export default function SingaporeTalkToSomeonePage() {
           <p>2 AM in Singapore. The messages back home are going unanswered because everyone is asleep.
             You are awake and you want to talk — not to scroll, not to watch something, but to actually
             have a conversation with a real person.</p>
-          <p>LeanOn listeners are online right now. Indian, warm, trained, ready.</p>
+          <p>LeanOn listeners are online right now. Indian, warm, screened, ready.</p>
           <a href="/browse" className="cta-night">Find someone to talk to →</a>
         </div>
 
         <div className="card">
           <h2>Why LeanOn is different from chatbots or apps</h2>
-          <p>LeanOn is not AI. Every single listener on the platform is a real, trained human being who
+          <p>LeanOn is not AI. Every single listener on the platform is a real, screened human being who
             chose to do this work. They are from India. They have lived experience. They understand your
             cultural background and the specific texture of Indian expat life.</p>
           <p>You can talk in Hindi, Tamil, Telugu, Malayalam, Kannada, Bengali, or English — whatever
@@ -235,7 +235,7 @@ export default function SingaporeTalkToSomeonePage() {
           </div>
           <div className="faq-item">
             <h3>Are LeanOn listeners real people or AI?</h3>
-            <p>Real people. Every LeanOn listener is a trained human peer supporter — not a chatbot.
+            <p>Real people. Every LeanOn listener is a screened human peer supporter — not a chatbot.
               They go through vetting and training before joining the platform.</p>
           </div>
           <div className="faq-item">

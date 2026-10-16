@@ -48,7 +48,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'How do I tell the listener I just want to vent?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Just say it at the start: "I just need to vent about something. I don\'t want advice, I just need someone to hear it." That is enough. The listener will calibrate accordingly. They are trained for this &mdash; you are not the first person to start a session that way.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Just say it at the start: "I just need to vent about something. I don\'t want advice, I just need someone to hear it." That is enough. The listener will calibrate accordingly. They have chosen to do this &mdash; you are not the first person to start a session that way.' },
     },
     {
       '@type': 'Question',
@@ -157,7 +157,7 @@ export default function RelationshipAdviceVsVentingIndiaPage() {
         </div>
 
         <div className="section">
-          <h2>How LeanOn Listeners Are Trained</h2>
+          <h2>How LeanOn Listeners Listen</h2>
           <p>The default mode for a LeanOn peer listener is receive and reflect, not advise and recommend. They will not give you their opinion about your partner unless you ask. They will not tell you whether to leave or stay. They will not suggest what you should have said or what you should say next.</p>
           <p>They will hear what you say, confirm they understand it, and create space for more. They will follow your lead. If you want to talk for fifteen minutes without a single unsolicited input, that is a completely valid session. It is often the most useful kind.</p>
         </div>

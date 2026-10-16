@@ -27,7 +27,7 @@ export const post = {
 <p>What makes the difference is the listener. Someone who validates everything you say without creating any reflective space is helping you rant. Someone who hears you fully, acknowledges what you are feeling, and asks the kind of questions that create space for the feeling to settle &mdash; that person is facilitating genuine emotional processing.</p>
 
 <h2>What Good Listening Creates</h2>
-<p>LeanOn peer listeners are specifically trained in this distinction. They are not there to validate everything you say or to agree with all your judgments. They are there to hear you &mdash; which is a different and more useful thing. The sessions are not an invitation to rant. They are a space for the kind of honest, witnessed expression that produces actual relief.</p>
-<p>If you have had the experience of talking about something and finding it made things worse, it is worth trying a different kind of conversation. One where the listener is trained to create the conditions for the emotion to move, not to amplify it.</p>
+<p>LeanOn peer listeners are specifically screened for this distinction. They are not there to validate everything you say or to agree with all your judgments. They are there to hear you &mdash; which is a different and more useful thing. The sessions are not an invitation to rant. They are a space for the kind of honest, witnessed expression that produces actual relief.</p>
+<p>If you have had the experience of talking about something and finding it made things worse, it is worth trying a different kind of conversation. One where the listener is chosen for their ability to create the conditions for the emotion to move, not to amplify it.</p>
 `,
 }

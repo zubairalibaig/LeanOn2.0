@@ -32,7 +32,7 @@ const definedTermSchema = {
     {
       '@type': 'DefinedTerm',
       name: 'Peer Listener',
-      description: 'A peer listener is a trained individual who provides emotional support based on their own lived experience. On LeanOn, peer listeners are verified real people who have personally navigated challenges like loneliness, burnout, grief, or anxiety.',
+      description: 'A peer listener is a screened individual who provides emotional support based on their own lived experience. On LeanOn, peer listeners are verified real people who have personally navigated challenges like loneliness, burnout, grief, or anxiety.',
       url: 'https://www.leanon.app/glossary#peer-listener',
       inDefinedTermSet: 'https://www.leanon.app/glossary',
     },

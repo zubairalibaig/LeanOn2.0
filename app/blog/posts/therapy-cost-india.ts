@@ -74,7 +74,7 @@ export const post = {
 
 <p>We think you should know exactly why our numbers are lower, because &quot;cheaper&quot; with no explanation should make anyone suspicious.</p>
 
-<p>The first reason is the honest one: <strong>LeanOn listeners are peers, not licensed clinicians.</strong> They are people who have lived through anxiety, burnout, grief, loneliness, family pressure, heartbreak — and who have been verified and trained to listen without judgment. They are not carrying a decade of clinical training whose cost has to be recovered, because they are not doing clinical work. They are offering understanding from experience. That is a different service, and it costs less because it is genuinely different, not because it is a discounted version of therapy.</p>
+<p>The first reason is the honest one: <strong>LeanOn listeners are peers, not licensed clinicians.</strong> They are people who have lived through anxiety, burnout, grief, loneliness, family pressure, heartbreak — and who have been verified and chosen for how well they listen without judgment. They are not carrying a decade of clinical training whose cost has to be recovered, because they are not doing clinical work. They are offering understanding from experience. That is a different service, and it costs less because it is genuinely different, not because it is a discounted version of therapy.</p>
 
 <p>The second reason is our fee structure. What you pay is the listener&apos;s stated rate plus a flat ₹10 per session — not a percentage of your bill, not a subscription, not a cut that grows with the listener&apos;s price. That is the entire fee you see as a seeker.</p>
 

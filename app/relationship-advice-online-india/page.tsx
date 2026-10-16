@@ -160,7 +160,7 @@ export default function RelationshipAdvicePage() {
           <p>Whether you&apos;re fighting with your partner, dealing with a breakup, confused about a situationship,
             or feeling disconnected in a marriage — these feelings deserve to be heard. Not judged, not fixed,
             just heard.</p>
-          <p>LeanOn connects you with real peer listeners who have been trained to hold space for exactly
+          <p>LeanOn connects you with real peer listeners who have been chosen for their ability to hold space for exactly
             this kind of conversation. They won&apos;t tell you what to do — they&apos;ll help you figure out
             what you already feel.</p>
         </div>

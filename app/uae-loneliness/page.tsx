@@ -41,7 +41,7 @@ const faqSchema = {
       name: 'Who are LeanOn listeners — are they Indian?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn listeners are trained Indian peer supporters. They understand the NRI experience, speak Hindi, Tamil, Telugu, Malayalam, Kannada, and other Indian languages, and can relate to the pressures of living abroad as an Indian.',
+        text: 'Yes. LeanOn listeners are screened Indian peer supporters. They understand the NRI experience, speak Hindi, Tamil, Telugu, Malayalam, Kannada, and other Indian languages, and can relate to the pressures of living abroad as an Indian.',
       },
     },
     {
@@ -218,7 +218,7 @@ export default function UAELonelinessPage() {
           </div>
           <div className="faq-item">
             <h3>Who are LeanOn listeners — are they Indian?</h3>
-            <p>Yes. LeanOn listeners are trained Indian peer supporters who speak your language and understand
+            <p>Yes. LeanOn listeners are screened Indian peer supporters who speak your language and understand
               the NRI experience firsthand.</p>
           </div>
           <div className="faq-item">

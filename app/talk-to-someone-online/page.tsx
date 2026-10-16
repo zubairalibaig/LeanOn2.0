@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 }
 
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
-  { '@type': 'Question', name: 'Is LeanOn a real person or an AI?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn connects you with real human peer listeners — not AI, not chatbots, not automated responses. Every listener is a real person who has applied, been screened, and trained. They are online right now, available to talk.' } },
+  { '@type': 'Question', name: 'Is LeanOn a real person or an AI?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn connects you with real human peer listeners — not AI, not chatbots, not automated responses. Every listener is a real person who has applied, been screened and been approved. They are online right now, available to talk.' } },
   { '@type': 'Question', name: 'Why is talking to a human different from talking to an AI?', acceptedAnswer: { '@type': 'Answer', text: 'An AI generates what a person who understood you would say. A real human who has lived through something similar actually knows what it feels like. The difference is not subtle — AI and human conversations serve different needs; LeanOn is designed for people who specifically want another human being to listen.' } },
   { '@type': 'Question', name: 'Do I need an appointment?', acceptedAnswer: { '@type': 'Answer', text: 'No appointment needed. Browse listeners who are currently online and start a session immediately. The first 5 minutes are free.' } },
   { '@type': 'Question', name: 'What is this different from therapy?', acceptedAnswer: { '@type': 'Answer', text: 'Therapy involves a licensed professional working with you on diagnosis and treatment. LeanOn is peer support — real people with lived experience who will listen without judgment. It is more informal, more accessible, and available right now without a booking.' } },
@@ -89,7 +89,7 @@ export default function TalkToSomeoneOnlinePage() {
           <h2>You Have Already Tried Talking to AI. You Know It Is Not the Same.</h2>
           <p>At some point most people have typed their problems into ChatGPT or another AI. And it is impressive &mdash; it says things that sound right, it reflects back, it validates. But something is missing. The response feels hollow, like a very articulate mirror. Because an AI generates what someone who understood you would say. It does not actually know what it feels like.</p>
           <p>A real person offers a different kind of conversation: another human being is actually receiving what you say and can respond from their own experience. If you have been using AI because you have no one to talk to, you may simply be looking for human company rather than another generated response.</p>
-          <p>LeanOn listeners are real people. They have applied, been screened, and trained. They are online right now. And the first 5 minutes cost nothing.</p>
+          <p>LeanOn listeners are real people. They have applied, been screened and been approved. They are online right now. And the first 5 minutes cost nothing.</p>
         </div>
         <div className="section">
           <h2>Not Therapy. Not AI. Something In Between That Actually Helps.</h2>

@@ -76,7 +76,7 @@ const faqSchema = {
       name: 'Is LeanOn an AI or a real person?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Every LeanOn listener is a real human — applied, reviewed, and trained to listen without judgment. There is no AI in the conversations. Just one real person talking to another.',
+        text: 'Every LeanOn listener is a real human — applied, reviewed, and chosen for how well they listen without judgment. There is no AI in the conversations. Just one real person talking to another.',
       },
     },
     {
@@ -202,7 +202,7 @@ export default function UKTalkToRealPersonPage() {
             receiving you. What helps is a real human who listens without judgment.
           </p>
           <p>
-            LeanOn gives you exactly that. A real peer listener, trained and reviewed, available any
+            LeanOn gives you exactly that. A real peer listener, screened and reviewed, available any
             time of day or night, for £8 — less than a pint of lager in London.
           </p>
         </div>
@@ -255,7 +255,7 @@ export default function UKTalkToRealPersonPage() {
           <h2>What LeanOn is — in plain English</h2>
           <p>
             LeanOn is a peer support platform. Every listener is a real human being who has applied,
-            been reviewed, and trained to listen without judgment. They are not therapists or counsellors.
+            been reviewed, and chosen for how well they listen without judgment. They are not therapists or counsellors.
             They are not AI. They are real people — with lives, with their own experience of the hard
             things — who choose to be present for others.
           </p>
@@ -306,7 +306,7 @@ export default function UKTalkToRealPersonPage() {
           </div>
           <div className="faq-item">
             <h3>Is LeanOn an AI or a real person?</h3>
-            <p>Every LeanOn listener is a real human — applied, reviewed, and trained to listen without
+            <p>Every LeanOn listener is a real human — applied, reviewed, and chosen for how well they listen without
               judgment. There is no AI in the conversations. Just one real person talking to another.</p>
           </div>
           <div className="faq-item">

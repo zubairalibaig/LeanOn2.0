@@ -37,6 +37,6 @@ export const post = {
 <p><strong>Saying it out loud.</strong> The crisis tends to grow in silence. Naming it &mdash; to yourself, to someone who can hear it without panicking or giving you a list of things to do &mdash; reduces its power. The act of articulating what you are experiencing is itself clarifying.</p>
 <p><strong>Separating your wants from others' expectations.</strong> This is harder than it sounds. Many people in India have never had the space to distinguish between what they actually want and what they have been told to want. Peer support is one place to work through that distinction without social consequence.</p>
 <p><strong>Giving it time.</strong> The quarter-life crisis, for most people, resolves in their early 30s not because they figured everything out but because they made enough decisions &mdash; some good, some not &mdash; to have a clearer sense of who they are. The resolution is not a thunderbolt. It is a gradual solidification of identity.</p>
-<p>If you are in the thick of it right now and cannot talk to anyone in your life about it honestly, LeanOn is a space for exactly that kind of conversation. Anonymous, private, with someone trained to listen without judgment or advice.</p>
+<p>If you are in the thick of it right now and cannot talk to anyone in your life about it honestly, LeanOn is a space for exactly that kind of conversation. Anonymous, private, with someone chosen for how well they listen without judgment or advice.</p>
 `,
 }

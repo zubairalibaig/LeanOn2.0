@@ -191,7 +191,7 @@ export default function BetterhelpAlternativeIndiaPage() {
                 </tr>
                 <tr className="highlight-row">
                   <td className="col-label">LeanOn</td>
-                  <td>Peer listeners (trained)</td>
+                  <td>Peer listeners (screened)</td>
                   <td>₹160/session</td>
                   <td>Yes</td>
                 </tr>

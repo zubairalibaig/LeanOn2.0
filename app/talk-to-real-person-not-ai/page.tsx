@@ -67,7 +67,7 @@ const faqSchema = {
       name: 'Is LeanOn an AI chatbot?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'No. Every listener on LeanOn is a real human being who has applied, been reviewed, and trained to listen without judgment. There is no AI involved in the conversations.',
+        text: 'No. Every listener on LeanOn is a real human being who has applied, been screened and been approved, and who listens without judgment. There is no AI involved in the conversations.',
       },
     },
     {
@@ -283,7 +283,7 @@ export default function TalkToRealPersonPage() {
           <div className="faq-item">
             <h3>Is LeanOn an AI chatbot?</h3>
             <p>No. Every listener on LeanOn is a real human being who has applied, been reviewed, and
-              trained to listen without judgment. There is no AI involved in the conversations.</p>
+              chosen for how well they listen without judgment. There is no AI involved in the conversations.</p>
           </div>
           <div className="faq-item">
             <h3>Why talk to a human instead of an AI like ChatGPT?</h3>

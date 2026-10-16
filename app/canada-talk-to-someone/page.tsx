@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Someone to Talk to in Canada — Real Human, Not a Chatbot | LeanOn',
-  description: 'You do not want a chatbot. You want a real person to actually listen. LeanOn connects Indians in Canada with trained human peer listeners — available any time you need.',
+  description: 'You do not want a chatbot. You want a real person to actually listen. LeanOn connects Indians in Canada with screened human peer listeners — available any time you need.',
   keywords: [
     'someone to talk to canada', 'real person to talk to canada', 'not a chatbot canada',
     'human listener canada', 'talk to someone canada indian', 'emotional support canada human',
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Someone to Talk to in Canada — Real Human, Not a Chatbot | LeanOn',
-    description: 'When you need to talk, you need a real person. LeanOn peer listeners are online daily on Indian time — warm, trained, and genuinely present.',
+    description: 'When you need to talk, you need a real person. LeanOn peer listeners are online daily on Indian time — warm, screened, and genuinely present.',
     url: 'https://www.leanon.app/canada-talk-to-someone',
     siteName: 'LeanOn',
     type: 'article',
@@ -32,7 +32,7 @@ const faqSchema = {
       name: 'Are LeanOn listeners real humans or AI?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Real humans — every single one. LeanOn listeners are trained peer supporters, not AI, not bots, not scripts. When you connect with a listener, there is a real person on the other end giving you their genuine attention.',
+        text: 'Real humans — every single one. LeanOn listeners are screened peer supporters, not AI, not bots, not scripts. When you connect with a listener, there is a real person on the other end giving you their genuine attention.',
       },
     },
     {
@@ -151,8 +151,7 @@ export default function CanadaTalkToSomeonePage() {
         <h1>You Want a Real Human.<br />Not Another App That Pretends to Listen.</h1>
         <p className="lead">
           AI chatbots are everywhere. They are fast, always available, and completely hollow when
-          you actually need to feel heard. LeanOn is different — every listener is a real, trained
-          human being who is genuinely present in your conversation. There is no script. No algorithm.
+          you actually need to feel heard. LeanOn is different — every listener is a real, screened human being who is genuinely present in your conversation. There is no script. No algorithm.
           Just a person listening.
         </p>
 
@@ -214,7 +213,7 @@ export default function CanadaTalkToSomeonePage() {
           <h2>Frequently asked questions</h2>
           <div className="faq-item">
             <h3>Are LeanOn listeners real humans or AI?</h3>
-            <p>Real humans — every single one. LeanOn listeners are trained peer supporters. When you
+            <p>Real humans — every single one. LeanOn listeners are screened peer supporters. When you
               connect, there is a real person on the other end giving you their genuine attention.</p>
           </div>
           <div className="faq-item">

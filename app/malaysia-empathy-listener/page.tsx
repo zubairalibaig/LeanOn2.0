@@ -158,7 +158,7 @@ export default function MalaysiaEmpathyListenerPage() {
         <p className="lead">
           Not someone who hears you and immediately pivots to advice. Not someone who relates everything
           back to themselves. Someone who sits with you in your experience and makes you feel that your
-          feelings make complete sense. LeanOn empathy listeners are exactly that — trained Indian
+          feelings make complete sense. LeanOn empathy listeners are exactly that — screened Indian
           peers who are here only to understand you.
         </p>
 

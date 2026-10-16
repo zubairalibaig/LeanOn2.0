@@ -250,8 +250,7 @@ export default function AstroTalkAlternativePage() {
         <div className="card">
           <h2>What people talk about on LeanOn</h2>
           <p>Relationship problems. Job stress. Family pressure. Feeling lost or lonely. Not sleeping. Not knowing
-            what to do next. These are the real reasons people reach out — and our listeners are trained
-            to hold space for all of it.</p>
+            what to do next. These are the real reasons people reach out — and our listeners are there to hold space for all of it.</p>
           <p>You don&apos;t need a reason big enough. If something is bothering you, that&apos;s enough.</p>
         </div>
 

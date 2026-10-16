@@ -50,7 +50,7 @@ export const post = {
 
 <h2>The Peer Support Alternative</h2>
 
-<p>LeanOn's peer listeners are not therapists, and they are not astrologers. They are people with real, lived experience of the kinds of things that tend to bring someone to an astrology app at 11pm — loneliness, career doubt, family pressure, relationship confusion, the particular anxiety of feeling behind in life. They have been trained specifically in the skill of listening with empathy: asking the right questions, reflecting back what you are actually saying, staying present without trying to fix or predict.</p>
+<p>LeanOn's peer listeners are not therapists, and they are not astrologers. They are people with real, lived experience of the kinds of things that tend to bring someone to an astrology app at 11pm — loneliness, career doubt, family pressure, relationship confusion, the particular anxiety of feeling behind in life. They are chosen for the skill of listening with empathy: asking the right questions, reflecting back what you are actually saying, staying present without trying to fix or predict.</p>
 
 <p>A session is anonymous — first names only — and nobody in your life finds out. The first session is five minutes, free, so you can try it without committing to anything. If what you find is that it is exactly the kind of conversation you were routing through a chart, you will know. If it is not what you needed, nothing has been spent.</p>
 

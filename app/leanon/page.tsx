@@ -84,7 +84,7 @@ const faqSchema = {
       name: 'Is LeanOn safe and private?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn uses phone OTP sign-up (no full name required), keeps all sessions completely private, never shares conversation content, and has AI moderation for safety. Your identity is protected — only your first name is ever shown to a listener.',
+        text: 'Yes. LeanOn uses phone OTP sign-up (no full name required), never shares conversation content outside LeanOn, shows crisis helplines in every session, and lets you report any listener. A listener sees only the name you choose.',
       },
     },
     {
@@ -261,7 +261,7 @@ export default function LeanOnBrandPage() {
             { q: 'Why is it called LeanOn?', a: 'The name was chosen because "lean on" captures what we offer: not therapy, not AI, not advice — just someone to lean on. A real human who has been through what you\'re going through.' },
             { q: 'Is LeanOn the same as therapy?', a: 'No. LeanOn is peer support, not therapy. Listeners are verified people with lived experience — not licensed therapists. They offer genuine empathy and understanding, not clinical diagnosis.' },
             { q: 'How much does LeanOn cost?', a: 'LeanOn offers a 5-minute trial session for new users. After that, sessions start from ₹160 for 15 minutes — significantly more affordable than therapy (₹1,500–5,000/session in India).' },
-            { q: 'Is LeanOn safe and private?', a: 'Yes. Phone OTP sign-up (no full name required), sessions completely private, never shares conversation content, AI moderation for safety.' },
+            { q: 'Is LeanOn safe and private?', a: 'Yes. Phone OTP sign-up (no full name required), conversations never shared outside LeanOn, crisis helplines in every session, and every report reviewed by a person.' },
             { q: 'How is LeanOn different from other mental health apps?', a: 'Unlike AI chatbots (not real humans) or professional therapy platforms (expensive, clinical), LeanOn offers real humans with lived experience, available instantly, at a fraction of therapy cost.' },
             { q: 'Is LeanOn available across India?', a: 'Yes — Bengaluru, Mumbai, Delhi, Chennai, Hyderabad, Pune, Kolkata, and everywhere else. Online, 24/7.' },
           ].map((f, i) => (

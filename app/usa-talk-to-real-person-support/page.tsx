@@ -68,7 +68,7 @@ const faqSchema = {
       name: 'Is LeanOn a real person or AI?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Every listener on LeanOn is a real human being who has applied, been reviewed, and trained to listen without judgment. There is no AI involved — only genuine human connection.',
+        text: 'Every listener on LeanOn is a real human being who has applied, been screened and been approved, and who listens without judgment. There is no AI involved — only genuine human connection.',
       },
     },
     {
@@ -256,7 +256,7 @@ export default function USATalkToRealPersonPage() {
           <h2>What LeanOn is — in plain English</h2>
           <p>
             LeanOn is a peer support platform. Every listener is a real human being who has applied,
-            been reviewed, and trained to listen without judgment. They are not therapists. They are
+            been reviewed, and chosen for how well they listen without judgment. They are not therapists. They are
             not AI. They are people — with lives, with experience of hard things — who choose to be
             present for others.
           </p>
@@ -300,7 +300,7 @@ export default function USATalkToRealPersonPage() {
           </div>
           <div className="faq-item">
             <h3>Is LeanOn a real person or AI?</h3>
-            <p>Every listener on LeanOn is a real human being who has applied, been reviewed, and trained
+            <p>Every listener on LeanOn is a real human being who has applied, been screened and been approved
               to listen without judgment. There is no AI involved — only genuine human connection.</p>
           </div>
           <div className="faq-item">

@@ -39,7 +39,7 @@ const faqSchema = {
       name: 'Is it safe to vent to someone online?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn sessions are anonymous and confidential. Listeners are real people trained to hold space — they do not share your conversations and you do not need to share your real name.',
+        text: 'LeanOn sessions are anonymous and confidential. Listeners are real, screened people who hold space — they do not share your conversations and you do not need to share your real name.',
       },
     },
     {
@@ -257,8 +257,7 @@ export default function VentToRealPersonPage() {
           </div>
           <div className="faq-item">
             <h3>Is it safe to vent to someone online?</h3>
-            <p>LeanOn sessions are anonymous and confidential. Listeners are real people trained to hold
-              space — they do not share your conversations and you do not need to share your real name.</p>
+            <p>LeanOn sessions are anonymous and confidential. Listeners are real, screened people who hold space — they do not share your conversations and you do not need to share your real name.</p>
           </div>
           <div className="faq-item">
             <h3>What&apos;s the difference between venting to an AI and venting to a real person?</h3>

@@ -58,7 +58,7 @@ const faqSchema = {
       name: 'Is talking to a LeanOn listener the same as therapy?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'No. LeanOn listeners are trained peer supporters, not therapists. They listen without judgment, ask thoughtful questions, and help you feel heard. They do not diagnose, prescribe, or give clinical advice. For serious mental health concerns, please also consult a licensed professional.',
+        text: 'No. LeanOn listeners are screened peer supporters, not therapists. They listen without judgment, ask thoughtful questions, and help you feel heard. They do not diagnose, prescribe, or give clinical advice. For serious mental health concerns, please also consult a licensed professional.',
       },
     },
     {
@@ -240,7 +240,7 @@ export default function SingaporeRelationshipAdvicePage() {
           </div>
           <div className="faq-item">
             <h3>Is talking to a LeanOn listener the same as therapy?</h3>
-            <p>No. LeanOn listeners are trained peer supporters, not therapists. They listen without judgment
+            <p>No. LeanOn listeners are screened peer supporters, not therapists. They listen without judgment
               and help you feel heard. For serious mental health concerns, also consult a licensed professional.</p>
           </div>
           <div className="faq-item">

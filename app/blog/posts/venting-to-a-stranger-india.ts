@@ -43,7 +43,7 @@ export const post = {
 
 <p>On LeanOn, the listener has zero connection to your life. They do not know your name, your city, your family, your workplace. The session is confidential by contract. What you say in that conversation ends there — and you can say things in full knowledge of that, which changes what gets said.</p>
 
-<h2>A Trained Listener vs a Sympathetic Friend</h2>
+<h2>A Peer Listener vs a Sympathetic Friend</h2>
 
 <p>There is also a skill dimension. A good friend is sympathetic. A screened peer listener is something different — they are practised in receiving without redirecting. The difference looks like this:</p>
 

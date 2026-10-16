@@ -168,7 +168,7 @@ export default function PeerCounsellingIndiaPage() {
           <p>The word &quot;counselling&quot; in peer counselling means something different from therapy. It is closer in spirit to &quot;someone you can talk to who has been there&quot; than to the clinical process of a professional consultation.</p>
 
           <h3>Peer Counsellors vs Licensed Therapists</h3>
-          <p>A licensed therapist or counsellor in India has a formal degree — typically a Masters in Clinical Psychology, Counselling Psychology, or a related field. They are qualified to diagnose mental health conditions, design treatment plans, and deliver structured psychotherapy. A peer counsellor is trained in supportive conversation and active listening, but is not licensed to diagnose or treat.</p>
+          <p>A licensed therapist or counsellor in India has a formal degree — typically a Masters in Clinical Psychology, Counselling Psychology, or a related field. They are qualified to diagnose mental health conditions, design treatment plans, and deliver structured psychotherapy. A peer counsellor is screened for supportive conversation and active listening, but is not licensed to diagnose or treat.</p>
           <p>This distinction matters — not because peer counselling is lesser, but because the two are good at different things. For emotional overwhelm, the weight of everyday stress, relationship difficulty, family pressure, or the feeling of needing to talk to someone who gets it: peer counselling is often exactly the right tool. For a diagnosed mental health condition, clinical therapy is what is needed.</p>
         </div>
 

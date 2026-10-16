@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'Is ChatGPT good for mental health?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'AI can be a starting point, but it has real limitations for emotional support. It cannot pick up on the weight behind your words, it has no continuity of memory in most settings, and it has never experienced human pain. For genuine emotional processing — especially around loneliness, grief, or anxiety — a trained human peer listener provides something fundamentally different: presence, not prediction.',
+        text: 'AI can be a starting point, but it has real limitations for emotional support. It cannot pick up on the weight behind your words, it has no continuity of memory in most settings, and it has never experienced human pain. For genuine emotional processing — especially around loneliness, grief, or anxiety — a screened human peer listener provides something fundamentally different: presence, not prediction.',
       },
     },
     {

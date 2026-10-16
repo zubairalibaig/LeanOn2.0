@@ -41,7 +41,7 @@ const faqSchema = {
       name: 'Is there anything cheaper that still involves a real human?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. Trained peer support sits between free helplines and clinical therapy. On LeanOn, one introductory session of up to 5 minutes is free per account, and paid sessions are charged by the minute at the selected listener’s per-minute rate, plus a flat ₹10 platform fee. For example, 15 minutes with a listener charging ₹10/min costs ₹160 including the flat ₹10 platform fee. You are speaking to a real, verified human being with lived experience of something similar — not a bot and not a script. Peer listeners are not licensed therapists and do not provide clinical treatment.',
+        text: 'Yes. Screened peer support sits between free helplines and clinical therapy. On LeanOn, one introductory session of up to 5 minutes is free per account, and paid sessions are charged by the minute at the selected listener’s per-minute rate, plus a flat ₹10 platform fee. For example, 15 minutes with a listener charging ₹10/min costs ₹160 including the flat ₹10 platform fee. You are speaking to a real, verified human being with lived experience of something similar — not a bot and not a script. Peer listeners are not licensed therapists and do not provide clinical treatment.',
       },
     },
     {
@@ -171,7 +171,7 @@ export default function OnlineCounsellingCostPage() {
           <p>AI chat apps are cheap or free, always awake, and never judgemental. They can be a reasonable place to journal or to structure a thought at 3 a.m. But it is worth being plain about the limit: an AI is not a human being. It has never lost a parent, failed an exam, ended a relationship, or moved to a city where it knew nobody. Simulated empathy is not the same as a person who has actually been where you are and says so.</p>
 
           <h3>LeanOn Peer Support — rates set by each listener</h3>
-          <p>On LeanOn, paid sessions are billed per minute at the selected listener’s per-minute rate, plus a flat ₹10 platform fee per paid session. For example, 15 minutes with a listener charging ₹10/min costs ₹160 including the flat ₹10 platform fee. One introductory session of up to 5 minutes is free per account. You top up a wallet before a session, and any unused balance is fully refundable. LeanOn listeners are trained peers with lived experience, not licensed clinicians — which is exactly why the price is different, and also why it is not a replacement for clinical care.</p>
+          <p>On LeanOn, paid sessions are billed per minute at the selected listener’s per-minute rate, plus a flat ₹10 platform fee per paid session. For example, 15 minutes with a listener charging ₹10/min costs ₹160 including the flat ₹10 platform fee. One introductory session of up to 5 minutes is free per account. You top up a wallet before a session, and any unused balance is fully refundable. LeanOn listeners are screened peers with lived experience, not licensed clinicians — which is exactly why the price is different, and also why it is not a replacement for clinical care.</p>
         </div>
 
         {/* Decision framework */}
@@ -195,7 +195,7 @@ export default function OnlineCounsellingCostPage() {
           <p>A price this far below therapy usually deserves suspicion, so here is the honest explanation of the model rather than a marketing answer.</p>
 
           <h3>Peers, not clinicians</h3>
-          <p>LeanOn listeners are trained peers with lived experience — people who have been through loneliness, heartbreak, career collapse, family pressure, grief — and who have been screened and trained to listen well. They are not licensed psychologists or psychiatrists. There is no decade of clinical training, licensing and supervision to recover in the price, because that training is not what they are offering. They are offering attention, empathy, and the particular credibility of having been there. That is worth a lot, but it does not cost what a clinical qualification costs.</p>
+          <p>LeanOn listeners are screened peers with lived experience — people who have been through loneliness, heartbreak, career collapse, family pressure, grief — and who have been screened and chosen for how well they listen well. They are not licensed psychologists or psychiatrists. There is no decade of clinical training, licensing and supervision to recover in the price, because that training is not what they are offering. They are offering attention, empathy, and the particular credibility of having been there. That is worth a lot, but it does not cost what a clinical qualification costs.</p>
 
           <h3>A simple, transparent fee — not a growing cut</h3>
           <p>What you pay is the listener&apos;s stated per-minute rate plus a flat ₹10 platform fee per paid session — not a percentage of your bill. The fee does not grow as your session gets longer, which means there is no incentive built into the system to keep you talking.</p>
@@ -242,7 +242,7 @@ export default function OnlineCounsellingCostPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is there anything cheaper that still involves a real human?</div>
-            <div className="faq-a">Yes. Trained peer support sits between free helplines and clinical therapy. On LeanOn, paid sessions are charged by the minute at the selected listener’s per-minute rate, plus a flat ₹10 platform fee. For example, a 15-minute conversation with a listener charging ₹10/min costs ₹160 including the flat ₹10 platform fee, with a real screened peer listener who brings relevant lived experience. One introductory session of up to 5 minutes is free per account. Peer listeners are not licensed therapists and do not provide clinical treatment.</div>
+            <div className="faq-a">Yes. Screened peer support sits between free helplines and clinical therapy. On LeanOn, paid sessions are charged by the minute at the selected listener’s per-minute rate, plus a flat ₹10 platform fee. For example, a 15-minute conversation with a listener charging ₹10/min costs ₹160 including the flat ₹10 platform fee, with a real screened peer listener who brings relevant lived experience. One introductory session of up to 5 minutes is free per account. Peer listeners are not licensed therapists and do not provide clinical treatment.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is free support good enough?</div>
@@ -272,7 +272,7 @@ export default function OnlineCounsellingCostPage() {
         <div className="disclaimer">
           <p><strong>LeanOn is peer support, not a crisis service.</strong> If you are in immediate distress or having thoughts of self-harm, please reach out to a professional helpline immediately.</p>
           <p><strong>NIMHANS:</strong> <a href="tel:08046110007">080-46110007</a> &nbsp;|&nbsp; <strong>Tele-MANAS (Govt. of India):</strong> <a href="tel:14416">14416</a> (free · 24/7)</p>
-          <p>LeanOn listeners are trained peers, not licensed therapists or medical professionals. For clinical mental health support, please consult a qualified mental health professional.</p>
+          <p>LeanOn listeners are screened peers, not licensed therapists or medical professionals. For clinical mental health support, please consult a qualified mental health professional.</p>
         </div>
       </div>
     </>

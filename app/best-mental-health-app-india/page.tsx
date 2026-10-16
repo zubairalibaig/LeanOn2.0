@@ -257,7 +257,7 @@ export default function BestMentalHealthAppIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">What is the difference between a peer listener and a therapist?</div>
-            <div className="faq-a">A therapist is a licensed professional who can diagnose and treat conditions. A peer listener is a real person with lived experience trained to listen and provide human support — not to diagnose. Therapists are for clinical needs. Peer listeners are for the emotional weight most people carry.</div>
+            <div className="faq-a">A therapist is a licensed professional who can diagnose and treat conditions. A peer listener is a real person with lived experience, chosen for how well they listen and provide human support — not to diagnose. Therapists are for clinical needs. Peer listeners are for the emotional weight most people carry.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn anonymous?</div>

@@ -44,7 +44,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is it anonymous?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Only your first name. No social connection, no profile visible to others. What you say stays in the session.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. A listener sees only the name you choose. No social connection, no profile visible to others, and what you say is never shared outside LeanOn.' },
     },
     {
       '@type': 'Question',
@@ -185,7 +185,7 @@ export default function TarotAlternativeIndiaPage() {
 
         <div className="cta-card">
           <h2>The support you were looking for. No predictions needed.</h2>
-          <p>Real human listener. Trained. Anonymous. From ₹160. First 5 minutes free.</p>
+          <p>Real human listener. Screened. Anonymous. From ₹160. First 5 minutes free.</p>
           <a href="/browse" className="btn-cta">Browse listeners &rarr;</a>
         </div>
 

@@ -31,7 +31,7 @@ export default function PrivacyPage() {
       <div className="page">
         <a href="/" className="back">← Back to LeanOn</a>
         <h1>Privacy Policy</h1>
-        <p className="updated">Last updated: May 2025</p>
+        <p className="updated">Last updated: October 2026</p>
 
         <div className="highlight-box">
           <p>LeanOn is a peer support platform. We take your privacy seriously — especially given the sensitive nature of the conversations on our platform.</p>
@@ -41,21 +41,21 @@ export default function PrivacyPage() {
         <ul>
           <li>Your phone number (for authentication via OTP)</li>
           <li>Your first name (optional, for personalisation)</li>
-          <li>Session metadata: duration, topic, rating (not session content by default)</li>
+          <li>Session details: type, duration, rating</li>
+          <li>Text chat messages — stored securely so a session can be reviewed if it is reported or flagged for safety. Only authorised LeanOn administrators can open them</li>
           <li>Wallet transaction history</li>
           <li>Device type and basic analytics (no personal tracking)</li>
         </ul>
 
         <h2>2. What we do NOT collect</h2>
         <ul>
-          <li>We do not record or store text chat messages after session completion</li>
           <li>We do not record voice calls</li>
           <li>We do not share your information with advertisers</li>
           <li>We do not sell your data to any third party</li>
         </ul>
 
-        <h2>3. AI moderation</h2>
-        <p>LeanOn uses automated AI tools to monitor sessions in real-time for safety purposes — specifically to detect content that violates our community guidelines. This is done to protect all users. Flagged content may be reviewed by our safety team.</p>
+        <h2>3. Safety checks</h2>
+        <p>If words linked to self-harm or suicide appear in a chat, LeanOn shows crisis helplines, lets the listener know to take extra care, and flags the session for review by the LeanOn team. Sessions are not analysed by AI. Reported or flagged conversations may be read by authorised LeanOn administrators to keep people safe and handle disputes.</p>
 
         <h2>4. Data storage</h2>
         <p>Your data is stored on Supabase servers hosted in the Asia South (Mumbai) region. We comply with India&apos;s Digital Personal Data Protection Act (DPDP Act 2023).</p>

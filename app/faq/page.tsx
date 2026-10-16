@@ -87,11 +87,11 @@ const faqs = [
     items: [
       {
         q: 'Are my conversations private?',
-        a: 'LeanOn uses your phone number for OTP sign-in, but it is not shown to listeners; you can use a display name. Text messages are not stored after session completion by default and voice calls are not recorded. Automated AI moderation runs for safety, and flagged content may be reviewed by the safety team. Read the Privacy Policy for details, and avoid sharing identifying information you do not want to disclose.',
+        a: 'LeanOn uses your phone number for OTP sign-in, but it is not shown to listeners; you can use a display name. Voice calls are not recorded. Text messages are stored securely and only authorised LeanOn administrators can open them, for example to review a reported or safety-flagged session. Read the Privacy Policy for details, and avoid sharing identifying information you do not want to disclose.',
       },
       {
         q: 'Is LeanOn safe?',
-        a: 'LeanOn has AI moderation that monitors for unsafe content, a crisis support banner that appears when distressing keywords are detected, and a reporting system for any listener misconduct. All listeners are verified before approval.',
+        a: 'Crisis helplines are shown in every session; if words linked to self-harm appear in a chat, LeanOn shows them prominently, alerts the listener and flags the session for the LeanOn team. You can report a listener from any session, and every report is reviewed by a person. All listeners are screened and approved by LeanOn before they can take sessions.',
       },
       {
         q: 'What if I\'m in a mental health crisis?',

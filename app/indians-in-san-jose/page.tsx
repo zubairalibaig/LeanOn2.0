@@ -84,7 +84,7 @@ export default function IndiansInSanJosePage() {
           <h2>The South Bay Indian Community: Scale Without Connection</h2>
           <p>The Indian community in the South Bay is extraordinary in its size. San Jose, Milpitas, Sunnyvale, Cupertino, Fremont, Santa Clara — these are cities where you can live an almost entirely Indian-facing life. Indian grocery stores, temples, cultural associations, cricket leagues, Diwali events that fill convention halls. On paper, you are never alone.</p>
           <p>And yet the specific loneliness of Bay Area Indians is something that doesn&rsquo;t show up in the census data. Everyone here is optimizing — their career, their H1B timeline, their green card queue position, their kids&rsquo; school district. The conversations are about stock options, home prices, and school rankings. The deeper conversations — about what you actually feel, what you actually fear, what you miss about India that you&rsquo;ve never said out loud — those happen less often than you&rsquo;d expect in a city with 100,000 Indians.</p>
-          <p>LeanOn listeners are Indians based in India who have been trained to hold space for exactly this. Not advice. Not a tech bro response. Real listening from someone who understands the NRI experience from the inside. First 5 minutes free, no appointment.</p>
+          <p>LeanOn listeners are Indians based in India who have been chosen for their ability to hold space for exactly this. Not advice. Not a tech bro response. Real listening from someone who understands the NRI experience from the inside. First 5 minutes free, no appointment.</p>
         </div>
 
         <div className="section">

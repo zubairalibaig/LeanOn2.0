@@ -96,7 +96,7 @@ export default function TamilNriSupportPage() {
 
         <div className="section">
           <h2>This Is Not a Helpline. It Is a Real Conversation.</h2>
-          <p>LeanOn listeners are not volunteers reading scripts. They are real people with lived experience — some have family abroad, some have navigated dual identity themselves, all have been trained to listen without advising, judging, or redirecting. You talk. They hear you. That is the whole thing.</p>
+          <p>LeanOn listeners are not volunteers reading scripts. They are real people with lived experience — some have family abroad, some have navigated dual identity themselves, all have been chosen for their ability to listen without advising, judging, or redirecting. You talk. They hear you. That is the whole thing.</p>
           <p>Sessions are anonymous. Phone number and first name only. Your community in Wembley or Scarborough or Sunnyvale will never know. The conversation is between you and your listener, and it stays there.</p>
         </div>
 

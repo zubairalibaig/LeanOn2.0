@@ -40,7 +40,7 @@ export const post = {
 
 <h3>Anonymous Peer Support Platforms</h3>
 
-<p>This is where platforms like <strong>LeanOn</strong> sit. Peer support connects you with another human being — not a licensed clinician, not an algorithm — who has personally lived through something similar to what you are facing, and who has been trained to listen with genuine empathy rather than to diagnose or advise. The relationship is human-to-human, judgment-free, and usually anonymous. It is not a replacement for therapy when therapy is clinically needed, but for the very common, very real experience of needing someone to talk to, it offers something neither a helpline (built for emergencies) nor a chatbot (incapable of real empathy) can.</p>
+<p>This is where platforms like <strong>LeanOn</strong> sit. Peer support connects you with another human being — not a licensed clinician, not an algorithm — who has personally lived through something similar to what you are facing, and who has been chosen for their ability to listen with genuine empathy rather than to diagnose or advise. The relationship is human-to-human, judgment-free, and usually anonymous. It is not a replacement for therapy when therapy is clinically needed, but for the very common, very real experience of needing someone to talk to, it offers something neither a helpline (built for emergencies) nor a chatbot (incapable of real empathy) can.</p>
 
 <h3>Informal Support: Friends, Family, Online Communities</h3>
 
@@ -79,7 +79,7 @@ export const post = {
 
 <h2>How LeanOn Fits Into This Landscape</h2>
 
-<p>LeanOn is built specifically for the everyday-support layer of this landscape — the very large, very real category of need that sits between &quot;I am fine&quot; and &quot;I need clinical treatment.&quot; It connects you one-on-one, by text chat or voice call, with a verified peer listener who has personally lived through loneliness, anxiety, burnout, grief, breakups, or family pressure, and who has been trained in <strong>empathetic listener India</strong> practices — genuine, active, judgment-free listening, not scripted responses.</p>
+<p>LeanOn is built specifically for the everyday-support layer of this landscape — the very large, very real category of need that sits between &quot;I am fine&quot; and &quot;I need clinical treatment.&quot; It connects you one-on-one, by text chat or voice call, with a verified peer listener who has personally lived through loneliness, anxiety, burnout, grief, breakups, or family pressure, and who has been screened for <strong>empathetic listener India</strong> practices — genuine, active, judgment-free listening, not scripted responses.</p>
 
 <p>Every session is anonymous by default. Listeners are manually verified. A short trial session is available for new users, so you can find the right listener before committing to a longer session. After that, sessions cost the per-minute rate set by the listener (15 minutes at ₹10/min = ₹160), a fraction of typical therapy costs, available 24/7, in 12 Indian languages.</p>
 

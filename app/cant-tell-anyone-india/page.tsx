@@ -33,7 +33,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is it really anonymous?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Your first name and phone number are all that exist on the platform. The listener knows only your first name. There is no email, no social profile, no connection to your offline identity. The session is a private voice call. What you say does not leave it.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Your first name and phone number are all that exist on the platform. The listener sees only the name you choose. There is no email, no social profile, no connection to your offline identity. The session is a private voice call. What you say does not leave it.' },
     },
     {
       '@type': 'Question',

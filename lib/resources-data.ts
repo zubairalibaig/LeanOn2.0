@@ -46,7 +46,7 @@ The defining feature of peer support is mutuality: the supporter is not a profes
 
 Peer support has been shown to reduce feelings of isolation, improve coping skills, increase hope, and reduce stigma around seeking help. These benefits are particularly pronounced for people from communities where professional mental health care carries significant stigma — which describes much of India.
 
-In practice, peer support can take many forms: self-help groups, one-on-one conversations, community forums, and increasingly, structured platforms like LeanOn that connect seekers with trained peer supporters.
+In practice, peer support can take many forms: self-help groups, one-on-one conversations, community forums, and increasingly, structured platforms like LeanOn that connect seekers with screened peer supporters.
 
 At LeanOn, peer support means talking to a verified listener who has personal experience with what you're going through — whether that's loneliness, burnout, grief, anxiety, a breakup, or career confusion. They are not there to fix you or tell you what to do. They are there to listen, to understand, and to sit with you in whatever you are going through.
 
@@ -82,7 +82,7 @@ Choose the right time and person. Not every feeling needs to be shared, and not 
 
 Start small. If talking about deep feelings feels overwhelming, start with something small. Mention a frustration at work. Share that you're feeling tired. Practice the skill in low-stakes situations and build from there.
 
-On LeanOn, our listeners are trained specifically in active listening and are comfortable sitting with difficult emotions. Many seekers find that talking to a LeanOn listener is the first time they have ever fully articulated what they're going through.`,
+On LeanOn, our listeners are screened for this specifically in active listening and are comfortable sitting with difficult emotions. Many seekers find that talking to a LeanOn listener is the first time they have ever fully articulated what they're going through.`,
   },
   {
     slug: 'anxiety-vs-stress',
@@ -322,7 +322,7 @@ Several specific behaviors produce the experience of being unheard. The immediat
 
 The experience of feeling chronically unheard has real psychological consequences. It reinforces the belief that your inner world is not worth sharing — that you should keep things to yourself. Over time, this can produce a kind of emotional closure that makes genuine connection increasingly hard.
 
-Finding someone who genuinely listens — who is fully present, who doesn't rush to fix or minimize, who is interested in understanding your experience rather than managing it — can be transformative. This is what LeanOn peer listeners are specifically trained and motivated to provide. Many seekers report that a session with a LeanOn listener was the first time they had ever felt truly heard.`,
+Finding someone who genuinely listens — who is fully present, who doesn't rush to fix or minimize, who is interested in understanding your experience rather than managing it — can be transformative. This is what LeanOn peer listeners are chosen and motivated to provide. Many seekers report that a session with a LeanOn listener was the first time they had ever felt truly heard.`,
   },
   {
     slug: 'emotional-intelligence',
@@ -400,7 +400,7 @@ Passive listening responds. Active listening receives.
 
 The reason this distinction matters practically: most people in our lives are passive listeners, not because they don't care, but because genuine active listening is cognitively demanding and requires real practice. When you find someone who actively listens — truly attends to your experience rather than waiting for their turn to speak — the experience can be startling in its depth.
 
-LeanOn peer listeners are specifically trained in active listening. It is the foundation of everything they do.`,
+LeanOn peer listeners are specifically screened for active listening. It is the foundation of everything they do.`,
   },
   {
     slug: 'building-emotional-resilience',

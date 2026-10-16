@@ -58,7 +58,7 @@ const faqSchema = {
       name: 'Are LeanOn listeners real people?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes, every listener on LeanOn is a real, trained human being from India — not a chatbot or AI. They go through a thorough vetting and training process before being allowed on the platform.',
+        text: 'Yes, every listener on LeanOn is a real, screened human being from India — not a chatbot or AI. They go through a thorough vetting and training process before being allowed on the platform.',
       },
     },
     {
@@ -181,14 +181,13 @@ export default function MalaysiaTalkToSomeonePage() {
           <p>It is past 11 PM. The day was a lot. You are not ready to sleep, but you do not want
             to stare at your phone. You want to talk — for real, to a real person, in Tamil or Hindi
             or whatever feels natural.</p>
-          <p>LeanOn listeners are online right now. Indian, trained, warm, and ready.</p>
+          <p>LeanOn listeners are online right now. Indian, screened, warm, and ready.</p>
           <a href="/browse" className="cta-night">Find someone to talk to →</a>
         </div>
 
         <div className="card">
           <h2>Real listeners. Not AI. Not bots.</h2>
-          <p>Every LeanOn listener is a human being from India who chose this work. They are trained
-            in empathy listening and peer support before their first session. They speak Tamil, Hindi,
+          <p>Every LeanOn listener is a human being from India who chose this work. They are screened by LeanOn — a written application, a quiz on handling difficult conversations and a manual review — before their first session. They speak Tamil, Hindi,
             Telugu, Malayalam, Kannada, Bengali, and English.</p>
           <p>You can be yourself completely. There is no algorithm deciding how to respond. There
             is a person — genuinely paying attention to you.</p>

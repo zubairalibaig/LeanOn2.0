@@ -41,7 +41,7 @@ const faqSchema = {
       name: 'Is LeanOn anonymous?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes, completely. Only your first name is ever shown to a listener — no phone number, no photo, no surname, no location. Nobody in your para, family, or office can discover that you use LeanOn.',
+        text: 'Yes, completely. Only the name you choose (a first name or nickname is fine) is shown to a listener — no phone number, no photo, no surname, no location. Nobody in your para, family, or office can discover that you use LeanOn.',
       },
     },
     {
@@ -194,7 +194,7 @@ export default function KolkataPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn anonymous?</div>
-            <div className="faq-a">Yes, completely. Only your first name is shown to a listener — no phone number, photo, surname, or location. Nobody in your para, family, or office can discover that you use LeanOn.</div>
+            <div className="faq-a">Yes, completely. Only the name you choose is shown to a listener — no phone number, photo, surname, or location. Nobody in your para, family, or office can discover that you use LeanOn.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does a session cost in Kolkata?</div>
@@ -218,7 +218,7 @@ export default function KolkataPage() {
         <div className="disclaimer">
           <p><strong>LeanOn is peer support, not a crisis service.</strong> If you are in immediate distress or having thoughts of self-harm, please reach out to a professional helpline immediately.</p>
           <p><strong>NIMHANS:</strong> <a href="tel:08046110007">080-46110007</a> &nbsp;|&nbsp; <strong>Tele-MANAS (Govt. of India):</strong> <a href="tel:14416">14416</a> (free · 24/7)</p>
-          <p>LeanOn listeners are trained peers, not licensed therapists or medical professionals. For clinical mental health support, please consult a qualified mental health professional.</p>
+          <p>LeanOn listeners are screened peers, not licensed therapists or medical professionals. For clinical mental health support, please consult a qualified mental health professional.</p>
         </div>
       </div>
     </>

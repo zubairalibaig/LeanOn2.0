@@ -38,7 +38,7 @@ export const post = {
 
 <h2>Why LeanOn's Listeners Are Different</h2>
 
-<p>LeanOn's peer listeners are trained in empathetic listening — active, non-judgmental presence with someone in distress. They are not trying to guide you toward a conclusion, sell you a longer reading, or frame your problems in a way that implies you need to come back for more. They have no vested interest in your return beyond wanting the conversation to have genuinely helped.</p>
+<p>LeanOn's peer listeners are screened for empathetic listening — active, non-judgmental presence with someone in distress. They are not trying to guide you toward a conclusion, sell you a longer reading, or frame your problems in a way that implies you need to come back for more. They have no vested interest in your return beyond wanting the conversation to have genuinely helped.</p>
 
 <p>There is no prediction angle. That means there is also no subtle pressure to accept an uncertain future that requires ongoing interpretation. Nobody is suggesting that the planets are misaligned and that another session next month will clarify things. The conversation is about what is happening now, and what you are feeling now, and nothing more needs to be sold.</p>
 

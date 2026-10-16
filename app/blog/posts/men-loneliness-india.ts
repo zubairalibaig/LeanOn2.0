@@ -58,7 +58,7 @@ export const post = {
 
 <p>Most Indian men have never had that experience with their current life. They have had it in childhood, maybe — a parent who listened, a friend who got it. But adult male friendships in India tend to stay at the surface by mutual agreement. The cost of that agreement is years of carrying things alone.</p>
 
-<p>A peer listener on LeanOn is not a friend, a therapist, or an advice-giver. They are someone trained to simply listen — to hold what you say without judgment, without agenda, without making it about something else. For men who have never had a conversation where they said what is actually going on, it tends to be more significant than they expected.</p>
+<p>A peer listener on LeanOn is not a friend, a therapist, or an advice-giver. They are someone chosen to simply listen — to hold what you say without judgment, without agenda, without making it about something else. For men who have never had a conversation where they said what is actually going on, it tends to be more significant than they expected.</p>
 
 <p>First 5 minutes are free. Sessions from ₹160. Anonymous.</p>
 

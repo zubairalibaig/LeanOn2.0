@@ -34,7 +34,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Can empathy be learned?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Empathy has both an innate component (some people naturally find it easier) and a learned one. Active listening, perspective-taking exercises, and genuine curiosity about other people\'s inner lives all build empathic capacity over time. LeanOn listeners are specifically trained in these skills, which is why conversations with them feel different from most conversations you\'ve had.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Empathy has both an innate component (some people naturally find it easier) and a learned one. Active listening, perspective-taking exercises, and genuine curiosity about other people\'s inner lives all build empathic capacity over time. LeanOn listeners are specifically screened for these skills, which is why conversations with them feel different from most conversations you\'ve had.' },
     },
     {
       '@type': 'Question',
@@ -49,7 +49,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is LeanOn cheaper than a therapist?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Significantly. A private therapist in India typically charges ₹1,500–5,000 per session. LeanOn peer sessions start at ₹160 for 15 minutes, and your first 5-minute session is free. LeanOn is not therapy — listeners are trained peers, not licensed professionals — but for the everyday need to be heard without judgment, it is accessible, immediate, and effective.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Significantly. A private therapist in India typically charges ₹1,500–5,000 per session. LeanOn peer sessions start at ₹160 for 15 minutes, and your first 5-minute session is free. LeanOn is not therapy — listeners are screened peers, not licensed professionals — but for the everyday need to be heard without judgment, it is accessible, immediate, and effective.' },
     },
     {
       '@type': 'Question',
@@ -167,8 +167,8 @@ export default function EmpathyIndiaPage() {
         </div>
 
         <div className="section">
-          <h2>How LeanOn Listeners Are Trained in Empathy</h2>
-          <p>LeanOn listeners go through specific training in the skills that make empathy possible:</p>
+          <h2>What LeanOn Listeners Are Chosen For</h2>
+          <p>LeanOn listeners are screened, not clinically trained. Every application is reviewed for the skills that make empathy possible:</p>
           <ul>
             <li><strong>Active listening:</strong> Not planning the response while the other person is talking. Fully receiving what is being said before responding.</li>
             <li><strong>Reflecting back:</strong> Articulating what the speaker seems to be feeling, not just what they said. Checking the understanding.</li>
@@ -176,7 +176,7 @@ export default function EmpathyIndiaPage() {
             <li><strong>Genuine curiosity:</strong> Asking questions that invite depth rather than questions that confirm the listener&apos;s existing interpretation.</li>
             <li><strong>Holding uncertainty:</strong> Being comfortable with unresolved situations, with &ldquo;I don&apos;t know,&rdquo; with the space where solutions do not exist.</li>
           </ul>
-          <p>These skills are teachable. LeanOn listeners practise them specifically, which is why a conversation with a LeanOn listener often feels different from conversations with people who care about you but haven&apos;t been trained in this way.</p>
+          <p>These skills are teachable. LeanOn listeners practise them specifically, which is why a conversation with a LeanOn listener often feels different from conversations with people who care about you but haven&apos;t been screened for this way.</p>
         </div>
 
         <div className="section">

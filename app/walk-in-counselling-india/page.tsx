@@ -39,7 +39,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is it the same as seeing a professional?',
-      acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn listeners are trained peers, not licensed professionals. They listen, empathise, and support &mdash; they do not assess, diagnose, or treat. For clinical mental health conditions, please see a qualified professional. For the day-to-day emotional weight that most people carry, peer support is often exactly what is needed.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn listeners are screened peers, not licensed professionals. They listen, empathise, and support &mdash; they do not assess, diagnose, or treat. For clinical mental health conditions, please see a qualified professional. For the day-to-day emotional weight that most people carry, peer support is often exactly what is needed.' },
     },
     {
       '@type': 'Question',

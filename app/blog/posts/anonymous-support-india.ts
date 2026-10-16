@@ -62,7 +62,7 @@ export const post = {
 
 <p>On LeanOn, users and listeners connect on a first-name-only basis. No personal information is shared between them — no last names, no contact details, no social media handles. The conversation stays within the platform. What is said in the session stays there.</p>
 
-<p>Every listener on LeanOn has gone through a verification and training process. They are real people — not bots, not actors — who have navigated their own difficult experiences and chosen to offer support to others. They are trained in active listening, emotional boundaries, and when to encourage professional support. They are not therapists, and LeanOn does not position them as such. They are peers who understand what it is to struggle, who know how to listen without judgment, and who show up reliably.</p>
+<p>Every listener on LeanOn has gone through a verification and training process. They are real people — not bots, not actors — who have navigated their own difficult experiences and chosen to offer support to others. They are screened for active listening, emotional boundaries, and when to encourage professional support. They are not therapists, and LeanOn does not position them as such. They are peers who understand what it is to struggle, who know how to listen without judgment, and who show up reliably.</p>
 
 <p>The platform is designed so that people can speak honestly — about loneliness, anxiety, relationship difficulty, grief, burnout, the pressure of family expectations — without any of that information reaching their real-world social circle. The anonymity is not a loophole. It is a feature. It is the design principle that makes honest support possible.</p>
 

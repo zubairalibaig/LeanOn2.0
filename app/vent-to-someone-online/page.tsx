@@ -43,7 +43,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is venting online in India safe and private?',
-      acceptedAnswer: { '@type': 'Answer', text: 'LeanOn uses phone OTP for sign-in, but your phone number is not shown to listeners; you can use a display name. Text messages are not stored after session completion by default and voice calls are not recorded. Automated AI moderation is used for safety, and flagged content may be reviewed by the safety team. Review the Privacy Policy for details and avoid sharing identifying details you do not want to disclose.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'LeanOn uses phone OTP for sign-in, but your phone number is not shown to listeners; you can use a display name. Voice calls are not recorded. Text messages are stored securely and only authorised LeanOn administrators can open them, for example to review a reported or safety-flagged session. Review the Privacy Policy for details and avoid sharing identifying details you do not want to disclose.' },
     },
     {
       '@type': 'Question',
@@ -58,7 +58,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'What makes LeanOn different from just texting a friend to vent?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Three things: confidentiality (your listener has no connection to your life and no interest in sharing what you say), no social debt (you are not creating a situation where someone now worries about you, has an opinion, or expects an update), and trained presence (listeners are practised in actually receiving what you say without redirecting, one-upping, or immediately solving).' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Three things: confidentiality (your listener has no connection to your life and no interest in sharing what you say), no social debt (you are not creating a situation where someone now worries about you, has an opinion, or expects an update), and practised presence (listeners are practised in actually receiving what you say without redirecting, one-upping, or immediately solving).' },
     },
     {
       '@type': 'Question',

@@ -210,7 +210,7 @@ export default function CanadaEmpathyListenerPage() {
           <h2>Frequently asked questions</h2>
           <div className="faq-item">
             <h3>What is an empathy listener?</h3>
-            <p>A trained peer who gives you their full attention — not to fix your problem, but to truly hear
+            <p>A screened peer who gives you their full attention — not to fix your problem, but to truly hear
               you. They reflect back what they understand, ask thoughtful questions, and make you feel genuinely seen.</p>
           </div>
           <div className="faq-item">
