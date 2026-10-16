@@ -256,7 +256,7 @@ export default function CantSleepAnxietyPage() {
           <h2>Someone Is Awake Right Now</h2>
           <p>LeanOn peer listeners are available 24/7 — including right now. Talk to someone who knows the 2 AM feeling. Start with a free trial session.</p>
           <div className="cta-btns">
-            <a href="/browse?topic=anxiety"><button className="btn-primary">Someone is up too — start free now →</button></a>
+            <a href="/talk?src=seo"><button className="btn-primary">Someone is up too — start free now →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>
           </div>
         </div>

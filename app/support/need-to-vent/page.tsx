@@ -247,7 +247,7 @@ export default function NeedToVentPage() {
           <h2>Ready to Get It Off Your Chest?</h2>
           <p>A peer listener is ready right now — no judgment, no advice unless you want it, no social consequence. Start with a free trial session.</p>
           <div className="cta-btns">
-            <a href="/browse?topic=general"><button className="btn-primary">Just say it — first 5 min free →</button></a>
+            <a href="/talk?src=seo"><button className="btn-primary">Just say it — first 5 min free →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>
           </div>
         </div>

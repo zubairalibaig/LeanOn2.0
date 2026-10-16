@@ -269,7 +269,7 @@ export default function AnonymousSupportPage() {
           <h2>Talk Anonymously — Your Identity Stays Yours</h2>
           <p>First name only. No judgment. No lasting record. Available 24/7.</p>
           <div className="cta-btns">
-            <a href="/browse?topic=general"><button className="btn-primary">Start anonymously — no name needed →</button></a>
+            <a href="/talk?src=seo"><button className="btn-primary">Start anonymously — no name needed →</button></a>
             <a href="/browse"><button className="btn-secondary">Browse Listeners First</button></a>
           </div>
         </div>
