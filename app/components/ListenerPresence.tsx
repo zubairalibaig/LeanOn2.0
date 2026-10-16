@@ -351,6 +351,25 @@ export default function ListenerPresence() {
     }
   }, [isListener, available])
 
+  // Closing a LeanOn tab: tell the server, so a listener who closed every tab
+  // goes offline within LEAVE_GRACE_SECS instead of up to 15 minutes later
+  // (owner test 2026-10-16: tabs closed, browser still open, still 'online').
+  // pagehide with persisted=false = really unloading (close, reload, full page
+  // load) — NOT switching apps, Chrome freezing a background tab, or in-app
+  // navigation. The server only ages the heartbeat; a reload or another open
+  // LeanOn tab heart-beats again within 90s and nothing changes.
+  useEffect(() => {
+    if (!isListener || available !== true) return
+    const onPageHide = (e: PageTransitionEvent) => {
+      if (e.persisted) return   // into the back/forward cache, not closing
+      try {
+        navigator.sendBeacon('/api/presence', new Blob([JSON.stringify({ leaving: true })], { type: 'application/json' }))
+      } catch { /* best effort */ }
+    }
+    window.addEventListener('pagehide', onPageHide)
+    return () => window.removeEventListener('pagehide', onPageHide)
+  }, [isListener, available])
+
   // The dashboard posts every toggle on this channel; follow it so this layer
   // doesn't keep ringing (or nudging) with a stale idea of the listener's state.
   useEffect(() => {

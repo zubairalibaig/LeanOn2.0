@@ -144,6 +144,10 @@
   (away → offline; active → offline on the 2nd unanswered in a row; `wasUnanswered()` defines it).
   `/api/talk/candidates` ranks by presence (in-app ≤3 min > ≤15 min > away). Measured that day:
   15 of 17 "online" listeners were in away mode. Recovery branch: `recovery/pre-presence-fix-2026-10-16`.
+- **Tab close (2026-10-16):** `ListenerPresence` sends a `{ leaving: true }` beacon on `pagehide`
+  (not bfcache). `/api/presence` only AGES `last_heartbeat_at` to `LEAVE_GRACE_SECS` (180s) short of
+  stale — never sets offline directly — so a reload or another open LeanOn tab (90s heartbeat) keeps
+  the listener online, and the normal sweep takes them offline ~3 min after the last tab closes.
 
 ## Suspension (2026-10-13, migration 068)
 

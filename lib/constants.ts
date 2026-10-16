@@ -70,6 +70,10 @@ export const REQUEST_RESPONSE_WINDOW_MS   = REQUEST_RESPONSE_WINDOW_SECS * 1000
 // 2026-10-16); it only bounds the sweep's 'long gone' step.
 export const STALE_HEARTBEAT_MINS  = 15
 export const AWAY_WITH_ALERTS_MINS = 240
+// A LeanOn tab closing (pagehide, not bfcache) ages the listener's heartbeat so
+// they go offline LEAVE_GRACE_SECS later unless another LeanOn tab / a reload
+// heart-beats first (every 60–90s). Must stay well above the heartbeat interval.
+export const LEAVE_GRACE_SECS = 180
 export const RECHARGE_AMOUNTS   = [200, 500, 1000, 2000] as const
 export const UUID_RE            = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 export const CRISIS_RESOURCES   = {

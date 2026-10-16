@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
+import { STALE_HEARTBEAT_MINS, LEAVE_GRACE_SECS } from '@/lib/constants'
 
 export const dynamic = 'force-dynamic'
 
@@ -39,6 +40,22 @@ export async function POST(req: NextRequest) {
         .maybeSingle()
       const isAvailable = (data as { is_available?: boolean } | null)?.is_available
       return NextResponse.json(typeof isAvailable === 'boolean' ? { ok: true, is_available: isAvailable } : { ok: true })
+    }
+
+    // A LeanOn tab was closed (beacon from ListenerPresence on pagehide). Don't
+    // go offline yet — a reload, a full page load or another open LeanOn tab
+    // heart-beats within 90s. Instead make the heartbeat look LEAVE_GRACE_SECS
+    // short of stale, so the normal sweep takes them offline then if nobody
+    // came back. Only ever ages the timestamp (never freshens it), and never
+    // touches is_available.
+    if (body.leaving === true) {
+      const aged = new Date(Date.now() - (STALE_HEARTBEAT_MINS * 60 - LEAVE_GRACE_SECS) * 1000).toISOString()
+      await sb.from('listener_profiles')
+        .update({ last_heartbeat_at: aged })
+        .eq('user_id', user.id)
+        .eq('is_available', true)
+        .gt('last_heartbeat_at', aged)
+      return NextResponse.json({ ok: true })
     }
 
     // Any other call can only ever set the listener OFFLINE (never online).
