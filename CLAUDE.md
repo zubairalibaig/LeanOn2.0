@@ -138,6 +138,11 @@
   `is_available=true`; they report it back so the UI re-syncs.
 - A request that runs out of time is cancelled as `timed_out` (decline route with
   `{ reason: 'timeout' }`), never `seeker_cancelled` / `declined`.
+- **Talk now misses (2026-10-16):** a Talk now switch (`replacesSessionId` + `via:'talk'`) after the
+  listener's full turn (≥ `TALK_SWITCH_MISS_SECS`) is a missed request — `recordMissedRequest()`
+  (away → offline; active → offline on the 2nd unanswered in a row; `wasUnanswered()` defines it).
+  `/api/talk/candidates` ranks by presence (in-app ≤3 min > ≤15 min > away). Measured that day:
+  15 of 17 "online" listeners were in away mode. Recovery branch: `recovery/pre-presence-fix-2026-10-16`.
 
 ## Suspension (2026-10-13, migration 068)
 

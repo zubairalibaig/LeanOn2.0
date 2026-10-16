@@ -4,7 +4,7 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { MAX_FREE_TRIALS } from '@/lib/constants'
 import { getBookingPriceDisplay, pricingCountry, quoteSession } from '@/lib/geo-pricing'
 import { isUnlimitedTestPhone } from '@/lib/test-users'
-import { sweepStaleListeners } from '@/lib/listener-presence'
+import { sweepStaleListeners, wasUnanswered, STALE_HEARTBEAT_MINS } from '@/lib/listener-presence'
 import { talkTopic, TALK_MAX_TEXT_RATE } from '@/lib/talk-match'
 import { logger } from '@/lib/logger'
 
@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
     // an old schema — retried without that filter.
     const onlineQuery = (withPendingPhoto: boolean) => {
       let q = sb.from('listener_profiles')
-        .select('user_id, rate_per_min, rating, specialty_tags, users!inner(name, phone)')
+        .select('user_id, rate_per_min, rating, specialty_tags, last_heartbeat_at, users!inner(name, phone)')
         .eq('is_approved', true).eq('is_available', true).eq('is_suspended', false)
         .or('is_active.eq.true,is_active.is.null')
         .not('users.phone', 'is', null)
@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
     if (error?.message?.includes('pending_avatar_url')) ({ data: online, error } = await onlineQuery(false))
     if (error) throw error
 
-    type Row = { user_id: string; rate_per_min: number | null; rating: number | null; specialty_tags: string[] | null; users: { name: string | null } }
+    type Row = { user_id: string; rate_per_min: number | null; rating: number | null; specialty_tags: string[] | null; last_heartbeat_at: string | null; users: { name: string | null } }
     let rows = ((online ?? []) as unknown as Row[]).filter(r => !exclude.has(r.user_id))
     if (!free) rows = rows.filter(r => Number(r.rate_per_min ?? 10) <= TALK_MAX_TEXT_RATE)
     const ids = rows.map(r => r.user_id)
@@ -86,7 +86,7 @@ export async function GET(req: NextRequest) {
       type === 'voice'
         ? sb.from('listener_profiles').select('user_id').in('user_id', ids).eq('voice_disabled', true)
         : Promise.resolve({ data: [] as { user_id: string }[], error: null }),
-      sb.from('sessions').select('listener_id, status, started_at, cancel_reason')
+      sb.from('sessions').select('listener_id, status, started_at, cancel_reason, responded_at, created_at')
         .in('listener_id', ids).gte('created_at', since)
         .order('created_at', { ascending: false }).limit(5000),
     ])
@@ -102,12 +102,21 @@ export async function GET(req: NextRequest) {
     const busy = new Set(((busyRes.data ?? []) as { listener_id: string }[]).map(r => r.listener_id))
     const voiceOff = new Set(((voiceOffRes.data ?? []) as { user_id: string }[]).map(r => r.user_id))
 
-    // Reliability: answered requests vs requests they let lapse or declined.
-    // Seeker-cancelled requests say nothing about the listener and are ignored.
+    // Reliability: answered requests vs requests they declined or left
+    // unanswered — including a Talk now request withdrawn after the listener's
+    // full turn (wasUnanswered). Before 2026-10-16 those were ignored, so a
+    // listener who was away kept a perfect score and was asked first every time.
     const answered = new Map<string, number>(), missed = new Map<string, number>()
-    for (const s of (statsRes.data ?? []) as { listener_id: string; status: string; started_at: string | null; cancel_reason: string | null }[]) {
+    for (const s of (statsRes.data ?? []) as { listener_id: string; status: string; started_at: string | null; cancel_reason: string | null; responded_at: string | null; created_at: string | null }[]) {
       if (s.started_at || s.status === 'active' || s.status === 'completed') answered.set(s.listener_id, (answered.get(s.listener_id) ?? 0) + 1)
-      else if (s.cancel_reason === 'timed_out' || s.cancel_reason === 'declined') missed.set(s.listener_id, (missed.get(s.listener_id) ?? 0) + 1)
+      else if (s.cancel_reason === 'declined' || wasUnanswered(s)) missed.set(s.listener_id, (missed.get(s.listener_id) ?? 0) + 1)
+    }
+    // Presence: someone in the app right now beats someone "away" (online only
+    // because their phone can get an alert — 15 of 17 'online' on 2026-10-16).
+    const now = Date.now()
+    const presence = (hb: string | null) => {
+      const mins = hb ? (now - Date.parse(hb)) / 60_000 : Infinity
+      return mins <= 3 ? 3 : mins <= STALE_HEARTBEAT_MINS ? 1.5 : 0
     }
 
     const wanted = new Set<string>(topic?.tags ?? [])
@@ -121,7 +130,7 @@ export async function GET(req: NextRequest) {
         // after the free 5 isn't a ₹600+ surprise (paid matches are already
         // limited to them above).
         const standardRate = Number(r.rate_per_min ?? 10) <= TALK_MAX_TEXT_RATE ? 1 : 0
-        const score = topicHit * 2 + reliability * 2 + standardRate * 1.5 + (Number(r.rating ?? 0) / 5) * 0.5 + Math.random() * 0.3
+        const score = presence(r.last_heartbeat_at) + topicHit * 2 + reliability * 2 + standardRate * 1.5 + (Number(r.rating ?? 0) / 5) * 0.5 + Math.random() * 0.3
         // The same quote POST /api/sessions holds (lib/geo-pricing quoteSession).
         const { indianTotal: indian, total: inr } = quoteSession(Number(r.rate_per_min ?? 10), type, durationMins, country, free)
         return {

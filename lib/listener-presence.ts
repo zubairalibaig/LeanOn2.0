@@ -88,6 +88,24 @@ export async function sweepStaleListeners(sb: Sb, onlyUserId?: string): Promise<
 // Call it AFTER the seeker's refund — it is slower (reads + a push) and must
 // never stand between a cancelled request and its refund.
 const MISS_FRESH_MS = REQUEST_RESPONSE_WINDOW_MS + 2 * 60_000
+
+// Talk now (/talk) moves on to the next listener after TALK_TRY_SECS (30s) and
+// cancels the old request as 'seeker_cancelled'. When the listener had at least
+// this long and did not respond, that is a missed request too (2026-10-16: 15 of
+// 17 'online' listeners were away; unanswered Talk requests never counted, so an
+// away listener stayed online and was asked first by every seeker).
+export const TALK_SWITCH_MISS_SECS = 25
+
+// Did this (earlier) request go unanswered by the listener?
+export function wasUnanswered(r: { status: string; cancel_reason: string | null; started_at?: string | null; responded_at?: string | null; created_at?: string | null }): boolean {
+  if (r.status !== 'cancelled' || r.started_at) return false
+  if (r.cancel_reason === 'timed_out') return true
+  // Withdrawn by Talk now's switch after the listener had its full turn.
+  if (r.cancel_reason === 'seeker_cancelled' && r.responded_at && r.created_at) {
+    return Date.parse(r.responded_at) - Date.parse(r.created_at) >= TALK_SWITCH_MISS_SECS * 1000
+  }
+  return false
+}
 const PREVIOUS_MISS_WITHIN_MS = 2 * 60 * 60_000
 
 export async function recordMissedRequest(sb: Sb, args: { listenerId: string; sessionId: string }): Promise<void> {
@@ -110,15 +128,15 @@ export async function recordMissedRequest(sb: Sb, args: { listenerId: string; se
     let secondInARow = false
     if (!away) {
       const { data: prev } = await sb.from('sessions')
-        .select('status, cancel_reason')
+        .select('status, cancel_reason, started_at, responded_at, created_at')
         .eq('listener_id', listenerId)
         .neq('id', sessionId)
         .lt('created_at', createdAt)
         .gte('created_at', new Date(new Date(createdAt).getTime() - PREVIOUS_MISS_WITHIN_MS).toISOString())
         .order('created_at', { ascending: false })
         .limit(1)
-      const p = (prev as { status: string; cancel_reason: string | null }[] | null)?.[0]
-      secondInARow = p?.status === 'cancelled' && p.cancel_reason === 'timed_out'
+      const p = (prev as { status: string; cancel_reason: string | null; started_at: string | null; responded_at: string | null; created_at: string | null }[] | null)?.[0]
+      secondInARow = !!p && wasUnanswered(p)
     }
     if (!away && !secondInARow) return
 

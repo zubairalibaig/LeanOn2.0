@@ -10,7 +10,7 @@ import { notifySessionComplete } from '@/lib/notify'
 import { logger } from '@/lib/logger'
 import { sendPushToUser, sendRequestWithdrawn } from '@/lib/push'
 import { expireStalePendingRequests } from '@/lib/expire-pending'
-import { sweepStaleListeners } from '@/lib/listener-presence'
+import { sweepStaleListeners, recordMissedRequest, TALK_SWITCH_MISS_SECS } from '@/lib/listener-presence'
 import { suspensionStatus } from '@/lib/suspension'
 
 const VALID_SESSION_TYPES = ['text', 'voice'] as const
@@ -61,10 +61,11 @@ export async function POST(req: NextRequest) {
     // Not atomic: if someone else takes the new listener between the checks and
     // create_session, the old request is already cancelled + refunded and the
     // client tells the seeker to choose again.
-    let replacing: { id: string; amount_held: number; is_free_trial: boolean; listener_id: string } | null = null
+    let replacing: { id: string; amount_held: number; is_free_trial: boolean; listener_id: string; created_at: string } | null = null
+    let talkMissToRecord: { listenerId: string; sessionId: string } | null = null
     if (replacesSessionId) {
       const { data: old } = await sb.from('sessions')
-        .select('id, seeker_id, listener_id, status, amount_held, is_free_trial')
+        .select('id, seeker_id, listener_id, status, amount_held, is_free_trial, created_at')
         .eq('id', replacesSessionId)
         .maybeSingle()
       if (!old || old.seeker_id !== user.id) {
@@ -76,7 +77,7 @@ export async function POST(req: NextRequest) {
       if (old.listener_id === listenerId) {
         return NextResponse.json({ error: 'same_listener' }, { status: 400 })
       }
-      replacing = { id: old.id as string, amount_held: Number(old.amount_held) || 0, is_free_trial: !!old.is_free_trial, listener_id: old.listener_id as string }
+      replacing = { id: old.id as string, amount_held: Number(old.amount_held) || 0, is_free_trial: !!old.is_free_trial, listener_id: old.listener_id as string, created_at: old.created_at as string }
     }
 
     // Block suspended/banned users (account or listener suspension) from booking
@@ -261,6 +262,15 @@ export async function POST(req: NextRequest) {
       }
       // Clear the withdrawn request's alert on the first listener's phone.
       await sendRequestWithdrawn(sb, replacing.listener_id, replacing.id)
+      // Talk now moved on because this listener did not answer in their turn:
+      // a missed request, same rule as a timeout (away → offline; active →
+      // offline on the second in a row). Only Talk now — the /browse waiting
+      // screen's switch follows a request whose alert promised 3 minutes.
+      // (Recorded at the end, after the next listener's request is out, so it
+      // never delays the seeker's switch.)
+      if (fromTalk && Date.now() - Date.parse(replacing.created_at) >= TALK_SWITCH_MISS_SECS * 1000) {
+        talkMissToRecord = { listenerId: replacing.listener_id, sessionId: replacing.id }
+      }
       if (replacing.amount_held > 0 && !replacing.is_free_trial) {
         const { error: refundErr } = await sb.rpc('credit_wallet', { p_user_id: user.id, p_amount: replacing.amount_held })
         if (refundErr) {
@@ -411,6 +421,9 @@ export async function POST(req: NextRequest) {
     } catch (fcmErr) {
       logger.error('FCM push failed (non-critical):', { error: fcmErr instanceof Error ? fcmErr.message : String(fcmErr) })
     }
+
+    // Talk now moved on from a listener who didn't answer in their turn.
+    if (talkMissToRecord) await recordMissedRequest(sb, talkMissToRecord)
 
     return NextResponse.json({ sessionId, total })
   } catch (err: unknown) {
