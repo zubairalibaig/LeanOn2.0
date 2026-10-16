@@ -525,6 +525,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Authoritative guide + disambiguation pages
     { url: `${base}/peer-support-india-guide`,          lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.90 },
     { url: `${base}/is-leanon-worth-it`,                lastModified: d('2026-10-17'), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/peer-support-alongside-therapy`,    lastModified: d('2026-10-16'), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/become-a-peer-supporter`,           lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.6 },
     { url: `${base}/leanon-is-not-a-job`,              lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.85 },
 

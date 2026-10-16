@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
+import QuickAnswer from '@/app/components/QuickAnswer'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Dealing With Family Pressure in India — Emotional Support When You Can\'t Talk to Them | LeanOn',
-  description: 'Family expectations around career, marriage, and money in India can be overwhelming. Talk to someone who understands — anonymously, without it getting back to them.',
+  description: "Family pressure about marriage or career? Talk privately to a real peer listener in India who gets it — text or voice, your number never shown. First 5 minutes free.",
   keywords: [
     'family pressure India', 'Indian family expectations', 'parents pressure India',
     'dealing with family stress India', 'career pressure from parents India', 'marriage pressure India',
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Dealing With Family Pressure in India — Emotional Support When You Can\'t Talk to Them | LeanOn',
-    description: 'Family expectations around career, marriage, and money in India can be overwhelming. Talk to someone who understands — anonymously, without it getting back to them.',
+    description: "Family pressure about marriage or career? Talk privately to a real peer listener in India who gets it — text or voice, your number never shown. First 5 minutes free.",
     url: 'https://www.leanon.app/support/family-pressure-india',
     siteName: 'LeanOn',
     type: 'article',
@@ -30,6 +31,7 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
+    { '@type': 'Question', name: "My family is pressuring me about marriage or career \u2014 who can I talk to?", acceptedAnswer: { '@type': 'Answer', text: "When you can't say it at home, saying it to someone neutral helps. LeanOn connects you with a peer listener in India who understands family and marriage pressure, for a private text or voice conversation — nothing is shared with anyone you know, and the listener sees only the name you choose. Your first 5 minutes are free." } },
     {
       '@type': 'Question',
       name: 'Will the listener judge my family or take sides?',
@@ -165,6 +167,7 @@ export default function FamilyPressureIndiaPage() {
           <p className="badge">Peer Support · Family Pressure · India</p>
           <h1>When the Pressure Comes From <em>The People You Love</em></h1>
           <p className="lead">Indian family expectations around career, marriage, and money can feel like a weight you carry everywhere. The hardest part: you cannot vent to the people who are the source of it. LeanOn gives you a space outside all of that — anonymous, confidential, and genuinely understanding of the Indian family dynamic.</p>
+          <QuickAnswer question={"My family is pressuring me about marriage or career \u2014 who can I talk to?"} answer={"When you can't say it at home, saying it to someone neutral helps. LeanOn connects you with a peer listener in India who understands family and marriage pressure, for a private text or voice conversation — nothing is shared with anyone you know, and the listener sees only the name you choose. Your first 5 minutes are free."} />
           <a href="/browse?topic=relationships" className="cta-hero">Find a listener →</a>
         </div>
 

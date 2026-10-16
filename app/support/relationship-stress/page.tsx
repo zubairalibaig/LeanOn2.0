@@ -1,14 +1,15 @@
 import type { Metadata } from 'next'
+import QuickAnswer from '@/app/components/QuickAnswer'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Relationship Stress Peer Support India | LeanOn',
-  description: 'Dealing with relationship stress? Talk to a peer listener anonymously on LeanOn. Available 24/7. Available across India.',
+  description: "Relationship stress building up? Talk it through with a neutral, real peer listener in India — private, text or voice, online now. Not couples therapy. First 5 minutes free.",
   alternates: { canonical: 'https://www.leanon.app/support/relationship-stress', languages: { 'en-IN': 'https://www.leanon.app/support/relationship-stress' } },
   openGraph: {
     title: 'Relationship Stress Peer Support India | LeanOn',
-    description: 'Dealing with relationship stress? Talk to a peer listener anonymously on LeanOn. Available 24/7. Available across India.',
+    description: "Relationship stress building up? Talk it through with a neutral, real peer listener in India — private, text or voice, online now. Not couples therapy. First 5 minutes free.",
     url: 'https://www.leanon.app/support/relationship-stress',
     siteName: 'LeanOn',
     type: 'article',
@@ -19,6 +20,7 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
+    { '@type': 'Question', name: "My relationship is stressing me out \u2014 who can I talk to?", acceptedAnswer: { '@type': 'Answer', text: "When fights, distance or doubts keep building, talking them through with someone neutral helps you see clearly. LeanOn connects you with a peer listener in India who has lived through relationship stress — privately, by text or voice, with someone online now. They do not take sides and it is not couples therapy. Your first 5 minutes are free." } },
     {
       '@type': 'Question',
       name: 'What counts as relationship stress?',
@@ -149,6 +151,7 @@ export default function RelationshipStressSupportPage() {
           <p className="tag">Peer Support · Relationship Stress</p>
           <h1>Getting Through Relationship Stress — You Don&apos;t Have to <em>Face It Alone</em></h1>
           <p className="lead">Relationship stress is one of the heaviest burdens to carry — especially when you feel you cannot talk to anyone about it. LeanOn connects you with peer listeners in India who have navigated the same complicated feelings and come out the other side.</p>
+          <QuickAnswer question={"My relationship is stressing me out \u2014 who can I talk to?"} answer={"When fights, distance or doubts keep building, talking them through with someone neutral helps you see clearly. LeanOn connects you with a peer listener in India who has lived through relationship stress — privately, by text or voice, with someone online now. They do not take sides and it is not couples therapy. Your first 5 minutes are free."} />
         </div>
 
         {/* What Is Relationship Stress */}

@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
+import QuickAnswer from '@/app/components/QuickAnswer'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Breakup & Heartbreak Support in India | Talk to Someone Who Gets It | LeanOn',
-  description: 'Going through a breakup, divorce, or heartbreak? Connect with peer listeners who have been through the pain and rebuilt. Available 24/7.',
+  description: "Can't stop thinking about your breakup? Talk privately to a real peer listener in India who has been through heartbreak — text or voice, online now. First 5 minutes free.",
   alternates: { canonical: 'https://www.leanon.app/support/breakup' },
   openGraph: {
     title: 'Breakup Support — LeanOn',
@@ -19,6 +20,7 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
+    { '@type': 'Question', name: "I can't stop thinking about my breakup \u2014 who can I talk to?", acceptedAnswer: { '@type': 'Answer', text: "Talking it out with someone who has been through heartbreak helps more than replaying it alone. LeanOn connects you with a screened peer listener in India for a private text or voice conversation with someone who is online now — no appointment, no judging, no 'just move on'. Your first 5 minutes are free. It is peer support, not therapy." } },
     {
       '@type': 'Question',
       name: 'How long does breakup pain typically last?',
@@ -143,6 +145,7 @@ export default function BreakupSupportPage() {
           <p className="tag">Peer Support · Breakup & Heartbreak</p>
           <h1>Heartbreak Is Real. <em>So Is Recovery.</em></h1>
           <p className="lead">A breakup can feel like the floor has disappeared. Whether you are recovering from a long-term relationship, a divorce, or a first heartbreak, LeanOn connects you with peer listeners who have been through it — and rebuilt.</p>
+          <QuickAnswer question={"I can't stop thinking about my breakup \u2014 who can I talk to?"} answer={"Talking it out with someone who has been through heartbreak helps more than replaying it alone. LeanOn connects you with a screened peer listener in India for a private text or voice conversation with someone who is online now — no appointment, no judging, no 'just move on'. Your first 5 minutes are free. It is peer support, not therapy."} />
         </div>
 
         <div className="notice">

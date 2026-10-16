@@ -1,15 +1,16 @@
 import type { Metadata } from 'next'
+import QuickAnswer from '@/app/components/QuickAnswer'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'How to Stop Overthinking — Talk to Someone Who Gets It | LeanOn',
-  description: 'Overthinking at night? Racing thoughts that will not switch off? Talk anonymously to a peer listener in India. Available 24/7.',
+  description: "Can't stop overthinking? Talk the loop out with a real peer listener in India — private, text or voice, no appointment. First 5 minutes free.",
   keywords: 'how to stop overthinking, overthinking at night, racing thoughts India, anxiety overthinking, talk to someone about overthinking, rumination help, overthinking help India, peer support overthinking',
   alternates: { canonical: 'https://www.leanon.app/support/overthinking', languages: { 'en-IN': 'https://www.leanon.app/support/overthinking' } },
   openGraph: {
     title: 'How to Stop Overthinking — Talk to Someone Who Gets It | LeanOn',
-    description: 'Overthinking at night? Racing thoughts that will not switch off? Talk anonymously to a peer listener in India. Available 24/7.',
+    description: "Can't stop overthinking? Talk the loop out with a real peer listener in India — private, text or voice, no appointment. First 5 minutes free.",
     url: 'https://www.leanon.app/support/overthinking',
     siteName: 'LeanOn',
     type: 'article',
@@ -20,6 +21,7 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
+    { '@type': 'Question', name: "I can't stop overthinking, especially at night \u2014 who can I talk to?", acceptedAnswer: { '@type': 'Answer', text: "Saying the loop out loud to a real person often breaks it. LeanOn connects you with a screened peer listener in India for a private text or voice conversation with someone who is online now — no appointment. Your first 5 minutes are free. It is peer support, not therapy." } },
     {
       '@type': 'Question',
       name: 'Why does my mind race more at night?',
@@ -150,6 +152,7 @@ export default function OverthinkingSupportPage() {
           <p className="tag">Peer Support · Overthinking</p>
           <h1>Your Mind Won&apos;t Stop. You&apos;re Not <em>Broken</em>.</h1>
           <p className="lead">If you&apos;re reading this at 1 AM with the same three thoughts going round and round, you&apos;re in the right place. LeanOn connects you with peer listeners across India who have lived inside their own spirals — and know that the loop usually loosens the moment you say it out loud to someone.</p>
+          <QuickAnswer question={"I can't stop overthinking, especially at night \u2014 who can I talk to?"} answer={"Saying the loop out loud to a real person often breaks it. LeanOn connects you with a screened peer listener in India for a private text or voice conversation with someone who is online now — no appointment. Your first 5 minutes are free. It is peer support, not therapy."} />
         </div>
 
         {/* Understanding overthinking */}

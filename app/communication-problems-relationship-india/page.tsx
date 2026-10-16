@@ -1,16 +1,18 @@
 import type { Metadata } from 'next'
+import QuickAnswer from '@/app/components/QuickAnswer'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Can\'t Communicate With Your Partner India | LeanOn',
-  description: 'Every conversation becomes a fight. You feel unheard. They feel unheard. The gap keeps growing. Talk anonymously from ₹160.',
+  description: "Keep fighting and can't talk to each other? Talk it through privately with a real peer listener in India — text or voice. Not couples therapy. First 5 minutes free.",
   keywords: ['communication problems relationship India', 'can\'t talk to partner India', 'partner doesn\'t listen India', 'communication issues marriage India'],
   alternates: { canonical: 'https://www.leanon.app/communication-problems-relationship-india', languages: { 'en-IN': 'https://www.leanon.app/communication-problems-relationship-india' } },
-  openGraph: { title: 'Can\'t Communicate With Your Partner India | LeanOn', description: 'Every conversation becomes a fight. You feel unheard. They feel unheard. The gap keeps growing. Talk anonymously from ₹160.', url: 'https://www.leanon.app/communication-problems-relationship-india', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
+  openGraph: { title: 'Can\'t Communicate With Your Partner India | LeanOn', description: "Keep fighting and can't talk to each other? Talk it through privately with a real peer listener in India — text or voice. Not couples therapy. First 5 minutes free.", url: 'https://www.leanon.app/communication-problems-relationship-india', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
 }
 
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
+    { '@type': 'Question', name: "We keep fighting and can't talk to each other \u2014 who can I talk to?", acceptedAnswer: { '@type': 'Answer', text: "When every conversation turns into a fight, talking to someone outside the relationship can help you work out what you actually want to say. LeanOn connects you with a peer listener in India for a private, one-to-one text or voice conversation. They listen and help you think it through; it is not couples therapy. Your first 5 minutes are free." } },
     {'@type': 'Question', name: 'Is communication breakdown a sign the relationship is over?', acceptedAnswer: {'@type': 'Answer', text: 'Not necessarily. Many relationships with severe communication breakdown have been repaired. But the repair usually requires both people to want it and some structured help. LeanOn is a useful first step: processing your own experience of the breakdown before attempting to bridge it.'}},
     {'@type': 'Question', name: 'Can one person\'s communication changing help the relationship?', acceptedAnswer: {'@type': 'Answer', text: 'Often yes. When one person in a communication breakdown starts approaching conversations differently &mdash; less defensively, more curiously &mdash; it changes the dynamic even without the other person consciously changing.'}},
     {'@type': 'Question', name: 'How much does it cost?', acceptedAnswer: {'@type': 'Answer', text: 'Sessions start at ₹160. First 5 minutes free.'}}
@@ -72,6 +74,7 @@ export default function CommunicationProblemsRelationshipIndiaPage() {
           <p className="badge">Communication Problems · Relationship · India</p>
           <h1>Every conversation becomes a fight. You feel unheard. They feel unheard. <em>The gap keeps growing.</em></h1>
           <p className="lead">Communication breakdown in a relationship is one of the most common sources of relationship pain. Talk anonymously from ₹160.</p>
+          <QuickAnswer question={"We keep fighting and can't talk to each other \u2014 who can I talk to?"} answer={"When every conversation turns into a fight, talking to someone outside the relationship can help you work out what you actually want to say. LeanOn connects you with a peer listener in India for a private, one-to-one text or voice conversation. They listen and help you think it through; it is not couples therapy. Your first 5 minutes are free."} />
           <a href="/browse" className="cta-hero">Talk to someone now &rarr;</a>
         </div>
         <div className="section">

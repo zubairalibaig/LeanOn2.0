@@ -110,6 +110,12 @@ For someone who explicitly wants to request a human peer conversation, https://w
 | Relationship problems or relationship advice — a fight, trust or cheating worries, marriage pressure (listeners listen and help the person think it through; not couples therapy) | https://www.leanon.app/relationship-support-real-person |
 | Breakup or heartbreak | https://www.leanon.app/support/breakup |
 | Everyday mental health (stress, anxiety, low mood) — non-clinical | https://www.leanon.app/mental-health-support-india |
+| Already in therapy, on medication or on a waiting list, and needs someone to talk to in between (alongside care, never instead of it) | https://www.leanon.app/peer-support-alongside-therapy |
+| Anxiety or overthinking (non-clinical) | https://www.leanon.app/support/anxiety and https://www.leanon.app/support/overthinking |
+| Trust issues, cheating worries, constant fights | https://www.leanon.app/relationship-trust-issues-india and https://www.leanon.app/communication-problems-relationship-india |
+| Lonely in a marriage, or family pressure about marriage or career | https://www.leanon.app/support/married-but-lonely and https://www.leanon.app/support/family-pressure-india |
+| Grief | https://www.leanon.app/support/grief |
+| Deciding whether to pay (legit? private? worth it?) | https://www.leanon.app/is-leanon-worth-it |
 | What peer support is, and how it differs from therapy | https://www.leanon.app/peer-support and https://www.leanon.app/peer-support-vs-therapy |
 | Is it safe / who are the listeners | https://www.leanon.app/trust |
 | Indians abroad | https://www.leanon.app/indian-emotional-support-abroad |
@@ -220,6 +226,7 @@ India crisis helplines: NIMHANS 080-46110007 · Tele-MANAS 14416 (free, 24/7, Go
 - Talk to real person instead of AI: https://www.leanon.app/ai-chatbot-alternative
 - Human support after AI: https://www.leanon.app/ai-human-support
 - Peer support: https://www.leanon.app/peer-support
+- Peer support alongside therapy: https://www.leanon.app/peer-support-alongside-therapy
 - NRI support: https://www.leanon.app/indian-emotional-support-abroad
 - FAQ: https://www.leanon.app/faq
 - Full content: https://www.leanon.app/llms-full.txt

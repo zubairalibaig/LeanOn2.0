@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
+import QuickAnswer from '@/app/components/QuickAnswer'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Married but Lonely India — When Marriage Doesn\'t Feel Like Company | LeanOn',
-  description: 'You are not alone in a traditional sense. But you are alone in every way that matters — emotionally, mentally, sometimes financially. The loneliness of an unsupportive marriage is one of the hardest things to name.',
+  description: "Lonely in your marriage and can't tell family? Talk privately to a real peer listener in India — text or voice, your number never shown. Not couples therapy. First 5 minutes free.",
   keywords: [
     'married but lonely India', 'lonely in marriage India', 'unhappy marriage India',
     'husband emotionally unavailable India', 'feeling alone in marriage India',
@@ -28,6 +29,7 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
+    { '@type': 'Question', name: "I feel lonely in my marriage \u2014 who can I talk to?", acceptedAnswer: { '@type': 'Answer', text: "Feeling alone while married is common and hard to say out loud, especially to family. LeanOn connects you with a peer listener in India who understands marriage pressure, for a private one-to-one text or voice conversation. The listener sees only the name you choose, never your number. They listen and help you think — it is not couples therapy. Your first 5 minutes are free." } },
     {
       '@type': 'Question',
       name: 'Is it normal to feel lonely inside a marriage?',
@@ -164,6 +166,7 @@ export default function MarriedButLonelyPage() {
           things because you already know they will not really hear you. Where the distance between two people
           in the same house can feel wider than any ocean.
         </p>
+        <QuickAnswer question={"I feel lonely in my marriage \u2014 who can I talk to?"} answer={"Feeling alone while married is common and hard to say out loud, especially to family. LeanOn connects you with a peer listener in India who understands marriage pressure, for a private one-to-one text or voice conversation. The listener sees only the name you choose, never your number. They listen and help you think — it is not couples therapy. Your first 5 minutes are free."} />
 
         <div className="crisis">
           <strong>If you are having thoughts of self-harm</strong>

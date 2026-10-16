@@ -1,14 +1,15 @@
 import type { Metadata } from 'next'
+import QuickAnswer from '@/app/components/QuickAnswer'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Peer Support for Anxiety in India | Talk Anonymously | LeanOn',
-  description: 'Manage anxiety with peer support. Talk to a screened listener anonymously on LeanOn. Available 24/7. Available across India.',
+  description: "Anxious all the time? Talk privately to a real, screened peer listener in India — text or voice, online now. Peer support, not diagnosis. First 5 minutes free.",
   alternates: { canonical: 'https://www.leanon.app/support/anxiety', languages: { 'en-IN': 'https://www.leanon.app/support/anxiety' } },
   openGraph: {
     title: 'Peer Support for Anxiety in India | Talk Anonymously | LeanOn',
-    description: 'Manage anxiety with peer support. Talk to a screened listener anonymously on LeanOn. Available 24/7. Available across India.',
+    description: "Anxious all the time? Talk privately to a real, screened peer listener in India — text or voice, online now. Peer support, not diagnosis. First 5 minutes free.",
     url: 'https://www.leanon.app/support/anxiety',
     siteName: 'LeanOn',
     type: 'article',
@@ -19,6 +20,7 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
+    { '@type': 'Question', name: "I feel anxious all the time \u2014 can I talk to someone without seeing a psychiatrist?", acceptedAnswer: { '@type': 'Answer', text: "Yes, for everyday anxiety and overthinking, talking to a calm, real person can help. LeanOn connects you with a screened peer listener in India for a private text or voice conversation with someone who is online now. It is peer support, not diagnosis or treatment — if anxiety is stopping your daily life or you have frequent panic attacks, also see a doctor. Your first 5 minutes are free." } },
     {
       '@type': 'Question',
       name: 'What types of anxiety can peer support help with?',
@@ -145,6 +147,7 @@ export default function AnxietySupportPage() {
           <p className="tag">Peer Support · Anxiety</p>
           <h1>Your <em>Anxious Mind</em> Deserves to Be Heard</h1>
           <p className="lead">Anxiety affects millions of people in India — from work pressure and exam stress to racing thoughts that won&apos;t quit at 3 AM. LeanOn connects you with peer listeners who have managed their own anxiety and truly understand what you are going through.</p>
+          <QuickAnswer question={"I feel anxious all the time \u2014 can I talk to someone without seeing a psychiatrist?"} answer={"Yes, for everyday anxiety and overthinking, talking to a calm, real person can help. LeanOn connects you with a screened peer listener in India for a private text or voice conversation with someone who is online now. It is peer support, not diagnosis or treatment — if anxiety is stopping your daily life or you have frequent panic attacks, also see a doctor. Your first 5 minutes are free."} />
         </div>
 
         <div style={{background:'#EBF5FB',borderLeft:'4px solid #1A8FA0',borderRadius:'0 12px 12px 0',padding:'14px 18px',marginBottom:28,fontSize:14,color:'#0F4867',fontWeight:600,lineHeight:1.65}}>

@@ -1,15 +1,16 @@
 import type { Metadata } from 'next'
+import QuickAnswer from '@/app/components/QuickAnswer'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Need to Vent? Talk to Someone Who Will Actually Listen | LeanOn',
-  description: 'Need to vent and get things off your chest? LeanOn connects you with real peer listeners in India who listen without judgment — no advice unless you want it. 24/7.',
+  description: "Need to vent? Talk to a real person who just listens — a screened peer listener in India, text or voice, online now. First 5 minutes free.",
   keywords: ['need to vent India', 'someone to vent to India', 'want to vent my feelings India', 'need to talk about my problems India', 'need to get things off my chest', 'vent to someone online India', 'talk about my problems India', 'someone to listen to me vent India', 'need to express my feelings India', 'I just want to talk India', 'need to release emotions India', 'emotional outlet India', 'talk to someone who listens India', 'vent without judgment India', 'talk about life problems India'],
   alternates: { canonical: 'https://www.leanon.app/support/need-to-vent', languages: { 'en-IN': 'https://www.leanon.app/support/need-to-vent' } },
   openGraph: {
     title: 'Need to Vent? Talk to Someone Who Will Actually Listen | LeanOn',
-    description: 'Need to vent and get things off your chest? LeanOn connects you with real peer listeners in India who listen without judgment — no advice unless you want it. 24/7.',
+    description: "Need to vent? Talk to a real person who just listens — a screened peer listener in India, text or voice, online now. First 5 minutes free.",
     url: 'https://www.leanon.app/support/need-to-vent',
     siteName: 'LeanOn',
     type: 'article',
@@ -21,6 +22,7 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
+    { '@type': 'Question', name: "I just need to vent to someone \u2014 where can I do that?", acceptedAnswer: { '@type': 'Answer', text: "Venting to a real person who just listens — no fixing, no advice unless you ask — is exactly what LeanOn is for. Connect with a screened peer listener in India by text or voice, privately, with someone who is online now. Your first 5 minutes are free." } },
     {
       '@type': 'Question',
       name: 'Why is venting to someone important for mental health?',
@@ -158,6 +160,7 @@ export default function NeedToVentPage() {
           <p className="tag">Peer Support · Venting &amp; Expression</p>
           <h1>Need to <em>Vent</em>? Someone Is Ready to Listen</h1>
           <p className="lead">Sometimes you do not need advice. You do not need a solution. You just need to say what you have been carrying — and have someone actually hear it. LeanOn peer listeners listen without judgment, without redirecting, and without rushing to fix anything.</p>
+          <QuickAnswer question={"I just need to vent to someone \u2014 where can I do that?"} answer={"Venting to a real person who just listens — no fixing, no advice unless you ask — is exactly what LeanOn is for. Connect with a screened peer listener in India by text or voice, privately, with someone who is online now. Your first 5 minutes are free."} />
         </div>
 
         <div className="section">

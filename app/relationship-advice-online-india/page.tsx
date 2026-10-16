@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import QuickAnswer from '@/app/components/QuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -23,10 +24,14 @@ export const metadata: Metadata = {
   },
 }
 
+const DIRECT_QUESTION = "Where can I get relationship advice online in India from a real person?"
+const DIRECT_ANSWER = "LeanOn connects adults with a screened peer listener in India for a one-to-one text or voice conversation about relationship stress. One introductory session of up to 5 minutes is free per account. It is peer support, not professional relationship counselling, couples therapy or legal advice; availability varies, and a match is not guaranteed."
+
 const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
+    { '@type': 'Question', name: DIRECT_QUESTION, acceptedAnswer: { '@type': 'Answer', text: DIRECT_ANSWER } },
     {
       '@type': 'Question',
       name: 'How do I get relationship advice online in India?',
@@ -150,6 +155,8 @@ export default function RelationshipAdvicePage() {
         <p className="lead">
           Relationship stress can be hard to discuss with people you know. LeanOn offers a one-to-one conversation with a screened peer listener by text or voice. It is non-clinical peer support, not professional relationship advice, couples therapy or legal advice.
         </p>
+
+        <QuickAnswer question={DIRECT_QUESTION} answer={DIRECT_ANSWER} />
 
         <a href="/talk?src=seo" className="cta-hero">Talk it through — first 5 minutes free →</a>
 
