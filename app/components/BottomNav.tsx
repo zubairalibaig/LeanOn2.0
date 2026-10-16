@@ -2,8 +2,11 @@
 import { usePathname, useRouter } from 'next/navigation'
 import NotificationsBell from './NotificationsBell'
 
-const TABS = [
+// `match` = the path that marks a tab active (href may carry a query string).
+// Talk now: the match-first entry (/talk); src=nav so Analytics can count menu taps.
+const TABS: { href: string; match?: string; icon: string | null; label: string; accent?: boolean }[] = [
   { href: '/browse',        icon: '🔍', label: 'Browse'   },
+  { href: '/talk?src=nav',  match: '/talk', icon: '💬', label: 'Talk now', accent: true },
   { href: '/history',       icon: '📋', label: 'History'  },
   { href: '/wallet',        icon: '💰', label: 'Wallet'   },
   { href: '/notifications', icon: null, label: 'Alerts'   },
@@ -207,12 +210,15 @@ export default function BottomNav() {
           color:#5A7A8A;transition:color .15s;gap:3px;
         }
         .nav-tab.active{color:#0F4867;}
+        .nav-tab.accent{color:#E07B10;font-weight:800;}
+        .nav-tab.accent.active{color:#B35C00;}
         .nav-tab-icon{font-size:20px;line-height:1;}
       `}</style>
       <nav className="bottom-nav">
         <div className="bottom-nav-inner">
           {TABS.map(tab => {
-            const isActive = pathname === tab.href || pathname.startsWith(tab.href + '/')
+            const base = tab.match ?? tab.href
+            const isActive = pathname === base || pathname.startsWith(base + '/')
             // Notifications tab: render as a plain div to avoid nesting <button> inside <button>
             // (NotificationsBell is itself a <button>)
             if (tab.icon === null) {
@@ -231,7 +237,7 @@ export default function BottomNav() {
             return (
               <button
                 key={tab.href}
-                className={`nav-tab${isActive ? ' active' : ''}`}
+                className={`nav-tab${isActive ? ' active' : ''}${tab.accent ? ' accent' : ''}`}
                 onClick={() => router.push(tab.href)}
               >
                 <span className="nav-tab-icon">{tab.icon}</span>
