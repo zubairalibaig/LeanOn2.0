@@ -263,7 +263,7 @@ export default function MentalHealthSupportIndiaPage() {
           <h2>Frequently Asked Questions</h2>
           <div className="faq-item">
             <div className="faq-q">What kind of mental health support is available in India?</div>
-            <div className="faq-a">Mental health support in India ranges from licensed psychiatrists and psychologists (₹1,500–₹5,000/session) to online therapy platforms (₹800–₹2,000/session), government crisis helplines (free, for emergencies), and peer support platforms like LeanOn (₹160/session, 24/7, no appointment). The right option depends on whether you need clinical diagnosis and treatment or emotional support from someone who understands your experience.</div>
+            <div className="faq-a">Options include qualified mental-health professionals for diagnosis or treatment, free government crisis helplines for urgent distress, and non-clinical peer support for conversation and connection. Professional fees and availability vary. LeanOn is a peer-listener service, not clinical treatment; one introductory session of up to 5 minutes is free per account, and paid prices are shown before you start.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn a mental health app?</div>
@@ -283,7 +283,7 @@ export default function MentalHealthSupportIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How can I get immediate mental health support in India?</div>
-            <div className="faq-a">For a mental health crisis or immediate danger, call NIMHANS 080-46110007 or Tele-MANAS 14416 — free and available 24/7. For emotional support that is not a crisis, LeanOn peer listeners are available right now with no appointment needed.</div>
+            <div className="faq-a">For a mental health crisis or immediate danger, call NIMHANS 080-46110007 or Tele-MANAS 14416 — free and available 24/7. For non-crisis emotional support, LeanOn offers peer-listener conversations without an appointment; availability depends on which listeners are online. Peer support is not clinical treatment.</div>
           </div>
         </div>
 
