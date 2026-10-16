@@ -251,7 +251,7 @@ export default function JaipurPage() {
           <p>Browse peer listeners who understand Rajasthan's traditions — family expectations, arranged marriage pressure, and the push and pull of building a modern career. Available 24/7, completely private.</p>
           <div className="cta-btns">
             <a href="/browse?city=jaipur"><button className="btn-primary">Browse Jaipur Listeners</button></a>
-            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Talk now</button></a>
           </div>
         </div>
 

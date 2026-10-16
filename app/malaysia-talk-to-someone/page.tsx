@@ -217,7 +217,7 @@ export default function MalaysiaTalkToSomeonePage() {
           <h2>A real person is ready to talk right now</h2>
           <p>Private, no appointment, real Indian listeners in your language.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

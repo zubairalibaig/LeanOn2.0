@@ -258,7 +258,7 @@ export default function AstroTalkAlternativePage() {
           <h2>Ready to talk to a real person?</h2>
           <p>No astrology. No predictions. Just a genuine human conversation.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

@@ -203,7 +203,7 @@ export default function UkLonelinessPage() {
           <h2>Someone is ready to listen right now</h2>
           <p>Real humans, not bots. Indian listeners who understand the NRI experience.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

@@ -204,7 +204,7 @@ export default function BritishIndianSupportPage() {
           <h2>You do not have to translate yourself here</h2>
           <p>Indian listeners who understand British Indian life. Anonymous, private, on Indian time.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

@@ -206,7 +206,7 @@ export default function CanadaTalkToSomeonePage() {
           <h2>A real person is ready to listen right now</h2>
           <p>No algorithm. No script. Just human presence when you need it.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

@@ -202,7 +202,7 @@ export default function KuwaitLonelinessPage() {
           <h2>Someone is ready to listen — right now</h2>
           <p>For Indians across Kuwait — online daily on Indian time, in your language.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

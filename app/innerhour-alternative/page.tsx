@@ -204,7 +204,7 @@ export default function InnerhourAlternativePage() {
           <p>Real peer listeners, no subscription, anonymous. First 5 minutes free.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse peer listeners →</button></a>
-            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn →</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Talk now →</button></a>
           </div>
         </div>
 

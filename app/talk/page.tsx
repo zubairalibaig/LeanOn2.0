@@ -38,6 +38,13 @@ function track(event: string, params: Record<string, string | number> = {}) {
   try { (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag?.('event', event, params) } catch { /* ignore */ }
 }
 
+// Entry point (home, float, footer, seo…), kept through the login round trip
+// so Analytics can tie a match back to where the visitor came from.
+const SRC_KEY = 'leanon_talk_src'
+function readSrc(): string {
+  try { return sessionStorage.getItem(SRC_KEY) || 'direct' } catch { return 'direct' }
+}
+
 function readChoice(): { topic: TalkTopicId; mode: Mode } | null {
   try {
     const v = JSON.parse(sessionStorage.getItem(CHOICE_KEY) || 'null')
@@ -86,7 +93,12 @@ function TalkInner() {
   // Where the visitor came from (home hero, floating button, footer, content
   // pages…) — set on every link into /talk, so Analytics can compare entry points.
   useEffect(() => {
-    track('talk_view', { src: (params.get('src') || 'direct').slice(0, 20) })
+    // Back from login / the wallet (?go=1) is the same visit continuing — count
+    // it as a resume, not a second view, and keep the original entry point.
+    if (params.get('go') === '1') { track('talk_resume', { src: readSrc() }); return }
+    const src = (params.get('src') || 'direct').replace(/[^a-z0-9_-]/gi, '').slice(0, 20) || 'direct'
+    try { sessionStorage.setItem(SRC_KEY, src) } catch { /* ignore */ }
+    track('talk_view', { src })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -103,7 +115,7 @@ function TalkInner() {
 
   const goToSession = useCallback((id: string) => {
     handedOff.current = true
-    track('talk_matched', { try_no: tried.current.length, wait_secs: Math.round((Date.now() - runStartedAt.current) / 1000), free: meta.current.free ? 1 : 0 })
+    track('talk_matched', { src: readSrc(), try_no: tried.current.length, wait_secs: Math.round((Date.now() - runStartedAt.current) / 1000), free: meta.current.free ? 1 : 0 })
     try { sessionStorage.removeItem(CHOICE_KEY) } catch { /* ignore */ }
     router.replace(`/session/${id}`)
   }, [router])
@@ -230,7 +242,7 @@ function TalkInner() {
     gen.current++
     choice.current = c
     saveChoice(c)
-    track('talk_start', { topic: c.topic, mode: c.mode })
+    track('talk_start', { src: readSrc(), topic: c.topic, mode: c.mode })
     const sb = createClient()
     const { data: { session } } = await sb.auth.getSession()
     if (!session) { track('talk_login_required'); router.push('/auth?redirect=' + encodeURIComponent('/talk?go=1')); return }
@@ -461,6 +473,11 @@ function TalkInner() {
             <div><Link className="link" href="/browse">See all listeners →</Link></div>
           </div>
         )}
+
+        <p className="fine" style={{ color: '#7A2020' }}>
+          In crisis or thinking about self-harm? Call <a href="tel:14416" style={{ color: '#C0392B', fontWeight: 800 }}>Tele-MANAS 14416</a> (free, 24/7)
+          {' '}or <a href="tel:08046110007" style={{ color: '#C0392B', fontWeight: 800 }}>NIMHANS 080-46110007</a>. LeanOn listeners are not crisis counsellors.
+        </p>
 
         {(phase.k === 'topic' || phase.k === 'mode') && (
           <p className="fine">Prefer to choose someone yourself? <Link href="/browse" style={{ color: '#1A8FA0', fontWeight: 800 }}>See all listeners</Link></p>

@@ -205,7 +205,7 @@ export default function GulfNriSupportPage() {
           <h2>Someone is ready to listen — right now</h2>
           <p>For Indians across the entire Gulf region — in your language, on Indian time, anonymously.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

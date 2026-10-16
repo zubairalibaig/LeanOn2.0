@@ -202,7 +202,7 @@ export default function MiddleEastRantPage() {
           <h2>Let it out. You will feel lighter.</h2>
           <p>Listeners online daily (Indian time), in your language, from anywhere in the Gulf.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

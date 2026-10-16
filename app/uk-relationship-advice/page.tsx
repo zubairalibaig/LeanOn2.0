@@ -203,7 +203,7 @@ export default function UkRelationshipAdvicePage() {
           <h2>Someone is ready to listen right now</h2>
           <p>Real humans. Indian listeners. No judgment, ever.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

@@ -206,7 +206,7 @@ export default function CanadaLonelinessPage() {
           <h2>Someone is ready to listen right now</h2>
           <p>Anonymous, affordable, online daily on Indian time. Made for exactly this.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

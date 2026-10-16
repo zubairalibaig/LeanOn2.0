@@ -211,7 +211,7 @@ export default function RelationshipCounsellingIndiaPage() {
           <p>Anonymous peer support for relationship pain. From ₹160. No appointment, no waitlist.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse peer listeners →</button></a>
-            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn →</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Talk now →</button></a>
           </div>
         </div>
 

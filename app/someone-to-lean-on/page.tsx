@@ -239,7 +239,7 @@ export default function SomeoneToLeanOnPage() {
           <p>Browse verified peer listeners and start talking in under a minute. Anonymous, available 24/7 — no appointments, no waitlists.</p>
 <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Listeners</button></a>
-            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Talk now</button></a>
           </div>
         </div>
 

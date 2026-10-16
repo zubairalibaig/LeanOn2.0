@@ -203,7 +203,7 @@ export default function DesiCanadaSupportPage() {
           <h2>Someone who gets it is ready to listen</h2>
           <p>The desi community in Canada deserves support that actually understands them.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

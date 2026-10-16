@@ -300,7 +300,7 @@ export default function IndiaHumanSupportVsAIPage() {
           <h2>Real human support is just a few clicks away</h2>
           <p>Not AI. Not a bot. A real Indian human who is ready to listen right now.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

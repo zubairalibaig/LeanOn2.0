@@ -235,7 +235,7 @@ export default function RelationshipAdvicePage() {
           <h2>Ready to talk?</h2>
           <p>Anonymous, affordable, and available right now.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

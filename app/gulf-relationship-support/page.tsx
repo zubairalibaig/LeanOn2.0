@@ -207,7 +207,7 @@ export default function GulfRelationshipSupportPage() {
           <h2>You deserve to be heard — all of it</h2>
           <p>Listeners online daily (Indian time) for Indians across the Gulf — anonymously, in your language.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

@@ -251,7 +251,7 @@ export default function AhmedabadPage() {
           <p>Browse peer listeners who understand the city's business pressures — family legacy, financial expectations, community visibility. Available 24/7, completely private.</p>
           <div className="cta-btns">
             <a href="/browse?city=ahmedabad"><button className="btn-primary">Browse Ahmedabad Listeners</button></a>
-            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Talk now</button></a>
           </div>
         </div>
 

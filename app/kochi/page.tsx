@@ -189,7 +189,7 @@ export default function KochiPage() {
           <p>Browse peer listeners who know the NRI experience and Kerala family dynamics. Available worldwide, 24/7, from ₹160.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Kerala Listeners</button></a>
-            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Talk now</button></a>
           </div>
         </div>
 

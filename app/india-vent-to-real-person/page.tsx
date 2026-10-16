@@ -281,7 +281,7 @@ export default function IndiaVentToRealPersonPage() {
           <h2>Koi sun raha hai. Someone is listening.</h2>
           <p>Real Indian listeners, available right now. Anonymous, affordable, 24/7.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

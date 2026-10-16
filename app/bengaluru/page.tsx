@@ -258,7 +258,7 @@ export default function BengaluruPage() {
           <p>Browse peer listeners who understand the pressures of India's tech capital. No appointments, no waitlists, available right now.</p>
           <div className="cta-btns">
             <a href="/browse?city=bengaluru"><button className="btn-primary">Browse Bengaluru Listeners</button></a>
-            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Talk now</button></a>
           </div>
         </div>
 

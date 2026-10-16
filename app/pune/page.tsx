@@ -175,7 +175,7 @@ export default function PunePage() {
           <p>Browse peer listeners who understand student pressure, first-job stress, and the loneliness of starting over. Sessions in Marathi, Hindi, or English. Available 24/7.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Listeners</button></a>
-            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Talk now</button></a>
           </div>
         </div>
 

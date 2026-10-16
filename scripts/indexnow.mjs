@@ -35,6 +35,12 @@ function changedPaths() {
   const paths = new Set()
   for (const f of out) {
     if (/^public\/llms(-full)?\.txt$/.test(f)) { paths.add('/' + f.slice('public/'.length)); continue }
+    // Blog posts are data files; their URL comes from the slug inside.
+    const post = f.match(/^app\/blog\/posts\/[^/]+\.ts$/)
+    if (post) {
+      try { const slug = readFileSync(f, 'utf8').match(/slug:\s*['"]([a-z0-9-]+)['"]/)?.[1]; if (slug) paths.add(`/blog/${slug}`) } catch { /* deleted file */ }
+      continue
+    }
     const m = f.match(/^app\/(.*)page\.tsx$/)
     if (!m) continue
     const route = '/' + m[1].replace(/\/$/, '')

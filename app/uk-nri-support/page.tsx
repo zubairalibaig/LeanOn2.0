@@ -202,7 +202,7 @@ export default function UkNriSupportPage() {
           <h2>Talk to someone who already understands NRI life</h2>
           <p>Indian peer listeners. Private, private, no appointment.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

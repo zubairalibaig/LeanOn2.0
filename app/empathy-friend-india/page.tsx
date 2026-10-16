@@ -201,7 +201,7 @@ export default function EmpathyFriendIndiaPage() {
           <p>Real people, chosen for how well they listen, from ₹160. First 5 minutes free.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse listeners →</button></a>
-            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn →</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Talk now →</button></a>
           </div>
         </div>
 

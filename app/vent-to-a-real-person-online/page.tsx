@@ -244,7 +244,7 @@ export default function VentToRealPersonPage() {
           <h2>Someone is ready to hear you right now</h2>
           <p>Anonymous, no judgment, available 24/7. First 5 minutes free.</p>
           <a href="/browse" className="btn-white">Find a listener →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

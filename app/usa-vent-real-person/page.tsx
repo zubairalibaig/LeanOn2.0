@@ -271,7 +271,7 @@ export default function USAVentRealPersonPage() {
           <h2>Say it out loud to someone who&apos;ll actually hear you.</h2>
           <p>Anonymous. Human. On Indian time. First 5 minutes free. $10 / $15 / $20 for 15, 30, 45 min.</p>
           <a href="/browse" className="btn-white">Browse real listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

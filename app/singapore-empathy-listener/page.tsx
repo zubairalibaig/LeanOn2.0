@@ -222,7 +222,7 @@ export default function SingaporeEmpathyListenerPage() {
           <h2>Feel truly heard — maybe for the first time in a while</h2>
           <p>Real Indian listeners. Your language. Full attention. On Indian time.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

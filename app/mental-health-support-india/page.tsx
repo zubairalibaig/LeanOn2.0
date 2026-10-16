@@ -254,7 +254,7 @@ export default function MentalHealthSupportIndiaPage() {
           <p>Real peer listeners. No appointment. First 5 minutes free. Anonymous, available 24/7 across India from ₹160/session.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse peer listeners →</button></a>
-            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn →</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Talk now →</button></a>
           </div>
         </div>
 

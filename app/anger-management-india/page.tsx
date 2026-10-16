@@ -167,7 +167,7 @@ export default function AngerManagementIndiaPage() {
           <p>Anonymous peer support from ₹160. No judgment, available now.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse listeners →</button></a>
-            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn →</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Talk now →</button></a>
           </div>
         </div>
 

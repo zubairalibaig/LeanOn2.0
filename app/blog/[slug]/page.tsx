@@ -273,7 +273,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
           <p>Reading is a start — but sometimes you need to actually talk. Browse affordable peer listeners across India who understand what you are going through. Available 24/7.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Peer Listeners</button></a>
-            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Talk now</button></a>
           </div>
         </div>
       </div>

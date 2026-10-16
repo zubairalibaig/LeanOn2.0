@@ -202,7 +202,7 @@ export default function UkTalkToSomeonePage() {
           <h2>A real conversation is one tap away</h2>
           <p>Indian peer listeners, online daily on Indian time. Anonymous and confidential.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

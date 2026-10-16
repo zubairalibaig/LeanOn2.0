@@ -208,7 +208,7 @@ export default function CanadaNriSupportPage() {
           <h2>Someone is ready to listen right now</h2>
           <p>The NRI journey is hard. You do not have to carry it alone.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">

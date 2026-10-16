@@ -236,7 +236,7 @@ export default function PaidCounsellingIndiaPage() {
           <p>Browse real peer listeners. First 5 minutes are free. No appointment, no waitlist, available right now.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse peer listeners →</button></a>
-            <a href="/talk?src=seo"><button className="btn-secondary">Join LeanOn →</button></a>
+            <a href="/talk?src=seo"><button className="btn-secondary">Talk now →</button></a>
           </div>
         </div>
 

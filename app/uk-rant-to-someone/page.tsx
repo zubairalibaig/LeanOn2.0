@@ -203,7 +203,7 @@ export default function UkRantToSomeonePage() {
           <h2>Say what you actually mean, to someone who will actually hear it</h2>
           <p>Real Indian listeners. On Indian time. No judgment, ever.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
-          <a href="/talk?src=seo" className="btn-orange">Join free</a>
+          <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
 
         <div className="card">
