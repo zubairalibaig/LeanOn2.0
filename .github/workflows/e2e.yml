@@ -1,6 +1,7 @@
 name: E2E Tests
 
-# Public-page/browser and unauthenticated API E2E coverage against production.
+# Public-page/browser and unauthenticated API E2E coverage against the current PR preview;
+# workflow_dispatch defaults to production unless a target URL is supplied.
 # The authenticated journeys still assume Supabase's retired fixed-OTP test
 # numbers. Production login now uses MSG91's OTP Widget, so those journeys are
 # intentionally skipped unless run manually against a dedicated test deploy
@@ -12,9 +13,9 @@ name: E2E Tests
 # Without it, admin-approval and booking tests skip. Public/browser and
 # unauthenticated API smoke tests still run.
 
-# COST NOTE: this suite runs against PRODUCTION (leanon.app), so every run
-# spends real Vercel Function CPU on the /api/* routes the API-security tests
-# exercise. It used to fire on every push to main + every PR + a daily cron,
+# COST NOTE: runs spend Vercel Function CPU on deployed /api/* routes that the
+# API-security tests exercise. The workflow used to fire on every push to main
+# + every PR + a daily cron,
 # which — with frequent direct pushes to main — became the single largest
 # chunk of Fluid Active CPU on the free tier. It is now MANUAL by default
 # (Actions tab → E2E Tests → Run workflow), plus PRs. Re-add the `push`/
@@ -78,7 +79,7 @@ jobs:
               if [[ "$vercel_state" == "success" ]]; then
                 comments="$(gh api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments?per_page=100")"
                 preview_url="$(jq -r '[.[] | select(.user.login == "vercel[bot]") | .body | try (capture("\\[Preview\\]\\((?<url>https://[^)]+)\\)").url) catch empty] | last // empty' <<< "$comments")"
-                if [[ "$preview_url" =~ ^https://[A-Za-z0-9.-]+\\.vercel\\.app$ ]]; then
+                if [[ "$preview_url" =~ ^https://[A-Za-z0-9.-]+\.vercel\.app$ ]]; then
                   echo "Using deployed PR preview: $preview_url"
                   echo "base_url=$preview_url" >> "$GITHUB_OUTPUT"
                   exit 0
