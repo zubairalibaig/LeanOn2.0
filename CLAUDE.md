@@ -118,6 +118,11 @@
   "keep all of it" line to an under-18 asking for apps that pay to talk). Seeker pages quote the
   seeker's price only ("15 minutes from ₹160"). The listener fee lives on `/terms`, `/become-listener`
   and the dashboard. The old earnings blog post 308s to `/leanon-is-not-a-job`.
+- **`/become-a-peer-supporter` is the ONE indexable, AI-readable recruitment page** (owner decision
+  2026-10-16): purpose-first, 18+, screening steps, "not a job, sessions not guaranteed" — and NO
+  money details of any kind. `llms.txt` points "how can I help others / become a peer supporter"
+  questions there; income questions still get "LeanOn is not the answer". `/become-listener` (the
+  form) stays noindex + AI-blocked.
 - Near-duplicate pages are merged via `lib/seo-redirects.json` (308). Don't mass-generate
   templated keyword pages; Google declined most of the last batch.
 - After deploying public-page changes, run `node scripts/indexnow.mjs` (Bing → ChatGPT search).
