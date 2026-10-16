@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.leanon.app/peer-support', languages: { 'en-IN': 'https://www.leanon.app/peer-support' } },
   openGraph: {
     title: 'Peer Support India — Real People, Real Conversations | LeanOn',
-    description: 'Peer support connects you with someone who has lived through what you\'re facing. Not therapy. Not AI. Real conversations on LeanOn — ₹160/session, private, no appointment.',
+    description: 'Understand peer support and how it differs from therapy. LeanOn offers one-to-one text or voice conversations with screened peers in India. One introductory session of up to 5 minutes is free per account; it is not clinical care and availability varies.',
     url: 'https://www.leanon.app/peer-support',
     siteName: 'LeanOn',
     type: 'website',
@@ -21,7 +21,7 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
-    { '@type': 'Question', name: "What is peer support, and where can I find it in India?", acceptedAnswer: { '@type': 'Answer', text: "Peer support is talking to someone who has lived through something similar — they listen without judging, diagnosing or giving advice. On LeanOn, peer listeners in India are screened (written application, screening quiz, live selfie check and review by LeanOn), and you talk one to one by text or voice. It is not therapy. Your first 5 minutes are free." } },
+    { '@type': 'Question', name: "What is peer support, and where can I find it in India?", acceptedAnswer: { '@type': 'Answer', text: "Peer support is a non-clinical conversation with someone who may bring relevant lived experience. On LeanOn, listeners in India are screened through an application, screening quiz, live selfie check and review by LeanOn. Conversations are one to one by text or voice. It is not therapy. One introductory session of up to 5 minutes is free per account; availability varies." } },
     {
       '@type': 'Question',
       name: 'What is peer support?',
@@ -56,10 +56,10 @@ const faqSchema = {
     },
     {
       '@type': 'Question',
-      name: 'Is peer support anonymous?',
+      name: 'How does privacy work on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: "LeanOn sign-up uses a phone number and first name. You do not need to use a last name, photo or social account to create the account. Sessions are intended to be private; see the Privacy and Trust pages for LeanOn's specific information practices.",
+        text: "LeanOn sign-up uses a verified phone number, but listeners do not see it; users can choose a display name. Voice calls are not recorded. Text messages are stored, and authorised administrators may review reported or safety-flagged sessions. Read the Privacy Policy for details.",
       },
     },
     {
@@ -67,7 +67,7 @@ const faqSchema = {
       name: 'Can peer support help with anxiety or depression?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Peer support is not a clinical treatment for anxiety or depression, and LeanOn does not claim otherwise. However, many people find that daily emotional weight — anxious thinking, low mood, the heaviness of a hard week — eases significantly when they can talk to someone who has been there and who listens without judgment. If you are managing a diagnosed condition, peer support works best alongside professional care, not instead of it. If you are unsure whether your experience needs clinical attention, please speak to a doctor or licensed counsellor.',
+        text: 'Peer support is not a clinical treatment for anxiety or depression, and LeanOn does not claim otherwise. Some people find it helpful to talk with someone who has relevant lived experience; others may prefer a different kind of support. Experiences vary, and peer support should complement, not replace, professional care when that care is needed.',
       },
     },
   ],
@@ -191,7 +191,7 @@ export default function PeerSupportPage() {
           <p className="tag">Peer Support · India · No Appointment Needed</p>
           <h1>Peer support. <em>Real people.</em> Real conversations.</h1>
           <p className="lead">Not therapy. Not an AI chatbot. Not advice from someone who has never been through it. Peer support is the experience of talking to a real human being who has lived something like what you are carrying right now — and who listens without judgment, without a diagnosis, and without a clinical distance between you.</p>
-          <QuickAnswer question={"What is peer support, and where can I find it in India?"} answer={"Peer support is talking to someone who has lived through something similar — they listen without judging, diagnosing or giving advice. On LeanOn, peer listeners in India are screened (written application, screening quiz, live selfie check and review by LeanOn), and you talk one to one by text or voice. It is not therapy. Your first 5 minutes are free."} />
+          <QuickAnswer question={"What is peer support, and where can I find it in India?"} answer={"Peer support is a non-clinical conversation with someone who may bring relevant lived experience. On LeanOn, listeners in India are screened through an application, screening quiz, live selfie check and review by LeanOn. Conversations are one to one by text or voice. It is not therapy. One introductory session of up to 5 minutes is free per account; availability varies."} />
         </div>
 
 
@@ -208,7 +208,7 @@ export default function PeerSupportPage() {
           <div className="stat-pill"><em>₹160</em>/session</div>
           <div className="stat-pill">First <em>5 min free</em></div>
           <div className="stat-pill"><em>No appointment</em> needed</div>
-          <div className="stat-pill"><em>Anonymous</em></div>
+          <div className="stat-pill"><em>Display name</em></div>
           <div className="stat-pill">Screened <em>peer listeners</em></div>
         </div>
 
@@ -304,7 +304,7 @@ export default function PeerSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Start Your First Peer Support Session</h2>
-          <p>First 5 minutes are free. Anonymous. No appointment is required; availability depends on which listeners are online.</p>
+          <p>One introductory session of up to 5 minutes is free per account. Listeners do not see your phone number; you can choose a display name. No appointment is needed, but availability depends on which listeners are online.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse peer listeners →</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now →</button></a>
@@ -320,23 +320,23 @@ export default function PeerSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How is peer support different from therapy?</div>
-            <div className="faq-a">Therapy is delivered by a licensed professional — a psychologist, psychiatrist, or counsellor — who can diagnose and treat mental health conditions. Peer support is delivered by someone with lived experience who is screened and expected to listen and support, not to diagnose or treat. Therapy costs ₹1,500–₹5,000 per session in India and requires an appointment. Peer support on LeanOn costs ₹160/session and is available without appointment.</div>
+            <div className="faq-a">Therapy is delivered by a licensed professional — a psychologist, psychiatrist, or counsellor — who can diagnose and treat mental health conditions. Peer support is delivered by someone with lived experience who is screened and expected to listen and support, not to diagnose or treat. Professional-care fees and wait times vary by provider and location. LeanOn is a different, non-clinical option for a conversation; paid prices are shown before booking and depend on the listener and mode. No appointment is needed, but availability is not guaranteed.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is peer support effective?</div>
-            <div className="faq-a">Research consistently shows that peer support reduces feelings of isolation, improves mood, and helps people feel understood and less alone. It is most effective for everyday emotional challenges — loneliness, burnout, relationship stress, family pressure, anxiety — rather than clinical conditions. The lived experience of a peer supporter adds authenticity that professional care sometimes cannot match.</div>
+            <div className="faq-a">Peer support may provide shared understanding and a chance to talk with someone outside your usual circle, but individual experiences vary. It does not diagnose or treat mental-health conditions, and should not replace professional care when that is needed.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does peer support cost in India?</div>
-            <div className="faq-a">On LeanOn, peer support sessions start at about ₹160 for 15 minutes. Your first 5-minute session is free, so you can talk to a listener and decide if it feels right before you commit. There are no subscription fees, no membership charges, and no automatic renewals — you pay per session.</div>
+            <div className="faq-a">Paid 15-minute text sessions in India start at ₹160 with a listener charging ₹10 per minute; actual price varies by listener and mode and is shown before booking. One introductory session of up to 5 minutes is free per account.</div>
           </div>
           <div className="faq-item">
-            <div className="faq-q">Is peer support anonymous?</div>
-            <div className="faq-a">Yes. On LeanOn you sign up with a phone number and a first name only. No last name, no photo, no social account required. What you share in a session stays between you and your listener.</div>
+            <div className="faq-q">How does privacy work on LeanOn?</div>
+            <div className="faq-a">LeanOn requires phone-number verification, but listeners do not see your phone number and you can choose a display name. Voice calls are not recorded. Text messages are stored and authorised administrators may review reports or safety-flagged sessions. Read the Privacy Policy for details.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Can peer support help with anxiety or depression?</div>
-            <div className="faq-a">Peer support is not a clinical treatment for anxiety or depression, and LeanOn does not claim otherwise. However, many people find that daily emotional weight — anxious thinking, low mood, the heaviness of a hard week — eases significantly when they can talk to someone who has been there. If you are managing a diagnosed condition, peer support works best alongside professional care, not instead of it.</div>
+            <div className="faq-a">Peer support is not a clinical treatment for anxiety or depression, and LeanOn does not claim otherwise. Some people find it helpful to talk with someone who has relevant lived experience; others may prefer a different kind of support. Experiences vary, and peer support should complement, not replace, professional care when that care is needed.</div>
           </div>
         </div>
 

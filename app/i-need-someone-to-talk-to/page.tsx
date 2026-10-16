@@ -5,7 +5,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'I Need Someone to Talk To Right Now | LeanOn India',
-  description: "Need someone to talk to right now? LeanOn connects you with a real, screened peer listener in India who is online now — text or voice, no appointment. First 5 minutes free.",
+  description: "Need someone to talk to? LeanOn lets adults in India request a one-to-one text or voice conversation with a screened peer listener. One introductory session up to 5 minutes is free per account. Availability varies; an immediate match is not guaranteed. Peer support, not therapy.",
   keywords: [
     'i need someone to talk to right now', 'need someone to talk to India',
     'someone to talk to online India', 'I want to talk to someone India',
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.leanon.app/i-need-someone-to-talk-to', languages: { 'en-IN': 'https://www.leanon.app/i-need-someone-to-talk-to' } },
   openGraph: {
     title: 'I Need Someone to Talk To Right Now | LeanOn India',
-    description: 'Need someone to talk to right now? Real peer listeners in India — anonymous, no appointment, available now.',
+    description: 'Need someone to talk to? Request a one-to-one conversation with a screened peer listener in India by text or voice. One introductory session up to 5 minutes is free per account; availability varies. Not therapy or crisis care.',
     url: 'https://www.leanon.app/i-need-someone-to-talk-to',
     siteName: 'LeanOn',
     type: 'article',
@@ -32,21 +32,21 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
-    { '@type': 'Question', name: "I need someone to talk to right now \u2014 where can I go?", acceptedAnswer: { '@type': 'Answer', text: "Open leanon.app/talk, choose text or voice and tap what is on your mind. LeanOn asks a screened peer listener who is online now, and the next one if they cannot answer within about 30 seconds. Your first 5 minutes are free, and listeners never see your phone number. If you are in danger or thinking of harming yourself, call Tele-MANAS 14416 first." } },
+    { '@type': 'Question', name: "I need someone to talk to right now \u2014 where can I go?", acceptedAnswer: { '@type': 'Answer', text: "Open leanon.app/talk, choose text or voice and select what is on your mind. LeanOn requests a conversation with a screened peer listener and may try another if there is no response in about 30 seconds. One introductory session up to 5 minutes is free per account; listeners do not see your phone number. Availability varies, so a match is not guaranteed. If you are in danger or at risk of self-harm, call Tele-MANAS 14416 first." } },
     {
       '@type': 'Question',
       name: 'How do I find someone to talk to right now in India?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Open LeanOn, browse listeners who are online right now, and book a session. No appointment needed, no waitlist. Many listeners are available at any hour — including late at night. Your first 5 minutes are free.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Open LeanOn to see listener profiles and current availability, or use Talk now to request a conversation. No appointment is needed; a session starts when a listener accepts, and immediate availability is not guaranteed. One introductory session up to 5 minutes is free per account.' },
     },
     {
       '@type': 'Question',
       name: 'What if I just need someone to listen and not give advice?',
-      acceptedAnswer: { '@type': 'Answer', text: 'That is exactly what peer listeners on LeanOn are screened and expected to do: listen. Not advise, not fix, not steer. If you open a session and say "I just need someone to hear me right now" — that is what you will get. You lead the conversation.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'LeanOn screens listeners for empathy, listening and boundaries. You can tell the listener that you mainly want to be heard rather than receive advice; experiences vary, and you can report a concern through the platform. You lead the conversation.' },
     },
     {
       '@type': 'Question',
-      name: 'Is it anonymous when I talk to someone on LeanOn?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. You do not need to share your real name, city, or any personal details. Listeners sign confidentiality agreements. You can say whatever you need to say without it reaching anyone in your life.' },
+      name: 'How does privacy work on LeanOn?',
+      acceptedAnswer: { '@type': 'Answer', text: 'LeanOn uses phone-number verification, but listeners do not see your phone number and you can choose a display name. Voice calls are not recorded. Text messages are stored and authorised administrators may review reported or safety-flagged sessions. Read the Privacy Policy and share only details you are comfortable disclosing.' },
     },
     {
       '@type': 'Question',
@@ -56,12 +56,12 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'How much does it cost to talk to someone on LeanOn?',
-      acceptedAnswer: { '@type': 'Answer', text: 'New users get a free 5-minute trial. Paid sessions start at ₹160 for 15 minutes — significantly less than a therapy session, available any time, with no appointment or insurance required.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'One introductory session up to 5 minutes is free per account. Paid 15-minute text sessions in India start at ₹160 with a listener charging ₹10 per minute; actual prices vary by listener and mode and are shown before booking. Availability depends on which listeners are online.' },
     },
     {
       '@type': 'Question',
       name: 'Is LeanOn the same as a crisis helpline?',
-      acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn is peer support for everyday emotional weight — loneliness, anxiety, grief, relationships, overthinking. If you are in a mental health crisis or having thoughts of self-harm, please call NIMHANS (080-46110007) or Tele-MANAS (14416), both free and available 24/7.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn is non-clinical peer support, not a crisis service. If you are in crisis or at risk of self-harm, call Tele-MANAS (14416; free, 24/7) or contact local emergency services.' },
     },
   ],
 }
@@ -145,11 +145,11 @@ export default function INeedSomeoneToTalkToPage() {
         </div>
 
         <div className="hero">
-          <p className="badge">Real Humans · Available Now · Anonymous</p>
+          <p className="badge">Real People · Text or Voice · Peer Support</p>
           <h1>Someone Is Here to <em>Listen</em> — Right Now</h1>
-          <p className="lead">You do not have to explain why you need to talk, have it figured out, or be in a crisis. You just need to say something out loud to a real person who will hear it. LeanOn connects you in minutes.</p>
-          <QuickAnswer question={"I need someone to talk to right now \u2014 where can I go?"} answer={"Open leanon.app/talk, choose text or voice and tap what is on your mind. LeanOn asks a screened peer listener who is online now, and the next one if they cannot answer within about 30 seconds. Your first 5 minutes are free, and listeners never see your phone number. If you are in danger or thinking of harming yourself, call Tele-MANAS 14416 first."} />
-          <a href="/browse" className="cta-hero">Find a listener now →</a>
+          <p className="lead">You do not need a diagnosis or a perfectly formed problem to ask for a conversation. LeanOn lets adults request a one-to-one text or voice chat with a screened peer listener. It is non-clinical support; timing depends on listener availability and acceptance.</p>
+          <QuickAnswer question={"I need someone to talk to right now \u2014 where can I go?"} answer={"Open leanon.app/talk, choose text or voice and select what is on your mind. LeanOn requests a conversation with a screened peer listener and may try another if there is no response in about 30 seconds. One introductory session up to 5 minutes is free per account; listeners do not see your phone number. Availability varies, so a match is not guaranteed. If you are in danger or at risk of self-harm, call Tele-MANAS 14416 first."} />
+          <a href="/talk?src=seo" className="cta-hero">Talk to someone →</a>
         </div>
 
         <div className="section">
@@ -173,7 +173,7 @@ export default function INeedSomeoneToTalkToPage() {
             <div className="step">
               <div className="step-num">1</div>
               <div className="step-body">
-                <h3>Browse listeners who are online now</h3>
+                <h3>Browse listener profiles and availability</h3>
                 <p>Each profile shows their lived experience and the topics they support. Pick someone whose story feels relevant to yours.</p>
               </div>
             </div>
@@ -181,7 +181,7 @@ export default function INeedSomeoneToTalkToPage() {
               <div className="step-num">2</div>
               <div className="step-body">
                 <h3>Start a session — no appointment needed</h3>
-                <p>Book instantly. New users get a free 5-minute trial. Paid sessions start at ₹160 for 15 minutes.</p>
+                <p>Send a session request to a listener. One introductory session up to 5 minutes is free per account; paid prices are shown before booking and vary by listener and mode. A session begins when a listener accepts.</p>
               </div>
             </div>
             <div className="step">
@@ -195,10 +195,9 @@ export default function INeedSomeoneToTalkToPage() {
         </div>
 
         <div className="section">
-          <h2>Why It Has to Be a Real Person</h2>
-          <p>There are AI chatbots, journaling apps, and breathing exercises. They are useful. But they do not do the one thing that actually shifts the weight: make you feel heard by a real human being who has also carried something hard.</p>
-          <p>When you talk to a LeanOn listener, there is a person on the other side who has personally navigated loneliness, or burnout, or grief, or the kind of relationship difficulty you are in. They are not reading from a script. They are not generating a response. They are present — affected by what you say, carrying your story with them.</p>
-          <p>That is the only thing that actually works. Everything else is preparation for it.</p>
+          <h2>When You Prefer a Human Conversation</h2>
+          <p>AI tools, journaling and self-guided exercises help some people. Others specifically want to talk with another person. LeanOn is designed for that preference: a one-to-one, non-clinical conversation with a screened peer listener.</p>
+          <p>Listeners bring varied lived experiences and are screened for listening and boundaries. You can tell them what kind of support you are looking for, but experiences vary. LeanOn does not claim human conversations are better for every person or situation.</p>
         </div>
 
         <div className="section">
@@ -226,9 +225,9 @@ export default function INeedSomeoneToTalkToPage() {
         </div>
 
         <div className="cta-card">
-          <h2>Someone is available right now</h2>
-          <p>No appointment. No explaining yourself first. Just open the app and find a listener who is online.</p>
-          <a href="/browse" className="btn-cta">Talk to someone now →</a>
+          <h2>Request a conversation</h2>
+          <p>No appointment is needed. View current listener availability or use Talk now to request a screened peer listener. A conversation starts when a listener accepts.</p>
+          <a href="/talk?src=seo" className="btn-cta">Talk to someone →</a>
         </div>
 
         <div className="section">

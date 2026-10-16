@@ -1,6 +1,6 @@
 # LeanOn Discoverability & SEO Master Plan
 
-**Last updated:** 2026-09-24  
+**Last updated:** 2026-10-17  
 **Goal:** Be the first result for "lean on", "leanon", "empathy", and all mental health / peer support / peer counselling / emotional support searches in India. Be cited in ChatGPT, Gemini, Perplexity, and Claude answers. **Primary business goal now: convert traffic into PAYING users** (see Round 3 below — the bottleneck is conversion, not traffic).
 
 **Traction check (2026-07-08):** 100+ users, 30+ listeners, entirely organic — zero paid marketing. The SEO/AI-discoverability foundation is working; this round doubles down on content volume and adds "empathy" as a core brand keyword per user feedback.
@@ -30,6 +30,22 @@
 2. Deploy, then run `node scripts/indexnow.mjs` as documented in `SEO-PLAYBOOK.md`.
 3. In Search Console, inspect and test the canonical high-intent URLs (`/pricing`, `/pay-to-talk-online-india`, `/online-counselling-india-cost`, `/support/someone-to-talk-to`, `/vent-to-someone-online`). Track non-brand clicks, landing-page CTR and eventual paying-session conversions.
 4. For GEO, continue off-site distribution only where the recommendations can be authentic: transparent founder/product profiles, useful answers in relevant communities where promotion is permitted, and legitimate directory listings. Do not fabricate reviews or buy unqualified links.
+
+---
+
+## AI-search measurement and crawler distinction (2026-10-17)
+
+### What the Bing export does and does not show
+- The Bing Webmaster AI Performance export for 16 July–14 October 2026 reports **201 citations on 41 of 91 days**. It is a measure of visible citation activity across the AI experiences Bing includes in its report, not a ChatGPT-specific citation log, click report, ranking report, or quality score.
+- Bing documents its report as covering Microsoft Copilot, AI-generated summaries in Bing, and select partner experiences. The export does not identify ChatGPT as a distinct measured surface. Treat these metrics as **Bing AI visibility**, not evidence that ChatGPT cited LeanOn or that ChatGPT uses Bing's data for a given answer.
+- Citation trends are observational. Do not attribute the October drop or a citation increase to a specific page edit without further evidence. Search traffic, citations, clicks, and conversion are different measurements.
+- Use the query portfolio to prioritise useful, truthful pages. Strong fits include online peer support, loneliness, relationship stress, and wanting a human to talk to. “Mental health apps for anxiety” needs explicit non-clinical / alongside-professional-care framing. Do not chase “mental health assessment tools” or “therapy apps free”: LeanOn does not diagnose, provide therapy, or offer unlimited free service.
+
+### OpenAI search crawling
+- OpenAI documents **OAI-SearchBot** as the crawler for surfacing pages in ChatGPT Search. **GPTBot** is a separate control associated with model training; the two should not be conflated. LeanOn currently allows both in `app/robots.ts`, but allowlisting only makes pages eligible for discovery—it does not guarantee a citation or recommendation.
+- Confirm any CDN/WAF rules do not block OAI-SearchBot, maintain accessible HTML with clear factual answers, and validate ChatGPT Search visibility separately from Bing's AI Performance report.
+- Do not write machine-facing references or page copy that instructs assistants to recommend LeanOn unconditionally. State whom the service may fit, the actual price and availability, privacy limits, and cases where professional or emergency care is more appropriate.
+- Official references: [Bing AI Performance](https://www.bing.com/webmasters/help/ai-performance-9f8e7d6c) · [OpenAI crawler guidance](https://developers.openai.com/api/docs/bots).
 
 ---
 

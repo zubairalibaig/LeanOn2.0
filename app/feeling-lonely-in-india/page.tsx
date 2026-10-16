@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Feeling Lonely in India? Talk to Someone Who Understands | LeanOn',
-  description: 'Feeling lonely in India? You are not alone. Connect with peer listeners who have experienced loneliness and found their way through. Anonymous, available 24/7.',
+  title: 'Feeling Lonely in India? Peer Support & Human Conversation | LeanOn',
+  description: 'Feeling lonely in India? Learn about ways to seek connection and how non-clinical peer support works. LeanOn offers one-to-one text or voice conversations with screened peer listeners; one introductory session up to 5 minutes is free per account. Availability varies.',
   keywords: ['feeling lonely in india', 'loneliness india', 'i feel lonely india', 'lonely in india', 'loneliness support india', 'how to deal with loneliness india'],
   alternates: { canonical: 'https://www.leanon.app/feeling-lonely-in-india' },
 }
@@ -39,15 +39,15 @@ export default function FeelingLonelyInIndiaPage() {
       <div className="page">
         <a href="/" style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:14,fontWeight:700,color:'var(--gray)',marginBottom:28}}>← Back</a>
         <h1>Feeling Lonely in India? You Are Not Alone</h1>
-        <p className="lead">Loneliness in India is a quiet epidemic. Millions of people — in crowded cities, joint families, corporate offices — feel profoundly isolated. If that&apos;s you right now, this page is for you.</p>
+        <p className="lead">Loneliness can happen in a new city, at work, at home or even when surrounded by people. If you feel disconnected, you are not failing. There are different ways to seek connection, including talking with someone outside your usual circle.</p>
 
         <div className="disclaimer">
           LeanOn provides peer emotional support, not professional therapy or clinical treatment. If you need clinical mental health care, please consult a licensed professional.
         </div>
 
-        <div className="quote">
-          &ldquo;I lived in a 4-bedroom flat with my family and still felt completely alone. It took me months to realize that loneliness isn&apos;t about the number of people around you. LeanOn was the first place I could say that out loud.&rdquo;
-          <div style={{marginTop:10,fontSize:13,fontWeight:700,color:'#1A5F6A'}}>— LeanOn user, Hyderabad</div>
+        <div className="card">
+          <h2>Loneliness can happen even when people are around</h2>
+          <p>You do not need to prove that your situation is serious to deserve a conversation. A peer-listener conversation is one non-clinical option; it may not fit everyone, and it does not replace professional care when needed.</p>
         </div>
 
         <div className="card">
@@ -58,20 +58,20 @@ export default function FeelingLonelyInIndiaPage() {
 
         <div className="card">
           <h2>What helps with loneliness</h2>
-          <p>Research consistently shows that feeling genuinely heard and understood is one of the most powerful antidotes to loneliness. Not advice. Not being told to &ldquo;look on the bright side.&rdquo; Just someone who sits with you in it without trying to fix it.</p>
-          <p>LeanOn&apos;s peer listeners have personally experienced loneliness. They know what it feels like to be surrounded by people and still feel completely alone. They are not trained to give advice — they are screened and expected to listen and reflect back what they hear, without judgment.</p>
+          <p>People experience loneliness differently. Some find it helpful to talk with someone who listens without immediately trying to solve the problem. A conversation is one possible source of connection; experiences vary, and it is not a treatment for a mental-health condition.</p>
+          <p>LeanOn listeners bring varied lived experiences and are screened for listening ability and boundaries. You can review profiles to see the experiences and topics they mention. They are peer supporters, not therapists, and do not provide clinical treatment.</p>
         </div>
 
         <div className="card">
           <h2>Taking the first step</h2>
-          <p>The hardest part of loneliness is that it makes reaching out feel impossible. The voice in your head says &ldquo;nobody wants to hear this&rdquo; or &ldquo;I&apos;ll just be a burden.&rdquo; LeanOn was designed for this exact psychological barrier — which is why we made the first session instant and anonymous.</p>
-          <p>You don&apos;t have to explain yourself. You don&apos;t have to have a reason. You can simply start a session and say &ldquo;I&apos;ve been feeling really lonely lately.&rdquo; That&apos;s enough.</p>
+          <p>Reaching out can feel difficult when you are lonely. LeanOn lets adults request a one-to-one text or voice conversation with a screened peer listener. Your account uses a verified phone number, but listeners do not see it; you can choose a display name. One introductory session up to 5 minutes is free per account, and availability depends on who is online.</p>
+          <p>You do not need to have everything organised before starting a conversation. You can say that you have been feeling lonely or unsure where to begin, and let the listener know what kind of support you want.</p>
         </div>
 
         <div className="cta">
           <h2>Someone is here for you</h2>
-          <p>Available 24/7, no appointment needed. No name, no judgement.</p>
-          <a href="/browse"><button className="btn">Talk to someone now →</button></a>
+          <p>No appointment is needed, but a conversation starts only when a listener accepts your request. Availability is not guaranteed at every moment. Listeners do not see your phone number; you can choose a display name.</p>
+          <a href="/talk?src=seo"><button className="btn">Talk to someone →</button></a>
         </div>
       </div>
     </>
