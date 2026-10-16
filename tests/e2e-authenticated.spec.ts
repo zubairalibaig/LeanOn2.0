@@ -4,33 +4,34 @@
  * These tests log in for real and exercise the seeker / listener / admin
  * flows end to end against a live deployment (production or preview).
  *
- * ── ONE-TIME SETUP (Supabase Dashboard) ───────────────────────────────
- * Auth → Providers → Phone → "Test phone numbers": add e.g.
- *     +911111111111 = 111111
- *     +912222222222 = 222222
- * Test numbers never send real SMS and always accept the fixed OTP.
- * They are real auth users in every other way.
+ * ── AUTH PROVIDER NOTE ────────────────────────────────────────────────
+ * This suite's login helper uses the legacy Supabase fixed-test-OTP flow.
+ * Production now uses the MSG91 OTP Widget (app/auth/page.tsx), so fixed
+ * Supabase test numbers cannot authenticate against the production login.
+ * The production E2E workflow deliberately leaves these variables unset so
+ * authenticated journeys skip instead of producing misleading failures.
  *
- * ── ENV VARS ──────────────────────────────────────────────────────────
- *   PLAYWRIGHT_BASE_URL   e.g. https://www.leanon.app
- *   TEST_SEEKER_PHONE     e.g. +911111111111   (10-digit part is typed)
- *   TEST_SEEKER_OTP       e.g. 111111
- *   TEST_LISTENER_PHONE   e.g. +912222222222
- *   TEST_LISTENER_OTP     e.g. 222222
+ * To run this legacy suite manually, target a dedicated test deployment that
+ * actually uses Supabase fixed-OTP auth and set:
+ *   TEST_AUTH_E2E_PROVIDER=supabase-test-otp
+ *   TEST_SEEKER_PHONE / TEST_SEEKER_OTP
+ *   TEST_LISTENER_PHONE / TEST_LISTENER_OTP
  *   TEST_ADMIN_PASSWORD   the ADMIN_SECRET value (server-side approval calls)
  *
- * Run:  npx playwright test tests/e2e-authenticated.spec.ts
- * All tests skip cleanly when the env vars are absent.
+ * Never enable fixed-OTP tests against a live MSG91 deployment. Until a safe
+ * MSG91-compatible test fixture exists, this suite does not claim to cover the
+ * production OTP integration.
  */
 
 import { test, expect, Page, BrowserContext, chromium } from '@playwright/test'
 import { createClient } from '@supabase/supabase-js'
 import { TAGLINE_PHRASES, TIME_SLOTS, PRIOR_EXPERIENCE, SCREENING_QUIZ, labelOf } from '../lib/listener-onboarding'
 
-const SEEKER_PHONE   = process.env.TEST_SEEKER_PHONE   ?? ''
-const SEEKER_OTP     = process.env.TEST_SEEKER_OTP     ?? ''
-const LISTENER_PHONE = process.env.TEST_LISTENER_PHONE ?? ''
-const LISTENER_OTP   = process.env.TEST_LISTENER_OTP   ?? ''
+const LEGACY_SUPABASE_OTP_E2E = process.env.TEST_AUTH_E2E_PROVIDER === 'supabase-test-otp'
+const SEEKER_PHONE   = LEGACY_SUPABASE_OTP_E2E ? (process.env.TEST_SEEKER_PHONE   ?? '') : ''
+const SEEKER_OTP     = LEGACY_SUPABASE_OTP_E2E ? (process.env.TEST_SEEKER_OTP     ?? '') : ''
+const LISTENER_PHONE = LEGACY_SUPABASE_OTP_E2E ? (process.env.TEST_LISTENER_PHONE ?? '') : ''
+const LISTENER_OTP   = LEGACY_SUPABASE_OTP_E2E ? (process.env.TEST_LISTENER_OTP   ?? '') : ''
 const ADMIN_PASSWORD = process.env.TEST_ADMIN_PASSWORD ?? ''
 
 const tenDigits = (p: string) => p.replace(/\D/g, '').slice(-10)
@@ -93,7 +94,7 @@ async function authUserId(context: BrowserContext): Promise<string> {
 
 // ────────────────────────────────────────────────────────────────────────
 test.describe('Seeker: login survives navigation (middleware regression)', () => {
-  test.skip(!SEEKER_PHONE || !SEEKER_OTP, 'TEST_SEEKER_PHONE / TEST_SEEKER_OTP not set')
+  test.skip(!SEEKER_PHONE || !SEEKER_OTP, 'requires TEST_AUTH_E2E_PROVIDER=supabase-test-otp plus TEST_SEEKER_PHONE and TEST_SEEKER_OTP')
 
   test('login once, then visit every protected route without bouncing to /auth', async ({ page }) => {
     await login(page, SEEKER_PHONE, SEEKER_OTP)
@@ -123,7 +124,7 @@ test.describe('Seeker: login survives navigation (middleware regression)', () =>
 // button or validation in the form itself. Chromium's fake camera feeds the
 // selfie step.
 test.describe('Listener: 3-step application form in a real browser', () => {
-  test.skip(!LISTENER_PHONE || !LISTENER_OTP, 'TEST_LISTENER_PHONE / TEST_LISTENER_OTP not set')
+  test.skip(!LISTENER_PHONE || !LISTENER_OTP, 'requires TEST_AUTH_E2E_PROVIDER=supabase-test-otp plus TEST_LISTENER_PHONE and TEST_LISTENER_OTP')
   test.setTimeout(180_000)
 
   test('fills and submits every step', async ({ browserName }) => {
@@ -227,7 +228,7 @@ test.describe('Listener: 3-step application form in a real browser', () => {
 
 // ────────────────────────────────────────────────────────────────────────
 test.describe('Listener: apply → admin approves → public profile live', () => {
-  test.skip(!LISTENER_PHONE || !LISTENER_OTP, 'TEST_LISTENER_PHONE / TEST_LISTENER_OTP not set')
+  test.skip(!LISTENER_PHONE || !LISTENER_OTP, 'requires TEST_AUTH_E2E_PROVIDER=supabase-test-otp plus TEST_LISTENER_PHONE and TEST_LISTENER_OTP')
 
   test('full lifecycle', async ({ page, context }) => {
     await login(page, LISTENER_PHONE, LISTENER_OTP, { listenerMode: true })
@@ -279,7 +280,7 @@ test.describe('Listener: apply → admin approves → public profile live', () =
 
 // ────────────────────────────────────────────────────────────────────────
 test.describe('Listener apply — selfie security', () => {
-  test.skip(!LISTENER_PHONE || !LISTENER_OTP, 'TEST_LISTENER_PHONE / TEST_LISTENER_OTP not set')
+  test.skip(!LISTENER_PHONE || !LISTENER_OTP, 'requires TEST_AUTH_E2E_PROVIDER=supabase-test-otp plus TEST_LISTENER_PHONE and TEST_LISTENER_OTP')
 
   test('missing avatar_url returns 400', async ({ page, context }) => {
     await login(page, LISTENER_PHONE, LISTENER_OTP, { listenerMode: true })
