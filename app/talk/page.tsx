@@ -14,14 +14,13 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase'
-import { REQUEST_RESPONSE_WINDOW_SECS } from '@/lib/constants'
+import { REQUEST_RESPONSE_WINDOW_SECS, FREE_SESSION_MINS } from '@/lib/constants'
 import { TALK_TOPICS, TALK_TRY_SECS, TALK_MAX_TRIES, TALK_MAX_WAIT_SECS, talkTopic, type TalkTopicId } from '@/lib/talk-match'
 
 type Mode = 'text' | 'voice'
 type Candidate = { listenerId: string; name: string; priceInr: number; priceLabel: string }
 type Phase =
   | { k: 'topic' }
-  | { k: 'mode' }
   | { k: 'finding' }
   | { k: 'confirm'; priceLabel: string; durationMins: number }
   | { k: 'waiting'; sessionId: string; name: string; tryNo: number; free: boolean; priceLabel: string }
@@ -68,6 +67,10 @@ function TalkInner() {
   const params = useSearchParams()
   const [phase, setPhase] = useState<Phase>({ k: 'topic' })
   const [topic, setTopic] = useState<TalkTopicId | null>(null)
+  // Text or voice: chosen on the same screen as the topic (text preselected,
+  // or what they picked last time), so one tap on a topic connects.
+  const [mode, setMode] = useState<Mode>('text')
+  useEffect(() => { const c = readChoice(); if (c) setMode(c.mode) }, [])
   const [onlineCount, setOnlineCount] = useState<number | null>(null)
   const [secsLeft, setSecsLeft] = useState(TALK_TRY_SECS)
   const [loggedIn, setLoggedIn] = useState<boolean | null>(null)
@@ -356,7 +359,7 @@ function TalkInner() {
   // The server-rendered description below the page (app/talk/layout.tsx) is
   // for the topic / mode screens; hide it while matching so it can't distract.
   useEffect(() => {
-    const busy = phase.k !== 'topic' && phase.k !== 'mode'
+    const busy = phase.k !== 'topic'
     document.body.classList.toggle('talk-busy', busy)
     return () => document.body.classList.remove('talk-busy')
   }, [phase.k])
@@ -368,17 +371,19 @@ function TalkInner() {
       <style>{`
         .tk{max-width:520px;margin:0 auto;padding:28px 18px 120px;font-family:'Nunito',system-ui,sans-serif;color:#27394A;}
         .tk h1{font-size:25px;font-weight:900;color:#0F4867;line-height:1.25;margin:6px 0 8px;}
-        .tk .sub{font-size:14.5px;color:#5A7A8A;line-height:1.55;margin-bottom:22px;}
+        .tk .sub{font-size:14.5px;color:#5A7A8A;line-height:1.55;margin-bottom:18px;}
         .tk .chips{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
         .tk .chip{display:flex;align-items:center;gap:10px;text-align:left;background:#fff;border:2px solid #D5EEF6;border-radius:16px;padding:14px 12px;font:inherit;font-weight:800;font-size:14.5px;color:#0F4867;cursor:pointer;min-height:64px;}
         .tk .chip:hover,.tk .chip:focus-visible{border-color:#1A8FA0;background:#F2FAFC;outline:none;}
         .tk .chip .e{font-size:22px;line-height:1;}
-        .tk .modes{display:grid;gap:12px;}
-        .tk .mode{display:flex;align-items:center;gap:14px;background:#fff;border:2px solid #D5EEF6;border-radius:18px;padding:18px 16px;font:inherit;cursor:pointer;text-align:left;}
-        .tk .mode:hover,.tk .mode:focus-visible{border-color:#1A8FA0;background:#F2FAFC;outline:none;}
-        .tk .mode b{display:block;font-size:17px;color:#0F4867;font-weight:900;}
-        .tk .mode span{font-size:13px;color:#5A7A8A;}
-        .tk .mode .e{font-size:28px;}
+        .tk .chips .chip:last-child:nth-child(odd){grid-column:1/-1;}
+        .tk .seg{display:grid;grid-template-columns:1fr 1fr;background:#EAF5F8;border-radius:14px;padding:4px;margin-bottom:14px;}
+        .tk .seg button{border:none;background:none;border-radius:11px;padding:10px 8px;font:inherit;font-weight:800;font-size:14.5px;color:#5A7A8A;cursor:pointer;}
+        .tk .seg button.on{background:#fff;color:#0F4867;box-shadow:0 1px 4px rgba(15,72,103,.15);}
+        .tk .seg button:focus-visible{outline:2px solid #1A8FA0;}
+        .tk .primary{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#1A8FA0;color:#fff;border:none;border-radius:16px;padding:17px 16px;font:inherit;font-weight:900;font-size:17px;cursor:pointer;box-shadow:0 4px 14px rgba(26,143,160,.3);}
+        .tk .primary:hover,.tk .primary:focus-visible{background:#167C8B;outline:none;}
+        .tk .or{text-align:center;font-size:13px;font-weight:700;color:#7A8A96;margin:14px 0 10px;}
         .tk .back{background:none;border:none;color:#1A8FA0;font:inherit;font-weight:800;font-size:13.5px;cursor:pointer;padding:0;margin-bottom:6px;}
         .tk .card{background:#fff;border:2px solid #D5EEF6;border-radius:20px;padding:26px 20px;text-align:center;}
         .tk .pulse{width:72px;height:72px;border-radius:50%;background:#E6F6F8;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:32px;animation:tkp 1.6s ease-in-out infinite;}
@@ -394,39 +399,37 @@ function TalkInner() {
       <div className="tk">
         {phase.k === 'topic' && (
           <>
-            {onlineCount !== null && onlineCount > 0 && <div className="live"><i />{onlineCount} listener{onlineCount === 1 ? '' : 's'} free right now</div>}
-            {onlineCount === 0 && (
-              <div className="live" style={{ background: '#FFF8EC', color: '#9A5B00' }}>
-                Everyone is busy right now — you can still try, and we&apos;ll keep looking for up to 5 minutes. Or <Link href="/browse" style={{ color: '#9A5B00', textDecoration: 'underline', marginLeft: 3 }}>see all listeners</Link>.
-              </div>
-            )}
-            <h1>What&apos;s on your mind?</h1>
-            <p className="sub">Pick what&apos;s closest. We&apos;ll connect you with someone who&apos;s online now — no browsing, no appointment.</p>
-            <div className="chips">
-              {TALK_TOPICS.map(o => (
-                <button key={o.id} className="chip" onClick={() => { setTopic(o.id); setPhase({ k: 'mode' }) }}>
-                  <span className="e" aria-hidden>{o.emoji}</span>{o.label}
+            {onlineCount !== null && onlineCount > 0 && <div className="live"><i />{onlineCount} listener{onlineCount === 1 ? '' : 's'} online now</div>}
+            {onlineCount === 0 && <div className="live" style={{ background: '#FFF8EC', color: '#9A5B00' }}>Everyone&apos;s busy — tap anyway, we&apos;ll keep looking for 5 minutes</div>}
+            <h1>Talk to someone now</h1>
+            <p className="sub">A real person, available right now. Private and one to one. New here? Your first {FREE_SESSION_MINS} minutes are free.</p>
+            <div className="seg" role="radiogroup" aria-label="How would you like to talk?">
+              {(['text', 'voice'] as const).map(m => (
+                <button key={m} type="button" role="radio" aria-checked={mode === m} className={mode === m ? 'on' : ''} onClick={() => setMode(m)}>
+                  <span aria-hidden>{m === 'text' ? '💬' : '📞'}</span> {m === 'text' ? 'Text chat' : 'Voice call'}
                 </button>
               ))}
             </div>
-            <p className="fine">New to LeanOn? Your first 5 minutes are free (once per account). Private, one-to-one, with a screened peer listener in India — not therapy.</p>
-          </>
-        )}
-
-        {phase.k === 'mode' && (
-          <>
-            <button className="back" onClick={() => setPhase({ k: 'topic' })}>← {t ? `${t.emoji} ${t.label}` : 'Back'}</button>
-            <h1>How would you like to talk?</h1>
-            <p className="sub">You can switch from a call to text during the conversation.</p>
-            <div className="modes">
-              <button className="mode" onClick={() => topic && start({ topic, mode: 'text' })}>
-                <span className="e" aria-hidden>💬</span><div><b>Text chat</b><span>Type at your own pace</span></div>
-              </button>
-              <button className="mode" onClick={() => topic && start({ topic, mode: 'voice' })}>
-                <span className="e" aria-hidden>📞</span><div><b>Voice call</b><span>Talk it through out loud</span></div>
-              </button>
-            </div>
-            {loggedIn === false && <p className="fine">Next, we&apos;ll confirm your phone number with a one-time code — then connect you straight away.</p>}
+            {(() => {
+              const go = (id: TalkTopicId) => { setTopic(id); start({ topic: id, mode }) }
+              const main = TALK_TOPICS.find(o => o.id === 'talk')!
+              return (
+                <>
+                  <button className="primary" onClick={() => go(main.id)}>
+                    <span aria-hidden>{main.emoji}</span> I just need to talk
+                  </button>
+                  <div className="or">or tap what&apos;s on your mind</div>
+                  <div className="chips">
+                    {TALK_TOPICS.filter(o => o.id !== 'talk').map(o => (
+                      <button key={o.id} className="chip" onClick={() => go(o.id)}>
+                        <span className="e" aria-hidden>{o.emoji}</span>{o.label}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )
+            })()}
+            {loggedIn === false && <p className="fine" style={{ marginTop: 12 }}>You&apos;ll confirm your phone with a one-time code. Listeners never see your number.</p>}
           </>
         )}
 
@@ -501,11 +504,11 @@ function TalkInner() {
         )}
 
         <p className="fine" style={{ color: '#7A2020' }}>
-          In crisis or thinking about self-harm? Call <a href="tel:14416" style={{ color: '#C0392B', fontWeight: 800 }}>Tele-MANAS 14416</a> (free, 24/7)
-          {' '}or <a href="tel:08046110007" style={{ color: '#C0392B', fontWeight: 800 }}>NIMHANS 080-46110007</a>. LeanOn listeners are not crisis counsellors.
+          In crisis? Call <a href="tel:14416" style={{ color: '#C0392B', fontWeight: 800 }}>Tele-MANAS 14416</a> (free, 24/7)
+          {' '}or <a href="tel:08046110007" style={{ color: '#C0392B', fontWeight: 800 }}>NIMHANS 080-46110007</a>. Listeners are not crisis counsellors.
         </p>
 
-        {(phase.k === 'topic' || phase.k === 'mode') && (
+        {phase.k === 'topic' && (
           <p className="fine">Prefer to choose someone yourself? <Link href="/browse" style={{ color: '#1A8FA0', fontWeight: 800 }}>See all listeners</Link></p>
         )}
       </div>

@@ -78,27 +78,28 @@ export default function TalkLayout({ children }: { children: React.ReactNode }) 
         <style>{`
           .talk-info{max-width:520px;margin:-90px auto 0;padding:0 18px 130px;font-family:'Nunito',system-ui,sans-serif;color:#27394A;}
           body.talk-busy .talk-info{display:none;}
-          .talk-info h2{font-size:19px;font-weight:900;color:#0F4867;margin:26px 0 8px;}
-          .talk-info h3{font-size:15px;font-weight:800;color:#0F4867;margin:14px 0 3px;}
-          .talk-info p,.talk-info li{font-size:14px;line-height:1.65;color:#3A6070;}
+          .talk-info h2{font-size:16px;font-weight:900;color:#0F4867;margin:26px 0 8px;}
+          .talk-info details{border-bottom:1px solid #E3EFF3;padding:10px 0;}
+          .talk-info summary{font-size:14.5px;font-weight:800;color:#0F4867;cursor:pointer;list-style-position:inside;}
+          .talk-info details p{margin:6px 0 2px;}
+          .talk-info p,.talk-info li{font-size:13.5px;line-height:1.6;color:#3A6070;}
           .talk-info ol{margin:6px 0 0 20px;}
           .talk-info a{color:#1A8FA0;font-weight:800;}
         `}</style>
-        <h2 id="talk-info-h">Talk to someone now — how it works</h2>
+        <h2 id="talk-info-h">How Talk now works</h2>
         <ol>
-          <li>Pick what&apos;s on your mind and choose text or voice.</li>
-          <li>Confirm your phone number with a one-time code. Your number is never shown to the listener.</li>
-          <li>LeanOn asks a screened peer listener who is free right now. If they can&apos;t answer within about {TALK_TRY_SECS} seconds, the next one is asked automatically.</li>
-          <li>Talk privately, one to one. Your first {FREE_SESSION_MINS} minutes are free.</li>
+          <li>Choose text or voice and tap what&apos;s on your mind.</li>
+          <li>We ask a screened peer listener who is free now. No answer in about {TALK_TRY_SECS} seconds? We ask the next one.</li>
+          <li>Talk privately, one to one. First {FREE_SESSION_MINS} minutes free, once per account. Peer support, not therapy.</li>
         </ol>
         <h2>Questions</h2>
         {TALK_FAQ.map(f => (
-          <div key={f.q}>
-            <h3>{f.q}</h3>
+          <details key={f.q}>
+            <summary>{f.q}</summary>
             <p>{f.a}</p>
-          </div>
+          </details>
         ))}
-        <p style={{ marginTop: 18 }}>More: <a href="/how-leanon-works">How LeanOn works</a> · <a href="/pricing">Pricing</a> · <a href="/trust">Trust &amp; safety</a> · <a href="/browse">See all listeners</a></p>
+        <p style={{ marginTop: 18 }}><a href="/how-leanon-works">How LeanOn works</a> · <a href="/pricing">Pricing</a> · <a href="/trust">Trust &amp; safety</a></p>
       </section>
     </>
   )
