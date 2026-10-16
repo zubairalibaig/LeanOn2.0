@@ -54,6 +54,7 @@ export async function GET(req: NextRequest) {
         amount_held, status, is_free_trial, started_at, ended_at, platform_fee,
         listener_rate_per_min,
         crisis_flagged, crisis_flagged_at, created_at,
+        cancel_reason, seeker_last_seen, listener_last_seen,
         seeker:users!seeker_id(name, phone),
         listener:users!listener_id(name, phone)
       `, { count: 'exact' })
@@ -106,6 +107,28 @@ export async function GET(req: NextRequest) {
       if (!pushErr) for (const r of (pushRows ?? []) as { id: string; request_push: unknown }[]) pushMap[r.id] = r.request_push ?? null
     }
 
+    // Talk now vs /browse, the hop number within a Talk now search, and how the
+    // session ended (migration 071; separate read so the tab keeps working before it's run).
+    const sourceMap: Record<string, { booked_via: string | null; ended_by: string | null; talk_hop: number | null }> = {}
+    if (sessionIds.length > 0) {
+      const { data: srcRows, error: srcErr } = await sb.from('sessions').select('id, booked_via, talk_search_id, ended_by').in('id', sessionIds)
+      if (!srcErr) {
+        const rows = (srcRows ?? []) as { id: string; booked_via: string | null; talk_search_id: string | null; ended_by: string | null }[]
+        const searchIds = Array.from(new Set(rows.map(r => r.talk_search_id).filter((v): v is string => !!v)))
+        const hopOf: Record<string, number> = {}
+        if (searchIds.length > 0) {
+          const { data: hops } = await sb.from('sessions').select('id, talk_search_id, created_at')
+            .in('talk_search_id', searchIds).order('created_at', { ascending: true }).limit(5000)
+          const seen: Record<string, number> = {}
+          for (const h of (hops ?? []) as { id: string; talk_search_id: string }[]) {
+            seen[h.talk_search_id] = (seen[h.talk_search_id] ?? 0) + 1
+            hopOf[h.id] = seen[h.talk_search_id]
+          }
+        }
+        for (const r of rows) sourceMap[r.id] = { booked_via: r.booked_via, ended_by: r.ended_by, talk_hop: hopOf[r.id] ?? null }
+      }
+    }
+
     // Why a listener with no device never registered (migration 069; separate
     // read so the tab keeps working before it's run).
     const noDeviceListeners = Array.from(new Set((data ?? [])
@@ -123,7 +146,7 @@ export async function GET(req: NextRequest) {
 
     const sessions = (data ?? []).map((s: { id: string; platform_fee?: number; listener_id?: string }) => {
       const e = earningsMap[s.id]
-      const withPush = { ...s, request_push: pushMap[s.id] ?? null, listener_push_error: (s.listener_id && pushErrMap[s.listener_id]) || null }
+      const withPush = { ...s, ...(sourceMap[s.id] ?? { booked_via: null, ended_by: null, talk_hop: null }), request_push: pushMap[s.id] ?? null, listener_push_error: (s.listener_id && pushErrMap[s.listener_id]) || null }
       return e
         ? {
             ...withPush,

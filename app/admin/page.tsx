@@ -71,6 +71,50 @@ type SessionRow = {
   listener_rate_per_min?: number | null
   request_push?: { configured: boolean; devices: number; delivered: number; errors: string[] } | null
   listener_push_error?: { error: string; at: string | null } | null
+  cancel_reason?: string | null
+  seeker_last_seen?: string | null
+  listener_last_seen?: string | null
+  // Migration 071 — null for sessions from before it.
+  booked_via?: string | null
+  talk_hop?: number | null
+  ended_by?: string | null
+}
+
+// How a session ended, for the Sessions tab. Requests that never went live use
+// cancel_reason; live sessions use ended_by (migration 071). Older sessions have
+// no ended_by: full time vs early is inferred from the timestamps, but who
+// ended an early one was not recorded.
+function sessionEndLabel(s: SessionRow): { text: string; color: string; hint?: string } | null {
+  if (s.status === 'cancelled') {
+    const r = s.cancel_reason
+    if (r === 'declined') return { text: 'Listener declined', color: 'var(--orange)' }
+    if (r === 'timed_out') return { text: 'No answer — timed out', color: 'var(--orange)' }
+    if (r === 'talk_unanswered') return { text: 'No answer — Talk now moved on', color: 'var(--orange)' }
+    if (r === 'seeker_cancelled') return { text: 'Seeker cancelled before answer', color: 'var(--gray)' }
+    if (r === 'booking_error') return { text: 'Booking error', color: 'var(--red)' }
+    return { text: 'Cancelled', color: 'var(--gray)' }
+  }
+  if (s.status !== 'completed' || !s.started_at) return null
+  const end = s.ended_at ? Date.parse(s.ended_at) : NaN
+  // The other side's last heartbeat well before the end: they had dropped off.
+  const stale = (t?: string | null) => !!t && Number.isFinite(end) && end - Date.parse(t) > 75_000
+  switch (s.ended_by) {
+    case 'time_up': return { text: 'Full time', color: 'var(--green)' }
+    case 'seeker':  return { text: 'Seeker ended early', color: 'var(--orange)', hint: stale(s.listener_last_seen) ? 'listener had dropped off' : undefined }
+    case 'listener': return { text: 'Listener ended early', color: 'var(--orange)', hint: stale(s.seeker_last_seen) ? 'seeker had dropped off' : undefined }
+    case 'dropped': return { text: 'Dropped — nobody ended it', color: 'var(--red)', hint: 'app closed / network lost' }
+  }
+  const started = Date.parse(s.started_at)
+  if (Number.isFinite(end) && end >= started + s.duration_mins * 60_000 - 30_000) return { text: 'Full time', color: 'var(--green)' }
+  return { text: 'Ended early', color: 'var(--orange)', hint: 'who ended it was not recorded' }
+}
+
+type TalkMetrics = {
+  ready: boolean; message?: string; days: number
+  searches: number; seekers: number; nobodyFree: number; stoppedBeforeRequest: number; withRequest: number
+  hopsTotal: number; avgHopsPerSearch: number; matched: number; avgHopsToMatch: number; unmatchedAfterRequests: number
+  completed: number; avgMins: number; endedBy: Record<string, number>
+  freeMatchedSeekers: number; converted: number; browseStarted: number
 }
 type TranscriptMsg = { id: string; sender_id: string; content: string; created_at: string; is_flagged?: boolean }
 type ReportRow = {
@@ -203,6 +247,64 @@ function fmtDateTime(iso: string | null | undefined) {
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
+
+// Talk now funnel (basics) for the Sessions tab — /api/admin/talk-metrics.
+function TalkMetricsCard({ headers }: { headers: () => Record<string, string> }) {
+  const [days, setDays] = useState(7)
+  const [m, setM] = useState<TalkMetrics | null>(null)
+  const [failed, setFailed] = useState(false)
+  useEffect(() => {
+    let alive = true
+    setFailed(false)
+    fetch(`/api/admin/talk-metrics?days=${days}`, { headers: headers(), cache: 'no-store' })
+      .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then((d: TalkMetrics) => { if (alive) setM(d) })
+      .catch(() => { if (alive) setFailed(true) })
+    return () => { alive = false }
+  }, [days]) // eslint-disable-line react-hooks/exhaustive-deps
+  const pct = (n: number, d: number) => (d > 0 ? `${Math.round((n / d) * 100)}%` : '—')
+  const box = (label: string, value: string | number, sub?: string) => (
+    <div style={{ background: '#fff', border: '1.5px solid #D5EEF6', borderRadius: 12, padding: '10px 12px', minWidth: 120, flex: '1 1 120px' }}>
+      <div style={{ fontSize: 11, color: 'var(--gray)', fontWeight: 700 }}>{label}</div>
+      <div style={{ fontSize: 20, fontWeight: 800 }}>{value}</div>
+      {sub && <div style={{ fontSize: 11, color: 'var(--gray)' }}>{sub}</div>}
+    </div>
+  )
+  return (
+    <div style={{ background: '#F4FBFD', border: '1.5px solid #D5EEF6', borderRadius: 14, padding: 14, marginBottom: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
+        <strong>⚡ Talk now</strong>
+        <span style={{ fontSize: 12, color: 'var(--gray)' }}>signed-in searches · a hop = one request to one listener</span>
+        <span style={{ marginLeft: 'auto', display: 'flex', gap: 4 }}>
+          {[1, 7, 30].map(d => (
+            <button key={d} className={`filter-btn${days === d ? ' active' : ''}`} onClick={() => setDays(d)}>{d === 1 ? '24h' : `${d}d`}</button>
+          ))}
+        </span>
+      </div>
+      {failed ? <div style={{ fontSize: 13, color: 'var(--red)' }}>Could not load Talk now metrics.</div>
+        : !m ? <div className="skeleton" style={{ height: 60 }} />
+        : !m.ready ? <div style={{ fontSize: 13, color: 'var(--gray)' }}>{m.message}</div>
+        : (
+          <>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {box('Searches started', m.searches, `${m.seekers} seeker${m.seekers === 1 ? '' : 's'}`)}
+              {box('Nobody free', m.nobodyFree, pct(m.nobodyFree, m.searches) + ' of searches')}
+              {box('Stopped before a request', m.stoppedBeforeRequest, 'price screen / cancel / wallet')}
+              {box('Listener accepted', m.matched, `${pct(m.matched, m.searches)} of searches · ${pct(m.matched, m.withRequest)} once asked`)}
+              {box('Hops per search', m.avgHopsPerSearch, `${m.avgHopsToMatch} to a match · ${m.hopsTotal} requests`)}
+              {box('Asked, nobody accepted', m.unmatchedAfterRequests, pct(m.unmatchedAfterRequests, m.withRequest) + ' of searches with a request')}
+              {box('Chats completed', m.completed, `avg ${m.avgMins} min`)}
+              {box('Free → paid', m.converted, `${pct(m.converted, m.freeMatchedSeekers)} of ${m.freeMatchedSeekers} free-trial seekers`)}
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 8 }}>
+              Completed chats ended: {Object.entries(m.endedBy).map(([k, v]) => `${({ time_up: 'full time', seeker: 'seeker early', listener: 'listener early', dropped: 'dropped', unknown: 'not recorded' } as Record<string, string>)[k] ?? k} ${v}`).join(' · ') || '—'}
+              {' · '}Sessions started from /browse in the same period: {m.browseStarted}
+            </div>
+          </>
+        )}
+    </div>
+  )
+}
 
 export default function AdminPage() {
   // ── Auth gate ───────────────────────────────────────────────────────────────
@@ -2313,6 +2415,7 @@ export default function AdminPage() {
                 ⚠️ {unsettledIds.size} session{unsettledIds.size > 1 ? 's' : ''} where the listener was never credited (credit_wallet failed). Look for <strong>⚠️ Fix settlement</strong> buttons below.
               </div>
             )}
+            <TalkMetricsCard headers={adminHeaders} />
             <div style={{ marginBottom: 10 }}>
               <input
                 type="search"
@@ -2397,7 +2500,14 @@ export default function AdminPage() {
                           <div>{s.listener?.name || s.listener_id.slice(0, 8) + '…'}</div>
                           {s.listener?.phone && <div style={{ fontSize: 11, color: 'var(--gray)' }}>{s.listener.phone}</div>}
                         </td>
-                        <td><span className="badge badge-teal">{s.session_type}</span></td>
+                        <td>
+                          <span className="badge badge-teal">{s.session_type}</span>
+                          {s.booked_via === 'talk'
+                            ? <div style={{ marginTop: 4 }}><span className="badge badge-orange" title="Booked through Talk now (/talk)">⚡ Talk now{s.talk_hop ? ` · hop ${s.talk_hop}` : ''}</span></div>
+                            : s.booked_via === 'browse'
+                              ? <div style={{ marginTop: 4 }}><span className="badge badge-gray" title="Booked directly from a listener's profile (/browse)">Browse</span></div>
+                              : null}
+                        </td>
                         <td>{(() => {
                           // Show actual elapsed time for completed/expired sessions if we have both timestamps.
                           // duration_mins is the BOOKED time; actual run-time is derived from started_at/ended_at.
@@ -2542,6 +2652,10 @@ export default function AdminPage() {
                             : s.status === 'completed'
                               ? <span className="badge badge-green">Completed</span>
                               : <span className="badge badge-gray">{s.status}</span>}
+                          {(() => {
+                            const e = sessionEndLabel(s)
+                            return e ? <div style={{ fontSize: 11, fontWeight: 700, marginTop: 4, color: e.color }}>{e.text}{e.hint && <span style={{ fontWeight: 500, color: 'var(--gray)' }}> · {e.hint}</span>}</div> : null
+                          })()}
                           {s.request_push && (() => {
                             const p = s.request_push
                             const delivered = Number(p.delivered) || 0

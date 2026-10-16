@@ -31,6 +31,13 @@ type Phase =
 
 const CHOICE_KEY = 'leanon_talk_choice'
 
+// A fresh id per search (admin metrics only — never trusted for anything else).
+function newSearchId(): string {
+  try { if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID() } catch { /* fall through */ }
+  const h = Array.from({ length: 32 }, () => Math.floor(Math.random() * 16).toString(16)).join('')
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-4${h.slice(13, 16)}-a${h.slice(17, 20)}-${h.slice(20, 32)}`
+}
+
 // Privacy-safe funnel events to Google Analytics (if configured): only the
 // topic category, mode and outcome — never anything the person typed, never
 // listener ids. GA already records the campaign (utm_*) of the visit.
@@ -83,6 +90,7 @@ function TalkInner() {
   const handedOff = useRef(false)
   const starting = useRef(false)
   const runStartedAt = useRef(0)          // when this search began (TALK_MAX_WAIT_SECS cap)
+  const searchId = useRef('')             // groups this search's requests in admin metrics
   const walletBalance = useRef(0)          // from the last candidate fetch
   const withdraw = (sessionId: string) =>
     fetch(`/api/sessions/${sessionId}/decline`, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: '{}' }).catch(() => {})
@@ -137,7 +145,7 @@ function TalkInner() {
     { ok: true; walletBalance: number } | { ok: false; status: number }
   > => {
     const c = choice.current!
-    const qs = new URLSearchParams({ topic: c.topic, type: c.mode, exclude: tried.current.join(',') })
+    const qs = new URLSearchParams({ topic: c.topic, type: c.mode, exclude: tried.current.join(','), search: searchId.current })
     const res = await fetch(`/api/talk/candidates?${qs}`, { cache: 'no-store' }).catch(() => null)
     if (!res || !res.ok) return { ok: false, status: res?.status ?? 0 }
     const d = await res.json() as { free: boolean; durationMins: number; walletBalance?: number; candidates: Candidate[] }
@@ -190,6 +198,7 @@ function TalkInner() {
             durationMins: meta.current.durationMins,
             sessionType: choice.current!.mode,
             via: 'talk',
+            talkSearchId: searchId.current,
             ...(replace ? { replacesSessionId: replace } : {}),
           }),
         }).catch(() => null)
@@ -256,6 +265,7 @@ function TalkInner() {
     }
     tried.current = []
     queue.current = []
+    searchId.current = newSearchId()
     setPhase({ k: 'finding' })
     if (!(await loadCandidates())) return
     if (!meta.current.free && queue.current.length > 0) {

@@ -146,6 +146,11 @@
   A plain `seeker_cancelled` (incl. /browse switches) is never a miss. `/api/talk/candidates` first
   expires stale pending requests (`expireStalePendingRequests`) so they don't mark listeners busy, and ranks by presence (in-app ≤3 min > ≤15 min > away). Measured that day:
   15 of 17 "online" listeners were in away mode. Recovery branch: `recovery/pre-presence-fix-2026-10-16`.
+- **Session analytics (migration 071, 2026-10-16):** `sessions.booked_via` ('talk'/'browse'),
+  `talk_search_id` (one Talk now search; each request = a hop), `ended_by` ('seeker'/'listener'/
+  'time_up'/'dropped') and table `talk_searches`, all written by `lib/session-analytics.ts` as separate
+  best-effort updates — never in the money path, never read for decisions. Admin Sessions tab shows
+  them + the Talk now funnel (`/api/admin/talk-metrics`). Sessions before 071 have NULLs.
 - **Tab close (2026-10-16):** `ListenerPresence` sends a `{ leaving: true }` beacon on `pagehide`
   (not bfcache). `/api/presence` only AGES `last_heartbeat_at` to `LEAVE_GRACE_SECS` (180s) short of
   stale — never sets offline directly — so a reload or another open LeanOn tab (90s heartbeat) keeps

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { recordEndedBy, endedByOnAbandon } from '@/lib/session-analytics'
 import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
 import { settleSession, abandonedSessionEnd } from '@/lib/session-billing'
@@ -66,6 +67,8 @@ export async function GET(req: NextRequest) {
 
       if (!completed) continue
       expiredCount++
+      // Nobody pressed End: full time, or dropped (app closed, network lost). Admin analytics, migration 071.
+      await recordEndedBy(sb, session.id, endedByOnAbandon({ started_at: completed.started_at ?? null, ended_at: completed.ended_at ?? null, duration_mins: completed.duration_mins as number }))
 
       // Shared settlement math (lib/session-billing.ts). Fires when a session is
       // still 'active' 10+ minutes past its booked end; bills up to the last

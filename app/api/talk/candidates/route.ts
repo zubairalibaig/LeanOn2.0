@@ -8,6 +8,7 @@ import { sweepStaleListeners, wasUnanswered, STALE_HEARTBEAT_MINS } from '@/lib/
 import { talkTopic, TALK_MAX_TEXT_RATE } from '@/lib/talk-match'
 import { logger } from '@/lib/logger'
 import { expireStalePendingRequests } from '@/lib/expire-pending'
+import { recordTalkSearch, validSearchId } from '@/lib/session-analytics'
 
 export const dynamic = 'force-dynamic'
 
@@ -38,6 +39,7 @@ export async function GET(req: NextRequest) {
   const type: 'text' | 'voice' = searchParams.get('type') === 'voice' ? 'voice' : 'text'
   const exclude = new Set((searchParams.get('exclude') ?? '').split(',').filter(id => UUID_RE.test(id)))
   exclude.add(user.id)
+  const searchId = validSearchId(searchParams.get('search'))
 
   const sb = createAdminClient()
   try {
@@ -82,6 +84,7 @@ export async function GET(req: NextRequest) {
     if (!free) rows = rows.filter(r => Number(r.rate_per_min ?? 10) <= TALK_MAX_TEXT_RATE)
     const ids = rows.map(r => r.user_id)
     if (ids.length === 0) {
+      if (searchId) await recordTalkSearch(sb, { id: searchId, seekerId: user.id, free, candidates: 0 })
       return NextResponse.json({ free, durationMins, candidates: [] })
     }
 
@@ -127,8 +130,10 @@ export async function GET(req: NextRequest) {
     }
 
     const wanted = new Set<string>(topic?.tags ?? [])
-    const ranked = rows
-      .filter(r => !busy.has(r.user_id) && !voiceOff.has(r.user_id))
+    const eligible = rows.filter(r => !busy.has(r.user_id) && !voiceOff.has(r.user_id))
+    // Admin Talk now metrics (migration 071) — the first fetch of a search only.
+    if (searchId) await recordTalkSearch(sb, { id: searchId, seekerId: user.id, free, candidates: eligible.length })
+    const ranked = eligible
       .map(r => {
         const a = answered.get(r.user_id) ?? 0, m = missed.get(r.user_id) ?? 0
         const reliability = (a + 1) / (a + m + 2)               // 0.5 with no history

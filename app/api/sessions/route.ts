@@ -10,6 +10,7 @@ import { notifySessionComplete } from '@/lib/notify'
 import { logger } from '@/lib/logger'
 import { sendPushToUser, sendRequestWithdrawn } from '@/lib/push'
 import { expireStalePendingRequests } from '@/lib/expire-pending'
+import { endedByOnPatch, recordEndedBy, recordBookingSource, validSearchId } from '@/lib/session-analytics'
 import { sweepStaleListeners, recordMissedRequest, TALK_SWITCH_MISS_SECS } from '@/lib/listener-presence'
 import { suspensionStatus } from '@/lib/suspension'
 
@@ -20,7 +21,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 // SECURITY: auth required — user context for auth check, admin client for atomic DB operations
 export async function POST(req: NextRequest) {
   try {
-    const { listenerId, durationMins, sessionType, replacesSessionId, via } = await req.json()
+    const { listenerId, durationMins, sessionType, replacesSessionId, via, talkSearchId } = await req.json()
     // 'talk' = Talk now (moves on to another listener after ~30s), so the
     // listener's alert must not promise the full response window.
     const fromTalk = via === 'talk'
@@ -426,6 +427,10 @@ export async function POST(req: NextRequest) {
       logger.error('FCM push failed (non-critical):', { error: fcmErr instanceof Error ? fcmErr.message : String(fcmErr) })
     }
 
+    // Admin analytics: Talk now or /browse, and which Talk now search
+    // (migration 071). After the listener's alert, so it never delays it.
+    await recordBookingSource(sb, sessionId, fromTalk, validSearchId(talkSearchId))
+
     // Talk now moved on from a listener who didn't answer in their turn.
     if (talkMissToRecord) await recordMissedRequest(sb, talkMissToRecord)
 
@@ -517,6 +522,9 @@ export async function PATCH(req: NextRequest) {
       }
       return NextResponse.json({ success: true })
     }
+
+    // Admin analytics (migration 071): time ran out, or who ended it early.
+    await recordEndedBy(sb, sessionId, endedByOnPatch({ started_at: completed.started_at ?? null, duration_mins: completed.duration_mins as number }, user.id === session.seeker_id))
 
     // Settlement math lives in lib/session-billing.ts (shared with the cleanup
     // and expire crons). Bills whole minutes rounding UP capped at booked — a

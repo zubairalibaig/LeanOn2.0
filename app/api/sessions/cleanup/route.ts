@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { recordEndedBy, endedByOnAbandon } from '@/lib/session-analytics'
 import { createAdminClient } from '@/lib/supabase-server'
 import { logger } from '@/lib/logger'
 import { expireStalePendingRequests } from '@/lib/expire-pending'
@@ -74,6 +75,8 @@ export async function POST(req: Request) {
       .single()
 
     if (!completed) continue // already handled by another process
+    // Nobody pressed End: full time, or dropped (app closed, network lost). Admin analytics, migration 071.
+    await recordEndedBy(sb, session.id, endedByOnAbandon({ started_at: completed.started_at ?? null, ended_at: completed.ended_at ?? null, duration_mins: completed.duration_mins as number }))
 
     // Shared settlement math (lib/session-billing.ts) — whole minutes rounded
     // UP capped at booked, so a full-length session never gets shaved by floor.
