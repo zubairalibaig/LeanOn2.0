@@ -388,9 +388,10 @@ export async function POST(req: NextRequest) {
     try {
       const push = await sendPushToUser(sb, listenerId, {
         title: '🔔 New session request',
-        body: fromTalk
-          ? `A seeker wants a ${durationMins}-min ${sessionType} session right now. Tap to accept — they're waiting.`
-          : `A seeker wants a ${durationMins}-min ${sessionType} session. Tap to accept — you have ${Math.round(REQUEST_RESPONSE_WINDOW_SECS / 60)} minutes.`,
+        // Free intro vs paid is in the alert itself, not only the dashboard popup.
+        body: `${effectivelyFree ? `A free ${durationMins}-min ${sessionType} intro` : `A paid ${durationMins}-min ${sessionType} session`} — ${fromTalk
+          ? "tap to accept, they're waiting."
+          : `tap to accept, you have ${Math.round(REQUEST_RESPONSE_WINDOW_SECS / 60)} minutes.`}`,
         url: '/dashboard',
         tag: `leanon-req-${sessionId}`,
         ttlSecs: REQUEST_RESPONSE_WINDOW_SECS,

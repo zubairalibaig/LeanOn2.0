@@ -789,6 +789,9 @@ function SessionContent() {
           const ns = payload.new.status as string | undefined
           if (!ns) return
           setSessionStatus(ns)
+          // Ended on the server (the other side pressed End, or it was settled)
+          // without our seeing their "session_ended" broadcast: end here too.
+          if (ns === 'completed') { peerEndedRef.current = true; setEnded(true) }
           if (ns === 'active') {
             const sa = payload.new.started_at as string | null
             if (sa) {
@@ -872,6 +875,9 @@ function SessionContent() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sessionId }),
       signal: AbortSignal.timeout(5000),
+    }).then(r => r.json()).then((d: { status?: string | null }) => {
+      // The server already ended it (the other side's "ended" signal was missed).
+      if (d?.status === 'completed') { peerEndedRef.current = true; setEnded(true) }
     }).catch(() => {})
     send() // immediate on mount
     const hb = setInterval(send, 30_000)
@@ -1289,10 +1295,21 @@ function SessionContent() {
     }).catch(() => null)
 
     if (!res || !res.ok) {
-      const body = await res?.json().catch(() => ({}))
-      console.error('Send failed:', body?.error)
+      const body = await res?.json().catch(() => ({})) as { error?: string } | undefined
       setMsgs(prev => prev.filter(m => m.id !== tempId))
       setInput(text)
+      // Say why the message didn't go — it used to vanish back into the draft.
+      if (res && res.status === 400 && body?.error === 'Session has ended') {
+        showToast('This session has ended, so your message wasn\'t sent.', 'warning')
+        peerEndedRef.current = true
+        setEnded(true)
+      } else if (res?.status === 429) {
+        showToast('You\'re sending very fast — wait a few seconds and tap send again.', 'warning')
+      } else if (res?.status === 401) {
+        showToast('Your login has expired — reload the page to keep chatting.', 'error')
+      } else {
+        showToast('Message not sent — check your connection and tap send again.', 'error')
+      }
       return
     }
 

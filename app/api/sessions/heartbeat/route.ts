@@ -28,7 +28,10 @@ export async function POST(req: NextRequest) {
       .eq('id', sessionId)
       .single()
 
-    if (!session || session.status !== 'active') return NextResponse.json({ ok: true })
+    // Tell the page when the session is no longer live on the server (the other
+    // side ended it, or it was settled), so it can stop instead of letting the
+    // timer run while every message is refused.
+    if (!session || session.status !== 'active') return NextResponse.json({ ok: true, status: session?.status ?? null })
 
     // Participant guard — only seeker or listener can update this session's timestamps
     if (user.id !== session.seeker_id && user.id !== session.listener_id) {

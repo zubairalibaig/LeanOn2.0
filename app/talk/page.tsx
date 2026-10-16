@@ -390,7 +390,7 @@ function TalkInner() {
                 </button>
               ))}
             </div>
-            <p className="fine">Your first 5 minutes are free. Private, one-to-one, with a screened peer listener in India — not therapy.</p>
+            <p className="fine">New to LeanOn? Your first 5 minutes are free (once per account). Private, one-to-one, with a screened peer listener in India — not therapy.</p>
           </>
         )}
 
@@ -443,6 +443,7 @@ function TalkInner() {
             <div className="pulse" style={{ animation: 'none' }} aria-hidden>🤝</div>
             <h1 style={{ fontSize: 21 }}>{phase.durationMins}-minute {choice.current?.mode === 'voice' ? 'call' : 'chat'}: at most {phase.priceLabel}</h1>
             <p className="sub" style={{ marginBottom: 4 }}>
+              You&apos;ve already had your free 5 minutes, so this is a paid {phase.durationMins}-minute session.
               The amount is held from your wallet only when a listener is asked, and returned in full if nobody answers.
               If you end early, unused minutes come back to your wallet.
             </p>
