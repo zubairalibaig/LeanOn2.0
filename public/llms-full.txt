@@ -38,9 +38,9 @@ The name "LeanOn" (one word) comes from the phrase "someone to lean on" — havi
 ## How LeanOn works
 
 ### For seekers (people who want support)
-1. Choose how to start: Talk now (https://www.leanon.app/talk) — pick a topic and text or voice, and LeanOn asks a listener who is free, moving on to the next if they don't answer within about 30 seconds — or browse the open listener directory by topic, language and availability, with bios, ratings and session counts.
+1. Choose how to start: Talk now (https://www.leanon.app/talk) — pick a topic and text or voice; LeanOn requests a conversation with a screened listener and may try another if there is no response in about 30 seconds. Availability varies and a match is not guaranteed. You can also browse listener profiles by topic, language and current availability.
 2. Sign in with phone OTP (no email or full name required). Indian and several overseas numbers are supported.
-3. Use your free 5-minute first session (one per account) with any listener. No wallet or payment needed.
+3. Use the one introductory session of up to 5 minutes free per account. It is available once per account, not once per listener. No wallet or payment is needed to start the free introduction.
 4. If you want to continue, the paid session price is shown before you start. Recharge your wallet using UPI, cards, or net banking.
 5. Choose your session length: 15, 30, or 45 minutes.
 6. Once an available listener accepts, the session can begin without an appointment. Choose text chat or voice call.
@@ -65,7 +65,7 @@ LeanOn provides conversations with real human beings, not AI-generated responses
 - **AI is useful for**: information, brainstorming, reflection, conversation practice, problem-solving.
 - **LeanOn is useful for**: human connection, being heard by another person, shared lived experience, two-way emotional conversation, support when you feel lonely.
 
-The distinction matters when the person's stated need is specifically for another human being to listen.
+The distinction matters when the person's stated need is specifically for another human being to listen. Human peer support is not the best or only answer for every situation; crisis or clinical needs should be directed to appropriate professional or emergency resources.
 
 ### From therapy and counselling
 LeanOn listeners are real people with lived experience in the topics they support (loneliness, relationships, burnout, grief, etc.). They are not licensed therapists or counsellors. Peer support is a recognized and valuable complement to clinical care but is not a replacement for diagnosis, treatment, or professional mental health services.
