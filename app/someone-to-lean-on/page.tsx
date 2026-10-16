@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'How much does it cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Listeners set their own rate between ₹8 and ₹25 per minute and keep all of it, while LeanOn adds a flat ₹10 platform fee per paid session. A 15-minute session works out to about ₹160 — far less than a therapy appointment in India, and available at any hour. A short trial session is available for new users.',
+        text: 'The price depends on the listener you choose plus a flat ₹10 platform fee per paid session. A 15-minute session starts around ₹160 — far less than a therapy appointment in India, and available at any hour. A short trial session is available for new users.',
       },
     },
   ],
@@ -264,7 +264,7 @@ export default function SomeoneToLeanOnPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does it cost?</div>
-            <div className="faq-a">Listeners set their own rate between ₹8 and ₹25 per minute and keep all of it, while LeanOn adds a flat ₹10 platform fee per paid session. A 15-minute session works out to about ₹160 — far less than a therapy appointment in India, and available at any hour. A short trial session is available for new users.</div>
+            <div className="faq-a">The price depends on the listener you choose plus a flat ₹10 platform fee per paid session. A 15-minute session starts around ₹160 — far less than a therapy appointment in India, and available at any hour. A short trial session is available for new users.</div>
           </div>
         </div>
 

@@ -22,7 +22,6 @@ import { post as therapyCostPost } from './posts/therapy-cost-india'
 import { post as astrologerTalkPost } from './posts/why-people-call-astrologers-to-talk'
 import { post as someoneToLeanOnPost } from './posts/what-it-means-to-have-someone-to-lean-on'
 import { post as chatgptVsHumanPost } from './posts/chatgpt-vs-human-listener'
-import { post as earnListeningPost } from './posts/earn-money-listening-online-india'
 import { post as feelEmptyPost } from './posts/feel-empty-inside-india'
 import { post as feelFailurePost } from './posts/feel-like-a-failure-india'
 import { post as am2LonelinessPost } from './posts/2am-loneliness-india'
@@ -74,7 +73,7 @@ const allPosts = [
   chatgptMentalHealthPost, cantAffordTherapyPost, familyPressurePost, lonelinessNewCityPost,
   signsNeedTalkPost, gettingItOffChestPost, badMorningResetPost, ventingStrangerPost,
   emotionalResetWorkdayPost, hateJobPost, am2LonelinessPost, feelFailurePost, feelEmptyPost,
-  earnListeningPost, chatgptVsHumanPost, someoneToLeanOnPost, astrologerTalkPost,
+  chatgptVsHumanPost, someoneToLeanOnPost, astrologerTalkPost,
   therapyCostPost, noOneToTalkToPost, overthinkingNightPost, onlineEmotionalSupportGuidePost,
   whatIsPeerSupportPost, empathyPost, womenLonelinessPost, mensMentalHealthPost,
   affordableTherapyPost, founderBurnoutPost, lonelinessJointFamilyPost, jointFamilyPost,

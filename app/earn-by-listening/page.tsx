@@ -202,7 +202,6 @@ export default function EarnByListeningPage() {
 
         <div className="section" style={{textAlign:'center'}}>
           <p style={{fontSize:14,color:'var(--gray)'}}>Looking for support instead? <a href="/browse" style={{color:'var(--teal)',fontWeight:800}}>Find a listener →</a></p>
-          <p style={{fontSize:14,color:'var(--gray)',marginTop:8}}>Read more: <a href="/blog/earn-money-listening-online-india" style={{color:'var(--teal)',fontWeight:800}}>How to earn money listening online in India →</a></p>
         </div>
       </div>
     </>

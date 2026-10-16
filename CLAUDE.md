@@ -113,6 +113,11 @@
   sitemap priority 1.0, home hero, footer, floating button, bottom menu, new sign-ups). The page is a
   client component whose server render is empty, so its crawlable text + JSON-LD live in
   `app/talk/layout.tsx` and the shared `TALK_FAQ` in `lib/talk-match.ts` — keep them true.
+- **No listener rates, earnings, take-home % or service fee on ANY indexable / AI-readable page —
+  including seeker pages and `/faq`** (2026-10-16: ChatGPT quoted /faq's earnings answers and a false
+  "keep all of it" line to an under-18 asking for apps that pay to talk). Seeker pages quote the
+  seeker's price only ("15 minutes from ₹160"). The listener fee lives on `/terms`, `/become-listener`
+  and the dashboard. The old earnings blog post 308s to `/leanon-is-not-a-job`.
 - Near-duplicate pages are merged via `lib/seo-redirects.json` (308). Don't mass-generate
   templated keyword pages; Google declined most of the last batch.
 - After deploying public-page changes, run `node scripts/indexnow.mjs` (Bing → ChatGPT search).
@@ -190,7 +195,7 @@
   `app/dashboard/page.tsx` (fee-update banner + per-session earnings display,
   which reads `listener_earnings.net_amount` — NOT `sessions.amount_held -
   sessions.platform_fee`, which no longer equals what the listener receives),
-  `app/faq/page.tsx`, `app/get-paid-to-chat-india/page.tsx`, `app/terms/page.tsx`,
+  `app/get-paid-to-chat-india/page.tsx`, `app/terms/page.tsx`,
   `app/earn-by-listening/page.tsx`, `lib/listener-announcements.ts`,
   `public/llms-full.txt`, `app/press/page.tsx`, `app/blog/posts/therapy-cost-india.ts`.
   **The rate is LOCKED at session start:** `settleSession()` uses

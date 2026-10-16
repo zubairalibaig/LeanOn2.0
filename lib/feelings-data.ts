@@ -66,7 +66,7 @@ export const FEELINGS: Feeling[] = [
       },
       {
         q: "How does LeanOn work, and what does it cost?",
-        a: `You pick a listener whose lived experience matches what you are carrying, and start a session. The first 5 minutes are free, so you can tell whether the person actually feels right before any money is involved. After that, listeners set their own rate between ₹8 and ₹25 per minute, and LeanOn adds a flat ₹10 platform fee per paid session. A 15-minute session starts around ₹160. There is no subscription, no package, and no obligation to continue past the free 5 minutes.`,
+        a: `You pick a listener whose lived experience matches what you are carrying, and start a session. The first 5 minutes are free, so you can tell whether the person actually feels right before any money is involved. After that, a 15-minute session starts around ₹160, including a flat ₹10 platform fee; the exact price depends on the listener and is shown before you start. There is no subscription, no package, and no obligation to continue past the free 5 minutes.`,
       },
       {
         q: "Will anyone find out that I reached out?",
@@ -129,7 +129,7 @@ export const FEELINGS: Feeling[] = [
       },
       {
         q: "What does a session cost?",
-        a: `The first 5 minutes are free, which is usually enough to know whether the listener feels right for you. After that the rate is set by the listener, between ₹8 and ₹25 per minute, plus a flat ₹10 platform fee per paid session. A 15-minute session starts around ₹160. Nothing is charged automatically and there is no subscription — you choose each time whether to continue.`,
+        a: `The first 5 minutes are free, which is usually enough to know whether the listener feels right for you. After that, a 15-minute session starts around ₹160, including a flat ₹10 platform fee; the exact price depends on the listener. Nothing is charged automatically and there is no subscription — you choose each time whether to continue.`,
       },
     ],
     relatedSupport: [
@@ -184,7 +184,7 @@ export const FEELINGS: Feeling[] = [
       },
       {
         q: "What does it cost to talk to someone here?",
-        a: `The first 5 minutes are free. After that the listener's own rate applies, between ₹8 and ₹25 per minute, plus a flat ₹10 platform fee per paid session — so a 15-minute session starts around ₹160. There is no subscription and no minimum commitment, which matters when your budget is already stretched.`,
+        a: `The first 5 minutes are free. After that, a 15-minute session starts around ₹160, including a flat ₹10 platform fee; the exact price depends on the listener. There is no subscription and no minimum commitment, which matters when your budget is already stretched.`,
       },
       {
         q: "What if I just want to vent and not be given advice?",
@@ -247,7 +247,7 @@ export const FEELINGS: Feeling[] = [
       },
       {
         q: "How does LeanOn work, and what will it cost me?",
-        a: `Choose a listener whose lived experience matches yours, and the first 5 minutes are free — no card, no commitment. Beyond that, listeners set their own rate between ₹8 and ₹25 per minute, and there is a flat ₹10 platform fee per paid session, so a 15-minute session starts around ₹160. It is anonymous, one session at a time, with nothing recurring.`,
+        a: `Choose a listener whose lived experience matches yours, and the first 5 minutes are free — no card, no commitment. Beyond that, a 15-minute session starts around ₹160, including a flat ₹10 platform fee; the exact price depends on the listener. It is anonymous, one session at a time, with nothing recurring.`,
       },
     ],
     relatedSupport: [
@@ -306,7 +306,7 @@ export const FEELINGS: Feeling[] = [
       },
       {
         q: "What does a session cost if I want to talk today?",
-        a: `The first 5 minutes are free, which is enough to see whether the listener feels right. After that they charge their own rate between ₹8 and ₹25 per minute, plus a flat ₹10 platform fee per paid session — so a 15-minute session starts around ₹160. You pay per session, nothing recurring, and you can stop whenever you want.`,
+        a: `The first 5 minutes are free, which is enough to see whether the listener feels right. After that, a 15-minute session starts around ₹160, including a flat ₹10 platform fee; the exact price depends on the listener. You pay per session, nothing recurring, and you can stop whenever you want.`,
       },
     ],
     relatedSupport: [
@@ -361,7 +361,7 @@ export const FEELINGS: Feeling[] = [
       },
       {
         q: "What does it cost and how quickly can I talk to someone?",
-        a: `You can usually start within minutes — listeners are online through evenings and late nights, which is when most burnt out people finally have a free hour. The first 5 minutes are free. After that the listener sets their own rate between ₹8 and ₹25 per minute, plus a flat ₹10 platform fee per paid session, so a 15-minute session starts around ₹160.`,
+        a: `You can usually start within minutes — listeners are online through evenings and late nights, which is when most burnt out people finally have a free hour. The first 5 minutes are free. After that, a 15-minute session starts around ₹160, including a flat ₹10 platform fee; the exact price depends on the listener.`,
       },
       {
         q: "Will my employer or anyone else ever know?",
@@ -424,7 +424,7 @@ export const FEELINGS: Feeling[] = [
       },
       {
         q: "How does it work and what does it cost?",
-        a: `Pick a listener whose background fits what you are wrestling with, and the first 5 minutes are free. After that, listeners charge their own rate between ₹8 and ₹25 per minute, plus a flat ₹10 platform fee per paid session — a 15-minute session starts around ₹160. No packages, no subscription, and it stays anonymous.`,
+        a: `Pick a listener whose background fits what you are wrestling with, and the first 5 minutes are free. After that, a 15-minute session starts around ₹160, including a flat ₹10 platform fee; the exact price depends on the listener. No packages, no subscription, and it stays anonymous.`,
       },
     ],
     relatedSupport: [
@@ -479,7 +479,7 @@ export const FEELINGS: Feeling[] = [
       },
       {
         q: "How much does a late-night session cost?",
-        a: `The same as any other time — there is no night surcharge. The first 5 minutes are free, and after that the listener's own rate applies, between ₹8 and ₹25 per minute, plus a flat ₹10 platform fee per paid session. A 15-minute session starts around ₹160. For a lot of people fifteen minutes at 3 AM is enough to stop the spiral.`,
+        a: `The same as any other time — there is no night surcharge. The first 5 minutes are free, and after that a 15-minute session starts around ₹160, including a flat ₹10 platform fee; the exact price depends on the listener. For a lot of people fifteen minutes at 3 AM is enough to stop the spiral.`,
       },
       {
         q: "When should I stop managing this myself and see a professional?",

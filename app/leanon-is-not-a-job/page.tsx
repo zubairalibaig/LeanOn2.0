@@ -25,6 +25,14 @@ const faqs = [
     a: 'LeanOn is designed for people who need emotional support, not for people looking to earn money. If you are searching for a job or side income, LeanOn is not the right service for you.',
   },
   {
+    q: 'Is LeanOn an app that pays you to talk to people?',
+    a: 'No. LeanOn is not an "earn by chatting" or "paid to listen" app. People come to LeanOn because they need someone to talk to. Its listeners are adults with lived experience who are screened and reviewed before they can take a session — it is a responsibility, not a way to make money.',
+  },
+  {
+    q: 'Can I use LeanOn if I am under 18?',
+    a: 'No. Everyone on LeanOn — people seeking support and listeners — must be 18 or older. If you are under 18 and struggling, talk to a trusted adult or call Tele-MANAS on 14416 (free, 24/7).',
+  },
+  {
     q: 'Is LeanOn a side hustle?',
     a: 'No. LeanOn is a support service for seekers — people who want to talk to a real person about loneliness, stress, relationships, or other everyday emotional challenges. It is not an income platform.',
   },

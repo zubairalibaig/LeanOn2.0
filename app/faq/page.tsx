@@ -121,31 +121,15 @@ const faqs = [
     ],
   },
   {
-    category: 'Becoming a Listener',
+    category: 'Listening on LeanOn',
     items: [
       {
-        q: 'How do I become a listener on LeanOn?',
-        a: 'Apply at leanon.app/become-listener. Share your lived experience, the topics you can support, and a brief bio. After verification and approval, you can start accepting sessions on your own schedule.',
+        q: 'Is LeanOn a job or a way to earn money?',
+        a: 'No. LeanOn is a peer support service for people who need someone to talk to. It is not a job, a side income or a work-from-home opportunity, and it should not be joined for the money.',
       },
       {
-        q: 'How much do listeners earn?',
-        a: 'You set your own text rate — typically ₹8 to ₹25 per minute — and voice calls are automatically priced ₹5/min higher, so every voice minute earns you more. You keep 60% of your rate on every paid session; LeanOn\'s 40% service fee supports everything around the conversation (see below). The flat ₹10 seekers pay is separate and never comes out of your earnings.',
-      },
-      {
-        q: 'What is the LeanOn service fee?',
-        a: 'It\'s 40% of session earnings, deducted automatically when a session settles — nothing for you to calculate or pay. It supports the work that happens around your conversations so you can focus on listening: bringing seekers to LeanOn, secure payments, refunds and payouts, listener verification and safety tools, and support when something goes wrong. What seekers pay is unaffected, and your dashboard shows exactly what you take home, in rupees, before you set your price.',
-      },
-      {
-        q: 'Do I need professional qualifications to be a listener?',
-        a: 'No professional qualifications are required. What matters is lived experience — you\'ve personally been through the challenge you want to support others with, and you\'ve found your way through it.',
-      },
-      {
-        q: 'How many sessions will I actually get?',
-        a: 'Session volume depends entirely on how many seekers are actively using LeanOn when you\'re online. LeanOn is a growing platform — early listeners typically start with a handful of sessions as the user base builds. There is no guaranteed session frequency. The best way to maximise your bookings is to keep your availability on consistently, maintain a complete profile, and build up your first few ratings.',
-      },
-      {
-        q: 'Is there a guaranteed minimum income?',
-        a: 'No. Earnings are variable and depend on session volume, which is tied to seeker traffic on LeanOn. We don\'t promise a specific income. What we do promise: your price is entirely yours to set, and you keep 60% of your rate on every paid session — that percentage doesn\'t change with volume.',
+        q: 'Who are the listeners?',
+        a: 'Adults (18+) with lived experience of what they talk about, who want to support others. Every listener applies, passes a screening quiz on boundaries, crisis referral and empathetic listening, completes a live selfie check and is reviewed by LeanOn before taking any session. They are peers, not therapists.',
       },
     ],
   },

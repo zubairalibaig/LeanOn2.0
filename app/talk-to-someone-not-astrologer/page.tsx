@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'How much does it cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Sessions cost between ₹8 and ₹25 per minute depending on the listener, plus a flat ₹10 platform fee per paid session. A typical 15-minute session starts around ₹160. A short trial session is available for new users.',
+        text: 'A 15-minute session starts around ₹160, including a flat ₹10 platform fee; the exact price depends on the listener and is shown before you start. A short trial session is available for new users.',
       },
     },
   ],
@@ -217,7 +217,7 @@ export default function TalkToSomeoneNotAstrologerPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does it cost?</div>
-            <div className="faq-a">Sessions cost between ₹8 and ₹25 per minute depending on the listener, plus a flat ₹10 platform fee per paid session. A typical 15-minute session starts around ₹160. A short trial session is available for new users.</div>
+            <div className="faq-a">A 15-minute session starts around ₹160, including a flat ₹10 platform fee; the exact price depends on the listener and is shown before you start. A short trial session is available for new users.</div>
           </div>
         </div>
 

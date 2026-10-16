@@ -76,7 +76,7 @@ const faqSchema = {
       name: 'How much does LeanOn cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn offers a 5-minute trial session for new users — no credit card, no wallet top-up. After that, sessions start from ₹160 for 15 minutes (listener earns ₹150, LeanOn adds a flat ₹10 fee). This is significantly more affordable than therapy, which typically costs ₹1,500–5,000 per session in India.',
+        text: 'LeanOn offers a 5-minute trial session for new users — no credit card, no wallet top-up. After that, sessions start from ₹160 for 15 minutes, including a flat ₹10 platform fee. This is significantly more affordable than therapy, which typically costs ₹1,500–5,000 per session in India.',
       },
     },
     {

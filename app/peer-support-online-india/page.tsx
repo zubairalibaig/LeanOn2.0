@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'Is peer support free on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'New users get a free 5-minute trial session. After that, paid sessions start at around ₹160 for 15 minutes — listeners set their own rate (₹8–₹25 per minute) and LeanOn adds a flat ₹10 platform fee. That is a fraction of what a private therapy session costs in India, and sessions are available at any hour with no appointment needed.',
+        text: 'New users get a free 5-minute trial session. After that, paid sessions start at around ₹160 for 15 minutes, including a flat ₹10 platform fee; the exact price depends on the listener and is shown before you start. That is a fraction of what a private therapy session costs in India, and sessions are available at any hour with no appointment needed.',
       },
     },
     {
@@ -328,7 +328,7 @@ export default function PeerSupportOnlineIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is peer support free on LeanOn?</div>
-            <div className="faq-a">New users get a free 5-minute trial session. After that, paid sessions start at around ₹160 for 15 minutes — listeners set their own rate (₹8–₹25 per minute) and LeanOn adds a flat ₹10 platform fee. That is a fraction of what a private therapy session costs in India, and sessions are available at any hour with no appointment needed.</div>
+            <div className="faq-a">New users get a free 5-minute trial session. After that, paid sessions start at around ₹160 for 15 minutes, including a flat ₹10 platform fee; the exact price depends on the listener and is shown before you start. That is a fraction of what a private therapy session costs in India, and sessions are available at any hour with no appointment needed.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Can peer support help with depression or anxiety?</div>
