@@ -21,7 +21,7 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
-    { '@type': 'Question', name: "Where can I get mental health support online in India?", acceptedAnswer: { '@type': 'Answer', text: "For everyday emotional weight — stress, anxiety, low mood, overthinking — LeanOn connects you with a screened peer listener in India for a private, one-to-one text or voice conversation with availability depends on who is online. It is peer support, not therapy or diagnosis: use it alongside professional care, never instead of it. One introductory session of up to 5 minutes is free per account; an immediate match is not guaranteed." } },
+    { '@type': 'Question', name: "Where can I get mental health support online in India?", acceptedAnswer: { '@type': 'Answer', text: "For non-urgent stress, loneliness, low mood or relationship difficulties, LeanOn lets adults in India request a one-to-one text or voice conversation with a screened peer listener. It is non-clinical peer support, not diagnosis or treatment; use it alongside professional care, never instead of it. One introductory session of up to 5 minutes is free per account. Availability depends on who is online, so an immediate match is not guaranteed." } },
     {
       '@type': 'Question',
       name: 'What kind of mental health support is available in India?',
@@ -167,7 +167,7 @@ export default function MentalHealthSupportIndiaPage() {
           <p className="tag">Mental Health Support · India · Peer Conversations</p>
           <h1>Mental health support that <em>actually feels human</em></h1>
           <p className="lead">When you feel stressed, low or alone, talking with another person may help you feel heard. LeanOn connects adults with screened peer listeners for everyday emotional conversations by text or voice. It is not therapy or clinical treatment. Pricing is shown before booking, and immediate availability is not guaranteed.</p>
-          <QuickAnswer question={"Where can I get mental health support online in India?"} answer={"For everyday emotional weight — stress, anxiety, low mood, overthinking — LeanOn connects you with a screened peer listener in India for a private, one-to-one text or voice conversation with availability depends on who is online. It is peer support, not therapy or diagnosis: use it alongside professional care, never instead of it. One introductory session of up to 5 minutes is free per account; an immediate match is not guaranteed."} />
+          <QuickAnswer question={"Where can I get mental health support online in India?"} answer={"For non-urgent stress, loneliness, low mood or relationship difficulties, LeanOn lets adults in India request a one-to-one text or voice conversation with a screened peer listener. It is non-clinical peer support, not diagnosis or treatment; use it alongside professional care, never instead of it. One introductory session of up to 5 minutes is free per account. Availability depends on who is online, so an immediate match is not guaranteed."} />
         </div>
 
         {/* The problem */}
