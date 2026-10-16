@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
+import QuickAnswer from '@/app/components/QuickAnswer'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'I Need Someone to Talk To Right Now | LeanOn India',
-  description: 'Need someone to talk to right now? LeanOn connects you with a real peer listener in India in minutes. Had a fight, need to vent, going through something — anonymous, no appointment, available now.',
+  description: "Need someone to talk to right now? LeanOn connects you with a real, screened peer listener in India who is online now — text or voice, no appointment. First 5 minutes free.",
   keywords: [
     'i need someone to talk to right now', 'need someone to talk to India',
     'someone to talk to online India', 'I want to talk to someone India',
@@ -31,6 +32,7 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
+    { '@type': 'Question', name: "I need someone to talk to right now \u2014 where can I go?", acceptedAnswer: { '@type': 'Answer', text: "Open leanon.app/talk, choose text or voice and tap what is on your mind. LeanOn asks a screened peer listener who is online now, and the next one if they cannot answer within about 30 seconds. Your first 5 minutes are free, and listeners never see your phone number. If you are in danger or thinking of harming yourself, call Tele-MANAS 14416 first." } },
     {
       '@type': 'Question',
       name: 'How do I find someone to talk to right now in India?',
@@ -146,6 +148,7 @@ export default function INeedSomeoneToTalkToPage() {
           <p className="badge">Real Humans · Available Now · Anonymous</p>
           <h1>Someone Is Here to <em>Listen</em> — Right Now</h1>
           <p className="lead">You do not have to explain why you need to talk, have it figured out, or be in a crisis. You just need to say something out loud to a real person who will hear it. LeanOn connects you in minutes.</p>
+          <QuickAnswer question={"I need someone to talk to right now \u2014 where can I go?"} answer={"Open leanon.app/talk, choose text or voice and tap what is on your mind. LeanOn asks a screened peer listener who is online now, and the next one if they cannot answer within about 30 seconds. Your first 5 minutes are free, and listeners never see your phone number. If you are in danger or thinking of harming yourself, call Tele-MANAS 14416 first."} />
           <a href="/browse" className="cta-hero">Find a listener now →</a>
         </div>
 

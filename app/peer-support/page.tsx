@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
+import QuickAnswer from '@/app/components/QuickAnswer'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Peer Support in India | Talk to a Real Peer Listener | LeanOn',
-  description: 'What is peer support? Learn how peer support works in India, when it fits instead of therapy, and how LeanOn connects you with real peer listeners for private text or voice conversations. Paid sessions start at ₹160 for 15 minutes.',
+  description: "What peer support is, how it differs from therapy, and where to find it in India: screened peer listeners on LeanOn, one to one by text or voice. First 5 minutes free.",
   keywords: ['peer support India', 'what is peer support', 'peer listener India', 'online peer support', 'talk to a peer listener', 'peer support vs therapy'],
   alternates: { canonical: 'https://www.leanon.app/peer-support', languages: { 'en-IN': 'https://www.leanon.app/peer-support' } },
   openGraph: {
@@ -20,6 +21,7 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
+    { '@type': 'Question', name: "What is peer support, and where can I find it in India?", acceptedAnswer: { '@type': 'Answer', text: "Peer support is talking to someone who has lived through something similar — they listen without judging, diagnosing or giving advice. On LeanOn, peer listeners in India are screened (written application, screening quiz, live selfie check and review by LeanOn), and you talk one to one by text or voice. It is not therapy. Your first 5 minutes are free." } },
     {
       '@type': 'Question',
       name: 'What is peer support?',
@@ -189,6 +191,7 @@ export default function PeerSupportPage() {
           <p className="tag">Peer Support · India · No Appointment Needed</p>
           <h1>Peer support. <em>Real people.</em> Real conversations.</h1>
           <p className="lead">Not therapy. Not an AI chatbot. Not advice from someone who has never been through it. Peer support is the experience of talking to a real human being who has lived something like what you are carrying right now — and who listens without judgment, without a diagnosis, and without a clinical distance between you.</p>
+          <QuickAnswer question={"What is peer support, and where can I find it in India?"} answer={"Peer support is talking to someone who has lived through something similar — they listen without judging, diagnosing or giving advice. On LeanOn, peer listeners in India are screened (written application, screening quiz, live selfie check and review by LeanOn), and you talk one to one by text or voice. It is not therapy. Your first 5 minutes are free."} />
         </div>
 
 

@@ -1,14 +1,15 @@
 import type { Metadata } from 'next'
+import QuickAnswer from '@/app/components/QuickAnswer'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Peer Support for Loneliness in India | LeanOn',
-  description: 'Feeling lonely? Talk to a peer listener anonymously. Available 24/7. LeanOn connects you with empathetic listeners in India, available 24/7.',
+  description: "Feeling lonely with no one to talk to? Talk privately to a real, screened peer listener in India who is online now — text or voice, no appointment. First 5 minutes free.",
   alternates: { canonical: 'https://www.leanon.app/support/loneliness', languages: { 'en-IN': 'https://www.leanon.app/support/loneliness' } },
   openGraph: {
     title: 'Peer Support for Loneliness in India | LeanOn',
-    description: 'Feeling lonely? Talk to a peer listener anonymously. Available 24/7. LeanOn connects you with empathetic listeners in India, available 24/7.',
+    description: "Feeling lonely with no one to talk to? Talk privately to a real, screened peer listener in India who is online now — text or voice, no appointment. First 5 minutes free.",
     url: 'https://www.leanon.app/support/loneliness',
     siteName: 'LeanOn',
     type: 'article',
@@ -19,6 +20,7 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
+    { '@type': 'Question', name: "What can I do when I feel lonely and have no one to talk to?", acceptedAnswer: { '@type': 'Answer', text: "Talking to a real person helps. LeanOn connects you with a screened peer listener in India — someone who knows what loneliness feels like — for a private text or voice conversation with someone who is online now, with no appointment. Your first 5 minutes are free, then 15 minutes start at ₹160 in India. It is peer support, not therapy." } },
     {
       '@type': 'Question',
       name: 'Is feeling lonely normal in India even when surrounded by people?',
@@ -149,6 +151,7 @@ export default function LonelinessSupportPage() {
           <p className="tag">Peer Support · Loneliness</p>
           <h1>You Are Not Alone in Feeling <em>Alone</em></h1>
           <p className="lead">Millions of people across India feel disconnected — in crowded cities, busy offices, even in their own homes. LeanOn connects you with peer listeners who have personally navigated deep loneliness and found their way through.</p>
+          <QuickAnswer question={"What can I do when I feel lonely and have no one to talk to?"} answer={"Talking to a real person helps. LeanOn connects you with a screened peer listener in India — someone who knows what loneliness feels like — for a private text or voice conversation with someone who is online now, with no appointment. Your first 5 minutes are free, then 15 minutes start at ₹160 in India. It is peer support, not therapy."} />
         </div>
 
         {/* What is loneliness */}

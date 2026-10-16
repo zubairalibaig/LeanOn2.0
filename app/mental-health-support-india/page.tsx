@@ -1,15 +1,16 @@
 import type { Metadata } from 'next'
+import QuickAnswer from '@/app/components/QuickAnswer'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Mental Health Support India — Real People, Not Just Apps | LeanOn',
-  description: 'Affordable mental health support in India from real people with lived experience. Anonymous peer conversations from ₹160. No appointments. 24/7.',
+  description: "Online mental health support in India from real people: private one-to-one text or voice with a screened peer listener, online now. Not therapy. First 5 minutes free.",
   keywords: ['mental health support India', 'mental health support online India', 'mental health help India', 'mental health chat India', 'online mental health support India', 'affordable mental health India'],
   alternates: { canonical: 'https://www.leanon.app/mental-health-support-india', languages: { 'en-IN': 'https://www.leanon.app/mental-health-support-india' } },
   openGraph: {
     title: 'Mental Health Support India — Real People, Not Just Apps | LeanOn',
-    description: 'Affordable mental health support in India from real people with lived experience. Anonymous peer conversations from ₹160. No appointments. 24/7.',
+    description: "Online mental health support in India from real people: private one-to-one text or voice with a screened peer listener, online now. Not therapy. First 5 minutes free.",
     url: 'https://www.leanon.app/mental-health-support-india',
     siteName: 'LeanOn',
     type: 'website',
@@ -20,6 +21,7 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
+    { '@type': 'Question', name: "Where can I get mental health support online in India?", acceptedAnswer: { '@type': 'Answer', text: "For everyday emotional weight — stress, anxiety, low mood, overthinking — LeanOn connects you with a screened peer listener in India for a private, one-to-one text or voice conversation with someone who is online now. It is not a group chat room, and it is peer support, not therapy or diagnosis: use it alongside professional care, never instead of it. Your first 5 minutes are free." } },
     {
       '@type': 'Question',
       name: 'What kind of mental health support is available in India?',
@@ -165,6 +167,7 @@ export default function MentalHealthSupportIndiaPage() {
           <p className="tag">Mental Health Support · India · 24/7</p>
           <h1>Mental health support that <em>actually feels human</em></h1>
           <p className="lead">India has a mental health gap that apps and AI have not closed. Therapists cost ₹1,500–₹5,000 per session, have long waitlists, and carry the weight of stigma. AI responses are hollow. LeanOn is different: real people with lived experience, available now, from ₹160.</p>
+          <QuickAnswer question={"Where can I get mental health support online in India?"} answer={"For everyday emotional weight — stress, anxiety, low mood, overthinking — LeanOn connects you with a screened peer listener in India for a private, one-to-one text or voice conversation with someone who is online now. It is not a group chat room, and it is peer support, not therapy or diagnosis: use it alongside professional care, never instead of it. Your first 5 minutes are free."} />
         </div>
 
         {/* The problem */}

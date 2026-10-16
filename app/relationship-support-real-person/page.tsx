@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
+import QuickAnswer from '@/app/components/QuickAnswer'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Get Relationship Support from a Real Person — Not an AI | LeanOn',
-  description: 'Relationship problems need a human ear, not an algorithm. LeanOn connects you with real peer listeners who have lived experience of relationships, breakups, and marriage stress. Anonymous, 24/7, first 5 min free.',
+  description: "Talk through a fight, breakup, trust issues or marriage pressure with a real peer listener in India — neutral, private, text or voice. Not couples therapy. First 5 minutes free.",
   keywords: [
     'relationship advice real person', 'someone to talk to about relationship problems',
     'relationship support online', 'relationship help online', 'talk about breakup online',
@@ -27,6 +28,7 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
+    { '@type': 'Question', name: "Who can I talk to about relationship problems?", acceptedAnswer: { '@type': 'Answer', text: "If you need to talk through a fight, a breakup, trust or cheating worries, or marriage and family pressure with someone neutral, LeanOn connects you with a peer listener in India who has lived through relationship struggles. They listen and help you think it through — they do not take sides, and it is not couples therapy or legal advice. Text or voice, one to one; your first 5 minutes are free." } },
     {
       '@type': 'Question',
       name: 'Where can I get relationship advice from a real person online?',
@@ -157,6 +159,7 @@ export default function RelationshipSupportPage() {
           someone who has actually been there. LeanOn connects you with real peer listeners who understand
           relationships from the inside out.
         </p>
+        <QuickAnswer question={"Who can I talk to about relationship problems?"} answer={"If you need to talk through a fight, a breakup, trust or cheating worries, or marriage and family pressure with someone neutral, LeanOn connects you with a peer listener in India who has lived through relationship struggles. They listen and help you think it through — they do not take sides, and it is not couples therapy or legal advice. Text or voice, one to one; your first 5 minutes are free."} />
 
         <a href="/browse" className="cta-hero">Talk to someone now — first 5 min free →</a>
 
