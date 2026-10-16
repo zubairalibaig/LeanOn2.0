@@ -50,7 +50,7 @@ const faqSchema = {
       name: 'Is WFH loneliness a real problem in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Working from home can reduce casual social contact for some people, while others value the flexibility. Whether it contributes to loneliness depends on the person's circumstances and support network.',
+        text: 'Working from home can reduce casual social contact for some people, while others value the flexibility. Whether it contributes to loneliness depends on individual circumstances and available support.',
       },
     },
     {
