@@ -66,10 +66,13 @@ export const REQUEST_RESPONSE_WINDOW_MS   = REQUEST_RESPONSE_WINDOW_SECS * 1000
 
 // Listener presence (lib/listener-presence.ts). A listener with no heartbeat for
 // STALE_HEARTBEAT_MINS goes offline. STALE is load-bearing: see PROJECT.md §8.2.3.
-// AWAY_WITH_ALERTS_MINS no longer keeps anyone online (away mode switched off
-// 2026-10-16); it only bounds the sweep's 'long gone' step.
+// AWAY_WITH_ALERTS_MINS: a listener whose phone can get a request alert stays
+// online that long without heartbeats (LeanOn in the background, screen
+// locked). 240 until 2026-10-16, then switched off (15 for everyone), back on
+// at 60 from 2026-10-19 (owner decision) — away listeners are asked last by
+// Talk now and go offline on their first unanswered request.
 export const STALE_HEARTBEAT_MINS  = 15
-export const AWAY_WITH_ALERTS_MINS = 240
+export const AWAY_WITH_ALERTS_MINS = 60
 // A LeanOn tab closing (pagehide, not bfcache) ages the listener's heartbeat so
 // they go offline LEAVE_GRACE_SECS later unless another LeanOn tab / a reload
 // heart-beats first (every 60–90s). Must stay well above the heartbeat interval.

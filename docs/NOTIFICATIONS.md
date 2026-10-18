@@ -37,9 +37,9 @@ Read this before changing `ListenerPresence.tsx`, the dashboard's toggle,
   | Last heartbeat | Push device? | Result |
   |---|---|---|
   | under 15 min | any | online |
-  | 15 min – 4 h | yes: a `push_tokens` row seen in the last 3 days | ~~online ("away mode")~~ **offline since 2026-10-16** — away mode switched off |
-  | 15 min – 4 h | no | offline |
-  | over 4 h, or never | any | offline |
+  | 15 – 60 min | yes: a `push_tokens` row seen in the last 3 days | **online ("away mode")** — was 4 h until 2026-10-16, off 10-16 → 10-19, 60 min since 2026-10-19 |
+  | 15 – 60 min | no | offline |
+  | over 60 min, or never | any | offline |
 
 - **Missed-request guard** (`recordMissedRequest`). When a request times out,
   the listener goes offline and gets a notification and a push saying why, if

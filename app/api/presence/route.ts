@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
-import { STALE_HEARTBEAT_MINS, LEAVE_GRACE_SECS } from '@/lib/constants'
+import { STALE_HEARTBEAT_MINS, AWAY_WITH_ALERTS_MINS, LEAVE_GRACE_SECS } from '@/lib/constants'
+import { pushReachableUserIds } from '@/lib/push'
 
 export const dynamic = 'force-dynamic'
 
@@ -50,7 +51,13 @@ export async function POST(req: NextRequest) {
     // already older than that (a truly stale listener stays stale). Closing a
     // second tab later only moves the deadline to ~3 min after THAT close.
     if (body.leaving === true) {
-      const aged = new Date(Date.now() - (STALE_HEARTBEAT_MINS * 60 - LEAVE_GRACE_SECS) * 1000).toISOString()
+      // The sweep allows STALE_HEARTBEAT_MINS without a heartbeat, or
+      // AWAY_WITH_ALERTS_MINS for a listener push can reach — age to just
+      // short of THEIR limit, so closing LeanOn means offline ~3 min later
+      // either way (not 60 min later for listeners with alerts).
+      const reachable = (await pushReachableUserIds(sb, [user.id])).has(user.id)
+      const windowMins = reachable ? AWAY_WITH_ALERTS_MINS : STALE_HEARTBEAT_MINS
+      const aged = new Date(Date.now() - (windowMins * 60 - LEAVE_GRACE_SECS) * 1000).toISOString()
       await sb.from('listener_profiles')
         .update({ last_heartbeat_at: aged })
         .eq('user_id', user.id)

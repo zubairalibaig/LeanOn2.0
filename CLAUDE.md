@@ -143,10 +143,12 @@
   `webpush` Urgency high + short TTL, data-only, dead tokens removed). `android.priority`
   does nothing for web tokens.
 - In-page alerts use `showLocalNotification()` — `new Notification()` throws on Android Chrome.
-- Presence rules live in `lib/listener-presence.ts` (15-min heartbeat → offline, push device or not;
-  auto-offline on missed requests). **Away mode (4 h online in the background with a push device) was
-  switched off 2026-10-16** — it showed away listeners as online and seekers waited on them. Heartbeats never set
-  `is_available=true`; they report it back so the UI re-syncs.
+- Presence rules live in `lib/listener-presence.ts`: no heartbeat for 15 min → offline, EXCEPT a listener
+  push can reach (`push_tokens` seen ≤3 days) stays online up to `AWAY_WITH_ALERTS_MINS` = **60** min ("away
+  mode"); auto-offline on missed requests (away → first miss). History: away mode was 4 h (2026-09-24), switched
+  off 2026-10-16 (15 of 17 "online" were away), back at 60 min 2026-10-19 (listeners who lock their phone were
+  going offline after 15 min; Talk now now asks in-app listeners first). Recovery branch:
+  `recovery/pre-away-60-2026-10-19`. Heartbeats never set `is_available=true`; they report it back so the UI re-syncs.
 - A request that runs out of time is cancelled as `timed_out` (decline route with
   `{ reason: 'timeout' }`), never `seeker_cancelled` / `declined`.
 - **Talk now misses (2026-10-16):** a Talk now switch (`replacesSessionId` + `via:'talk'`) after the
@@ -163,7 +165,7 @@
   them + the Talk now funnel (`/api/admin/talk-metrics`). Sessions before 071 have NULLs.
 - **Tab close (2026-10-16):** `ListenerPresence` sends a `{ leaving: true }` beacon on `pagehide`
   (not bfcache). `/api/presence` only AGES `last_heartbeat_at` to `LEAVE_GRACE_SECS` (180s) short of
-  stale — never sets offline directly — so a reload or another open LeanOn tab (90s heartbeat) keeps
+  THAT listener's limit (60 min if push can reach them, else 15) — never sets offline directly — so a reload or another open LeanOn tab (90s heartbeat) keeps
   the listener online, and the normal sweep takes them offline ~3 min after the last tab closes.
 
 ## Suspension (2026-10-13, migration 068)
