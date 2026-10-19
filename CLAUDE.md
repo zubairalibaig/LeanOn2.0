@@ -168,6 +168,22 @@
   THAT listener's limit (60 min if push can reach them, else 15) — never sets offline directly — so a reload or another open LeanOn tab (90s heartbeat) keeps
   the listener online, and the normal sweep takes them offline ~3 min after the last tab closes.
 
+## Android app (2026-10-19) — read `docs/ANDROID_APP.md`
+
+- **`mobile/` = the Play Store app**: Capacitor shell (`server.url` www.leanon.app, package `app.leanon`)
+  + native call-style request alerts (FCM data messages → `LeanOnMessagingService` → `RequestAlert`
+  ringing CallStyle notification + full-screen `IncomingRequestActivity`). The old `android/` folder and
+  `build-twa.yml` are the deprecated TWA — don't use them.
+- The app's WebView has **no Push API**: the website talks to the app through `window.LeanOnAndroid`
+  (`LeanOnBridge.java`, wrapped by `leanOnApp()` in `lib/firebase-client.ts`). App tokens are registered
+  with `kind:'android_app'` → `push_tokens.user_agent` prefix `native:android` → `sendNativePush`
+  (android priority high). Web tokens go through `sendWebPush` unchanged.
+- A request's alert MUST be stoppable: `sendRequestWithdrawn()` (type `request_closed`) stops the
+  ringing; the page's `closeLocalNotifications('leanon-req-<id>')` also calls `stopRinging`.
+- Build: `.github/workflows/build-android.yml` (debug APK on every `mobile/` push; signed `.aab` on
+  manual run with release=true, from repo secrets). Bump the version code for every Play upload.
+  Never commit `google-services.json`, a keystore or its passwords.
+
 ## Suspension (2026-10-13, migration 068)
 
 - **Suspended = `users.is_suspended` OR `listener_profiles.is_suspended`.** Both block login,

@@ -1,3 +1,7 @@
+> **SUPERSEDED (2026-10-19): use `docs/ANDROID_APP.md`.** The Play Store app is now a
+> hybrid Capacitor build (`mobile/`) with call-style request alerts, not the PWABuilder TWA
+> below. Kept for reference only.
+
 # Launching the new LeanOn on Google Play — plain-English guide (v4, Oct 2026)
 
 **Situation (confirmed 9 Oct 2026):**
