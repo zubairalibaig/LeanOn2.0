@@ -9,7 +9,7 @@ import { SHOW_LISTENER_GROWTH_NOTICE, SHOW_LISTENER_PRICING_UPDATE_NOTICE } from
 import { PRICING_NOTICE } from '@/lib/listener-announcements'
 import { estimateListenerTakeHome } from '@/lib/session-billing'
 import { showToast } from '@/lib/toast'
-import { registerPushNotifications, getAlertStatus, getLastPushFailure, waitForTestPush, showLocalNotification, closeLocalNotifications, type AlertStatus } from '@/lib/firebase-client'
+import { registerPushNotifications, getAlertStatus, getLastPushFailure, waitForTestPush, showLocalNotification, closeLocalNotifications, leanOnApp, type AlertStatus } from '@/lib/firebase-client'
 import { compressImage, extForType, MAX_INPUT_BYTES } from '@/lib/compress-image'
 import Avatar from '@/app/components/Avatar'
 import { TAGLINE_PHRASES, TAGLINE_PICK, LIVED_MIN_CHARS, LIVED_MAX_CHARS } from '@/lib/listener-onboarding'
@@ -275,7 +275,7 @@ export default function DashboardPage() {
   // Opened from the installed LeanOn app (Play Store / home screen) rather than
   // a Chrome tab — notification permission is then set in the app's settings.
   const [inInstalledApp, setInInstalledApp] = useState(false)
-  useEffect(() => { try { setInInstalledApp(window.matchMedia('(display-mode: standalone)').matches) } catch { /* ignore */ } }, [])
+  useEffect(() => { try { setInInstalledApp(!!leanOnApp() || window.matchMedia('(display-mode: standalone)').matches) } catch { /* ignore */ } }, [])
   // Outcome of the last test alert, shown in the alerts card (toasts vanish too fast for setup steps).
   const [testResult, setTestResult] = useState<{ ok: boolean; text: string } | null>(null)
 

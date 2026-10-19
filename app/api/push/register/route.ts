@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
+import { NATIVE_ANDROID_MARK } from '@/lib/firebase-admin'
 
 export async function POST(req: NextRequest) {
   const supabase = createServerSupabaseClient()
@@ -13,9 +14,12 @@ export async function POST(req: NextRequest) {
   }
 
   let fcm_token: string
+  let fromApp = false
   try {
     const body = await req.json()
     fcm_token = body.fcm_token
+    // The LeanOn Android app (mobile/) sends its native FCM token with this kind.
+    fromApp = body.kind === 'android_app'
   } catch {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
@@ -36,7 +40,7 @@ export async function POST(req: NextRequest) {
   const { error: tokErr } = await sb.from('push_tokens').upsert({
     token: fcm_token,
     user_id: user.id,
-    user_agent: (req.headers.get('user-agent') ?? '').slice(0, 300),
+    user_agent: `${fromApp ? NATIVE_ANDROID_MARK + ' ' : ''}${req.headers.get('user-agent') ?? ''}`.slice(0, 300),
     last_seen_at: new Date().toISOString(),
   }, { onConflict: 'token' })
   const tableMissing = tokErr?.code === '42P01' || tokErr?.code === 'PGRST205'

@@ -32,6 +32,61 @@ export const firebaseConfigured = Boolean(
   FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId && FIREBASE_CONFIG.appId && VAPID_KEY
 )
 
+// ── Inside the LeanOn Android app (mobile/, Capacitor) ───────────────────────
+// The app's WebView has no Push API, so web push can't work there. Instead the
+// app exposes window.LeanOnAndroid (mobile/android/.../LeanOnBridge.java): a
+// NATIVE FCM token whose alerts ring like a phone call. Everything below falls
+// back to the browser path when this object is absent.
+type LeanOnAndroid = {
+  isApp(): boolean
+  notificationStatus(): 'granted' | 'denied' | 'prompt'
+  requestNotifications(): void
+  pushToken(): string
+  fullScreenAllowed(): boolean
+  openFullScreenSettings(): void
+  openNotificationSettings(): void
+  stopRinging(sessionId: string): void
+  lastPushAt(): number
+}
+export function leanOnApp(): LeanOnAndroid | null {
+  if (typeof window === 'undefined') return null
+  const a = (window as Window & { LeanOnAndroid?: LeanOnAndroid }).LeanOnAndroid
+  try { return a && a.isApp() ? a : null } catch { return null }
+}
+const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))
+
+async function registerInApp(app: LeanOnAndroid): Promise<boolean> {
+  try {
+    if (app.notificationStatus() !== 'granted') {
+      app.requestNotifications()
+      // Android's prompt is asynchronous: wait for the answer (or settings).
+      for (let i = 0; i < 60 && app.notificationStatus() !== 'granted'; i++) await sleep(500)
+      if (app.notificationStatus() !== 'granted') return fail(`app_permission_${app.notificationStatus()}`)
+    }
+    let token = app.pushToken()
+    for (let i = 0; i < 20 && !token; i++) { await sleep(500); token = app.pushToken() }
+    if (!token) return fail('app_no_token')
+    const res = await fetch('/api/push/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fcm_token: token, kind: 'android_app' }),
+    })
+    if (!res.ok) return fail(`save_failed_${res.status}`)
+    lastFailure = null
+    return true
+  } catch (e) {
+    return fail(`app_error: ${(e instanceof Error ? e.message : String(e)).slice(0, 160)}`)
+  }
+}
+
+// True when this device will get request alerts without asking (permission
+// already granted) — the browser's Notification.permission, or the app's.
+export function alertsAlreadyAllowed(): boolean {
+  const app = leanOnApp()
+  if (app) { try { return app.notificationStatus() === 'granted' } catch { return false } }
+  return typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted'
+}
+
 // Module-level guard: avoid registering twice at once in the same tab (e.g. the
 // explicit "Go online" tap and a silent background refresh firing together).
 // The token is re-POSTed on every call on purpose: that POST is what moves a
@@ -70,7 +125,7 @@ function fail(reason: string): false {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         reason,
-        permission: typeof Notification !== 'undefined' ? Notification.permission : 'n/a',
+        permission: leanOnApp() ? `app:${leanOnApp()!.notificationStatus()}` : typeof Notification !== 'undefined' ? Notification.permission : 'n/a',
         standalone: isStandalone(),
       }),
     }).catch(() => {})
@@ -79,8 +134,14 @@ function fail(reason: string): false {
 }
 
 export async function registerPushNotifications(): Promise<boolean> {
-  if (!firebaseConfigured) return false
   if (typeof window === 'undefined') return false
+  const app = leanOnApp()
+  if (app) {
+    if (inFlight) return inFlight
+    inFlight = registerInApp(app)
+    try { return await inFlight } finally { inFlight = null }
+  }
+  if (!firebaseConfigured) return false
   if (!('serviceWorker' in navigator) || !('Notification' in window)) return fail('unsupported_browser')
 
   if (inFlight) return inFlight
@@ -174,6 +235,8 @@ function isStandalone(): boolean {
 // the dashboard so a silent failure is no longer invisible.
 export function getAlertStatus(): AlertStatus {
   if (typeof window === 'undefined') return 'unsupported'
+  const app = leanOnApp()
+  if (app) { try { return app.notificationStatus() } catch { return 'unsupported' } }
   if (!firebaseConfigured) return 'not_configured'
   if (isIos() && !isStandalone()) return 'ios_install'
   if (!('serviceWorker' in navigator) || !('Notification' in window) || !('PushManager' in window)) return 'unsupported'
@@ -214,6 +277,9 @@ export async function showLocalNotification(title: string, opts: { body: string;
 // Close the notification for a request once it's accepted, declined, cancelled
 // or expired, so a stale one can't send the listener to an empty dashboard.
 export async function closeLocalNotifications(tag: string) {
+  // In the app, also stop the native ringing for this request.
+  const m = /^leanon-req-(.+)$/.exec(tag)
+  if (m) { try { leanOnApp()?.stopRinging(m[1]) } catch { /* ignore */ } }
   try {
     if (typeof window === 'undefined' || !('serviceWorker' in navigator)) return
     const reg = await navigator.serviceWorker.getRegistration('/')
@@ -226,6 +292,15 @@ export async function closeLocalNotifications(tag: string) {
 // 'shown' = displayed, 'refused' = arrived but the browser wouldn't display it,
 // 'none' = nothing arrived within `ms`. Start it BEFORE sending the test.
 export function waitForTestPush(ms: number): Promise<'shown' | 'refused' | 'none'> {
+  const app = leanOnApp()
+  if (app) {
+    // The app's notification service records when a push arrived.
+    const before = app.lastPushAt()
+    return (async () => {
+      for (let t = 0; t < ms; t += 500) { await sleep(500); if (app.lastPushAt() > before) return 'shown' as const }
+      return 'none' as const
+    })()
+  }
   return new Promise(resolve => {
     if (typeof navigator === 'undefined' || !('serviceWorker' in navigator)) return resolve('none')
     const onMsg = (e: MessageEvent) => {
@@ -243,7 +318,7 @@ export function getDeviceKind(): DeviceKind {
   if (typeof window === 'undefined') return 'desktop'
   const ua = navigator.userAgent
   if (isIos()) return 'iphone'
-  if (/Android/i.test(ua)) return isStandalone() ? 'android_app' : 'android_chrome'
+  if (/Android/i.test(ua)) return (leanOnApp() || isStandalone()) ? 'android_app' : 'android_chrome'
   if (/Mobi/i.test(ua)) return 'other_mobile'
   return 'desktop'
 }

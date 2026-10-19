@@ -89,3 +89,39 @@ export async function sendWebPush(token: string, msg: WebPushMessage): Promise<W
     return { ok: false, code, tokenDead }
   }
 }
+
+// The LeanOn Android app (mobile/, Capacitor) registers a NATIVE FCM token
+// (push_tokens.user_agent starts with NATIVE_ANDROID_MARK). Its
+// LeanOnMessagingService builds the alert itself from `data` — a session
+// request rings like a phone call — so this is data-only too, but with
+// android.priority high (webpush headers mean nothing to a native token).
+export const NATIVE_ANDROID_MARK = 'native:android'
+
+export async function sendNativePush(token: string, msg: WebPushMessage): Promise<WebPushResult> {
+  const adminApp = getFirebaseAdmin()
+  if (!adminApp) return { ok: false, code: 'fcm_not_configured', tokenDead: false }
+  const ttlSecs = Math.max(0, Math.round(msg.ttlSecs))
+  try {
+    const admin = require('firebase-admin')
+    await admin.messaging(adminApp).send({
+      token,
+      data: {
+        ...(msg.data ?? {}),
+        title: msg.title,
+        body: msg.body,
+        url: msg.url,
+        tag: msg.tag,
+        ttl: String(ttlSecs),
+      },
+      // 'request_closed' must arrive fast too: it stops the ringing.
+      android: { priority: msg.urgent || msg.data?.type === 'request_closed' ? 'high' : 'normal', ttl: ttlSecs * 1000 },
+    })
+    return { ok: true }
+  } catch (err: any) {
+    const code: string = err?.errorInfo?.code || err?.code || 'unknown'
+    const tokenDead = code === 'messaging/registration-token-not-registered'
+      || code === 'messaging/invalid-registration-token'
+      || (code === 'messaging/invalid-argument' && /registration token/i.test(String(err?.message)))
+    return { ok: false, code, tokenDead }
+  }
+}

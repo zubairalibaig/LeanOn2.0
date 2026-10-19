@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { showToast } from '@/lib/toast'
-import { registerPushNotifications, showLocalNotification, closeLocalNotifications } from '@/lib/firebase-client'
+import { registerPushNotifications, showLocalNotification, closeLocalNotifications, alertsAlreadyAllowed } from '@/lib/firebase-client'
 import { REQUEST_RESPONSE_WINDOW_SECS } from '@/lib/constants'
 import { estimateListenerTakeHome } from '@/lib/session-billing'
 
@@ -397,8 +397,7 @@ export default function ListenerPresence() {
   // network call when the token is unchanged.
   useEffect(() => {
     if (skip || !isListener || available !== true) return
-    if (typeof window === 'undefined' || !('Notification' in window)) return
-    if (Notification.permission !== 'granted') return
+    if (!alertsAlreadyAllowed()) return   // browser permission, or the LeanOn app's
     registerPushNotifications().catch(() => {})
   }, [skip, isListener, available])
 

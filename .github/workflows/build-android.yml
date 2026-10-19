@@ -1,0 +1,87 @@
+# Builds the LeanOn Android app (mobile/ — Capacitor shell around www.leanon.app
+# with native call-style request alerts). See docs/ANDROID_APP.md.
+#   - Every push that changes mobile/**: a DEBUG APK (compile check + a test
+#     build you can install on a phone). Artifact: leanon-debug-apk.
+#   - Manually (Actions → "Build Android app" → Run workflow, release = true):
+#     a SIGNED release bundle (.aab) for Google Play. Needs the repository
+#     secrets listed in docs/ANDROID_APP.md. Artifact: leanon-release-aab.
+name: Build Android app
+
+on:
+  push:
+    branches: [main]
+    paths: ['mobile/**', '.github/workflows/build-android.yml']
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 'Build a signed Play Store bundle (.aab)'
+        type: boolean
+        default: false
+      version_code:
+        description: 'Version code (must go up by 1 for every Play upload)'
+        default: '1'
+      version_name:
+        description: 'Version name shown to users'
+        default: '1.0.0'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci --no-audit --no-fund
+      - run: npx cap sync android
+
+      # Firebase config for native alerts (public client config, kept out of git).
+      - name: google-services.json
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+            printf '%s' "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
+            echo "google-services.json added — this build can receive alerts."
+          else
+            echo "::warning::No GOOGLE_SERVICES_JSON secret — this build will NOT receive alerts."
+          fi
+
+      - name: Debug APK
+        working-directory: mobile/android
+        run: chmod +x gradlew && ./gradlew --no-daemon assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: leanon-debug-apk
+          path: mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14
+
+      - name: Signed release bundle
+        if: github.event_name == 'workflow_dispatch' && inputs.release
+        working-directory: mobile/android
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          LEANON_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          LEANON_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          LEANON_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          LEANON_VERSION_CODE: ${{ inputs.version_code }}
+          LEANON_VERSION_NAME: ${{ inputs.version_name }}
+        run: |
+          if [ -z "$KEYSTORE_B64" ]; then echo "::error::ANDROID_KEYSTORE_BASE64 secret missing"; exit 1; fi
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          export LEANON_KEYSTORE_FILE="$RUNNER_TEMP/upload.jks"
+          ./gradlew --no-daemon bundleRelease
+          rm -f "$RUNNER_TEMP/upload.jks"
+      - uses: actions/upload-artifact@v4
+        if: github.event_name == 'workflow_dispatch' && inputs.release
+        with:
+          name: leanon-release-aab
+          path: mobile/android/app/build/outputs/bundle/release/app-release.aab
+          retention-days: 30

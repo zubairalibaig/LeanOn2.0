@@ -1,5 +1,5 @@
 import type { createAdminClient } from '@/lib/supabase-server'
-import { sendWebPush, getFirebaseAdmin, type WebPushMessage } from '@/lib/firebase-admin'
+import { sendWebPush, sendNativePush, NATIVE_ANDROID_MARK, getFirebaseAdmin, type WebPushMessage } from '@/lib/firebase-admin'
 import { logger } from '@/lib/logger'
 
 type Sb = ReturnType<typeof createAdminClient>
@@ -22,20 +22,32 @@ function isMissingTable(err: { code?: string; message?: string } | null): boolea
   return err.code === '42P01' || err.code === 'PGRST205' || /push_tokens/.test(err.message ?? '')
 }
 
-export async function getPushTokens(sb: Sb, userId: string): Promise<string[]> {
-  const tokens: string[] = []
+// `native` = a LeanOn Android app install (mobile/), marked at registration
+// (/api/push/register with kind 'android_app'); everything else is web push.
+export type PushTarget = { token: string; native: boolean }
+
+export async function getPushTargets(sb: Sb, userId: string): Promise<PushTarget[]> {
+  const targets: PushTarget[] = []
   const { data: rows, error } = await sb.from('push_tokens')
-    .select('token')
+    .select('token, user_agent')
     .eq('user_id', userId)
     .order('last_seen_at', { ascending: false })
     .limit(MAX_DEVICES)
   if (error && !isMissingTable(error)) logger.warn('push: push_tokens read failed', { userId, error: error.message })
-  for (const r of (rows ?? []) as { token: string }[]) tokens.push(r.token)
+  for (const r of (rows ?? []) as { token: string; user_agent: string | null }[]) {
+    targets.push({ token: r.token, native: (r.user_agent ?? '').startsWith(NATIVE_ANDROID_MARK) })
+  }
 
+  // Legacy single-token column. The app's token is copied there too, so only
+  // add it when push_tokens doesn't already know it (then it is a web token).
   const { data: u } = await sb.from('users').select('fcm_token').eq('id', userId).maybeSingle()
   const legacy = (u as { fcm_token?: string | null } | null)?.fcm_token
-  if (legacy && !tokens.includes(legacy)) tokens.push(legacy)
-  return tokens.slice(0, MAX_DEVICES)
+  if (legacy && !targets.some(t => t.token === legacy)) targets.push({ token: legacy, native: false })
+  return targets.slice(0, MAX_DEVICES)
+}
+
+export async function getPushTokens(sb: Sb, userId: string): Promise<string[]> {
+  return (await getPushTargets(sb, userId)).map(t => t.token)
 }
 
 // Which of these users can probably be reached by push: a device token that
@@ -77,9 +89,10 @@ export type PushSummary = {
 export async function sendPushToUser(sb: Sb, userId: string, msg: WebPushMessage): Promise<PushSummary> {
   const summary: PushSummary = { configured: true, devices: 0, delivered: 0, errors: [] }
   try {
-    const tokens = await getPushTokens(sb, userId)
-    summary.devices = tokens.length
-    const results = await Promise.all(tokens.map(t => sendWebPush(t, msg).then(r => ({ t, r }))))
+    const targets = await getPushTargets(sb, userId)
+    summary.devices = targets.length
+    const results = await Promise.all(targets.map(({ token: t, native }) =>
+      (native ? sendNativePush(t, msg) : sendWebPush(t, msg)).then(r => ({ t, r }))))
     for (const { t, r } of results) {
       if (r.ok) { summary.delivered++; continue }
       if (r.code === 'fcm_not_configured') { summary.configured = false; continue }

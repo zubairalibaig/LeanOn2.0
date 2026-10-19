@@ -1,0 +1,16 @@
+{
+  "appId": "app.leanon",
+  "appName": "LeanOn",
+  "webDir": "www",
+  "server": {
+    "url": "https://www.leanon.app",
+    "androidScheme": "https",
+    "allowNavigation": ["www.leanon.app", "leanon.app", "*.razorpay.com", "*.msg91.com", "*.agora.io"]
+  },
+  "android": {
+    "appendUserAgent": "LeanOnApp/android",
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false
+  }
+}
