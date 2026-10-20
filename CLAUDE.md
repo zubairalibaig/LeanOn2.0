@@ -186,12 +186,16 @@
 
 ## Contact-detail guard (2026-10-20)
 
-- Session chat (`/api/messages`) and offline messages (`/api/listener/[id]/message`) refuse phone numbers,
-  emails, @handles, bare handles, links and "text me on my ig"-style requests (terms §3), server-side, with
-  422 `contact_blocked`; each attempt is flagged in admin → Reports as type `contact_attempt` (max 3 per
-  sender per conversation/day). Rules + allowlist (Tele-MANAS / NIMHANS, toll-free 1800 numbers, leanon.app) live in
-  `lib/contact-guard.ts`; after ANY change run `npx tsx scripts/check-contact-guard.ts` (193 must-allow / 55 must-block cases). Tune it there — keep it from blocking people describing their own lives
-  ("my ex keeps posting on instagram"). Reason: a competitor posed as a seeker and got a listener's Instagram.
+- **Owner rule: no genuine message may be blocked.** Two tiers (`lib/contact-guard.ts checkContact()`): BLOCK only
+  an actual contact DETAIL — a phone number written like one (Indian mobile / +intl; not marks, IDs after "PNR/roll/
+  order…", round figures, toll-free 1800, known helplines), an email, a profile/chat link (wa.me, t.me, instagram.com/
+  <user>…), a handle given as a handle ("ig: priya_k12", "@priya_k12", a message that is just "theurbandude_lll").
+  Everything that only HINTS ("text me on my ig", "insta id do", websites, digits in pairs) is DELIVERED and flagged.
+  Session chat (`/api/messages`) + offline messages refuse the block tier with 422 `contact_blocked`; both tiers are
+  recorded in admin → Reports as `contact_attempt` (BLOCKED vs "delivered, please review"; max 3 per sender per
+  conversation/day). **After ANY change run `npx tsx scripts/check-contact-guard.ts`** (253 genuine + 32 hints must
+  pass, 44 details must block, 80k seeded fuzz messages must never block). Reason: a competitor posed as a seeker
+  and got a listener's Instagram.
 - Also on listener bio / lived experience (apply + profile edit — public pages). The session page drops a realtime
   `msg` broadcast carrying contact details (broadcasts come from the other browser, not the server). Migration 072
   removes the browser INSERT/UPDATE policies on `messages` and `listener_messages` — all writes go through the API.

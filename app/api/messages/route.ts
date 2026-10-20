@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { detectContact, contactBlockedMessage } from '@/lib/contact-guard'
+import { checkContact, contactBlockedMessage } from '@/lib/contact-guard'
 import { flagContactAttempt } from '@/lib/contact-flag'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
@@ -100,11 +100,13 @@ export async function POST(req: NextRequest) {
 
     // No phone numbers, social media, emails or links (terms §3) — blocked here,
     // server-side, so it can't be bypassed; flagged for admin. lib/contact-guard.ts
-    const contact = detectContact(text)
-    if (contact.length) {
-      await flagContactAttempt(sb, { senderId: user.id, sessionId, kinds: contact, text, where: 'session_chat' })
+    // Blocked only for an actual detail; a hint is delivered and flagged.
+    const contact = checkContact(text)
+    if (contact.block.length) {
+      await flagContactAttempt(sb, { senderId: user.id, sessionId, kinds: contact.block, text, where: 'session_chat', blocked: true })
       return NextResponse.json({ error: 'contact_blocked', message: contactBlockedMessage(user.id === session.listener_id) }, { status: 422 })
     }
+    if (contact.flag.length) await flagContactAttempt(sb, { senderId: user.id, sessionId, kinds: contact.flag, text, where: 'session_chat', blocked: false })
 
     const { data: saved, error } = await sb
       .from('messages')

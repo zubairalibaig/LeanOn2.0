@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { detectContact, contactBlockedMessage } from '@/lib/contact-guard'
+import { checkContact, contactBlockedMessage } from '@/lib/contact-guard'
 import { flagContactAttempt } from '@/lib/contact-flag'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
@@ -38,11 +38,12 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const admin = createAdminClient()
 
   // No contact details in offline messages either (lib/contact-guard.ts).
-  const contact = detectContact(text)
-  if (contact.length) {
-    await flagContactAttempt(admin, { senderId: user.id, sessionId: null, kinds: contact, text, where: 'offline_message' })
+  const contact = checkContact(text)
+  if (contact.block.length) {
+    await flagContactAttempt(admin, { senderId: user.id, sessionId: null, kinds: contact.block, text, where: 'offline_message', blocked: true })
     return NextResponse.json({ error: 'contact_blocked', message: contactBlockedMessage(false) }, { status: 422 })
   }
+  if (contact.flag.length) await flagContactAttempt(admin, { senderId: user.id, sessionId: null, kinds: contact.flag, text, where: 'offline_message', blocked: false })
 
   // Verify listener exists and is active
   const { data: lp } = await admin
