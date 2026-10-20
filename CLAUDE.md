@@ -193,8 +193,8 @@
   Everything that only HINTS ("text me on my ig", "insta id do", websites, digits in pairs) is DELIVERED and flagged.
   Session chat (`/api/messages`) + offline messages refuse the block tier with 422 `contact_blocked`; both tiers are
   recorded in admin → Reports as `contact_attempt` (BLOCKED vs "delivered, please review"; max 3 per sender per
-  conversation/day). **After ANY change run `npx tsx scripts/check-contact-guard.ts`** (253 genuine + 32 hints must
-  pass, 44 details must block, 80k seeded fuzz messages must never block). Reason: a competitor posed as a seeker
+  conversation/day). **After ANY change run `npx tsx scripts/check-contact-guard.ts`** (266 genuine + 32 hints must
+  pass, 50 details must block, 80k seeded fuzz messages must never block). Reason: a competitor posed as a seeker
   and got a listener's Instagram.
 - Also on listener bio / lived experience (apply + profile edit — public pages). The session page drops a realtime
   `msg` broadcast carrying contact details (broadcasts come from the other browser, not the server). Migration 072

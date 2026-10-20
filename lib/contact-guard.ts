@@ -90,7 +90,8 @@ const RE_EMAIL_NO_TLD = /[a-z0-9._%+-]{3,}@(?:gmail|yahoo|outlook|hotmail|rediff
 // Profile / chat links only — a link to a POST ("instagram.com/p/…", "/reel/",
 // "x.com/…/status/…") is flagged, not blocked: people share what someone posted.
 const RE_CONTACT_LINK = new RegExp([
-  String.raw`\b(?:wa\.me|api\.whatsapp\.com|chat\.whatsapp\.com|t\.me|telegram\.(?:me|dog)|m\.me|fb\.me|discord\.gg|linktr\.ee|join\.skype\.com|snapchat\.com\/add)\b`,
+  // Always with a path ("t.me/name") — "I can't.me and him", "I'm.me" are missed spaces.
+  String.raw`(?:^|[^a-z0-9'’])(?:wa\.me|api\.whatsapp\.com|chat\.whatsapp\.com|t\.me|telegram\.(?:me|dog)|m\.me|fb\.me|discord\.gg|linktr\.ee|join\.skype\.com|snapchat\.com\/add)\/[a-z0-9_.+\-]`,
   String.raw`\b(?:instagram\.com|instagr\.am)\/(?!p\/|reels?\/|tv\/|stories\/|explore\/)[a-z0-9._]{3,}`,
   String.raw`\b(?:facebook\.com|fb\.com)\/(?!watch|share|photo|story|groups|events|reel|posts|permalink)[a-z0-9.]{4,}(?:\/?$|\/?\s|\?)`,
   String.raw`\b(?:twitter\.com|x\.com)\/[a-z0-9_]{2,}(?!\/status)(?:\/?$|\/?\s)`,
@@ -120,7 +121,7 @@ const COMMON_WORDS = new Set(['and', 'the', 'i', 'a', 'at', 'to', 'on', 'in', 'm
 // Looks like an account name: priya_k12, priya.k, rahul99x.
 function handleLike(token: string): boolean {
   const t = token.replace(/^@/, '').replace(/[.]+$/, '')
-  if (t.length < 5 || t.length > 30 || !/[a-z]/i.test(t) || NOT_A_HANDLE.test(t)) return false
+  if (t.length < 5 || t.length > 30 || (t.match(/[a-z]/gi) ?? []).length < 3 || NOT_A_HANDLE.test(t)) return false
   if (/[a-z0-9]_|_[a-z0-9]/i.test(t)) return true
   if (/^[a-z]/i.test(t) && (t.match(/\d/g) ?? []).length >= 2) return true
   if (/[a-z0-9]\.[a-z0-9]/i.test(t)) {
@@ -191,7 +192,8 @@ export function checkContact(input: string): ContactCheck {
   // Handles
   if (!block.has('email')) {
     const at = RE_AT.exec(text)
-    if (at) { if (handleLike(at[1]) || P.test(text)) block.add('handle'); else if (/[\d_.]/.test(at[1])) flag.add('handle') }   // plain "@home", "@everyone": nothing
+    // "@priya_k12" → block; "@priya" with an app named → flag; plain "@home", "@everyone" → nothing.
+    if (at) { if (handleLike(at[1])) block.add('handle'); else if (P.test(text) || /[\d_.]/.test(at[1])) flag.add('handle') }
   }
   if (P.test(text)) {
     const h = RE_PLATFORM_HANDLE.exec(text)
@@ -207,7 +209,11 @@ export function checkContact(input: string): ContactCheck {
     const everyday = words.every(w => CHAT_WORDS.has(w) || EVERYDAY_WORDS.has(w))  // "love_you", "good_night"
     // Abbreviations ("B.Tech", "Ph.D", "Mr.Sharma") are written with capitals; handles aren't.
     const abbreviation = /[A-Z]/.test(solo) && !/_/.test(solo)
-    if (!everyday && !abbreviation) { if (/[a-z0-9]_|_[a-z0-9]/i.test(solo)) block.add('handle'); else flag.add('handle') }
+    // Block only a made-up-looking name: a digit, a vowel-less part ("lll", "xyz") or a
+    // one-letter part — "theurbandude_lll", "priya_k12". Two real words joined
+    // ("happy_birthday", "rahul_sharma") are only flagged.
+    const madeUp = words.some(w => /\d/.test(w) || w.length === 1 || (w.length >= 2 && !/[aeiouy]/i.test(w)))
+    if (!everyday && !abbreviation) { if (/[a-z0-9]_|_[a-z0-9]/i.test(solo) && madeUp) block.add('handle'); else flag.add('handle') }
   }
 
   // Hints

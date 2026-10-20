@@ -11,8 +11,11 @@ type Sb = ReturnType<typeof createAdminClient>
 // conversation per day.
 export async function flagContactAttempt(sb: Sb, a: { senderId: string; sessionId: string | null; kinds: ContactKind[]; text: string; where: 'session_chat' | 'offline_message'; blocked: boolean }): Promise<void> {
   try {
+    // Separate caps per tier, so a few harmless hints can never hide a real
+    // blocked attempt from admin.
     let q = sb.from('reports').select('id', { count: 'exact', head: true })
       .eq('reporter_id', a.senderId).eq('type', 'contact_attempt')
+      .ilike('description', a.blocked ? 'Automatic: tried%' : 'Automatic: may be%')
       .gte('created_at', new Date(Date.now() - 24 * 60 * 60_000).toISOString())
     q = a.sessionId ? q.eq('session_id', a.sessionId) : q.is('session_id', null)
     const { count } = await q

@@ -6,6 +6,19 @@ import { checkContact } from '../lib/contact-guard'
 
 // Genuine messages: must NEVER be blocked (a flag is allowed).
 const MUST_ALLOW: string[] = [
+ "I can't.me and him are over",
+ "I'm.me and nobody else",
+ "don't.me too",
+ "I'm @home scrolling insta all day",
+ "happy_birthday",
+ "HAPPY_BIRTHDAY",
+ "rahul_sharma",
+ "good_morning_ji",
+ "my whatsapp is v2.23 and keeps crashing",
+ "my insta is down.so annoying",
+ "meet me@5.30pm",
+ "insta pe 10mins daily",
+ "I joined discord.gg is a word?",
  "hiii",
  "whass up?",
  "I am good how are you?",
@@ -299,6 +312,12 @@ const MUST_DELIVER_HINTS: string[] = [
 
 // Actual contact details (incl. disguised): must be blocked.
 const MUST_BLOCK: string[] = [
+ "t.me/priyak",
+ "m.me/priya.k",
+ "priya_k12",
+ "rahul_99",
+ "discord.gg/abcd",
+ "linktr.ee/priya",
  "theurbandude_lll",
  "my insta is theurbandude_lll",
  "@theurbandude_lll",
