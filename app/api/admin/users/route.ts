@@ -259,9 +259,26 @@ export async function GET(req: NextRequest) {
             earnMap.set(row.listener_id, cur)
           }
         }
+        // What a payout would actually pay now — the SAME rule as force_payout
+        // below and /api/payout: min(wallet, settled earnings − payouts already
+        // requested). The Payout button used to show lifetime settled earnings
+        // (e.g. ₹5,882) while the server correctly queued ~₹42.
+        const claimedMap = new Map<string, number>()
+        const claimRes = await sb.from('payout_requests')
+          .select('user_id, amount, status')
+          .in('user_id', userIds)
+          .neq('status', 'rejected')
+        if (!claimRes.error) {
+          for (const row of (claimRes.data ?? []) as { user_id: string; amount: number }[]) {
+            claimedMap.set(row.user_id, (claimedMap.get(row.user_id) ?? 0) + Number(row.amount ?? 0))
+          }
+        }
         items = items.map(p => {
           const e = earnMap.get(p.user_id as string) ?? { total: 0, settled: 0 }
-          return { ...p, earned_total: e.total, earned_settled: e.settled }
+          const wallet = Number((p.users as { wallet_balance?: number } | null | undefined)?.wallet_balance ?? 0)
+          const claimed = claimedMap.get(p.user_id as string) ?? 0
+          const payoutAvailable = claimRes.error ? null : Math.floor(Math.min(wallet, Math.max(0, e.settled - claimed)))
+          return { ...p, earned_total: e.total, earned_settled: e.settled, payout_claimed: claimed, payout_available: payoutAvailable }
         })
       }
 

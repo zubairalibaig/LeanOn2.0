@@ -43,6 +43,9 @@ type ListenerRow = {
   // Summed from listener_earnings by /api/admin/users. earned_total is
   // everything the ledger credits them; earned_settled is the payable subset.
   earned_total?: number; earned_settled?: number
+  // What a payout would pay now (same rule as force_payout): min(wallet,
+  // settled − already requested). null if payout requests couldn't be read.
+  payout_claimed?: number; payout_available?: number | null
   review?: ListenerReview
   users: { id: string; name?: string; email?: string; phone?: string; avatar_url?: string | null; created_at: string; is_active: boolean; is_suspended: boolean; wallet_balance: number }
   application?: { status: string; admin_notes: string | null; upi_id?: string | null; bank_account?: string | null; ifsc_code?: string | null; aadhaar?: string | null; aadhaar_last4?: string | null; account_holder_name?: string | null } | null
@@ -2319,13 +2322,13 @@ export default function AdminPage() {
                                   {!l.users?.phone?.startsWith('DELETE') && (
                                     confirmForcePayoutId === l.user_id ? (
                                       <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
-                                        <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--teal)' }}>Queue ₹{l.earned_settled ?? 0} payout?</span>
-                                        <button className="btn btn-teal" style={{ fontSize: 11, padding: '4px 8px' }} disabled={busy !== null || (l.earned_settled ?? 0) <= 0} onClick={() => { setConfirmForcePayoutId(null); userAction(l.user_id, 'force_payout') }}>Yes, queue</button>
+                                        <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--teal)' }}>Queue ₹{l.payout_available ?? '?'} payout?</span>
+                                        <button className="btn btn-teal" style={{ fontSize: 11, padding: '4px 8px' }} disabled={busy !== null || (l.payout_available ?? 0) <= 0} onClick={() => { setConfirmForcePayoutId(null); userAction(l.user_id, 'force_payout') }}>Yes, queue</button>
                                         <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setConfirmForcePayoutId(null)}>Cancel</button>
                                       </span>
                                     ) : (
-                                      <button className="btn btn-teal" style={{ fontSize: 12 }} disabled={busy !== null || (l.earned_settled ?? 0) <= 0} onClick={() => setConfirmForcePayoutId(l.user_id)} title={(l.earned_settled ?? 0) > 0 ? 'Queue payout, pay via UPI, mark paid in Payouts tab' : 'No settled earnings to pay out'}>
-                                        Payout {(l.earned_settled ?? 0) > 0 ? `₹${l.earned_settled}` : '₹0'}
+                                      <button className="btn btn-teal" style={{ fontSize: 12 }} disabled={busy !== null || (l.payout_available ?? 0) <= 0} onClick={() => setConfirmForcePayoutId(l.user_id)} title={(l.payout_available ?? 0) > 0 ? `Pays what is still owed: wallet ₹${Number((l.users as { wallet_balance?: number } | undefined)?.wallet_balance ?? 0)}, settled earnings ₹${l.earned_settled ?? 0} − already paid/requested ₹${l.payout_claimed ?? 0}` : 'Nothing owed — already paid out (or no settled earnings)'}>
+                                        Payout {l.payout_available == null ? '' : `₹${l.payout_available}`}
                                       </button>
                                     )
                                   )}
