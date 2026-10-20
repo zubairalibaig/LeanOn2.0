@@ -192,6 +192,9 @@
   sender per conversation/day). Rules + allowlist (only Tele-MANAS / NIMHANS numbers, leanon.app) live in
   `lib/contact-guard.ts`. Tune it there — keep it from blocking people describing their own lives
   ("my ex keeps posting on instagram"). Reason: a competitor posed as a seeker and got a listener's Instagram.
+- Also on listener bio / lived experience (apply + profile edit — public pages). The session page drops a realtime
+  `msg` broadcast carrying contact details (broadcasts come from the other browser, not the server). Migration 072
+  removes the browser INSERT/UPDATE policies on `messages` and `listener_messages` — all writes go through the API.
 
 ## Suspension (2026-10-13, migration 068)
 

@@ -1,5 +1,6 @@
 'use client'
 import { syncServerClock, serverNow } from '@/lib/server-clock'
+import { detectContact } from '@/lib/contact-guard'
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
@@ -761,6 +762,10 @@ function SessionContent() {
       )
       .on('broadcast', { event: 'msg' }, ({ payload }: { payload: Msg }) => {
         if (payload.session_id !== sessionId) return
+        // A broadcast comes straight from the other browser, not the server —
+        // never show one carrying contact details (the server would have
+        // refused it; real messages also arrive via postgres_changes above).
+        if (typeof payload.content !== 'string' || detectContact(payload.content).length) return
         applyMsg(payload)
       })
       // Typing indicator (Item 13)

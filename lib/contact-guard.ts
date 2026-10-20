@@ -7,70 +7,114 @@
 // asks listeners this exact case.
 //
 // Used server-side by /api/messages (session chat) and /api/listener/[id]/message
-// (offline messages). Tuned to catch what people actually send — a bare handle,
-// "text me on my ig", a phone number, an email, a site address — WITHOUT blocking
-// normal support talk ("my ex keeps posting on instagram", "I deleted WhatsApp",
-// prices, years, the crisis helplines).
+// (offline messages). It blocks what people actually send — a phone number, an
+// email, a handle, a site address, "text me on my ig" — and must NOT block people
+// describing their own lives: "his whatsapp number was saved as office", "I
+// checked his insta profile", "she commented on my insta post", ages ("25years"),
+// marks, prices, the crisis helplines. Every rule below has a reason in the test
+// list in the commit history; when tuning, add the new example to both lists.
 
 export type ContactKind = 'phone' | 'email' | 'link' | 'handle' | 'social'
 
 // Numbers that are fine to share: the only crisis helplines LeanOn lists.
 const ALLOWED_NUMBERS = new Set(['14416', '08046110007', '8046110007', '918046110007'])
-const ALLOWED_DOMAINS = /^(www\.)?leanon\.app$/i
 
-const PLATFORM = String.raw`(?:insta(?:gram)?|ig|whats\s?app|wtsp|watsapp|telegram|tg|snap(?:chat)?|facebook|fb|messenger|discord|signal|threads|twitter|linkedin|skype|imo|sharechat|moj|josh|hike)`
+// Only apps used to move a chat elsewhere. NOT English/Hinglish words that also
+// mean something else (signal, threads, hike, imo, moj, josh, snap-as-verb).
+const PLATFORM = String.raw`(?:insta(?:gram)?|ig|whats\s?app|wtsp|watsapp|telegram|snapchat|snap|facebook|fb|messenger|discord|twitter|linkedin|skype|sharechat)`
 const P = new RegExp(String.raw`\b${PLATFORM}\b`, 'i')
+const OWNER = String.raw`(?:my|mera|meri|mere|apna|apni|apne|your|ur|tumhara|tumhari|tumhare|tera|teri|tere|aapka|aapki|aapke)`
+const IDWORD = String.raw`(?:id|handle|user\s?name|number|no\.?)`
 
 const RE_EMAIL = /[a-z0-9._%+-]+@[a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,}/i
+const RE_EMAIL_NO_TLD = /[a-z0-9._%+-]{3,}@(?:gmail|yahoo|outlook|hotmail|rediffmail|icloud|proton(?:mail)?)\b/i
 const RE_AT_HANDLE = /(?:^|[\s(:,])@[a-z0-9_.]{3,30}\b/i
 const RE_URL = /\bhttps?:\/\/\S+|\bwww\.[a-z0-9-]+\.\S+|\bwa\.me\/\S*|\bt\.me\/\S*/i
-const RE_DOMAIN = /\b([a-z0-9-]{2,}\.)+(com|in|app|net|org|io|co|me|link|xyz|ly|gg|info|site|online|live|chat|club|store|page)\b/gi
-// A number written with spaces/dashes/dots/brackets: 10–13 digits in total.
+// Unambiguous TLDs anywhere. Word-like ones (in, me, co, live, club…) only at the
+// end of a message, before a path, or after "visit / check out" — so a missed
+// space ("so tired.in the morning", "I cried.me and mom") isn't a link.
+const RE_DOMAIN_STRONG = /(?:^|\s)(?:[a-z0-9-]{2,}\.)+(?:com|net|org|io|app|xyz|ly|gg|info|site|online|store|page)(?:\/\S*)?(?=\s|$|[),.!?])/gi
+const RE_DOMAIN_WEAK = /(?:^|\s)[a-z0-9-]{4,}\.(?:in|co\.in|co|me|live|chat|club|link)(?:\/\S*)?(?=\s*$|\/)/gi
+// "checkout thetalkingapp.in", "visit abc.me", "go to xyz.co" — a word-like TLD
+// mid-sentence counts only after a "go and look" verb.
+const RE_DOMAIN_VISIT = /\b(?:check\s?out|visit|go\s+to|search|google|site|website|link)\b[\s\S]{0,12}\b[a-z0-9-]{3,}\.(?:in|co\.in|co|me|live|chat|club|link)\b/i
 const RE_PHONE_RUN = /\+?\d[\d\s\-().]{7,}\d/g
 
-// "insta id", "whatsapp number", "my ig handle", "snap username"
-const RE_PLATFORM_ID = new RegExp(String.raw`\b${PLATFORM}\b[\s\S]{0,15}\b(?:id|handle|user\s?name|profile|number|no\.?|link)\b|\b(?:id|handle|user\s?name|number)\b[\s\S]{0,12}\b${PLATFORM}\b`, 'i')
-// A request aimed at the other person — "text ME on…", "on MY ig", "LET'S talk on…" —
-// not someone describing their own life ("I talk to my sister on whatsapp").
-const RE_CONTACT_ON = new RegExp([
-  String.raw`\b(?:text|message|msg|dm|ping|call|add|follow|reach|connect|talk|chat|contact)\s+(?:me|mujhe|us)\b[\s\S]{0,20}\b(?:on|pe|par|in|via|at)\s+(?:my\s+|mere\s+|meri\s+)?${PLATFORM}\b`,
-  String.raw`\b(?:on|pe|par)\s+(?:my|mere|meri|mera)\s+${PLATFORM}\b`,
-  String.raw`\b(?:let'?s|lets|can\s+we|shall\s+we|chalo|we\s+can)\b[\s\S]{0,15}\b(?:talk|chat|connect|baat|continue)\b[\s\S]{0,15}\b(?:on|pe|par|in)\s+${PLATFORM}\b`,
-].join('|'), 'i')
-// "telegram pe aao", "insta pe baat karo", "whatsapp karo", "dm me", "ig pe milo"
-const RE_PLATFORM_COME = new RegExp(String.raw`\b${PLATFORM}\b\s*(?:pe|par|par\s+)?\s*(?:aao|aaja|aa\s?jao|aa\s?jaao|milo|baat|text|msg|message|call|dm|add|follow|karo|kro|kar\s?lo)\b`, 'i')
+// "my insta id", "apna whatsapp number", "your snap username"
+const RE_OWN_ID = new RegExp(String.raw`\b${OWNER}\s+${PLATFORM}\s*${IDWORD}\b`, 'i')
+// "insta id do", "whatsapp number bhejo", "ig handle is …"
+const RE_ID_ASK = new RegExp(String.raw`\b${PLATFORM}\s*${IDWORD}\s*(?:do|de|dedo|de\s+do|bhejo|bhej\s+do|send|share|please|pls|plz|chahiye|batao|bata\s+do|is|hai|:|=)`, 'i')
+// "send me your whatsapp number", "share your insta id"
+const RE_SEND_ID = new RegExp(String.raw`\b(?:send|share|give|bhejo|batao)\s+(?:me\s+)?(?:${OWNER}\s+)?${PLATFORM}\s*${IDWORD}\b`, 'i')
+// "text me (here) on (my) ig", "find me on insta", "hit me up on telegram"
+const RE_CONTACT_ON = new RegExp(String.raw`\b(?:text|message|msg|dm|ping|call|add|follow|reach|connect|talk|chat|contact|find|search|hit)\s+(?:me|mujhe|us)\b(?:\s+up)?[\s\S]{0,20}\b(?:on|pe|par|in|via|at)\s+(?:my\s+|mere\s+|meri\s+)?${PLATFORM}\b`, 'i')
+// "let's talk on whatsapp", "can we continue on instagram"
+const RE_LETS_MOVE = new RegExp(String.raw`\b(?:let'?s|lets|can\s+we|shall\s+we|chalo|we\s+can)\b[\s\S]{0,15}\b(?:talk|chat|connect|baat|continue|move)\b[\s\S]{0,15}\b(?:on|pe|par|in|to)\s+${PLATFORM}\b`, 'i')
+// Inviting, not past tense: "telegram pe aao", "insta pe baat karte hain",
+// "whatsapp karo" — but not "insta pe baat ki thi", "whatsapp pe call aaya".
+const RE_PLATFORM_COME = new RegExp(String.raw`\b${PLATFORM}\b\s*(?:pe|par)?\s*(?:aao|aaja|aa\s?jao|aa\s?jaao|milo|(?:baat|msg|message|text|call|dm|add|follow)\s+(?:karo|kro|kar\s+lo|karte\s+hain|karte\s+he|karein|karna|karenge)|karo|kro)\b`, 'i')
 const RE_DM_ME = /\b(?:dm|inbox)\s+(?:me|kar(?:o|do)?|kro)\b/i
-// "my insta is abc_12" / "ig: abc.xyz"
-const RE_PLATFORM_HANDLE = new RegExp(String.raw`\b${PLATFORM}\b\s*(?:id\s*)?(?:is|hai|:|-|=)?\s*@?([a-z0-9._]{4,30})`, 'i')
+// "ig: priya.k_21", "my snap is rahul99x", "search theurbandude_lll on ig"
+const RE_PLATFORM_HANDLE = new RegExp(String.raw`\b${PLATFORM}\b\s*(?:id\s*|handle\s*)?(?:is|hai|:|-|=)?\s*@?([a-z0-9._]{4,30})`, 'i')
+const RE_HANDLE_ON_PLATFORM = new RegExp(String.raw`\b@?([a-z0-9._]{4,30})\s+(?:on|pe|par)\s+${PLATFORM}\b`, 'i')
+
+// Ages, marks, units… not handles: "25years", "24yrs", "12th", "5kg".
+const NOT_A_HANDLE = /^\d+(?:yrs?|years?|yo|yr|age|th|st|nd|rd|am|pm|hrs?|hours?|mins?|minutes?|days?|k|lakh|lakhs|lpa|cm|kg|kgs|km|rs|inr|percent)$/i
 
 function handleLike(token: string): boolean {
-  const t = token.replace(/^@/, '')
-  if (t.length < 5 || t.length > 30 || !/[a-z]/i.test(t)) return false
-  return /[a-z0-9][._][a-z0-9_]/i.test(t) || /_/.test(t) || (/[a-z]/i.test(t) && (t.match(/\d/g) ?? []).length >= 2)
+  const t = token.replace(/^@/, '').replace(/[.]+$/, '')
+  if (t.length < 5 || t.length > 30 || !/[a-z]/i.test(t) || NOT_A_HANDLE.test(t)) return false
+  return /[a-z0-9][._][a-z0-9_]/i.test(t) || /_/.test(t) || (/[a-z]/i.test(t) && (t.match(/\d/g) ?? []).length >= 2 && /^[a-z]/i.test(t))
+}
+
+// Indian-script and full-width digits → ASCII, so "९८७६५४३२१०" counts as a number:
+// Devanagari, Bengali, Gurmukhi, Gujarati, Odia, Tamil, Telugu, Kannada, Malayalam, full-width.
+const DIGIT_ZEROS = [0x0966, 0x09e6, 0x0a66, 0x0ae6, 0x0b66, 0x0be6, 0x0c66, 0x0ce6, 0x0d66, 0xff10]
+const RE_OTHER_DIGITS = /[\u0966-\u096f\u09e6-\u09ef\u0a66-\u0a6f\u0ae6-\u0aef\u0b66-\u0b6f\u0be6-\u0bef\u0c66-\u0c6f\u0ce6-\u0cef\u0d66-\u0d6f\uff10-\uff19]/g
+function asciiDigits(s: string): string {
+  return s.replace(RE_OTHER_DIGITS, d => {
+    const cp = d.charCodeAt(0)
+    const zero = DIGIT_ZEROS.find(z => cp >= z && cp <= z + 9)
+    return zero === undefined ? d : String(cp - zero)
+  })
+}
+
+// A phone number, not a list of marks: 10–13 digits, and not 3+ separate short
+// groups of 1–3 digits each ("85 90 95 88 92").
+function looksLikePhone(run: string): boolean {
+  const digits = run.replace(/\D/g, '')
+  if (digits.length < 10 || digits.length > 13 || ALLOWED_NUMBERS.has(digits)) return false
+  const groups = run.trim().split(/[\s\-().]+/).filter(Boolean)
+  if (groups.length >= 4 && groups.every(g => g.replace(/\D/g, '').length <= 3)) return /^\+/.test(run.trim()) || /^[6-9]\d{0,2}$/.test(groups[0]) && groups.length >= 8
+  return true
 }
 
 export function detectContact(input: string): ContactKind[] {
-  const text = input.normalize('NFKC')
+  const text = asciiDigits(input.normalize('NFKC'))
   const kinds = new Set<ContactKind>()
 
-  for (const m of text.match(RE_PHONE_RUN) ?? []) {
-    const digits = m.replace(/\D/g, '')
-    if (digits.length >= 10 && digits.length <= 13 && !ALLOWED_NUMBERS.has(digits)) kinds.add('phone')
+  for (const m of text.match(RE_PHONE_RUN) ?? []) if (looksLikePhone(m)) kinds.add('phone')
+
+  if (RE_EMAIL.test(text) || RE_EMAIL_NO_TLD.test(text)) kinds.add('email')
+  else if (RE_AT_HANDLE.test(text)) {
+    const m = RE_AT_HANDLE.exec(text)!
+    if (handleLike(m[0].trim().replace(/^[(:,]/, '')) || /@[a-z0-9_.]{3,30}\b/i.test(m[0]) && P.test(text)) kinds.add('handle')
   }
-  // Digits spelled with gaps across words ("98765 432 10") are covered by the run above.
 
-  if (RE_EMAIL.test(text)) kinds.add('email')
-  if (RE_AT_HANDLE.test(text) && !RE_EMAIL.test(text)) kinds.add('handle')
-
-  if (RE_URL.test(text) && !/^\s*(https?:\/\/)?(www\.)?leanon\.app(\/\S*)?\s*$/i.test(text.match(RE_URL)?.[0] ?? '')) kinds.add('link')
-  for (const d of text.match(RE_DOMAIN) ?? []) {
-    if (!ALLOWED_DOMAINS.test(d) && !/^(e\.g|i\.e)$/i.test(d)) kinds.add('link')
+  const url = text.match(RE_URL)?.[0]
+  if (url && !/^(https?:\/\/)?(www\.)?leanon\.app(\/|$)/i.test(url)) kinds.add('link')
+  if (RE_DOMAIN_VISIT.test(text)) kinds.add('link')
+  for (const re of [RE_DOMAIN_STRONG, RE_DOMAIN_WEAK]) {
+    for (const d of text.match(re) ?? []) if (!/^\s*(www\.)?leanon\.app(\/|$)/i.test(d.trim() + '/')) kinds.add('link')
   }
 
   if (P.test(text)) {
-    if (RE_PLATFORM_ID.test(text) || RE_CONTACT_ON.test(text) || RE_PLATFORM_COME.test(text)) kinds.add('social')
+    if (RE_OWN_ID.test(text) || RE_ID_ASK.test(text) || RE_SEND_ID.test(text) || RE_CONTACT_ON.test(text)
+      || RE_LETS_MOVE.test(text) || RE_PLATFORM_COME.test(text)) kinds.add('social')
     const h = RE_PLATFORM_HANDLE.exec(text)
     if (h && handleLike(h[1])) kinds.add('handle')
+    const h2 = RE_HANDLE_ON_PLATFORM.exec(text)
+    if (h2 && handleLike(h2[1])) kinds.add('handle')
   }
   if (RE_DM_ME.test(text)) kinds.add('social')
 

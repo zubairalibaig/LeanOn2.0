@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { detectContact } from '@/lib/contact-guard'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { ensureUserRow } from '@/lib/ensure-user-row'
@@ -68,6 +69,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Please enter your name (2–80 characters).' }, { status: 400 })
     if (bio.length < 30 || bio.length > 400)
       return NextResponse.json({ error: 'Please write a bio (30–400 characters).' }, { status: 400 })
+    if (detectContact(bio).length)
+      return NextResponse.json({ error: 'Your profile is public, so it can’t include contact details (phone, social media, email or links). Please remove them.' }, { status: 400 })
     if (!Number.isFinite(rate) || rate < MIN_LISTENER_RATE || rate > MAX_LISTENER_RATE)
       return NextResponse.json({ error: `Rate must be between ₹${MIN_LISTENER_RATE} and ₹${MAX_LISTENER_RATE} per minute.` }, { status: 400 })
     if (tags.length === 0)
@@ -78,6 +81,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'A clear display photo of your face is required.' }, { status: 400 })
     const onboarding = parseOnboarding(body ?? {})
     if ('error' in onboarding) return NextResponse.json({ error: onboarding.error }, { status: 400 })
+    if (detectContact(onboarding.public.lived_experience).length)
+      return NextResponse.json({ error: 'Your profile is public, so it can’t include contact details (phone, social media, email or links). Please remove them.' }, { status: 400 })
     if (!/^\d{9,18}$/.test(bank))
       return NextResponse.json({ error: 'Please enter a valid bank account number.' }, { status: 400 })
     if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc))

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { detectContact } from '@/lib/contact-guard'
 import { createServerSupabaseClient, createAdminClient } from '@/lib/supabase-server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, LANGUAGES } from '@/lib/constants'
@@ -31,6 +32,7 @@ export async function PATCH(req: NextRequest) {
       const bio = body.bio.trim()
       // Match the apply validation (30–400 chars) for consistency
       if (bio.length < 30 || bio.length > 400) return NextResponse.json({ error: 'Bio must be 30–400 characters.' }, { status: 400 })
+      if (detectContact(bio).length) return NextResponse.json({ error: 'Your profile is public, so it can’t include contact details (phone, social media, email or links). Please remove them.' }, { status: 400 })
       updates.bio = bio
     }
 
@@ -70,6 +72,7 @@ export async function PATCH(req: NextRequest) {
       const lived = body.lived_experience.trim()
       if (lived.length < LIVED_MIN_CHARS || lived.length > LIVED_MAX_CHARS)
         return NextResponse.json({ error: `"What I've been through" must be ${LIVED_MIN_CHARS}–${LIVED_MAX_CHARS} characters.` }, { status: 400 })
+      if (detectContact(lived).length) return NextResponse.json({ error: 'Your profile is public, so it can’t include contact details (phone, social media, email or links). Please remove them.' }, { status: 400 })
       updates.lived_experience = lived
     }
 
