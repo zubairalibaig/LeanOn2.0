@@ -1715,7 +1715,7 @@ export default function AdminPage() {
                                     <button className="btn btn-gray" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setConfirmForceRefundId(null)}>Cancel</button>
                                   </span>
                                 ) : (
-                                  <button className="btn btn-teal" style={{ fontSize: 12 }} disabled={busy !== null || (u.wallet_balance ?? 0) <= 0} onClick={() => setConfirmForceRefundId(u.id)} title={(u.wallet_balance ?? 0) > 0 ? 'Refund wallet balance via Razorpay, then ban' : 'No balance to refund'}>
+                                  <button className="btn btn-teal" style={{ fontSize: 12 }} disabled={busy !== null || (u.wallet_balance ?? 0) <= 0} onClick={() => setConfirmForceRefundId(u.id)} title={(u.wallet_balance ?? 0) > 0 ? 'Refund the whole wallet balance to the original Razorpay payment(s). Does NOT ban or suspend the account.' : 'No balance to refund'}>
                                     Refund {(u.wallet_balance ?? 0) > 0 ? `₹${u.wallet_balance}` : '₹0'}
                                   </button>
                                 )
