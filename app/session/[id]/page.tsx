@@ -1295,7 +1295,7 @@ function SessionContent() {
     }).catch(() => null)
 
     if (!res || !res.ok) {
-      const body = await res?.json().catch(() => ({})) as { error?: string } | undefined
+      const body = await res?.json().catch(() => ({})) as { error?: string; message?: string } | undefined
       setMsgs(prev => prev.filter(m => m.id !== tempId))
       setInput(text)
       // Say why the message didn't go — it used to vanish back into the draft.
@@ -1303,6 +1303,10 @@ function SessionContent() {
         showToast('This session has ended, so your message wasn\'t sent.', 'warning')
         peerEndedRef.current = true
         setEnded(true)
+      } else if (res?.status === 422 && body?.error === 'contact_blocked') {
+        // Phone / social media / email / link — not allowed on LeanOn. The draft
+        // stays in the box so they can edit it.
+        showToast(body.message || 'Contact details can\'t be shared on LeanOn.', 'warning')
       } else if (res?.status === 429) {
         showToast('You\'re sending very fast — wait a few seconds and tap send again.', 'warning')
       } else if (res?.status === 401) {

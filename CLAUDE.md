@@ -184,6 +184,15 @@
   manual run with release=true, from repo secrets). Bump the version code for every Play upload.
   Never commit `google-services.json`, a keystore or its passwords.
 
+## Contact-detail guard (2026-10-20)
+
+- Session chat (`/api/messages`) and offline messages (`/api/listener/[id]/message`) refuse phone numbers,
+  emails, @handles, bare handles, links and "text me on my ig"-style requests (terms §3), server-side, with
+  422 `contact_blocked`; each attempt is flagged in admin → Reports as type `contact_attempt` (max 3 per
+  sender per conversation/day). Rules + allowlist (only Tele-MANAS / NIMHANS numbers, leanon.app) live in
+  `lib/contact-guard.ts`. Tune it there — keep it from blocking people describing their own lives
+  ("my ex keeps posting on instagram"). Reason: a competitor posed as a seeker and got a listener's Instagram.
+
 ## Suspension (2026-10-13, migration 068)
 
 - **Suspended = `users.is_suspended` OR `listener_profiles.is_suspended`.** Both block login,
