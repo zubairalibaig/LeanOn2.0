@@ -41,13 +41,17 @@ const RE_DOMAIN_VISIT = /\b(?:check\s?out|visit|go\s+to|search|google|site|websi
 const RE_PHONE_RUN = /\+?\d[\d\s\-().]{7,}\d/g
 
 // "my insta id", "apna whatsapp number", "your snap username"
-const RE_OWN_ID = new RegExp(String.raw`\b${OWNER}\s+${PLATFORM}\s*${IDWORD}\b`, 'i')
+// …only when it's being shared or asked for ("my insta id is …", "apna number do"),
+// not "my insta id got hacked" / "my whatsapp number changed".
+const SHARE_TAIL = String.raw`\s*(?:is\b|hai\b|kya\b|:|=|-|do\b|de\b|dedo\b|de\s+do\b|bhejo\b|bhej\s+do\b|send\b|share\b|batao\b|bata\s+do\b|please\b|pls\b|plz\b|\?|$)`
+const RE_OWN_ID = new RegExp(String.raw`\b${OWNER}\s+${PLATFORM}\s*${IDWORD}${SHARE_TAIL}`, 'i')
+const RE_WHAT_ID = new RegExp(String.raw`\b(?:what'?s|what\s+is|kya\s+hai)\s+(?:your|ur|tumhara|tumhari|tera|teri|aapka|aapki)\s+${PLATFORM}\s*${IDWORD}\b`, 'i')
 // "insta id do", "whatsapp number bhejo", "ig handle is …"
 const RE_ID_ASK = new RegExp(String.raw`\b${PLATFORM}\s*${IDWORD}\s*(?:do|de|dedo|de\s+do|bhejo|bhej\s+do|send|share|please|pls|plz|chahiye|batao|bata\s+do|is|hai|:|=)`, 'i')
 // "send me your whatsapp number", "share your insta id"
 const RE_SEND_ID = new RegExp(String.raw`\b(?:send|share|give|bhejo|batao)\s+(?:me\s+)?(?:${OWNER}\s+)?${PLATFORM}\s*${IDWORD}\b`, 'i')
 // "text me (here) on (my) ig", "find me on insta", "hit me up on telegram"
-const RE_CONTACT_ON = new RegExp(String.raw`\b(?:text|message|msg|dm|ping|call|add|follow|reach|connect|talk|chat|contact|find|search|hit)\s+(?:me|mujhe|us)\b(?:\s+up)?[\s\S]{0,20}\b(?:on|pe|par|in|via|at)\s+(?:my\s+|mere\s+|meri\s+)?${PLATFORM}\b`, 'i')
+const RE_CONTACT_ON = new RegExp(String.raw`\b(?:text|message|msg|dm|ping|call|add|follow|reach|connect|talk|chat|contact|find|search|hit)\s+(?:to\s+|with\s+)?(?:me|mujhe|us)\b(?:\s+up)?[\s\S]{0,20}\b(?:on|pe|par|in|via|at)\s+(?:my\s+|mere\s+|meri\s+)?${PLATFORM}\b`, 'i')
 // "let's talk on whatsapp", "can we continue on instagram"
 const RE_LETS_MOVE = new RegExp(String.raw`\b(?:let'?s|lets|can\s+we|shall\s+we|chalo|we\s+can)\b[\s\S]{0,15}\b(?:talk|chat|connect|baat|continue|move)\b[\s\S]{0,15}\b(?:on|pe|par|in|to)\s+${PLATFORM}\b`, 'i')
 // Inviting, not past tense: "telegram pe aao", "insta pe baat karte hain",
@@ -58,13 +62,32 @@ const RE_DM_ME = /\b(?:dm|inbox)\s+(?:me|kar(?:o|do)?|kro)\b/i
 const RE_PLATFORM_HANDLE = new RegExp(String.raw`\b${PLATFORM}\b\s*(?:id\s*|handle\s*)?(?:is|hai|:|-|=)?\s*@?([a-z0-9._]{4,30})`, 'i')
 const RE_HANDLE_ON_PLATFORM = new RegExp(String.raw`\b@?([a-z0-9._]{4,30})\s+(?:on|pe|par)\s+${PLATFORM}\b`, 'i')
 
+// Someone describing what happened ("HE used to call me on whatsapp", "WO insta pe
+// baat karte hain", "HIS whatsapp number is saved as…") rather than asking.
+const RE_NARRATIVE = /\b(?:he|she|they|his|her|their|him|them|ex|husband|wife|boyfriend|girlfriend|bf|gf|friends?|dost|mom|mummy|mother|dad|papa|father|bhai|didi|sister|brother|boss|everyone|nobody|people|log|wo|woh|vo|usne|unhone|uska|uski|uske|unka|unki|unke|used\s+to|would|was|were|did|didn'?t|never|always|still|keeps?|kept)\b/i
+function invites(re: RegExp, text: string): boolean {
+  const m = re.exec(text)
+  if (!m) return false
+  return !RE_NARRATIVE.test(text.slice(Math.max(0, m.index - 30), m.index + 1))
+}
+
 // Ages, marks, units… not handles: "25years", "24yrs", "12th", "5kg".
 const NOT_A_HANDLE = /^\d+(?:yrs?|years?|yo|yr|age|th|st|nd|rd|am|pm|hrs?|hours?|mins?|minutes?|days?|k|lakh|lakhs|lpa|cm|kg|kgs|km|rs|inr|percent)$/i
+
+const CHAT_WORDS = new Set(['k', 'kk', 'ok', 'okk', 'okay', 'okie', 'bye', 'byee', 'tc', 'gn', 'gm', 'thx', 'thanks', 'ty', 'yes', 'ya', 'yeah', 'no', 'nah', 'sure', 'fine', 'done', 'hmm', 'u', 'r', 'y', 'n', 'bro', 'sis', 'see', 'later', 'cya', 'lol'])
 
 function handleLike(token: string): boolean {
   const t = token.replace(/^@/, '').replace(/[.]+$/, '')
   if (t.length < 5 || t.length > 30 || !/[a-z]/i.test(t) || NOT_A_HANDLE.test(t)) return false
-  return /[a-z0-9][._][a-z0-9_]/i.test(t) || /_/.test(t) || (/[a-z]/i.test(t) && (t.match(/\d/g) ?? []).length >= 2 && /^[a-z]/i.test(t))
+  if (/_/.test(t)) return true
+  if (/^[a-z]/i.test(t) && (t.match(/\d/g) ?? []).length >= 2) return true
+  // Dots: "priya.k" / "abc.xyz12" are handles; "ok.bye", "hmm.ok", "thanks.tc" are a missed space.
+  if (/[a-z0-9]\.[a-z0-9]/i.test(t)) {
+    const segs = t.toLowerCase().split('.').filter(Boolean)
+    if (segs.every(seg => CHAT_WORDS.has(seg))) return false        // "k.bye", "ok.tc"
+    return /\d/.test(t) || segs.some(seg => seg.length === 1)
+  }
+  return false
 }
 
 // Indian-script and full-width digits → ASCII, so "९८७६५४३२१०" counts as a number:
@@ -84,6 +107,7 @@ function asciiDigits(s: string): string {
 function looksLikePhone(run: string): boolean {
   const digits = run.replace(/\D/g, '')
   if (digits.length < 10 || digits.length > 13 || ALLOWED_NUMBERS.has(digits)) return false
+  if (/^1800\d{6,7}$/.test(digits)) return false   // toll-free (helplines, banks) — not a person's number
   const groups = run.trim().split(/[\s\-().]+/).filter(Boolean)
   if (groups.length >= 4 && groups.every(g => g.replace(/\D/g, '').length <= 3)) return /^\+/.test(run.trim()) || /^[6-9]\d{0,2}$/.test(groups[0]) && groups.length >= 8
   return true
@@ -109,8 +133,8 @@ export function detectContact(input: string): ContactKind[] {
   }
 
   if (P.test(text)) {
-    if (RE_OWN_ID.test(text) || RE_ID_ASK.test(text) || RE_SEND_ID.test(text) || RE_CONTACT_ON.test(text)
-      || RE_LETS_MOVE.test(text) || RE_PLATFORM_COME.test(text)) kinds.add('social')
+    if (RE_OWN_ID.test(text) || RE_WHAT_ID.test(text) || RE_SEND_ID.test(text) || RE_LETS_MOVE.test(text)
+      || invites(RE_ID_ASK, text) || invites(RE_CONTACT_ON, text) || invites(RE_PLATFORM_COME, text)) kinds.add('social')
     const h = RE_PLATFORM_HANDLE.exec(text)
     if (h && handleLike(h[1])) kinds.add('handle')
     const h2 = RE_HANDLE_ON_PLATFORM.exec(text)
