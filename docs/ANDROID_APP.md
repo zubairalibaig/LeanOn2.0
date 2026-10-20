@@ -5,7 +5,7 @@ Parts 0 and 7–8 of that guide (unpublish the old app, store listing, go live)
 are repeated here so this file is all you need.
 
 ## What the app is
-- A **Capacitor app** (folder `mobile/`, package **`app.leanon`**) that opens
+- A **Capacitor app** (folder `mobile/`, package **`com.leanon.app`** — the name your Play Console listing is locked to; the Java code package is still `app.leanon`) that opens
   **www.leanon.app** full-screen. The website stays the product: website
   changes reach the app instantly, no app update needed.
 - Plus one native feature the website can't do: **session requests ring like a
@@ -56,7 +56,7 @@ added to **that same project**.
    whose *Project ID* matches `FIREBASE_PROJECT_ID` in Vercel → Settings →
    Environment Variables).
 2. Project overview → **Add app** → the **Android** icon.
-3. **Android package name:** `app.leanon` · App nickname: `LeanOn Android` ·
+3. **Android package name:** `com.leanon.app` · App nickname: `LeanOn Android` ·
    leave SHA-1 empty → **Register app**.
 4. **Download `google-services.json`** → skip the remaining Firebase steps
    (Claude already did the code) → Continue to console.

@@ -170,7 +170,7 @@
 
 ## Android app (2026-10-19) — read `docs/ANDROID_APP.md`
 
-- **`mobile/` = the Play Store app**: Capacitor shell (`server.url` www.leanon.app, package `app.leanon`)
+- **`mobile/` = the Play Store app**: Capacitor shell (`server.url` www.leanon.app, package/applicationId `com.leanon.app` — Play listing is locked to it; Java namespace `app.leanon`)
   + native call-style request alerts (FCM data messages → `LeanOnMessagingService` → `RequestAlert`
   ringing CallStyle notification + full-screen `IncomingRequestActivity`). The old `android/` folder and
   `build-twa.yml` are the deprecated TWA — don't use them.

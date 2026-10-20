@@ -4,7 +4,9 @@ android {
     namespace = "app.leanon"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "app.leanon"
+        // Play Console listing is locked to com.leanon.app (first upload). The Java
+        // code package (namespace) stays app.leanon — they are allowed to differ.
+        applicationId "com.leanon.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         // Bump for every Play Store upload (CI: LEANON_VERSION_CODE / _NAME).
