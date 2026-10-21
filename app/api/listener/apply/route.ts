@@ -7,6 +7,7 @@ import { MIN_LISTENER_RATE, MAX_LISTENER_RATE, LANGUAGES, MIN_LISTENER_AGE, MAX_
 import { logger } from '@/lib/logger'
 import { parseOnboarding } from '@/lib/listener-onboarding'
 import { hasSelfie } from '@/lib/selfie-storage'
+import { isReviewPhone } from '@/lib/review-login'
 
 // POST — submit a listener application (users row + profile + application).
 //
@@ -21,6 +22,9 @@ export async function POST(req: NextRequest) {
     const userSb = createServerSupabaseClient()
     const { data: { user } } = await userSb.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    // The Google Play reviewer demo account (lib/review-login.ts) is seeker-only.
+    if (isReviewPhone(user.phone))
+      return NextResponse.json({ error: 'The demo account can’t apply as a listener.' }, { status: 403 })
 
     if (!checkRateLimit(`listener-apply:${user.id}`, 10, 60_000)) {
       return NextResponse.json({ error: 'Too many requests. Please wait.' }, { status: 429 })

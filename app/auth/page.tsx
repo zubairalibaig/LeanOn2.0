@@ -152,6 +152,7 @@ export default function AuthPage() {
   const [error, setError]       = useState('')
   const [countdown, setCountdown] = useState(0)
   const [widgetReady, setWidgetReady] = useState(false)
+  const [reviewMode, setReviewMode] = useState(false) // Play reviewer demo number — no SMS
   const otpRefs = useRef<(HTMLInputElement|null)[]>([])
   const handledRef = useRef(false)      // guards the final navigation
   const tokenHandledRef = useRef(false) // guards double token delivery (verifyOtp cb + config.success)
@@ -217,27 +218,45 @@ export default function AuthPage() {
         setLoading(false)
         return
       }
-      // Session cookies are now set by the server route. Decide new-vs-returning
-      // by asking the server for a profile name (admin read, bypasses RLS).
-      let existingName: string | null = null
-      try {
-        const p = await fetch('/api/auth/profile')
-        if (p.ok) existingName = (await p.json())?.name ?? null
-      } catch { /* treat as new */ }
-
-      if (!existingName) { setStep('name'); setLoading(false); return }
-
-      const dest = getDestination()
-      sessionStorage.removeItem('auth_redirect')
-      sessionStorage.removeItem('auth_mode')
-      handledRef.current = true
-      window.location.assign(dest)
+      await afterSignIn()
     } catch {
       setError('Network error. Please check your connection and try again.')
       tokenHandledRef.current = false
       setLoading(false)
     }
   }, [])
+
+  // Session cookies are now set by the server route. Decide new-vs-returning
+  // by asking the server for a profile name (admin read, bypasses RLS).
+  async function afterSignIn() {
+    let existingName: string | null = null
+    try {
+      const p = await fetch('/api/auth/profile')
+      if (p.ok) existingName = (await p.json())?.name ?? null
+    } catch { /* treat as new */ }
+
+    if (!existingName) { setStep('name'); setLoading(false); return }
+
+    const dest = getDestination()
+    sessionStorage.removeItem('auth_redirect')
+    sessionStorage.removeItem('auth_mode')
+    handledRef.current = true
+    window.location.assign(dest)
+  }
+
+  // Google Play reviewer login (lib/review-login.ts): the demo number gets a
+  // fixed code instead of an SMS. Returns true if this number is the demo one.
+  async function isReviewNumber(phone: string): Promise<boolean> {
+    try {
+      const res = await fetch('/api/auth/review-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone }),
+      })
+      if (!res.ok) return false
+      return (await res.json())?.review === true
+    } catch { return false }
+  }
 
   // Keep the widget's config callback pointing at the latest handleToken.
   const handleTokenRef = useRef(handleToken)
@@ -319,7 +338,7 @@ export default function AuthPage() {
     return () => { document.removeEventListener('keydown', onKey); document.removeEventListener('mousedown', onClick) }
   }, [dropdownOpen])
 
-  function requestOtp() {
+  async function requestOtp() {
     setError('')
     if (!isValidPhone()) {
       const len = country.minDigits === country.maxDigits
@@ -328,6 +347,11 @@ export default function AuthPage() {
       setError(`Enter a valid ${len} mobile number for ${country.name}`)
       return
     }
+    setLoading(true)
+    const review = await isReviewNumber(country.dialCode + digits())
+    setReviewMode(review)
+    if (review) { setLoading(false); setOtp(Array(OTP_LEN).fill('')); setStep('otp'); return }
+    setLoading(false)
     if (!widgetReady || typeof window.sendOtp !== 'function') {
       setError('Verification is still loading — give it a second and try again.')
       return
@@ -346,6 +370,7 @@ export default function AuthPage() {
     setError('')
     const code = otp.join('')
     if (code.length < OTP_LEN) { setError(`Enter the full ${OTP_LEN}-digit code`); return }
+    if (reviewMode) { verifyReview(code); return }
     if (typeof window.verifyOtp !== 'function') { setError('Verification not ready. Please try again.'); return }
     setLoading(true)
     window.verifyOtp(
@@ -355,8 +380,26 @@ export default function AuthPage() {
     )
   }
 
+  async function verifyReview(code: string) {
+    setLoading(true)
+    try {
+      const res = await fetch('/api/auth/review-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: country.dialCode + digits(), code, country: country.code }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) { setError(data?.error || 'Incorrect code. Please check and try again.'); setLoading(false); return }
+      await afterSignIn()
+    } catch {
+      setError('Network error. Please check your connection and try again.')
+      setLoading(false)
+    }
+  }
+
   function resend() {
     setError('')
+    if (reviewMode) return
     // Re-send via sendOtp (robust) rather than guessing retryOtp's channel code.
     if (typeof window.sendOtp === 'function') {
       window.sendOtp(country.dialCode + digits(), () => setCountdown(30), (err) => setError(errText(err) || 'Could not resend. Please try again.'))

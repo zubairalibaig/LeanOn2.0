@@ -202,7 +202,7 @@ new* makes the same `.jks`; then do steps 3–7 with `base64` on your laptop.)
 | Item | What to choose |
 |---|---|
 | Privacy policy | `https://www.leanon.app/privacy` |
-| App access | **Restricted** → **ask Claude for the reviewer login first** (Google's reviewers can't receive your OTP; Claude builds a locked-down demo account switched on by a Vercel setting) |
+| App access | **Restricted** → reviewer login: set Vercel env `REVIEW_LOGIN_PHONE` (an unused number, e.g. `+919000000001`) + `REVIEW_LOGIN_CODE` (same digit count as the OTP boxes), redeploy. That one number then signs in with that code, no SMS (`lib/review-login.ts`); it's seeker-only (can't apply as a listener). Off again by removing the env vars or suspending the account. |
 | Ads | No |
 | Content rating | Questionnaire → "All other app types" → users interact/communicate **Yes**; digital purchases **Yes**; violence/sexual/drugs/gambling **No** |
 | Target audience | **18 and over only**; appeals to children **No** |
