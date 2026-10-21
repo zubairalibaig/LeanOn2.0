@@ -52,6 +52,7 @@ const PUBLIC_PAGES = [
   '/get-paid-to-chat-india',
   '/contact',
   '/privacy',
+  '/delete-account', // linked from the Google Play listing — must open signed out
   '/terms',
   '/glossary',
   '/admin', // handled client-side with Supabase auth + PIN gate

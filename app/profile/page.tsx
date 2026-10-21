@@ -321,7 +321,7 @@ export default function ProfilePage() {
                 <div style={{ fontSize: 36, marginBottom: 12 }}>⚠️</div>
                 <h3 style={{ fontSize: 18, fontWeight: 800, color: '#B71C1C', marginBottom: 8 }}>Delete your account?</h3>
                 <p style={{ fontSize: 13, color: '#5A7A8A', fontWeight: 600, lineHeight: 1.6, marginBottom: walletBalance > 0 ? 8 : 16 }}>
-                  This is permanent and cannot be undone. Your name, phone number, profile, and all personal data will be permanently erased. Session history will be anonymized.
+                  This is permanent and cannot be undone. Your sign-in, photos, profile and payout details will be erased. Session and payment records are kept without your contact details.
                 </p>
                 {walletBalance > 0 && (
                   <p style={{ fontSize: 13, fontWeight: 700, color: '#B71C1C', background: '#FFF5F5', border: '1px solid #FFCDD2', borderRadius: 8, padding: '8px 12px', marginBottom: 16 }}>
