@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
+import QuickAnswer from '@/app/components/QuickAnswer'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support for Women India — Someone Who Actually Listens | LeanOn',
-  description: 'For women carrying the weight of marriage, motherhood, family, and work — all at once. Talk to a screened peer listener who understands what that weight actually feels like. Anonymous. Available now.',
+  description: 'For women carrying the weight of marriage, motherhood, family, and work — all at once. Talk to a screened peer listener who understands what that weight actually feels like. Non-clinical peer support; availability varies.',
   keywords: [
     'emotional support for women India', 'women mental health India', 'support for women India',
     'working women stress India', 'women emotional health India', 'Indian women mental health',
@@ -24,10 +25,14 @@ export const metadata: Metadata = {
   },
 }
 
+const directQuestion = "I'm a woman in India feeling lonely in my marriage — who can I talk to?"
+const directAnswer = "LeanOn lets adults in India request one-to-one text or voice conversations with screened peer listeners about marital loneliness, family pressure, parenting and work stress. It offers non-clinical peer support, not therapy or couples counselling. One introductory session of up to five minutes is free per account; paid prices and listener availability vary."
+
 const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
+    { '@type': 'Question', name: directQuestion, acceptedAnswer: { '@type': 'Answer', text: directAnswer } },
     {
       '@type': 'Question',
       name: 'Is LeanOn specifically for women?',
@@ -65,7 +70,7 @@ const faqSchema = {
       name: 'Is it anonymous? Will anyone from my family or workplace know?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes — completely anonymous. You do not need to share your real name. Listeners sign confidentiality agreements and cannot share what you discuss. No one from your family, workplace, or social circle will know you used LeanOn.',
+        text: 'LeanOn is not completely anonymous. Sign-in uses phone verification, but listeners see your chosen display name rather than your phone number. Voice calls are not recorded. Text messages are stored, and authorised administrators may review reported or safety-flagged sessions. Others may discover use through a shared device or payment records.',
       },
     },
   ],
@@ -171,7 +176,7 @@ export default function ForWomenPage() {
           <span style={{color:'var(--navy)'}}>For Women</span>
         </nav>
 
-        <p className="hero-tag">Women · Emotional Support · India · Anonymous</p>
+        <p className="hero-tag">Women · Emotional Support · India</p>
         <h1>You Hold Everything Together.<br />Who Holds <em>You?</em></h1>
         <p className="lead">
           You manage the child, the house, the career, the family relationships, the finances, and the emotional labour
@@ -179,6 +184,7 @@ export default function ForWomenPage() {
           how you are doing. LeanOn is a real person who will actually listen — just to you, just about you, for once.
         </p>
 
+        <QuickAnswer question={directQuestion} answer={directAnswer} />
         <h2>If Any of This Sounds Familiar</h2>
         <div className="situations">
           {situations.map((s, i) => (
@@ -207,7 +213,7 @@ export default function ForWomenPage() {
           ))}
         </div>
 
-        <h2>Why Women Choose LeanOn Over Therapy</h2>
+        <h2>Peer Support and Therapy Serve Different Needs</h2>
         <p>
           Private therapy in India costs ₹1,500–₹5,000 per session. That is a real barrier — especially when
           you are already carrying financial pressure. Even when you can afford it, finding a therapist, making
@@ -251,7 +257,7 @@ export default function ForWomenPage() {
 
         <div className="cta-card">
           <h2>You Deserve to Be Heard Too</h2>
-          <p>Browse screened peer listeners — many of them women, many of them mothers — who understand what you are carrying. Anonymous, available now.</p>
+          <p>Browse screened peer listeners and request a text or voice conversation. Availability varies, and a match is not guaranteed. LeanOn is not therapy or couples counselling.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Listeners</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works</button></a>
