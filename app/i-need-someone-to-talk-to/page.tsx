@@ -46,7 +46,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is it anonymous when I talk to someone on LeanOn?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. You do not need to share your real name, city, or any personal details. Listeners sign confidentiality agreements. You can say whatever you need to say without it reaching anyone in your life.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. You do not need to share your real name, city, or any personal details. Listeners agree to keep what you share confidential. You can say whatever you need to say without it reaching anyone in your life.' },
     },
     {
       '@type': 'Question',

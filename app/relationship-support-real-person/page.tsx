@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Relationship Support from a Real Person | LeanOn',
-    description: 'Relationship problems need a human ear, not an algorithm. LeanOn connects you with peer listeners who have real lived experience — available 24/7, first 5 minutes free.',
+    description: 'Relationship problems need a human ear, not an algorithm. LeanOn connects you with peer listeners who have real lived experience — text or voice, first 5 minutes free.',
     url: 'https://www.leanon.app/relationship-support-real-person',
     siteName: 'LeanOn',
     type: 'article',
@@ -34,7 +34,7 @@ const faqSchema = {
       name: 'Where can I get relationship advice from a real person online?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn connects you with peer listeners who have real lived experience of relationships, breakups, marriage stress, and emotional disconnection — available 24/7, first 5 minutes free.',
+        text: 'LeanOn connects you with peer listeners who have real lived experience of relationships, breakups, marriage stress, and emotional disconnection — text or voice, first 5 minutes free.',
       },
     },
     {
@@ -221,7 +221,7 @@ export default function RelationshipSupportPage() {
             at 3 AM when your mind won&apos;t stop, on a Sunday when your friends are all busy.
           </p>
           <p>
-            LeanOn listeners are available 24/7 — including right now. You don&apos;t have to sit alone
+            Talk now connects you with a listener who is online — no appointment. You don&apos;t have to sit alone
             with whatever you&apos;re carrying.
           </p>
           <a href="/browse" className="cta-night">Find a listener who understands →</a>
@@ -239,7 +239,7 @@ export default function RelationshipSupportPage() {
           <div className="faq-item">
             <h3>Where can I get relationship advice from a real person online?</h3>
             <p>LeanOn connects you with peer listeners who have real lived experience of relationships,
-              breakups, marriage stress, and emotional disconnection — available 24/7, first 5 minutes free.</p>
+              breakups, marriage stress, and emotional disconnection — text or voice, first 5 minutes free.</p>
           </div>
           <div className="faq-item">
             <h3>Is LeanOn relationship advice or therapy?</h3>

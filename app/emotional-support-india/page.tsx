@@ -14,7 +14,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
     {'@type': 'Question', name: 'Is emotional support the same as therapy?', acceptedAnswer: {'@type': 'Answer', text: 'No. Therapy is a clinical service provided by licensed professionals. It involves diagnosis, treatment planning, and specific evidence-based interventions. Emotional support &mdash; the kind LeanOn provides &mdash; is peer-based, non-clinical, and focused on being heard rather than treated. Many people benefit from both.'}},
     {'@type': 'Question', name: 'Who provides emotional support on LeanOn?', acceptedAnswer: {'@type': 'Answer', text: 'Real people &mdash; screened peer listeners with lived experience. They are not AI, not therapists, and not volunteers. They are compensated for their time and screened for active listening and supportive conversation.'}},
     {'@type': 'Question', name: 'How much does it cost?', acceptedAnswer: {'@type': 'Answer', text: 'Sessions start at ₹160. First 5 minutes free. No subscription.'}},
-    {'@type': 'Question', name: 'Is it anonymous?', acceptedAnswer: {'@type': 'Answer', text: 'Yes. First name only. Listener bound by confidentiality agreement.'}}
+    {'@type': 'Question', name: 'Is it anonymous?', acceptedAnswer: {'@type': 'Answer', text: 'Yes. First name only. Listener agrees to keep it confidential.'}}
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [

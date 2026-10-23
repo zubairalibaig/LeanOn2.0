@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'Is it anonymous?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. First name only, no photo, no social profile. Unlike a support group where multiple people know your story, a LeanOn session is between you and one listener only — who signs a confidentiality agreement.',
+        text: 'Yes. First name only, no photo, no social profile. Unlike a support group where multiple people know your story, a LeanOn session is between you and one listener only — who agrees to keep it confidential.',
       },
     },
     {

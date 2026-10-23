@@ -38,7 +38,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Can I use LeanOn without my family knowing?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn is completely private. You sign up with just your phone number and first name. Sessions are voice calls from your phone &mdash; no app visible to others, no browser history that names the service. What you say in the session is confidential.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn is completely private. You sign up with your phone number and any first name you like. Sessions are text chat or voice, from your own phone. The listener never sees your phone number, and what you say is confidential.' },
     },
     {
       '@type': 'Question',

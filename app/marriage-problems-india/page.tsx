@@ -3,8 +3,8 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Marriage Problems? Talk to Someone Who Understands | LeanOn India',
-  description: 'Struggling with marriage problems? Talk anonymously to a peer listener who gets it — no judgment, ₹160/session, available 24/7 in India.',
+  title: 'Marriage Problems in India? Talk to Someone Privately | LeanOn',
+  description: 'Struggling with marriage problems? Talk anonymously to a peer listener who gets it — no judgment, first 5 minutes free, then from ₹160 for 15 minutes.',
   keywords: [
     'marriage problems india talk to someone', 'marriage advice online india',
     'unhappy marriage india help', 'married but unhappy india',
@@ -13,6 +13,8 @@ export const metadata: Metadata = {
     'marriage help india online', 'arranged marriage problems india',
     'husband wife problems india', 'marriage counselling online india',
     'unhappy in marriage india', 'marriage support india',
+    'marital problems india', 'marital issues talk to someone', 'in-laws problems india talk',
+    'husband does not listen india', 'thinking about divorce india talk to someone',
   ],
   alternates: {
     canonical: 'https://www.leanon.app/marriage-problems-india',
@@ -20,7 +22,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Marriage Problems? Talk to Someone Who Understands | LeanOn India',
-    description: 'Struggling with marriage problems? Talk anonymously to a peer listener who gets it — no judgment, ₹160/session, available 24/7 in India.',
+    description: 'Struggling with marriage problems? Talk anonymously to a peer listener who gets it — no judgment, first 5 minutes free, then from ₹160 for 15 minutes.',
     url: 'https://www.leanon.app/marriage-problems-india',
     siteName: 'LeanOn',
     type: 'article',
@@ -34,10 +36,42 @@ const faqSchema = {
   mainEntity: [
     {
       '@type': 'Question',
+      name: 'Where can I talk to someone about my marriage problems in India?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'LeanOn (www.leanon.app) lets you talk one-to-one with a screened peer listener in India, by text or voice, without an appointment. You use any first name, the listener never sees your phone number, and the first 5 minutes are free; after that a 15-minute session starts at ₹160. It is for being heard and thinking things through — not couples therapy or legal advice.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I talk about problems with my in-laws?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes — in-law pressure is something many people bring to LeanOn. Interference, comparisons, expectations about children or money, a spouse who will not take your side: you can say all of it to someone who has no connection to your family.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'I am thinking about divorce. Can a listener help?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'A listener can help you think out loud — about what you feel, what you are afraid of, and what matters to you — without pushing you either way. They cannot give legal advice; for that, speak to a family lawyer. Many people use LeanOn to get clear in their own head before they talk to family or a lawyer.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I talk to a woman listener about my marriage?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. On the Browse page you see every listener\'s first name, photo, languages and topics, and you choose who to talk to. If you would be more comfortable with a woman, pick one there.',
+      },
+    },
+    {
+      '@type': 'Question',
       name: 'Is it anonymous if I talk about my marriage problems?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes, completely. You do not need to share your real name, your location, or any identifying details. Your listener only knows what you choose to tell them. Nothing from the conversation is stored under your identity or shared outside the session. You can talk about the most private details of your marriage without any of it following you.',
+        text: 'Yes, completely. You do not need to share your real name, your location, or any identifying details. Your listener only knows what you choose to tell them. The listener never sees your phone number, and nothing is shared with your family or anyone in your life. You can talk about the most private details of your marriage without any of it following you.',
       },
     },
     {
@@ -167,8 +201,18 @@ export default function MarriageProblemsIndiaPage() {
           And definitely not admit that the thing everyone celebrated might not be what you hoped for.
         </p>
 
+        <div className="card">
+          <div className="card-label">The short answer</div>
+          <p>
+            LeanOn lets you talk privately about your marriage — fights, distance, in-laws, an arranged
+            marriage that is not working, thoughts of divorce — with a screened listener in India, by text or
+            voice. Use any name; the listener never sees your number. You can choose a woman listener.
+            First 5 minutes free, then from ₹160 for 15 minutes. Not couples therapy, not legal advice.
+          </p>
+        </div>
+
         <div className="crisis">
-          <strong>If you are in distress or having thoughts of self-harm</strong>
+          <strong>If you are in danger at home, contact the police or local emergency services first. If you are in distress or having thoughts of self-harm:</strong>
           NIMHANS helpline: <a href="tel:08046110007">080-46110007</a> · Tele-MANAS: <a href="tel:14416">14416</a> (free, 24/7)
         </div>
 
@@ -258,6 +302,8 @@ export default function MarriageProblemsIndiaPage() {
           <a href="/support/husband-not-supportive-india" className="related-link">Husband not supportive →</a>
           <a href="/support/arranged-marriage-stress" className="related-link">Arranged marriage stress →</a>
           <a href="/relationship-advice-online-india" className="related-link">Relationship advice online →</a>
+          <a href="/for-women" className="related-link">Support for women →</a>
+          <a href="/divorce-support-india" className="related-link">Thinking about divorce →</a>
         </div>
 
         <div className="cta-card">

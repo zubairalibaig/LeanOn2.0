@@ -3,8 +3,8 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Emotional Support for Women India — Someone Who Actually Listens | LeanOn',
-  description: 'For women carrying the weight of marriage, motherhood, family, and work — all at once. Talk to a screened peer listener who understands what that weight actually feels like. Anonymous. Available now.',
+  title: 'Emotional Support for Women in India — Talk to a Woman Listener, Privately | LeanOn',
+  description: 'A safe, private place for women in India to talk about marriage, relationships, in-laws, motherhood and stress. Choose a woman listener, use any name, text or voice. Listeners never see your number. First 5 minutes free.',
   keywords: [
     'emotional support for women India', 'women mental health India', 'support for women India',
     'working women stress India', 'women emotional health India', 'Indian women mental health',
@@ -12,6 +12,8 @@ export const metadata: Metadata = {
     'women burnout India', 'women carrying everything India', 'support group women India',
     'married women mental health India', 'women emotional support online India',
     'women peer support India', 'strong women who need support India',
+    'talk to a woman listener', 'female listener India', 'safe app for women to talk India',
+    'women relationship problems India', 'married women talk to someone India',
   ],
   alternates: { canonical: 'https://www.leanon.app/for-women', languages: { 'en-IN': 'https://www.leanon.app/for-women' } },
   openGraph: {
@@ -30,18 +32,26 @@ const faqSchema = {
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'Is LeanOn specifically for women?',
+      name: 'Is there a safe app in India where a woman can talk to someone privately?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn is for everyone, but we understand that women in India carry a particular kind of weight — the expectation to hold everything together while rarely being asked how they are doing. Many of our seekers are women navigating the intersection of work, marriage, motherhood, and family pressure. Our listeners understand this from the inside.',
+        text: 'Yes. LeanOn (www.leanon.app) is a peer support app where you talk one-to-one, by text or voice, with a screened listener in India. You use any first name you like, the listener never sees your phone number, and phone numbers, emails and social media handles are blocked in chat, so nobody can pull you onto WhatsApp or Instagram. The first 5 minutes are free; after that a 15-minute session starts at ₹160.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Are the listeners women too?',
+      name: 'Can I choose to talk to a woman?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Many of our listeners are women — some of whom have lived through exactly the kinds of experiences that bring people to LeanOn. You can browse listener profiles and choose someone whose experience resonates with yours. All listeners sign confidentiality agreements and are screened for active listening.',
+        text: 'Yes. On the Browse page every listener shows their real first name, photo, languages and topics, so you can pick a woman listener yourself. Talk now connects you with whoever is online first, so if you would rather talk to a woman, choose from Browse instead.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Will my husband, in-laws or family find out?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Nobody is told. Your listener sees only the name you choose — not your phone number — and never meets anyone in your life. Voice calls are not recorded. Text chats are stored securely and opened only by authorised LeanOn staff if a report is reviewed. If others use your phone, remember the LeanOn app or browser history shows like any other, so use your own phone if you can.',
       },
     },
     {
@@ -49,23 +59,23 @@ const faqSchema = {
       name: 'What do women usually talk about on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'The most common themes for women on LeanOn: feeling invisible in a marriage, maternal burnout and the exhaustion of solo parenting, the emotional weight of family conflict, career breaks and identity erosion, the loneliness of being "the strong one" that everyone else leans on, and the specific ache of not having anyone ask how you are doing.',
+        text: 'Feeling alone inside a marriage, a husband who does not listen, in-law pressure, fights that keep repeating, doubts about an arranged marriage, motherhood exhaustion, career breaks, family pressure to marry, and simply having nobody who asks how you are doing.',
       },
     },
     {
       '@type': 'Question',
-      name: 'I am a working professional. Will this take up too much of my time?',
+      name: 'Is LeanOn therapy or marriage counselling?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Sessions start at 15 minutes. Many women use LeanOn during a lunch break, after the child is in bed, or in a quiet twenty minutes in the car. There is no appointment, no commute, no waiting room. You open the app, choose a listener, and talk. The first 5-minute session free.',
+        text: 'No. LeanOn listeners are screened peers, not therapists or counsellors. They listen and help you think things through; they do not diagnose, give legal advice, or tell you to stay or leave. If you need therapy or couples counselling, LeanOn can sit alongside it, not replace it.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Is it anonymous? Will anyone from my family or workplace know?',
+      name: 'What if I am not safe at home?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes — completely anonymous. You do not need to share your real name. Listeners sign confidentiality agreements and cannot share what you discuss. No one from your family, workplace, or social circle will know you used LeanOn.',
+        text: 'If you are in danger, contact the police or local emergency services first. If you are in emotional crisis or thinking of harming yourself, call Tele-MANAS on 14416 or NIMHANS on 080-46110007 (free). LeanOn is for talking things through, not for emergencies.',
       },
     },
   ],
@@ -193,8 +203,15 @@ export default function ForWomenPage() {
         </div>
 
         <div className="quote-box">
-          <p>"Everything feels like a never ending struggle. I divide my time between my house and my parents house but I don't think they want me — they want my baby. If not for him, I would have given up a long time ago."</p>
-          <span>— a real LeanOn session, shared anonymously</span>
+          <p style={{fontStyle:'normal'}}><strong>The short answer:</strong> LeanOn is a private place for women in India to talk to a real, screened person — by text or voice — about marriage, relationships, in-laws, motherhood or anything else. You can choose a woman listener, use any name, and the listener never sees your number. First 5 minutes free.</p>
+        </div>
+
+        <h2>Built So You Can Talk Safely</h2>
+        <div className="situations">
+          <div className="sit"><div className="sit-icon">🙋‍♀️</div><div className="sit-body"><h3>Choose who you talk to</h3><p>Every listener shows a real first name and photo. Pick a woman listener from Browse if that feels easier.</p></div></div>
+          <div className="sit"><div className="sit-icon">🔒</div><div className="sit-body"><h3>Your number stays private</h3><p>Use any first name. The listener never sees your phone number, and numbers, emails and Instagram handles are blocked in chat.</p></div></div>
+          <div className="sit"><div className="sit-icon">✋</div><div className="sit-body"><h3>You are in control</h3><p>End a session the moment it feels wrong, and report the listener afterwards. Flirting or sexual talk gets a listener banned.</p></div></div>
+          <div className="sit"><div className="sit-icon">🎧</div><div className="sit-body"><h3>Text or voice</h3><p>Type if you cannot speak freely at home. Voice calls are never recorded.</p></div></div>
         </div>
 
         <h2>What Women Talk About on LeanOn</h2>
@@ -225,12 +242,12 @@ export default function ForWomenPage() {
           <div className="how-card">
             <div className="how-num">1</div>
             <h4>Browse listeners</h4>
-            <p>See profiles, experience areas, and availability. Choose someone who resonates.</p>
+            <p>See each listener&apos;s name, photo, languages and topics. Choose a woman listener if you prefer.</p>
           </div>
           <div className="how-card">
             <div className="how-num">2</div>
             <h4>Start talking</h4>
-            <p>Text-based. First 5 minutes free. No appointment, no commute, no waiting room.</p>
+            <p>Text or voice. First 5 minutes free. No appointment, no commute, no waiting room.</p>
           </div>
           <div className="how-card">
             <div className="how-num">3</div>
@@ -251,7 +268,7 @@ export default function ForWomenPage() {
 
         <div className="cta-card">
           <h2>You Deserve to Be Heard Too</h2>
-          <p>Browse screened peer listeners — many of them women, many of them mothers — who understand what you are carrying. Anonymous, available now.</p>
+          <p>Browse screened peer listeners, choose a woman if you prefer, and talk by text or voice. Your number stays private.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Listeners</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works</button></a>

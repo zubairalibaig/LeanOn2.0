@@ -26,7 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/pricing`,                          lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/glossary`,                         lastModified: d('2026-03-01'), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${base}/privacy`,                          lastModified: d('2026-10-16'), changeFrequency: 'yearly',  priority: 0.3 },
-    { url: `${base}/terms`,                            lastModified: d('2026-01-01'), changeFrequency: 'yearly',  priority: 0.3 },
+    { url: `${base}/terms`,                            lastModified: d('2026-10-23'), changeFrequency: 'yearly',  priority: 0.3 },
     { url: `${base}/trust`,                            lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/press`,                            lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.6 },
     // Support hub + topic pages
@@ -161,7 +161,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/blog/signs-you-need-to-talk-to-someone`, lastModified: d(CONTENT_UPDATED),    changeFrequency: 'monthly', priority: 0.92 },
     // Women-targeting hub + seeker pages — Avantikka-cluster (married women, mothers, working women)
     // Both paid sessions to date are women 20s-30s → dedicated women's SEO cluster
-    { url: `${base}/for-women`,                           lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/for-women`,                           lastModified: d('2026-10-23'),        changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/support/married-but-lonely`,          lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/support/mom-burnout-india`,           lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/support/working-woman-india`,         lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.95 },
@@ -196,7 +196,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/online-emotional-support-india`,   lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.9 },
     // AstroTalk-overlap + relationship + loneliness cluster
     { url: `${base}/astrotalk-alternative`,            lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
-    { url: `${base}/relationship-advice-online-india`, lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/relationship-advice-online-india`, lastModified: d('2026-10-23'),        changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/talk-to-real-person-online-india`, lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/support/loneliness`,         lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/alternatives-to-therapy-india`,    lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
@@ -225,7 +225,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // pay-per-minute chat). AstroTalk's top keywords reframed as peer support.
     { url: `${base}/pay-to-talk-online-india`,         lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/love-problems-india`,              lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
-    { url: `${base}/marriage-problems-india`,          lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.97 },
+    { url: `${base}/marriage-problems-india`,          lastModified: d('2026-10-23'),        changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/anonymous-chat-india`,             lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/late-night-support-india`,         lastModified: d(CONTENT_UPDATED),        changeFrequency: 'weekly',  priority: 0.97 },
     // Blog: AstroTalk comparison posts
@@ -483,7 +483,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Round 21b: Real human vs AI — core AEO pages (2026-09-15)
     { url: `${base}/talk-to-human-instead-of-chatgpt`,          lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.98 },
     { url: `${base}/vent-to-a-real-person-online`,        lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.97 },
-    { url: `${base}/relationship-support-real-person`,    lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.97 },
+    { url: `${base}/relationship-support-real-person`,    lastModified: d('2026-10-23'), changeFrequency: 'weekly', priority: 0.97 },
     { url: `${base}/emotional-support-without-ai`,        lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.97 },
     { url: `${base}/india-talk-to-real-person`,           lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.97 },
     { url: `${base}/india-vent-to-real-person`,           lastModified: d(CONTENT_UPDATED), changeFrequency: 'weekly', priority: 0.97 },

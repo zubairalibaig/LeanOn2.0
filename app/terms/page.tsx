@@ -31,7 +31,7 @@ export default function TermsPage() {
       <div className="page">
         <a href="/" className="back">← Back to LeanOn</a>
         <h1>Terms of Use</h1>
-        <p className="updated">Last updated: September 16, 2026</p>
+        <p className="updated">Last updated: October 23, 2026</p>
 
         <div className="warning-box">
           <p>⚠️ LeanOn is a peer support platform only. It is NOT a mental health service, therapy platform, or medical service. Listeners are not licensed therapists, psychologists, or counselors unless an individual profile explicitly states a relevant qualification. If you are in crisis or immediate danger, contact an appropriate local emergency or crisis service where you are.</p>
@@ -61,6 +61,7 @@ export default function TermsPage() {
 
         <h2>4. Listener responsibilities</h2>
         <p>Listeners confirm they are sharing personal lived experience only and are not providing clinical, medical, or professional advice unless a specific service and qualification is explicitly presented and permitted by LeanOn. Listeners must not misrepresent their qualifications.</p>
+        <p>Listeners must keep everything a seeker shares confidential. They must not record, screenshot, copy or repeat it to anyone, and must not try to identify, find or contact a seeker outside LeanOn. Breaking this leads to removal from the platform.</p>
 
         <h2>5. Payments and refunds</h2>
         <ul>

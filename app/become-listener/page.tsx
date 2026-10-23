@@ -848,7 +848,7 @@ export default function BecomeListenerPage() {
         >
           <div className="agree-check">{agreementChecked ? '✓' : ''}</div>
           <div className="agree-text">
-            I have read and understood the above. I am applying because I genuinely want to support people — not for easy money. I agree to LeanOn&apos;s <a href="/terms" onClick={e => e.stopPropagation()} style={{color:'var(--teal)'}}>Terms of Service</a> and <a href="/privacy" onClick={e => e.stopPropagation()} style={{color:'var(--teal)'}}>Privacy Policy</a>.
+            I have read and understood the above. I am applying because I genuinely want to support people — not for easy money. I will keep everything seekers share with me confidential and never contact them outside LeanOn. I agree to LeanOn&apos;s <a href="/terms" onClick={e => e.stopPropagation()} style={{color:'var(--teal)'}}>Terms of Service</a> and <a href="/privacy" onClick={e => e.stopPropagation()} style={{color:'var(--teal)'}}>Privacy Policy</a>.
           </div>
         </div>
 

@@ -38,7 +38,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Will my problems stay private?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Completely. You do not need to share your real name or location. Listeners sign confidentiality agreements before joining LeanOn. What you say in a session stays in that session — it does not reach your friends, your family, or anyone else in your life.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Completely. You do not need to share your real name or location. Listeners agree to keep what you share confidential before joining LeanOn. What you say in a session stays in that session — it does not reach your friends, your family, or anyone else in your life.' },
     },
     {
       '@type': 'Question',

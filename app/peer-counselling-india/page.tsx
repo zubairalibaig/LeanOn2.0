@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'Is peer counselling confidential?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. On LeanOn, all peer counselling sessions are fully confidential. Listeners sign confidentiality agreements and what you share does not leave the session. You use only a first name — no last name, no photo, no social account.',
+        text: 'Yes. On LeanOn, all peer counselling sessions are fully confidential. Listeners agree to keep what you share confidential. You use only a first name — no last name, no photo, no social account.',
       },
     },
     {
@@ -259,7 +259,7 @@ export default function PeerCounsellingIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is peer counselling confidential?</div>
-            <div className="faq-a">Yes. On LeanOn, all sessions are fully confidential. Listeners sign confidentiality agreements and what you share does not leave the session. You use only a first name — no last name, no photo required.</div>
+            <div className="faq-a">Yes. On LeanOn, all sessions are fully confidential. Listeners agree to keep what you share confidential. You use only a first name — no last name, no photo required.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Does peer counselling work for anxiety?</div>

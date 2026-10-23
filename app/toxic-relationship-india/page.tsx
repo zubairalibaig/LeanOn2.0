@@ -48,7 +48,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is it anonymous?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Completely. You use a first name. The listener is bound by a confidentiality agreement. Nothing you say leaves the session. This is especially important when the person you are talking about is also in your social circle.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Completely. You use a first name. The listener is bound by LeanOn’s confidentiality rules. Nothing is shared with anyone in your life. This is especially important when the person you are talking about is also in your social circle.' },
     },
     {
       '@type': 'Question',

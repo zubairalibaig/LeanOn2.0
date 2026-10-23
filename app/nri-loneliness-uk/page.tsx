@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
   { '@type': 'Question', name: 'I grew up here. Is LeanOn still relevant for me?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. British-Indian loneliness is often deeper precisely because it is less visible — you have language, community, a career, but still carry an unnameable weight. Our listeners understand the hyphenated identity and the specific exhaustion that comes with it.' } },
   { '@type': 'Question', name: 'I don\'t want to talk about Indian stuff. Can I just vent about life?', acceptedAnswer: { '@type': 'Answer', text: 'Absolutely. Many callers just want to vent — work, relationships, exhaustion. The India connection just means you never have to explain context you did not ask for. Say what you need to say.' } },
-  { '@type': 'Question', name: 'Is this confidential from my community in the UK?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Anonymous phone number only. No social login. No one in your gurdwara, mandir, or office knows. Listeners sign confidentiality agreements.' } },
+  { '@type': 'Question', name: 'Is this confidential from my community in the UK?', acceptedAnswer: { '@type': 'Answer', text: 'Completely. Anonymous phone number only. No social login. No one in your gurdwara, mandir, or office knows. Listeners agree to keep what you share confidential.' } },
   { '@type': 'Question', name: 'What are good times to call from the UK?', acceptedAnswer: { '@type': 'Answer', text: 'Indian listeners are active evenings IST. That is lunchtime to early afternoon UK time: 12:30pm–5:30pm GMT (winter) or 1:30pm–6:30pm BST (summer). A lunchtime call works perfectly.' } },
 ] }
 

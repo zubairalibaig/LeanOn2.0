@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Relationship Advice Online India — Real Human Support, Not Predictions',
-    description: 'Talk to a screened peer listener about relationship problems. Anonymous, affordable, and available 24/7 across India.',
+    description: 'Talk to a screened peer listener about relationship problems. Private, affordable, first 5 minutes free.',
     url: 'https://www.leanon.app/relationship-advice-online-india',
     siteName: 'LeanOn',
     type: 'article',
@@ -42,7 +42,7 @@ const faqSchema = {
       name: 'Is it safe to talk about my relationship problems online?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn is private — your name and personal details are never shared with listeners. All conversations are private and confidential.',
+        text: 'Yes. LeanOn is private — listeners see only the name you choose, never your phone number. Voice is never recorded, and text is opened only by authorised LeanOn staff when a report is reviewed.',
       },
     },
     {
@@ -66,7 +66,7 @@ const faqSchema = {
       name: 'Is LeanOn better than searching for a relationship counsellor?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn is a good first step when you are not sure if you need therapy, or when you just want to talk and feel heard right now. Therapy typically costs ₹1,500–₹3,000 per session and requires scheduling in advance. LeanOn sessions start at ₹15 and are available immediately.',
+        text: 'LeanOn is a good first step when you are not sure if you need therapy, or when you just want to talk and feel heard right now. Therapy typically costs ₹1,500–₹3,000 per session and requires scheduling in advance. A 15-minute LeanOn session starts at ₹160, with no appointment, and the first 5 minutes are free.',
       },
     },
   ],
@@ -229,7 +229,7 @@ export default function RelationshipAdvicePage() {
         <div className="card">
           <h2>More affordable than therapy</h2>
           <p>A therapy session in India typically costs ₹1,500–₹3,000 and requires an appointment booked days
-            in advance. LeanOn sessions start at ₹15 and are available right now, 24/7.</p>
+            in advance. A 15-minute LeanOn session starts at ₹160, with no appointment.</p>
           <p>LeanOn is not therapy — but for the moments when you just need to talk, it is often exactly
             what you actually need.</p>
         </div>
@@ -251,8 +251,8 @@ export default function RelationshipAdvicePage() {
           </div>
           <div className="faq-item">
             <h3>Is it safe to talk about my relationship problems online?</h3>
-            <p>Yes. LeanOn is private — your name and personal details are never shared with listeners.
-              All conversations are private and confidential.</p>
+            <p>Yes. LeanOn is private — listeners see only the name you choose, never your phone number.
+              Voice is never recorded, and text is opened only by authorised LeanOn staff when a report is reviewed.</p>
           </div>
           <div className="faq-item">
             <h3>What kinds of relationship issues can I talk about?</h3>
@@ -262,8 +262,8 @@ export default function RelationshipAdvicePage() {
           <div className="faq-item">
             <h3>Is LeanOn better than searching for a relationship counsellor?</h3>
             <p>LeanOn is a good first step when you just want to talk and feel heard right now. Therapy costs
-              ₹1,500–₹3,000 per session and requires advance scheduling. LeanOn sessions start at ₹15 and
-              are available immediately.</p>
+              ₹1,500–₹3,000 per session and requires advance scheduling. A 15-minute LeanOn session starts at ₹160,
+              with no appointment.</p>
           </div>
           <div className="faq-item">
             <h3>Can a peer listener help with serious problems like domestic abuse?</h3>

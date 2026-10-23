@@ -56,7 +56,7 @@ export const post = {
 
 <p>The reason talking to friends has limits is that your friends know your family. They may have opinions. Something you tell them may reach the wrong person. And even when none of that happens, you are aware of the risk, which keeps you from saying the full, unmanaged truth.</p>
 
-<p>A peer listener on LeanOn has no connection to your family, your social circle, or your community. They do not know the people you are talking about. They have no stake in the outcome. They signed a confidentiality agreement. What you say in that conversation ends there — and you can say it in full knowledge of that, which changes what actually gets said.</p>
+<p>A peer listener on LeanOn has no connection to your family, your social circle, or your community. They do not know the people you are talking about. They have no stake in the outcome. They agreed to keep it confidential. What you say in that conversation ends there — and you can say it in full knowledge of that, which changes what actually gets said.</p>
 
 <h2>You Are Not Betraying Your Family by Needing This</h2>
 

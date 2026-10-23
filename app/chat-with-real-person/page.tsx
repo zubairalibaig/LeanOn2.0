@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'Is talking to a real person online safe and anonymous in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. On LeanOn, you do not need to share your name, city, or any personal details. Listeners are verified, screened for active listening, and sign confidentiality agreements. Sessions are private by design. You can talk about anything — your family, your relationship, your darkest thoughts — without fear of judgment or disclosure.',
+        text: 'Yes. On LeanOn, you do not need to share your name, city, or any personal details. Listeners are verified, screened, and agree to keep what you share confidential. Sessions are private by design. You can talk about anything — your family, your relationship, your darkest thoughts — without fear of judgment or disclosure.',
       },
     },
     {

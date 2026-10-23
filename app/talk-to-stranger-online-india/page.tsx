@@ -35,7 +35,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is it safe to talk to a stranger online in India?',
-      acceptedAnswer: { '@type': 'Answer', text: 'On LeanOn, yes. Unlike random chat apps, LeanOn listeners are screened, approved, and bound by a confidentiality agreement. They are not random strangers — they are peer listeners who have applied, been reviewed, and selected to hold space for difficult conversations. You can be anonymous; they are accountable.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'On LeanOn, yes. Unlike random chat apps, LeanOn listeners are screened, approved, and bound by LeanOn’s confidentiality rules. They are not random strangers — they are peer listeners who have applied, been reviewed, and selected to hold space for difficult conversations. You can be anonymous; they are accountable.' },
     },
     {
       '@type': 'Question',

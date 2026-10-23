@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'Is it safe to talk about parenting struggles on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes — completely. Listeners sign confidentiality agreements. You do not need to share your real name. What you share in a session stays there. Many people find that the anonymity of LeanOn is specifically what makes it possible to say the things they cannot say to family or friends — including the messy, ambivalent, exhausted parts of parenting that feel too vulnerable to share with people who know your child.',
+        text: 'Yes — completely. Listeners agree to keep what you share confidential. You do not need to share your real name. What you share in a session stays there. Many people find that the anonymity of LeanOn is specifically what makes it possible to say the things they cannot say to family or friends — including the messy, ambivalent, exhausted parts of parenting that feel too vulnerable to share with people who know your child.',
       },
     },
     {

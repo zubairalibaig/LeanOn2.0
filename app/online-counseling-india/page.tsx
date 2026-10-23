@@ -59,7 +59,7 @@ const faqSchema = {
       name: 'Will anyone know I used LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'No. You can use LeanOn without sharing your real name. There is no formal record of your sessions, no diagnosis, no file that follows you. Listeners sign confidentiality agreements and are bound not to share what they hear. Your privacy is treated seriously — LeanOn is designed from the ground up to be a space where you can speak freely without any social or professional consequences.',
+        text: 'No. You can use LeanOn without sharing your real name. There is no formal record of your sessions, no diagnosis, no file that follows you. Listeners agree not to share what they hear. Your privacy is treated seriously — LeanOn is designed from the ground up to be a space where you can speak freely without any social or professional consequences.',
       },
     },
     {

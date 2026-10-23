@@ -38,7 +38,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is it safe to talk about this on LeanOn?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are completely anonymous and confidential. You do not use your full name. The listener is bound by a confidentiality agreement. Nothing leaves the session. LeanOn is specifically designed for situations where you cannot speak freely in the rest of your life.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are completely anonymous and confidential. You do not use your full name. The listener is bound by LeanOn’s confidentiality rules. Nothing leaves the session. LeanOn is specifically designed for situations where you cannot speak freely in the rest of your life.' },
     },
     {
       '@type': 'Question',
@@ -48,7 +48,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'What if I am in danger?',
-      acceptedAnswer: { '@type': 'Answer', text: 'If you are in immediate danger or fear for your physical safety, please call NIMHANS on 080-46110007 or Tele-MANAS on 14416. Both are free and available 24/7. LeanOn peer support is for emotional processing — it is not a crisis intervention service.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'If you are in immediate danger or fear for your physical safety, contact the police or local emergency services first. If you are in emotional crisis, call Tele-MANAS on 14416 or NIMHANS on 080-46110007 (free). LeanOn peer support is for emotional processing — it is not a crisis intervention service.' },
     },
     {
       '@type': 'Question',

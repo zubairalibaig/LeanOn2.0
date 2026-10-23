@@ -43,7 +43,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Will it stay anonymous?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. You sign up with a first name and phone number. Listeners sign confidentiality agreements. Nobody in your life will know you talked to anyone. This is especially important in India, where social networks are dense and word travels fast. LeanOn is the place you can say the thing you cannot say anywhere else.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. You sign up with a first name and phone number. Listeners agree to keep what you share confidential. Nobody in your life will know you talked to anyone. This is especially important in India, where social networks are dense and word travels fast. LeanOn is the place you can say the thing you cannot say anywhere else.' },
     },
     {
       '@type': 'Question',
