@@ -30,6 +30,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/trust`,                            lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/press`,                            lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.6 },
     // Support hub + topic pages
+    { url: `${base}/relationship-emotional-support-guide-india`, lastModified: d('2026-10-24'), changeFrequency: 'monthly', priority: 0.92 },
     { url: `${base}/support`,                          lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/support/loneliness`,               lastModified: d('2026-10-17'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/support/anxiety`,                  lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.85 },
