@@ -184,7 +184,7 @@ export default function LonelinessSupportPage() {
           <p>Our listeners have personally experienced loneliness — many of them have relocated to new cities, navigated WFH isolation, or gone through years of feeling misunderstood. They are not reading from a script. They know what it feels like.</p>
 
           <h3>Available When Loneliness Peaks</h3>
-          <p>Loneliness tends to be worst at night and on weekends. LeanOn listeners are available 24/7, including at 2 AM on a Sunday when you most need someone to talk to and feel like there is no one.</p>
+          <p>Loneliness tends to be worst at night and on weekends. LeanOn listeners go online at different hours, often late at night and on weekends, when you most need someone to talk to and feel like there is no one.</p>
 
           <h3>Private and Judgment-Free</h3>
           <p>In Indian social contexts, admitting loneliness is often seen as shameful — a sign that you are unlikeable or socially deficient. LeanOn offers complete privacy. No one in your life needs to know. You can be honest about exactly how you feel without any social consequences.</p>
@@ -228,7 +228,7 @@ export default function LonelinessSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Feel Less Alone?</h2>
-          <p>Talk to a peer listener who truly understands loneliness. Available 24/7, no appointments, no waitlists.</p>
+          <p>Talk to a peer listener who truly understands loneliness. No appointments, no waitlists.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Someone is listening — start free now →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>

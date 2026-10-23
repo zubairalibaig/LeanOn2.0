@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -128,6 +129,7 @@ export default function DivorceSupportIndiaPage() {
           <p className="lead">In India, divorce carries shame, family pressure, financial panic, and grief &mdash; all at once. You can&apos;t tell most people. You&apos;re managing everyone else&apos;s reactions while barely managing your own. Say it here.</p>
           <a href="/browse" className="cta-hero">Talk to someone &rarr;</a>
         </div>
+        <GeoQuickAnswer path="/divorce-support-india" />
         <div className="section">
           <h2>Why Divorce Hits Different in India</h2>
           <p>In India, marriage is not just a relationship between two people. It is a contract between two families, embedded in social identity, community standing, and in many cases religious significance. When it ends, the impact radiates outward in ways that do not happen in cultures where divorce is less socially loaded.</p>

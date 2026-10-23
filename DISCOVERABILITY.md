@@ -1,9 +1,50 @@
 # LeanOn Discoverability & SEO Master Plan
 
-**Last updated:** 2026-09-24  
+**Last updated:** 2026-10-23  
 **Goal:** Be the first result for "lean on", "leanon", "empathy", and all mental health / peer support / peer counselling / emotional support searches in India. Be cited in ChatGPT, Gemini, Perplexity, and Claude answers. **Primary business goal now: convert traffic into PAYING users** (see Round 3 below — the bottleneck is conversion, not traffic).
 
 **Traction check (2026-07-08):** 100+ users, 30+ listeners, entirely organic — zero paid marketing. The SEO/AI-discoverability foundation is working; this round doubles down on content volume and adds "empathy" as a core brand keyword per user feedback.
+
+---
+
+## Round 15 — Top 50 questions for AI assistants + truth sweep (2026-10-23)
+
+**Why:** ChatGPT, Copilot and Perplexity recommend services they can quote, and they quote pages
+that answer the question directly and agree with every other page about the facts.
+
+**Where the 50 came from.** ChatGPT publishes no query volumes, so the list is built from:
+- the Bing Webmaster exports for leanon.app (16 Oct). The long rows ("india peer support chat
+  loneliness", "relationship breakup emotional support india tele manas 14416") are the searches
+  AI assistants run behind the scenes;
+- OpenAI's usage study: Relationships & personal reflection is about 1.9% of messages;
+- a 2025 study of people using ChatGPT for mental health: stress/anxiety 64%, interpersonal problems 53.5%.
+
+`source` in `lib/geo-questions.ts` records which signal backs each question.
+
+**What was built (no new keyword pages — the 60-day pause holds):**
+- `lib/geo-questions.ts` holds the 50 questions (20 relationships, 18 mental health, 12 peer support).
+  Each has an answer-first reply and the existing, indexable page that answers it. This is the
+  single source for everything below.
+- `/answers`: one hub listing all 50 with FAQPage JSON-LD. It's in the sitemap and the footer.
+- `GeoQuickAnswer` puts the answer at the top of 29 target pages and of 6 blog posts (via the blog
+  template), using the existing `QuickAnswer` box with live prices. Pages that already had a quick
+  answer, and the three `ReadyToTalkLanding` template pages, are covered by `/answers` and `llms.txt` instead.
+- `public/llms.txt` has a "Top questions" section, regenerated with `npx tsx scripts/sync-llms-questions.ts`.
+- GA4: a `purchase` event on every successful wallet recharge and `browse_request` on profile
+  bookings (`lib/analytics.ts`). `/talk` already tracked its funnel. In GA, mark `purchase` as a key
+  event; then Reports → Engagement → Landing page shows which SEO pages bring paying users (Round 13, item 6).
+
+**Truth sweep (answers have to agree):**
+- About 240 "available 24/7" promises are gone across about 100 pages, including the share image
+  shown for every page and comparison tables. They now say "no appointment" or "listeners go
+  online at different hours". Helpline 24/7 facts stay.
+- Overseas pages (Canada, Malaysia, Singapore, UK, USA) no longer promise "any time of day or night".
+  They say availability follows Indian time.
+- Also fixed: "listeners sign confidentiality agreements" (now true, see Terms §4), "₹15 sessions",
+  "first 5 minutes of every session free", "listeners are trained", and an overseas page quoting ₹160.
+
+**Rule:** when adding or editing one of the 50, edit `lib/geo-questions.ts`, re-run the sync script,
+and keep answers inside CLAUDE.md's copy rules.
 
 ---
 

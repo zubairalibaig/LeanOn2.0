@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Laid Off? Talk to Someone Who Has Been There | LeanOn India',
-  description: 'Job loss hurts more than the paycheck. Talk anonymously to a peer listener who has been laid off and rebuilt. Available 24/7 across India.',
+  description: 'Job loss hurts more than the paycheck. Talk anonymously to a peer listener who has been laid off and rebuilt. No appointment needed.',
   alternates: { canonical: 'https://www.leanon.app/support/job-loss', languages: { 'en-IN': 'https://www.leanon.app/support/job-loss' } },
   keywords: 'job loss depression India, laid off emotional support, coping with layoff India, lost my job India, talk to someone after layoff, job loss anxiety, unemployment stress India, peer support after being fired',
   openGraph: {
     title: 'Laid Off? Talk to Someone Who Has Been There | LeanOn India',
-    description: 'Job loss hurts more than the paycheck. Talk anonymously to a peer listener who has been laid off and rebuilt. Available 24/7 across India.',
+    description: 'Job loss hurts more than the paycheck. Talk anonymously to a peer listener who has been laid off and rebuilt. No appointment needed.',
     url: 'https://www.leanon.app/support/job-loss',
     siteName: 'LeanOn',
     type: 'article',
@@ -149,7 +149,7 @@ export default function JobLossSupportPage() {
         <div className="hero">
           <p className="tag">Peer Support · Job Loss</p>
           <h1>Losing a Job Isn&apos;t Losing Your <em>Worth</em></h1>
-          <p className="lead">A layoff email takes thirty seconds to read and months to absorb. If you&apos;re staring at a laptop you no longer have a login for, wondering how to tell anyone — LeanOn connects you with peer listeners who have been laid off themselves, and rebuilt. Available 24/7.</p>
+          <p className="lead">A layoff email takes thirty seconds to read and months to absorb. If you&apos;re staring at a laptop you no longer have a login for, wondering how to tell anyone — LeanOn connects you with peer listeners who have been laid off themselves, and rebuilt. No appointment needed.</p>
         </div>
 
         {/* Understanding */}
@@ -226,7 +226,7 @@ export default function JobLossSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>You Don&apos;t Have to Carry This Alone</h2>
-          <p>Talk to a peer listener who has been laid off and rebuilt. Available 24/7, no subscription, no one in your life needs to know.</p>
+          <p>Talk to a peer listener who has been laid off and rebuilt. No subscription, no one in your life needs to know.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">You're not alone in this — first 5 min free →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>

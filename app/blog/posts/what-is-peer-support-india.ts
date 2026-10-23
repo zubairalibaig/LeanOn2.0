@@ -93,7 +93,7 @@ export const post = {
 
 <p><strong>Anonymous by default.</strong> You do not need to reveal your identity to open up — this matters in a culture where the fear of being recognised or talked about often keeps people from being honest, even with those who care about them.</p>
 
-<p><strong>Available 24/7.</strong> Emotional difficulty does not keep office hours. A 3am spiral, a panic before a difficult family conversation, a wave of loneliness on a quiet weeknight — LeanOn&apos;s listeners are reachable when these moments actually happen, not only within a scheduled appointment window.</p>
+<p><strong>No appointment.</strong> Emotional difficulty does not keep office hours. A 3am spiral, a panic before a difficult family conversation, a wave of loneliness on a quiet weeknight — LeanOn&apos;s listeners are reachable when these moments actually happen, not only within a scheduled appointment window.</p>
 
 <p><strong>Affordable, pay-per-minute pricing.</strong> Rather than committing to an expensive session up front, you pay only for the time you actually use, making support financially accessible for far more people, including students and those early in their careers.</p>
 

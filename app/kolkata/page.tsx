@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support in Kolkata — Peer Listeners | LeanOn',
-  description: 'Connect with peer listeners in Kolkata, India. Available 24/7. Talk anonymously in Bengali, Hindi, or English about loneliness, family pressure, and more on LeanOn.',
+  description: 'Connect with peer listeners in Kolkata, India. No appointment needed. Talk anonymously in Bengali, Hindi, or English about loneliness, family pressure, and more on LeanOn.',
   alternates: { canonical: 'https://www.leanon.app/kolkata', languages: { 'en-IN': 'https://www.leanon.app/kolkata' } },
   keywords: 'peer support Kolkata, emotional support Kolkata, loneliness Kolkata, talk to someone Kolkata, Bengali emotional support, family pressure Kolkata, leanon Kolkata',
   openGraph: {
     title: 'Emotional Support in Kolkata — Peer Listeners | LeanOn',
-    description: 'Connect with peer listeners in Kolkata, India. Available 24/7. Talk anonymously in Bengali, Hindi, or English on LeanOn.',
+    description: 'Connect with peer listeners in Kolkata, India. No appointment needed. Talk anonymously in Bengali, Hindi, or English on LeanOn.',
     url: 'https://www.leanon.app/kolkata',
     siteName: 'LeanOn',
     type: 'article',
@@ -175,7 +175,7 @@ export default function KolkataPage() {
 
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Gets Kolkata?</h2>
-          <p>Browse peer listeners who understand the stay-or-leave dilemma, family expectations, and the loneliness no adda quite reaches. Sessions in Bengali, Hindi, or English. Available 24/7.</p>
+          <p>Browse peer listeners who understand the stay-or-leave dilemma, family expectations, and the loneliness no adda quite reaches. Sessions in Bengali, Hindi, or English. No appointment needed.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Listeners</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now</button></a>

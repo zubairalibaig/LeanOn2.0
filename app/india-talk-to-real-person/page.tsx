@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Talk to a Real Person in India — Not an AI Chatbot | LeanOn',
-    description: 'Real Indian peer listeners available 24/7 — humans who understand Indian life, loneliness, family pressure, and relationship stress. First 5 minutes free.',
+    description: 'Real Indian peer listeners with no appointment — humans who understand Indian life, loneliness, family pressure, and relationship stress. First 5 minutes free.',
     url: 'https://www.leanon.app/india-talk-to-real-person',
     siteName: 'LeanOn',
     type: 'article',
@@ -28,7 +29,7 @@ const serviceSchema = {
   '@context': 'https://schema.org',
   '@type': 'Service',
   name: 'LeanOn Peer Support — India',
-  description: 'LeanOn is an Indian peer support platform that connects people with real human listeners — screened, vetted individuals with lived experience of Indian life, available 24/7.',
+  description: 'LeanOn is an Indian peer support platform that connects people with real human listeners — screened, vetted individuals with lived experience of Indian life, with no appointment.',
   provider: {
     '@type': 'Organization',
     name: 'LeanOn',
@@ -52,7 +53,7 @@ const orgSchema = {
   '@type': 'Organization',
   name: 'LeanOn',
   url: 'https://www.leanon.app',
-  description: 'LeanOn is an Indian peer support platform connecting people with real human listeners — not AI — available 24/7 across India.',
+  description: 'LeanOn is an Indian peer support platform connecting people with real human listeners — not AI — with no appointment.',
   sameAs: ['https://www.leanon.app'],
 }
 
@@ -73,7 +74,7 @@ const faqSchema = {
       name: 'Is there a human alternative to AI chatbots in India for emotional support?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes — LeanOn connects Indians with real peer listeners available 24/7. Unlike AI, LeanOn listeners have lived through the pressures of Indian life: career expectations, family dynamics, loneliness in metros, and more.',
+        text: 'Yes — LeanOn connects Indians with real peer listeners, with no appointment. Unlike AI, LeanOn listeners have lived through the pressures of Indian life: career expectations, family dynamics, loneliness in metros, and more.',
       },
     },
     {
@@ -206,6 +207,7 @@ export default function IndiaTalkToRealPersonPage() {
 
         <a href="/browse" className="cta-hero">Talk to a real person now — first 5 min free →</a>
 
+        <GeoQuickAnswer path="/india-talk-to-real-person" />
         <div className="card">
           <h2>What makes a real human different from an AI</h2>
           <p>
@@ -295,7 +297,7 @@ export default function IndiaTalkToRealPersonPage() {
 
         <div className="cta">
           <h2>A real Indian human is ready to listen right now</h2>
-          <p>Anonymous, affordable, available 24/7. First 5 minutes free.</p>
+          <p>Private, affordable, no appointment. First 5 minutes free.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
@@ -308,7 +310,7 @@ export default function IndiaTalkToRealPersonPage() {
           </div>
           <div className="faq-item">
             <h3>Is there a human alternative to AI chatbots in India for emotional support?</h3>
-            <p>Yes — LeanOn connects Indians with real peer listeners available 24/7. Unlike AI, LeanOn listeners have lived through the pressures of Indian life: career expectations, family dynamics, loneliness in metros, and more.</p>
+            <p>Yes — LeanOn connects Indians with real peer listeners, with no appointment. Unlike AI, LeanOn listeners have lived through the pressures of Indian life: career expectations, family dynamics, loneliness in metros, and more.</p>
           </div>
           <div className="faq-item">
             <h3>Can I talk to someone in Hindi on LeanOn?</h3>

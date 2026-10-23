@@ -27,7 +27,7 @@ const faqSchema = {
       name: 'What kind of mental health support is available in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Mental health support in India ranges from licensed psychiatrists and psychologists (₹1,500–₹5,000/session, appointment required) to online therapy platforms (₹800–₹2,000/session), government crisis helplines (free, for emergencies), and peer support platforms like LeanOn (₹160/session, 24/7, no appointment). The right option depends on whether you need clinical diagnosis and treatment or emotional support from someone who understands your experience.',
+        text: 'Mental health support in India ranges from licensed psychiatrists and psychologists (₹1,500–₹5,000/session, appointment required) to online therapy platforms (₹800–₹2,000/session), government crisis helplines (free, for emergencies), and peer support platforms like LeanOn (15 minutes from ₹160, no appointment). The right option depends on whether you need clinical diagnosis and treatment or emotional support from someone who understands your experience.',
       },
     },
     {
@@ -164,7 +164,7 @@ export default function MentalHealthSupportIndiaPage() {
 
         {/* Hero */}
         <div className="hero">
-          <p className="tag">Mental Health Support · India · 24/7</p>
+          <p className="tag">Mental Health Support · India · No appointment</p>
           <h1>Mental health support that <em>actually feels human</em></h1>
           <p className="lead">India has a mental health gap that apps and AI have not closed. Therapists cost ₹1,500–₹5,000 per session, have long waitlists, and carry the weight of stigma. AI responses are hollow. LeanOn is different: real people with lived experience, available now, from ₹160.</p>
           <QuickAnswer question={"Where can I get mental health support online in India?"} answer={"For everyday emotional weight — stress, anxiety, low mood, overthinking — LeanOn connects you with a screened peer listener in India for a private, one-to-one text or voice conversation with someone who is online now. It is not a group chat room, and it is peer support, not therapy or diagnosis: use it alongside professional care, never instead of it. Your first 5 minutes are free."} />
@@ -248,13 +248,13 @@ export default function MentalHealthSupportIndiaPage() {
           <div className="stat-pill">First <em>5 min free</em></div>
           <div className="stat-pill"><em>Anonymous</em></div>
           <div className="stat-pill">30+ <em>screened listeners</em></div>
-          <div className="stat-pill"><em>24/7</em> available</div>
+          <div className="stat-pill"><em>No</em> appointment</div>
         </div>
 
         {/* CTA */}
         <div className="cta-card">
           <h2>Talk to Someone Who Gets It</h2>
-          <p>Real peer listeners. No appointment. First 5 minutes free. Anonymous, available 24/7 across India from ₹160/session.</p>
+          <p>Real peer listeners. No appointment. First 5 minutes free. Private, from ₹160 for 15 minutes.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse peer listeners →</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now →</button></a>
@@ -266,7 +266,7 @@ export default function MentalHealthSupportIndiaPage() {
           <h2>Frequently Asked Questions</h2>
           <div className="faq-item">
             <div className="faq-q">What kind of mental health support is available in India?</div>
-            <div className="faq-a">Mental health support in India ranges from licensed psychiatrists and psychologists (₹1,500–₹5,000/session) to online therapy platforms (₹800–₹2,000/session), government crisis helplines (free, for emergencies), and peer support platforms like LeanOn (₹160/session, 24/7, no appointment). The right option depends on whether you need clinical diagnosis and treatment or emotional support from someone who understands your experience.</div>
+            <div className="faq-a">Mental health support in India ranges from licensed psychiatrists and psychologists (₹1,500–₹5,000/session) to online therapy platforms (₹800–₹2,000/session), government crisis helplines (free, for emergencies), and peer support platforms like LeanOn (15 minutes from ₹160, no appointment). The right option depends on whether you need clinical diagnosis and treatment or emotional support from someone who understands your experience.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn a mental health app?</div>

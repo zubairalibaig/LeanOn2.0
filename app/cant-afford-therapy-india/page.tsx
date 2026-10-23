@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -166,6 +167,7 @@ export default function CantAffordTherapyIndiaPage() {
           <a href="/browse" className="cta-hero">See peer support options →</a>
         </div>
 
+        <GeoQuickAnswer path="/cant-afford-therapy-india" />
         <div className="section">
           <h2>The Honest Price of Therapy in India Right Now</h2>
           <p>Let us put actual numbers on this. In major Indian cities, a 50-minute session with a licensed psychologist or therapist typically costs:</p>

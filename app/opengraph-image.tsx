@@ -27,7 +27,7 @@ export default function OgImage() {
           Someone to lean on, anytime.
         </div>
         <div style={{ display: 'flex', fontSize: 26, fontWeight: 500, color: 'rgba(255,255,255,0.75)', marginTop: 28 }}>
-          Peer emotional support · India · 24/7 · Anonymous · leanon.app
+          Peer emotional support · India · Anonymous · leanon.app
         </div>
         <div
           style={{
@@ -41,7 +41,7 @@ export default function OgImage() {
             borderRadius: 50,
           }}
         >
-          Available 24/7
+          First 5 minutes free
         </div>
       </div>
     ),

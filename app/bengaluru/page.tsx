@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support in Bengaluru — Peer Listeners | LeanOn',
-  description: 'Connect with peer listeners in Bengaluru, India. Available 24/7. Talk anonymously on LeanOn.',
+  description: 'Connect with peer listeners in Bengaluru, India. No appointment needed. Talk anonymously on LeanOn.',
   alternates: { canonical: 'https://www.leanon.app/bengaluru', languages: { 'en-IN': 'https://www.leanon.app/bengaluru' } },
   keywords: 'peer support Bengaluru, emotional support Bangalore, loneliness Bangalore, startup burnout Bengaluru, talk to someone Bangalore, leanon Bengaluru',
   openGraph: {
     title: 'Emotional Support in Bengaluru — Peer Listeners | LeanOn',
-    description: 'Connect with peer listeners in Bengaluru, India. Available 24/7. Talk anonymously on LeanOn.',
+    description: 'Connect with peer listeners in Bengaluru, India. No appointment needed. Talk anonymously on LeanOn.',
     url: 'https://www.leanon.app/bengaluru',
     siteName: 'LeanOn',
     type: 'article',
@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'Is LeanOn peer support different from therapy or counselling?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn is peer support, not therapy. Our listeners are screened peers who have lived through the experiences they support — they are not licensed therapists. This makes it more accessible, more affordable (starting at ₹160 for 15 minutes), and available 24/7. For clinical mental health concerns, we always recommend professional help. For the day-to-day weight of modern Bengaluru life, peer support is often exactly what is needed.',
+        text: 'Yes. LeanOn is peer support, not therapy. Our listeners are screened peers who have lived through the experiences they support — they are not licensed therapists. This makes it more accessible, more affordable (starting at ₹160 for 15 minutes). For clinical mental health concerns, we always recommend professional help. For the day-to-day weight of modern Bengaluru life, peer support is often exactly what is needed.',
       },
     },
   ],
@@ -283,7 +283,7 @@ export default function BengaluruPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn peer support different from therapy or counselling?</div>
-            <div className="faq-a">Yes. LeanOn is peer support, not therapy. Our listeners are screened peers who have lived through the experiences they support — not licensed therapists. This makes it more accessible, more affordable (starting at ₹160 for 15 minutes), and available 24/7. For clinical mental health concerns, we always recommend professional help. For the day-to-day weight of Bengaluru life, peer support is often exactly what is needed.</div>
+            <div className="faq-a">Yes. LeanOn is peer support, not therapy. Our listeners are screened peers who have lived through the experiences they support — not licensed therapists. This makes it more accessible, more affordable (starting at ₹160 for 15 minutes). For clinical mental health concerns, we always recommend professional help. For the day-to-day weight of Bengaluru life, peer support is often exactly what is needed.</div>
           </div>
         </div>
 

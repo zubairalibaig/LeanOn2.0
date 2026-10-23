@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const metadata: Metadata = {
   title: 'Is LeanOn Safe? Privacy & Anonymity Explained',
@@ -82,6 +83,7 @@ export default function IsLeanOnSafePage() {
           ))}
         </div>
 
+        <GeoQuickAnswer path="/is-leanon-safe" />
         <div className="card">
           <h2>Our listener verification process</h2>
           <p>Every listener on LeanOn is a real person who has applied, shared their lived experience, and been approved by our team. We check for empathy, genuine experience, and adherence to our Code of Conduct. Listeners who violate our terms are removed immediately.</p>
@@ -97,7 +99,7 @@ export default function IsLeanOnSafePage() {
 
         <div className="cta">
           <h2>You are safe here</h2>
-          <p>Browse listeners anonymously. Available 24/7, no appointment needed.</p>
+          <p>Browse listeners anonymously. No appointment needed.</p>
           <a href="/browse"><button className="btn">Browse listeners →</button></a>
         </div>
       </div>

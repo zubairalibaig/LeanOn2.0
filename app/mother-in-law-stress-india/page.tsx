@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -47,8 +48,8 @@ const faqSchema = {
     },
     {
       '@type': 'Question',
-      name: 'Is LeanOn available 24/7?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are available whenever you need them — early morning, late night, or during the workday. There is no appointment. You browse listeners who are online right now and start a session. The first 5-minute session free.' },
+      name: 'Can I talk at any time of day?',
+      acceptedAnswer: { '@type': 'Answer', text: 'There is no appointment. Listeners go online at different hours — early morning, late night, during the workday — and Browse shows who is online right now. The first 5-minute session free.' },
     },
     {
       '@type': 'Question',
@@ -134,6 +135,7 @@ export default function MotherInLawStressIndiaPage() {
           <a href="/browse" className="cta-hero">Talk to someone now &rarr;</a>
         </div>
 
+        <GeoQuickAnswer path="/mother-in-law-stress-india" />
         <div className="section">
           <h2>Why In-Law Stress Is Different From Other Stress</h2>
           <p>Most stressors have a clear outside and inside. Work stress is about work. Financial stress is about money. But in-law stress is inside your home and inside your marriage at the same time. There is nowhere to go to get away from it. The person you would normally turn to for support is also the person at the centre of the situation.</p>

@@ -183,7 +183,7 @@ export default function UKVentRealPersonPage() {
         <h1>Sometimes the Very British Thing to Do<br />Is Not to Say Anything.<br />That&apos;s the Problem.</h1>
         <p className="lead">
           LeanOn is a peer support platform where people in the UK can vent to a real human listener —
-          anonymously, without judgment, any time of day or night. No AI. No waiting lists. No stiff
+          anonymously, without judgment, whenever a listener is online (they are in India). No AI. No waiting lists. No stiff
           upper lip required. Just a real person ready to hear you out.
         </p>
 

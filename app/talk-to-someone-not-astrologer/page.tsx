@@ -180,7 +180,7 @@ export default function TalkToSomeoneNotAstrologerPage() {
           <p>You don't need a horoscope question to justify wanting to talk. "I just need to tell someone how today went" is a complete and valid reason to open a chat. The conversation is the point, not a means to an ending or a forecast.</p>
 
           <h3>Anonymous, Judgment-Free, Always On</h3>
-          <p>You can talk using just a first name. No one on the other end needs your birth details, your identity, or your history to be genuinely, empathetically present with you. And like the astrology chats that stay open past midnight, LeanOn is available whenever the need actually shows up — 24/7.</p>
+          <p>You can talk using just a first name. No one on the other end needs your birth details, your identity, or your history to be genuinely, empathetically present with you. And like the astrology chats that stay open past midnight, LeanOn listeners go online at different hours, often when the need actually shows up.</p>
 
           <h3>You Choose Who You Talk To</h3>
           <p>Instead of being matched by planetary alignment, you pick a listener based on what they've actually lived through — grief, breakups, work stress, loneliness, family pressure. It's a small shift, but it means the connection is grounded in shared human experience rather than a birth chart.</p>
@@ -189,7 +189,7 @@ export default function TalkToSomeoneNotAstrologerPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Talk to a Real Person?</h2>
-          <p>No birth chart needed. Just a first name and whatever's actually on your mind. Available 24/7, completely private.</p>
+          <p>No birth chart needed. Just a first name and whatever's actually on your mind. Completely private.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Listeners</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now</button></a>

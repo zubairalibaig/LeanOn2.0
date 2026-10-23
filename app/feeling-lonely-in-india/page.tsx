@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Feeling Lonely in India? Talk to Someone Who Understands | LeanOn',
-  description: 'Feeling lonely in India? You are not alone. Connect with peer listeners who have experienced loneliness and found their way through. Anonymous, available 24/7.',
+  description: 'Feeling lonely in India? You are not alone. Connect with peer listeners who have experienced loneliness and found their way through. Anonymous.',
   keywords: ['feeling lonely in india', 'loneliness india', 'i feel lonely india', 'lonely in india', 'loneliness support india', 'how to deal with loneliness india'],
   alternates: { canonical: 'https://www.leanon.app/feeling-lonely-in-india' },
 }
@@ -70,7 +70,7 @@ export default function FeelingLonelyInIndiaPage() {
 
         <div className="cta">
           <h2>Someone is here for you</h2>
-          <p>Available 24/7, no appointment needed. No name, no judgement.</p>
+          <p>No appointment needed. No name, no judgement.</p>
           <a href="/browse"><button className="btn">Talk to someone now →</button></a>
         </div>
       </div>

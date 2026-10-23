@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'Is LeanOn peer support different from therapy?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn is peer support, not therapy. Listeners are screened peers with lived experience — not licensed therapists. More accessible (from ₹160 for 15 minutes), available 24/7, and anonymous. For clinical mental health concerns, professional help is always recommended.',
+        text: 'Yes. LeanOn is peer support, not therapy. Listeners are screened peers with lived experience — not licensed therapists. More accessible (from ₹160 for 15 minutes), and anonymous. For clinical mental health concerns, professional help is always recommended.',
       },
     },
   ],
@@ -212,7 +212,7 @@ export default function NoidaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn peer support different from therapy?</div>
-            <div className="faq-a">Yes. LeanOn is peer support, not therapy. Listeners are screened peers — not licensed therapists. More accessible (from ₹160 for 15 minutes), available 24/7, and anonymous.</div>
+            <div className="faq-a">Yes. LeanOn is peer support, not therapy. Listeners are screened peers — not licensed therapists. More accessible (from ₹160 for 15 minutes), and anonymous.</div>
           </div>
         </div>
 

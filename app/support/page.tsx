@@ -209,13 +209,13 @@ export default function SupportHubPage() {
         {/* Intro section */}
         <div className="intro-section">
           <h2>Why Peer Support Works</h2>
-          <p>Unlike therapy, peer support connects you with real people who have lived through similar challenges. On LeanOn, listeners are verified, screened for active listening, and available 24/7 — including at 2 AM when professional help is not reachable. Sessions start at ₹160 with a short trial session available for new users.</p>
+          <p>Unlike therapy, peer support connects you with real people who have lived through similar challenges. On LeanOn, listeners are verified, screened for active listening, and often online late at night, when professional help is not reachable. Sessions start at ₹160 with a short trial session available for new users.</p>
         </div>
 
         {/* CTA */}
         <div className="cta-card">
           <h2>Not Sure Where to Start?</h2>
-          <p>Browse all peer listeners by topic, language, or availability. Available 24/7, no appointment needed.</p>
+          <p>Browse all peer listeners by topic, language, or availability. No appointment needed.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse All Listeners</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now</button></a>

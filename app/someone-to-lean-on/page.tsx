@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Someone to Lean On — Talk to a Real Person Tonight | LeanOn India',
-  description: 'Need someone to lean on? Talk anonymously to a verified peer listener in India tonight. Available 24/7. Real humans with lived experience, not AI.',
+  description: 'Need someone to lean on? Talk anonymously to a verified peer listener in India tonight. No appointment needed. Real humans with lived experience, not AI.',
   keywords: 'someone to lean on, need someone to lean on, having someone to lean on, no one to lean on, what does lean on mean, lean on someone meaning, someone to lean on India',
   alternates: { canonical: 'https://www.leanon.app/someone-to-lean-on', languages: { 'en-IN': 'https://www.leanon.app/someone-to-lean-on' } },
   openGraph: {
     title: 'Someone to Lean On — Talk to a Real Person Tonight | LeanOn India',
-    description: 'Need someone to lean on? Talk anonymously to a verified peer listener in India tonight. Available 24/7. Real humans with lived experience, not AI.',
+    description: 'Need someone to lean on? Talk anonymously to a verified peer listener in India tonight. No appointment needed. Real humans with lived experience, not AI.',
     url: 'https://www.leanon.app/someone-to-lean-on',
     siteName: 'LeanOn',
     type: 'article',
@@ -236,7 +236,7 @@ export default function SomeoneToLeanOnPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Find Someone to Lean On Tonight</h2>
-          <p>Browse verified peer listeners and start talking in under a minute. Anonymous, available 24/7 — no appointments, no waitlists.</p>
+          <p>Browse verified peer listeners and start talking in under a minute. Anonymous — no appointments, no waitlists.</p>
 <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Listeners</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now</button></a>

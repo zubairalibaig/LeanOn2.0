@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Want to Talk About Your Problems Online? LeanOn India',
-  description: 'Find someone to talk to about your problems — a real peer listener who listens without judgment. Anonymous, available 24/7 in India. First 5 min free.',
+  description: 'Find someone to talk to about your problems — a real peer listener who listens without judgment. Anonymous. First 5 min free.',
   keywords: [
     'talk about my problems online', 'someone to talk to about my problems',
     'talk to someone about my problems india', 'talk about problems online India',
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.leanon.app/talk-about-my-problems-online', languages: { 'en-IN': 'https://www.leanon.app/talk-about-my-problems-online' } },
   openGraph: {
     title: 'Want to Talk About Your Problems Online? LeanOn India',
-    description: 'Find someone to talk to about your problems — a real peer listener who listens without judgment. Anonymous, available 24/7 in India.',
+    description: 'Find someone to talk to about your problems — a real peer listener who listens without judgment. Anonymous.',
     url: 'https://www.leanon.app/talk-about-my-problems-online',
     siteName: 'LeanOn',
     type: 'article',
@@ -136,7 +136,7 @@ export default function TalkAboutMyProblemsOnlinePage() {
         </div>
 
         <div className="hero">
-          <p className="badge">Anonymous · No Judgment · Available 24/7</p>
+          <p className="badge">Anonymous · No Judgment · No Appointment</p>
           <h1>Sometimes You Just Need to <em>Say It Out Loud</em></h1>
           <p className="lead">You do not need advice. You do not need to be fixed. You just need to get it out of your head and say it to someone who will actually listen — without judging you, without telling your people, without an agenda.</p>
           <div className="cta-row">

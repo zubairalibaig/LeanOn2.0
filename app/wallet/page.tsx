@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { showToast } from '@/lib/toast'
 import { grossRechargeAmount } from '@/lib/constants'
+import { trackEvent } from '@/lib/analytics'
 const S = `
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -251,6 +252,8 @@ function WalletPageInner() {
               .select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(10)
               .then(({ data: txns }) => { if (txns) setTransactions(txns as Txn[]) })
             showToast(`₹${selected} added to your wallet!`, 'success')
+            // GA4 'purchase' (mark it as a key event in GA) — ties paying users to their landing page.
+            trackEvent('purchase', { transaction_id: response.razorpay_payment_id, value: selected, currency: 'INR', items: [{ item_name: 'Wallet recharge', price: selected, quantity: 1 }] })
             // If user came from the free-trial conversion screen, redirect back to the
             // listener profile so they can immediately book a paid session.
             if (returnUrl && returnUrl.startsWith('/') && !returnUrl.startsWith('//')) {

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -172,6 +173,7 @@ export default function BestPeerSupportAppIndiaPage() {
         </div>
 
         {/* Comparison table */}
+        <GeoQuickAnswer path="/best-peer-support-app-india" />
         <div className="section">
           <h2>Platform Comparison: 2026</h2>
           <div style={{overflowX:'auto'}}>
@@ -183,7 +185,7 @@ export default function BestPeerSupportAppIndiaPage() {
                   <th>Cost</th>
                   <th>Real humans?</th>
                   <th>Anonymous?</th>
-                  <th>24/7?</th>
+                  <th>Availability</th>
                 </tr>
               </thead>
               <tbody>
@@ -193,7 +195,7 @@ export default function BestPeerSupportAppIndiaPage() {
                   <td>₹160/session</td>
                   <td><span className="badge badge-green">✅ Real people</span></td>
                   <td><span className="badge badge-green">✅ Yes</span></td>
-                  <td><span className="badge badge-green">✅ Yes</span></td>
+                  <td>Listeners online at different hours</td>
                 </tr>
                 <tr>
                   <td className="col-label">YourDOST</td>

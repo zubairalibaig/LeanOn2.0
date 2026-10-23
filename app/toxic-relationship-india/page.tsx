@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -134,6 +135,7 @@ export default function ToxicRelationshipIndiaPage() {
           <a href="/browse" className="cta-hero">Talk to someone now &rarr;</a>
         </div>
 
+        <GeoQuickAnswer path="/toxic-relationship-india" />
         <div className="section">
           <h2>Signs a Relationship Is Draining You</h2>
           <p>A toxic relationship does not always look dramatic from the outside. It can look like a normal relationship where one person is quietly diminishing. Some signs:</p>

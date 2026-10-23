@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Feeling Lonely in Your Marriage? Talk to Someone | LeanOn India',
-  description: 'Lonely in your marriage? Talk anonymously to a peer listener who has felt it too. Private, judgment-free emotional support in India. Available 24/7.',
+  description: 'Lonely in your marriage? Talk anonymously to a peer listener who has felt it too. Private, judgment-free emotional support in India. No appointment needed.',
   keywords: 'lonely in marriage, emotional loneliness marriage India, feeling alone in relationship, married but lonely, talk to someone about marriage, marriage loneliness support India, anonymous emotional support for married people',
   alternates: { canonical: 'https://www.leanon.app/support/marriage-loneliness', languages: { 'en-IN': 'https://www.leanon.app/support/marriage-loneliness' } },
   openGraph: {
     title: 'Feeling Lonely in Your Marriage? Talk to Someone | LeanOn India',
-    description: 'Lonely in your marriage? Talk anonymously to a peer listener who has felt it too. Private, judgment-free emotional support in India. Available 24/7.',
+    description: 'Lonely in your marriage? Talk anonymously to a peer listener who has felt it too. Private, judgment-free emotional support in India. No appointment needed.',
     url: 'https://www.leanon.app/support/marriage-loneliness',
     siteName: 'LeanOn',
     type: 'article',
@@ -241,7 +241,7 @@ export default function MarriageLonelinessSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Be Heard?</h2>
-          <p>Talk to a peer listener who understands loneliness inside a marriage. Completely anonymous, outside your circle. Available 24/7, no appointments, no waitlists.</p>
+          <p>Talk to a peer listener who understands loneliness inside a marriage. Completely anonymous, outside your circle. No appointments, no waitlists.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Talk to someone who understands — first 5 min free →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>

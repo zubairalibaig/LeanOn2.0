@@ -4,11 +4,11 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Peer Support for Work-From-Home Loneliness in India | LeanOn',
-  description: 'Feeling isolated working from home? Talk to a peer listener who understands WFH loneliness. Empathetic support, 24/7 in India.',
+  description: 'Feeling isolated working from home? Talk to a peer listener who understands WFH loneliness. Empathetic support in India.',
   alternates: { canonical: 'https://www.leanon.app/support/work-from-home-loneliness', languages: { 'en-IN': 'https://www.leanon.app/support/work-from-home-loneliness' } },
   openGraph: {
     title: 'Peer Support for Work-From-Home Loneliness in India | LeanOn',
-    description: 'Feeling isolated working from home? Talk to a peer listener who understands WFH loneliness. Empathetic support, 24/7 in India.',
+    description: 'Feeling isolated working from home? Talk to a peer listener who understands WFH loneliness. Empathetic support in India.',
     url: 'https://www.leanon.app/support/work-from-home-loneliness',
     siteName: 'LeanOn',
     type: 'article',
@@ -222,7 +222,7 @@ export default function WorkFromHomeLonelinessSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Feel Connected Again?</h2>
-          <p>Talk to a peer listener who truly understands work-from-home isolation. Available 24/7, no appointments, no waitlists.</p>
+          <p>Talk to a peer listener who truly understands work-from-home isolation. No appointments, no waitlists.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Someone is here — start free now →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>

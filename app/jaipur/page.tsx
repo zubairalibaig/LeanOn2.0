@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support in Jaipur — Peer Listeners | LeanOn',
-  description: 'Connect with peer listeners in Jaipur, India. Available 24/7. Talk anonymously about anxiety, loneliness, stress, and more on LeanOn.',
+  description: 'Connect with peer listeners in Jaipur, India. No appointment needed. Talk anonymously about anxiety, loneliness, stress, and more on LeanOn.',
   alternates: { canonical: 'https://www.leanon.app/jaipur', languages: { 'en-IN': 'https://www.leanon.app/jaipur' } },
   keywords: 'peer support Jaipur, emotional support Jaipur, loneliness Jaipur, family pressure Jaipur, talk to someone Jaipur, leanon Jaipur',
   openGraph: {
     title: 'Emotional Support in Jaipur — Peer Listeners | LeanOn',
-    description: 'Connect with peer listeners in Jaipur, India. Available 24/7. Talk anonymously about anxiety, loneliness, stress, and more on LeanOn.',
+    description: 'Connect with peer listeners in Jaipur, India. No appointment needed. Talk anonymously about anxiety, loneliness, stress, and more on LeanOn.',
     url: 'https://www.leanon.app/jaipur',
     siteName: 'LeanOn',
     type: 'article',
@@ -248,7 +248,7 @@ export default function JaipurPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Gets Jaipur?</h2>
-          <p>Browse peer listeners who understand Rajasthan's traditions — family expectations, arranged marriage pressure, and the push and pull of building a modern career. Available 24/7, completely private.</p>
+          <p>Browse peer listeners who understand Rajasthan's traditions — family expectations, arranged marriage pressure, and the push and pull of building a modern career. Completely private.</p>
           <div className="cta-btns">
             <a href="/browse?city=jaipur"><button className="btn-primary">Browse Jaipur Listeners</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now</button></a>

@@ -56,7 +56,7 @@ export const post = {
 
 <p>Just: someone who will hear it. The actual thing — the job that is draining you, the marriage pressure you cannot satisfy, the loneliness you cannot name to anyone in your actual life, the question of whether any of this is what you actually want. Someone who will receive that without making it about something else.</p>
 
-<p>LeanOn peer listeners are trained to do exactly this. They are not career coaches or therapists or advice-givers. They are people who will listen — without judgment, without agenda, without making it into a problem to be fixed.</p>
+<p>LeanOn peer listeners are screened for exactly this. They are not career coaches or therapists or advice-givers. They are people who will listen — without judgment, without agenda, without making it into a problem to be fixed.</p>
 
 <p>First 5 minutes are free. Sessions from ₹160. Anonymous.</p>
 

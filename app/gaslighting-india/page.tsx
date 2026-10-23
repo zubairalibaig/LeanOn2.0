@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -116,6 +117,7 @@ export default function GaslightingIndiaPage() {
           <p className="lead">Being told you are too sensitive, imagining things, overreacting. Gaslighting makes you doubt your own reality. Talk to someone who will validate your experience. From ₹160.</p>
           <a href="/browse" className="cta-hero">Talk to someone now &rarr;</a>
         </div>
+        <GeoQuickAnswer path="/gaslighting-india" />
         <div className="section">
           <h2>What Gaslighting Is</h2>
           <p>Gaslighting is a pattern of behaviour in which someone causes you to doubt your own perceptions, memory, or sanity. It involves being told that something did not happen when it did, that you are misremembering, that you are overreacting, that you are too sensitive, that everyone else thinks you are being unreasonable.</p>

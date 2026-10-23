@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Vent to a Real Person in India — Safe, Anonymous, Human | LeanOn',
-  description: 'LeanOn has real human listeners in India available 24/7. Vent about anything — family, relationships, work stress, loneliness. Sessions are anonymous. First 5 minutes free.',
+  description: 'LeanOn has real human listeners in India. Vent about anything — family, relationships, work stress, loneliness. Sessions are anonymous. First 5 minutes free.',
   keywords: [
     'vent to someone in India', 'kisi se baat karni hai', 'I want to vent India',
     'koi baat sunne wala India', 'vent online India', 'talk to someone anonymously India',
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Vent to a Real Person in India — Safe, Anonymous, Human | LeanOn',
-    description: 'Real human listeners in India available 24/7. Vent about anything, anonymously. First 5 minutes free.',
+    description: 'Real human listeners in India. Vent about anything, anonymously. First 5 minutes free.',
     url: 'https://www.leanon.app/india-vent-to-real-person',
     siteName: 'LeanOn',
     type: 'article',
@@ -28,7 +28,7 @@ const serviceSchema = {
   '@context': 'https://schema.org',
   '@type': 'Service',
   name: 'LeanOn Peer Venting & Emotional Support — India',
-  description: 'LeanOn connects people in India with real human listeners for anonymous, judgment-free venting and emotional support. Available 24/7 across India.',
+  description: 'LeanOn connects people in India with real human listeners for anonymous, judgment-free venting and emotional support. No appointment needed.',
   provider: {
     '@type': 'Organization',
     name: 'LeanOn',
@@ -52,7 +52,7 @@ const orgSchema = {
   '@type': 'Organization',
   name: 'LeanOn',
   url: 'https://www.leanon.app',
-  description: 'LeanOn is an Indian peer support platform connecting people with real human listeners — not AI — for venting, emotional support, and genuine connection, available 24/7.',
+  description: 'LeanOn is an Indian peer support platform connecting people with real human listeners — not AI — for venting, emotional support, and genuine connection.',
   sameAs: ['https://www.leanon.app'],
 }
 
@@ -65,7 +65,7 @@ const faqSchema = {
       name: 'Where can I vent to someone in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn has real human listeners in India available 24/7 — people who genuinely listen without judgment. Vent about anything: family, relationships, work stress, loneliness. First 5 minutes are free.',
+        text: 'LeanOn has real human listeners in India — people who genuinely listen without judgment. Vent about anything: family, relationships, work stress, loneliness. First 5 minutes are free.',
       },
     },
     {
@@ -233,7 +233,7 @@ export default function IndiaVentToRealPersonPage() {
           <h2>🌙 3 AM and you cannot sleep?</h2>
           <p>
             The heaviest feelings arrive late. When the distraction stops and the quiet becomes too loud.
-            LeanOn listeners are available 24/7 — including right now, at whatever hour you are reading this.
+            LeanOn listeners are — including right now, at whatever hour you are reading this.
           </p>
           <p>
             You do not have to carry it until morning. A real person is awake and ready to listen.
@@ -279,7 +279,7 @@ export default function IndiaVentToRealPersonPage() {
 
         <div className="cta">
           <h2>Koi sun raha hai. Someone is listening.</h2>
-          <p>Real Indian listeners, available right now. Anonymous, affordable, 24/7.</p>
+          <p>Real Indian listeners, available right now. Anonymous, affordable.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
@@ -288,7 +288,7 @@ export default function IndiaVentToRealPersonPage() {
           <h2>Frequently asked questions</h2>
           <div className="faq-item">
             <h3>Where can I vent to someone in India?</h3>
-            <p>LeanOn has real human listeners in India available 24/7 — people who genuinely listen without judgment. Vent about anything: family, relationships, work stress, loneliness. First 5 minutes are free.</p>
+            <p>LeanOn has real human listeners in India — people who genuinely listen without judgment. Vent about anything: family, relationships, work stress, loneliness. First 5 minutes are free.</p>
           </div>
           <div className="faq-item">
             <h3>Is it okay to vent to a stranger online in India?</h3>

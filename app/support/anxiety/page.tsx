@@ -187,7 +187,7 @@ export default function AnxietySupportPage() {
           <p>Our listeners share what has actually worked for them — breathing techniques, grounding practices, ways of reframing anxious thoughts — not as prescriptions, but as peer insights from people who have tried these things in real life.</p>
 
           <h3>Available During Anxiety Peaks</h3>
-          <p>Anxiety does not respect business hours. LeanOn is available 24/7, so when the spiral hits at midnight or your chest tightens before a Monday morning meeting, you have someone to reach out to immediately.</p>
+          <p>Anxiety does not respect business hours. LeanOn listeners go online at different hours, including late at night, so when the spiral hits at midnight or your chest tightens before a Monday morning meeting, you have someone to reach out to immediately.</p>
         </div>
 
         <h2 style={{fontSize:'20px',fontWeight:800,color:'var(--navy)',marginBottom:'16px'}}>Listeners Who Understand Anxiety</h2>
@@ -223,7 +223,7 @@ export default function AnxietySupportPage() {
 
         <div className="cta-card">
           <h2>Your Anxiety Doesn&apos;t Have to Be This Loud</h2>
-          <p>Connect with a peer listener who truly understands. Available 24/7, no appointment needed.</p>
+          <p>Connect with a peer listener who truly understands. No appointment needed.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Talk to someone who understands — first 5 min free →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>

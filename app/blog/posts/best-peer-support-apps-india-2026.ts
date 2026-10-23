@@ -29,7 +29,7 @@ export const post = {
 
 <p><strong>Cost:</strong> Around ₹160/session. Your first 5-minute session is free, so you can get a sense of whether the connection feels right before committing.</p>
 
-<p><strong>Pros:</strong> Real humans, not AI. Private — first name only, no last name, no photo. Available 24/7 without an appointment. Pay per session, no subscription trap. The lived-experience angle is the most meaningful differentiator: when someone says "I've been through something like that," they mean it.</p>
+<p><strong>Pros:</strong> Real humans, not AI. Private — first name only, no last name, no photo. No appointment needed. Pay per session, no subscription trap. The lived-experience angle is the most meaningful differentiator: when someone says "I've been through something like that," they mean it.</p>
 
 <p><strong>Cons:</strong> Not a substitute for clinical care. If you need a diagnosis, medication, or structured psychotherapy, LeanOn is not the right tool. It is also not a crisis service — if you are in immediate danger, please call NIMHANS (080-46110007) or Tele-MANAS (14416).</p>
 

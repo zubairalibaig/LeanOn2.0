@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -40,7 +41,7 @@ const faqSchema = {
       name: 'Can I talk to someone on LeanOn just to feel better?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes, that\'s exactly what LeanOn is for. Many people just want someone to talk to — not to hear what their stars say, but to feel understood. Our listeners are available 24/7 for exactly that.',
+        text: 'Yes, that\'s exactly what LeanOn is for. Many people just want someone to talk to — not to hear what their stars say, but to feel understood. Our listeners are there for exactly that.',
       },
     },
     {
@@ -159,6 +160,7 @@ export default function AstroTalkAlternativePage() {
 
         <a href="/browse" className="cta-hero">Find a listener now — first 5 min free →</a>
 
+        <GeoQuickAnswer path="/astrotalk-alternative" />
         <div className="card">
           <h2>Why people go to AstroTalk when they&apos;re struggling</h2>
           <p>
@@ -206,7 +208,7 @@ export default function AstroTalkAlternativePage() {
               </tr>
               <tr>
                 <td>Available at 2 AM</td>
-                <td className="tick">Yes, 24/7</td>
+                <td className="tick">Often — listeners go online at different hours</td>
                 <td>Depends on astrologer</td>
               </tr>
               <tr>
@@ -271,12 +273,12 @@ export default function AstroTalkAlternativePage() {
           <div className="faq-item">
             <h3>Can I talk to someone on LeanOn just to feel better?</h3>
             <p>Yes, that&apos;s exactly what LeanOn is for. Many people just want someone to talk to — not to hear
-              what their stars say, but to feel understood. Our listeners are available 24/7 for exactly that.</p>
+              what their stars say, but to feel understood. Our listeners are there for exactly that.</p>
           </div>
           <div className="faq-item">
             <h3>Is LeanOn free to use?</h3>
-            <p>Your first 5-minute session is completely free. After that, sessions are affordable starting at ₹15 per
-              15-minute session depending on the listener.</p>
+            <p>Your first 5-minute session is completely free. After that, a 15-minute session starts at ₹160,
+              depending on the listener.</p>
           </div>
           <div className="faq-item">
             <h3>Will my conversations be kept private?</h3>

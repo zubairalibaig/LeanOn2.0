@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Feeling Lost in Life? Peer Support India | LeanOn',
-  description: "Feeling lost, stuck, or like you don't know who you are or what you want? Talk to a peer listener in India who has navigated the same uncertainty. Anonymous, 24/7.",
+  description: "Feeling lost, stuck, or like you don't know who you are or what you want? Talk to a peer listener in India who has navigated the same uncertainty. Anonymous, no appointment.",
   keywords: ['feeling lost in life India', 'I feel stuck India', 'I dont know what I want India', 'I feel directionless India', 'I have no purpose India', 'feeling lost after college India', 'quarter life crisis India', 'lost and confused India', 'I dont know who I am India', 'what should I do with my life India', 'I feel like I am going nowhere India', 'lost in my twenties India', 'identity crisis India', 'feeling purposeless India', 'peer support feeling lost India'],
   alternates: { canonical: 'https://www.leanon.app/support/feeling-lost', languages: { 'en-IN': 'https://www.leanon.app/support/feeling-lost' } },
   openGraph: {
     title: 'Feeling Lost in Life? Peer Support India | LeanOn',
-    description: "Feeling lost, stuck, or like you don't know who you are or what you want? Talk to a peer listener in India who has navigated the same uncertainty. Anonymous, 24/7.",
+    description: "Feeling lost, stuck, or like you don't know who you are or what you want? Talk to a peer listener in India who has navigated the same uncertainty. Anonymous, no appointment.",
     url: 'https://www.leanon.app/support/feeling-lost',
     siteName: 'LeanOn',
     type: 'article',

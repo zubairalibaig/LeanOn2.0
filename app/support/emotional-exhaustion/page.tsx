@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Exhaustion & Being Emotionally Drained | LeanOn India',
-  description: 'Feeling emotionally drained, tired of everything, or like you have nothing left to give? Talk to a peer listener in India who has been through emotional exhaustion. Anonymous, 24/7.',
+  description: 'Feeling emotionally drained, tired of everything, or like you have nothing left to give? Talk to a peer listener in India who has been through emotional exhaustion. Anonymous, no appointment.',
   keywords: ['emotional exhaustion India', 'emotionally drained India', 'nothing left to give India', 'tired of everything India', 'emotionally tired India', 'compassion fatigue India', 'feeling emotionally depleted India', 'too tired to feel India', 'emotionally burnt out India', 'emotional fatigue India', 'I am exhausted emotionally India', 'how to recover from emotional exhaustion India', 'mental tiredness India', 'emotionally overwhelmed India', 'support for emotional exhaustion India'],
   alternates: { canonical: 'https://www.leanon.app/support/emotional-exhaustion', languages: { 'en-IN': 'https://www.leanon.app/support/emotional-exhaustion' } },
   openGraph: {
     title: 'Emotional Exhaustion & Being Emotionally Drained | LeanOn India',
-    description: 'Feeling emotionally drained, tired of everything, or like you have nothing left to give? Talk to a peer listener in India who has been through emotional exhaustion. Anonymous, 24/7.',
+    description: 'Feeling emotionally drained, tired of everything, or like you have nothing left to give? Talk to a peer listener in India who has been through emotional exhaustion. Anonymous, no appointment.',
     url: 'https://www.leanon.app/support/emotional-exhaustion',
     siteName: 'LeanOn',
     type: 'article',

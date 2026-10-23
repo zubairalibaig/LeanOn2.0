@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -160,6 +161,7 @@ export default function PayToTalkOnlineIndiaPage() {
 
         <a href="/talk?src=seo" className="cta-hero">Try your free 5-minute introduction →</a>
 
+        <GeoQuickAnswer path="/pay-to-talk-online-india" />
         <div className="card">
           <h2>You&apos;re already paying to be heard. It&apos;s completely normal.</h2>
           <p>

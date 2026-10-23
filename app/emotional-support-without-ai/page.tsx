@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Real Emotional Support — Not a Chatbot | LeanOn',
-  description: 'LeanOn is the human alternative to ChatGPT for emotional support. Real peer listeners with lived experience — available 24/7 for loneliness, grief, relationships, and anything weighing on you. First 5 min free.',
+  description: 'LeanOn is the human alternative to ChatGPT for emotional support. Real peer listeners with lived experience — for loneliness, grief, relationships, and anything weighing on you. First 5 min free.',
   keywords: [
     'emotional support without ai', 'human alternative to chatgpt', 'talking to ai vs real person',
     'real emotional support online', 'chatgpt alternative emotional support', 'ai vs human mental health',
@@ -59,7 +59,7 @@ const faqSchema = {
       name: 'What is a good alternative to ChatGPT for emotional support?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn is a peer support platform where real human listeners — people with genuine lived experience — are available 24/7 to talk about loneliness, relationships, grief, and anything else weighing on you.',
+        text: 'LeanOn is a peer support platform where real human listeners — people with genuine lived experience — are to talk about loneliness, relationships, grief, and anything else weighing on you.',
       },
     },
     {
@@ -293,7 +293,7 @@ export default function EmotionalSupportWithoutAIPage() {
           <div className="faq-item">
             <h3>What is a good alternative to ChatGPT for emotional support?</h3>
             <p>LeanOn is a peer support platform where real human listeners — people with genuine lived
-              experience — are available 24/7 to talk about loneliness, relationships, grief, and anything
+              experience — are to talk about loneliness, relationships, grief, and anything
               else weighing on you.</p>
           </div>
           <div className="faq-item">

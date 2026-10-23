@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -74,6 +75,7 @@ export default function ParentsForcingMarriageIndiaPage() {
           <p className="lead">Marriage deadlines, family ultimatums, pressure from every direction. Talk anonymously from ₹160 &mdash; to someone who understands the difference between not ready and not wanting.</p>
           <a href="/browse" className="cta-hero">Talk to someone now &rarr;</a>
         </div>
+        <GeoQuickAnswer path="/parents-forcing-marriage-india" />
         <div className="section">
           <h2>The Specific Pressure of Marriage in India</h2>
           <p>In India, marriage is not just a personal decision. It is a family event, a social signal, and in many contexts a financial transaction involving multiple generations. The pressure to marry by a certain age &mdash; typically stricter for women &mdash; comes from parents, extended family, community comparison, and the fear of being left behind.</p>

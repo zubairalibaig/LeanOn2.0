@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -145,6 +146,7 @@ export default function MenMentalHealthIndiaPage() {
           <p>&quot;You are not weak for struggling. You are human.&quot;</p>
         </div>
 
+        <GeoQuickAnswer path="/men-mental-health-india" />
         <div className="section">
           <h2>The Male Loneliness Epidemic in India</h2>
           <p>India has one of the highest rates of male suicide globally. Men in India are taught from childhood that vulnerability is weakness, that emotions are something to push through, that asking for support is something other people do. The result is a silent epidemic — millions of men carrying enormous weight with no one to talk to.</p>

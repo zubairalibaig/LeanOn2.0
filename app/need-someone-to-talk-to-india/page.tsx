@@ -3,17 +3,17 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Need Someone to Talk To in India? LeanOn — Real Humans, 24/7',
-  description: 'Need someone to talk to in India? LeanOn connects you with real peer listeners who understand. Anonymous, affordable, available even at 2 AM. Available 24/7.',
+  title: 'Need Someone to Talk To in India? LeanOn — Real Humans',
+  description: 'Need someone to talk to in India? LeanOn connects you with real peer listeners who understand. Anonymous, affordable, no appointment needed.',
   alternates: { canonical: 'https://www.leanon.app/need-someone-to-talk-to-india' },
-  keywords: ['need someone to talk to India', 'someone to talk to India', 'peer listener India 24/7'],
+  keywords: ['need someone to talk to India', 'someone to talk to India', 'peer listener India'],
 }
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebPage',
   name: 'Need Someone to Talk To in India? — LeanOn',
-  description: 'Real human peer support in India — available 24/7.',
+  description: 'Real human peer support in India —.',
   url: 'https://www.leanon.app/need-someone-to-talk-to-india',
 }
 
@@ -52,7 +52,7 @@ export default function NeedSomeoneToTalkToIndia() {
         <a href="/" className="back">← LeanOn Home</a>
         <h1>Need <span>Someone to Talk To</span> in India?</h1>
         <p className="lead">
-          You&apos;re not alone — even if it feels that way right now. LeanOn connects you with real peer listeners in India who have been through what you&apos;re going through. Available 24/7, instant access, no appointment.
+          You&apos;re not alone — even if it feels that way right now. LeanOn connects you with real peer listeners in India who have been through what you&apos;re going through. No appointment, instant access.
         </p>
 
         <div className="crisis-box">

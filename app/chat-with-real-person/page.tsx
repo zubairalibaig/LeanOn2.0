@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Chat with a Real Person in India — Not a Bot | LeanOn',
-  description: 'Tired of AI chatbots? Talk to a real human listener on LeanOn. No scripts, no algorithms — just genuine empathy from someone who has lived it. Available 24/7 in India.',
+  description: 'Tired of AI chatbots? Talk to a real human listener on LeanOn. No scripts, no algorithms — just genuine empathy from someone who has lived it. No appointment needed.',
   keywords: 'chat with real person online India, talk to real human not AI, real person to talk to online India, human chat not chatbot India, AI alternative human connection, tired of AI chatbot, ChatGPT alternative India, human listener not bot, real human emotional support India, talk to actual human online, not a bot chat India, genuine human conversation online, chatbot replacement India, real person chat app India, human connection app India',
   alternates: { canonical: 'https://www.leanon.app/chat-with-real-person', languages: { 'en-IN': 'https://www.leanon.app/chat-with-real-person' } },
   openGraph: {
     title: 'Chat with a Real Person in India — Not a Bot | LeanOn',
-    description: 'Tired of AI chatbots? Talk to a real human listener on LeanOn. No scripts, no algorithms — just genuine empathy from someone who has lived it. Available 24/7 in India.',
+    description: 'Tired of AI chatbots? Talk to a real human listener on LeanOn. No scripts, no algorithms — just genuine empathy from someone who has lived it. No appointment needed.',
     url: 'https://www.leanon.app/chat-with-real-person',
     siteName: 'LeanOn',
     type: 'article',
@@ -65,7 +65,7 @@ const faqSchema = {
       name: 'How much does it cost to talk to a real person online in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn starts at ₹160 for a 15-minute session. New users get a free 5-minute trial. It is significantly more affordable than therapy and available any time — no insurance, no waitlist, no prescription needed.',
+        text: 'LeanOn starts at ₹160 for a 15-minute session. New users get a free 5-minute trial. It is significantly more affordable than therapy and no appointment — no insurance, no waitlist, no prescription needed.',
       },
     },
   ],
@@ -245,7 +245,7 @@ export default function ChatWithRealPersonPage() {
           <h3>Step 3: Be Heard</h3>
           <p>Your listener is screened for active listening and guided by their own lived experience. You are not getting scripted responses — you are having a real conversation with someone who genuinely cares about what you are going through.</p>
 
-          <h3>Available 24/7 Across India</h3>
+          <h3>No Appointment, Across India</h3>
           <p>Listeners are available all day, every day — including at 2 AM when most professional services are closed and the weight of feeling alone is heaviest. No insurance required, no prescription needed, no judgement.</p>
         </div>
 

@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'LeanOn App for Mental Health India | Peer Support Platform',
-  description: 'LeanOn is India\'s peer support app for mental health. Talk to real humans who get it — anxiety, loneliness, burnout, grief. Anonymous. Affordable. Available 24/7.',
+  description: 'LeanOn is India\'s peer support app for mental health. Talk to real humans who get it — anxiety, loneliness, burnout, grief. Anonymous. Affordable. No appointment needed.',
   alternates: { canonical: 'https://www.leanon.app/leanon-app-mental-health' },
   keywords: ['leanon app mental health', 'leanon mental health India', 'peer support mental health India', 'mental health app India'],
 }
@@ -48,7 +48,7 @@ export default function LeanOnAppMentalHealth() {
         <a href="/" className="back">← LeanOn Home</a>
         <h1>LeanOn App for <span>Mental Health</span> — India&apos;s Peer Support Platform</h1>
         <p className="lead">
-          LeanOn is India&apos;s peer support app for mental health — not therapy, not AI, but real humans with lived experience. Available 24/7 across India, starting at ₹0 for your first 5 minutes.
+          LeanOn is India&apos;s peer support app for mental health — not therapy, not AI, but real humans with lived experience. Starting at ₹0 for your first 5 minutes.
         </p>
 
         <div className="section">
@@ -61,7 +61,7 @@ export default function LeanOnAppMentalHealth() {
         <div className="section">
           <h2>Why LeanOn works for mental health in India</h2>
           <p>India faces a severe mental health crisis. 1 in 7 Indians experiences a mental health condition, yet fewer than 1% receive any form of support. The reasons? Stigma, cost, availability, and cultural barriers.</p>
-          <p>LeanOn addresses all of these. Sign up anonymously with just your phone number. Pay from ₹160 for a 15-minute session — a fraction of therapy costs. Available even at 2 AM when mental health struggles are often worst. Accessible in English and 11 Indian languages.</p>
+          <p>LeanOn addresses all of these. Sign up anonymously with just your phone number. Pay from ₹160 for a 15-minute session — a fraction of therapy costs. Listeners are often online late at night, when mental health struggles are often worst. Accessible in English and 11 Indian languages.</p>
           <p>It&apos;s not a replacement for professional mental health care — and we&apos;re honest about that. But for the millions of Indians who need someone to talk to right now, LeanOn fills a gap that nothing else does.</p>
         </div>
 

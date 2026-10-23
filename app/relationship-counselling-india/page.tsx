@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -159,6 +160,7 @@ export default function RelationshipCounsellingIndiaPage() {
           <div className="stat-pill">Couple therapy <em>₹2,000+</em></div>
         </div>
 
+        <GeoQuickAnswer path="/relationship-counselling-india" />
         <div className="section">
           <h2>What People Come to Talk About</h2>
           <ul>

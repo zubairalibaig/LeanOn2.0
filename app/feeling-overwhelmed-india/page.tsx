@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Feeling Overwhelmed? You\'re Not Broken — You Just Need to Be Heard | LeanOn',
-  description: 'Feeling overwhelmed, exhausted, or like you can\'t cope? Talk to a real peer listener — anonymous, no judgment, available 24/7 across India. First 5 min free.',
+  description: 'Feeling overwhelmed, exhausted, or like you can\'t cope? Talk to a real peer listener — anonymous, no judgment. First 5 min free.',
   keywords: [
     'feeling overwhelmed India', 'overwhelmed and don\'t know why India',
     'feeling overwhelmed all the time India', 'everything feels too much India',
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.leanon.app/feeling-overwhelmed-india', languages: { 'en-IN': 'https://www.leanon.app/feeling-overwhelmed-india' } },
   openGraph: {
     title: 'Feeling Overwhelmed? You\'re Not Broken — You Just Need to Be Heard | LeanOn',
-    description: 'Feeling overwhelmed, exhausted, or like you can\'t cope? Talk to a real peer listener — anonymous, no judgment, available 24/7 across India. First 5 min free.',
+    description: 'Feeling overwhelmed, exhausted, or like you can\'t cope? Talk to a real peer listener — anonymous, no judgment. First 5 min free.',
     url: 'https://www.leanon.app/feeling-overwhelmed-india',
     siteName: 'LeanOn',
     type: 'article',
@@ -133,7 +133,7 @@ export default function FeelingOverwhelmedPage() {
         </div>
 
         <div className="hero">
-          <p className="badge">Anonymous · No Judgment · Available 24/7</p>
+          <p className="badge">Anonymous · No Judgment · No Appointment</p>
           <h1>Everything Feels Like <em>Too Much</em> Right Now</h1>
           <p className="lead">It is not one big thing. It is everything — the unanswered messages, the unfinished tasks, the conversation you keep replaying, the expectations you cannot meet, the tiredness you cannot shake. It has been building quietly for a while, and now even small things feel impossible to carry.</p>
           <a href="/talk?src=seo" className="cta-hero">Talk to someone now →</a>

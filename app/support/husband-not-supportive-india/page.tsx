@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -157,6 +158,8 @@ export default function HusbandNotSupportiveIndiaPage() {
           <strong>If you are having thoughts of self-harm</strong>
           NIMHANS helpline: <a href="tel:08046110007">080-46110007</a> · Tele-MANAS: <a href="tel:14416">14416</a> (free, 24/7)
         </div>
+
+        <GeoQuickAnswer path="/support/husband-not-supportive-india" />
 
         <h2>When Support Withdraws Gradually</h2>
         <p>

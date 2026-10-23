@@ -7,6 +7,7 @@ import { SHOW_LISTENER_IN_SESSION_STATUS } from '@/lib/feature-flags'
 import { isNriCountry, getBookingPriceDisplay, sessionTotalInr } from '@/lib/geo-pricing'
 import Avatar from '@/app/components/Avatar'
 import { EDUCATION_LEVELS, EDUCATION_FIELDS, labelOf } from '@/lib/listener-onboarding'
+import { trackEvent } from '@/lib/analytics'
 
 type ListenerProfile = {
   id: string
@@ -294,6 +295,7 @@ export default function ListenerClient({ id }: { id: string }) {
         return
       }
       if (data.sessionId) {
+        trackEvent('browse_request', { mode: type, mins: duration, free: typeof data.total === 'number' && data.total > 0 ? 0 : 1 })
         router.push(`/session/${data.sessionId}?name=${encodeURIComponent(listener?.name ?? '')}&duration=${duration}&type=${type}`)
       }
     } catch {

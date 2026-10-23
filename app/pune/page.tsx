@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support in Pune — Peer Listeners | LeanOn',
-  description: 'Connect with peer listeners in Pune, India. Available 24/7. Talk anonymously in Marathi, Hindi, or English about stress, loneliness, and student life on LeanOn.',
+  description: 'Connect with peer listeners in Pune, India. No appointment needed. Talk anonymously in Marathi, Hindi, or English about stress, loneliness, and student life on LeanOn.',
   alternates: { canonical: 'https://www.leanon.app/pune', languages: { 'en-IN': 'https://www.leanon.app/pune' } },
   keywords: 'peer support Pune, emotional support Pune, loneliness Pune, student stress Pune, talk to someone Pune, Marathi emotional support, leanon Pune',
   openGraph: {
     title: 'Emotional Support in Pune — Peer Listeners | LeanOn',
-    description: 'Connect with peer listeners in Pune, India. Available 24/7. Talk anonymously on LeanOn.',
+    description: 'Connect with peer listeners in Pune, India. No appointment needed. Talk anonymously on LeanOn.',
     url: 'https://www.leanon.app/pune',
     siteName: 'LeanOn',
     type: 'article',
@@ -172,7 +172,7 @@ export default function PunePage() {
 
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Gets Pune?</h2>
-          <p>Browse peer listeners who understand student pressure, first-job stress, and the loneliness of starting over. Sessions in Marathi, Hindi, or English. Available 24/7.</p>
+          <p>Browse peer listeners who understand student pressure, first-job stress, and the loneliness of starting over. Sessions in Marathi, Hindi, or English. No appointment needed.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Listeners</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now</button></a>

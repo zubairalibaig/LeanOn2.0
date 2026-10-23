@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support in Mumbai — Peer Listeners | LeanOn',
-  description: 'Connect with peer listeners in Mumbai, India. Available 24/7. Talk anonymously about anxiety, loneliness, stress, and more on LeanOn.',
+  description: 'Connect with peer listeners in Mumbai, India. No appointment needed. Talk anonymously about anxiety, loneliness, stress, and more on LeanOn.',
   alternates: { canonical: 'https://www.leanon.app/mumbai', languages: { 'en-IN': 'https://www.leanon.app/mumbai' } },
   keywords: 'peer support Mumbai, emotional support Mumbai, loneliness Mumbai, relationship stress Mumbai, talk to someone Mumbai, leanon Mumbai',
   openGraph: {
     title: 'Emotional Support in Mumbai — Peer Listeners | LeanOn',
-    description: 'Connect with peer listeners in Mumbai, India. Available 24/7. Talk anonymously about anxiety, loneliness, stress, and more on LeanOn.',
+    description: 'Connect with peer listeners in Mumbai, India. No appointment needed. Talk anonymously about anxiety, loneliness, stress, and more on LeanOn.',
     url: 'https://www.leanon.app/mumbai',
     siteName: 'LeanOn',
     type: 'article',
@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'Is LeanOn available in the middle of the night for Mumbai users?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes, LeanOn is available 24/7. Mumbai\'s night owls, late-shift workers, and anyone who finds that their hardest feelings surface after midnight can connect with a peer listener any time. Sessions start at ₹160 for 15 minutes — no appointment, no waiting.',
+        text: 'Often, yes. LeanOn listeners go online at different hours, including late at night. Mumbai\'s night owls, late-shift workers, and anyone who finds that their hardest feelings surface after midnight can connect with a peer listener any time. Sessions start at ₹160 for 15 minutes — no appointment, no waiting.',
       },
     },
   ],
@@ -267,7 +267,7 @@ export default function MumbaiPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn available in the middle of the night for Mumbai users?</div>
-            <div className="faq-a">Yes, LeanOn is available 24/7. Mumbai's night owls, late-shift workers, and anyone who finds that their hardest feelings surface after midnight can connect with a peer listener any time. Sessions start at ₹160 for 15 minutes — no appointment, no waiting.</div>
+            <div className="faq-a">Often, yes. LeanOn listeners go online at different hours, including late at night. Mumbai's night owls, late-shift workers, and anyone who finds that their hardest feelings surface after midnight can connect with a peer listener any time. Sessions start at ₹160 for 15 minutes — no appointment, no waiting.</div>
           </div>
         </div>
 

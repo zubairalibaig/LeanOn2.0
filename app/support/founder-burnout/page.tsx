@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Founder Burnout Support India | Talk to Someone Who Gets Startup Stress | LeanOn',
-  description: 'Startup stress, fundraising rejection, imposter syndrome as a founder? Connect with peer listeners who have lived through founder burnout. Available 24/7.',
+  description: 'Startup stress, fundraising rejection, imposter syndrome as a founder? Connect with peer listeners who have lived through founder burnout. No appointment needed.',
   alternates: { canonical: 'https://www.leanon.app/support/founder-burnout' },
   openGraph: {
     title: 'Founder Burnout Support — LeanOn',
@@ -229,7 +229,7 @@ export default function FounderBurnoutSupportPage() {
 
         <div className="cta-card">
           <h2>You Are Allowed to Not Be Okay</h2>
-          <p>Talk to someone who has been in the trenches of building a startup and came out the other side. Available 24/7.</p>
+          <p>Talk to someone who has been in the trenches of building a startup and came out the other side. No appointment needed.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Talk to a listener who gets founders — first 5 min free →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>

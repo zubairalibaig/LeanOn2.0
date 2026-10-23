@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support in Visakhapatnam — Peer Listeners | LeanOn',
-  description: 'Connect with peer listeners in Visakhapatnam (Vizag), Andhra Pradesh. Talk anonymously about career pressure, family expectations, work stress. Available 24/7 on LeanOn.',
+  description: 'Connect with peer listeners in Visakhapatnam (Vizag), Andhra Pradesh. Talk anonymously about career pressure, family expectations, work stress. No appointment needed.',
   alternates: { canonical: 'https://www.leanon.app/visakhapatnam', languages: { 'en-IN': 'https://www.leanon.app/visakhapatnam' } },
   keywords: 'peer support Visakhapatnam, emotional support Vizag, work stress Visakhapatnam Andhra, family pressure Vizag, talk to someone Visakhapatnam, leanon Vizag',
   openGraph: {
     title: 'Emotional Support in Visakhapatnam — Peer Listeners | LeanOn',
-    description: 'Connect with peer listeners in Visakhapatnam (Vizag), Andhra Pradesh. Talk anonymously about career pressure, family expectations, work stress. Available 24/7 on LeanOn.',
+    description: 'Connect with peer listeners in Visakhapatnam (Vizag), Andhra Pradesh. Talk anonymously about career pressure, family expectations, work stress. No appointment needed.',
     url: 'https://www.leanon.app/visakhapatnam',
     siteName: 'LeanOn',
     type: 'article',

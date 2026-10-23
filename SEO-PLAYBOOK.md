@@ -59,6 +59,21 @@ income… make money chatting online") and the other recruitment pages.
 
 ---
 
+## 🎯 After the 2026-10-23 deploy (top-50 questions)
+
+- [ ] `node scripts/indexnow.mjs` (tells Bing, and so ChatGPT search, about the ~130 changed pages).
+- [ ] Bing Webmaster → URL Inspection → Request indexing: `/answers`, `/for-women`, `/marriage-problems-india`.
+- [ ] Google Search Console → URL Inspection → Request indexing: `/answers`.
+- [ ] GA4 → Admin → Events → mark `purchase` as a key event. After 4 weeks: Reports → Engagement →
+      Landing page, filtered to the `purchase` event, shows which pages bring paying users.
+- [ ] Once a month, ask ChatGPT (search on, logged out) 10 of the 50 questions in `lib/geo-questions.ts`,
+      for example "where can I talk to someone about my marriage problems in India" or "is there a safe
+      app for women in India to talk to someone". Note whether LeanOn is named. Expect 6–10 weeks.
+- [ ] Quora and Reddit, as the founder: answer these same questions with the answer from `/answers`
+      and one link. This is what moves ChatGPT most.
+
+---
+
 ## ⭐ Priority now (2026-09-24): off-site GEO for PAYING users
 
 The code side of SEO is saturated (414 pages). What AI assistants cite is **other websites

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Anonymous Emotional Support Online India | LeanOn',
-  description: 'Get anonymous emotional support online in India. No name required, no judgement, no records. Real peer listeners available 24/7 on LeanOn.',
+  description: 'Get anonymous emotional support online in India. No name required, no judgement, no records. Real peer listeners on LeanOn.',
   keywords: ['anonymous emotional support online india', 'anonymous support india', 'anonymous peer support', 'anonymous chat india', 'emotional support anonymously'],
   alternates: { canonical: 'https://www.leanon.app/anonymous-support-online' },
 }
@@ -64,7 +64,7 @@ export default function AnonymousSupportPage() {
 
         <div className="cta">
           <h2>Talk anonymously — available now</h2>
-          <p>Available 24/7, no appointment needed. No name, no judgement.</p>
+          <p>No appointment needed. No name, no judgement.</p>
           <a href="/browse"><button className="btn">Start anonymously →</button></a>
         </div>
       </div>

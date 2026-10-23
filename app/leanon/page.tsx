@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'LeanOn — What Is LeanOn? India\'s Peer Support Platform',
-  description: 'LeanOn (Lean On) is India\'s peer support platform. Learn what LeanOn means, how it works, who it\'s for, and why it\'s the most human alternative to therapy in India. Available 24/7.',
+  description: 'LeanOn (Lean On) is India\'s peer support platform. Learn what LeanOn means, how it works, who it\'s for, and why it\'s the most human alternative to therapy in India. No appointment needed.',
   alternates: { canonical: 'https://www.leanon.app/leanon' },
   keywords: [
     'LeanOn', 'leanon', 'lean on', 'lean on app', 'leanon app', 'what is leanon',
@@ -44,7 +44,7 @@ const faqSchema = {
       name: 'What is LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn is India\'s peer support platform — an app that connects people with verified peer listeners who have personally experienced the same challenges. It\'s not therapy. It\'s real human connection, available 24/7, starting at ₹0 for the first 5 minutes.',
+        text: 'LeanOn is India\'s peer support platform — an app that connects people with verified peer listeners who have personally experienced the same challenges. It\'s not therapy. It\'s real human connection, starting at ₹0 for the first 5 minutes.',
       },
     },
     {
@@ -189,7 +189,7 @@ export default function LeanOnBrandPage() {
         <div className="hero">
           <p className="tag">Brand · LeanOn</p>
           <h1>What Is <em>LeanOn</em>?</h1>
-          <p className="lead">LeanOn is India&apos;s peer support platform — named after the act of leaning on someone. Real humans. Real understanding. Available any time, anywhere in India. Available 24/7, no appointment needed.</p>
+          <p className="lead">LeanOn is India&apos;s peer support platform — named after the act of leaning on someone. Real humans. Real understanding. Available any time, anywhere in India. No appointment needed.</p>
         </div>
 
         {/* The name meaning */}
@@ -229,7 +229,7 @@ export default function LeanOnBrandPage() {
                 Start in 60 seconds<br/>
                 Real humans with lived experience<br/>
                 Completely private<br/>
-                Available 24/7, even 2 AM
+                Often online late at night
               </div>
             </div>
           </div>
@@ -245,7 +245,7 @@ export default function LeanOnBrandPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Lean on Someone?</h2>
-          <p>Available 24/7, no appointment needed. Someone is available right now.</p>
+          <p>No appointment needed. Someone is available right now.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Start now</button></a>
             <a href="/browse"><button className="btn-secondary">Browse peer listeners</button></a>
@@ -256,14 +256,14 @@ export default function LeanOnBrandPage() {
         <div className="section">
           <h2>Frequently Asked Questions About LeanOn</h2>
           {[
-            { q: 'What is LeanOn?', a: 'LeanOn is India\'s peer support platform — an app that connects people with verified peer listeners who have personally experienced the same challenges. It\'s not therapy. It\'s real human connection, available 24/7. Sessions start at ₹160 for 15 minutes, with a trial session for new users.' },
+            { q: 'What is LeanOn?', a: 'LeanOn is India\'s peer support platform — an app that connects people with verified peer listeners who have personally experienced the same challenges. It\'s not therapy. It\'s real human connection. Sessions start at ₹160 for 15 minutes, with a trial session for new users.' },
             { q: 'What does "LeanOn" mean?', a: '"LeanOn" takes its name from "lean on" — to emotionally rely on someone, to let another person support you when you\'re struggling. The platform is built on the idea that everyone deserves someone to lean on.' },
             { q: 'Why is it called LeanOn?', a: 'The name was chosen because "lean on" captures what we offer: not therapy, not AI, not advice — just someone to lean on. A real human who has been through what you\'re going through.' },
             { q: 'Is LeanOn the same as therapy?', a: 'No. LeanOn is peer support, not therapy. Listeners are verified people with lived experience — not licensed therapists. They offer genuine empathy and understanding, not clinical diagnosis.' },
             { q: 'How much does LeanOn cost?', a: 'LeanOn offers a 5-minute trial session for new users. After that, sessions start from ₹160 for 15 minutes — significantly more affordable than therapy (₹1,500–5,000/session in India).' },
             { q: 'Is LeanOn safe and private?', a: 'Yes. Phone OTP sign-up (no full name required), conversations never shared outside LeanOn, crisis helplines in every session, and every report reviewed by a person.' },
             { q: 'How is LeanOn different from other mental health apps?', a: 'Unlike AI chatbots (not real humans) or professional therapy platforms (expensive, clinical), LeanOn offers real humans with lived experience, available instantly, at a fraction of therapy cost.' },
-            { q: 'Is LeanOn available across India?', a: 'Yes — Bengaluru, Mumbai, Delhi, Chennai, Hyderabad, Pune, Kolkata, and everywhere else. Online, 24/7.' },
+            { q: 'Is LeanOn available across India?', a: 'Yes — Bengaluru, Mumbai, Delhi, Chennai, Hyderabad, Pune, Kolkata, and everywhere else. Online.' },
           ].map((f, i) => (
             <div key={i} className="faq-item">
               <div className="faq-q">{f.q}</div>
@@ -288,7 +288,7 @@ export default function LeanOnBrandPage() {
               {[
                 ['What is it?', 'Peer support platform for India', 'Dance/pop song by Major Lazer & DJ Snake'],
                 ['Can it help you?', 'Yes — real humans, real conversations', 'Emotionally, maybe. Practically, no'],
-                ['Available in India?', 'Yes — 24/7, across all cities', 'On all streaming platforms'],
+                ['Available in India?', 'Yes — across all cities', 'On all streaming platforms'],
                 ['Trial available?', 'Yes — 5-minute trial session', 'Yes — it is just a song'],
                 ['Will you feel better?', 'Very likely', 'Depends on your taste in music'],
               ].map(([f, a, b], i) => (
@@ -307,7 +307,7 @@ export default function LeanOnBrandPage() {
             { q: 'Is LeanOn the app or the song?', a: 'LeanOn is an app — India\'s peer support platform. The song "Lean On" is by Major Lazer and DJ Snake. We share the same phrase but are entirely unrelated.' },
             { q: 'What does "lean on" mean in the LeanOn app context?', a: 'In the app, "lean on" means finding a real human you can emotionally rely on during hard times. A peer listener who has been through what you\'re going through and can offer genuine understanding — not advice, not therapy, just presence.' },
             { q: 'Is LeanOn an app review or a song?', a: 'LeanOn is a peer support app — read user reviews on our website. If you\'re looking for the "Lean On" song review, that\'s a different (and very catchy) song.' },
-            { q: 'What is "leanon app" India?', a: 'LeanOn is India\'s peer emotional support app — you can talk to real listeners about anxiety, loneliness, burnout, relationships, and more. Available 24/7, instant access.' },
+            { q: 'What is "leanon app" India?', a: 'LeanOn is India\'s peer emotional support app — you can talk to real listeners about anxiety, loneliness, burnout, relationships, and more. No appointment needed.' },
           ].map((f, i) => (
             <div key={i} className="faq-item" style={{marginTop: i === 0 ? 16 : 0}}>
               <div className="faq-q">{f.q}</div>

@@ -52,6 +52,7 @@ const PUBLIC_PAGES = [
   '/get-paid-to-chat-india',
   '/contact',
   '/privacy',
+  '/answers',        // AEO hub: lib/geo-questions.ts
   '/delete-account', // linked from the Google Play listing — must open signed out
   '/terms',
   '/glossary',

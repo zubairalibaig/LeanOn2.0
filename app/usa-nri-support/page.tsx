@@ -54,10 +54,10 @@ const faqSchema = {
     },
     {
       '@type': 'Question',
-      name: 'Is LeanOn available 24 hours a day for NRIs in different US time zones?',
+      name: 'Can I use LeanOn from any US time zone?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn listeners are based in India, so availability follows Indian time — whether you are on the East Coast, West Coast, or anywhere in between. The late-night hours when India is sleeping and you are alone with your thoughts are exactly when LeanOn is there.',
+        text: 'Yes. Listeners are based in India, so availability follows Indian time. US late evenings fall in the Indian morning and midday, when listeners are often online; US daytime is late night in India, when fewer are. Check who is online now before you start.',
       },
     },
     {
@@ -226,9 +226,8 @@ export default function UsaNriSupportPage() {
               hear it as the genuine sadness it is — not minimise it as &quot;you chose to go.&quot;</p>
           </div>
           <div className="faq-item">
-            <h3>Is LeanOn available 24 hours a day for NRIs in different US time zones?</h3>
-            <p>Yes. LeanOn listeners are based in India, so availability follows Indian time — East Coast or West Coast — check who is online now (listeners are in India) of day or night.
-              The late-night hours when India is sleeping are exactly when LeanOn is there.</p>
+            <h3>Can I use LeanOn from any US time zone?</h3>
+            <p>Yes. Listeners are based in India, so availability follows Indian time. US late evenings fall in the Indian morning and midday, when listeners are often online; US daytime is late night in India, when fewer are. Check who is online now before you start.</p>
           </div>
           <div className="faq-item">
             <h3>How much does a LeanOn session cost in the USA?</h3>

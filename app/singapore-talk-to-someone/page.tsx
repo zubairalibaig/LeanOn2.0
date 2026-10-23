@@ -34,7 +34,7 @@ const faqSchema = {
       name: 'Can I talk to someone in Singapore right now?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn listeners are based in India, so availability follows Indian time. You can start a session any time of day or night — no appointment, no waiting list. Just browse available listeners and start talking.',
+        text: 'Yes. LeanOn listeners are based in India, so availability follows Indian time. You can start a session whenever a listener is online — no appointment, no waiting list. Just browse available listeners and start talking.',
       },
     },
     {
@@ -177,7 +177,7 @@ export default function SingaporeTalkToSomeonePage() {
         </div>
 
         <div className="night-box">
-          <h2>🌃 Available any time you need it</h2>
+          <h2>🌃 Your evenings overlap Indian evenings</h2>
           <p>2 AM in Singapore. The messages back home are going unanswered because everyone is asleep.
             You are awake and you want to talk — not to scroll, not to watch something, but to actually
             have a conversation with a real person.</p>

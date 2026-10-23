@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Vent to a Real Person Online — Someone Who Actually Listens | LeanOn',
-  description: 'Need to vent but have no one to talk to? LeanOn connects you with real human listeners online — anonymous, available 24/7, first 5 minutes free. Not an AI. A real person.',
+  description: 'Need to vent but have no one to talk to? LeanOn connects you with real human listeners online — anonymous, first 5 minutes free. Not an AI. A real person.',
   keywords: [
     'vent to someone online', 'i need to vent', 'someone to vent to', 'vent online',
     'vent to a real person', 'vent anonymously online', 'need to vent no one to talk to',
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Vent to a Real Person Online | LeanOn',
-    description: 'Sometimes you don\'t need advice. You just need to let it out. LeanOn connects you with real human listeners — anonymous, available 24/7, first 5 minutes free.',
+    description: 'Sometimes you don\'t need advice. You just need to let it out. LeanOn connects you with real human listeners — anonymous, first 5 minutes free.',
     url: 'https://www.leanon.app/vent-to-a-real-person-online',
     siteName: 'LeanOn',
     type: 'article',
@@ -31,7 +31,7 @@ const faqSchema = {
       name: 'Where can I vent to someone online?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn lets you vent to a real human listener — someone with lived experience who won\'t judge you, won\'t give unsolicited advice, and won\'t try to fix you. Available 24/7, first 5 minutes free.',
+        text: 'LeanOn lets you vent to a real human listener — someone with lived experience who won\'t judge you, won\'t give unsolicited advice, and won\'t try to fix you. First 5 minutes free.',
       },
     },
     {
@@ -153,7 +153,7 @@ export default function VentToRealPersonPage() {
         <p className="lead">
           You have something weighing on you. You have been carrying it for hours, maybe days. You don&apos;t
           need someone to fix it — you just need to say it out loud to a real person who will actually hear
-          you. LeanOn makes that possible, right now, 24/7.
+          you. LeanOn makes that possible, right now.
         </p>
 
         <a href="/browse" className="cta-hero">Find someone to listen — first 5 min free →</a>
@@ -242,7 +242,7 @@ export default function VentToRealPersonPage() {
 
         <div className="cta">
           <h2>Someone is ready to hear you right now</h2>
-          <p>Anonymous, no judgment, available 24/7. First 5 minutes free.</p>
+          <p>Anonymous, no judgment. First 5 minutes free.</p>
           <a href="/browse" className="btn-white">Find a listener →</a><br />
           <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
@@ -252,7 +252,7 @@ export default function VentToRealPersonPage() {
           <div className="faq-item">
             <h3>Where can I vent to someone online?</h3>
             <p>LeanOn lets you vent to a real human listener — someone with lived experience who won&apos;t
-              judge you, won&apos;t give unsolicited advice, and won&apos;t try to fix you. Available 24/7,
+              judge you, won&apos;t give unsolicited advice, and won&apos;t try to fix you. No appointment,
               first 5 minutes free.</p>
           </div>
           <div className="faq-item">

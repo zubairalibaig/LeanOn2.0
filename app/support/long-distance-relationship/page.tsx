@@ -1,15 +1,16 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Long-Distance Relationship Loneliness — Talk It Through | LeanOn',
-  description: 'Missing your partner across cities or time zones? Talk to a peer listener anonymously. Available 24/7. Empathetic support for LDR loneliness, 24/7.',
+  description: 'Missing your partner across cities or time zones? Talk to a peer listener anonymously. No appointment. Empathetic support for LDR loneliness.',
   alternates: { canonical: 'https://www.leanon.app/support/long-distance-relationship', languages: { 'en-IN': 'https://www.leanon.app/support/long-distance-relationship' } },
   keywords: 'long distance relationship loneliness India, LDR loneliness, missing partner abroad, long distance relationship stress, talk to someone long distance relationship',
   openGraph: {
     title: 'Long-Distance Relationship Loneliness — Talk It Through | LeanOn',
-    description: 'Missing your partner across cities or time zones? Talk to a peer listener anonymously. Available 24/7. Empathetic support for LDR loneliness, 24/7.',
+    description: 'Missing your partner across cities or time zones? Talk to a peer listener anonymously. No appointment. Empathetic support for LDR loneliness.',
     url: 'https://www.leanon.app/support/long-distance-relationship',
     siteName: 'LeanOn',
     type: 'article',
@@ -153,6 +154,7 @@ export default function LongDistanceRelationshipSupportPage() {
         </div>
 
         {/* Understanding */}
+        <GeoQuickAnswer path="/support/long-distance-relationship" />
         <div className="section">
           <h2>Understanding Long-Distance Relationship Loneliness</h2>
           <p>Long-distance relationships in India are more common than people realise — migration for work, higher studies abroad, and job postings across cities mean millions of couples are navigating love through screens. This loneliness is often invisible because, on paper, everything looks fine.</p>
@@ -185,7 +187,7 @@ export default function LongDistanceRelationshipSupportPage() {
           <p>Our listeners have navigated their own long-distance relationships — partners abroad, cities apart, long engagements across time zones. They bring genuine, empathetic understanding of this specific texture of loneliness, not generic relationship talk.</p>
 
           <h3>Available Regardless of Your Time Zone</h3>
-          <p>Whether you are up at odd hours waiting for your partner&apos;s call, or it is a quiet weekday afternoon while they sleep on the other side of the world, LeanOn listeners are available 24/7 — whenever the loneliness actually shows up for you.</p>
+          <p>Whether you are up at odd hours waiting for your partner&apos;s call, or it is a quiet weekday afternoon while they sleep on the other side of the world, LeanOn listeners go online at different hours, so you can often find someone when the loneliness actually shows up.</p>
 
           <h3>Anonymous and Separate From Your Shared World</h3>
           <p>A LeanOn conversation is completely separate from your partner&apos;s world and your shared social circle. You can be fully honest about how you feel without it reaching your partner, your families, or anyone you both know.</p>
@@ -226,7 +228,7 @@ export default function LongDistanceRelationshipSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>You Don&apos;t Have to Carry the Distance Alone</h2>
-          <p>Talk to a peer listener who has been through their own long-distance relationship and offers empathetic, judgment-free support. Available 24/7, no appointments, no waitlists.</p>
+          <p>Talk to a peer listener who has been through their own long-distance relationship and offers empathetic, judgment-free support. No appointments, no waitlists.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Talk to someone who understands distance — first 5 min free →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Why LeanOn? Peer Emotional Support vs Therapy | India',
-  description: 'Why choose LeanOn over therapy? Discover the benefits of peer emotional support — affordable, instant, anonymous, available 24/7 across India.',
+  description: 'Why choose LeanOn over therapy? Discover the benefits of peer emotional support — affordable, instant, anonymous.',
   keywords: ['why leanon', 'leanon vs therapy', 'leanon peer support india', 'peer support benefits india', 'alternative to therapy india'],
   alternates: { canonical: 'https://www.leanon.app/why-leanon' },
   openGraph: { title: 'Why LeanOn? Peer Emotional Support vs Therapy', description: 'The case for peer support over therapy in India.', url: 'https://www.leanon.app/why-leanon' },
@@ -71,7 +71,7 @@ export default function WhyLeanOnPage() {
           <div className="compare-col leanon">
             <h3>LeanOn Peer Support</h3>
             <ul>
-              <li>Available 24/7 — even at 2 AM</li>
+              <li>Listeners often online late at night</li>
               <li>From ₹160 for 15 minutes</li>
               <li>No appointment needed</li>
               <li>Completely anonymous</li>
@@ -114,7 +114,7 @@ export default function WhyLeanOnPage() {
 
         <div className="cta">
           <h2>Try LeanOn today</h2>
-          <p>Available 24/7. No card, no commitment.</p>
+          <p>No appointment. No card, no commitment.</p>
           <a href="/browse"><button className="btn">Browse listeners →</button></a>
         </div>
       </div>

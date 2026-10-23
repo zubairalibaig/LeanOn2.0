@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -147,6 +148,7 @@ export default function ArrangedMarriageStressPage() {
           <a href="/browse?topic=relationships" className="cta-hero">Talk to someone who understands →</a>
         </div>
 
+        <GeoQuickAnswer path="/support/arranged-marriage-stress" />
         <div className="section">
           <h2>What the Arranged Marriage Process Actually Feels Like From Inside It</h2>
           <p>From the outside, the arranged marriage process in India is often described in one of two ways: either as a warm family tradition, or as an outdated institution. Neither of these captures what it actually feels like to be inside it.</p>

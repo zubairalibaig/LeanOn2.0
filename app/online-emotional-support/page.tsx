@@ -4,10 +4,10 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Online Emotional Support from Real People | LeanOn',
-  description: 'Real peer listeners with lived experience, available 24/7. More human than AI, more accessible than therapy. No appointment, no judgment.',
+  description: 'Real peer listeners with lived experience. More human than AI, more accessible than therapy. No appointment, no judgment.',
   keywords: ['online emotional support', 'emotional support online', 'emotional support chat', 'peer emotional support online', 'online support chat', 'emotional support real person'],
   alternates: { canonical: 'https://www.leanon.app/online-emotional-support' },
-  openGraph: { title: 'Online Emotional Support from Real People | LeanOn', description: 'Real peer listeners with lived experience, available 24/7. More human than AI, more accessible than therapy. No appointment, no judgment.', url: 'https://www.leanon.app/online-emotional-support', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
+  openGraph: { title: 'Online Emotional Support from Real People | LeanOn', description: 'Real peer listeners with lived experience. More human than AI, more accessible than therapy. No appointment, no judgment.', url: 'https://www.leanon.app/online-emotional-support', siteName: 'LeanOn', type: 'article', images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn' }] },
 }
 
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
@@ -15,7 +15,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
   { '@type': 'Question', name: 'How is LeanOn different from an AI chatbot?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are real humans with lived experience. An AI generates responses that simulate understanding. A real person who has been through something similar actually knows what it feels like. Most people who try both describe AI emotional support as hollow — it mimics empathy but does not provide it.' } },
   { '@type': 'Question', name: 'How is this different from therapy?', acceptedAnswer: { '@type': 'Answer', text: 'Therapy is a clinical service with a licensed professional — appropriate for diagnosis and treatment. LeanOn is peer support: informal, accessible, and focused on being heard rather than treated. It is available right now, without an appointment, and is significantly more affordable.' } },
   { '@type': 'Question', name: 'Do I need a reason to use LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'No. You do not need to be in crisis or have a diagnosed condition. Feeling overwhelmed, lonely, anxious, or just needing to talk is sufficient. LeanOn is for anyone who needs to be heard.' } },
-  { '@type': 'Question', name: 'Is it available right now?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn is available 24/7. Browse listeners who are currently online and start a session immediately. The first 5 minutes are free with no charge.' } },
+  { '@type': 'Question', name: 'Is it available right now?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn is. Browse listeners who are currently online and start a session immediately. The first 5 minutes are free with no charge.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -77,7 +77,7 @@ export default function OnlineEmotionalSupportPage() {
       <div className="page">
         <nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>&#x203A;</span><span style={{ color: 'var(--navy)' }}>Online Emotional Support from Real People</span></nav>
         <div className="hero">
-          <p className="badge">Emotional Support &middot; Real People &middot; 24/7 &middot; No Appointment</p>
+          <p className="badge">Emotional Support &middot; Real People No Appointment</p>
           <h1>More human than AI. <em>More accessible than therapy.</em></h1>
           <p className="lead">Real peer listeners with lived experience, available right now. No appointment, no judgment, no waiting room. The first 5 minutes are free — start talking in under a minute.</p>
           <a href="/browse" className="cta-hero">Find a listener now &rarr;</a>

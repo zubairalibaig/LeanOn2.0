@@ -54,7 +54,7 @@ export const post = {
 
 <p>A session is anonymous — first names only — and nobody in your life finds out. The first session is five minutes, free, so you can try it without committing to anything. If what you find is that it is exactly the kind of conversation you were routing through a chart, you will know. If it is not what you needed, nothing has been spent.</p>
 
-<p>You can <a href="/browse">browse peer listeners</a> and read about who they are and what they have experience with before choosing. Sessions run 24/7, which matters because the feeling that sends people to astrology apps tends to arrive exactly in the hours when everything else is closed.</p>
+<p>You can <a href="/browse">browse peer listeners</a> and read about who they are and what they have experience with before choosing. Listeners go online at different hours, which matters because the feeling that sends people to astrology apps tends to arrive exactly in the hours when everything else is closed.</p>
 
 <p>The relief you are looking for — being heard, feeling like what you are going through matters, having permission to feel what you are feeling — is available directly. It does not need a birth chart as an entrance fee.</p>
 

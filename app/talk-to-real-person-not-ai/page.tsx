@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Talk to a Real Person, Not an AI | LeanOn',
-    description: 'AI predicts words. Humans understand feelings. LeanOn connects you with real peer listeners — people with lived experience — available 24/7.',
+    description: 'AI predicts words. Humans understand feelings. LeanOn connects you with real peer listeners — people with lived experience —.',
     url: 'https://www.leanon.app/talk-to-human-instead-of-chatgpt',
     siteName: 'LeanOn',
     type: 'article',
@@ -91,7 +91,7 @@ const faqSchema = {
       name: 'How is LeanOn different from therapy?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn is peer support — affordable, anonymous, and available 24/7. It is not therapy or clinical mental health care. Think of it as a trusted friend with relevant lived experience, available on demand.',
+        text: 'LeanOn is peer support — affordable, anonymous. It is not therapy or clinical mental health care. Think of it as a trusted friend with relevant lived experience, available on demand.',
       },
     },
   ],
@@ -178,7 +178,7 @@ export default function TalkToRealPersonPage() {
         <p className="lead">
           LeanOn is a peer support platform that connects people feeling lonely, overwhelmed, or emotionally
           stuck with real human listeners — people with lived experience of the same struggles. Not AI. Not
-          chatbots. Real humans, available 24/7.
+          chatbots. Real humans.
         </p>
 
         <a href="/browse" className="cta-hero">Talk to a real person now — first 5 min free →</a>
@@ -299,7 +299,7 @@ export default function TalkToRealPersonPage() {
           </div>
           <div className="faq-item">
             <h3>How is LeanOn different from therapy?</h3>
-            <p>LeanOn is peer support — affordable, anonymous, and available 24/7. It is not therapy or
+            <p>LeanOn is peer support — affordable, anonymous. It is not therapy or
               clinical mental health care. Think of it as a trusted friend with relevant lived experience,
               available on demand.</p>
           </div>

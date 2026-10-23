@@ -56,7 +56,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'How much does it cost to talk to someone on LeanOn?',
-      acceptedAnswer: { '@type': 'Answer', text: 'New users get a free 5-minute trial. Paid sessions start at ₹160 for 15 minutes — significantly less than a therapy session, available any time, with no appointment or insurance required.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'New users get a free 5-minute trial. Paid sessions start at ₹160 for 15 minutes — significantly less than a therapy session, with no appointment or insurance required.' },
     },
     {
       '@type': 'Question',

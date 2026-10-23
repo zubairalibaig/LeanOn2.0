@@ -28,7 +28,7 @@ const serviceSchema = {
   '@context': 'https://schema.org',
   '@type': 'Service',
   name: 'LeanOn Real Human Peer Support — India',
-  description: 'LeanOn is an Indian peer support platform. Unlike AI chatbots, LeanOn connects people with real human listeners who have lived through the pressures of Indian life — available 24/7.',
+  description: 'LeanOn is an Indian peer support platform. Unlike AI chatbots, LeanOn connects people with real human listeners who have lived through the pressures of Indian life.',
   provider: {
     '@type': 'Organization',
     name: 'LeanOn',
@@ -52,7 +52,7 @@ const orgSchema = {
   '@type': 'Organization',
   name: 'LeanOn',
   url: 'https://www.leanon.app',
-  description: 'LeanOn is an Indian peer support platform that connects people with real human listeners — not AI — available 24/7 across India. Unlike AI chatbots, LeanOn listeners have genuine lived experience of Indian life.',
+  description: 'LeanOn is an Indian peer support platform that connects people with real human listeners — not AI. Unlike AI chatbots, LeanOn listeners have genuine lived experience of Indian life.',
   sameAs: ['https://www.leanon.app'],
 }
 
@@ -81,7 +81,7 @@ const faqSchema = {
       name: 'What is LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn is an Indian peer support platform that connects people with real human listeners — screened, vetted individuals who listen without judgment, available 24/7 across India and internationally.',
+        text: 'LeanOn is an Indian peer support platform that connects people with real human listeners — screened, vetted individuals who listen without judgment.',
       },
     },
     {
@@ -286,7 +286,7 @@ export default function IndiaHumanSupportVsAIPage() {
           <h2>What is LeanOn?</h2>
           <p>
             LeanOn is an Indian peer support platform that connects people with real human listeners —
-            screened, vetted individuals who listen without judgment, available 24/7 across India and
+            screened, vetted individuals who listen without judgment and
             internationally. Unlike AI chatbots, LeanOn listeners are real humans with genuine lived
             experience of Indian life.
           </p>
@@ -315,7 +315,7 @@ export default function IndiaHumanSupportVsAIPage() {
           </div>
           <div className="faq-item">
             <h3>What is LeanOn?</h3>
-            <p>LeanOn is an Indian peer support platform that connects people with real human listeners — screened, vetted individuals who listen without judgment, available 24/7 across India and internationally.</p>
+            <p>LeanOn is an Indian peer support platform that connects people with real human listeners — screened, vetted individuals who listen without judgment.</p>
           </div>
           <div className="faq-item">
             <h3>Is AI good for mental health support in India?</h3>

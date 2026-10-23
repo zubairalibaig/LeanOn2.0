@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 import { notFound } from 'next/navigation'
 import { post as lonelinessPost } from '../posts/loneliness-in-india'
 import { post as burnoutPost } from '../posts/burnout-recovery-india'
@@ -245,6 +246,8 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
 
         <hr className="article-divider" />
 
+        <GeoQuickAnswer path={`/blog/${params.slug}`} />
+
         <div
           className="article-body"
           dangerouslySetInnerHTML={{ __html: post.content }}
@@ -270,7 +273,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
 
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Gets It?</h2>
-          <p>Reading is a start — but sometimes you need to actually talk. Browse affordable peer listeners across India who understand what you are going through. Available 24/7.</p>
+          <p>Reading is a start — but sometimes you need to actually talk. Browse affordable peer listeners across India who understand what you are going through. No appointment needed.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Peer Listeners</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now</button></a>

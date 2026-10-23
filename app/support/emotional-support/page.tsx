@@ -4,11 +4,11 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Online Emotional Support India — Talk to a Peer Listener | LeanOn',
-  description: 'Get online emotional support from screened peer listeners in India. Anonymous, affordable, and available 24/7 on LeanOn.',
+  description: 'Get online emotional support from screened peer listeners in India. Anonymous, affordable.',
   alternates: { canonical: 'https://www.leanon.app/support/emotional-support', languages: { 'en-IN': 'https://www.leanon.app/support/emotional-support' } },
   openGraph: {
     title: 'Online Emotional Support India — Talk to a Peer Listener | LeanOn',
-    description: 'Get online emotional support from screened peer listeners in India. Anonymous, affordable, and available 24/7 on LeanOn.',
+    description: 'Get online emotional support from screened peer listeners in India. Anonymous, affordable.',
     url: 'https://www.leanon.app/support/emotional-support',
     siteName: 'LeanOn',
     type: 'article',
@@ -258,7 +258,7 @@ export default function EmotionalSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Start a Session Now</h2>
-          <p>Find someone who understands. Available 24/7, no appointment needed.</p>
+          <p>Find someone who understands. No appointment needed.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Get support from a real person — first 5 min free →</button></a>
             <a href="/browse"><button className="btn-secondary">Browse Listeners First</button></a>

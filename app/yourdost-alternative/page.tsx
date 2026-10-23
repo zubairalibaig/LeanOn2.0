@@ -154,7 +154,7 @@ export default function YourDOSTAlternativePage() {
         <p className="lead">
           YourDOST does good work — but it is tied to your employer, runs on office hours, and can feel clinical
           when you just need to talk. LeanOn connects you with a real peer listener in under 2 minutes,
-          completely anonymously, any time of day or night. No HR, no corporate portal, no waiting list.
+          completely anonymously, whenever a listener is online. No HR, no corporate portal, no waiting list.
         </p>
 
         <a href="/talk?src=seo" className="cta-hero">Start free — talk in 2 min →</a>
@@ -209,9 +209,9 @@ export default function YourDOSTAlternativePage() {
                 <td className="tick">✅ Private</td>
               </tr>
               <tr>
-                <td>Available 24/7?</td>
+                <td>Available late at night?</td>
                 <td className="cross">Weekday hours</td>
-                <td className="tick">✅ Even at 2 AM</td>
+                <td className="tick">Often — listeners in India choose their hours</td>
               </tr>
               <tr>
                 <td>Response time</td>

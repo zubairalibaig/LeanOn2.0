@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'Is LeanOn peer support different from therapy?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn is peer support, not therapy. Listeners are screened peers — not licensed therapists. More accessible (from ₹160 for 15 minutes), available 24/7, and completely anonymous. For clinical mental health concerns, professional help is always recommended.',
+        text: 'Yes. LeanOn is peer support, not therapy. Listeners are screened peers — not licensed therapists. More accessible (from ₹160 for 15 minutes), and completely anonymous. For clinical mental health concerns, professional help is always recommended.',
       },
     },
   ],
@@ -186,7 +186,7 @@ export default function KochiPage() {
 
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Understands Kerala?</h2>
-          <p>Browse peer listeners who know the NRI experience and Kerala family dynamics. Available worldwide, 24/7, from ₹160.</p>
+          <p>Browse peer listeners who know the NRI experience and Kerala family dynamics. Available worldwide, from US$10 abroad (availability follows Indian time).</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Kerala Listeners</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now</button></a>
@@ -213,7 +213,7 @@ export default function KochiPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn peer support different from therapy?</div>
-            <div className="faq-a">Yes. LeanOn is peer support, not therapy. Listeners are screened peers — not licensed therapists. Accessible from ₹160 for 15 minutes, available 24/7, anonymous.</div>
+            <div className="faq-a">Yes. LeanOn is peer support, not therapy. Listeners are screened peers — not licensed therapists. Accessible from ₹160 for 15 minutes, anonymous.</div>
           </div>
         </div>
 

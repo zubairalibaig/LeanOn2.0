@@ -64,7 +64,7 @@ export default function ResourcesIndex() {
 
         <div className="cta-box">
           <h2>Sometimes reading isn&apos;t enough</h2>
-          <p>Talk to a real peer listener — someone who has been through what you&apos;re reading about. Available 24/7.</p>
+          <p>Talk to a real peer listener — someone who has been through what you&apos;re reading about. No appointment needed.</p>
           <a href="/browse"><button className="btn">Find a listener →</button></a>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -118,6 +119,7 @@ export default function InterfaithRelationshipIndiaPage() {
           <p className="lead">Interfaith relationships in India mean navigating two sets of family expectations, social pressure, and sometimes genuine fear. It&apos;s too complicated to explain to most people. Say it to someone with no stake in how it turns out.</p>
           <a href="/browse" className="cta-hero">Find a listener &rarr;</a>
         </div>
+        <GeoQuickAnswer path="/interfaith-relationship-india" />
         <div className="section">
           <h2>The Specific Weight of Interfaith Relationships in India</h2>
           <p>Hindu-Muslim, Hindu-Christian, Sikh-Hindu, inter-caste &mdash; each combination carries its own specific weight in India. The political climate has made some of these harder than they were a decade ago. The family pressure is real and often enormous. The social cost of being in such a relationship &mdash; the gossip, the judgment, the uncertainty about how it will be received &mdash; is something most people in these relationships carry in silence.</p>

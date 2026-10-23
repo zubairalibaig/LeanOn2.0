@@ -158,7 +158,7 @@ export default function MalaysiaTalkToSomeonePage() {
         <p className="lead">
           Not an app. Not a chatbot. Not another scroll through social media. A real person — warm,
           Indian, who understands your world — who will give you their complete attention. LeanOn
-          makes that possible from Malaysia, any time of day or night.
+          makes that possible from Malaysia — your evenings overlap Indian evenings, when most listeners are online.
         </p>
 
         <a href="/browse" className="cta-hero">Talk to someone now — first 5 min free →</a>
@@ -234,7 +234,7 @@ export default function MalaysiaTalkToSomeonePage() {
           </div>
           <div className="faq-item">
             <h3>Can I talk to a Tamil-speaking listener from Malaysia?</h3>
-            <p>Yes. LeanOn has Tamil-speaking listeners available round the clock. You can also find
+            <p>Yes. LeanOn has Tamil-speaking listeners (availability follows Indian time). You can also find
               listeners who speak Hindi, Telugu, Malayalam, Kannada, Bengali, and English.</p>
           </div>
           <div className="faq-item">

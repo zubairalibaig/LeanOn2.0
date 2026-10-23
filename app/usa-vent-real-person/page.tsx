@@ -183,7 +183,7 @@ export default function USAVentRealPersonPage() {
         <h1>You&apos;ve Got a Lot on Your Mind.<br />A Real Human Is Ready to Listen.</h1>
         <p className="lead">
           LeanOn is a peer support platform where you can vent to a real human listener — anonymously,
-          any time of day or night, with no judgment and no AI. Just a real person in the US who is
+          whenever a listener is online (they are in India), with no judgment and no AI. Just a real person in the US who is
           fully present and ready to receive what you&apos;re carrying.
         </p>
 

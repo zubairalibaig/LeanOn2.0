@@ -4,11 +4,11 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Peer Support for Social Anxiety in India | LeanOn',
-  description: 'Struggling with social anxiety? Talk to a peer listener who gets it. Available 24/7. LeanOn listeners are empathetic and available 24/7.',
+  description: 'Struggling with social anxiety? Talk to a peer listener who gets it. No appointment needed. LeanOn listeners are empathetic.',
   alternates: { canonical: 'https://www.leanon.app/support/social-anxiety', languages: { 'en-IN': 'https://www.leanon.app/support/social-anxiety' } },
   openGraph: {
     title: 'Peer Support for Social Anxiety in India | LeanOn',
-    description: 'Struggling with social anxiety? Talk to a peer listener who gets it. Available 24/7. LeanOn listeners are empathetic and available 24/7.',
+    description: 'Struggling with social anxiety? Talk to a peer listener who gets it. No appointment needed. LeanOn listeners are empathetic.',
     url: 'https://www.leanon.app/support/social-anxiety',
     siteName: 'LeanOn',
     type: 'article',
@@ -228,7 +228,7 @@ export default function SocialAnxietySupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Feel More at Ease?</h2>
-          <p>Talk to a peer listener who truly understands social anxiety. Available 24/7, no appointments, no waitlists.</p>
+          <p>Talk to a peer listener who truly understands social anxiety. No appointments, no waitlists.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">No judgment, no pressure — first 5 min free →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>

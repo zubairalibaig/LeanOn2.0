@@ -65,7 +65,7 @@ const faqSchema = {
       name: 'Where can I find peer counselling in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn (leanon.app) offers peer counselling from screened peer listeners available 24/7 across India. Sessions start at ₹160, are private, and available without an appointment. Your first 5-minute session is free.',
+        text: 'LeanOn (leanon.app) offers peer counselling from screened peer listeners across India. Sessions start at ₹160, are private, and available without an appointment. Your first 5-minute session is free.',
       },
     },
   ],
@@ -267,7 +267,7 @@ export default function PeerCounsellingIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Where can I find peer counselling in India?</div>
-            <div className="faq-a">LeanOn (leanon.app) offers peer counselling from screened peer listeners available 24/7 across India. Sessions start at ₹160, are private, and available without an appointment. Your first 5-minute session is free.</div>
+            <div className="faq-a">LeanOn (leanon.app) offers peer counselling from screened peer listeners across India. Sessions start at ₹160, are private, and available without an appointment. Your first 5-minute session is free.</div>
           </div>
         </div>
 

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -74,6 +75,7 @@ export default function FeelingEmptyInsideIndiaPage() {
           <p className="lead">Emotional emptiness is harder to explain than sadness. And harder to ask for help with. Talk anonymously from ₹160 to someone who understands.</p>
           <a href="/browse" className="cta-hero">Talk to someone now &rarr;</a>
         </div>
+        <GeoQuickAnswer path="/feeling-empty-inside-india" />
         <div className="section">
           <h2>What Feeling Empty Actually Is</h2>
           <p>Feeling empty is not the same as sadness. Sadness has content &mdash; there is something to cry about. Emptiness is the absence of feeling. You go through your day, you respond appropriately, you function. But inside there is nothing connecting you to any of it. Nothing lands. Nothing feels real.</p>

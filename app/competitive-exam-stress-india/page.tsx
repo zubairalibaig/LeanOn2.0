@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -97,6 +98,7 @@ export default function CompetitiveExamStressIndiaPage() {
           <p className="lead">Competitive exams in India carry a weight that goes far beyond the syllabus. Talk to someone who understands. Anonymous peer support from ₹160.</p>
           <a href="/browse" className="cta-hero">Talk to someone now &rarr;</a>
         </div>
+        <GeoQuickAnswer path="/competitive-exam-stress-india" />
         <div className="section">
           <h2>Why Competitive Exam Stress Is Unique</h2>
           <p>Competitive exams in India &mdash; CAT, GATE, banking exams, UPSC, state PSC &mdash; are not just academic challenges. They are social events. Your rank is your identity. Your success is your family's pride. Your failure is something that follows you in ways that exam failure in other contexts does not.</p>

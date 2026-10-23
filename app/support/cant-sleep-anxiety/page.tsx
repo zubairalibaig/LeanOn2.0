@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -160,6 +161,7 @@ export default function CantSleepAnxietyPage() {
           <p className="lead">You are not alone. Millions of people in India are awake right now, spiraling in the dark. LeanOn peer listeners are available through the night — real people who know the 2 AM feeling and are ready to talk.</p>
         </div>
 
+        <GeoQuickAnswer path="/support/cant-sleep-anxiety" />
         <div className="section">
           <h2>Why 2 AM Is the Hardest Hour</h2>
           <p>There is a reason anxiety peaks at night. During the day, you are moving — work, commute, social obligations, screens, chores. Each of these is a distraction, and distractions keep the anxious mind partially occupied. At night, when the stimulation drops, the mind suddenly has space. And it fills that space with everything it has been holding.</p>
@@ -254,7 +256,7 @@ export default function CantSleepAnxietyPage() {
 
         <div className="cta-card">
           <h2>Someone Is Awake Right Now</h2>
-          <p>LeanOn peer listeners are available 24/7 — including right now. Talk to someone who knows the 2 AM feeling. Start with a free trial session.</p>
+          <p>LeanOn listeners go online at different hours, including late at night. Talk to someone who knows the 2 AM feeling. Start with a free trial session.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Someone is up too — start free now →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>

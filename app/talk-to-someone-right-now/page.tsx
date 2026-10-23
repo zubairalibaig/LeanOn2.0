@@ -4,12 +4,12 @@ import QuickAnswer from '@/app/components/QuickAnswer'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Talk to Someone Right Now — Anonymous, 24/7 | LeanOn India',
+  title: 'Talk to Someone Right Now — Anonymous, no appointment | LeanOn India',
   description: "Talk to someone right now — a real, screened peer listener in India, online now, by text or voice. No appointment. First 5 minutes free.",
   alternates: { canonical: 'https://www.leanon.app/talk-to-someone-right-now', languages: { 'en-IN': 'https://www.leanon.app/talk-to-someone-right-now' } },
   keywords: 'talk to someone right now, need to talk to someone now India, someone to talk to immediately, urgent emotional support India, talk to someone online now, anonymous listener India',
   openGraph: {
-    title: 'Talk to Someone Right Now — Anonymous, 24/7 | LeanOn India',
+    title: 'Talk to Someone Right Now — Anonymous, no appointment | LeanOn India',
     description: "Talk to someone right now — a real, screened peer listener in India, online now, by text or voice. No appointment. First 5 minutes free.",
     url: 'https://www.leanon.app/talk-to-someone-right-now',
     siteName: 'LeanOn',
@@ -147,7 +147,7 @@ export default function TalkToSomeoneRightNowPage() {
 
         {/* Hero */}
         <div className="hero">
-          <p className="tag">Available Now · Anonymous · 24/7</p>
+          <p className="tag">Available Now · Anonymous</p>
           <h1>Someone Is Ready to <em>Listen</em> — Right Now</h1>
           <p className="lead">You do not need an appointment, a referral, or a reason good enough. Open the listener directory, see who is online, and start talking instantly.</p>
           <QuickAnswer question={"Can I talk to someone right now, without an appointment?"} answer={"Yes. Open leanon.app/talk, choose text or voice and tap what is on your mind. LeanOn asks a screened peer listener who is online now, and the next one if they can't answer within about 30 seconds. Your first 5 minutes are free. If you are in danger, call Tele-MANAS 14416 first."} />
@@ -237,7 +237,7 @@ export default function TalkToSomeoneRightNowPage() {
 
         {/* CTA */}
         <div className="cta-card">
-          <h2>Start Talking Now — Available 24/7</h2>
+          <h2>Start Talking Now</h2>
           <p>See who is online right now. Anonymous, available instantly, text or voice. If nobody is online this second, leave a message and a listener will reply.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">See Who Is Online Now</button></a>

@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support Online India — Complete Guide | LeanOn',
-  description: 'The complete guide to emotional support in India. Understand your options, find the right support for loneliness, anxiety, burnout, grief, relationships and more. LeanOn peer support — available 24/7.',
+  description: 'The complete guide to emotional support in India. Understand your options, find the right support for loneliness, anxiety, burnout, grief, relationships and more. LeanOn peer support —.',
   alternates: { canonical: 'https://www.leanon.app/emotional-support' },
   keywords: [
     'emotional support India', 'online emotional support India', 'emotional support online',
@@ -63,7 +63,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'How do I get emotional support online in India?',
-      acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is India\'s leading peer emotional support platform. Sign up with your phone number (OTP, 30 seconds), browse verified peer listeners, and start a session instantly. Available 24/7. Sessions from ₹160 for 15 minutes.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is India\'s leading peer emotional support platform. Sign up with your phone number (OTP, 30 seconds), browse verified peer listeners, and start a session instantly. No appointment needed. Sessions from ₹160 for 15 minutes.' },
     },
     {
       '@type': 'Question',
@@ -174,7 +174,7 @@ export default function EmotionalSupportHubPage() {
               { icon:'💬', title:'Relationship Stress', desc:'When the people closest to you become the source of pain.', href:'/support/relationship-stress' },
               { icon:'🌐', title:'Anonymous Support', desc:'Talk to someone without revealing your identity.', href:'/support/anonymous-support' },
               { icon:'🙋', title:'Someone to Talk To', desc:'No specific topic — just need a real human to listen.', href:'/support/someone-to-talk-to' },
-              { icon:'💙', title:'Emotional Support', desc:'Online emotional support — available anytime, anywhere.', href:'/support/emotional-support' },
+              { icon:'💙', title:'Emotional Support', desc:'Online emotional support — no appointment, from anywhere.', href:'/support/emotional-support' },
             ].map((t, i) => (
               <a key={i} href={t.href} className="topic-card">
                 <div className="topic-icon">{t.icon}</div>
@@ -214,7 +214,7 @@ export default function EmotionalSupportHubPage() {
         {/* City coverage */}
         <div className="section">
           <h2>Emotional Support Across India</h2>
-          <p>LeanOn is available in every city and town across India — fully online, available 24/7. We have specific guidance for people in India&apos;s major cities:</p>
+          <p>LeanOn is available in every city and town across India — fully online. We have specific guidance for people in India&apos;s major cities:</p>
           <div className="city-grid">
             {[
               { city:'Bengaluru', href:'/bengaluru' },
@@ -234,7 +234,7 @@ export default function EmotionalSupportHubPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Find Your Emotional Support?</h2>
-          <p>Browse peer listeners across India. Someone who has been through what you&apos;re facing is available right now. Available 24/7.</p>
+          <p>Browse peer listeners across India. Someone who has been through what you&apos;re facing is available right now. No appointment needed.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Find a peer listener now</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Start now</button></a>
@@ -246,7 +246,7 @@ export default function EmotionalSupportHubPage() {
           <h2>Frequently Asked Questions</h2>
           {[
             { q:'What is emotional support?', a:'Emotional support means having someone listen, understand, and validate your feelings without judgment. Research shows it is one of the strongest predictors of mental wellbeing and recovery.' },
-            { q:'How do I get emotional support online in India?', a:'Sign up on LeanOn with your phone number (OTP, 30 seconds), browse verified peer listeners, and start a session instantly. Available 24/7. Sessions from ₹160 for 15 minutes.' },
+            { q:'How do I get emotional support online in India?', a:'Sign up on LeanOn with your phone number (OTP, 30 seconds), browse verified peer listeners, and start a session instantly. No appointment needed. Sessions from ₹160 for 15 minutes.' },
             { q:'Is peer emotional support different from therapy?', a:'Yes. Therapy is clinical — licensed professionals for diagnosis and treatment. Peer support is human — people who have lived through the same challenges. Both valuable, but for different needs.' },
             { q:'What topics does LeanOn cover?', a:'Loneliness, anxiety, burnout, grief, breakups, relationship stress, career confusion, student stress, startup challenges, and general emotional support.' },
             { q:'Is online emotional support anonymous?', a:'On LeanOn, you sign up with your phone and first name only. Full name never shared. Sessions private and confidential — ideal for joint families and privacy-sensitive situations.' },

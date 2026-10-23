@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Talk to a Real Person Online India — Not an AI, Not a Bot | LeanOn',
-  description: 'Tired of talking to AI chatbots? LeanOn connects you with real human peer listeners across India — available 24/7, anonymous, and genuinely caring. First 5 minutes free.',
+  description: 'Tired of talking to AI chatbots? LeanOn connects you with real human peer listeners across India — private and genuinely caring. First 5 minutes free.',
   keywords: [
     'talk to a real person online india', 'real human conversation online india', 'not ai not chatgpt india',
     'talk to human not bot india', 'human chat support india', 'real person to talk to india',
@@ -157,7 +157,7 @@ export default function TalkToRealPersonPage() {
         <p className="lead">
           AI can answer questions. But when you are struggling, anxious, or just need to feel understood —
           only a real human can do that. LeanOn connects you with real screened peer listeners across India,
-          available 24/7. No AI. No bots. No predictions.
+         . No AI. No bots. No predictions.
         </p>
 
         <a href="/browse" className="cta-hero">Find a listener now — first 5 min free →</a>

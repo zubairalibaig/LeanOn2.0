@@ -197,7 +197,7 @@ export default function CanadaRelationshipPage() {
             <li>CA$14 for 15 min &nbsp;·&nbsp; CA$21 for 30 min &nbsp;·&nbsp; CA$28 for 45 min</li>
             <li>Real human listeners — not AI, not bots</li>
             <li>Anonymous — your story stays between you and your listener</li>
-            <li>Available anytime, including evenings and weekends</li>
+            <li>No appointment — availability follows Indian time</li>
           </ul>
         </div>
 

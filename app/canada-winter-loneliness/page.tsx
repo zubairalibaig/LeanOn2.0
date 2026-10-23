@@ -48,7 +48,7 @@ const faqSchema = {
       name: 'What can I do when I feel completely isolated during a Canadian winter?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Reaching out is the most important thing — even when it feels impossible. LeanOn listeners are available any time of day or night, including in the middle of a winter evening when everything feels too heavy. You do not need a specific reason to start a conversation. Just starting is enough.',
+        text: 'Reaching out is the most important thing — even when it feels impossible. LeanOn listeners are in India and go online at different hours (availability follows Indian time), including in the middle of a winter evening when everything feels too heavy. You do not need a specific reason to start a conversation. Just starting is enough.',
       },
     },
     {
@@ -223,8 +223,8 @@ export default function CanadaWinterLonelinessPage() {
           </div>
           <div className="faq-item">
             <h3>What can I do when I feel completely isolated during winter?</h3>
-            <p>Reaching out is the most important thing. LeanOn listeners are available any time — including
-              winter evenings. You do not need a specific reason. Just starting is enough.</p>
+            <p>Reaching out is the most important thing. LeanOn listeners are in India, so availability follows Indian time —
+              check who is online now. You do not need a specific reason. Just starting is enough.</p>
           </div>
           <div className="faq-item">
             <h3>How much does a session cost?</h3>

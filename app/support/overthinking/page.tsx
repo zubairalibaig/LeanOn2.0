@@ -188,7 +188,7 @@ export default function OverthinkingSupportPage() {
           <p>Our listeners are not reading from a script about racing thoughts. They have had the sleepless nights, the reread messages, the week-long replay of one conversation. That lived experience shows up as real empathy rather than polite sympathy — they understand why you cannot simply put it down, because they could not either.</p>
 
           <h3>Available at 2 AM When It Peaks</h3>
-          <p>Overthinking does not keep office hours. It peaks exactly when there is no one left to call and everyone you know is asleep. LeanOn listeners are available 24/7, so on the nights when you are staring at the ceiling and the loop is winning, there is a real person you can reach in a couple of minutes.</p>
+          <p>Overthinking does not keep office hours. It peaks exactly when there is no one left to call and everyone you know is asleep. LeanOn listeners go online at different hours, so on the nights when you are staring at the ceiling and the loop is winning, there is a real person you can reach in a couple of minutes.</p>
 
           <h3>No Judgment, No Advice You Did Not Ask For</h3>
           <p>Most people, with the best intentions, respond to overthinking by trying to fix it — do not worry, it is nothing, just sleep. It rarely helps, and it often adds a quiet shame for still being stuck. LeanOn listeners are screened and expected to listen with empathy first. They will not tell you your worry is silly, and they will not hand you solutions you never asked for. You get to say the whole thing, uninterrupted, to someone who is genuinely there for it.</p>
@@ -229,7 +229,7 @@ export default function OverthinkingSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Get Out of Your Own Head?</h2>
-          <p>Talk to a peer listener who knows the loop from the inside. Available 24/7, no appointments, no waitlists.</p>
+          <p>Talk to a peer listener who knows the loop from the inside. No appointments, no waitlists.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Quiet the loop — talk it out — first 5 min free →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>

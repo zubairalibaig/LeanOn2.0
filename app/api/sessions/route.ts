@@ -563,7 +563,7 @@ export async function PATCH(req: NextRequest) {
       user_id:    session.seeker_id,
       type:       'follow_up',
       title:      'How are you feeling?',
-      body:       'We hope your conversation helped. Remember, support is available anytime — browse listeners whenever you need.',
+      body:       'We hope your conversation helped. Remember, support is here when you need it — browse listeners whenever you like.',
       action_url: '/browse',
     }).then(() => {}, () => {})
 

@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support in Nagpur — Peer Listeners | LeanOn',
-  description: 'Connect with peer listeners in Nagpur, Maharashtra. Talk anonymously about career pressure, family expectations, civil services stress. Available 24/7 on LeanOn.',
+  description: 'Connect with peer listeners in Nagpur, Maharashtra. Talk anonymously about career pressure, family expectations, civil services stress. No appointment needed.',
   alternates: { canonical: 'https://www.leanon.app/nagpur', languages: { 'en-IN': 'https://www.leanon.app/nagpur' } },
   keywords: 'peer support Nagpur, emotional support Nagpur, civil services stress Nagpur, family pressure Nagpur Maharashtra, talk to someone Nagpur, leanon Nagpur',
   openGraph: {
     title: 'Emotional Support in Nagpur — Peer Listeners | LeanOn',
-    description: 'Connect with peer listeners in Nagpur, Maharashtra. Talk anonymously about career pressure, family expectations, civil services stress. Available 24/7 on LeanOn.',
+    description: 'Connect with peer listeners in Nagpur, Maharashtra. Talk anonymously about career pressure, family expectations, civil services stress. No appointment needed.',
     url: 'https://www.leanon.app/nagpur',
     siteName: 'LeanOn',
     type: 'article',
@@ -43,7 +43,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is LeanOn available in Nagpur?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn is available anywhere in India with a smartphone and internet connection. Sessions start from &#8377;160 for 15 minutes, available any time.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn is available anywhere in India with a smartphone and internet connection. Sessions start from &#8377;160 for 15 minutes, no appointment.' },
     },
   ],
 }
@@ -143,7 +143,7 @@ export default function NagpurPage() {
         </div>
         <div className="section">
           <h2>How LeanOn Works in Nagpur</h2>
-          <p>Browse listener profiles at <a href="/browse" style={{color:'var(--teal)',fontWeight:700}}>leanon.app/browse</a>. Choose a listener whose background resonates with your situation. Start a session &mdash; the first 5 minutes are free. Sessions start at &#8377;160 for 15 minutes, available any time, from your phone.</p>
+          <p>Browse listener profiles at <a href="/browse" style={{color:'var(--teal)',fontWeight:700}}>leanon.app/browse</a>. Choose a listener whose background resonates with your situation. Start a session &mdash; the first 5 minutes are free. Sessions start at &#8377;160 for 15 minutes, no appointment, from your phone.</p>
           <p>The listener is a real Indian person, screened for active listening. They have no connection to your family or your social network. What you say stays in the session.</p>
         </div>
         <div className="section">

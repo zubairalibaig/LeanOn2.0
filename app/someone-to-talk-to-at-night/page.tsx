@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const metadata: Metadata = {
-  title: 'Need Someone to Talk To at Night? LeanOn Is Available 24/7',
-  description: 'Feeling alone at night in India? LeanOn connects you with real peer listeners available 24/7 — even at 2 AM. Anonymous, affordable, and genuinely human.',
+  title: 'Need Someone to Talk To at Night? Talk to a Real Person | LeanOn',
+  description: 'Feeling alone at night in India? LeanOn connects you with real peer listeners in India, many of whom are online late at night. Anonymous, affordable, and genuinely human.',
   keywords: ['someone to talk to at night', 'midnight support india', 'night anxiety india', 'lonely at night india', 'talk to someone 2am india', 'late night emotional support'],
   alternates: { canonical: 'https://www.leanon.app/someone-to-talk-to-at-night' },
 }
@@ -40,13 +41,14 @@ export default function SomeoneTalkToAtNightPage() {
       </nav>
       <div className="page">
         <a href="/" style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:14,fontWeight:700,color:'var(--gray)',marginBottom:28}}>← Back</a>
-        <h1>Someone to Talk To at Night — LeanOn Is Here 24/7</h1>
+        <h1>Someone to Talk To at Night — A Real Person, Not a Bot</h1>
         <p className="lead">It&apos;s 1 AM and you can&apos;t sleep. Your thoughts are spiralling. Everyone you know is asleep, and calling someone feels like too much. LeanOn is here for exactly this moment.</p>
 
         <div className="disclaimer">
           LeanOn provides peer emotional support, not professional therapy or clinical treatment. If you need clinical mental health care, please consult a licensed professional.
         </div>
 
+        <GeoQuickAnswer path="/someone-to-talk-to-at-night" />
         <div className="card">
           <h2>Why nights feel harder</h2>
           <p>Night anxiety is real and common. When there&apos;s no distraction, no work, no noise — the thoughts you&apos;ve been pushing down all day come flooding in. Loneliness, regrets, fears about the future. Everything feels heavier at 2 AM.</p>
@@ -72,7 +74,7 @@ export default function SomeoneTalkToAtNightPage() {
 
         <div className="cta">
           <h2>Someone is here right now</h2>
-          <p>Available 24/7, no appointment needed.</p>
+          <p>No appointment needed.</p>
           <a href="/browse"><button className="btn">Find a listener →</button></a>
         </div>
       </div>

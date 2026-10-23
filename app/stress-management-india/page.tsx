@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'Can I talk to someone at 2am?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn listeners are available 24/7 including late at night. Stress does not keep office hours — and many people find it most intense at night when there is nothing else to distract from it.',
+        text: 'Often, yes. LeanOn listeners go online at different hours, including late at night. Stress does not keep office hours — and many people find it most intense at night when there is nothing else to distract from it.',
       },
     },
     {
@@ -182,7 +182,7 @@ export default function StressManagementIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Can I talk to someone at 2am?</div>
-            <div className="faq-a">Yes. LeanOn listeners are available 24/7 including late at night. Stress does not keep office hours.</div>
+            <div className="faq-a">Often, yes. LeanOn listeners go online at different hours, including late at night. Stress does not keep office hours.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">What does a stress support session actually look like?</div>

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -74,6 +75,7 @@ export default function NewMomIndiaPage() {
           <p className="lead">Sleep deprivation, identity shift, isolation, pressure to perform joy. New motherhood in India is hard. Talk anonymously from ₹160.</p>
           <a href="/browse" className="cta-hero">Talk to someone now &rarr;</a>
         </div>
+        <GeoQuickAnswer path="/new-mom-india" />
         <div className="section">
           <h2>What Nobody Tells You About New Motherhood</h2>
           <p>The narrative around new motherhood in India is almost entirely positive: it is the most beautiful thing, you will feel complete, this is what you were made for. When the reality is more complex &mdash; when you are exhausted, overwhelmed, grieving your former self, and not sure you are doing anything right &mdash; you feel broken in addition to everything else.</p>

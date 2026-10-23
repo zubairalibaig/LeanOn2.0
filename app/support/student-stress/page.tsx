@@ -4,11 +4,11 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Student Stress Support India | LeanOn Peer Listeners',
-  description: 'Student stress getting overwhelming? Talk to a peer listener anonymously on LeanOn. Available 24/7 across India.',
+  description: 'Student stress getting overwhelming? Talk to a peer listener anonymously on LeanOn. No appointment needed.',
   alternates: { canonical: 'https://www.leanon.app/support/student-stress', languages: { 'en-IN': 'https://www.leanon.app/support/student-stress' } },
   openGraph: {
     title: 'Student Stress Support India | LeanOn Peer Listeners',
-    description: 'Student stress getting overwhelming? Talk to a peer listener anonymously on LeanOn. Available 24/7 across India.',
+    description: 'Student stress getting overwhelming? Talk to a peer listener anonymously on LeanOn. No appointment needed.',
     url: 'https://www.leanon.app/support/student-stress',
     siteName: 'LeanOn',
     type: 'article',
@@ -180,7 +180,7 @@ export default function StudentStressSupportPage() {
           <p>Many students cannot talk honestly about how they are struggling — parents would panic, friends are competing, teachers do not understand. LeanOn is completely private. Nothing you say reaches your family, institution, or peers.</p>
 
           <h3>Available During Exam Season</h3>
-          <p>Stress peaks during exam periods, late at night when revision feels impossible and panic sets in. LeanOn is available 24/7, including during board exam weeks, JEE season, and final placements.</p>
+          <p>Stress peaks during exam periods, late at night when revision feels impossible and panic sets in. LeanOn listeners go online at different hours, including during board exam weeks, JEE season, and final placements.</p>
 
           <h3>No Judgment About Your Academic Choices</h3>
           <p>Whether you want to switch streams, take a gap year, leave engineering for art, or are questioning whether the career your family chose for you is actually what you want — LeanOn listeners will not judge your choices. They will help you think through them.</p>
@@ -219,7 +219,7 @@ export default function StudentStressSupportPage() {
 
         <div className="cta-card">
           <h2>You Are More Than Your Rank</h2>
-          <p>Talk to someone who has been through the pressure of Indian student life and made it through. Available 24/7.</p>
+          <p>Talk to someone who has been through the pressure of Indian student life and made it through. No appointment needed.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Talk to someone who gets student life — first 5 min free →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>

@@ -198,9 +198,9 @@ export default function WysaAlternativePage() {
                 <td className="tick">✅ Human empathy</td>
               </tr>
               <tr>
-                <td>Available 24/7?</td>
-                <td className="tick">✅ Yes</td>
-                <td className="tick">✅ Yes</td>
+                <td>Available late at night?</td>
+                <td className="tick">✅ Yes (AI)</td>
+                <td className="tick">Often — listeners in India choose their hours</td>
               </tr>
               <tr>
                 <td>Remembers your context?</td>

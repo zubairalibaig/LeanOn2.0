@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Online Emotional Support India | Talk to a Peer Listener | LeanOn',
-  description: 'Get online emotional support in India. Talk to verified peer listeners who have lived through what you\'re facing. Available 24/7, anonymous, instant access.',
+  description: 'Get online emotional support in India. Talk to verified peer listeners who have lived through what you\'re facing. Anonymous, no appointment.',
   keywords: ['online emotional support india', 'emotional support online india', 'peer emotional support india', 'talk to someone online india'],
   alternates: { canonical: 'https://www.leanon.app/online-emotional-support-india' },
 }
@@ -41,7 +41,7 @@ export default function OnlineEmotionalSupportIndiaPage() {
       <div className="page">
         <a href="/" style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:14,fontWeight:700,color:'var(--gray)',marginBottom:28}}>← Back</a>
         <h1>Online Emotional Support India — LeanOn</h1>
-        <p className="lead">India needs more ways to get emotional support — not just in metros, not just for those who can afford private therapy. LeanOn makes peer emotional support accessible, affordable, and available everywhere in India, 24/7.</p>
+        <p className="lead">India needs more ways to get emotional support — not just in metros, not just for those who can afford private therapy. LeanOn makes peer emotional support accessible, affordable, and available everywhere in India.</p>
 
         <div className="disclaimer">
           LeanOn provides peer emotional support, not professional therapy or clinical treatment. If you need clinical mental health care, please consult a licensed professional.
@@ -70,7 +70,7 @@ export default function OnlineEmotionalSupportIndiaPage() {
 
         <div className="cta">
           <h2>Start a session today</h2>
-          <p>Browse peer listeners by topic. Available 24/7.</p>
+          <p>Browse peer listeners by topic. No appointment needed.</p>
           <a href="/browse"><button className="btn">Browse listeners →</button></a>
         </div>
       </div>

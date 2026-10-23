@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support in Lucknow — Peer Listeners | LeanOn',
-  description: 'Connect with peer listeners in Lucknow, India. Talk anonymously about family pressure, UPSC stress, relationship challenges. Available 24/7 on LeanOn.',
+  description: 'Connect with peer listeners in Lucknow, India. Talk anonymously about family pressure, UPSC stress, relationship challenges. No appointment needed.',
   alternates: { canonical: 'https://www.leanon.app/lucknow', languages: { 'en-IN': 'https://www.leanon.app/lucknow' } },
   keywords: 'peer support Lucknow, emotional support Lucknow, UPSC stress Lucknow, family pressure Lucknow UP, talk to someone Lucknow, leanon Lucknow',
   openGraph: {
     title: 'Emotional Support in Lucknow — Peer Listeners | LeanOn',
-    description: 'Connect with peer listeners in Lucknow, India. Talk anonymously about family pressure, UPSC stress, relationship challenges. Available 24/7 on LeanOn.',
+    description: 'Connect with peer listeners in Lucknow, India. Talk anonymously about family pressure, UPSC stress, relationship challenges. No appointment needed.',
     url: 'https://www.leanon.app/lucknow',
     siteName: 'LeanOn',
     type: 'article',

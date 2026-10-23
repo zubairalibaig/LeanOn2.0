@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -134,6 +135,7 @@ export default function CheatingPartnerIndiaPage() {
           <a href="/browse" className="cta-hero">Talk to someone now &rarr;</a>
         </div>
 
+        <GeoQuickAnswer path="/cheating-partner-india" />
         <div className="section">
           <h2>What You Are Feeling Right Now</h2>
           <h3>Shock</h3>

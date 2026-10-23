@@ -265,7 +265,7 @@ export default function RelationshipStressSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Talk to Someone Who Gets It</h2>
-          <p>Find a peer listener who understands relationship stress. Available 24/7, no appointments, no waitlists.</p>
+          <p>Find a peer listener who understands relationship stress. No appointments, no waitlists.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Talk to someone who understands — first 5 min free →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>

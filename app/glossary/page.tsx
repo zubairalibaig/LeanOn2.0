@@ -179,7 +179,7 @@ export default function GlossaryPage() {
 
         <div className="cta-box">
           <h2>Experience Peer Support for Yourself</h2>
-          <p>Browse real peer listeners in India. Available 24/7, no appointment needed.</p>
+          <p>Browse real peer listeners in India. No appointment needed.</p>
           <a href="/browse"><button className="btn-cta">Browse peer listeners →</button></a>
         </div>
       </div>

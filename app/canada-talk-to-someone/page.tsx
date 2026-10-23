@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Someone to Talk to in Canada — Real Human, Not a Chatbot | LeanOn',
-  description: 'You do not want a chatbot. You want a real person to actually listen. LeanOn connects Indians in Canada with screened human peer listeners — available any time you need.',
+  description: 'You do not want a chatbot. You want a real person to actually listen. LeanOn connects Indians in Canada with screened human peer listeners — no appointment; availability follows Indian time.',
   keywords: [
     'someone to talk to canada', 'real person to talk to canada', 'not a chatbot canada',
     'human listener canada', 'talk to someone canada indian', 'emotional support canada human',

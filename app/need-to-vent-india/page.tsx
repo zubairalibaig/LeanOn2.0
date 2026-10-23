@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -74,6 +75,7 @@ export default function NeedToVentIndiaPage() {
           <p className="lead">Not looking for solutions. Just somewhere to put all of it. A real listener, from ₹160. First 5 minutes free.</p>
           <a href="/browse" className="cta-hero">Talk to someone now &rarr;</a>
         </div>
+        <GeoQuickAnswer path="/need-to-vent-india" />
         <div className="section">
           <h2>What Venting Actually Does</h2>
           <p>Venting is not weakness. It is a pressure regulation mechanism. When you carry something at full weight for too long without expressing it, it starts to affect everything &mdash; your focus, your mood, your patience with the people around you.</p>

@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support in Surat — Peer Listeners | LeanOn',
-  description: 'Connect with peer listeners in Surat, Gujarat. Talk anonymously about business pressure, family expectations, diamond industry stress. Available 24/7 on LeanOn.',
+  description: 'Connect with peer listeners in Surat, Gujarat. Talk anonymously about business pressure, family expectations, diamond industry stress. No appointment needed.',
   alternates: { canonical: 'https://www.leanon.app/surat', languages: { 'en-IN': 'https://www.leanon.app/surat' } },
   keywords: 'peer support Surat, emotional support Surat, business stress Surat Gujarat, family pressure Surat, talk to someone Surat, leanon Surat',
   openGraph: {
     title: 'Emotional Support in Surat — Peer Listeners | LeanOn',
-    description: 'Connect with peer listeners in Surat, Gujarat. Talk anonymously about business pressure, family expectations, diamond industry stress. Available 24/7 on LeanOn.',
+    description: 'Connect with peer listeners in Surat, Gujarat. Talk anonymously about business pressure, family expectations, diamond industry stress. No appointment needed.',
     url: 'https://www.leanon.app/surat',
     siteName: 'LeanOn',
     type: 'article',
@@ -145,7 +145,7 @@ export default function SuratPage() {
         </div>
         <div className="section">
           <h2>How LeanOn Works in Surat</h2>
-          <p>Browse listener profiles at <a href="/browse" style={{color:'var(--teal)',fontWeight:700}}>leanon.app/browse</a>. Choose a listener whose background resonates with your situation. Start a session &mdash; the first 5 minutes are free. Sessions start at &#8377;160 for 15 minutes, available any time, from your phone.</p>
+          <p>Browse listener profiles at <a href="/browse" style={{color:'var(--teal)',fontWeight:700}}>leanon.app/browse</a>. Choose a listener whose background resonates with your situation. Start a session &mdash; the first 5 minutes are free. Sessions start at &#8377;160 for 15 minutes, no appointment, from your phone.</p>
           <p>The listener is a real Indian person, screened for active listening. They have no connection to your business network, your family, or your community. What you say stays in the session.</p>
         </div>
         <div className="section">

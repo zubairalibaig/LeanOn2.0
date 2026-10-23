@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Feeling Lonely in India? You\'re Not the Only One. | LeanOn',
-  description: 'Loneliness is an epidemic in urban India — in offices, apartments, and even in relationships. LeanOn connects you with a real human listener whenever you need it, day or night.',
+  description: 'Loneliness is an epidemic in urban India — in offices, apartments, and even in relationships. LeanOn connects you with a real human listener, with no appointment.',
   keywords: [
     'loneliness support india', 'feeling lonely india', 'lonely in india', 'urban loneliness india',
     'feeling alone india', 'no one to talk to india', 'talk to someone when lonely india',
@@ -15,8 +15,8 @@ export const metadata: Metadata = {
     languages: { 'en-IN': 'https://www.leanon.app/support/loneliness' },
   },
   openGraph: {
-    title: 'Loneliness Support in India — Talk to Someone, Anytime',
-    description: 'Loneliness is everywhere in modern India. LeanOn peer listeners are available 24/7 — day or night, whenever the quiet gets too loud.',
+    title: 'Loneliness Support in India — Talk to a Real Person',
+    description: 'Loneliness is everywhere in modern India. LeanOn connects you with a real peer listener when the quiet gets too loud.',
     url: 'https://www.leanon.app/support/loneliness',
     siteName: 'LeanOn',
     type: 'article',
@@ -40,7 +40,7 @@ const faqSchema = {
       name: 'What can I do when I feel lonely at night?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn listeners are available 24/7, including late at night. Start a free 5-minute session and talk to a real person whenever the loneliness feels too heavy to carry alone.',
+        text: 'LeanOn listeners go online at different hours, including late at night. Start a free 5-minute session and talk to a real person whenever the loneliness feels too heavy to carry alone.',
       },
     },
     {
@@ -174,7 +174,7 @@ export default function LonelinessSupportPage() {
         <div className="night-box">
           <h2>🌙 Feeling it most at night?</h2>
           <p>Loneliness peaks after 10 PM when distractions run out and the quiet becomes too loud.
-            LeanOn listeners are available 24/7 — including 2 AM, 3 AM, any time you need them.</p>
+            LeanOn listeners are — including 2 AM, 3 AM, any time you need them.</p>
           <p>You don&apos;t need to wait until morning. You can talk right now.</p>
           <a href="/browse" className="cta-night">Find a listener online now →</a>
         </div>
@@ -201,7 +201,7 @@ export default function LonelinessSupportPage() {
 
         <div className="cta">
           <h2>Someone is ready to listen right now</h2>
-          <p>Anonymous, affordable, available 24/7 across India.</p>
+          <p>Anonymous, affordable.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
@@ -216,7 +216,7 @@ export default function LonelinessSupportPage() {
           </div>
           <div className="faq-item">
             <h3>What can I do when I feel lonely at night?</h3>
-            <p>LeanOn listeners are available 24/7, including late at night. Start a free 5-minute session and
+            <p>LeanOn listeners go online at different hours, including late at night. Start a free 5-minute session and
               talk to a real person whenever the loneliness feels too heavy to carry alone.</p>
           </div>
           <div className="faq-item">

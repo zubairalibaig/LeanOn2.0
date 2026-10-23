@@ -195,7 +195,7 @@ export default function DesiCanadaSupportPage() {
             <li>CA$14 for 15 min &nbsp;·&nbsp; CA$21 for 30 min &nbsp;·&nbsp; CA$28 for 45 min</li>
             <li>Many listeners speak Hindi, Punjabi, Tamil, Telugu, and other Indian languages</li>
             <li>Anonymous — your community will never know</li>
-            <li>Available any time — no appointment needed</li>
+            <li>No appointment needed — availability follows Indian time</li>
           </ul>
         </div>
 

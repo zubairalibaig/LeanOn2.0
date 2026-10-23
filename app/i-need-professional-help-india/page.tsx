@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -144,6 +145,7 @@ export default function INeedProfessionalHelpIndiaPage() {
           <a href="/browse" className="cta-hero">Talk to someone right now →</a>
         </div>
 
+        <GeoQuickAnswer path="/i-need-professional-help-india" />
         <div className="section">
           <h2>You Already Know You Need Help. That Clarity Is Valuable.</h2>
           <p>It took something — time, honesty, maybe years of quietly carrying things — to get to the point of saying &quot;I need professional help.&quot; That is not a small thing. Many people never get there. They dismiss their experience, tell themselves others have it worse, keep waiting for things to improve on their own. You have already moved past that.</p>

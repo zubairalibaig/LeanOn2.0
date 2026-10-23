@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -116,6 +117,7 @@ export default function OverthinkinRelationshipIndiaPage() {
           <p className="lead">Analysing every text, every tone, every silence. Relationship overthinking is exhausting and isolating. A 15-minute conversation can break the loop. Anonymous peer support from ₹160.</p>
           <a href="/browse" className="cta-hero">Talk to someone now &rarr;</a>
         </div>
+        <GeoQuickAnswer path="/overthinking-relationship-india" />
         <div className="section">
           <h2>What Relationship Overthinking Feels Like</h2>
           <p>You check your phone again. You replay the last conversation. You analyse a tone of voice. You rehearse things you should have said. You construct hypothetical scenarios. You interpret silence as a sign. This loop runs on its own power, regardless of what you try to do to stop it.</p>

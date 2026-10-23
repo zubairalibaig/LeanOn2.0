@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -148,6 +149,7 @@ export default function JustHadAFightPage() {
           <a href="/browse" className="cta-hero">Talk to someone now →</a>
         </div>
 
+        <GeoQuickAnswer path="/just-had-a-fight" />
         <div className="section">
           <h2>Why You Can&apos;t Tell Anyone Else</h2>
           <p>Think through who you would normally call. Your partner — they are the other party. Your mutual friends — they have loyalties, they will form opinions, and you will have to manage those opinions on top of everything else. Your family — they will worry, they will take sides, and they will remember this conversation for years in ways that may not help you.</p>

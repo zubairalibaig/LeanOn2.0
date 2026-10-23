@@ -184,7 +184,7 @@ export default function GriefSupportPage() {
           <p>One of the most painful things about grief is the social pressure to recover on someone else&apos;s timeline. Family members become impatient. Friends want the &quot;old you&quot; back. LeanOn listeners understand that grief has its own timeline and will never rush you or minimise what you are carrying.</p>
 
           <h3>Available at Night and on Hard Days</h3>
-          <p>Grief tends to be hardest at anniversaries, on holidays, on days that would have been significant, and at night. LeanOn is available 24/7, so when the grief wave hits at 2 AM or on what would have been their birthday, you have somewhere to go.</p>
+          <p>Grief tends to be hardest at anniversaries, on holidays, on days that would have been significant, and at night. LeanOn listeners go online at different hours, including late at night, so when the grief wave hits at 2 AM or on what would have been their birthday, you have somewhere to go.</p>
 
           <h3>Private Space to Grieve Openly</h3>
           <p>Indian cultural contexts can make open grief complex — expectations to be strong, religious frameworks that prescribe certain expressions of mourning, family dynamics where you feel you must hold others together. LeanOn gives you a completely private space to grieve without any of those pressures.</p>
@@ -223,7 +223,7 @@ export default function GriefSupportPage() {
 
         <div className="cta-card">
           <h2>Your Grief Deserves to Be Witnessed</h2>
-          <p>Talk to someone who knows loss from the inside. No pressure, no timeline, no judgment. Available 24/7.</p>
+          <p>Talk to someone who knows loss from the inside. No pressure, no timeline, no judgment.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Talk to someone who will sit with you — first 5 min free →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>

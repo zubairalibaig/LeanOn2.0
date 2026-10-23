@@ -10,7 +10,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Daily Check-In — How Are You Feeling Today? | LeanOn',
-  description: 'Name how you feel today and read something honest about it — lonely, anxious, overwhelmed, numb, burnt out. Then talk to someone who has felt it too. Available 24/7.',
+  description: 'Name how you feel today and read something honest about it — lonely, anxious, overwhelmed, numb, burnt out. Then talk to someone who has felt it too. No appointment needed.',
   keywords: 'daily check in mental health, how am I feeling today, mood check in India, emotional check in, name your feeling',
   alternates: {
     canonical: 'https://www.leanon.app/daily-check-in',
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Daily Check-In — How Are You Feeling Today? | LeanOn',
-    description: 'Name how you feel today, understand it, and talk to someone who has felt the same. Available 24/7.',
+    description: 'Name how you feel today, understand it, and talk to someone who has felt the same. No appointment needed.',
     url: 'https://www.leanon.app/daily-check-in',
     siteName: 'LeanOn',
     type: 'website',
@@ -123,13 +123,13 @@ export default function DailyCheckInPage() {
             That is all this page is for. No score, no streak, no diagnosis — just a name for
             today, something honest to read about it, and the option to talk to a real person
             who has been in the same place. LeanOn listeners are verified peers with genuine
-            lived experience, not therapists and not AI, available 24/7 across India.
+            lived experience, not therapists and not AI.
           </p>
         </div>
 
         <div className="cta-card">
           <h2>Rather just talk to someone?</h2>
-          <p>Skip the reading. Browse peer listeners who have lived what you are feeling. Available 24/7.</p>
+          <p>Skip the reading. Browse peer listeners who have lived what you are feeling. No appointment needed.</p>
           <a href="/browse"><button className="btn-primary">Browse listeners →</button></a>
         </div>
       </div>

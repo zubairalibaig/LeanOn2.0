@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -78,6 +79,7 @@ export default function PanicAttackIndiaPage() {
           <p className="lead">After a panic attack, the physical intensity fades but the emotional aftermath remains. Talk anonymously from ₹160. First 5 minutes free.</p>
           <a href="/browse" className="cta-hero">Talk to someone now &rarr;</a>
         </div>
+        <GeoQuickAnswer path="/panic-attack-india" />
         <div className="section">
           <h2>What Panic Attack Aftermath Feels Like</h2>
           <p>The acute panic passes. Your heart rate returns to normal. You can breathe again. But what follows is its own difficult experience: physical exhaustion, embarrassment about what just happened, the disorienting question of what caused it, and &mdash; most persistently &mdash; the hypervigilance about when it might happen again.</p>

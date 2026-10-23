@@ -1,15 +1,16 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Feeling Like a Failure? Peer Support in India | LeanOn',
-  description: 'Feel like you\'re failing at life, work, or relationships? Talk to a real peer listener in India who has felt the same and come through it. Anonymous, 24/7.',
+  description: 'Feel like you\'re failing at life, work, or relationships? Talk to a real peer listener in India who has felt the same and come through it. Anonymous, no appointment.',
   keywords: ['feeling like a failure India', 'I am a failure India', 'feel worthless India', 'feel like I am not good enough India', 'failure at life India', 'failing at everything India', 'I am a disappointment India', 'feel inadequate India', 'not good enough India', 'peer support for failure India', 'I failed my family India', 'startup failure India', 'career failure India', 'exam failure India', 'how to deal with failure India'],
   alternates: { canonical: 'https://www.leanon.app/support/feeling-like-a-failure', languages: { 'en-IN': 'https://www.leanon.app/support/feeling-like-a-failure' } },
   openGraph: {
     title: 'Feeling Like a Failure? Peer Support in India | LeanOn',
-    description: 'Feel like you\'re failing at life, work, or relationships? Talk to a real peer listener in India who has felt the same and come through it. Anonymous, 24/7.',
+    description: 'Feel like you\'re failing at life, work, or relationships? Talk to a real peer listener in India who has felt the same and come through it. Anonymous, no appointment.',
     url: 'https://www.leanon.app/support/feeling-like-a-failure',
     siteName: 'LeanOn',
     type: 'article',
@@ -160,6 +161,7 @@ export default function FeelingLikeAFailurePage() {
           <p className="lead">Millions of people in India carry a persistent sense of not being enough — even when the evidence does not support it. LeanOn connects you with peer listeners who have personally navigated failure, come through it, and can sit with you in it now.</p>
         </div>
 
+        <GeoQuickAnswer path="/support/feeling-like-a-failure" />
         <div className="section">
           <h2>The Feeling of Failure vs The Fact of Failure</h2>
           <p>These are two separate things, and the distinction matters enormously. You can fail at something — miss a deadline, lose a deal, end a relationship — and feel fine about it. And you can objectively be doing well — career intact, family stable, health reasonable — and feel like a complete failure. The feeling and the fact are not the same thing.</p>
