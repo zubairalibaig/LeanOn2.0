@@ -185,6 +185,7 @@ export default function ForWomenPage() {
         </p>
 
         <QuickAnswer question={directQuestion} answer={directAnswer} />
+        <p style={{ fontSize: 14, margin: '10px 0 20px', lineHeight: 1.7, color: '#4A6470' }}>Not sure what kind of help fits? <a href="/relationship-emotional-support-guide-india" style={{ fontWeight: 800, color: '#0F7788', textDecoration: 'underline' }}>Read our relationship and emotional support guide</a> for marriage, family pressure, women’s emotional load, and when to choose counselling instead of peer listening.</p>
         <h2>If Any of This Sounds Familiar</h2>
         <div className="situations">
           {situations.map((s, i) => (

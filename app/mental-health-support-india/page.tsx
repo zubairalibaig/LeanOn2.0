@@ -168,6 +168,7 @@ export default function MentalHealthSupportIndiaPage() {
           <h1>Mental health support that <em>actually feels human</em></h1>
           <p className="lead">When you feel stressed, low or alone, talking with another person may help you feel heard. LeanOn connects adults with screened peer listeners for everyday emotional conversations by text or voice. It is not therapy or clinical treatment. Pricing is shown before booking, and immediate availability is not guaranteed.</p>
           <QuickAnswer question={"Where can I get mental health support online in India?"} answer={"For non-urgent stress, loneliness, low mood or relationship difficulties, LeanOn lets adults in India request a one-to-one text or voice conversation with a screened peer listener. It is non-clinical peer support, not diagnosis or treatment; use it alongside professional care, never instead of it. One introductory session of up to 5 minutes is free per account. Availability depends on who is online, so an immediate match is not guaranteed."} />
+          <p style={{ fontSize: 14, margin: '10px 0 20px', lineHeight: 1.7, color: '#4A6470' }}>Not sure what kind of help fits? <a href="/relationship-emotional-support-guide-india" style={{ fontWeight: 800, color: '#0F7788', textDecoration: 'underline' }}>Read our relationship and emotional support guide</a> for marriage, family pressure, women’s emotional load, and when to choose counselling instead of peer listening.</p>
         </div>
 
         {/* The problem */}

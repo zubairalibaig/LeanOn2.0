@@ -136,6 +136,7 @@ export default function HousewifeSupportIndiaPage() {
           <h1>You&apos;re always there for everyone. <em>Who&apos;s there for you?</em></h1>
           <p className="lead">You keep the house running, the kids fed, the family functioning. Nobody asked how you were doing this week &mdash; they assumed you were fine because nothing fell apart. You&apos;re not fine. And you&apos;re allowed to say that.</p>
           <QuickAnswer question={directQuestion} answer={directAnswer} />
+          <p style={{ fontSize: 14, margin: '10px 0 20px', lineHeight: 1.7, color: '#4A6470' }}>Not sure what kind of help fits? <a href="/relationship-emotional-support-guide-india" style={{ fontWeight: 800, color: '#0F7788', textDecoration: 'underline' }}>Read our relationship and emotional support guide</a> for marriage, family pressure, women’s emotional load, and when to choose counselling instead of peer listening.</p>
           <a href="/talk?src=seo" className="cta-hero">Find someone to talk to &rarr;</a>
         </div>
 
