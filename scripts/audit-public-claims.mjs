@@ -19,6 +19,10 @@ function requireText(path, pattern, reason) {
   if (!pattern.test(source(path))) failures.push(`${path}: missing ${reason}`);
 }
 
+forbid('app/page.tsx', /Real sessions\. Real relief|nm:\s*'Priya M\.'|nm:\s*'Arjun K\.'|nm:\s*'Sneha R\.'/i, 'do not publish unverified personal testimonials');
+forbid('app/page.tsx', /Your session begins immediately/i, 'do not promise immediate acceptance');
+requireText('app/page.tsx', /A listener must accept|listener accepts/i, 'listener acceptance disclosure');
+
 forbid('app/layout.tsx', /alternates:\s*\{\s*canonical:\s*['"]https:\/\/www\.leanon\.app['"]/, 'do not inherit the homepage canonical across every route');
 forbid('app/layout.tsx', /schema\.org\/InStock/, 'listener acceptance is not equivalent to in-stock inventory');
 
