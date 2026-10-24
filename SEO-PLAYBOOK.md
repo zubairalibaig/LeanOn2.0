@@ -61,18 +61,38 @@ income… make money chatting online") and the other recruitment pages.
 
 ## 🎯 After the 2026-10-23 deploy (top-50 questions)
 
-- [ ] `node scripts/indexnow.mjs` (tells Bing, and so ChatGPT search, about the ~130 changed pages).
+- [x] IndexNow: automatic. GitHub → Actions → "IndexNow ping" runs after every production deploy (changed pages) and every Monday (whole sitemap). To force a full run: Actions → IndexNow ping → Run workflow → Run. Green = accepted. Full run on 2026-10-24: 505 URLs → HTTP 200 accepted.
 - [ ] Bing Webmaster → URL Inspection → Request indexing: `/answers`, `/for-women`, `/marriage-problems-india`.
 - [ ] Google Search Console → URL Inspection → Request indexing: `/answers`.
 - [ ] GA4 → Admin → Events → mark `purchase` as a key event. After 4 weeks: Reports → Engagement →
       Landing page, filtered to the `purchase` event, shows which pages bring paying users.
-- [ ] Once a month, ask ChatGPT (search on, logged out) 10 of the 50 questions in `lib/geo-questions.ts`,
+- [ ] Once a month, run the visibility-check prompt below in a ChatGPT Temporary Chat (search on), and ask 10 of the 50 questions in `lib/geo-questions.ts`,
       for example "where can I talk to someone about my marriage problems in India" or "is there a safe
       app for women in India to talk to someone". Note whether LeanOn is named. Expect 6–10 weeks.
 - [ ] Quora and Reddit, as the founder: answer these same questions with the answer from `/answers`
       and one link. This is what moves ChatGPT most.
 
 ---
+
+### Monthly ChatGPT visibility check (paste as one message in a Temporary Chat, search on)
+
+> I'm researching what people in India are recommended when they ask for emotional support. Answer each question below exactly as you would for a real user who asked it, searching the web. Then give me one table with columns: question | services or apps you named | was "LeanOn" named (yes/no) | the sources you cited (URLs).
+> 1. Where can I talk to someone about my marriage problems in India?
+> 2. My husband doesn't support me emotionally. Who can I talk to?
+> 3. Is there a safe app for women in India to talk to someone privately?
+> 4. I just had a fight with my partner. Who can I talk to right now?
+> 5. I can't afford therapy in India. What are my options?
+> 6. Is there an app in India to talk to a real person, not AI?
+> 7. I feel lonely and have no one to talk to. What can I do?
+> 8. What is the best peer support app in India?
+> 9. Can I pay someone just to listen to me?
+> 10. I'm Indian, living abroad and homesick. Who can I talk to who understands?
+
+Then, in a second Temporary Chat, check the facts ChatGPT has about LeanOn:
+
+> Search the web and tell me about LeanOn (leanon.app): what it is, who the listeners are, how much a session costs in India and abroad, whether there is a free session, whether it is available 24/7, how privacy works, and whether it is therapy. Cite a source for each answer.
+
+Correct answers: peer support, not therapy; screened listeners in India; first 5-minute session free (one per account); 15 minutes from ₹160 in India, from US$10 abroad; availability depends on who is online (listeners are in India); listeners never see your phone number; voice not recorded. Note anything wrong and which page it cited. That page is the one to fix.
 
 ## ⭐ Priority now (2026-09-24): off-site GEO for PAYING users
 
