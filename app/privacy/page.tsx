@@ -58,7 +58,7 @@ export default function PrivacyPage() {
         <p>If words linked to self-harm or suicide appear in a chat, LeanOn shows crisis helplines, lets the listener know to take extra care, and flags the session for review by the LeanOn team. Sessions are not analysed by AI. Reported or flagged conversations may be read by authorised LeanOn administrators to keep people safe and handle disputes.</p>
 
         <h2>4. Data storage</h2>
-        <p>Your data is stored on Supabase servers hosted in the Asia South (Mumbai) region. We comply with India&apos;s Digital Personal Data Protection Act (DPDP Act 2023).</p>
+        <p>Your data is stored on Supabase servers hosted in the Asia South (Mumbai) region. For information about access, deletion requests and applicable data-protection rights, contact LeanOn using the details below.</p>
 
         <h2>5. Listener identity verification</h2>
         <p>Listeners are required to submit a government-issued photo ID and a selfie for manual identity verification. Only the last 4 digits of any ID number are retained for reference; full ID numbers and document images are reviewed by our admin team, stored securely in encrypted cloud storage, and deleted once verification is complete. We do not share this data with third parties.</p>

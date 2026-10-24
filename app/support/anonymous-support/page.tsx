@@ -4,11 +4,11 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Anonymous Emotional Support India | LeanOn Peer Listeners',
-  description: 'Get anonymous emotional support from screened peer listeners. No appointment needed.',
+  description: 'Use a chosen name with screened peer listeners. Phone verification is required; text chats may be reviewed for safety.',
   alternates: { canonical: 'https://www.leanon.app/support/anonymous-support', languages: { 'en-IN': 'https://www.leanon.app/support/anonymous-support' } },
   openGraph: {
     title: 'Anonymous Emotional Support India | LeanOn Peer Listeners',
-    description: 'Get anonymous emotional support from screened peer listeners. No appointment needed.',
+    description: 'Use a chosen name with screened peer listeners. Phone verification is required; text chats may be reviewed for safety.',
     url: 'https://www.leanon.app/support/anonymous-support',
     siteName: 'LeanOn',
     type: 'article',
@@ -24,7 +24,7 @@ const faqSchema = {
       name: 'Is LeanOn really anonymous?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn only uses your first name in sessions. Your last name, phone number, email, and any other identifying information are never shared with listeners. Your conversations are completely private and never disclosed to third parties. You can also choose a pseudonym rather than your real first name.',
+        text: 'No. You sign in with a phone number, but listeners see your chosen display name. Text messages are stored securely and may be reviewed by authorised administrators for safety. Complete anonymity cannot be promised.',
       },
     },
     {
@@ -32,7 +32,7 @@ const faqSchema = {
       name: 'Why do people seek anonymous support in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'In India especially, the stigma around emotional struggles is real and can carry social, professional, and family consequences. People fear being judged by family, colleagues, or their community. Anonymous support removes that fear entirely — allowing people to be fully honest about what they are going through without any social cost.',
+        text: 'Some adults prefer to speak with a listener outside their social circle using a chosen name. This can feel less exposing, but does not remove all privacy risks.',
       },
     },
     {
@@ -40,7 +40,7 @@ const faqSchema = {
       name: 'Does anonymous support actually help?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. Research on online anonymous peer support consistently shows positive outcomes. The key mechanism is the same as any emotional support — feeling genuinely heard and understood. Anonymity often helps people open up more fully, which makes the support more effective, not less.',
+        text: 'Some people find it easier to talk to a person outside their usual circle. Benefits vary; peer support is not medical treatment and LeanOn does not claim proven clinical results.',
       },
     },
     {
@@ -48,7 +48,7 @@ const faqSchema = {
       name: 'Can I stay anonymous if I do voice calls?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Voice sessions use an anonymized channel — the listener hears your voice but has no access to your personal identity or contact details. You can also choose text-only sessions if you prefer to maintain complete anonymity throughout.',
+        text: 'The listener cannot see your phone number, but can hear your natural voice, which may identify you. You can choose text instead of speaking aloud.',
       },
     },
     {
@@ -56,7 +56,7 @@ const faqSchema = {
       name: 'How does LeanOn protect my data?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn stores only the minimum data necessary to operate the platform. Session content is not retained long-term or shared. Your phone number is used only for authentication and is never visible to listeners. Full details are in our privacy policy at leanon.app/privacy.',
+        text: 'Phone verification is required. Text chats are stored securely and may be reviewed by authorised administrators when flagged or reported; voice calls are not recorded by LeanOn. See our Privacy Policy.',
       },
     },
   ],
@@ -147,25 +147,25 @@ export default function AnonymousSupportPage() {
 
         {/* Hero */}
         <div className="hero">
-          <div className="privacy-badge">Your identity stays private — always</div>
+          <div className="privacy-badge">A chosen name is visible to listeners</div>
           <p className="tag">Peer Support · Anonymous Emotional Support India</p>
           <h1>Anonymous Emotional Support in India — Be Heard <em>Without Fear</em></h1>
-          <p className="lead">You should not have to choose between getting support and protecting your privacy. On LeanOn, you connect with real peer listeners using only the name you choose — no last name, no photo, no personal details shared.</p>
+          <p className="lead">LeanOn offers a private-feeling conversation with a screened human peer listener using the name you choose. Phone verification is required. Text chats are stored securely and may be reviewed for safety, so read the Privacy Policy before sharing sensitive details.</p>
         </div>
 
         {/* What Anonymous Support Means */}
         <div className="section">
           <h2>What Anonymous Support Means</h2>
-          <p>Anonymous support means you can open up fully without fear of judgment, social consequences, or your information reaching the wrong people. When you use LeanOn, listeners know you by your first name only — or by a pseudonym if you prefer. Your phone number, your identity, and your conversation content are never shared or disclosed.</p>
+          <p>Using a chosen display name can help when you want to discuss everyday emotional strain with a person outside your circle. LeanOn is pseudonymous toward listeners, not fully anonymous to the service: phone verification and account information are required.</p>
 
           <h3>Not Hiding — Creating Safety</h3>
           <p>Anonymity in peer support is not about secrecy for its own sake. It is about creating the conditions for genuine honesty. Many people find they can speak far more truthfully — and receive far more from a conversation — when they are not managing how they are perceived by someone who knows them in real life. That freedom is the point.</p>
 
           <h3>Being Fully Honest for the First Time</h3>
-          <p>For many LeanOn users, an anonymous session is the first time they have ever said out loud what they have been carrying inside. The things you cannot tell your partner, your parents, or your closest friends — the shame, the fear, the confusion — can finally be spoken, heard, and acknowledged. That experience alone is often profoundly relieving.</p>
+          <p>For some adults it feels easier to explain relationship or family difficulties to a listener who is not part of their social circle. You decide what to disclose and may stop a session.</p>
 
-          <h3>No Permanent Record That Can Be Used Against You</h3>
-          <p>In Indian social contexts, vulnerability can be weaponised — used to challenge someone&apos;s competence, their fitness as a partner, or their standing in a family. Anonymous support removes that risk. What you share stays between you and your listener, and is not retained in any way that could be accessed or shared.</p>
+          <h3>Understand What Is Stored</h3>
+          <p>Text messages are stored and may be reviewed by authorised LeanOn administrators after reports or safety flags. Voice calls are not recorded by LeanOn. Shared devices, notifications and payments can leave traces.</p>
         </div>
 
         {/* Why Anonymity Matters in India */}
@@ -177,28 +177,28 @@ export default function AnonymousSupportPage() {
           <p>Despite significant progress in recent years, mental health struggles in India still carry stigma in many communities and families. Admitting that you are struggling — even with something as universal as anxiety or grief — can be interpreted as weakness, instability, or cause for concern about your prospects, your relationships, or your reliability. This stigma keeps enormous numbers of people suffering in silence when they could be getting real support.</p>
 
           <h3>Family Dynamics and the Pressure to Appear Fine</h3>
-          <p>In Indian families, there is often an implicit pressure to present as capable, settled, and untroubled — especially to parents who have sacrificed for you, or to a spouse and their family who have certain expectations. The idea of a family member finding out that you have been seeking emotional support can feel more frightening than the original problem. Anonymous support sidesteps this entirely.</p>
+          <p>Family expectations can make asking for emotional support difficult. Using a display name may help, but you should not assume that any digital service leaves no visible traces on a shared device.</p>
 
           <h3>Professional Contexts</h3>
-          <p>Many professionals in India worry about what colleagues or employers might think if they learned they were seeking mental health support. This concern is particularly acute in high-pressure industries — tech, finance, consulting, startups — where the culture often demands constant resilience. Anonymous peer support means you can seek help without any professional consequences.</p>
+          <p>Some people prefer talking to someone outside work or family about everyday pressure. Think about device privacy and what you choose to disclose before any online conversation.</p>
         </div>
 
         {/* How LeanOn Protects Your Privacy */}
         <div className="section">
           <h2>How LeanOn Protects Your Privacy</h2>
-          <p>LeanOn was built with privacy as a design principle, not an afterthought. Here is specifically how your anonymity is protected:</p>
+          <p>Here are important privacy limits to know before deciding whether to use LeanOn:</p>
 
           <h3>First Name Only</h3>
-          <p>When you create an account and join a session, only the name you choose to use is visible to your listener. No last name, no profile photo, no location, no workplace — nothing that identifies you beyond what you choose to share yourself.</p>
+          <p>A listener ordinarily sees your chosen display name rather than your phone number. Your words or natural voice may still reveal information about you.</p>
 
           <h3>Phone Number Authentication Without Exposure</h3>
-          <p>LeanOn uses phone number OTP for authentication — a necessary step to maintain platform integrity. But your phone number is never shared with listeners and is stored only in encrypted form for authentication purposes.</p>
+          <p>LeanOn requires phone-number verification for sign-in. Your number is not shown to listeners, but account information is retained to operate the service.</p>
 
-          <h3>No Session Recording or Long-Term Storage</h3>
-          <p>Session content is not recorded or retained long-term. Conversations are not stored in a way that could be accessed by third parties. For full details, see our <a href="/privacy" style={{color:'var(--teal)',fontWeight:700}}>privacy policy</a>.</p>
+          <h3>Text Is Stored; Voice Is Not Recorded</h3>
+          <p>Text chats are stored securely and may be reviewed by authorised administrators following safety reports or flags. LeanOn does not record voice conversations. For details, see our <a href="/privacy" style={{color:"var(--teal)",fontWeight:700}}>Privacy Policy</a>.</p>
 
           <h3>Voice Anonymisation</h3>
-          <p>If you choose voice sessions, the channel is anonymised — your listener hears you but has no access to your contact details, phone number, or any identifying information. Text-only sessions are also available for those who prefer to maintain complete anonymity.</p>
+          <p>Voice sessions do not reveal your phone number to the listener, but your natural voice may identify you. Text is available if you prefer not to speak aloud.</p>
         </div>
 
         {/* What You Can Talk About */}
@@ -214,62 +214,37 @@ export default function AnonymousSupportPage() {
             <li>Identity questions or life choices that go against family or community expectations</li>
             <li>A feeling of general emptiness or meaninglessness that you cannot explain</li>
           </ul>
-          <p>There is no topic too sensitive, too shameful, or too complicated. The anonymity is specifically designed to make space for exactly these conversations.</p>
+          <p>LeanOn supports everyday conversations, not therapy, emergency intervention, or specialist domestic-abuse assistance. For clinical needs or personal danger, contact qualified or specialist services.</p>
         </div>
 
         {/* Is Anonymous Support Effective? */}
         <div className="section">
           <h2>Is Anonymous Support Effective?</h2>
-          <p>This is a fair and important question. The answer, supported by considerable research and the experience of millions of people who use anonymous peer support, is yes — often more effective than support where your identity is known.</p>
+          <p>Some people find speaking under a chosen name more comfortable than sharing personal concerns with acquaintances. Experiences differ and no positive outcome is guaranteed.</p>
 
           <h3>Anonymity Increases Honest Disclosure</h3>
-          <p>Research in psychology and online communication consistently shows that anonymity increases honest self-disclosure. When people feel genuinely safe — not managing how they are perceived — they share more fully and more accurately. That honesty is the raw material that makes emotional support work.</p>
+          <p>Decide what personal information you are comfortable sharing with someone you do not know. Using a display name is not a substitute for protecting account and device privacy.</p>
 
           <h3>The Mechanism Is the Same</h3>
-          <p>What makes emotional support effective is feeling genuinely heard and understood by another person. That mechanism works just as well — often better — when you are not concerned about the social consequences of what you are sharing. Anonymous peer support delivers exactly this.</p>
+          <p>Peer listeners offer a human conversation about everyday emotional difficulties. They do not offer diagnosis or clinical treatment.</p>
 
           <h3>People Who Would Not Seek Help Otherwise</h3>
-          <p>Perhaps the most important evidence for anonymous support&apos;s effectiveness is that it reaches people who would otherwise seek no support at all. For someone who would rather suffer in silence than risk judgment from people who know them, anonymous peer support is not a lesser option — it is the option that actually exists for them.</p>
+          <p>A listener outside your own social circle can be an option if you prefer to talk privately about everyday stress. This does not remove all privacy risks or replace specialist care.</p>
         </div>
 
-        {/* Listener cards */}
-        <h2 style={{fontSize:'20px',fontWeight:800,color:'var(--navy)',marginBottom:'16px'}}>Listeners Who Understand the Need for Privacy</h2>
-        <div className="listeners-grid">
-          {[
-            {
-              emoji: '🔒',
-              name: 'Meena',
-              tag: 'Family Pressure',
-              bio: 'Carried family struggles alone for years because I couldn\'t tell anyone who knew me. I understand completely why privacy matters when you seek support.'
-            },
-            {
-              emoji: '🌿',
-              name: 'Siddharth',
-              tag: 'Mental Health Stigma',
-              bio: 'Hid my anxiety from everyone for years due to the stigma. I know what it costs to suffer in silence — and what it means to finally be heard.'
-            },
-            {
-              emoji: '💙',
-              name: 'Aarti',
-              tag: 'Work & Identity',
-              bio: 'Navigated career struggles and identity questions I couldn\'t share with colleagues or family. Here to create the safe space I needed myself.'
-            },
-          ].map((l, i) => (
-            <div key={i} className="listener-card">
-              <div className="listener-avatar">{l.emoji}</div>
-              <div className="listener-name">{l.name}</div>
-              <div className="listener-tag">{l.tag}</div>
-              <p className="listener-bio">{l.bio}</p>
-            </div>
-          ))}
+        {/* Link to actual profiles rather than invented listener names or biographies. */}
+        <div className="section">
+          <h2>See Real Listener Profiles</h2>
+          <p>Browse actual listener profiles, languages, topics and current status. A request starts only if a listener accepts.</p>
+          <a href="/browse" className="related-link">Browse screened peer listeners</a>
         </div>
 
         {/* CTA */}
         <div className="cta-card">
-          <h2>Talk Anonymously — Your Identity Stays Yours</h2>
-          <p>First name only. No judgment. No lasting record. No appointment needed.</p>
+          <h2>Request a Peer Conversation</h2>
+          <p>Use a chosen display name. Phone verification is required. One introductory session of up to five minutes is free per account if a listener accepts.</p>
           <div className="cta-btns">
-            <a href="/talk?src=seo"><button className="btn-primary">Start anonymously — no name needed →</button></a>
+            <a href="/talk?src=seo"><button className="btn-primary">Request a conversation →</button></a>
             <a href="/browse"><button className="btn-secondary">Browse Listeners First</button></a>
           </div>
         </div>
@@ -279,23 +254,23 @@ export default function AnonymousSupportPage() {
           <h2>Frequently Asked Questions</h2>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn really anonymous?</div>
-            <div className="faq-a">Yes. LeanOn only uses your first name in sessions. Your last name, phone number, email, and any other identifying information are never shared with listeners. Conversations are completely private and never disclosed to third parties. You can also use a pseudonym if you prefer.</div>
+            <div className="faq-a">No. A verified phone number is needed to sign in, but listeners see your chosen name. Text messages are stored for possible safety review. See our <a href="/privacy">Privacy Policy</a>.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Why do people seek anonymous support in India?</div>
-            <div className="faq-a">In India especially, the stigma around emotional struggles can carry real social, professional, and family consequences. People fear being judged by family, colleagues, or their community. Anonymous support removes that fear entirely — allowing people to be fully honest without any social cost.</div>
+            <div className="faq-a">A chosen name may make it easier to talk with someone outside your circle, but privacy risks remain.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Does anonymous support actually help?</div>
-            <div className="faq-a">Yes. Research on anonymous peer support consistently shows positive outcomes. Anonymity often helps people open up more fully, making the support more effective. The mechanism is the same as any emotional support — feeling genuinely heard and understood.</div>
+            <div className="faq-a">Some people find it easier to speak to a stranger. Benefits vary; LeanOn is not a clinical treatment.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Can I stay anonymous if I do voice calls?</div>
-            <div className="faq-a">Voice sessions use an anonymized channel — the listener hears your voice but has no access to your personal identity or contact details. Text-only sessions are also available if you prefer to maintain complete anonymity throughout.</div>
+            <div className="faq-a">Your phone number is hidden from listeners, but they hear your voice. Text-only sessions are available.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">How does LeanOn protect my data?</div>
-            <div className="faq-a">LeanOn stores only the minimum data necessary to operate the platform. Session content is not retained long-term or shared. Your phone number is used only for authentication and is never visible to listeners. Full details are in our privacy policy at leanon.app/privacy.</div>
+            <div className="faq-a">Phone verification is required. Text chats are stored securely and may be reviewed by authorised administrators; voice calls are not recorded by LeanOn. See <a href="/privacy">Privacy Policy</a>.</div>
           </div>
         </div>
 

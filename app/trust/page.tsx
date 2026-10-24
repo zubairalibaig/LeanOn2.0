@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Trust & Safety | LeanOn — Anonymous Peer Support India',
+  title: 'Trust & Safety | LeanOn — Peer Listening and Privacy',
   description: 'How LeanOn keeps you safe: privacy, how listeners are screened, safety checks during sessions, reporting, and crisis helplines. Peer support, not therapy.',
   alternates: { canonical: 'https://www.leanon.app/trust' },
 }
@@ -70,11 +70,11 @@ export default function TrustPage() {
         <div className="hero">
           <p className="tag">Trust &amp; Safety</p>
           <h1>Your safety is our top priority</h1>
-          <p className="lead">LeanOn is built on trust. Every decision we make — from how you sign up to how we vet listeners — is designed to keep you safe, anonymous, and in control.</p>
+          <p className="lead">LeanOn is built on trust. Every decision we make — from how you sign up to how we vet listeners — is intended to help you make informed decisions and understand our privacy and safety boundaries.</p>
         </div>
 
         <div className="section">
-          <h2>🔒 Your anonymity is protected</h2>
+          <h2>🔒 Privacy and its limits</h2>
           <p>LeanOn was designed for privacy from the ground up. Here is exactly what we collect and what we don&apos;t:</p>
           <ul>
             <li>Sign up with just your mobile number — no full name, no email required</li>
@@ -82,7 +82,7 @@ export default function TrustPage() {
             <li>No profile photos required for seekers</li>
             <li>Text messages are stored securely so a session can be reviewed if it is reported or flagged for safety. Only authorised LeanOn administrators can open them</li>
             <li>Voice calls are not recorded</li>
-            <li>We never share your conversations with anyone outside LeanOn</li>
+            <li>Our handling of account and conversation data follows our <a href="/privacy">Privacy Policy</a>; full anonymity or secrecy cannot be guaranteed</li>
           </ul>
           <p>You are in control of your identity on LeanOn. We built text-first specifically so that people in joint households can use the platform privately.</p>
         </div>

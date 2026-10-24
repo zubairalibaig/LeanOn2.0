@@ -98,7 +98,7 @@ const howToSchema = {
     { '@type': 'HowToStep', position: 2, name: 'Browse peer listeners', text: 'Filter listeners by topic (loneliness, relationships, work stress, grief, etc.). Read their bios, ratings, and lived experience.' },
     { '@type': 'HowToStep', position: 3, name: 'Start a free 5-minute trial', text: 'Your first 5-minute introductory session is free once per account. No wallet or payment is needed to start.' },
     { '@type': 'HowToStep', position: 4, name: 'Continue with a paid session', text: 'If you want more time, recharge your wallet via UPI, cards, or net banking. Choose 15, 30, or 45 minutes. Paid sessions start at ₹160.' },
-    { '@type': 'HowToStep', position: 5, name: 'Talk by text or voice', text: 'Choose text chat for privacy or voice call for warmth. Your session begins immediately — no appointment.' },
+    { '@type': 'HowToStep', position: 5, name: 'Talk by text or voice', text: 'Choose text chat for privacy or voice call for warmth. A session begins if a listener accepts your request; no scheduled appointment is required.' },
     { '@type': 'HowToStep', position: 6, name: 'Rate and return', text: 'Rate your listener after the session. Book again anytime. Unused wallet balance is fully refundable.' },
   ],
 }
@@ -499,23 +499,24 @@ export default function Home() {
         </div>
       </div>
 
-      {/* TESTIMONIALS */}
+      {/* USE CASES — examples, not unverified user reviews */}
       <div className="white-section">
         <div className="inner">
-          <h2 className="sh">What people are saying</h2>
-          <p className="ss">Real sessions. Real relief.</p>
+          <h2 className="sh">When talking to another human may help</h2>
+          <p className="ss">LeanOn is for everyday emotional support, not a promise to fix a relationship or treat a condition.</p>
           <div className="tlist">
-            {[
-              {tx:"Had a fight with my husband before he left for work. I was sitting at my desk, unable to focus. Opened LeanOn, talked for 15 minutes, and I could actually breathe again.",nm:'Priya M.',cy:'Bengaluru',ini:'P'},
-              {tx:"As a founder going through a hard patch I felt completely alone. Talking to someone who survived their own startup failure was exactly what I needed.",nm:'Arjun K.',cy:'Mumbai',ini:'A'},
-              {tx:"More affordable and more honest than anything else I've tried. I've booked 4 sessions now and each one helped.",nm:'Sneha R.',cy:'Hyderabad',ini:'S'},
-            ].map((r,i)=>(
-              <div key={i} className="tcard">
-                <div className="tst">★★★★★</div>
-                <p className="ttx">&ldquo;{r.tx}&rdquo;</p>
-                <div className="tau"><div className="tav">{r.ini}</div><div><div className="tnm">{r.nm}</div><div className="tcy">{r.cy}</div></div></div>
-              </div>
-            ))}
+            <div className="tcard">
+              <h3>After a difficult relationship conversation</h3>
+              <p className="ttx">You might want to put your feelings into words with someone outside your circle, without being told what decision to make.</p>
+            </div>
+            <div className="tcard">
+              <h3>When marriage or family expectations feel heavy</h3>
+              <p className="ttx">A screened peer listener can hear about everyday pressure, loneliness or feeling unheard. They cannot provide couples counselling or legal advice.</p>
+            </div>
+            <div className="tcard">
+              <h3>When you need a person instead of an AI conversation</h3>
+              <p className="ttx">If you specifically want another human being to listen, you can request text or voice support. A listener must accept before a session begins.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -523,7 +524,7 @@ export default function Home() {
       {/* TRUST */}
       <div className="inner">
         <div className="tg">
-          {[{i:'🔒',l:'Safe & private'},{i:'💬',l:'Text or voice'},{i:'🔄',l:'Refund anytime'},{i:'⚡',l:'No appointment'},{i:'🤝',l:'Lived experience'},{i:'⏱️',l:'Available now'}].map((t,i)=>(
+          {[{i:'🔒',l:'Safe & private'},{i:'💬',l:'Text or voice'},{i:'🔄',l:'Refund anytime'},{i:'⚡',l:'No appointment'},{i:'🤝',l:'Lived experience'},{i:'⏱️',l:'Availability varies'}].map((t,i)=>(
             <div key={i} className="ti"><div className="tic">{t.i}</div><span className="tl">{t.l}</span></div>
           ))}
         </div>

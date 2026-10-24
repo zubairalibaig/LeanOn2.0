@@ -14,13 +14,13 @@ const URL = 'https://www.leanon.app/talk'
 
 export const metadata: Metadata = {
   title: 'Talk to Someone Now — Free First 5 Minutes | LeanOn Talk now',
-  description: `Talk to a real person right now. Pick what's on your mind, choose text or voice, and LeanOn connects you with a screened peer listener in India who is free now. First ${FREE_SESSION_MINS} minutes free; for Indians in India and abroad.`,
+  description: `Request a text or voice conversation with a screened peer listener in India. A session begins only if a listener accepts. One introductory session of up to ${FREE_SESSION_MINS} minutes is free per account.`,
   keywords: ['talk to someone now', 'talk to someone online india', 'someone to talk to', 'talk to a real person', 'relationship problems talk to someone', 'nri talk to someone', 'peer support india', 'online emotional support india', 'vent to someone online'],
   alternates: { canonical: URL },
   robots: { index: true, follow: true },
   openGraph: {
     title: 'Talk to someone now — LeanOn',
-    description: `Connect with a screened peer listener in India who is free right now. First ${FREE_SESSION_MINS} minutes free.`,
+    description: `Request a conversation with a screened human peer listener. Acceptance is required; one introductory session of up to ${FREE_SESSION_MINS} minutes is free per account.`,
     url: URL,
     siteName: 'LeanOn',
     type: 'website',
@@ -45,7 +45,7 @@ const jsonLd = [
     serviceType: 'Peer emotional support (non-clinical)',
     provider: { '@id': 'https://www.leanon.app/#organization' },
     areaServed: ['India', 'United States', 'United Kingdom', 'Canada', 'Australia', 'United Arab Emirates', 'Kuwait', 'Oman', 'Singapore', 'Malaysia'],
-    description: 'One-to-one text or voice conversation with a screened peer listener in India who is available now. Not therapy or emergency care.',
+    description: 'One-to-one text or voice peer support with a screened listener in India. Availability and acceptance are not guaranteed. Not therapy or emergency care.',
     offers: [
       { '@type': 'Offer', name: `Free ${FREE_SESSION_MINS}-minute first session`, price: '0', priceCurrency: 'INR', description: 'Once per account.' },
       { '@type': 'Offer', name: '15-minute session (outside India)', price: String(NRI_USD_PRICES[15]), priceCurrency: 'USD' },
@@ -59,7 +59,7 @@ const jsonLd = [
       { '@type': 'HowToStep', position: 1, name: "Pick what's on your mind", text: 'Relationship, family, work or studies, loneliness, anxiety or overthinking, or just needing to talk.' },
       { '@type': 'HowToStep', position: 2, name: 'Choose text or voice', text: 'Type at your own pace or talk it through out loud.' },
       { '@type': 'HowToStep', position: 3, name: 'Confirm your phone number', text: 'A one-time code; your number is never shown to the listener.' },
-      { '@type': 'HowToStep', position: 4, name: 'Get connected', text: `LeanOn asks a listener who is free now, and the next one if they cannot answer within about ${TALK_TRY_SECS} seconds.` },
+      { '@type': 'HowToStep', position: 4, name: 'Get connected', text: `LeanOn requests a session with an eligible listener, and may ask another if there is no response within about ${TALK_TRY_SECS} seconds. Connection is not guaranteed.` },
     ],
   },
   {
@@ -89,7 +89,7 @@ export default function TalkLayout({ children }: { children: React.ReactNode }) 
         <h2 id="talk-info-h">How Talk now works</h2>
         <ol>
           <li>Choose text or voice and tap what&apos;s on your mind.</li>
-          <li>We ask a screened peer listener who is free now. No answer in about {TALK_TRY_SECS} seconds? We ask the next one.</li>
+          <li>We request a conversation with an eligible screened listener. If no one responds within about {TALK_TRY_SECS} seconds, we may ask another. A connection is not guaranteed.</li>
           <li>Talk privately, one to one. First {FREE_SESSION_MINS} minutes free, once per account. Peer support, not therapy.</li>
         </ol>
         <h2>Questions</h2>
