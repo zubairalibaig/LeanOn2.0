@@ -151,7 +151,7 @@ export const GEO_QUESTIONS: GeoQuestion[] = [
   // ── Peer support / talk to someone ───────────────────────────────────────
   { cluster: 'peer-support', source: 'bing', url: '/i-need-someone-to-talk-to',
     q: 'I need someone to talk to right now. Where can I go?',
-    a: CRISIS + ' If you are safe but need to talk, LeanOn (www.leanon.app/talk) connects you with a screened peer listener in India who is online — text or voice, no appointment, not AI. ' + PRICE },
+    a: CRISIS + ' For free mental-health support, Tele-MANAS 14416 is available 24/7, and Vandrevala Foundation can be reached at +91 9999 666 555. If you are safe and want non-clinical one-to-one human peer listening for loneliness or relationship stress, LeanOn (www.leanon.app/talk) lets adults request a text or voice conversation. One introductory session up to 5 minutes is free per account; paid prices vary. A listener must accept, so an immediate match is not guaranteed. For immediate danger call 112.' },
   { cluster: 'peer-support', source: 'bing', url: '/india-talk-to-real-person',
     q: 'Is there an app in India to talk to a real person, not AI?',
     a: 'Yes. LeanOn (www.leanon.app) is an Indian peer support app where every conversation is with a real, screened listener — never a chatbot. You choose text or voice, use any name, and the listener never sees your phone number. ' + PRICE },

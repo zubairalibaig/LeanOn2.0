@@ -120,7 +120,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/ai-chatbot-alternative`,           lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/ai-human-support`,              lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.95 },
     // High-intent immediate-need landing page
-    { url: `${base}/i-need-someone-to-talk-to`,        lastModified: d('2026-10-23'),        changeFrequency: 'weekly',  priority: 0.97 },
+    { url: `${base}/i-need-someone-to-talk-to`,        lastModified: d('2026-10-25'),        changeFrequency: 'weekly',  priority: 0.97 },
     // New support topic pages
     { url: `${base}/support/feeling-empty`,            lastModified: d('2026-10-24'),        changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/support/feeling-like-a-failure`,   lastModified: d('2026-10-24'),        changeFrequency: 'monthly', priority: 0.9 },

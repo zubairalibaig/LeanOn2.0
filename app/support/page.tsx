@@ -201,6 +201,12 @@ export default function SupportHubPage() {
           <span style={{display:'block',fontSize:13,color:'#526D7A',marginTop:8}}>For adults 18+. Peer support is not therapy. An available listener must accept your request.</span>
         </section>
 
+        <section style={{background:'#FFFFFF',border:'1px solid #C9E4EB',padding:'20px 24px',borderRadius:20,marginBottom:28}}>
+          <h2 style={{fontSize:21,margin:'0 0 7px',color:'#0F4867'}}>Need someone to talk to right now?</h2>
+          <p style={{fontSize:15,color:'#3A6070',lineHeight:1.7,margin:'0 0 11px'}}>See verified free helplines in India and options for a one-to-one conversation with a screened human peer listener. Learn which kind of help is right for you, and what happens if no listener is available.</p>
+          <a href="/i-need-someone-to-talk-to" style={{color:'#0D7889',fontWeight:800,textDecoration:'underline'}}>Compare services for immediate emotional support →</a>
+        </section>
+
         {/* Topics grid */}
         <div className="topics-grid">
           {topics.map((t) => (
