@@ -5,7 +5,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Husband Not Supportive India — Emotional and Financial Withdrawal in Marriage | LeanOn',
-  description: 'When your husband has stopped showing up — emotionally, financially, or both. The particular exhaustion of managing everything while the person who was supposed to be your partner has checked out.',
+  description: 'When your husband is emotionally distant or not supportive, learn options for confidential listening, counselling, financial or legal guidance and personal safety in India.',
   keywords: [
     'husband not supportive India', 'husband not helping India', 'unsupportive husband India',
     'husband stopped financial support India', 'husband emotionally absent India',
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.leanon.app/support/husband-not-supportive-india', languages: { 'en-IN': 'https://www.leanon.app/support/husband-not-supportive-india' } },
   openGraph: {
     title: 'Husband Not Supportive India | LeanOn',
-    description: 'Emotional and financial withdrawal in marriage. The exhaustion of managing everything while your partner has checked out.',
+    description: 'Understand options when your husband seems emotionally distant, including non-clinical human listening and qualified counselling when needed.',
     url: 'https://www.leanon.app/support/husband-not-supportive-india',
     siteName: 'LeanOn',
     type: 'article',
@@ -34,7 +34,7 @@ const faqSchema = {
       name: 'My husband has stopped contributing financially. What are my options?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Financial withdrawal in a marriage is a serious issue. Your practical options depend on your situation — whether you have your own income, what the legal framework is, whether children are involved. In India, a wife has legal rights to maintenance under the Hindu Marriage Act and other personal laws. Beyond the legal dimension, the emotional weight of financial abandonment — the stress, the loss of security, the practical burden — is real and deserves to be named and addressed. Talking to a peer listener is not a legal resource, but it can be a place to process the emotional experience while you figure out the practical steps.',
+        text: 'If your spouse is not contributing financially, your options can depend on your personal circumstances and applicable law. A qualified family-law professional or appropriate legal-aid service can explain possible legal rights. If there is coercive control or financial abuse, seek specialist assistance. A peer listener can hear how this affects you emotionally, but cannot provide legal advice, financial protection or safety planning.',
       },
     },
     {
@@ -174,6 +174,10 @@ export default function HusbandNotSupportiveIndiaPage() {
         </p>
 
 
+        <h2>What are your options if you cannot talk to family?</h2>
+        <p>A trusted friend or community member outside the conflict may listen without charge. For structured help with recurring marriage problems or persistent emotional distress, consider <a href="https://icallhelpline.org/faqs/" target="_blank" rel="noopener noreferrer">iCALL at TISS</a> or an appropriately qualified individual or couples counsellor. If you want an everyday non-clinical conversation instead, a screened LeanOn peer listener may be an option when one is available and accepts your request.</p>
+        <p>If you feel threatened, controlled, afraid of retaliation or unable to access your own money or devices, look for qualified legal aid or specialist domestic-abuse support. LeanOn cannot provide emergency protection or safety planning. Read our <a href="/relationship-emotional-support-guide-india">guide to different kinds of emotional and relationship support</a>.</p>
+
         <h2>The Two Kinds of Withdrawal</h2>
         <div className="cards">
           <div className="card">
@@ -207,7 +211,7 @@ export default function HusbandNotSupportiveIndiaPage() {
           telling no one how things actually are. The silence is protective and exhausting at the same time.
         </p>
         <p>
-          Talking to a peer listener — anonymously, privately — is not the same as telling your family.
+          Talking to a screened peer listener outside your family can be one way to discuss your emotions, but you use a phone-verified account and it is not completely anonymous.
           It is telling yourself, with a witness. Sometimes that is what you need first.
         </p>
 
@@ -223,7 +227,7 @@ export default function HusbandNotSupportiveIndiaPage() {
 
         <div className="cta-card">
           <h2>You Do Not Have to Carry This Alone</h2>
-          <p>Talk to a real peer listener — anonymous, no judgment, not marriage counselling. Just a real person who will hear what you are actually carrying.</p>
+          <p>If a listener is available and accepts, LeanOn offers non-clinical text or voice peer support for adults. It is not couples counselling, legal advice or specialist domestic-abuse help.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Talk to someone who understands — first 5 min free →</button></a>
             <a href="/support/married-but-lonely"><button className="btn-secondary">Married but lonely</button></a>
