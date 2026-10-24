@@ -200,7 +200,7 @@ export default function PeerSupportOnlineIndiaPage() {
           <h3>Private Conversations</h3>
           <p>Phone-number verification is required. You can choose a display name for listeners, who do not see your number. Text messages are stored securely and may be reviewed by authorised administrators for safety. Voice is not recorded by LeanOn. Read the <a href="/privacy">Privacy Policy</a>.</p>
 
-          <h3>No Appointment, No Waitlist</h3>
+          <h3>No Scheduled Appointment Required</h3>
           <p>Adults across India can request a session when suitable listeners are available. Some may respond during evenings or weekends, but no particular time or 24/7 availability is promised.</p>
 
           <h3>Affordable</h3>
