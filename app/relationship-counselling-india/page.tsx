@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.leanon.app/relationship-counselling-india', languages: { 'en-IN': 'https://www.leanon.app/relationship-counselling-india' } },
   openGraph: {
     title: 'Relationship Counselling India — Talk It Through with a Real Person | LeanOn',
-    description: 'Relationship problems weighing on you? Talk to a real person — not an algorithm. Anonymous peer support from ₹160. No appointment needed.',
+    description: 'Relationship stress? Learn where non-clinical peer listening fits, when professional counselling is needed and what to expect from LeanOn.',
     url: 'https://www.leanon.app/relationship-counselling-india',
     siteName: 'LeanOn',
     type: 'website',
@@ -202,7 +202,7 @@ export default function RelationshipCounsellingIndiaPage() {
               <div className="step-num">3</div>
               <div className="step-text">
                 <div className="step-title">Start your session in minutes</div>
-                <div className="step-desc">No appointments, no waitlist. First 5-minute session free. <a href="/browse" style={{color:'var(--teal)',fontWeight:700}}>Browse listeners now.</a></div>
+                <div className="step-desc">Request a conversation without booking an appointment. One introductory session of up to five minutes is free per account, subject to listener acceptance. <a href="/browse" style={{color:'var(--teal)',fontWeight:700}}>Browse listeners.</a></div>
               </div>
             </div>
           </div>
