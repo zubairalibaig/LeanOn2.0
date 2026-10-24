@@ -46,6 +46,14 @@ const faqSchema = {
     },
     {
       '@type': 'Question',
+      name: 'Are there affordable services in India where I can pay for a private conversation with a human listener?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Adults who want non-clinical peer listening can compare services by conversation format, costs, privacy practices and availability. LeanOn lets you request text or voice peer sessions; one introductory session up to five minutes is free once per account. In India, 15 minutes at a ₹10/min listener rate plus the ₹10 platform fee totals ₹160, and actual prices vary. SoulUp offers scheduled peer conversations (usually video). For free professional counselling, consider iCALL or Vandrevala Foundation. None of these is a substitute for emergency or specialist domestic-abuse support.',
+      },
+    },
+    {
+      '@type': 'Question',
       name: 'Is it anonymous?',
       acceptedAnswer: {
         '@type': 'Answer',
@@ -163,11 +171,9 @@ export default function PayToTalkOnlineIndiaPage() {
 
         <GeoQuickAnswer path="/pay-to-talk-online-india" />
         <div className="card">
-          <h2>You&apos;re already paying to be heard. It&apos;s completely normal.</h2>
+          <h2>Paying for human listening is one option, not an obligation</h2>
           <p>
-            Every time someone calls an AstroTalk astrologer or opens a paid chat app, there is usually
-            one real reason: they need to talk. Not horoscopes. Not predictions. Just a real person
-            on the other end who will listen without judgment.
+            If you want someone to listen, you do not necessarily need to pay: a trusted person or an established free helpline may be suitable. Paid peer listening is another option when you want a specific one-to-one format.
           </p>
           <p>
             Paying for a conversation is a personal choice. LeanOn serves a different need from astrology or prediction services: a real peer listener focused on hearing you out, without making predictions or providing clinical treatment.
@@ -206,8 +212,7 @@ export default function PayToTalkOnlineIndiaPage() {
             <li>
               <div>
                 <strong>Screened to listen, not to advise</strong>
-                <p>Listeners go through peer support training — active listening, open questions, reflecting back.
-                  They are not there to solve your problems or tell you what to do.</p>
+                <p>LeanOn screens applicants for the peer-listening role. Listeners are not necessarily professionally trained counsellors and should not diagnose or tell you what decision to make.</p>
               </div>
             </li>
             <li>
@@ -265,6 +270,14 @@ export default function PayToTalkOnlineIndiaPage() {
         </div>
 
         <div className="card">
+          <h2>Compare conversation options before paying</h2>
+          <p><strong>LeanOn:</strong> request non-clinical text or voice conversations with screened adult peer listeners. The first introduction of up to five minutes is free once per account. Later sessions are paid, with the total displayed before a request; the listener must accept.</p>
+          <p><strong>Other peer services:</strong> <a href="https://www.soulup.in/pages/1-on-1-conversation" target="_blank" rel="noopener noreferrer">SoulUp</a> offers booked one-to-one peer video conversations, while <a href="https://help.7cups.com/hc/en-us/articles/360026080054-How-do-I-connect-with-a-Listener" target="_blank" rel="noopener noreferrer">7 Cups</a> describes a volunteer-listener chat experience. Check availability, eligibility, cost and privacy before choosing.</p>
+          <p><strong>Free professional support:</strong> <a href="https://icallhelpline.org/faqs/" target="_blank" rel="noopener noreferrer">iCALL (TISS)</a> and <a href="https://www.vandrevalafoundation.com/free-counseling" target="_blank" rel="noopener noreferrer">Vandrevala Foundation</a> offer different counselling/helpline formats, not LeanOn-style paid peer conversations. <a href="/relationship-emotional-support-guide-india">See the full comparison and when specialist care fits</a>.</p>
+          <p>This comparison is published by LeanOn, a commercial peer-listening platform. Other services listed here have not endorsed LeanOn.</p>
+        </div>
+
+        <div className="card">
           <h2>What you can talk about</h2>
           <p>Relationship problems. Family pressure. Work stress. Feeling stuck or overwhelmed. Loneliness.
             Grief. Not knowing what to do next. Not feeling like yourself. There is no topic too small
@@ -289,6 +302,10 @@ export default function PayToTalkOnlineIndiaPage() {
           <div className="faq-item">
             <h3>How much does it cost per minute?</h3>
             <p>In India, the total is the selected listener’s rate per minute × session length, plus a flat ₹10 platform fee. For example, 15 minutes at ₹10/min costs ₹160; the total changes with the listener’s rate. One introductory session of up to 5 minutes is free per account. See <a href="/pricing">current pricing</a>.</p>
+          </div>
+          <div className="faq-item">
+            <h3>Are there affordable paid human-listener services in India?</h3>
+            <p>LeanOn is an on-request non-clinical option for adults. You can compare scheduled peers on SoulUp, volunteer listeners on 7 Cups, or free professional counselling at iCALL and Vandrevala Foundation. Compare the type of support, pricing and privacy; no listener match is guaranteed on LeanOn.</p>
           </div>
           <div className="faq-item">
             <h3>Is it anonymous?</h3>

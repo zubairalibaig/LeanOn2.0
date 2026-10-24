@@ -5,7 +5,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Emotional Support for Women in India — Talk to a Woman Listener, Privately | LeanOn',
-  description: 'A safe, private place for women in India to talk about marriage, relationships, in-laws, motherhood and stress. Choose a woman listener, use any name, text or voice. Listeners never see your number. First 5 minutes free.',
+  description: 'Explore non-clinical peer listening for women in India facing marriage loneliness, family pressure or daily stress. Choose a woman listener from current profiles when available; phone verification is required. Not therapy or crisis support.',
   keywords: [
     'emotional support for women India', 'women mental health India', 'support for women India',
     'working women stress India', 'women emotional health India', 'Indian women mental health',
@@ -40,7 +40,7 @@ const faqSchema = {
       name: 'Is there a safe app in India where a woman can talk to someone privately?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn (www.leanon.app) is a peer support app where you talk one-to-one, by text or voice, with a screened listener in India. You use any first name you like, the listener never sees your phone number, and phone numbers, emails and social media handles are blocked in chat, so nobody can pull you onto WhatsApp or Instagram. The first 5 minutes are free; after that a 15-minute session starts at ₹160.',
+        text: 'No online service can guarantee safety or anonymity. For everyday stress, adults can consider a trusted person, a free counselling helpline, a qualified professional, or a screened human peer listener. LeanOn offers non-clinical text or voice listening, uses phone verification, hides your number from listeners, and stores text messages for possible safety review. You may select a woman listener from current profiles when available. One introductory session of up to five minutes is free per account; later sessions are paid and acceptance is not guaranteed.',
       },
     },
     {
@@ -48,7 +48,7 @@ const faqSchema = {
       name: 'Can I choose to talk to a woman?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. On the Browse page every listener shows their real first name, photo, languages and topics, so you can pick a woman listener yourself. Talk now connects you with whoever is online first, so if you would rather talk to a woman, choose from Browse instead.',
+        text: 'You can inspect current profiles on Browse and select a woman listener if a suitable one is listed and available. Talk now automatically considers eligible listeners and does not guarantee the gender of the person selected; use Browse if that preference matters. Every session requires acceptance.',
       },
     },
     {
@@ -56,7 +56,7 @@ const faqSchema = {
       name: 'Will my husband, in-laws or family find out?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Nobody is told. Your listener sees only the name you choose — not your phone number — and never meets anyone in your life. Voice calls are not recorded. Text chats are stored securely and opened only by authorised LeanOn staff if a report is reviewed. If others use your phone, remember the LeanOn app or browser history shows like any other, so use your own phone if you can.',
+        text: 'LeanOn does not show your verified phone number to listeners, but complete secrecy cannot be promised. Text chats are stored securely and may be reviewed by authorised staff for safety; LeanOn does not record voice calls. A shared device, browser history, notifications or payments can reveal use. If someone controls or monitors your devices, seek specialist safety guidance instead of relying on an online peer-listening app.',
       },
     },
     {
@@ -191,7 +191,7 @@ export default function ForWomenPage() {
         <p className="lead">
           You manage the child, the house, the career, the family relationships, the finances, and the emotional labour
           of everyone around you. You do it well. And somewhere in the middle of all of that, you stopped being asked
-          how you are doing. LeanOn is a real person who will actually listen — just to you, just about you, for once.
+          how you are doing. LeanOn offers a screened human peer listener if a request is accepted. It is one option alongside friends, professional counselling and specialist support.
         </p>
 
         <QuickAnswer question={directQuestion} answer={directAnswer} />
@@ -209,7 +209,7 @@ export default function ForWomenPage() {
           ))}
         </div>
 
-        <h2>Built So You Can Talk Safely</h2>
+        <h2>What to check before talking online</h2>
         <div className="situations">
           <div className="sit"><div className="sit-icon">🙋‍♀️</div><div className="sit-body"><h3>Choose who you talk to</h3><p>Every listener shows a real first name and photo. Pick a woman listener from Browse if that feels easier.</p></div></div>
           <div className="sit"><div className="sit-icon">🔒</div><div className="sit-body"><h3>Your number stays private</h3><p>Use any first name. The listener never sees your phone number, and numbers, emails and Instagram handles are blocked in chat.</p></div></div>
@@ -219,9 +219,9 @@ export default function ForWomenPage() {
 
         <h2>Practical Answers</h2>
         <div className="situations">
-          <div className="sit"><div className="sit-icon">🏠</div><div className="sit-body"><h3>If you are at home all day</h3><p>Many homemakers talk in the quiet hours — after lunch, or once children are asleep. A 15-minute text session works without anyone hearing you, and you can stop at any time.</p></div></div>
-          <div className="sit"><div className="sit-icon">💼</div><div className="sit-body"><h3>If you are a working mother</h3><p>There is no appointment, so you can use a lunch break or the commute. Choose 15 minutes if that is all you have; unused minutes go back to your wallet if you end early.</p></div></div>
-          <div className="sit"><div className="sit-icon">📱</div><div className="sit-body"><h3>If you share a phone or home</h3><p>Use text if you cannot speak freely. LeanOn appears in your browser history or app list like any other app, so use your own phone if you can. Listeners never see your number, and LeanOn never contacts your family.</p></div></div>
+          <div className="sit"><div className="sit-icon">🏠</div><div className="sit-body"><h3>If you are at home all day</h3><p>A text conversation may suit a shared home, but availability varies. Messages can remain in your account, and notifications or browser history may be visible to others.</p></div></div>
+          <div className="sit"><div className="sit-icon">💼</div><div className="sit-body"><h3>If you are a working mother</h3><p>A brief session may fit a break, but you may have to wait for a listener to accept. Check actual pricing and refund rules before paying.</p></div></div>
+          <div className="sit"><div className="sit-icon">📱</div><div className="sit-body"><h3>If you share a phone or home</h3><p>Use text if speaking aloud is not private, but messages, notifications, transactions and browser history can leave traces. If another person monitors your device, prioritize your personal safety and specialist guidance.</p></div></div>
           <div className="sit"><div className="sit-icon">🙋‍♀️</div><div className="sit-body"><h3>How to choose a woman listener</h3><p>Open <a href="/browse" style={{color:'var(--teal)',fontWeight:800}}>Browse</a>, read the profiles (first name, photo, languages, topics) and request the listener you want. Talk now picks whoever is online first, so use Browse if you would prefer a woman. A session starts when she accepts.</p></div></div>
         </div>
 
@@ -235,17 +235,18 @@ export default function ForWomenPage() {
           ))}
         </div>
 
+        <h2>Other trustworthy options and when to choose them</h2>
+        <p>If you want free professional listening, see <a href="https://icallhelpline.org/faqs/" target="_blank" rel="noopener noreferrer">iCALL (TISS)</a> or <a href="https://www.vandrevalafoundation.com/free-counseling" target="_blank" rel="noopener noreferrer">Vandrevala Foundation</a>. For a professional mental-health helpline, India's <a href="https://dghs.mohfw.gov.in/national-mental-health-programme.php" target="_blank" rel="noopener noreferrer">Tele-MANAS</a> is available at 14416. If you want non-clinical paid human listening, LeanOn is one option. <a href="/relationship-emotional-support-guide-india">Compare the available options and their limitations</a> before choosing.</p>
+        <p>If you feel frightened, threatened, controlled or monitored at home, prioritize specialist domestic-abuse assistance or local emergency help; a peer listener cannot provide safety planning or emergency protection. LeanOn is for adults aged 18 and over.</p>
+
         <h2>Peer Support and Therapy Serve Different Needs</h2>
         <p>
-          Private therapy in India costs ₹1,500–₹5,000 per session. That is a real barrier — especially when
-          you are already carrying financial pressure. Even when you can afford it, finding a therapist, making
-          an appointment, and then explaining your entire situation from scratch to a stranger takes more energy
-          than you have.
+          Counselling with an appropriately qualified professional can be the right choice for persistent distress, repeated conflict or clinical needs. Peer listening is a different service for adults who want an everyday non-clinical conversation, not a cheaper replacement for treatment.
         </p>
         <p>
           LeanOn is not therapy. It is screened peer support — real people who have lived through their own hard
           seasons and learned to listen without fixing, without judging, and without making it about themselves.
-          Sessions start at ₹160 for 15 minutes. The first 5-minute session free.
+          A 15-minute paid text session in India can be ₹160 at an example ₹10/min listener rate plus the platform fee; actual rates vary. One introductory session of up to five minutes is free once per account, if an available listener accepts.
         </p>
 
         <h2>How It Works</h2>
@@ -258,7 +259,7 @@ export default function ForWomenPage() {
           <div className="how-card">
             <div className="how-num">2</div>
             <h4>Start talking</h4>
-            <p>Text or voice. First 5 minutes free. No appointment, no commute, no waiting room.</p>
+            <p>Request text or voice without a scheduled appointment. One introduction of up to five minutes is free per account; you connect only if a listener accepts.</p>
           </div>
           <div className="how-card">
             <div className="how-num">3</div>

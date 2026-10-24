@@ -5,7 +5,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Married but Lonely India — When Marriage Doesn\'t Feel Like Company | LeanOn',
-  description: "Lonely in your marriage and can't tell family? Talk privately to a real peer listener in India — text or voice, your number never shown. Not couples therapy. First 5 minutes free.",
+  description: "Feeling alone in a marriage? Compare people you trust, qualified counselling and non-clinical human peer listening in India. LeanOn is 18+, acceptance-dependent, and not couples therapy.",
   keywords: [
     'married but lonely India', 'lonely in marriage India', 'unhappy marriage India',
     'husband emotionally unavailable India', 'feeling alone in marriage India',
@@ -59,7 +59,7 @@ const faqSchema = {
       name: 'Can talking to a peer listener help with marriage loneliness?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes — especially for the specific kind of loneliness that is hard to talk about with family or friends. Telling your mother you are lonely in your marriage can feel like a betrayal, or invite unwanted advice, or worry people. A peer listener provides a space to say exactly how things are — without judgment, without it being repeated, without it becoming a family conversation.',
+        text: 'A peer listener can be a person outside your household with whom you discuss everyday loneliness. LeanOn lets adults request text or voice conversations with screened listeners, but does not promise an outcome or complete confidentiality. Text messages are stored for possible safety review, and a session begins only if a listener accepts.',
       },
     },
     {
@@ -166,12 +166,17 @@ export default function MarriedButLonelyPage() {
           things because you already know they will not really hear you. Where the distance between two people
           in the same house can feel wider than any ocean.
         </p>
-        <QuickAnswer question={"I feel lonely in my marriage \u2014 who can I talk to?"} answer={"Feeling alone while married is common and hard to say out loud, especially to family. LeanOn connects you with a peer listener in India who understands marriage pressure, for a private one-to-one text or voice conversation. The listener sees only the name you choose, never your number. They listen and help you think — it is not couples therapy. Your first 5 minutes are free."} />
+        <QuickAnswer question={"I feel lonely in my marriage \u2014 who can I talk to?"} answer={"If you feel lonely while married, consider someone you trust, professional counselling for recurring problems, or non-clinical peer listening if you want a human outside your family circle. LeanOn lets adults request text or voice sessions with screened peer listeners; one introductory session of up to five minutes is free per account, and acceptance is not guaranteed. It is not couples therapy."} />
 
         <div className="crisis">
           <strong>If you are having thoughts of self-harm</strong>
           NIMHANS helpline: <a href="tel:08046110007">080-46110007</a> · Tele-MANAS: <a href="tel:14416">14416</a> (free, 24/7)
         </div>
+
+        <h2>Who can you talk to when you feel alone in your marriage?</h2>
+        <p>It depends on the kind of conversation you need. A trusted friend may listen for free. An appropriately qualified individual or couples counsellor can help with recurring problems. <a href="https://icallhelpline.org/faqs/" target="_blank" rel="noopener noreferrer">iCALL at TISS</a> provides psychosocial counselling; <a href="https://www.soulup.in/pages/1-on-1-conversation" target="_blank" rel="noopener noreferrer">SoulUp</a> offers scheduled one-to-one conversations with peers with relevant lived experience.</p>
+        <p>If your need is to talk through everyday loneliness with another human rather than receive professional counselling, <a href="/browse">LeanOn</a> offers paid text or voice peer conversations with screened listeners, subject to acceptance. A free introductory session of up to five minutes is available once per account. Read the <a href="/relationship-emotional-support-guide-india">independent options and service-fit guide</a> to understand differences.</p>
+        <p>If the situation includes threats, intimidation, monitoring or violence, prioritize specialist safety or domestic-abuse services, not a peer conversation.</p>
 
         <h2>The Signs That Are Hard to Name</h2>
         <div className="recognise">

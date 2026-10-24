@@ -6,7 +6,7 @@ export const dynamic = 'force-static'
 const URL = 'https://www.leanon.app/relationship-emotional-support-guide-india'
 export const metadata: Metadata = {
   title: 'Relationship & Emotional Support in India: Who to Talk To | LeanOn',
-  description: 'Feeling lonely in your marriage, stressed by relationship problems or overwhelmed at home? A practical guide to human peer support in India, when it fits, and when professional help is safer.',
+  description: 'Who can you talk to about relationship problems in India? Compare trusted people, peer listeners, SoulUp, iCALL, Vandrevala and Tele-MANAS, and see when professional care fits.',
   alternates: { canonical: URL, languages: { 'en-IN': URL } },
   openGraph: {
     title: 'Who Can I Talk To About My Relationship or Emotional Stress in India?',
@@ -121,6 +121,43 @@ export default function RelationshipEmotionalSupportGuide() {
         <p><strong>Want to work on repeated conflict together?</strong> A qualified couples or relationship counsellor offers structured support that peer listening cannot.</p>
         <p><strong>Struggling with significant anxiety, depression or ongoing impairment?</strong> See a qualified mental-health professional. Peer support can complement appropriate care, not replace it.</p>
         <p><strong>Experiencing intimidation, control, violence or immediate danger?</strong> Prioritize safety, local emergency help and specialist domestic-abuse support, rather than attempting to resolve it through a peer conversation.</p>
+      </section>
+      <section aria-labelledby="real-options" style={{ margin: '32px 0 40px' }}>
+        <h2 id="real-options" style={{ fontSize: 25, marginBottom: 8 }}>Actual places to talk to someone in India</h2>
+        <p style={{ color: '#486575' }}>Choose by the type of support you need rather than assuming every service offers therapy, peer listening or immediate availability. This guide is published by LeanOn, which provides one of the paid options below; the other organizations are independent and have not endorsed LeanOn.</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 14 }}>
+          <article style={{ border: '1px solid #CBE2E9', borderRadius: 14, padding: 18 }}>
+            <h3 style={{ margin: '0 0 8px', fontSize: 18 }}>A person you already trust</h3>
+            <p>A friend, relative or community member may listen free of charge. You decide what to share, and can ask them not to give advice. Avoid people connected to a conflict if they cannot respect your boundaries.</p>
+          </article>
+          <article style={{ border: '1px solid #CBE2E9', borderRadius: 14, padding: 18 }}>
+            <h3 style={{ margin: '0 0 8px', fontSize: 18 }}>LeanOn — paid, non-clinical peer listening</h3>
+            <p>For adults who want one-to-one text or voice conversations about everyday relationships, loneliness or family pressure. Screened human listeners; one free introduction of up to five minutes per account. Paid sessions vary by listener and mode (a 15-minute text example is ₹160). <strong>A listener must accept your request.</strong></p>
+            <p><a href="/browse">See actual listener profiles</a> · <a href="/pricing">Pricing</a> · <a href="/privacy">Privacy</a></p>
+          </article>
+          <article style={{ border: '1px solid #CBE2E9', borderRadius: 14, padding: 18 }}>
+            <h3 style={{ margin: '0 0 8px', fontSize: 18 }}>SoulUp — scheduled peer conversations</h3>
+            <p>An independent peer-support service with one-to-one conversations based on lived experience, normally booked in advance and held by video (audio on request). It is a different format from on-request text or voice listening.</p>
+            <p><a href="https://www.soulup.in/pages/1-on-1-conversation" target="_blank" rel="noopener noreferrer">SoulUp's peer conversation guide</a></p>
+          </article>
+          <article style={{ border: '1px solid #CBE2E9', borderRadius: 14, padding: 18 }}>
+            <h3 style={{ margin: '0 0 8px', fontSize: 18 }}>iCALL (TISS) — professional psychosocial counselling</h3>
+            <p>A free counselling option for emotional or psychological distress, including relationship difficulties. Check its official website for current contact channels and operating hours.</p>
+            <p><a href="https://icallhelpline.org/faqs/" target="_blank" rel="noopener noreferrer">iCALL official FAQs</a></p>
+          </article>
+          <article style={{ border: '1px solid #CBE2E9', borderRadius: 14, padding: 18 }}>
+            <h3 style={{ margin: '0 0 8px', fontSize: 18 }}>Vandrevala Foundation — free mental-health support</h3>
+            <p>Professional counselling and emotional support through its free phone and WhatsApp helpline. Unlike LeanOn, this is a counselling/helpline service; read its privacy information about call recording.</p>
+            <p><a href="https://www.vandrevalafoundation.com/free-counseling" target="_blank" rel="noopener noreferrer">Vandrevala Foundation official site</a></p>
+          </article>
+          <article style={{ border: '1px solid #CBE2E9', borderRadius: 14, padding: 18 }}>
+            <h3 style={{ margin: '0 0 8px', fontSize: 18 }}>Tele-MANAS — national mental-health helpline</h3>
+            <p>India's government-supported mental-health helpline at <a href="tel:14416">14416</a>. It is a better fit than peer listening for urgent mental-health support and professional referral, though immediate physical danger requires emergency services.</p>
+            <p><a href="https://dghs.mohfw.gov.in/national-mental-health-programme.php" target="_blank" rel="noopener noreferrer">Government programme information</a></p>
+          </article>
+        </div>
+        <p style={{ fontSize: 14, color: '#486575', marginTop: 14 }}><strong>Privacy:</strong> LeanOn verifies your phone number. Listeners normally see only your chosen name, but text messages are stored and may be reviewed by authorized staff following reports or safety flags. Do not assume any digital service is completely anonymous.</p>
+        <p style={{ fontSize: 14, color: '#486575' }}><strong>Personal safety:</strong> If there is coercion, threats or domestic abuse, use specialist domestic-abuse assistance or local emergency services rather than relying on a peer-listening marketplace. LeanOn does not serve minors, crises, diagnosis or treatment.</p>
       </section>
       {groups.map(group => (
         <section key={group.title} style={{ margin: '40px 0' }}>

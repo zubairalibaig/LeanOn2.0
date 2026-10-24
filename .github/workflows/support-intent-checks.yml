@@ -1,0 +1,29 @@
+name: Support intent accuracy checks
+
+on:
+  pull_request:
+    paths:
+      - 'app/relationship-emotional-support-guide-india/**'
+      - 'app/relationship-advice-online-india/**'
+      - 'app/for-women/**'
+      - 'app/support/relationship-stress/**'
+      - 'app/pay-to-talk-online-india/**'
+      - 'app/support/married-but-lonely/**'
+      - 'app/support/husband-not-supportive-india/**'
+      - 'scripts/check-support-intent-pages.mjs'
+      - '.github/workflows/support-intent-checks.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-accuracy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check matching, consent and support-type disclosures
+        run: node scripts/check-support-intent-pages.mjs
