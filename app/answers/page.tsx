@@ -5,7 +5,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Answers: Relationships, Mental Health and Peer Support in India | LeanOn',
-  description: 'Straight answers to the 50 questions people ask most about relationship problems, marriage, loneliness, anxiety and finding someone to talk to in India — and where to get help.',
+  description: 'Practical answers to common questions about relationships, marriage, loneliness, peer listening and finding appropriate support in India.',
   alternates: { canonical: 'https://www.leanon.app/answers' },
   openGraph: {
     title: 'Answers: Relationships, Mental Health and Peer Support in India',

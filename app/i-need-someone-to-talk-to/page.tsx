@@ -1,247 +1,148 @@
 import type { Metadata } from 'next'
-import QuickAnswer from '@/app/components/QuickAnswer'
 
 export const dynamic = 'force-static'
 
+const url = 'https://www.leanon.app/i-need-someone-to-talk-to'
+
 export const metadata: Metadata = {
-  title: 'I Need Someone to Talk To Right Now | LeanOn India',
-  description: "Need someone to talk to? LeanOn lets adults in India request a one-to-one text or voice conversation with a screened peer listener. One introductory session up to 5 minutes is free per account. Availability varies; an immediate match is not guaranteed. Peer support, not therapy.",
-  keywords: [
-    'i need someone to talk to right now', 'need someone to talk to India',
-    'someone to talk to online India', 'I want to talk to someone India',
-    'talk to someone right now India', 'need to talk to someone urgently India',
-    'who can I talk to when I am sad India', 'I feel like I need to talk India',
-    'need emotional support right now India', 'I want to talk about my feelings India',
-    'find someone to talk to online India', 'someone to listen to me India',
-    'talk to someone about my problems India', 'I need to vent right now',
-    'need a friend to talk to India', 'talk to someone after a fight India',
-    'need to vent about relationship India', 'talk to someone morning India',
-  ],
-  alternates: { canonical: 'https://www.leanon.app/i-need-someone-to-talk-to', languages: { 'en-IN': 'https://www.leanon.app/i-need-someone-to-talk-to' } },
+  title: 'Need Someone to Talk to Right Now in India? Services & Human Listeners | LeanOn',
+  description: 'Need someone to talk to right now? Compare free mental-health helplines in India with non-crisis human peer listening on LeanOn. Learn who to contact and how fast a session can start.',
+  alternates: { canonical: url, languages: { 'en-IN': url } },
   openGraph: {
-    title: 'I Need Someone to Talk To Right Now | LeanOn India',
-    description: 'Need someone to talk to? Request a one-to-one conversation with a screened peer listener in India by text or voice. One introductory session up to 5 minutes is free per account; availability varies. Not therapy or crisis care.',
-    url: 'https://www.leanon.app/i-need-someone-to-talk-to',
-    siteName: 'LeanOn',
-    type: 'article',
-    images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'LeanOn — Someone to Talk To' }],
+    title: 'I Need Someone to Talk to Right Now. What Services Can Help?',
+    description: 'A clear guide to free helplines, human peer listeners and when to seek urgent support in India. LeanOn provides non-clinical conversations when a listener accepts.',
+    url, type: 'article', siteName: 'LeanOn',
   },
+}
+
+const faqs = [
+  {
+    q: 'I need someone to talk to right now. What services can help?',
+    a: 'In India, Tele-MANAS (14416) offers free 24/7 mental-health support and Vandrevala Foundation (+91 9999 666 555) offers free 24/7 counselling support. If you are safe and mainly want a real person to listen to everyday stress, relationships or loneliness, LeanOn offers one-to-one peer conversations by text or voice. A listener must accept, so an immediate match is not guaranteed. For immediate physical danger call 112.',
+  },
+  {
+    q: 'Is LeanOn a free mental-health helpline?',
+    a: 'No. LeanOn is a non-clinical peer-listening service for adults aged 18 and older, not an emergency or counselling helpline. One introductory session of up to five minutes is free per account, and subsequent sessions are paid. Your exact price depends on the listener and conversation mode and is displayed before booking.',
+  },
+  {
+    q: 'Can I speak to a real person online without waiting for an appointment?',
+    a: 'On LeanOn, you can request a screened human peer listener for text or voice without booking an appointment. A session begins only when someone accepts the request. If you need guaranteed, immediate or professional support, a free helpline or local service may be more appropriate.',
+  },
+  {
+    q: 'Can LeanOn help with marriage problems, loneliness or a bad day?',
+    a: 'Yes, those are examples of everyday non-clinical topics you can discuss with a peer listener. LeanOn does not provide couples therapy, diagnosis, treatment, legal advice or domestic-abuse intervention. In controlling, threatening or unsafe relationships, seek specialist help and prioritize your safety.',
+  },
+  {
+    q: 'Will my family know if I use LeanOn?',
+    a: 'LeanOn requires a phone number for verification, but listeners do not see that number and you may choose a display name. Voice calls are not recorded. Text messages are stored and may be reviewed by authorized administrators when reported or flagged for safety. Device access, notifications and payments can leave traces, so complete anonymity cannot be promised.',
+  },
+]
+
+const breadcrumbs = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
+    { '@type': 'ListItem', position: 2, name: 'Need someone to talk to right now', item: url },
+  ],
 }
 
 const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: [
-    { '@type': 'Question', name: "I need someone to talk to right now \u2014 where can I go?", acceptedAnswer: { '@type': 'Answer', text: "Open leanon.app/talk, choose text or voice and select what is on your mind. LeanOn requests a conversation with a screened peer listener and may try another if there is no response in about 30 seconds. One introductory session up to 5 minutes is free per account; listeners do not see your phone number. Availability varies, so a match is not guaranteed. If you are in danger or at risk of self-harm, call Tele-MANAS 14416 first." } },
-    {
-      '@type': 'Question',
-      name: 'How do I find someone to talk to right now in India?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Open LeanOn to see listener profiles and current availability, or use Talk now to request a conversation. No appointment is needed; a session starts when a listener accepts, and immediate availability is not guaranteed. One introductory session up to 5 minutes is free per account.' },
-    },
-    {
-      '@type': 'Question',
-      name: 'What if I just need someone to listen and not give advice?',
-      acceptedAnswer: { '@type': 'Answer', text: 'LeanOn screens listeners for empathy, listening and boundaries. You can tell the listener that you mainly want to be heard rather than receive advice; experiences vary, and you can report a concern through the platform. You lead the conversation.' },
-    },
-    {
-      '@type': 'Question',
-      name: 'How does privacy work on LeanOn?',
-      acceptedAnswer: { '@type': 'Answer', text: 'LeanOn uses phone-number verification, but listeners do not see your phone number and you can choose a display name. Voice calls are not recorded. Text messages are stored and authorised administrators may review reported or safety-flagged sessions. Read the Privacy Policy and share only details you are comfortable disclosing.' },
-    },
-    {
-      '@type': 'Question',
-      name: 'What if I don\'t know what to say or where to start?',
-      acceptedAnswer: { '@type': 'Answer', text: 'You do not need to have it figured out before you talk. You can open with "I don\'t know where to start" or "I\'ve been feeling off and I just need to say it out loud." That is enough. A good listener will meet you there.' },
-    },
-    {
-      '@type': 'Question',
-      name: 'How much does it cost to talk to someone on LeanOn?',
-      acceptedAnswer: { '@type': 'Answer', text: 'One introductory session up to 5 minutes is free per account. Paid 15-minute text sessions in India start at ₹160 with a listener charging ₹10 per minute; actual prices vary by listener and mode and are shown before booking. Availability depends on which listeners are online.' },
-    },
-    {
-      '@type': 'Question',
-      name: 'Is LeanOn the same as a crisis helpline?',
-      acceptedAnswer: { '@type': 'Answer', text: 'No. LeanOn is non-clinical peer support, not a crisis service. If you are in crisis or at risk of self-harm, call Tele-MANAS (14416; free, 24/7) or contact local emergency services.' },
-    },
-  ],
+  mainEntity: faqs.map(({ q, a }) => ({
+    '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a },
+  })),
 }
 
-const breadcrumbSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.leanon.app' },
-    { '@type': 'ListItem', position: 2, name: 'I Need Someone to Talk To', item: 'https://www.leanon.app/i-need-someone-to-talk-to' },
-  ],
-}
+const services = [
+  {
+    name: 'Tele-MANAS',
+    fit: 'Free mental-health support, emotional distress or when you may need a counsellor',
+    detail: 'Government of India service. Free, 24 hours a day, seven days a week, in multiple Indian languages.',
+    action: 'Call 14416',
+    href: 'tel:14416',
+    source: 'https://www.dghs.mohfw.gov.in/national-mental-health-programme.php',
+    sourceLabel: 'Government programme information',
+  },
+  {
+    name: 'Vandrevala Foundation',
+    fit: 'Free counselling support by phone or WhatsApp',
+    detail: 'Free mental-health support and counselling, with 24/7 helpline availability. Connection times depend on demand.',
+    action: 'Call +91 9999 666 555',
+    href: 'tel:+919999666555',
+    source: 'https://www.vandrevalafoundation.com/free-counseling',
+    sourceLabel: 'Official helpline information',
+  },
+  {
+    name: 'LeanOn — human peer listener',
+    fit: 'Everyday loneliness, a relationship issue, feeling overwhelmed or needing to vent to another person',
+    detail: 'Screened peer listeners in India, one-to-one text or voice. For adults 18+. One free introductory session of up to 5 minutes per account; paid thereafter. A listener must accept your request, and immediate availability is not guaranteed. Not therapy or crisis support.',
+    action: 'Request a peer conversation',
+    href: '/talk?src=right-now-guide',
+    source: 'https://www.leanon.app/trust',
+    sourceLabel: 'How LeanOn works and its boundaries',
+  },
+]
 
-const S = `
-  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-  :root{--navy:#0F4867;--teal:#1A8FA0;--orange:#FF9933;--gray:#5A7A8A;--border:#D5EEF6;--light:#F0F8FC;}
-  body{font-family:'Nunito',sans-serif;color:var(--navy);-webkit-font-smoothing:antialiased;
-    background:radial-gradient(ellipse 90% 55% at 0% 0%,#C2E4F2 0%,#DAEEF8 22%,#FFFFFF 58%) fixed;}
-  a{text-decoration:none;color:inherit;}
-  .nav{padding:0 28px;height:72px;display:flex;align-items:center;justify-content:space-between;max-width:900px;margin:0 auto;}
-  .nav-logo{height:56px;width:auto;}
-  .btn-nav{background:var(--teal);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;padding:10px 22px;border-radius:50px;border:none;cursor:pointer;}
-  .page{max-width:780px;margin:0 auto;padding:16px 24px 100px;}
-  .breadcrumb{display:flex;gap:6px;align-items:center;font-size:13px;font-weight:600;color:var(--gray);margin-bottom:32px;flex-wrap:wrap;}
-  .breadcrumb span{color:var(--border);}
-  .hero{margin-bottom:48px;}
-  .badge{display:inline-block;background:var(--light);border:1.5px solid var(--border);color:var(--teal);font-size:12px;font-weight:800;padding:6px 14px;border-radius:50px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;}
-  h1{font-size:clamp(28px,6vw,44px);font-weight:900;color:var(--navy);line-height:1.15;margin-bottom:16px;}
-  h1 em{color:var(--orange);font-style:normal;}
-  .lead{font-size:17px;color:var(--gray);line-height:1.78;font-weight:500;max-width:640px;margin-bottom:28px;}
-  .cta-hero{display:inline-block;background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;padding:14px 32px;border-radius:50px;box-shadow:0 4px 20px rgba(255,153,51,0.35);}
-  .section{background:white;border-radius:24px;padding:32px;margin-bottom:24px;border:1.5px solid var(--border);}
-  .section h2{font-size:22px;font-weight:800;color:var(--navy);margin-bottom:16px;}
-  .section h3{font-size:17px;font-weight:800;color:var(--navy);margin-bottom:8px;margin-top:20px;}
-  .section h3:first-of-type{margin-top:0;}
-  .section p{font-size:15px;color:#3A6070;line-height:1.80;margin-bottom:14px;}
-  .section p:last-child{margin-bottom:0;}
-  .section ul{padding-left:20px;margin-bottom:14px;}
-  .section ul li{font-size:15px;color:#3A6070;line-height:1.80;margin-bottom:6px;}
-  .how-steps{display:flex;flex-direction:column;gap:16px;}
-  .step{display:flex;gap:16px;align-items:flex-start;}
-  .step-num{width:36px;height:36px;border-radius:50%;background:var(--teal);color:white;font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-  .step-body h3{font-size:16px;font-weight:800;color:var(--navy);margin-bottom:4px;}
-  .step-body p{font-size:14px;color:var(--gray);line-height:1.7;font-weight:500;margin:0;}
-  .faq-item{border-bottom:1.5px solid var(--border);padding:20px 0;}
-  .faq-item:first-of-type{padding-top:0;}
-  .faq-item:last-of-type{border-bottom:none;padding-bottom:0;}
-  .faq-q{font-size:16px;font-weight:800;color:var(--navy);margin-bottom:10px;}
-  .faq-a{font-size:14px;color:var(--gray);line-height:1.75;font-weight:500;}
-  .cta-card{background:var(--navy);border-radius:24px;padding:40px 32px;text-align:center;margin-bottom:24px;}
-  .cta-card h2{font-size:24px;font-weight:900;color:white;margin-bottom:12px;}
-  .cta-card p{font-size:15px;color:rgba(201,231,244,0.85);font-weight:500;margin-bottom:28px;line-height:1.7;}
-  .btn-cta{display:inline-block;background:var(--orange);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;padding:14px 28px;border-radius:50px;box-shadow:0 4px 20px rgba(255,153,51,0.35);}
-  .related{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
-  .related a{background:var(--light);border:1.5px solid var(--border);border-radius:16px;padding:14px 16px;font-size:14px;font-weight:700;color:var(--navy);display:block;}
-  .related a:hover{border-color:var(--teal);color:var(--teal);}
-`
-
-export default function INeedSomeoneToTalkToPage() {
-  const faqs = faqSchema.mainEntity
+export default function NeedSomeoneToTalkTo() {
   return (
-    <>
+    <main style={{ maxWidth: 880, margin: '0 auto', padding: '28px 20px 84px', color: '#15394A', fontFamily: 'system-ui, sans-serif', lineHeight: 1.7 }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
-      <style>{S}</style>
-
-      <nav className="nav">
-        <a href="/"><img src="/logo.png" alt="LeanOn" className="nav-logo" /></a>
-        <a href="/browse"><button className="btn-nav">Find a listener</button></a>
+      <nav aria-label="Breadcrumb" style={{ fontSize: 13, marginBottom: 28 }}>
+        <a href="/" style={{ color: '#087688' }}>Home</a> / Need someone to talk to
       </nav>
+      <header>
+        <p style={{ color: '#137A87', fontSize: 13, fontWeight: 750 }}>India · Free helplines and human peer support · Updated 25 October 2026</p>
+        <h1 style={{ fontSize: 'clamp(28px, 5vw, 42px)', lineHeight: 1.23, margin: '10px 0 16px' }}>I need someone to talk to right now. What services can help?</h1>
+        <p style={{ fontSize: 18, maxWidth: 780 }}>You don't need a diagnosis or a crisis to want someone to listen. The right service depends on whether you need immediate professional support or simply a private conversation with another person.</p>
+      </header>
 
-      <div className="page">
-        <nav className="breadcrumb" aria-label="Breadcrumb">
-          <a href="/">Home</a><span>›</span>
-          <span style={{color:'var(--navy)'}}>I Need Someone to Talk To</span>
-        </nav>
+      <section style={{ background: '#F0F8FA', borderLeft: '5px solid #168397', padding: '18px 20px', borderRadius: 12, margin: '22px 0 30px' }} aria-label="Direct answer">
+        <h2 style={{ fontSize: 20, margin: '0 0 6px' }}>Quick answer</h2>
+        <p style={{ margin: '0 0 10px' }}>In India, <strong>Tele-MANAS (14416)</strong> and <strong>Vandrevala Foundation (+91 9999 666 555)</strong> offer free support by phone. If you are safe and want to talk to a real human peer about loneliness, a relationship problem or a difficult day, <strong>LeanOn</strong> offers one-to-one text or voice conversations with screened listeners. LeanOn is not a helpline, and a match is not guaranteed.</p>
+        <p style={{ fontSize: 14, margin: 0 }}><strong>In immediate danger?</strong> Call <a href="tel:112">112</a> or seek emergency assistance. For thoughts of self-harm or significant emotional distress, use a crisis or mental-health service rather than waiting for a peer-listening request.</p>
+      </section>
 
-        <div style={{background:'#EBF5FB',borderLeft:'4px solid #1A8FA0',borderRadius:'0 12px 12px 0',padding:'14px 18px',marginBottom:28,fontSize:14,color:'#0F4867',fontWeight:600,lineHeight:1.65}}>
-          🆘 In crisis? Call <a href="tel:08046110007" style={{color:'#1A8FA0',fontWeight:800}}>NIMHANS 080-46110007</a> or <a href="tel:14416" style={{color:'#1A8FA0',fontWeight:800}}>Tele-MANAS 14416</a> (free · 24/7 · Govt of India)
-        </div>
-
-        <div className="hero">
-          <p className="badge">Real People · Text or Voice · Peer Support</p>
-          <h1>Someone Is Here to <em>Listen</em> — Right Now</h1>
-          <p className="lead">You do not need a diagnosis or a perfectly formed problem to ask for a conversation. LeanOn lets adults request a one-to-one text or voice chat with a screened peer listener. It is non-clinical support; timing depends on listener availability and acceptance.</p>
-          <QuickAnswer question={"I need someone to talk to right now \u2014 where can I go?"} answer={"Open leanon.app/talk, choose text or voice and select what is on your mind. LeanOn requests a conversation with a screened peer listener and may try another if there is no response in about 30 seconds. One introductory session up to 5 minutes is free per account; listeners do not see your phone number. Availability varies, so a match is not guaranteed. If you are in danger or at risk of self-harm, call Tele-MANAS 14416 first."} />
-          <a href="/talk?src=seo" className="cta-hero">Talk to someone →</a>
-        </div>
-
-        <div className="section">
-          <h2>You Do Not Need a Reason</h2>
-          <p>Sometimes the feeling is specific — a relationship falling apart, a bad week at work, a grief you have been carrying. Sometimes it is just a heaviness you cannot name. Both are enough. You do not need to have a diagnosis, a crisis, or a well-formed problem to deserve someone to talk to.</p>
-          <p>The most common thing people say before their first session is: <em>"I don&apos;t even know where to start."</em> And the most common thing they say after is: <em>"That helped more than I expected."</em> The starting is the hardest part.</p>
-
-          <h3>What You Can Bring</h3>
-          <ul>
-            <li>Something that has been sitting heavy and you have not said out loud yet</li>
-            <li>A situation you keep turning over but have no one to process it with</li>
-            <li>The feeling of not being okay without a clear reason why</li>
-            <li>Loneliness, anxiety, grief, a difficult relationship, work pressure, or just a bad stretch</li>
-            <li>Nothing specific — just the need to not be alone with your thoughts for 15 minutes</li>
-          </ul>
-        </div>
-
-        <div className="section">
-          <h2>How It Works</h2>
-          <div className="how-steps">
-            <div className="step">
-              <div className="step-num">1</div>
-              <div className="step-body">
-                <h3>Browse listener profiles and availability</h3>
-                <p>Each profile shows their lived experience and the topics they support. Pick someone whose story feels relevant to yours.</p>
-              </div>
-            </div>
-            <div className="step">
-              <div className="step-num">2</div>
-              <div className="step-body">
-                <h3>Start a session — no appointment needed</h3>
-                <p>Send a session request to a listener. One introductory session up to 5 minutes is free per account; paid prices are shown before booking and vary by listener and mode. A session begins when a listener accepts.</p>
-              </div>
-            </div>
-            <div className="step">
-              <div className="step-num">3</div>
-              <div className="step-body">
-                <h3>Talk. Your listener will follow your lead</h3>
-                <p>No scripts, no agendas, no advice unless you ask for it. Just a real person, listening.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="section">
-          <h2>When You Prefer a Human Conversation</h2>
-          <p>AI tools, journaling and self-guided exercises help some people. Others specifically want to talk with another person. LeanOn is designed for that preference: a one-to-one, non-clinical conversation with a screened peer listener.</p>
-          <p>Listeners bring varied lived experiences and are screened for listening and boundaries. You can tell them what kind of support you are looking for, but experiences vary. LeanOn does not claim human conversations are better for every person or situation.</p>
-        </div>
-
-        <div className="section">
-          <h2>What People Come to LeanOn For</h2>
-          <p>No two conversations are the same, but these are the most common reasons people book a session:</p>
-          <ul>
-            <li>Feeling lonely — in a new city, in a relationship, in their own life</li>
-            <li>Anxiety and overthinking that does not switch off</li>
-            <li>Grief — loss of a person, a relationship, a version of themselves</li>
-            <li>Work stress, burnout, or not knowing what to do with their career</li>
-            <li>A relationship that is difficult in ways they cannot say to anyone in their life</li>
-            <li>The general heaviness of being a person in a demanding world</li>
-            <li>Needing to vent — with no advice, no opinions, just space</li>
-          </ul>
-        </div>
-
-        <div className="section">
-          <h2>Frequently Asked Questions</h2>
-          {faqs.map((f, i) => (
-            <div className="faq-item" key={i}>
-              <p className="faq-q">{f.name}</p>
-              <p className="faq-a">{f.acceptedAnswer.text}</p>
-            </div>
+      <section aria-labelledby="services-heading">
+        <h2 id="services-heading" style={{ fontSize: 25 }}>Services you can contact in India</h2>
+        <div style={{ display: 'grid', gap: 15 }}>
+          {services.map(service => (
+            <article key={service.name} style={{ padding: '20px 22px', border: '1px solid #CCE0E7', borderRadius: 16, background: '#fff' }}>
+              <h3 style={{ fontSize: 21, margin: '0 0 6px' }}>{service.name}</h3>
+              <p style={{ margin: '0 0 6px', fontWeight: 700 }}>{service.fit}</p>
+              <p style={{ margin: '0 0 13px', color: '#405D6C' }}>{service.detail}</p>
+              <a href={service.href} style={{ display: 'inline-block', background: '#157D8D', color: '#fff', padding: '10px 18px', borderRadius: 28, fontWeight: 800, textDecoration: 'none', marginRight: 12 }}>{service.action}</a>
+              <a href={service.source} style={{ color: '#0D6B7E', fontSize: 13 }}>{service.sourceLabel}</a>
+            </article>
           ))}
         </div>
+      </section>
 
-        <div className="cta-card">
-          <h2>Request a conversation</h2>
-          <p>No appointment is needed. View current listener availability or use Talk now to request a screened peer listener. A conversation starts when a listener accepts.</p>
-          <a href="/talk?src=seo" className="btn-cta">Talk to someone →</a>
-        </div>
+      <section style={{ margin: '37px 0' }}>
+        <h2 style={{ fontSize: 24, marginBottom: 8 }}>When LeanOn is the relevant choice</h2>
+        <p>LeanOn is designed for adults who say things like “I have nobody to talk to,” “I need to vent after an argument,” “I feel lonely in my marriage,” or “I want a real person, not AI.” It provides peer listening, not clinical treatment or guaranteed instant response.</p>
+        <p>If you want to request a listener, <a href="/talk?src=right-now-guide">use Talk now</a> and select text or voice. If you prefer to read a profile first, <a href="/browse">browse available listeners</a>. The first introductory conversation of up to five minutes is free once per account. Paid prices are shown before booking; in India a 15-minute text session with a ₹10/min listener costs ₹160 including the platform fee, and your actual price may differ.</p>
+        <p>If no one accepts your request and you need support urgently, do not keep waiting on LeanOn: call an appropriate helpline or contact a trusted person nearby.</p>
+      </section>
 
-        <div className="section">
-          <h2>You Might Also Find This Helpful</h2>
-          <div className="related">
-            <a href="/support/loneliness">Loneliness →</a>
-            <a href="/support/anxiety">Anxiety →</a>
-            <a href="/support/need-to-vent">Need to vent →</a>
-            <a href="/support/someone-to-talk-to">Someone to talk to →</a>
-            <a href="/support/overthinking">Overthinking →</a>
-            <a href="/talk-to-someone-right-now">Talk right now →</a>
-          </div>
-        </div>
-      </div>
-    </>
+      <section style={{ margin: '30px 0' }}>
+        <h2 style={{ fontSize: 24, marginBottom: 10 }}>Questions people ask before reaching out</h2>
+        {faqs.map(({ q, a }) => (
+          <article key={q} style={{ padding: '18px 0', borderBottom: '1px solid #D9E8EE' }}>
+            <h3 style={{ fontSize: 18, margin: '0 0 8px' }}>{q}</h3>
+            <p style={{ margin: 0 }}>{a}</p>
+          </article>
+        ))}
+      </section>
+
+      <section style={{ marginTop: 40, background: '#123D54', padding: 26, borderRadius: 18, color: 'white' }}>
+        <h2 style={{ fontSize: 23, margin: '0 0 8px' }}>Need to be heard, not treated?</h2>
+        <p>Request a one-to-one conversation with a screened human listener about everyday life. Listeners are not counsellors, and a session begins only when one accepts.</p>
+        <a href="/talk?src=right-now-guide" style={{ display: 'inline-block', background: '#fff', color: '#12495B', borderRadius: 30, padding: '11px 18px', fontWeight: 800, textDecoration: 'none' }}>Try LeanOn Talk now →</a>
+        <p style={{ fontSize: 13, marginTop: 14 }}>Learn more: <a style={{ color: 'white' }} href="/pricing">pricing</a>, <a style={{ color: 'white' }} href="/privacy">privacy</a>, <a style={{ color: 'white' }} href="/peer-support-vs-therapy">peer support vs therapy</a>.</p>
+      </section>
+    </main>
   )
 }
