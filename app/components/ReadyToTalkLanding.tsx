@@ -1,3 +1,5 @@
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
+
 export type ReadyToTalkLandingData = {
   canonical: string
   title: string
@@ -69,6 +71,8 @@ export default function ReadyToTalkLanding({ data }: { data: ReadyToTalkLandingD
           </div>
           <p className="mt-4 text-sm font-semibold text-slate-500">Start with one free 5-minute introduction per account. Continue with paid time only if you want to.</p>
         </header>
+
+        <div className="mt-10 max-w-3xl"><GeoQuickAnswer path={data.canonical} /></div>
 
         <section className="mt-12 rounded-3xl border border-[#D5EEF6] bg-[#F0F8FC] p-6 sm:p-8">
           <h2 className="mb-5 text-2xl font-black">{data.problemTitle}</h2>

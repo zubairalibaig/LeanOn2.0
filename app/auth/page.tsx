@@ -17,10 +17,11 @@ import { createClient } from '@/lib/supabase'
 // route for the full trust model.
 
 // Supported countries — must match MSG91 "Country Wise Restriction" allowed list.
-// Alphabetical order; India is the default (index 1 in this sorted list is index
-// where code === 'IN'). US + CA share dial code +1 — we use the country code
+// Alphabetical order; India is the default (DEFAULT_COUNTRY below).
+// US + CA share dial code +1 — we use the country code
 // internally so analytics can distinguish them.
 const COUNTRIES = [
+  { code: 'AU', name: 'Australia',      dialCode: '61',  flag: '🇦🇺', minDigits: 9,  maxDigits: 9  },
   { code: 'CA', name: 'Canada',         dialCode: '1',   flag: '🇨🇦', minDigits: 10, maxDigits: 10 },
   { code: 'IN', name: 'India',          dialCode: '91',  flag: '🇮🇳', minDigits: 10, maxDigits: 10 },
   { code: 'KW', name: 'Kuwait',         dialCode: '965', flag: '🇰🇼', minDigits: 8,  maxDigits: 8  },
@@ -166,7 +167,9 @@ export default function AuthPage() {
   const dropdownId = useId()
 
   // Strip non-digits; no length cap here — validation uses country.minDigits/maxDigits
-  const digits = () => phone.replace(/\D/g, '')
+  // One leading 0 is the national trunk prefix (UK 07…, AU 04…, MY 01…), never
+  // part of the international number MSG91 needs.
+  const digits = () => phone.replace(/\D/g, '').replace(/^0/, '')
   const isValidPhone = () => {
     const d = digits()
     return d.length >= country.minDigits && d.length <= country.maxDigits

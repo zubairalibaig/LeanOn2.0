@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -36,6 +37,8 @@ export default function PeerSupportVsTherapyPage() {
       <p style={s.kicker}>PEER SUPPORT · THERAPY · COUNSELLING · MENTAL HEALTH SUPPORT</p>
       <h1 style={s.h1}>Peer support vs therapy: different tools for different needs.</h1>
       <p style={s.lead}>The terms peer support, counselling, therapy and emotional support are often used interchangeably online. They are not the same thing. Understanding the difference helps you find support that matches what you actually need.</p>
+
+      <GeoQuickAnswer path="/peer-support-vs-therapy" />
 
       <section style={s.note}><strong>LeanOn provides peer support.</strong><span>LeanOn does not diagnose, prescribe, provide psychotherapy or claim to replace licensed mental-health care.</span></section>
 

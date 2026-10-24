@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase'
 import { showToast } from '@/lib/toast'
 import { grossRechargeAmount } from '@/lib/constants'
 import { trackEvent } from '@/lib/analytics'
+import { pricingCountry, isNriCountry, NRI_INR_EQUIV, getNriDisplayPrice } from '@/lib/geo-pricing'
 const S = `
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -44,12 +45,26 @@ const S = `
   @keyframes spin{to{transform:rotate(360deg);}}
 `
 
-const PRESETS = [
+const INDIA_PRESETS = [
   { amount:200,  sessions:'~1 session',    tag:'' },
   { amount:500,  sessions:'~3 sessions',   tag:'Popular' },
   { amount:1000, sessions:'~6 sessions',   tag:'Best value' },
   { amount:2000, sessions:'~12 sessions',  tag:'' },
 ]
+
+// Overseas (NRI) sessions cost the flat NRI price (lib/geo-pricing.ts), so the
+// India presets (₹200 ≈ "1 session") would leave them short. These match one
+// session each, labelled in the user's currency. Display only: what is credited
+// is still decided server-side from the Razorpay order.
+function nriPresets(country: string) {
+  const p = (m: 15 | 30 | 45) => getNriDisplayPrice(m, country) ?? ''
+  return [
+    { amount: NRI_INR_EQUIV[15],     sessions: `1 × 15 min (${p(15)})`, tag: '' },
+    { amount: NRI_INR_EQUIV[30],     sessions: `1 × 30 min (${p(30)})`, tag: 'Popular' },
+    { amount: NRI_INR_EQUIV[45],     sessions: `1 × 45 min (${p(45)})`, tag: '' },
+    { amount: NRI_INR_EQUIV[45] * 2, sessions: `2 × 45 min`,            tag: '' },
+  ]
+}
 
 type RazorpayResponse = { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }
 type RazorpayOptions = { key: string | undefined; amount: number; currency: string; name: string; description: string; order_id: string; prefill: object; theme: { color: string }; handler: (r: RazorpayResponse) => void }
@@ -75,6 +90,7 @@ function WalletPageInner() {
   const [paymentPending, setPaymentPending] = useState(false)
   const [showRefundConfirm, setShowRefundConfirm] = useState(false)
   const [isListener, setIsListener] = useState(false)
+  const [nriCountry, setNriCountry] = useState<string | null>(null)
   const [hasEarningsCredits, setHasEarningsCredits] = useState(false)
   const [hasRazorpayCredits, setHasRazorpayCredits] = useState(false)
   const rzpScriptRef = useRef(false)
@@ -118,7 +134,13 @@ function WalletPageInner() {
     // Try browser-client first (RLS: users_select_own). Fall back to the server
     // API (admin client, bypasses RLS) if the row is missing or inaccessible —
     // e.g. users who completed payment before their public.users row was created.
-    const { data: userData } = await sb.from('users').select('wallet_balance').eq('id', user.id).maybeSingle()
+    const { data: userData } = await sb.from('users').select('wallet_balance, account_country').eq('id', user.id).maybeSingle()
+    // India vs overseas pricing follows the verified phone (same rule as billing).
+    const pc = pricingCountry(user.phone ? '+' + user.phone.replace(/^\+/, '') : null, (userData?.account_country as string | null) ?? null)
+    if (isNriCountry(pc)) {
+      setNriCountry(pc)
+      setSelected(returnUrl ? NRI_INR_EQUIV[15] : NRI_INR_EQUIV[30])
+    }
     if (userData !== null) {
       setBalance((userData?.wallet_balance as number) ?? 0)
     } else {
@@ -344,20 +366,22 @@ function WalletPageInner() {
               Top up your wallet to start a session. Choose any session length and pay per minute.
             </p>
             <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:12,maxWidth:320,margin:'0 auto 20px'}}>
-              {[200,500,1000,2000].map(amt => (
+              {(nriCountry ? nriPresets(nriCountry) : INDIA_PRESETS).map(p => p.amount).map(amt => (
                 <button key={amt} onClick={() => setSelected(amt)}
                   style={{background: selected===amt ? '#FFF8F0' : 'white',border:`2px solid ${selected===amt?'var(--orange)':'var(--border)'}`,borderRadius:16,padding:'16px 8px',textAlign:'center',cursor:'pointer',fontFamily:'Nunito,sans-serif',fontWeight:900,fontSize:20,color:'var(--navy)'}}>
                   ₹{amt}
                 </button>
               ))}
             </div>
-            <p style={{fontSize:13,color:'var(--gray)'}}>₹160 for 15 min · ₹310 for 30 min · ₹460 for 45 min</p>
+            <p style={{fontSize:13,color:'var(--gray)'}}>{nriCountry
+              ? `15 min ${getNriDisplayPrice(15, nriCountry)} · 30 min ${getNriDisplayPrice(30, nriCountry)} · 45 min ${getNriDisplayPrice(45, nriCountry)} (charged in ₹ at a fixed rate)`
+              : 'From ₹160 for 15 min · ₹310 for 30 min · ₹460 for 45 min (price varies by listener)'}</p>
           </div>
         )}
 
         <div className="section-title">Recharge wallet</div>
         <div className="presets">
-          {PRESETS.map(p => (
+          {(nriCountry ? nriPresets(nriCountry) : INDIA_PRESETS).map(p => (
             <div key={p.amount} className={`preset${selected===p.amount && !customInput?' sel':''}`} onClick={() => { setSelected(p.amount); setCustomInput('') }}>
               <div className="preset-amount">₹{p.amount}</div>
               <div className="preset-sessions">{p.sessions}</div>

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 
 export const metadata: Metadata = {
-  title: 'Is LeanOn Safe? Privacy & Anonymity Explained',
+  title: 'Is LeanOn Safe? Screening, Privacy & Trust Explained',
   description: 'Is LeanOn safe? Learn about LeanOn\'s privacy protections, anonymity features, verified listeners, reporting system, and crisis resources.',
   keywords: ['is leanon safe', 'leanon privacy', 'leanon anonymity', 'leanon safety', 'peer support safety india'],
   alternates: { canonical: 'https://www.leanon.app/is-leanon-safe' },
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Article',
-  headline: 'Is LeanOn Safe? Privacy, Anonymity & Trust',
+  headline: 'Is LeanOn Safe? Screening, Privacy & Trust',
   author: { '@type': 'Organization', name: 'LeanOn Editorial Team' },
   publisher: { '@type': 'Organization', name: 'LeanOn', url: 'https://www.leanon.app' },
   datePublished: '2026-01-01',
@@ -59,7 +59,7 @@ export default function IsLeanOnSafePage() {
       </nav>
       <div className="page">
         <a href="/" style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:14,fontWeight:700,color:'var(--gray)',marginBottom:28}}>← Back</a>
-        <h1>Is LeanOn Safe? Privacy, Anonymity & Trust</h1>
+        <h1>Is LeanOn Safe? Screening, Privacy & Trust</h1>
         <p className="lead">Your safety and privacy are the foundation of everything we build at LeanOn. Here is exactly how we protect you.</p>
 
         <div className="disclaimer">

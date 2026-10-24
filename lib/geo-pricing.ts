@@ -36,11 +36,12 @@ export const NRI_INR_EQUIV: Record<15 | 30 | 45, number> = {
   45: Math.round(NRI_USD_PRICES[45] * APPROX_USD_TO_INR),  // $20 → ₹1680
 }
 
-// Per-currency display config for the 8 supported countries.
+// Per-currency display config for the supported overseas countries.
 // symbol: shown before the amount. code: for screen-reader / accessibility.
 const CURRENCY_MAP: Record<string, { symbol: string; code: string; rate: number }> = {
   US: { symbol: '$',  code: 'USD', rate: APPROX_USD_TO_INR },
   CA: { symbol: 'CA$', code: 'CAD', rate: 62  }, // ≈ 1 CAD = ₹62
+  AU: { symbol: 'A$', code: 'AUD', rate: 55  }, // ≈ 1 AUD = ₹55
   GB: { symbol: '£',  code: 'GBP', rate: 107 }, // ≈ 1 GBP = ₹107
   AE: { symbol: 'AED ', code: 'AED', rate: 23 }, // ≈ 1 AED = ₹23
   KW: { symbol: 'KD ', code: 'KWD', rate: 274 },
@@ -57,7 +58,7 @@ export function isNriCountry(country: string | null | undefined): boolean {
 // dropdown choice decides which (pricingCountry), US otherwise.
 const DIAL_CODES: [string, string][] = [
   ['971', 'AE'], ['965', 'KW'], ['968', 'OM'],
-  ['91', 'IN'], ['44', 'GB'], ['65', 'SG'], ['60', 'MY'],
+  ['91', 'IN'], ['44', 'GB'], ['65', 'SG'], ['60', 'MY'], ['61', 'AU'],
   ['1', 'US'],
 ]
 
