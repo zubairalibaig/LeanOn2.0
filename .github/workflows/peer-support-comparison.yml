@@ -1,0 +1,25 @@
+name: Peer-support comparison accuracy
+
+on:
+  pull_request:
+    paths:
+      - 'app/best-peer-support-app-india/**'
+      - 'app/peer-support/**'
+      - 'lib/geo-questions.ts'
+      - 'scripts/check-peer-support-comparison.mjs'
+      - '.github/workflows/peer-support-comparison.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-source-claims:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Verify peer-service sourcing and boundaries
+        run: node scripts/check-peer-support-comparison.mjs
