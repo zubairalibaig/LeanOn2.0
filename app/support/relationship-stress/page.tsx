@@ -5,11 +5,11 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Relationship Stress Peer Support India | LeanOn',
-  description: "Relationship stress building up? Talk it through with a neutral, real peer listener in India — private, text or voice, online now. Not couples therapy. First 5 minutes free.",
+  description: "Relationship stress in India? Compare trusted people, counselling and non-clinical peer listening. LeanOn allows adult text or voice requests; matches depend on listener acceptance.",
   alternates: { canonical: 'https://www.leanon.app/support/relationship-stress', languages: { 'en-IN': 'https://www.leanon.app/support/relationship-stress' } },
   openGraph: {
     title: 'Relationship Stress Peer Support India | LeanOn',
-    description: "Relationship stress building up? Talk it through with a neutral, real peer listener in India — private, text or voice, online now. Not couples therapy. First 5 minutes free.",
+    description: "Relationship stress in India? Compare trusted people, counselling and non-clinical peer listening. LeanOn allows adult text or voice requests; matches depend on listener acceptance.",
     url: 'https://www.leanon.app/support/relationship-stress',
     siteName: 'LeanOn',
     type: 'article',
@@ -20,7 +20,7 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
-    { '@type': 'Question', name: "My relationship is stressing me out \u2014 who can I talk to?", acceptedAnswer: { '@type': 'Answer', text: "When fights, distance or doubts keep building, talking them through with someone neutral helps you see clearly. LeanOn connects you with a peer listener in India who has lived through relationship stress — privately, by text or voice, with someone online now. They do not take sides and it is not couples therapy. Your first 5 minutes are free." } },
+    { '@type': 'Question', name: "My relationship is stressing me out \u2014 who can I talk to?", acceptedAnswer: { '@type': 'Answer', text: "When relationship stress builds, options include a trusted person, a qualified counsellor for ongoing issues, or a screened peer listener for everyday non-clinical conversation. LeanOn lets adults request text or voice sessions. One introduction of up to five minutes is free once per account; an eligible listener must accept, and matching is not guaranteed." } },
     {
       '@type': 'Question',
       name: 'What counts as relationship stress?',
@@ -151,7 +151,7 @@ export default function RelationshipStressSupportPage() {
           <p className="tag">Peer Support · Relationship Stress</p>
           <h1>Getting Through Relationship Stress — You Don&apos;t Have to <em>Face It Alone</em></h1>
           <p className="lead">Relationship stress is one of the heaviest burdens to carry — especially when you feel you cannot talk to anyone about it. LeanOn connects you with peer listeners in India who have navigated the same complicated feelings and come out the other side.</p>
-          <QuickAnswer question={"My relationship is stressing me out \u2014 who can I talk to?"} answer={"When fights, distance or doubts keep building, talking them through with someone neutral helps you see clearly. LeanOn connects you with a peer listener in India who has lived through relationship stress — privately, by text or voice, with someone online now. They do not take sides and it is not couples therapy. Your first 5 minutes are free."} />
+          <QuickAnswer question={"My relationship is stressing me out \u2014 who can I talk to?"} answer={"When relationship stress builds, options include a trusted person, a qualified counsellor for ongoing issues, or a screened peer listener for everyday non-clinical conversation. LeanOn lets adults request text or voice sessions. One introduction of up to five minutes is free once per account; an eligible listener must accept, and matching is not guaranteed."} />
         </div>
 
         {/* What Is Relationship Stress */}
@@ -225,47 +225,21 @@ export default function RelationshipStressSupportPage() {
             <li>Empathetic listening from someone who has personally experienced relationship challenges in an Indian context</li>
             <li>Gentle reflection and questions to help you understand your own feelings and needs more clearly</li>
             <li>Perspective from someone who has no stake in the relationship — no allegiances, no agenda, no judgment</li>
-            <li>Availability any time, including late nights when relationship worries tend to be loudest</li>
+            <li>On-request matching when an eligible listener is available and accepts; no 24/7 guarantee</li>
           </ul>
           <p>LeanOn listeners do not provide therapy, couples counselling, or legal advice. If your situation involves safety concerns, abuse, or serious mental health issues, please reach out to a qualified professional.</p>
         </div>
 
-        {/* Listener cards */}
-        <h2 style={{fontSize:'20px',fontWeight:800,color:'var(--navy)',marginBottom:'16px'}}>Listeners Who Understand Relationship Stress</h2>
-        <div className="listeners-grid">
-          {[
-            {
-              emoji: '💛',
-              name: 'Kavya',
-              tag: 'Family Pressure & Marriage',
-              bio: 'Navigated intense family expectations around marriage for years. I understand the exhaustion of being caught between your own heart and everyone else\'s opinions.'
-            },
-            {
-              emoji: '🔄',
-              name: 'Rohan',
-              tag: 'Long-Distance Relationships',
-              bio: 'Spent three years in a long-distance relationship through a job migration. I know the specific strain of distance on love and communication.'
-            },
-            {
-              emoji: '🤝',
-              name: 'Divya',
-              tag: 'Trust & Communication',
-              bio: 'Worked through serious trust issues and rebuilt a relationship from the ground up. I can help you think through what you are feeling and what you actually need.'
-            },
-          ].map((l, i) => (
-            <div key={i} className="listener-card">
-              <div className="listener-avatar">{l.emoji}</div>
-              <div className="listener-name">{l.name}</div>
-              <div className="listener-tag">{l.tag}</div>
-              <p className="listener-bio">{l.bio}</p>
-            </div>
-          ))}
+        {/* Real profiles are served by Browse; fictional biographies must not be presented as listeners. */}
+        <div className="section">
+          <h2>Browse actual screened peer listeners</h2>
+          <p>Review listener profiles, languages, topics and current status on <a href="/browse">Browse</a>. A match is not guaranteed; a session starts after a listener accepts.</p>
         </div>
 
         {/* CTA */}
         <div className="cta-card">
           <h2>Talk to Someone Who Gets It</h2>
-          <p>Find a peer listener who understands relationship stress. No appointments, no waitlists.</p>
+          <p>Request a peer listener without a scheduled appointment. Availability and acceptance are not guaranteed. Professional care and specialist services may be more appropriate for some needs.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Talk to someone who understands — first 5 min free →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>
@@ -285,16 +259,21 @@ export default function RelationshipStressSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How does relationship stress affect mental health in India?</div>
-            <div className="faq-a">In India, relationship stress is one of the leading contributors to anxiety, sleep problems, and low self-esteem — particularly because cultural expectations around family, marriage, and loyalty make it hard to set boundaries or talk openly. Getting even one safe space to process these feelings can significantly reduce that burden.</div>
+            <div className="faq-a">Difficult relationships can be associated with worry, poorer sleep or low mood. Experiences differ; if distress is persistent or disrupts daily functioning, seek an appropriate qualified mental-health professional.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Can I talk about family relationship stress, not just romantic relationships?</div>
-            <div className="faq-a">Absolutely. Relationship stress on LeanOn covers all kinds of relationships — parents, in-laws, siblings, friends, and romantic partners. LeanOn is a safe, private space to talk about any relationship that is weighing on you.</div>
+            <div className="faq-a">Yes, for everyday family, friendship or romantic stress. LeanOn uses phone verification and stores text messages for possible authorised safety review; it is not completely anonymous or a domestic-abuse support service.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">When should relationship stress become a reason to see a therapist?</div>
-            <div className="faq-a">If relationship stress is causing persistent depression, anxiety that disrupts daily functioning, thoughts of self-harm, or if the relationship involves abuse or coercion, please seek a qualified mental health professional. LeanOn peer support is a helpful first step, but not a replacement for clinical therapy when those signs are present.</div>
+            <div className="faq-a">Persistent symptoms call for qualified mental-health care. For controlling behaviour, threats or abuse, seek specialist domestic-abuse assistance and safety guidance. LeanOn is not a first response for crises or emergencies.</div>
           </div>
+        </div>
+
+        <div className="section">
+          <h2>How to choose between a peer and professional support</h2>
+          <p>A trusted friend may be enough for an everyday conversation. If you want non-clinical one-to-one human listening, LeanOn is one paid option; <a href="https://www.soulup.in/pages/1-on-1-conversation" target="_blank" rel="noopener noreferrer">SoulUp</a> offers scheduled peer sessions. For qualified psychosocial counselling, see <a href="https://icallhelpline.org/faqs/" target="_blank" rel="noopener noreferrer">iCALL at TISS</a>. <a href="/relationship-emotional-support-guide-india">Read the complete comparison</a> before choosing.</p>
         </div>
 
         {/* Disclaimer */}
