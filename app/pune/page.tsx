@@ -25,7 +25,7 @@ const faqSchema = {
       name: 'Why is loneliness so common among students and young professionals in Pune?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Pune hosts one of India\'s largest student and young-migrant populations. Hundreds of thousands of people move here for college or a first job, leaving their entire support system behind. Hostels, PGs, and flatshares are full of people — yet genuinely close friendships take years to build. The result is a city full of young people who are surrounded by others and profoundly alone. LeanOn gives them someone to talk to honestly, any time of day or night.',
+        text: 'Pune hosts one of India\'s largest student and young-migrant populations. Hundreds of thousands of people move here for college or a first job, leaving their entire support system behind. Hostels, PGs, and flatshares are full of people — yet genuinely close friendships take years to build. The result is a city full of young people who are surrounded by others and profoundly alone. LeanOn gives them someone to talk to honestly, with no appointment.',
       },
     },
     {

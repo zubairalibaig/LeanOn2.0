@@ -164,7 +164,7 @@ export default function TarotAlternativeIndiaPage() {
               <tbody>
                 <tr><td>Cost</td><td>&#8377;500&ndash;2,000 per session</td><td>From &#8377;160 for 15 minutes</td></tr>
                 <tr><td>Approach</td><td>Card-based, prediction-focused</td><td>Active listening, empathy</td></tr>
-                <tr><td>Training</td><td>Tarot reading; varies widely</td><td>Trained in active listening</td></tr>
+                <tr><td>Training</td><td>Tarot reading; varies widely</td><td>Screened for active listening</td></tr>
                 <tr><td>Predictions</td><td>Yes</td><td>No</td></tr>
                 <tr className="highlight-row"><td>Emotional support</td><td>Incidental</td><td>Primary purpose</td></tr>
                 <tr><td>Anonymous</td><td>Often not</td><td>Yes &mdash; first name only</td></tr>

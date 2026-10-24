@@ -190,7 +190,7 @@ export default function MalaysiaLonelinessPage() {
         <div className="card">
           <h2>Talk in Tamil, Hindi, or any Indian language</h2>
           <p>Many Indians in Malaysia are Tamil-speaking — and LeanOn has Tamil listeners available
-            round the clock. You can also talk in Hindi, Telugu, Malayalam, Kannada, Bengali, or English.</p>
+            (availability follows Indian time). You can also talk in Hindi, Telugu, Malayalam, Kannada, Bengali, or English.</p>
           <p>Being heard in your mother tongue does something that a translated conversation cannot.
             LeanOn listeners get that.</p>
         </div>

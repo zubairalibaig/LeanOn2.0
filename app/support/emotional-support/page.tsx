@@ -32,7 +32,7 @@ const faqSchema = {
       name: 'How does online emotional support work on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'You browse peer listeners, pick someone whose lived experience resonates with yours, and start a session via text or voice. The listener is a real person who has been through similar challenges and is screened and expected to offer empathetic, non-judgmental support. Sessions start instantly with no booking required, and a short trial session is available for new users.',
+        text: 'You browse peer listeners, pick someone whose lived experience resonates with yours, and start a session via text or voice. The listener is a real person who has been through similar challenges and is screened and expected to offer empathetic, non-judgmental support. There is no booking required, and a short trial session is available for new users.',
       },
     },
     {
@@ -274,7 +274,7 @@ export default function EmotionalSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How does online emotional support work on LeanOn?</div>
-            <div className="faq-a">You browse peer listeners, pick someone whose lived experience resonates with yours, and start a session via text or voice. The listener is a real person screened for empathetic support. Sessions start instantly with no booking required, and a short trial session is available for new users.</div>
+            <div className="faq-a">You browse peer listeners, pick someone whose lived experience resonates with yours, and start a session via text or voice. The listener is a real person screened for empathetic support. There is no booking required, and a short trial session is available for new users.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is online emotional support as effective as in-person support?</div>

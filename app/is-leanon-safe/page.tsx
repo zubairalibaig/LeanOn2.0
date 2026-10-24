@@ -71,7 +71,7 @@ export default function IsLeanOnSafePage() {
             { icon: '🔒', title: 'No full name required', desc: 'Sign up with just your mobile number. You control what name you share.' },
             { icon: '🤫', title: 'Conversations are private', desc: 'Your sessions are never shared, sold, or used for advertising.' },
             { icon: '✓', title: 'Verified listeners', desc: 'Every listener is manually reviewed for lived experience and empathy before approval.' },
-            { icon: '🚫', title: 'Report & block', desc: 'Instantly block or report any listener. We investigate every report within 24 hours.' },
+            { icon: '🚫', title: 'Report & block', desc: 'Block or report any listener. Every report is reviewed by the LeanOn team.' },
             { icon: '🗑️', title: 'Data deletion', desc: 'You can request full account and data deletion at any time via our support channel.' },
             { icon: '📵', title: 'No data sold', desc: 'We do not sell, share, or broker any user data with third parties. Ever.' },
           ].map((s, i) => (

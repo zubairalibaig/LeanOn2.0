@@ -52,7 +52,7 @@ export default function NeedSomeoneToTalkToIndia() {
         <a href="/" className="back">← LeanOn Home</a>
         <h1>Need <span>Someone to Talk To</span> in India?</h1>
         <p className="lead">
-          You&apos;re not alone — even if it feels that way right now. LeanOn connects you with real peer listeners in India who have been through what you&apos;re going through. No appointment, instant access.
+          You&apos;re not alone — even if it feels that way right now. LeanOn connects you with real peer listeners in India who have been through what you&apos;re going through. No appointment needed.
         </p>
 
         <div className="crisis-box">
@@ -62,7 +62,7 @@ export default function NeedSomeoneToTalkToIndia() {
         <div className="section">
           <h2>You deserve someone who truly understands</h2>
           <p>In India, it&apos;s often hard to find someone to talk to — really talk to. Family members may not understand or may judge you. Friends get tired of hearing about the same problems. Therapy feels too clinical or is simply too expensive. And at 2 AM when the feelings are worst, there&apos;s often no one available at all.</p>
-          <p>LeanOn changes this. Our peer listeners are available around the clock — and they genuinely understand. Not because they have a degree, but because they have lived through something similar.</p>
+          <p>LeanOn changes this. Our peer listeners go online at different hours — and they genuinely understand. Not because they have a degree, but because they have lived through something similar.</p>
         </div>
 
         <div className="section">

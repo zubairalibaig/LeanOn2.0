@@ -60,7 +60,7 @@ const faqSchema = {
       name: 'Where can I vent to someone online in the US?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn lets you vent to a real human listener — online daily on Indian time, completely anonymous, first 5 minutes free. No AI, no judgment, just a real person ready to hear you out.',
+        text: 'LeanOn lets you vent to a real human listener — online daily on Indian time, private, first 5 minutes free. No AI, no judgment, just a real person ready to hear you out.',
       },
     },
     {
@@ -278,7 +278,7 @@ export default function USAVentRealPersonPage() {
           <h2>Frequently asked questions</h2>
           <div className="faq-item">
             <h3>Where can I vent to someone online in the US?</h3>
-            <p>LeanOn lets you vent to a real human listener — online daily on Indian time, completely anonymous,
+            <p>LeanOn lets you vent to a real human listener — online daily on Indian time, private,
               first 5 minutes free. No AI, no judgment, just a real person ready to hear you out.</p>
           </div>
           <div className="faq-item">

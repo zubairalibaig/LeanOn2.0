@@ -62,7 +62,7 @@ export const post = {
 
 <p>Peer support — from people who have been through similar things and come out the other side — offers something different from coaching. It offers the specific comfort of being understood by someone who has been where you are. Not told what to do. Not optimised. Just understood.</p>
 
-<p>This is why platforms like <strong>LeanOn</strong> are particularly well-suited to <strong>founder burnout India</strong> situations. The supporters on LeanOn are not coaches or therapists. They are people who have navigated difficult experiences — including professional burnout, loss, career collapse — and trained to offer the kind of genuine peer understanding that burned-out founders most need.</p>
+<p>This is why platforms like <strong>LeanOn</strong> are particularly well-suited to <strong>founder burnout India</strong> situations. The supporters on LeanOn are not coaches or therapists. They are people who have navigated difficult experiences — including professional burnout, loss, career collapse — and screened to offer the kind of genuine peer understanding that burned-out founders most need.</p>
 
 <h2>The LeanOn Startup Support Network</h2>
 

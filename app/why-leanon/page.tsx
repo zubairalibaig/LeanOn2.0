@@ -74,7 +74,7 @@ export default function WhyLeanOnPage() {
               <li>Listeners often online late at night</li>
               <li>From ₹160 for 15 minutes</li>
               <li>No appointment needed</li>
-              <li>Completely anonymous</li>
+              <li>Private — listeners never see your number</li>
               <li>Real humans with lived experience</li>
               <li>No stigma, no clinical label</li>
               <li>Start in under 60 seconds</li>

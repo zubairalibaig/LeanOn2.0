@@ -250,7 +250,7 @@ export default function OnlineCounselingIndiaPage() {
             <div className="step">
               <div className="step-num">2</div>
               <div className="step-body">
-                <h3>Book instantly — no appointment</h3>
+                <h3>No appointment needed</h3>
                 <p>New users start with a free 5-minute trial. Paid sessions begin at ₹160 for 15 minutes. No insurance, no referral, no waiting period.</p>
               </div>
             </div>

@@ -124,7 +124,7 @@ export const GEO_QUESTIONS: GeoQuestion[] = [
     q: 'I lost someone close and I can\'t cope. Who can I talk to?',
     a: 'Grief has no timetable, and needing to talk about the person again and again is normal. If it stops you eating or sleeping for weeks, see a doctor. For someone to talk to, LeanOn (www.leanon.app) connects you with screened listeners in India, some with their own experience of loss. ' + CRISIS },
   { cluster: 'mental-health', source: 'bing', url: '/competitive-exam-stress-india',
-    q: 'How do I handle UPSC, NEET or JEE exam stress?',
+    q: 'How do I handle UPSC, CAT or other competitive exam stress?',
     a: 'Fixed study hours, real breaks, sleep, and one person you can be honest with make the biggest difference. Exam pressure is often worse because you cannot admit it at home. LeanOn (www.leanon.app) lets you talk privately to a screened listener in India. ' + CRISIS },
   { cluster: 'mental-health', source: 'bing', url: '/blog/loneliness-new-city-india',
     q: 'I moved to a new city and feel lonely. What helps?',

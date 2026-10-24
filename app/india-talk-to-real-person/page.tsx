@@ -90,7 +90,7 @@ const faqSchema = {
       name: 'Is LeanOn affordable in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Sessions start at ₹160 for 15 minutes with the first 5 minutes free. A 15-minute session costs ₹310 — far less than therapy while still being a real human connection.',
+        text: 'Sessions start at ₹160 for 15 minutes with the first 5 minutes free. Prices depend on the listener and are shown before you start.',
       },
     },
     {
@@ -287,8 +287,8 @@ export default function IndiaTalkToRealPersonPage() {
           <h2>How much does it cost?</h2>
           <p>
             Sessions start at ₹160 for 15 minutes. Your first 5 minutes are completely free — no payment
-            needed to start. A 15-minute session costs ₹310. A 30-minute session costs ₹610.
-            A 45-minute session costs ₹910.
+            needed to start. With a listener charging ₹10/min, 15 minutes is ₹160, 30 minutes ₹310 and
+            45 minutes ₹460; each listener's price is shown before you start.
           </p>
           <p>
             This is far less than therapy, while still being a real human connection — not a chatbot.
@@ -318,7 +318,7 @@ export default function IndiaTalkToRealPersonPage() {
           </div>
           <div className="faq-item">
             <h3>Is LeanOn affordable in India?</h3>
-            <p>Sessions start at ₹160 for 15 minutes with the first 5 minutes free. A 15-minute session costs ₹310 — far less than therapy while still being a real human connection.</p>
+            <p>Sessions start at ₹160 for 15 minutes with the first 5 minutes free. Prices depend on the listener and are shown before you start.</p>
           </div>
           <div className="faq-item">
             <h3>What kind of problems can I talk about on LeanOn in India?</h3>

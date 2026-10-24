@@ -92,7 +92,7 @@ const faqSchema = {
       name: 'How is LeanOn different from other mental health apps?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Most mental health apps in India are either AI chatbots (not real humans) or professional therapy platforms (expensive, clinical). LeanOn sits between: real humans with lived experience, available instantly, at a fraction of the cost of therapy. It\'s peer support — the most human option.',
+        text: 'Most mental health apps in India are either AI chatbots (not real humans) or professional therapy platforms (expensive, clinical). LeanOn sits between: real humans with lived experience, with no appointment, at a fraction of the cost of therapy. It\'s peer support — the most human option.',
       },
     },
     {
@@ -262,7 +262,7 @@ export default function LeanOnBrandPage() {
             { q: 'Is LeanOn the same as therapy?', a: 'No. LeanOn is peer support, not therapy. Listeners are verified people with lived experience — not licensed therapists. They offer genuine empathy and understanding, not clinical diagnosis.' },
             { q: 'How much does LeanOn cost?', a: 'LeanOn offers a 5-minute trial session for new users. After that, sessions start from ₹160 for 15 minutes — significantly more affordable than therapy (₹1,500–5,000/session in India).' },
             { q: 'Is LeanOn safe and private?', a: 'Yes. Phone OTP sign-up (no full name required), conversations never shared outside LeanOn, crisis helplines in every session, and every report reviewed by a person.' },
-            { q: 'How is LeanOn different from other mental health apps?', a: 'Unlike AI chatbots (not real humans) or professional therapy platforms (expensive, clinical), LeanOn offers real humans with lived experience, available instantly, at a fraction of therapy cost.' },
+            { q: 'How is LeanOn different from other mental health apps?', a: 'Unlike AI chatbots (not real humans) or professional therapy platforms (expensive, clinical), LeanOn offers real humans with lived experience, with no appointment, at a fraction of therapy cost.' },
             { q: 'Is LeanOn available across India?', a: 'Yes — Bengaluru, Mumbai, Delhi, Chennai, Hyderabad, Pune, Kolkata, and everywhere else. Online.' },
           ].map((f, i) => (
             <div key={i} className="faq-item">

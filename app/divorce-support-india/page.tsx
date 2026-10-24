@@ -34,7 +34,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is it anonymous?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Your first name only. Nothing is connected to your social or professional life. What you say in the session stays there. Given the social complexity of divorce in India, anonymity is particularly important &mdash; and it is fully guaranteed.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Your first name only. Nothing is connected to your social or professional life. What you say in the session stays there. Given the social complexity of divorce in India, anonymity is particularly important. Listeners never see your phone number.' },
     },
     {
       '@type': 'Question',

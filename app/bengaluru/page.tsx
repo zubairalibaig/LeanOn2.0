@@ -198,7 +198,7 @@ export default function BengaluruPage() {
           <p>Every session starts with a short five-minute window. Use it to gauge the connection before committing. If it feels right, continue. If not, find another listener. Sessions start at ₹160 for 15 minutes — significantly more accessible than therapy and available any time, including late nights when the weight feels heaviest.</p>
 
           <h3>Available When You Need It Most</h3>
-          <p>Loneliness and burnout do not keep business hours. LeanOn listeners are available around the clock, including midnight on a Tuesday when you are staring at the ceiling in your Koramangala flat wondering if any of this is worth it.</p>
+          <p>Loneliness and burnout do not keep business hours. LeanOn listeners go online at different hours, often including late at night when you are staring at the ceiling in your Koramangala flat wondering if any of this is worth it.</p>
 
           <h3>Completely Private</h3>
           <p>Nobody in your professional network, flatmate group, or family needs to know. LeanOn is confidential by design. In a city where professional reputation feels precarious and vulnerability can feel career-limiting, that privacy matters.</p>

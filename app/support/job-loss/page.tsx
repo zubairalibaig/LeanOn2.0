@@ -185,7 +185,7 @@ export default function JobLossSupportPage() {
           <p>LinkedIn demands that you be grateful, energised and open to opportunities within days. Family demands that you be reassuring. Friends want you to be fine. Somewhere in all that, nobody asks how you actually are. On LeanOn you can say the ungracious things out loud — that you feel humiliated, that you resent people who kept their jobs, that you are frightened — and be met with empathy instead of a pep talk.</p>
 
           <h3>Available at the Hours the Anxiety Spikes</h3>
-          <p>Job-loss anxiety keeps unsociable hours. It arrives at 2 AM, on Sunday evenings, and in the twenty minutes after a rejection email. LeanOn listeners are available round the clock, so you are not left holding a 3 AM spiral by yourself until the world wakes up.</p>
+          <p>Job-loss anxiety keeps unsociable hours. It arrives at 2 AM, on Sunday evenings, and in the twenty minutes after a rejection email. LeanOn listeners go online at different hours, so you are not left holding a 3 AM spiral by yourself until the world wakes up.</p>
 
           <h3>Completely Private</h3>
           <p>Nothing you say here reaches your professional network, your former colleagues, your recruiters, or your family. There is no profile anyone can find, no post anyone can screenshot, no mutual connection who might mention it. You can be fully honest about your situation without a single social consequence — which is often the only condition under which people can finally say the truth.</p>

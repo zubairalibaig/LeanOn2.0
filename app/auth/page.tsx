@@ -569,7 +569,7 @@ export default function AuthPage() {
               {/* MSG91's invisible-captcha renders here when required. */}
               <div id="msg91-captcha" />
               {error && <p className="error">{error}</p>}
-              <p className="tos">By continuing you agree to our <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</p>
+              <p className="tos">LeanOn is for adults 18+. By continuing you confirm you are 18 or older and agree to our <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</p>
               <button className="btn" onClick={requestOtp} disabled={loading || !isValidPhone()}>
                 {loading ? <span className="spin">⟳</span> : !widgetReady ? 'Loading…' : 'Send OTP →'}
               </button>

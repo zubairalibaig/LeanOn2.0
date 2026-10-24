@@ -41,7 +41,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Are there free or subsidized mental health services in India?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Government district mental health programs (DMHP) offer free services at government hospitals. Medical college psychiatry departments often have free or very low-cost OPD clinics. NIMHANS in Bangalore is a government institute where consultation is subsidized. The iCall helpline (011-41198666) and the Vandrevala Foundation helpline offer free telephonic counselling. Some NGOs and community health organizations offer sliding-scale or free therapy — Sangath (Goa and online), The MINDS Foundation, and similar organizations. Online platforms like YourDOST and Wysa offer accessible-cost counselling. These require research and persistence to access, but they exist.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Government district mental health programs (DMHP) offer free services at government hospitals. Medical college psychiatry departments often have free or very low-cost OPD clinics. NIMHANS in Bangalore is a government institute where consultation is subsidized. Tele-MANAS (14416) is the Government of India’s free tele-mental health helpline. Some NGOs and community health organizations offer sliding-scale or free therapy — Sangath (Goa and online), The MINDS Foundation, and similar organizations. Online platforms like YourDOST and Wysa offer accessible-cost counselling. These require research and persistence to access, but they exist.' },
     },
     {
       '@type': 'Question',
@@ -215,9 +215,9 @@ export default function INeedProfessionalHelpIndiaPage() {
             <li>A space to say things out loud that you have never said — to have them witnessed by another human being without being dismissed, fixed, or alarmed</li>
             <li>A way to feel less alone in what you are carrying while you work toward professional support</li>
             <li>A conversation that often helps people clarify what they are experiencing, and what they want to say when they get to a therapist</li>
-            <li>Available at any hour, from anywhere, anonymously, for the cost of less than a coffee at a nice cafe</li>
+            <li>No appointment, from anywhere, privately — listeners never see your phone number</li>
           </ul>
-          <p>The woman who came to LeanOn saying &quot;that&apos;s why I need professional help&quot; — who paid ₹310 for a 15-minute session at 5pm on a Tuesday — knew exactly what she was doing. She knew LeanOn was not therapy. She came anyway because the professional help was not available to her right then, and the weight was real right then, and a real conversation with a real person was better than nothing.</p>
+          <p>Someone who knows they need professional help can still use LeanOn while they wait for it — knowing it is not therapy. The professional help may not be available right then, the weight is real right then, and a real conversation with a real person is better than nothing.</p>
           <p>Better than nothing is underselling it. Being heard — by a person, not an algorithm, in real time, without judgment — does something. It does not do everything. But it does something real. And for many people, that something is where the movement toward getting the bigger help begins.</p>
         </div>
 

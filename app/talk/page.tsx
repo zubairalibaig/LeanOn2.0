@@ -400,9 +400,9 @@ function TalkInner() {
         {phase.k === 'topic' && (
           <>
             {onlineCount !== null && onlineCount > 0 && <div className="live"><i />{onlineCount} listener{onlineCount === 1 ? '' : 's'} online now</div>}
-            {onlineCount === 0 && <div className="live" style={{ background: '#FFF8EC', color: '#9A5B00' }}>Everyone&apos;s busy — tap anyway, we&apos;ll keep looking for 5 minutes</div>}
+            {onlineCount === 0 && <div className="live" style={{ background: '#FFF8EC', color: '#9A5B00' }}>Nobody is online this minute — tap anyway to try, or see all listeners</div>}
             <h1>Talk to someone now</h1>
-            <p className="sub">A real person, available right now. Private and one to one. New here? Your first {FREE_SESSION_MINS} minutes are free.</p>
+            <p className="sub">A real person, one to one and private, when a listener is online. New here? Your first {FREE_SESSION_MINS} minutes are free.</p>
             <div className="seg" role="radiogroup" aria-label="How would you like to talk?">
               {(['text', 'voice'] as const).map(m => (
                 <button key={m} type="button" role="radio" aria-checked={mode === m} className={mode === m ? 'on' : ''} onClick={() => setMode(m)}>

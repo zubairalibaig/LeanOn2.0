@@ -58,7 +58,7 @@ const faqSchema = {
       name: 'Will my employer or family know I am using this?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'No. Sessions are completely anonymous. You can join without using your real name. No information is shared with anyone outside the session.',
+        text: 'No. Sessions are private. You can join without using your real name. No information is shared with anyone outside the session.',
       },
     },
   ],

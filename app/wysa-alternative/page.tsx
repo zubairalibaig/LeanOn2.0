@@ -157,7 +157,7 @@ export default function WysaAlternativePage() {
           Wysa is a well-designed AI chatbot — and AI is genuinely useful for tracking moods and building
           habits. But when you need to actually feel understood, no algorithm can replace a human being who
           has been through it themselves. LeanOn connects you to a real peer listener in under 2 minutes.
-          First 5 minutes free. Completely anonymous.
+          First 5 minutes free. Private.
         </p>
 
         <a href="/talk?src=seo" className="cta-hero">Talk to a real person → first 5 min free</a>

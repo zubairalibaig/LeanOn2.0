@@ -31,7 +31,7 @@ export const post = {
 
 <h2>What Helps</h2>
 <p>For many NRIs, the most useful support is not therapy but peer connection — talking to another Indian who has lived a similar experience. Someone who understands without requiring explanation. Who knows what it means to call your parents every Sunday and feel the guilt and the love and the distance all at once.</p>
-<p>LeanOn connects NRIs with peer listeners who have lived the diaspora experience — available worldwide, at any hour, from ₹160 per session. You do not need to be in India. You do not need to be in crisis. You just need to talk.</p>
+<p>LeanOn connects NRIs with peer listeners who have lived the diaspora experience — available worldwide (availability follows Indian time), from US$10 per 15-minute session abroad. You do not need to be in India. You do not need to be in crisis. You just need to talk.</p>
 
 <h2>When Professional Help Is Warranted</h2>
 <p>Peer support is not a substitute for professional mental health care. If you are experiencing persistent depression, anxiety disorders, or thoughts of self-harm, please consult a mental health professional in your country. If you are in India and in crisis: NIMHANS (080-46110007) or Tele-MANAS (14416).</p>

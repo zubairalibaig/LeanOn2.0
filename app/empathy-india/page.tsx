@@ -204,7 +204,7 @@ export default function EmpathyIndiaPage() {
 
         <div className="cta-card">
           <h2>Find an empathetic listener today.</h2>
-          <p>Real people, trained in empathy. From ₹160. First 5-minute session free.</p>
+          <p>Real people, screened for empathy. From ₹160. First 5-minute session free.</p>
           <a href="/browse" className="btn-cta">Browse listeners &rarr;</a>
         </div>
 

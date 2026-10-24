@@ -205,7 +205,7 @@ export default function PayToTalkOnlineIndiaPage() {
             </li>
             <li>
               <div>
-                <strong>Trained to listen, not to advise</strong>
+                <strong>Screened to listen, not to advise</strong>
                 <p>Listeners go through peer support training — active listening, open questions, reflecting back.
                   They are not there to solve your problems or tell you what to do.</p>
               </div>
@@ -252,7 +252,7 @@ export default function PayToTalkOnlineIndiaPage() {
               </tr>
               <tr>
                 <td>No unsolicited advice</td>
-                <td className="tick">Yes — trained to hold space</td>
+                <td className="tick">Yes — screened to hold space</td>
                 <td>Depends on the person</td>
               </tr>
               <tr>

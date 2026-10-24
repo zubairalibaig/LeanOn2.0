@@ -233,7 +233,7 @@ export default function GulfRelationshipSupportPage() {
           </div>
           <div className="faq-item">
             <h3>Will my spouse or family find out I talked to a listener?</h3>
-            <p>No. LeanOn is completely anonymous. Your spouse, family, and anyone you know will never know
+            <p>No. LeanOn is private. Your spouse, family, and anyone you know will never know
               you used LeanOn. You can speak freely about anything.</p>
           </div>
         </div>

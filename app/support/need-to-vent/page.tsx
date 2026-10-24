@@ -208,7 +208,7 @@ export default function NeedToVentPage() {
           <h3>A Dedicated Space With No Social Consequence</h3>
           <p>When you talk to a LeanOn peer listener, you are in a space that exists entirely for your expression. The listener has no prior relationship with you. They have no stake in what you decide. They are not going to tell anyone what you said. The social consequence of speaking honestly — the reason you censor yourself with friends and family — simply does not exist here. You can say the thing you have not been able to say anywhere else.</p>
 
-          <h3>Trained to Not Fix or Judge</h3>
+          <h3>Screened to Not Fix or Judge</h3>
           <p>Active listening is a skill. LeanOn peer listeners are screened for it. They know how to hear you without immediately pivoting to advice. They know how to reflect back what you are saying in ways that help you hear yourself. They know how to hold the space for you to keep talking — because sometimes what you need most is not a response but more room to speak. You can vent for 20 minutes and have a listener who is genuinely receiving every word without trying to redirect you.</p>
 
           <h3>Someone Who Has Been There</h3>

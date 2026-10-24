@@ -40,7 +40,7 @@ const faqSchema = {
       name: 'Are LeanOn listeners real humans or AI?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'All LeanOn listeners are real people. They go through a screening and training process before they can listen on the platform. You will never talk to a bot or AI on LeanOn.',
+        text: 'All LeanOn listeners are real people. They go through a screening process (application, quiz, live selfie and review) before they can listen on the platform. You will never talk to a bot or AI on LeanOn.',
       },
     },
     {
@@ -182,7 +182,7 @@ export default function TalkToRealPersonPage() {
                 <li>Hears the emotion behind words</li>
                 <li>Responds to you specifically</li>
                 <li>Comfortable with silence</li>
-                <li>Trained to care, not just reply</li>
+                <li>Screened to listen, not just reply</li>
               </ul>
             </div>
           </div>
@@ -245,7 +245,7 @@ export default function TalkToRealPersonPage() {
           </div>
           <div className="faq-item">
             <h3>Are LeanOn listeners real humans or AI?</h3>
-            <p>All LeanOn listeners are real people. They go through a screening and training process before
+            <p>All LeanOn listeners are real people. They go through a screening process (application, quiz, live selfie and review) before
               they can listen on the platform. You will never talk to a bot or AI on LeanOn.</p>
           </div>
           <div className="faq-item">

@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'How quickly can I start a session?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Instantly. Browse available listeners, pick one, and start talking — your first 5 minutes are free. No appointment, no waitlist, no insurance forms.',
+        text: 'When a listener is online (they are in India, so availability follows Indian time). Browse available listeners, pick one, and start talking — your first 5 minutes are free. No appointment, no waitlist, no insurance forms.',
       },
     },
     {
@@ -224,7 +224,7 @@ export default function UsaRantToSomeonePage() {
           </div>
           <div className="faq-item">
             <h3>How quickly can I start a session?</h3>
-            <p>Instantly. Browse available listeners, pick one, and start talking — your first 5 minutes
+            <p>When a listener is online (they are in India, so availability follows Indian time). Browse available listeners, pick one, and start talking — your first 5 minutes
               are free. No appointment, no waitlist, no insurance forms.</p>
           </div>
           <div className="faq-item">

@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'How do I talk about work stress without it affecting my job?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn is completely anonymous and confidential. Your real name, employer, and personal details are never required. What you say in a session stays between you and your listener. No HR involvement, no professional risk.',
+        text: 'LeanOn is private and confidential. Your real name, employer, and personal details are never required. What you say in a session stays between you and your listener. No HR involvement, no professional risk.',
       },
     },
     {
@@ -179,7 +179,7 @@ export default function WorkStressIndiaPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How do I talk about work stress without it affecting my job?</div>
-            <div className="faq-a">LeanOn is completely anonymous and confidential. Your real name, employer, and personal details are never required. What you say in a session stays between you and your listener. No HR involvement, no professional risk.</div>
+            <div className="faq-a">LeanOn is private and confidential. Your real name, employer, and personal details are never required. What you say in a session stays between you and your listener. No HR involvement, no professional risk.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is this anonymous?</div>

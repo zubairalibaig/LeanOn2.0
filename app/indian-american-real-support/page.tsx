@@ -336,7 +336,7 @@ export default function IndianAmericanRealSupportPage() {
         </div>
 
         <div className="disclaimer">
-          <p>⚠️ If you are in crisis or thinking about self-harm, please contact emergency services (911 in the US) or a crisis line in your country.<br />
+          <p>⚠️ If you are in crisis or thinking about self-harm, please contact your local emergency services or a crisis line in your country.<br />
             LeanOn is peer support — not a substitute for professional mental health care or emergency services.
           </p>
         </div>

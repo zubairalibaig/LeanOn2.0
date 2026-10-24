@@ -127,7 +127,7 @@ export default function ResourcePage({ params }: Props) {
 
         <div className="cta-box">
           <h2>Talk to a LeanOn peer listener —</h2>
-          <p>Real humans with lived experience. No appointment needed. Anonymous. Start instantly.</p>
+          <p>Real humans with lived experience. No appointment needed. Private. Start when a listener is online.</p>
           <a href="/browse"><button className="btn">Find a listener →</button></a>
         </div>
 

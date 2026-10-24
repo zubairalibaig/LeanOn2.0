@@ -97,7 +97,7 @@ const faqSchema = {
       name: 'How much does it cost to vent on LeanOn in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Your first 5 minutes are completely free. After that, sessions are ₹310 for 15 minutes, ₹610 for 30 minutes, or ₹910 for 45 minutes.',
+        text: 'Your first 5 minutes are completely free. After that, sessions start at ₹160 for 15 minutes, ₹310 for 30 minutes or ₹460 for 45 minutes (with a ₹10/min listener; prices vary by listener).',
       },
     },
   ],
@@ -245,7 +245,7 @@ export default function IndiaVentToRealPersonPage() {
           <h2>Anonymous and judgment-free</h2>
           <p>
             You do not need to share your real name. You do not need to explain who you are or where
-            you are from. LeanOn sessions are completely anonymous — your privacy is protected.
+            you are from. LeanOn sessions are private — your privacy is protected.
           </p>
           <p>
             LeanOn listeners are screened and expected to hold space without judgment. No advice unless you ask for it.
@@ -270,7 +270,7 @@ export default function IndiaVentToRealPersonPage() {
           <h2>How much does it cost?</h2>
           <p>
             Your first 5 minutes are completely free — no credit card needed to start. After that:
-            ₹310 for 15 minutes, ₹610 for 30 minutes, ₹910 for 45 minutes.
+            from ₹160 for 15 minutes, ₹310 for 30 minutes, ₹460 for 45 minutes (prices vary by listener).
           </p>
           <p>
             Listeners speak Hindi and other regional languages — filter by language when browsing.
@@ -304,7 +304,7 @@ export default function IndiaVentToRealPersonPage() {
           </div>
           <div className="faq-item">
             <h3>How much does it cost to vent on LeanOn in India?</h3>
-            <p>Your first 5 minutes are completely free. After that, sessions are ₹310 for 15 minutes, ₹610 for 30 minutes, or ₹910 for 45 minutes.</p>
+            <p>Your first 5 minutes are completely free. After that, sessions start at ₹160 for 15 minutes, ₹310 for 30 minutes or ₹460 for 45 minutes (with a ₹10/min listener; prices vary by listener).</p>
           </div>
         </div>
 

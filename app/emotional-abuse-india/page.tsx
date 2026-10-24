@@ -38,7 +38,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is it safe to talk about this on LeanOn?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are completely anonymous and confidential. You do not use your full name. The listener is bound by LeanOn’s confidentiality rules. Nothing leaves the session. LeanOn is specifically designed for situations where you cannot speak freely in the rest of your life.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions are private and confidential. You do not use your full name. The listener is bound by LeanOn’s confidentiality rules. Nothing leaves the session. LeanOn is specifically designed for situations where you cannot speak freely in the rest of your life.' },
     },
     {
       '@type': 'Question',

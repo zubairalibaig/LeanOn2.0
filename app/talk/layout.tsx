@@ -44,7 +44,7 @@ const jsonLd = [
     url: URL,
     serviceType: 'Peer emotional support (non-clinical)',
     provider: { '@id': 'https://www.leanon.app/#organization' },
-    areaServed: ['India', 'United States', 'United Kingdom', 'Canada', 'Australia', 'United Arab Emirates', 'Kuwait', 'Oman', 'Singapore', 'Malaysia'],
+    areaServed: ['India', 'United States', 'United Kingdom', 'Canada', 'United Arab Emirates', 'Kuwait', 'Oman', 'Singapore', 'Malaysia'],
     description: 'One-to-one text or voice conversation with a screened peer listener in India who is available now. Not therapy or emergency care.',
     offers: [
       { '@type': 'Offer', name: `Free ${FREE_SESSION_MINS}-minute first session`, price: '0', priceCurrency: 'INR', description: 'Once per account.' },
