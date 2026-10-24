@@ -267,7 +267,7 @@ export default function LateNightSupportIndiaPage() {
 
         {/* Availability */}
         <div className="card">
-          <p className="section-label">Available right now</p>
+          <p className="section-label">No appointment</p>
           <h2>LeanOn is open — even after midnight</h2>
           <div className="avail-badge">
             <span className="avail-dot" />

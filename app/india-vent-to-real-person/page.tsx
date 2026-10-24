@@ -195,7 +195,7 @@ export default function IndiaVentToRealPersonPage() {
         <p className="lead">
           Sometimes you do not need advice. You do not need solutions. You just need to say it — to
           someone who is actually there, actually present, actually human. LeanOn connects you with
-          real Indian listeners available right now, day or night.
+          real Indian listeners, with no appointment.
         </p>
 
         <a href="/browse" className="cta-hero">Find someone to listen — first 5 min free →</a>
@@ -279,7 +279,7 @@ export default function IndiaVentToRealPersonPage() {
 
         <div className="cta">
           <h2>Koi sun raha hai. Someone is listening.</h2>
-          <p>Real Indian listeners, available right now. Anonymous, affordable.</p>
+          <p>Real Indian listeners. Anonymous, affordable.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>

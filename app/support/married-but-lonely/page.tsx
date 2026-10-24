@@ -183,10 +183,8 @@ export default function MarriedButLonelyPage() {
           ))}
         </div>
 
-        <div className="quote-box">
-          <p>"Though I am married my husband hardly helps and of late has stopped supporting financially too... I don't know if my mom and sister are happy with my visit. They of course want my baby but I don't think they want me."</p>
-          <span>— a real LeanOn session, shared anonymously</span>
-        </div>
+
+        <p>Why does loneliness grow inside a marriage that looks stable from the outside? <a href="/support/marriage-loneliness" style={{color:'#1A8FA0',fontWeight:800}}>Understanding loneliness in marriage →</a></p>
 
         <h2>Why This Is So Hard to Talk About in India</h2>
         <p>
@@ -242,7 +240,7 @@ export default function MarriedButLonelyPage() {
 
         <div className="cta-card">
           <h2>You Deserve to Be Heard</h2>
-          <p>Talk to a real screened peer listener — anonymous, no judgment, available now. First 5 minutes free.</p>
+          <p>Talk to a real screened peer listener — private, no judgment, no appointment. First 5 minutes free.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Talk to someone who understands — first 5 min free →</button></a>
             <a href="/for-women"><button className="btn-secondary">Support for women</button></a>

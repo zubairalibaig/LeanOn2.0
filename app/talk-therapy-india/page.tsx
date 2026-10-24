@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Talk Therapy India — The Power of Saying It Out Loud | LeanOn',
-  description: 'Talk therapy works because speaking things out loud changes them. LeanOn offers real-voice peer conversations from ₹160 — no appointment, available now.',
+  description: 'Talk therapy works because speaking things out loud changes them. LeanOn offers real-voice peer conversations from ₹160 — no appointment.',
   keywords: [
     'talk therapy india', 'talking therapy india', 'verbal therapy india',
     'talk about problems india', 'talking through problems india',
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.leanon.app/talk-therapy-india', languages: { 'en-IN': 'https://www.leanon.app/talk-therapy-india' } },
   openGraph: {
     title: 'Talk Therapy India — The Power of Saying It Out Loud | LeanOn',
-    description: 'Talk therapy works because speaking things out loud changes them. LeanOn offers real-voice peer conversations from ₹160 — no appointment, available now.',
+    description: 'Talk therapy works because speaking things out loud changes them. LeanOn offers real-voice peer conversations from ₹160 — no appointment.',
     url: 'https://www.leanon.app/talk-therapy-india',
     siteName: 'LeanOn',
     type: 'article',
@@ -173,7 +173,7 @@ export default function TalkTherapyIndiaPage() {
 
         <div className="cta-card">
           <h2>Say it out loud. To someone real.</h2>
-          <p>Available now. No appointment. From ₹160. First 5 minutes free.</p>
+          <p>No appointment. From ₹160. First 5 minutes free.</p>
           <a href="/browse" className="btn-cta">Browse listeners &rarr;</a>
         </div>
 

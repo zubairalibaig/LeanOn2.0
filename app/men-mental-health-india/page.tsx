@@ -178,7 +178,7 @@ export default function MenMentalHealthIndiaPage() {
 
         <div className="cta-card">
           <h2>Talking Is Strength</h2>
-          <p>Anonymous peer support from ₹160. No judgment. Available now.</p>
+          <p>Anonymous peer support from ₹160. No judgment. No appointment.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse listeners →</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now →</button></a>

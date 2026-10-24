@@ -255,7 +255,7 @@ export default function BengaluruPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Gets Bengaluru?</h2>
-          <p>Browse peer listeners who understand the pressures of India's tech capital. No appointments, no waitlists, available right now.</p>
+          <p>Browse peer listeners who understand the pressures of India's tech capital. No appointments, no waitlists.</p>
           <div className="cta-btns">
             <a href="/browse?city=bengaluru"><button className="btn-primary">Browse Bengaluru Listeners</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now</button></a>

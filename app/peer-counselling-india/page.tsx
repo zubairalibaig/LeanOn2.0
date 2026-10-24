@@ -158,7 +158,7 @@ export default function PeerCounsellingIndiaPage() {
         <div className="hero">
           <p className="tag">Peer Counselling · India · No Appointment Needed</p>
           <h1>Peer counselling. From someone <em>who has been there.</em></h1>
-          <p className="lead">Not a licensed therapist. Not an AI. A real person who has personally lived through something like what you are carrying — screened for listening, available now, and affordable. Peer counselling on LeanOn starts at ₹160/session, with the first 5 minutes free.</p>
+          <p className="lead">Not a licensed therapist. Not an AI. A real person who has personally lived through something like what you are carrying — screened for listening, no appointment, and affordable. Peer counselling on LeanOn starts at ₹160/session, with the first 5 minutes free.</p>
         </div>
 
         {/* What is peer counselling */}
@@ -203,7 +203,7 @@ export default function PeerCounsellingIndiaPage() {
                   <td className="col-label">LeanOn peer counselling</td>
                   <td>Screened peer listener with lived experience</td>
                   <td>₹160/session (first 5 min free)</td>
-                  <td>No — available now</td>
+                  <td>No appointment needed</td>
                 </tr>
                 <tr>
                   <td className="col-label">Crisis helpline</td>

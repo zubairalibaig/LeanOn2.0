@@ -282,7 +282,7 @@ export default function PeerSupportIndiaGuidePage() {
           <p>Sessions are private. LeanOn does not share session content. You sign up with a phone number (OTP verified) and a first name — no last name or photograph required. LeanOn is not a fully anonymous service: an account with a phone number is required.</p>
 
           <h3>Availability</h3>
-          <p>Listeners set their own availability. Most India-based listeners are most active during evening IST hours. There is no appointment required — browse who is available now and start a session immediately. Listener availability varies and is not guaranteed at all hours.</p>
+          <p>Listeners set their own availability. Most India-based listeners are most active during evening IST hours. There is no appointment required — browse who is available now and request a session. Listener availability varies and is not guaranteed at all hours.</p>
         </div>
 
         <div id="safety" className="section">

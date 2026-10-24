@@ -87,7 +87,7 @@ const faqSchema = {
       name: 'Can I talk about my marriage without my spouse knowing?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn is designed for individuals seeking support for themselves. Your spouse does not need to know, be involved, or consent to you talking about your own experience. There is no record sent to anyone. The session is private to you.',
+        text: 'Yes. LeanOn is designed for individuals seeking support for themselves. Your spouse does not need to know, be involved, or consent to you talking about your own experience. Nothing is sent to your spouse or anyone in your life. The session is private to you.',
       },
     },
     {
@@ -230,10 +230,6 @@ export default function MarriageProblemsIndiaPage() {
           ))}
         </div>
 
-        <div className="quote-box">
-          <p>&ldquo;I have never said any of this to anyone in my life. Not to my mother, not to my friends. The moment I started speaking I realised how long I had been holding it in.&rdquo;</p>
-          <span>— from an anonymous LeanOn session</span>
-        </div>
 
         <h2>You don&apos;t need to have all the answers</h2>
         <p>
@@ -270,7 +266,7 @@ export default function MarriageProblemsIndiaPage() {
         </p>
         <p>
           A peer listener has no stake. They do not know your husband or wife. They will never meet your
-          in-laws. What you say in the session stays in the session. That is exactly why many people find
+          in-laws. Your listener never sees your phone number, and nothing is shared with anyone in your life. That is exactly why many people find
           it possible to be more honest with a stranger about their marriage than with the people who love them.
         </p>
 
@@ -309,7 +305,7 @@ export default function MarriageProblemsIndiaPage() {
         <div className="cta-card">
           <h2>You can say it here</h2>
           <p>
-            Talk to a screened peer listener — anonymous, no judgment, available now.
+            Talk to a screened peer listener — private, no judgment, no appointment.
             First 5 minutes free. ₹160 for a 15-minute session.
           </p>
           <div className="cta-btns">

@@ -26,7 +26,7 @@ export const post = {
 
 <p>India has one of the highest male suicide rates in Asia. Men in India die by suicide at significantly higher rates than women — a pattern that research consistently attributes to lower rates of help-seeking, smaller social support networks, and greater reluctance to acknowledge mental health difficulties.</p>
 
-<p>Studies show that Indian men are significantly less likely than women to seek professional mental health support, less likely to disclose emotional struggles to friends or family, and less likely to even identify their own distress as a mental health issue. They are more likely to describe depression as &quot;tiredness&quot; or &quot;stress,&quot; and more likely to manage anxiety through work, alcohol, or withdrawal rather than through support-seeking.</p>
+<p>Surveys suggest that Indian men are significantly less likely than women to seek professional mental health support, less likely to disclose emotional struggles to friends or family, and less likely to even identify their own distress as a mental health issue. They are more likely to describe depression as &quot;tiredness&quot; or &quot;stress,&quot; and more likely to manage anxiety through work, alcohol, or withdrawal rather than through support-seeking.</p>
 
 <p>This is not because men suffer less. The evidence suggests they suffer differently and suffer in silence. The silence is not strength. It is a learned behaviour that is quietly devastating.</p>
 

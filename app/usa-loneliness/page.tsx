@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Feeling Lonely in the USA — The Silent Side of the American Dream',
-    description: 'You moved to America for a better life. Nobody told you it would feel this empty. LeanOn peer listeners are Indian, they understand, and they are available right now.',
+    description: 'You moved to America for a better life. Nobody told you it would feel this empty. LeanOn peer listeners are Indian and they understand; US evenings are Indian mornings, when listeners are often online.',
     url: 'https://www.leanon.app/usa-loneliness',
     siteName: 'LeanOn',
     type: 'article',

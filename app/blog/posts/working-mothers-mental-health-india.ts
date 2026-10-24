@@ -70,6 +70,6 @@ That does not mean there is nothing to be done. But it starts with naming what i
 
 ---
 
-*[LeanOn peer listeners](/browse) are screened people who understand what working mothers carry — many of them are working mothers themselves. Talk to someone who gets it. Anonymous, available now, from ₹160.*
+*[LeanOn peer listeners](/browse) are screened people who understand what working mothers carry — many of them are working mothers themselves. Talk to someone who gets it. Private, no appointment, from ₹160.*
   `.trim(),
 }

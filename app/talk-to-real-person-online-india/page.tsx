@@ -231,7 +231,7 @@ export default function TalkToRealPersonPage() {
 
         <div className="cta">
           <h2>A real human is waiting to hear you</h2>
-          <p>Anonymous, affordable, available right now across India.</p>
+          <p>Private, affordable, no appointment, across India.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>

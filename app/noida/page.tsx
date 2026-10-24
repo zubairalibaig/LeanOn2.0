@@ -185,7 +185,7 @@ export default function NoidaPage() {
 
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Gets Noida?</h2>
-          <p>Browse peer listeners who understand NCR life. No appointments, no waitlists, available right now.</p>
+          <p>Browse peer listeners who understand NCR life. No appointments, no waitlists.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Noida Listeners</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now</button></a>

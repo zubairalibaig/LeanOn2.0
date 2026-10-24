@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Online Counseling India — Affordable Emotional Support Without a Therapist | LeanOn',
-  description: 'Looking for online counseling in India? LeanOn connects you with peer listeners from ₹160 per 15-minute session — screened, confidential, available now. No appointment, no therapist fees.',
+  description: 'Looking for online counseling in India? LeanOn connects you with peer listeners from ₹160 per 15-minute session — screened, confidential, no appointment, no therapist fees.',
   keywords: [
     'online counseling India', 'online counselling India', 'affordable online counseling India',
     'emotional support online India', 'talk to someone online India', 'online therapy India cheap',
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Online Counseling India — Affordable Emotional Support Without a Therapist | LeanOn',
-    description: 'Looking for online counseling in India? LeanOn connects you with peer listeners from ₹160 per 15-minute session — screened, confidential, available now. No appointment, no therapist fees.',
+    description: 'Looking for online counseling in India? LeanOn connects you with peer listeners from ₹160 per 15-minute session — screened, confidential, no appointment, no therapist fees.',
     url: 'https://www.leanon.app/online-counseling-india',
     siteName: 'LeanOn',
     type: 'article',
@@ -51,7 +51,7 @@ const faqSchema = {
       name: 'Is peer support effective for emotional problems?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Research consistently shows that feeling heard by another person — peer or professional — is one of the most effective ways to process difficult emotions. Peer support has been used extensively in mental health contexts globally, including for grief, addiction recovery, and everyday stress. For the majority of people dealing with everyday emotional weight (not clinical conditions), peer support is genuinely effective and often more accessible than therapy.',
+        text: 'Research suggests that feeling heard by another person — peer or professional — is one of the most effective ways to process difficult emotions. Peer support has been used extensively in mental health contexts globally, including for grief, addiction recovery, and everyday stress. For the majority of people dealing with everyday emotional weight (not clinical conditions), peer support is genuinely effective and often more accessible than therapy.',
       },
     },
     {
@@ -160,9 +160,9 @@ export default function OnlineCounselingIndiaPage() {
         </div>
 
         <div className="hero">
-          <p className="badge">Peer Support · Available Now · Anonymous</p>
+          <p className="badge">Peer Support · No Appointment · Private</p>
           <h1>Online Counseling India — <em>Without the ₹5,000 Fee</em></h1>
-          <p className="lead">Most people searching for online counseling in India are not looking for a diagnosis. They need someone to talk to — real, screened, confidential, and affordable. LeanOn is that: peer listeners available now, from ₹160 for 15 minutes.</p>
+          <p className="lead">Most people searching for online counseling in India are not looking for a diagnosis. They need someone to talk to — real, screened, confidential, and affordable. LeanOn is that: peer listeners with no appointment, from ₹160 for 15 minutes.</p>
           <a href="/browse" className="cta-hero">Browse listeners now →</a>
         </div>
 

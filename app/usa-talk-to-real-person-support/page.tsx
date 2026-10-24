@@ -247,7 +247,7 @@ export default function USATalkToRealPersonPage() {
             </div>
             <div className="compare-col human">
               <h3>💙 LeanOn Real Human</h3>
-              <p>No insurance needed, no appointments — anonymous, available now</p>
+              <p>No insurance needed, no appointments — anonymous</p>
             </div>
           </div>
         </div>
@@ -265,7 +265,7 @@ export default function USATalkToRealPersonPage() {
             <li>A real person who is fully present and undivided in their attention</li>
             <li>No advice unless you ask for it — just listening and presence</li>
             <li>Complete anonymity — no name, no location, no identifying information required</li>
-            <li>Available now, 2am, Sunday morning, whenever loneliness hits</li>
+            <li>No appointment — US evenings fall in the Indian morning, when listeners are often online</li>
             <li>No insurance, no waitlist, no prescription — just a human who listens</li>
             <li>First 5 minutes free — no commitment, no credit card required upfront</li>
           </ul>
@@ -278,8 +278,8 @@ export default function USATalkToRealPersonPage() {
             hour. Therapy is weeks away. You&apos;ve already tried ChatGPT and it felt worse, not better.
           </p>
           <p>
-            LeanOn has real human listeners available right now — at 2am, at 4am, on holidays. Because
-            loneliness doesn&apos;t keep office hours. And neither do we.
+            LeanOn&apos;s listeners are real humans in India, so availability follows Indian time — check
+            who is online now. No appointment, and no office hours to wait for.
           </p>
           <a href="/browse" className="cta-night">Find a listener right now →</a>
         </div>

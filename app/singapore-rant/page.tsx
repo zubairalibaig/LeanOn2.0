@@ -180,7 +180,7 @@ export default function SingaporeRantPage() {
           <p>By the time you leave the office, you are carrying the weight of a hundred small irritations —
             the dismissive comment, the unrealistic deadline, the meeting that should have been an email.
             You go home and there is no one to just dump it all on.</p>
-          <p>LeanOn listeners are available right now. Start talking, get it out, feel lighter.</p>
+          <p>LeanOn listeners are in India, and Singapore evenings overlap Indian evenings. Start talking, get it out, feel lighter.</p>
           <a href="/browse" className="cta-night">Talk to a listener now →</a>
         </div>
 

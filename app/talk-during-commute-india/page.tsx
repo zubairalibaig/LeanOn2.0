@@ -177,7 +177,7 @@ export default function TalkDuringCommuteIndiaPage() {
 
         <div className="cta-card">
           <h2>Use the commute to actually process it.</h2>
-          <p>A real listener, voice call, available now. 15 minutes from &#x20b9;160. Done before you park.</p>
+          <p>A real listener, voice call. 15 minutes from &#x20b9;160. Done before you park.</p>
           <a href="/browse" className="btn-cta">Start your session &#x2192;</a>
         </div>
 

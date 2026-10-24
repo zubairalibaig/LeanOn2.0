@@ -157,10 +157,6 @@ export default function AdultingIndiaPage() {
           not enough places to put them.
         </p>
 
-        <div className="quote-box">
-          <p>"Just wanted to talk. Feelin lonely. Too many things — job marriage pressure going on. Adulting is hard."</p>
-          <span>— a real LeanOn session, shared anonymously</span>
-        </div>
 
         <h2>The Specific Stack of Pressures</h2>
         <div className="stack">
@@ -211,7 +207,7 @@ export default function AdultingIndiaPage() {
 
         <div className="cta-card">
           <h2>Just Wanted to Talk?</h2>
-          <p>Real person. No judgment. No agenda. Anonymous, available now. First 5 minutes free, from ₹160 for 15 minutes.</p>
+          <p>Real person. No judgment. No agenda. private, no appointment. First 5 minutes free, from ₹160 for 15 minutes.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Start talking — first 5 min free →</button></a>
             <a href="/support/men-loneliness-india"><button className="btn-secondary">Men &amp; loneliness</button></a>

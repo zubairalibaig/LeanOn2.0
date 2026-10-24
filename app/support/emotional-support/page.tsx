@@ -24,7 +24,7 @@ const faqSchema = {
       name: 'What is emotional support?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Emotional support is the experience of feeling genuinely heard, understood, and less alone. It is different from advice-giving or problem-solving — it is about having someone acknowledge your feelings as real and valid rather than rushing to fix things. Research consistently shows that feeling emotionally supported is one of the most powerful factors in human resilience and wellbeing.',
+        text: 'Emotional support is the experience of feeling genuinely heard, understood, and less alone. It is different from advice-giving or problem-solving — it is about having someone acknowledge your feelings as real and valid rather than rushing to fix things. Research suggests that feeling emotionally supported is one of the most powerful factors in human resilience and wellbeing.',
       },
     },
     {
@@ -154,7 +154,7 @@ export default function EmotionalSupportPage() {
         {/* What Is Emotional Support */}
         <div className="section">
           <h2>What Is Emotional Support?</h2>
-          <p>Emotional support is the experience of feeling understood and less alone. It is about being heard without judgment — having someone acknowledge your feelings as real and valid rather than rushing to solutions or silver linings. Research consistently shows that emotional support is one of the strongest predictors of resilience, recovery, and mental wellbeing.</p>
+          <p>Emotional support is the experience of feeling understood and less alone. It is about being heard without judgment — having someone acknowledge your feelings as real and valid rather than rushing to solutions or silver linings. Research suggests that emotional support is one of the strongest predictors of resilience, recovery, and mental wellbeing.</p>
 
           <h3>Support Is Not the Same as Advice</h3>
           <p>Most of us have experienced going to a friend or family member in distress and receiving a list of things we should do — when all we actually wanted was for someone to sit with us in what we were feeling. Genuine emotional support is rarer than it sounds. It requires the other person to resist the urge to fix and instead simply be present.</p>
@@ -178,7 +178,7 @@ export default function EmotionalSupportPage() {
           <p>Emotional distress does not follow a schedule. It peaks at 1 AM when you cannot sleep, on Sunday afternoons when the loneliness is loudest, or at moments when something small tips over everything you have been holding together. Online support is available in those exact moments — not just during business hours.</p>
 
           <h3>Proven Effectiveness</h3>
-          <p>Research consistently shows that online peer support can be as effective as in-person support for emotional wellbeing. The key factor is not proximity — it is feeling genuinely heard and understood. That is fully possible through a text or voice conversation with the right person.</p>
+          <p>Research suggests that online peer support can help in a similar way to in-person support for emotional wellbeing. The key factor is not proximity — it is feeling genuinely heard and understood. That is fully possible through a text or voice conversation with the right person.</p>
         </div>
 
         {/* What to Expect from a Peer Listener */}

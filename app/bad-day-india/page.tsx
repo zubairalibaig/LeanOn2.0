@@ -82,7 +82,7 @@ export default function BadDayIndiaPage() {
         </div>
         <div className="section">
           <h2>No Appointment, No Commitment</h2>
-          <p>You do not need to be in crisis. You do not need to have a serious mental health issue. You just need to talk. LeanOn is available right now &mdash; browse listeners who are online, start a session, the first 5 minutes are free. If it helps, continue. If not, you stop and pay nothing.</p>
+          <p>You do not need to be in crisis. You do not need to have a serious mental health issue. You just need to talk. There is no appointment on LeanOn &mdash; browse listeners who are online, start a session, the first 5 minutes are free. If it helps, continue. If not, you stop and pay nothing.</p>
         </div>
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
         <div className="cta-card"><h2>Start talking. Right now.</h2><p>Real person. No judgment. First 5 minutes free. From ₹160.</p><a href="/browse" className="btn-cta">Find a listener &rarr;</a></div>

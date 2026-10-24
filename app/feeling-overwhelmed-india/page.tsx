@@ -43,7 +43,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is it confidential?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions on LeanOn are private — you do not need to share your name, your job, your location, or any identifying information. What you say in a session stays in the session. Listeners are bound by a strict confidentiality commitment and are not connected to your employer, your family, or any institution. You can say anything without consequence.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Sessions on LeanOn are private — you do not need to share your name, your job, your location, or any identifying information. Your listener never sees your phone number, and nothing is shared with anyone in your life. Listeners are bound by a strict confidentiality commitment and are not connected to your employer, your family, or any institution. You can say anything without consequence.' },
     },
     {
       '@type': 'Question',
@@ -189,7 +189,7 @@ export default function FeelingOverwhelmedPage() {
 
         <div className="cta-card">
           <h2>You don&apos;t have to keep carrying this alone.</h2>
-          <p>A real peer listener is available right now — anonymous, judgment-free, and ready to sit with you exactly where you are. First 5 minutes are free.</p>
+          <p>A real peer listener may be online right now — anonymous, judgment-free, and ready to sit with you exactly where you are. First 5 minutes are free.</p>
           <div className="cta-buttons">
             <a href="/talk?src=seo" className="btn-cta">Talk to someone now →</a>
             <a href="/browse" className="btn-cta-outline">Browse listeners →</a>

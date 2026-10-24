@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Affordable Therapy Alternative for Indians in the USA — LeanOn Peer Listeners',
-  description: 'Therapy in the USA costs $200/hr with a 6-week waitlist. LeanOn peer listeners start at $10 for 15 minutes, available right now, and understand the Indian cultural context without explanation.',
+  description: 'Therapy in the USA costs $200/hr with a 6-week waitlist. LeanOn peer listeners start at $10 for 15 minutes, need no appointment, and understand the Indian cultural context without explanation.',
   keywords: [
     'therapy alternative indians usa', 'affordable therapy usa indian', 'cheap therapy alternative usa',
     'therapy too expensive usa', 'peer support instead of therapy usa', 'mental health support indians usa',
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Affordable Therapy Alternative for Indians in the USA — LeanOn Peer Listeners',
-    description: 'Therapy is $200/hr with a 6-week wait. LeanOn starts at $10 for 15 minutes, available now, with listeners who understand the Indian experience without needing it explained.',
+    description: 'Therapy is $200/hr with a 6-week wait. LeanOn starts at $10 for 15 minutes, with no appointment and listeners who understand the Indian experience without needing it explained.',
     url: 'https://www.leanon.app/usa-therapy-alternative',
     siteName: 'LeanOn',
     type: 'article',
@@ -149,11 +149,11 @@ export default function UsaTherapyAlternativePage() {
           <a href="/">Home</a><span>›</span>Therapy Alternative USA
         </div>
 
-        <h1>Therapy is $200 an Hour and Six Weeks Away.<br />LeanOn Is $10 and Available Right Now.</h1>
+        <h1>Therapy is $200 an Hour and Six Weeks Away.<br />LeanOn Is From $10, With No Appointment.</h1>
         <p className="lead">
           You know you need to talk to someone. You looked into therapy — $200 a session, three-week waitlist,
           and a therapist who has never heard of an H-1B and will need the whole cultural backstory before
-          you can get to how you actually feel. LeanOn peer listeners are Indian, available now, and a fraction
+          you can get to how you actually feel. LeanOn peer listeners are Indian, need no appointment, and cost a fraction
           of the cost.
         </p>
 

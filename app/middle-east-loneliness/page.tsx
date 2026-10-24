@@ -66,7 +66,7 @@ const faqSchema = {
       name: 'Is LeanOn available late at night from the Middle East?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn listeners are available throughout the day. Many India-based listeners are active during Gulf evening hours. No appointment needed — browse who is available now.',
+        text: 'Yes. LeanOn listeners are available throughout the day. Many India-based listeners are active during Gulf evening hours. No appointment needed — browse who is online right now.',
       },
     },
   ],

@@ -184,7 +184,7 @@ export default function MorningEmotionalSupportIndiaPage() {
 
         <div className="cta-card">
           <h2>Reset before the day starts.</h2>
-          <p>A listener is available now &mdash; no appointment, voice call, 15 minutes. Say what&apos;s sitting on you and get on with the day.</p>
+          <p>A listener may be online right now &mdash; no appointment, voice call, 15 minutes. Say what&apos;s sitting on you and get on with the day.</p>
           <a href="/browse" className="btn-cta">Start with 15 minutes &#x2192;</a>
         </div>
 

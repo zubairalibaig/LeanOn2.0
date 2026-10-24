@@ -184,7 +184,7 @@ export default function UKTalkToRealPersonPage() {
         <p className="lead">
           LeanOn is a peer support platform that connects people in the UK with real human listeners —
           people with lived experience, not AI chatbots. No NHS waiting list. No referral. No appointment.
-          A real person, available now, for as little as £8.
+          A real person, no appointment, from £8.
         </p>
 
         <a href="/browse" className="cta-hero">Talk to a real person now — first 5 min free →</a>
@@ -226,7 +226,7 @@ export default function UKTalkToRealPersonPage() {
             </div>
             <div className="compare-col human">
               <h3>💙 LeanOn Real Human</h3>
-              <p>Available now. No referral, no waiting list, no gatekeeping.</p>
+              <p>No appointment. No referral, no waiting list, no gatekeeping.</p>
             </div>
           </div>
           <div className="compare-row">
@@ -264,7 +264,7 @@ export default function UKTalkToRealPersonPage() {
             <li>A real person — fully present, undivided attention, no scripts</li>
             <li>No advice unless you want it — just listening and space to be heard</li>
             <li>Complete anonymity — no name, no location, no identifying details required</li>
-            <li>Available now, at midnight, on Sunday, whenever you need it most</li>
+            <li>No appointment — listeners are in India, so availability follows Indian time</li>
             <li>No NHS referral, no GP appointment, no insurance — just a human who listens</li>
             <li>First 5 minutes free — no credit card, no commitment required</li>
           </ul>
@@ -278,8 +278,8 @@ export default function UKTalkToRealPersonPage() {
             won&apos;t worry.
           </p>
           <p>
-            LeanOn listeners are available right now. At midnight. On bank holidays. When the NHS
-            waiting list stretches to next year. A real person. Tonight.
+            LeanOn listeners are in India, so UK evenings are late night there — check who is online now.
+            No NHS waiting list, no appointment. A real person.
           </p>
           <a href="/browse" className="cta-night">Find a listener right now →</a>
         </div>

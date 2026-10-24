@@ -81,7 +81,7 @@ export default function OmanTalkToSomeonePage() {
         </h1>
 
         <p style={{ fontSize: '1.05rem', color: '#444', lineHeight: 1.7, marginBottom: 32 }}>
-          Oman has a large and close-knit Indian community — and yet the loneliness of expat life can still feel very real. Whether it is late at night in Muscat when there is nobody to call, or a weight you cannot explain to your family back home, LeanOn gives you a real person to talk to. Anonymous, in your language, available now.
+          Oman has a large and close-knit Indian community — and yet the loneliness of expat life can still feel very real. Whether it is late at night in Muscat when there is nobody to call, or a weight you cannot explain to your family back home, LeanOn gives you a real person to talk to. Anonymous, in your language.
         </p>
 
         <a href="/browse" style={{ display: 'inline-block', background: '#0F4867', color: '#fff', padding: '14px 28px', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: '1rem', marginBottom: 48 }}>

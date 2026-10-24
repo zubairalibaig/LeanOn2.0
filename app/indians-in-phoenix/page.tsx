@@ -83,7 +83,7 @@ export default function IndiansInPhoenixPage() {
           <h2>Chandler, Tempe, Scottsdale: Phoenix&rsquo;s Emerging Indian Hub</h2>
           <p>The Greater Phoenix area — particularly Chandler, Tempe, Gilbert, and Scottsdale — has seen rapid growth in its Indian tech worker population. Intel&rsquo;s semiconductor fabs in Chandler, the Taiwan Semiconductor Manufacturing Company (TSMC) facilities, and the broader tech expansion in the East Valley have brought thousands of Indian engineers and their families to Arizona in the past few years.</p>
           <p>Phoenix is hot, sprawling, and car-dependent. Unlike the Bay Area or Dallas, the Indian community infrastructure is still catching up. The temple exists, the Indian grocery stores are there, and the community is forming — but for many new arrivals, the sense of deep community that takes years to build is not yet present. You might be in a new subdivision in Gilbert with Indian neighbours on one side but still feel profoundly alone in your first year or two.</p>
-          <p>LeanOn bridges that gap. A real Indian peer listener in India, available now, before your Phoenix community fully forms. First 5 minutes free.</p>
+          <p>LeanOn bridges that gap. A real Indian peer listener in India, with no appointment, before your Phoenix community fully forms. First 5 minutes free.</p>
         </div>
 
         <div className="section">

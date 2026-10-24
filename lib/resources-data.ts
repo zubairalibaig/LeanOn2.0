@@ -260,7 +260,7 @@ The pressure that students face is multidimensional. Academic pressure is obviou
 
 The physiological impact of chronic exam stress is real. Sustained high cortisol impairs memory consolidation — the very cognitive function being tested. Sleep deprivation, common among students studying late, further impairs memory and emotional regulation. The result is a cruel irony: the stress of needing to perform well actively impairs the ability to perform well.
 
-What genuinely helps? Adequate sleep is non-negotiable — research consistently shows that sleep consolidates learning more effectively than additional hours of study. Regular physical movement, even short walks, reduces cortisol and improves cognitive performance. Study breaks are not a luxury: they are neurologically essential. And emotional processing — talking about the pressure, the fear, the loneliness of preparation — matters more than most students allow themselves to acknowledge.
+What genuinely helps? Adequate sleep is non-negotiable — research suggests that sleep consolidates learning more effectively than additional hours of study. Regular physical movement, even short walks, reduces cortisol and improves cognitive performance. Study breaks are not a luxury: they are neurologically essential. And emotional processing — talking about the pressure, the fear, the loneliness of preparation — matters more than most students allow themselves to acknowledge.
 
 Many students in India who use LeanOn do so during exam seasons, seeking a space to talk about the pressure they are under without burdening their family (who are often deeply invested in the outcome) or their peers (who are in the same competitive situation). A listener who has been through their own exam experience brings genuine understanding — and the reminder that you are more than your results.`,
   },
@@ -362,7 +362,7 @@ LeanOn peer listeners provide a uniquely safe container for vulnerability practi
 
 In India, these barriers are often amplified. Cultural values around self-reliance and not being a "burden" run deep. The stigma around mental and emotional struggles — the idea that such difficulties reveal weakness of character — makes help-seeking particularly loaded. And the social density of Indian life, where a request for help can quickly become family or community news, makes the privacy cost of asking high.
 
-The psychological reality is that the barriers to asking for help are largely distortions. Research consistently shows that when people ask for help, it is received more positively than they expected. People generally feel good about being asked — it signals trust and creates connection. The imagined reaction (judgment, imposition, dismissal) rarely matches reality.
+The psychological reality is that the barriers to asking for help are largely distortions. Research suggests that when people ask for help, it is received more positively than they expected. People generally feel good about being asked — it signals trust and creates connection. The imagined reaction (judgment, imposition, dismissal) rarely matches reality.
 
 The act of asking also has a significant cognitive benefit: it moves the problem from internal to external, making it possible to receive new perspectives that you simply cannot generate alone when you are inside the problem.
 
@@ -424,7 +424,7 @@ Talking to a peer listener on LeanOn — someone who has navigated their own adv
 
 India's traditional joint family system, which historically provided elderly members with daily social integration, is declining. Urbanization, migration, and the rise of nuclear families mean that many elderly Indians now live alone or with just their partner — separated from children and grandchildren by geography, and increasingly by the pace of modern life.
 
-The consequences of elderly loneliness are severe. Research consistently shows that chronic loneliness in old age is associated with significantly elevated risk of dementia, cardiovascular disease, depression, and premature death. The health impact of chronic loneliness is comparable to smoking 15 cigarettes a day.
+The consequences of elderly loneliness are severe. Research suggests that chronic loneliness in old age is associated with significantly elevated risk of dementia, cardiovascular disease, depression, and premature death. The health impact of chronic loneliness is comparable to smoking 15 cigarettes a day.
 
 In India, the elderly face unique barriers to addressing loneliness: cultural norms that discourage complaining, the belief that family should be sufficient (and that needing more reveals family failure), limited mobility, and unfamiliarity with digital platforms that might provide connection.
 

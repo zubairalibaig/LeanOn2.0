@@ -171,7 +171,7 @@ export default function PaidFriendIndiaPage() {
                 <tr><td>Training</td><td>Licensed mental health professional</td><td>Trained peer with lived experience</td></tr>
                 <tr><td>Purpose</td><td>Diagnose and treat clinical conditions</td><td>Listen, empathise, support</td></tr>
                 <tr><td>Tone</td><td>Clinical, structured</td><td>Human, conversational</td></tr>
-                <tr><td>Availability</td><td>Appointments, waiting lists</td><td>Available now, no appointment</td></tr>
+                <tr><td>Availability</td><td>Appointments, waiting lists</td><td>No appointment</td></tr>
                 <tr className="highlight-row"><td>Cost</td><td>&#8377;1,500&ndash;5,000/session</td><td>From &#8377;160/session</td></tr>
                 <tr><td>Right for</td><td>Clinical mental health conditions</td><td>Processing, venting, feeling heard</td></tr>
               </tbody>

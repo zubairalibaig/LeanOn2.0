@@ -48,7 +48,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Can I talk about the other person without them knowing?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. What you say in a session stays in the session. The listener has no way of contacting your partner and no reason to. You can describe your partner, the situation, the context &mdash; fully and honestly &mdash; without it reaching them.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Your listener never sees your phone number, and nothing is shared with anyone in your life. The listener has no way of contacting your partner and no reason to. You can describe your partner, the situation, the context &mdash; fully and honestly &mdash; without it reaching them.' },
     },
     {
       '@type': 'Question',
@@ -180,7 +180,7 @@ export default function AfterFightWithPartnerIndiaPage() {
 
         <div className="cta-card">
           <h2>Get it out before it takes over the day.</h2>
-          <p>A real listener, available now &mdash; no appointment, no judgment, no advice unless you want it. Anonymous. 15 minutes from &#x20b9;160.</p>
+          <p>A real listener &mdash; no appointment, no judgment, no advice unless you want it. Anonymous. 15 minutes from &#x20b9;160.</p>
           <a href="/browse" className="btn-cta">Get it out before it takes over &#x2192;</a>
         </div>
 

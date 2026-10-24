@@ -32,6 +32,9 @@ export async function POST(req: NextRequest) {
   const matches = isReviewPhone(phone)
 
   if (!code) return NextResponse.json({ review: matches })
+  if (body?.ageConfirmed !== true) {
+    return NextResponse.json({ error: 'Please confirm you are 18 or older to continue.', code: 'age_not_confirmed' }, { status: 400 })
+  }
   if (!matches || !reviewCodeMatches(code)) {
     logger.warn('review-login: wrong phone or code', { ip })
     return NextResponse.json({ error: 'Incorrect code. Please check and try again.' }, { status: 401 })

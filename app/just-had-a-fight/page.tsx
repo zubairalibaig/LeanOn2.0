@@ -196,7 +196,7 @@ export default function JustHadAFightPage() {
 
         <div className="cta-card">
           <h2>You don&apos;t have to hold it in until tonight.</h2>
-          <p>A listener is available right now — no appointment, no judgment, no advice unless you want it. Just say what happened.</p>
+          <p>A listener may be online right now — no appointment, no judgment, no advice unless you want it. Just say what happened.</p>
           <a href="/browse" className="btn-cta">Talk to someone now →</a>
         </div>
 

@@ -171,7 +171,7 @@ export default function CanadaTalkToSomeonePage() {
         </div>
 
         <div className="night-box">
-          <h2>🌙 Available right now — no appointment, no waiting room</h2>
+          <h2>🌙 No appointment, no waiting room</h2>
           <p>You do not need to book a week in advance. You do not need to explain why you want to talk.
             Browse the listeners who are available right now, pick the one who feels right, and start
             your first 5 minutes free.</p>

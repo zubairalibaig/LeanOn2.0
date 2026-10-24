@@ -264,7 +264,7 @@ export default function LoveProblemsIndiaPage() {
 
         <div className="cta">
           <h2>Ready to talk it through?</h2>
-          <p>Anonymous, no judgment, available right now.</p>
+          <p>Private, no judgment, no appointment.</p>
           <a href="/talk?src=seo" className="btn-white">Talk it through — first 5 min free →</a><br />
           <a href="/browse" className="btn-orange">Browse listeners →</a>
         </div>

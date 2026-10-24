@@ -115,7 +115,7 @@ function sessionEndLabel(s: SessionRow): { text: string; color: string; hint?: s
 type TalkMetrics = {
   ready: boolean; message?: string; days: number
   searches: number; seekers: number; nobodyFree: number; stoppedBeforeRequest: number; withRequest: number
-  hopsTotal: number; avgHopsPerSearch: number; matched: number; avgHopsToMatch: number; medianConnectSecs: number | null; unmatchedAfterRequests: number
+  hopsTotal: number; avgHopsPerSearch: number; matched: number; avgHopsToMatch: number; medianConnectSecs: number | null; p90ConnectSecs?: number | null; validAttempts?: number; connectionSuccessPct?: number | null; unmatchedAfterRequests: number
   completed: number; avgMins: number; endedBy: Record<string, number>
   freeMatchedSeekers: number; converted: number; browseStarted: number
 }
@@ -292,7 +292,8 @@ function TalkMetricsCard({ headers }: { headers: () => Record<string, string> })
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {box('Searches started', m.searches, `${m.seekers} seeker${m.seekers === 1 ? '' : 's'}`)}
               {box('Connected', m.matched, `${pct(m.matched, m.searches)} of searches`)}
-              {box('Time to connect', m.medianConnectSecs == null ? '—' : m.medianConnectSecs < 90 ? `${m.medianConnectSecs}s` : `${Math.round(m.medianConnectSecs / 60)} min`, 'median, first request → accepted')}
+              {box('Connection success', m.connectionSuccessPct == null ? '—' : `${m.connectionSuccessPct}%`, `${m.matched} connected of ${m.validAttempts ?? '—'} valid attempts`)}
+              {box('Time to connect', m.medianConnectSecs == null ? '—' : m.medianConnectSecs < 90 ? `${m.medianConnectSecs}s` : `${Math.round(m.medianConnectSecs / 60)} min`, `median, first request → accepted · slowest 10%: ${m.p90ConnectSecs == null ? '—' : m.p90ConnectSecs < 90 ? m.p90ConnectSecs + 's' : Math.round(m.p90ConnectSecs / 60) + ' min'}`)}
               {box('Hops to connect', m.avgHopsToMatch || '—', `avg listeners asked · ${m.hopsTotal} requests in all`)}
               {box('Nobody free', m.nobodyFree, pct(m.nobodyFree, m.searches) + ' of searches — need more listeners online')}
               {box('Asked, nobody accepted', m.unmatchedAfterRequests, pct(m.unmatchedAfterRequests, m.withRequest) + ' of searches that asked someone')}

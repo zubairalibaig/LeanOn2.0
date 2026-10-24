@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Having a Bad Day? Talk It Out With a Real Listener | LeanOn India',
-  description: 'When the day has gone sideways and you need someone to hear you — LeanOn connects you with a real peer listener in India in minutes. Anonymous, no appointment, available now.',
+  description: 'When the day has gone sideways and you need someone to hear you — LeanOn connects you with a real peer listener in India in minutes. Private, no appointment.',
   keywords: [
     'having a bad day India', 'bad day what to do India',
     'my day is going terrible India', 'bad day at work India',
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.leanon.app/having-a-bad-day', languages: { 'en-IN': 'https://www.leanon.app/having-a-bad-day' } },
   openGraph: {
     title: 'Having a Bad Day? Talk It Out With a Real Listener | LeanOn India',
-    description: 'When the day has gone sideways and you need someone to hear you — LeanOn connects you with a real peer listener in India in minutes. Anonymous, no appointment, available now.',
+    description: 'When the day has gone sideways and you need someone to hear you — LeanOn connects you with a real peer listener in India in minutes. Private, no appointment.',
     url: 'https://www.leanon.app/having-a-bad-day',
     siteName: 'LeanOn',
     type: 'article',
@@ -200,7 +200,7 @@ export default function HavingABadDayPage() {
 
         <div className="cta-card">
           <h2>The afternoon does not have to be a write-off.</h2>
-          <p>A listener is available right now. 15 minutes is enough to get it out and return to your day from a different state.</p>
+          <p>No appointment needed. 15 minutes is enough to get it out and return to your day from a different state.</p>
           <a href="/browse" className="btn-cta">Talk it out now →</a>
         </div>
 

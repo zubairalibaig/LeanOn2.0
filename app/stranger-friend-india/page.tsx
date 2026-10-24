@@ -145,7 +145,7 @@ export default function StrangerFriendIndiaPage() {
           <ul>
             <li>Selected by you, based on their real background and areas of experience</li>
             <li>Trained specifically in active listening and empathetic support</li>
-            <li>Bound by confidentiality &mdash; what you say stays in the session</li>
+            <li>Agrees to keep what you share confidential</li>
             <li>Indian &mdash; they understand your cultural context, your family dynamics, your pressures</li>
             <li>Accountable to the platform</li>
           </ul>

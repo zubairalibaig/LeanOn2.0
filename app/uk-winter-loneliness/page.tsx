@@ -175,7 +175,7 @@ export default function UkWinterLonelinessPage() {
           <h2>🕯️ The long evenings do not have to be so solitary</h2>
           <p>There is something uniquely isolating about a dark Tuesday in November when it has been raining
             for three days and the flat feels too small and too quiet. You do not have to just sit with it.</p>
-          <p>LeanOn listeners are available right now — real humans, warm conversations, no waiting.</p>
+          <p>LeanOn listeners are real humans in India — warm conversations, no appointment (availability follows Indian time).</p>
           <a href="/browse" className="cta-night">Find a listener online now →</a>
         </div>
 
@@ -200,7 +200,7 @@ export default function UkWinterLonelinessPage() {
 
         <div className="cta">
           <h2>You do not have to wait for spring</h2>
-          <p>Indian peer listeners, available right now. Anonymous and warm.</p>
+          <p>Indian peer listeners, no appointment. Private and warm.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>

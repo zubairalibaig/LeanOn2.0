@@ -168,7 +168,7 @@ export default function OnlineFriendIndiaPage() {
 
         <div className="cta-card">
           <h2>Real conversation. Real person. No strings.</h2>
-          <p>From ₹160. First 5 minutes free. Available now, no appointment needed.</p>
+          <p>From ₹160. First 5 minutes free. No appointment needed.</p>
           <a href="/browse" className="btn-cta">Browse listeners &rarr;</a>
         </div>
 

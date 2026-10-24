@@ -150,6 +150,10 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}))
   const token = typeof body?.token === 'string' ? body.token : ''
   if (!token) return NextResponse.json({ error: 'Missing verification token.' }, { status: 400 })
+  // LeanOn is 18+ (Terms). The sign-in page asks the user to confirm it; refuse without.
+  if (body?.ageConfirmed !== true) {
+    return NextResponse.json({ error: 'Please confirm you are 18 or older to continue.', code: 'age_not_confirmed' }, { status: 400 })
+  }
   // ISO country code from the auth page's country selector (e.g. 'IN', 'US', 'GB').
   // Validated as a simple 2-letter string; unknown values are stored as-is (tolerated).
   const accountCountry = typeof body?.country === 'string' && /^[A-Z]{2}$/.test(body.country)

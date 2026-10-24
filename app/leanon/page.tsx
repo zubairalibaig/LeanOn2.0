@@ -245,7 +245,7 @@ export default function LeanOnBrandPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Lean on Someone?</h2>
-          <p>No appointment needed. Someone is available right now.</p>
+          <p>No appointment needed. A session starts when a listener accepts.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Start now</button></a>
             <a href="/browse"><button className="btn-secondary">Browse peer listeners</button></a>

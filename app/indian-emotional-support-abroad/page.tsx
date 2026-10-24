@@ -54,6 +54,26 @@ const data: ReadyToTalkLandingData = {
     {
       "q": "Can I try LeanOn before paying?",
       "a": "Yes. New seekers get one free 5-minute introductory session (one per account)."
+    },
+    {
+      "q": "When are listeners online if I live abroad?",
+      "a": "Listeners are in India and choose their own hours, so availability follows Indian time (IST). Evenings in the Gulf, Singapore and Malaysia overlap Indian evenings, when most listeners are online. UK evenings are late night in India, and US or Canadian evenings fall in the Indian morning, so fewer listeners may be online then. Browse shows who is online right now."
+    },
+    {
+      "q": "Can I talk in Hindi or another Indian language?",
+      "a": "Each listener's profile shows the languages they speak, and you choose who to request. Hindi and English are the most common; other Indian languages depend on which listeners are online."
+    },
+    {
+      "q": "How much does it cost outside India, and how am I charged?",
+      "a": "Outside India a 15-minute session is from US$10 (30 minutes from US$15, 45 minutes from US$20), shown in your local currency where available. You top up a LeanOn wallet and are charged in Indian rupees, so your card needs international payments enabled. You are charged only if a listener accepts, unused minutes return to your wallet, and unused balance is refundable on request."
+    },
+    {
+      "q": "Which countries can sign in?",
+      "a": "You sign in with a one-time code sent to your mobile number. Supported countries include the USA, UK, Canada, Australia, the UAE, Kuwait, Oman, Singapore and Malaysia."
+    },
+    {
+      "q": "Will a listener definitely be available?",
+      "a": "Not always. A session starts only when an available listener accepts your request. If nobody can, you are not charged, and you can leave a listener a message from their profile."
     }
   ],
   "related": [

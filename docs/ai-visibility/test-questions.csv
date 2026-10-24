@@ -1,21 +1,51 @@
-id,cluster,intent,question
-Q01,relationships,conversation,"I just had a big fight with my partner and I'm really upset. Who can I talk to right now in India?"
-Q02,relationships,discovery,"How do I stop having the same arguments with my boyfriend over and over?"
-Q03,relationships,conversation,"I think my partner is cheating and I can't tell my friends. Is there someone I can talk to online in India?"
-Q04,relationships,discovery,"How do I get over a breakup when I keep checking their Instagram?"
-Q05,marriage-family,conversation,"Where can I talk to someone about my marriage problems in India without my family knowing?"
-Q06,marriage-family,conversation,"My husband is emotionally unavailable and I feel alone in my marriage. Who can I talk to?"
-Q07,marriage-family,discovery,"How do I deal with in-laws who interfere in my marriage in India?"
-Q08,marriage-family,discovery,"My parents are pressuring me to get married and I'm not ready. What should I do?"
-Q09,women,conversation,"Is there a safe app for women in India to talk to someone privately about personal problems?"
-Q10,women,conversation,"I'm a housewife and I feel lonely all day with nobody to talk to. Where can I find someone to talk to?"
-Q11,women,discovery,"I'm a working mother in India and I feel overwhelmed and invisible. How do I cope?"
-Q12,women,conversation,"I'm a new mother and feel isolated. Can I talk to someone online in India who isn't a doctor?"
-Q13,loneliness-stress,conversation,"I feel lonely and have no one to talk to. Are there apps in India where I can talk to a real person?"
-Q14,loneliness-stress,conversation,"I need to vent to someone tonight but I don't want therapy. What are my options in India?"
-Q15,loneliness-stress,discovery,"How do I stop overthinking at night?"
-Q16,loneliness-stress,conversation,"I'm Indian, living in Dubai, and I'm homesick and lonely. Who can I talk to who understands Indian culture?"
-Q17,peer-support,conversation,"Is there an app in India to talk to a real human instead of an AI chatbot?"
-Q18,peer-support,discovery,"What is the difference between peer support and therapy?"
-Q19,peer-support,conversation,"Therapy is too expensive for me in India. What are cheaper ways to get emotional support?"
-Q20,peer-support,discovery,"What are the best peer support apps in India?"
+id,group,intent,question,expected_page
+Q01,relationships,D,"I had a terrible fight with my partner. How can I calm down and process it?",/after-fight-with-partner-india
+Q02,relationships,A,"Where can I talk privately to someone about relationship problems in India?",/talk
+Q03,relationships,A,"My partner never understands my feelings. Who can I talk to?",/support/relationship-stress
+Q04,relationships,D,"My partner cheated on me and I have nobody to discuss it with. What can I do?",/cheating-partner-india
+Q05,relationships,D,"How can I stop overthinking every conversation with my partner?",/overthinking-relationship-india
+Q06,relationships,D,"How do I talk through trust issues without involving our mutual friends?",/relationship-trust-issues-india
+Q07,relationships,A,"I just went through a breakup. Is there someone who will listen without judging?",/support/breakup
+Q08,relationships,D,"How do I deal with loneliness in a long-distance relationship?",/support/long-distance-relationship
+Q09,relationships,D,"We keep having the same arguments. How can I understand my own feelings?",/communication-problems-relationship-india
+Q10,relationships,D,"When should relationship problems be discussed with a counsellor instead of a peer?",/relationship-emotional-support-guide-india
+Q11,marriage-family,A,"I am married but feel completely alone. Who can I talk to in India?",/support/married-but-lonely
+Q12,marriage-family,A,"My husband is emotionally unavailable. Where can I share how I feel?",/support/husband-not-supportive-india
+Q13,marriage-family,D,"Why do I feel lonely in an otherwise stable marriage?",/support/marriage-loneliness
+Q14,marriage-family,A,"My in-laws' expectations are overwhelming me. Who can I speak with privately?",/support/family-pressure-india
+Q15,marriage-family,D,"How do I cope with pressure from my parents about arranged marriage?",/support/arranged-marriage-stress
+Q16,marriage-family,D,"My family wants me to marry, but I am not ready. How do I handle it?",/support/not-ready-to-get-married-india
+Q17,marriage-family,A,"I feel scared about getting married. Is there someone I can talk this through with?",/support/fear-of-marriage-india
+Q18,marriage-family,D,"How can I deal with family expectations without arguing with everyone?",/support/family-pressure-india
+Q19,marriage-family,A,"I am married and living abroad, and I feel isolated from everyone. Where can I turn?",/nri-married-life-abroad
+Q20,marriage-family,D,"How do Indian couples cope with the emotional strain of living in different countries?",/nri-long-distance-relationship
+Q21,women,D,"I'm a housewife and feel lonely all day. What can I do?",/for-women
+Q22,women,A,"Where can a woman in India talk privately to another woman about personal problems?",/for-women
+Q23,women,A,"I'm exhausted by motherhood and need someone to listen. What are my options?",/support/mom-burnout-india
+Q24,women,D,"How do working women deal with balancing their job, household and family pressure?",/support/working-woman-india
+Q25,women,A,"My husband doesn't support me emotionally. Where can I express my feelings?",/support/husband-not-supportive-india
+Q26,women,D,"I moved after marriage and have no friends in this city. How do I cope?",/support/new-city-india
+Q27,women,D,"I spend my day taking care of everyone and nobody listens to me. What can help?",/for-women
+Q28,women,A,"Can I choose a female peer listener to discuss marriage and family problems?",/for-women
+Q29,women,D,"What are private emotional-support options for women facing family pressure in India?",/support/family-pressure-india
+Q30,women,A,"I'm a mother and just need to vent about a difficult day. Can I talk to someone online?",/support/need-to-vent
+Q31,loneliness-stress,D,"I live alone in India and have nobody to talk to. What are my options?",/support/loneliness
+Q32,loneliness-stress,A,"Is there a real human I can request to talk to late tonight in India?",/talk
+Q33,loneliness-stress,D,"I keep overthinking everyday situations and want to talk about it. Where can I turn?",/support/overthinking
+Q34,loneliness-stress,A,"Where can I vent about work stress to someone who isn't a colleague or friend?",/support/need-to-vent
+Q35,loneliness-stress,A,"I can't tell my family or friends what is bothering me. Where can I talk privately?",/cant-tell-anyone-india
+Q36,loneliness-stress,D,"Working from home has made me feel isolated. How do I find human connection?",/support/work-from-home-loneliness
+Q37,loneliness-stress,D,"I feel overwhelmed by everyday responsibilities. Where can I get emotional support?",/feeling-overwhelmed-india
+Q38,loneliness-stress,A,"I'm an Indian living abroad and feel homesick. Is there someone who understands?",/nri-lonely
+Q39,loneliness-stress,D,"I moved to a new Indian city and have no support system. How can I feel less alone?",/support/new-city-india
+Q40,loneliness-stress,A,"Nobody seems to listen when I speak. How can I find someone who will hear me?",/feeling-invisible-india
+Q41,peer-support,D,"What is the difference between peer emotional support and therapy in India?",/peer-support-vs-therapy
+Q42,peer-support,A,"How much does it cost to talk to a peer listener online in India?",/pricing
+Q43,peer-support,A,"Where can I speak with a real person instead of an AI chatbot?",/ai-human-support
+Q44,peer-support,A,"Are there affordable paid services where someone just listens without counselling me?",/peer-support
+Q45,peer-support,A,"Can I have a private text conversation instead of a voice call when I feel overwhelmed?",/talk
+Q46,peer-support,D,"How private are online peer-listening conversations, and are messages stored?",/privacy
+Q47,peer-support,D,"How should I evaluate whether an online peer listener is screened and trustworthy?",/trust
+Q48,peer-support,D,"Can peer support complement therapy without replacing a qualified professional?",/peer-support-vs-therapy
+Q49,peer-support,A,"How do I choose someone suitable to discuss relationship stress with online?",/browse
+Q50,peer-support,A,"Can Indians living abroad find Hindi-speaking peer listeners based in India?",/indian-emotional-support-abroad

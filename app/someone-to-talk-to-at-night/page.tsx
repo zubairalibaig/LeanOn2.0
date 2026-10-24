@@ -56,7 +56,7 @@ export default function SomeoneTalkToAtNightPage() {
         </div>
 
         <div className="card">
-          <h2>Real people available right now</h2>
+          <h2>Real people, no appointment</h2>
           <p>LeanOn has peer listeners available across all time zones and working through the night shift. Our listeners are real people — many of them are night owls themselves, or have been through dark nights of their own. They understand what it feels like to be alone with heavy thoughts.</p>
           <p>You can text (so no one hears) or use voice if you need to hear a calm voice. Start a 5-minute session now — no top-up, no scheduling, no waiting room.</p>
         </div>

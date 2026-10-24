@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'Why do working women in India experience a higher emotional load?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Research consistently shows that women in India — even those in full-time professional careers — carry a disproportionate share of domestic labour, childcare, and emotional management within the family. This "double shift" — a full workday followed by a full domestic shift — means working women in India are doing significantly more total work than their male partners, with significantly less recognition of the invisible load. The cultural expectation that this should be done without complaint, cheerfully, adds another layer.',
+        text: 'Research suggests that women in India — even those in full-time professional careers — carry a disproportionate share of domestic labour, childcare, and emotional management within the family. This "double shift" — a full workday followed by a full domestic shift — means working women in India are doing significantly more total work than their male partners, with significantly less recognition of the invisible load. The cultural expectation that this should be done without complaint, cheerfully, adds another layer.',
       },
     },
     {

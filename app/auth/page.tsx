@@ -154,6 +154,11 @@ export default function AuthPage() {
   const [countdown, setCountdown] = useState(0)
   const [widgetReady, setWidgetReady] = useState(false)
   const [reviewMode, setReviewMode] = useState(false) // Play reviewer demo number — no SMS
+  // 18+ only (Terms). Sent to the server, which refuses sign-in without it. A ref
+  // because handleToken is a stable callback that would otherwise see a stale value.
+  const [adultConfirmed, setAdultConfirmed] = useState(false)
+  const adultRef = useRef(false)
+  useEffect(() => { adultRef.current = adultConfirmed }, [adultConfirmed])
   const otpRefs = useRef<(HTMLInputElement|null)[]>([])
   const handledRef = useRef(false)      // guards the final navigation
   const tokenHandledRef = useRef(false) // guards double token delivery (verifyOtp cb + config.success)
@@ -212,7 +217,7 @@ export default function AuthPage() {
         headers: { 'Content-Type': 'application/json' },
         // country is sent so the server can store account_country on the users row
         // for geo-pricing (NRI vs India). Validated as 2-letter ISO code server-side.
-        body: JSON.stringify({ token, country: country.code }),
+        body: JSON.stringify({ token, country: country.code, ageConfirmed: adultRef.current }),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
@@ -343,6 +348,7 @@ export default function AuthPage() {
 
   async function requestOtp() {
     setError('')
+    if (!adultConfirmed) { setError('Please confirm you are 18 or older to continue.'); return }
     if (!isValidPhone()) {
       const len = country.minDigits === country.maxDigits
         ? `${country.minDigits}-digit`
@@ -389,7 +395,7 @@ export default function AuthPage() {
       const res = await fetch('/api/auth/review-login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: country.dialCode + digits(), code, country: country.code }),
+        body: JSON.stringify({ phone: country.dialCode + digits(), code, country: country.code, ageConfirmed: adultRef.current }),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) { setError(data?.error || 'Incorrect code. Please check and try again.'); setLoading(false); return }
@@ -572,8 +578,11 @@ export default function AuthPage() {
               {/* MSG91's invisible-captcha renders here when required. */}
               <div id="msg91-captcha" />
               {error && <p className="error">{error}</p>}
-              <p className="tos">LeanOn is for adults 18+. By continuing you confirm you are 18 or older and agree to our <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</p>
-              <button className="btn" onClick={requestOtp} disabled={loading || !isValidPhone()}>
+              <label className="tos" style={{ display: 'flex', gap: 10, alignItems: 'flex-start', cursor: 'pointer', textAlign: 'left' }}>
+                <input type="checkbox" checked={adultConfirmed} onChange={e => setAdultConfirmed(e.target.checked)} style={{ width: 18, height: 18, marginTop: 1, flexShrink: 0, accentColor: '#1A8FA0' }} />
+                <span>I am 18 or older. LeanOn is for adults only. I agree to the <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</span>
+              </label>
+              <button className="btn" onClick={requestOtp} disabled={loading || !isValidPhone() || !adultConfirmed}>
                 {loading ? <span className="spin">⟳</span> : !widgetReady ? 'Loading…' : 'Send OTP →'}
               </button>
             </>

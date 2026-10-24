@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Empathy Listener for Indians in the USA — Someone Who Actually Gets It',
-    description: 'No explaining the cultural weight. No blank looks when you mention izzat or visa status. LeanOn peer listeners are warm, Indian-context aware, and available now.',
+    description: 'No explaining the cultural weight. No blank looks when you mention izzat or visa status. LeanOn peer listeners are warm, Indian-context aware, and need no appointment.',
     url: 'https://www.leanon.app/usa-empathy-listener',
     siteName: 'LeanOn',
     type: 'article',
@@ -174,8 +174,8 @@ export default function UsaEmpathyListenerPage() {
           <h2>💙 Empathy is not something you schedule six weeks from now</h2>
           <p>Therapy waitlists are long. Your friends are busy. The moment you need to be heard does not
             always arrive at a convenient time.</p>
-          <p>LeanOn listeners are available right now — any day, any time, including late at night US time
-            when the weight of everything feels heaviest.</p>
+          <p>LeanOn listeners are in India, so availability follows Indian time — US evenings are Indian
+            mornings, when listeners are often online. No appointment needed.</p>
           <a href="/browse" className="cta-night">Find a listener now →</a>
         </div>
 

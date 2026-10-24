@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Someone to Talk to in the USA — Real Human, Not a Chatbot | LeanOn',
-  description: 'When you need a real person to talk to in the USA — not an AI, not a hotline, not a six-week therapy waitlist — LeanOn connects you with a warm Indian peer listener. Available right now.',
+  description: 'When you need a real person to talk to in the USA — not an AI, not a hotline, not a six-week therapy waitlist — LeanOn connects you with a warm Indian peer listener — availability follows Indian time.',
   keywords: [
     'someone to talk to usa', 'need someone to talk to usa indian', 'real person to talk to usa',
     'not a chatbot listener usa', 'human listener usa', 'talk to a person usa nri',
@@ -149,7 +149,7 @@ export default function UsaTalkToSomeonePage() {
           <a href="/">Home</a><span>›</span>Someone to Talk to USA
         </div>
 
-        <h1>Not an AI. Not a Hotline.<br />A Real Warm Person — Available Right Now.</h1>
+        <h1>Not an AI. Not a Hotline.<br />A Real Warm Person, No Appointment.</h1>
         <p className="lead">
           You do not need an appointment. You do not need a crisis. You do not need to wait six weeks for
           a therapy slot. You just need a real human being who will listen — properly, warmly, without
@@ -194,7 +194,7 @@ export default function UsaTalkToSomeonePage() {
             often has a waiting list measured in months. LeanOn sessions start at <strong>$10 for 15 minutes</strong>,
             <strong> $15 for 30 minutes</strong>, and <strong>$20 for 45 minutes</strong>.</p>
           <p>Your first 5-minute session free. No insurance required. No referral needed. No waitlist.
-            Just a real person, available now.</p>
+            Just a real person.</p>
         </div>
 
         <div className="cta">

@@ -70,6 +70,11 @@ export async function GET(req: NextRequest) {
     }
     connectSecs.sort((a, b) => a - b)
     const medianConnectSecs = connectSecs.length ? Math.round(connectSecs[Math.floor((connectSecs.length - 1) / 2)]) : null
+    const p90ConnectSecs = connectSecs.length ? Math.round(connectSecs[Math.min(connectSecs.length - 1, Math.ceil(connectSecs.length * 0.9) - 1)]) : null
+    // Connection success = searches that ended in an accepted session ÷ valid
+    // attempts (searches that found nobody free or sent ≥1 request; searches the
+    // seeker stopped before any request are not attempts).
+    const validAttempts = nobodyFree + withRequest.length
     const hopsTotal = withRequest.reduce((n, s) => n + bySearch.get(s.id)!.length, 0)
     const completed = matchedSessions.filter(r => r.status === 'completed')
     const avgMins = completed.length
@@ -113,6 +118,9 @@ export async function GET(req: NextRequest) {
       matched,
       avgHopsToMatch: matched ? round1(hopsToMatchTotal / matched) : 0,
       medianConnectSecs,
+      p90ConnectSecs,
+      validAttempts,
+      connectionSuccessPct: validAttempts ? Math.round((matched / validAttempts) * 100) : null,
       unmatchedAfterRequests,
       completed: completed.length,
       avgMins: round1(avgMins),

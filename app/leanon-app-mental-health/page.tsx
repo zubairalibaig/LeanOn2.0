@@ -77,8 +77,8 @@ export default function LeanOnAppMentalHealth() {
         </div>
 
         <div className="cta-box">
-          <h2>Try LeanOn — someone is available right now</h2>
-          <p>No credit card. No appointment. Someone is available right now.</p>
+          <h2>Try LeanOn — no appointment needed</h2>
+          <p>No credit card. No appointment. A session starts when a listener accepts.</p>
           <a href="/browse"><button className="btn">Browse peer listeners →</button></a>
         </div>
       </div>

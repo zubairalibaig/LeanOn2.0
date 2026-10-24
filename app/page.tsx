@@ -310,8 +310,8 @@ export default function Home() {
 
       {/* HERO — flows with same gradient background */}
       <section className="hero">
-        <div className="hero-badge"><span>🤝</span><span>Real people · Real conversations · In minutes</span></div>
-        <h1>Someone to<br /><span className="o">lean on,</span><br />right now.</h1>
+        <div className="hero-badge"><span>🤝</span><span>Real people · Real conversations · No appointment</span></div>
+        <h1>Someone to<br /><span className="o">lean on,</span><br />who listens.</h1>
         <p>Had a fight. Going through something. Need to vent before you explode. Talk one-to-one with a screened peer listener in India. Conversations are private, and no appointment is required; start when a listener is available.</p>
         <div className="hero-btns">
           <a href="/talk?src=home" className="btn-primary">Talk to someone now</a>
@@ -354,7 +354,7 @@ export default function Home() {
         <h2 className="at">Let&apos;s change the conversation on <span className="o">emotional wellness</span></h2>
         <div className="ab">
           <p>We believe solving emotional challenges should be no different from solving any other health challenge. When you&apos;re struggling, you deserve someone who truly understands — not just a stranger, but someone who has been there and found their way through.</p>
-          <p>Stigma still holds people back. LeanOn is here to change that — making human connection instant, affordable, and free of judgment. You don&apos;t need a diagnosis or an appointment. You just need someone to lean on.</p>
+          <p>Stigma still holds people back. LeanOn is here to change that — making human connection easier, affordable, and free of judgment. You don&apos;t need a diagnosis or an appointment. You just need someone to lean on.</p>
         </div>
       </div>
 
@@ -391,7 +391,7 @@ export default function Home() {
           <div className="fl">
             {[
               {i:'🔍',t:'Open listener directory',d:'Browse peer listeners by topic. Read their stories and ratings before you pay anything.'},
-              {i:'⚡',t:'Instant, no-appointment access',d:'No appointment is required. Browse listeners who are online and start when someone is available.'},
+              {i:'⚡',t:'No appointment',d:'No appointment is required. Browse listeners who are online and start when someone is available.'},
               {i:'💳',t:'Pay-per-session flexibility',d:'No subscriptions. Recharge your wallet and use it whenever. Unused balance refunded anytime.'},
               {i:'💬',t:'Text or voice — your choice',d:'Type for privacy in a joint home. Talk for the warmth of a real voice. Always your call.'},
               {i:'🤝',t:'Lived-experience listeners',d:'Our listeners have been through it — breakups, burnout, grief, startup failure. They get it.'},
@@ -523,7 +523,7 @@ export default function Home() {
       {/* TRUST */}
       <div className="inner">
         <div className="tg">
-          {[{i:'🔒',l:'Safe & private'},{i:'💬',l:'Text or voice'},{i:'🔄',l:'Refund anytime'},{i:'⚡',l:'No appointment'},{i:'🤝',l:'Lived experience'},{i:'⏱️',l:'Available now'}].map((t,i)=>(
+          {[{i:'🔒',l:'Safe & private'},{i:'💬',l:'Text or voice'},{i:'🔄',l:'Refund anytime'},{i:'⚡',l:'No appointment'},{i:'🤝',l:'Lived experience'},{i:'⏱️',l:'Text or voice'}].map((t,i)=>(
             <div key={i} className="ti"><div className="tic">{t.i}</div><span className="tl">{t.l}</span></div>
           ))}
         </div>
@@ -611,7 +611,7 @@ export default function Home() {
       <div className="inner">
         <div className="cta-c">
           <h2>Tonight doesn&apos;t have to feel this heavy.</h2>
-          <p>One breath, then one small step. A listener who gets it is a tap away — right now, no appointment.</p>
+          <p>One breath, then one small step. A listener who gets it is a tap away — no appointment.</p>
           <a href="/talk?src=home" className="btn-cta">Talk to someone now →</a>
         </div>
       </div>

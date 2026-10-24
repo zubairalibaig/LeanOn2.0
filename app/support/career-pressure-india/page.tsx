@@ -250,7 +250,7 @@ export default function CareerPressureIndiaPage() {
 
         <div className="cta-card">
           <h2>Your career struggle deserves more than silence</h2>
-          <p>Talk to a peer listener who genuinely understands Indian career culture — the expectations, the comparisons, the weight of it. Anonymous, confidential, available now.</p>
+          <p>Talk to a peer listener who genuinely understands Indian career culture — the expectations, the comparisons, the weight of it. Anonymous, confidential.</p>
           <a href="/browse?topic=career" className="btn-cta">Someone is listening — start free now →</a>
         </div>
 

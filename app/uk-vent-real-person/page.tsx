@@ -273,8 +273,8 @@ export default function UKVentRealPersonPage() {
             it a whole thing.
           </p>
           <p>
-            LeanOn has real human listeners available right now. Late night, early morning, bank
-            holidays. Because the weight doesn&apos;t wait for office hours — and neither do we.
+            LeanOn has real human listeners in India. Availability follows Indian time, so UK evenings are
+            late night there — check who is online now. No appointment, and no office hours to wait for.
           </p>
           <a href="/browse" className="cta-night">Find a listener right now →</a>
         </div>

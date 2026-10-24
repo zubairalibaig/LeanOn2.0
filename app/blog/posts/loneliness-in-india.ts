@@ -42,7 +42,7 @@ export const post = {
 
 <p>The first and most important thing: acknowledging the loneliness to yourself. Many people spend years in low-grade loneliness without naming it — treating the symptoms (depression, anxiety, irritability, numbness) without identifying the root. Naming the experience is the beginning.</p>
 
-<p><strong>Find one genuine connection.</strong> Research consistently shows that it is not the number of social connections that matters for wellbeing — it is the quality of at least one genuine connection. One person who knows you, and you them, makes an enormous difference.</p>
+<p><strong>Find one genuine connection.</strong> Research suggests that it is not the number of social connections that matters for wellbeing — it is the quality of at least one genuine connection. One person who knows you, and you them, makes an enormous difference.</p>
 
 <p><strong>Talk to someone who has been through it.</strong> There is a specific kind of relief in talking to someone who has personally navigated deep loneliness and found their way through. Not a therapist (though that can help too), but a peer — someone who knows what it actually feels like from the inside. This is the insight behind platforms like <a href="/browse">LeanOn</a>: lived experience is a form of expertise that no degree can grant.</p>
 

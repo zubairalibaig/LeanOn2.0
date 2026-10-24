@@ -49,7 +49,7 @@ const faqs = [
     items: [
       {
         q: 'How do I start using LeanOn?',
-        a: 'The quickest way is Talk now at leanon.app/talk: choose text or voice, tap what is on your mind, confirm your phone number with a one-time code, and LeanOn connects you with a screened listener who is available now. One introductory session of up to 5 minutes is free per account. You can also browse listener profiles at leanon.app/browse and choose someone yourself.',
+        a: 'The quickest way is Talk now at leanon.app/talk: choose text or voice, tap what is on your mind, confirm your phone number with a one-time code, and LeanOn connects you with a screened listener who is online. One introductory session of up to 5 minutes is free per account. You can also browse listener profiles at leanon.app/browse and choose someone yourself.',
       },
       {
         q: 'Is there a LeanOn app on the Play Store or App Store?',

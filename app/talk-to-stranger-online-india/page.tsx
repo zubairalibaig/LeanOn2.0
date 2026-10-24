@@ -6,7 +6,7 @@ export const dynamic = 'force-static'
 export const metadata: Metadata = {
   robots: NOINDEX_ROBOTS, // wrong-intent traffic — see lib/seo-noindex.ts
   title: 'Talk to a Stranger Online India — Real Person, No Judgment, Right Now | LeanOn',
-  description: 'Sometimes the best person to talk to is someone who does not know you. Talk to a real peer listener in India — anonymous, confidential, available right now.',
+  description: 'Sometimes the best person to talk to is someone who does not know you. Talk to a real peer listener in India — private, confidential, no appointment.',
   keywords: [
     'talk to a stranger online India', 'stranger to talk to online India',
     'chat with stranger online India', 'talk to random person online India',
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.leanon.app/talk-to-stranger-online-india', languages: { 'en-IN': 'https://www.leanon.app/talk-to-stranger-online-india' } },
   openGraph: {
     title: 'Talk to a Stranger Online India — Real Person, No Judgment, Right Now | LeanOn',
-    description: 'Sometimes the best person to talk to is someone who does not know you. Talk to a real peer listener in India — anonymous, confidential, available right now.',
+    description: 'Sometimes the best person to talk to is someone who does not know you. Talk to a real peer listener in India — private, confidential, no appointment.',
     url: 'https://www.leanon.app/talk-to-stranger-online-india',
     siteName: 'LeanOn',
     type: 'website',
@@ -222,7 +222,7 @@ export default function TalkToStrangerOnlineIndiaPage() {
 
         <div className="cta-card">
           <h2>The person who gets to hear the real version</h2>
-          <p>Anonymous. Confidential. Available now. No history with you. No opinion about the people you mention. No risk of it going further. Just someone who will hear it.</p>
+          <p>Private. Confidential. No appointment. No history with you. No opinion about the people you mention. No risk of it going further. Just someone who will hear it.</p>
           <a href="/browse" className="btn-cta">Find a listener →</a>
         </div>
 

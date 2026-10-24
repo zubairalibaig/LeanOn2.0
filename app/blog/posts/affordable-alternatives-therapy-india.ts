@@ -26,7 +26,7 @@ export const post = {
 
 <p>Before listing alternatives, it is worth being honest about what the evidence supports. For severe mental health conditions — psychosis, severe depression, bipolar disorder, personality disorders — professional clinical care is essential and cannot be replaced. If you are in crisis or believe you may have a serious mental health condition, please seek professional help.</p>
 
-<p>But for the most common presentations — mild to moderate anxiety and depression, stress, loneliness, life transitions, relationship difficulties, burnout — research consistently shows that a range of non-clinical interventions are genuinely effective. These include peer support, structured self-help, psychoeducation, social connection, and physical health interventions. The alternatives below are not consolation prizes. For many people, they are genuinely the right fit.</p>
+<p>But for the most common presentations — mild to moderate anxiety and depression, stress, loneliness, life transitions, relationship difficulties, burnout — research suggests that a range of non-clinical interventions are genuinely effective. These include peer support, structured self-help, psychoeducation, social connection, and physical health interventions. The alternatives below are not consolation prizes. For many people, they are genuinely the right fit.</p>
 
 <h2>Option 1: Peer Support (LeanOn)</h2>
 

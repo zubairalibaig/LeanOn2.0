@@ -132,7 +132,7 @@ export default function RantOnlineIndiaPage() {
 
         <div className="section">
           <h2>Why Ranting Is Healthy (When You Have the Right Outlet)</h2>
-          <p>Emotional suppression has a cost. Research consistently shows that holding in intense feelings &mdash; rather than expressing them &mdash; maintains physiological arousal, keeps the stress response active, and depletes the cognitive resources available for everything else in your day.</p>
+          <p>Emotional suppression has a cost. Research suggests that holding in intense feelings &mdash; rather than expressing them &mdash; maintains physiological arousal, keeps the stress response active, and depletes the cognitive resources available for everything else in your day.</p>
           <p>Ranting &mdash; intense emotional expression to a safe, non-reactive listener &mdash; works like a pressure valve. The activation that has been building gets a channel out. The loop that has been running in the background gets to resolve. You feel lighter. You can think again.</p>
           <p>The key is the outlet. Ranting to someone who responds defensively, gives advice, minimises, or takes sides makes things worse. Ranting to someone trained to receive it without reacting &mdash; that is the healthy version.</p>
         </div>

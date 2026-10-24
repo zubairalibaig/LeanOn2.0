@@ -91,7 +91,7 @@ export default function UAETalkToSomeonePage() {
         </h1>
 
         <p style={{ fontSize: '1.05rem', color: '#444', lineHeight: 1.7, marginBottom: 32 }}>
-          The UAE has one of the largest Indian communities in the world — and yet the loneliness that comes with expat life can still feel very real, very late at night, when there is nobody to call who truly understands. LeanOn gives you a screened Indian peer listener who gets the Dubai and Abu Dhabi experience from the inside. Anonymous, in your language, available now.
+          The UAE has one of the largest Indian communities in the world — and yet the loneliness that comes with expat life can still feel very real, very late at night, when there is nobody to call who truly understands. LeanOn gives you a screened Indian peer listener who gets the Dubai and Abu Dhabi experience from the inside. Private, in your language, with no appointment — UAE evenings overlap Indian evenings.
         </p>
 
         <a href="/browse" style={{ display: 'inline-block', background: '#0F4867', color: '#fff', padding: '14px 28px', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: '1rem', marginBottom: 48 }}>

@@ -164,7 +164,7 @@ export default function WorkStressIndiaPage() {
 
         <div className="cta-card">
           <h2>Talk to Someone Who Gets the Corporate World</h2>
-          <p>Anonymous peer support for work stress and IT burnout. From ₹160. No appointment, available now.</p>
+          <p>Anonymous peer support for work stress and IT burnout. From ₹160. No appointment.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse listeners →</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now →</button></a>

@@ -164,10 +164,6 @@ export default function FearOfMarriageIndiaPage() {
           NIMHANS helpline: <a href="tel:08046110007">080-46110007</a> · Tele-MANAS: <a href="tel:14416">14416</a> (free, 24/7)
         </div>
 
-        <div className="quote-box">
-          <p>"I don't trust in marriage because I have seen my parents themselves not having a good one. My parents have even cheated on each other."</p>
-          <span>— a real LeanOn session, shared anonymously</span>
-        </div>
 
         <h2>How Witnessing an Unhappy Parents&apos; Marriage Affects You</h2>
         <p>

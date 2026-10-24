@@ -252,7 +252,7 @@ export default function BestPeerSupportAppIndiaPage() {
             <div className="diff-card">
               <div className="diff-icon">⚡</div>
               <div className="diff-title">No appointment needed</div>
-              <div className="diff-desc">Available now. No scheduling, no waitlist, no 2-week wait. The thing that made you decide to reach out does not wait that long.</div>
+              <div className="diff-desc">No appointment. No scheduling, no waitlist, no 2-week wait. The thing that made you decide to reach out does not wait that long.</div>
             </div>
             <div className="diff-card">
               <div className="diff-icon">💰</div>

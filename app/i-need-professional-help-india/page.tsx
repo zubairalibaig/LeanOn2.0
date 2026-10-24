@@ -171,7 +171,7 @@ export default function INeedProfessionalHelpIndiaPage() {
         <div className="section">
           <h2>What to Do Right Now — Before the Therapy Appointment</h2>
           <p>The most important thing to do right now is not to wait. Waiting for the &quot;right&quot; moment, the right budget, the right circumstance — while the weight continues to build — makes everything harder. There are things you can do today that will matter.</p>
-          <p><strong>Talk to someone.</strong> LeanOn is not therapy. But it is a real person, available now, who will listen without judgment to whatever you are carrying. For the cost of a session (a fraction of a therapy appointment), you can have a real conversation with someone who has navigated their own difficult experiences. That conversation — the act of saying things out loud to another human being — is not a substitute for therapy, but it is not nothing. It often helps people clarify what they are experiencing well enough to then go to a professional with greater clarity.</p>
+          <p><strong>Talk to someone.</strong> LeanOn is not therapy. But it is a real person, with no appointment, who will listen without judgment to whatever you are carrying. For the cost of a session (a fraction of a therapy appointment), you can have a real conversation with someone who has navigated their own difficult experiences. That conversation — the act of saying things out loud to another human being — is not a substitute for therapy, but it is not nothing. It often helps people clarify what they are experiencing well enough to then go to a professional with greater clarity.</p>
           <p><strong>Start the search while you are waiting.</strong> Even if therapy is not accessible right now, begin orienting toward it. Research what is available in your city or online. Look at government hospital options. Ask your company HR if there is an Employee Assistance Program (many larger companies offer a few free therapy sessions through EAPs). Check whether any university clinics in your area offer low-cost therapy.</p>
           <p><strong>Say it out loud somewhere.</strong> The isolation of carrying this alone is its own weight. Whether through LeanOn, a trusted friend, or a family member who can hold it carefully — saying what you are going through to another person matters. You do not have to carry this entirely inside.</p>
         </div>
@@ -211,7 +211,7 @@ export default function INeedProfessionalHelpIndiaPage() {
           <p>This page would not be honest if it told you LeanOn is a substitute for professional care. It is not. If you have been carrying things for years — numbness since your teenage years, the effects of a difficult childhood, a depression that is affecting your ability to function — you need, and deserve, a trained professional. A therapist or psychologist who can work with you over time, who has the clinical tools to help you process what you are carrying at a structural level.</p>
           <p>But here is what LeanOn is:</p>
           <ul>
-            <li>A real person, available now, who has navigated their own hard experiences and is screened and expected to listen without judgment</li>
+            <li>A real person, with no appointment, who has navigated their own hard experiences and is screened and expected to listen without judgment</li>
             <li>A space to say things out loud that you have never said — to have them witnessed by another human being without being dismissed, fixed, or alarmed</li>
             <li>A way to feel less alone in what you are carrying while you work toward professional support</li>
             <li>A conversation that often helps people clarify what they are experiencing, and what they want to say when they get to a therapist</li>
@@ -233,7 +233,7 @@ export default function INeedProfessionalHelpIndiaPage() {
 
         <div className="cta-card">
           <h2>While you work toward the bigger picture — you don&apos;t have to carry this alone right now</h2>
-          <p>Anonymous. Real person. Available now. Not therapy — but real support while you navigate toward it.</p>
+          <p>Anonymous. Real person. No appointment. Not therapy — but real support while you navigate toward it.</p>
           <a href="/browse" className="btn-cta">Talk to someone →</a>
         </div>
 

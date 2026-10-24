@@ -79,12 +79,12 @@ export default function LonelinessSupportOnlinePage() {
         <div className="hero">
           <p className="badge">Loneliness &middot; Feeling Alone &middot; Need to Talk</p>
           <h1>Loneliness does not always look <em>like isolation.</em></h1>
-          <p className="lead">Sometimes you are surrounded by people and still feel completely alone. A real peer listener who understands the texture of loneliness — available right now, no appointment needed. First 5 minutes free.</p>
+          <p className="lead">Sometimes you are surrounded by people and still feel completely alone. A real peer listener who understands the texture of loneliness — no appointment needed. First 5 minutes free.</p>
           <a href="/browse" className="cta-hero">Talk to someone now &rarr;</a>
         </div>
         <div className="section">
           <h2>The Many Shapes of Loneliness</h2>
-          <p>Loneliness is not just being physically alone. Research consistently shows it is more about whether you feel genuinely seen and known than whether people are around. You can be in a crowded room, in a relationship, in a family — and feel entirely invisible.</p>
+          <p>Loneliness is not just being physically alone. Research suggests it is more about whether you feel genuinely seen and known than whether people are around. You can be in a crowded room, in a relationship, in a family — and feel entirely invisible.</p>
           <div className="loneliness-types">
             <div className="type">
               <div className="type-name">New city loneliness</div>
@@ -118,12 +118,12 @@ export default function LonelinessSupportOnlinePage() {
           <p>LeanOn listeners are screened for active listening. They do not try to fix your loneliness with advice or silver linings. They are present while you talk. That experience of being genuinely received by another person &mdash; even a stranger, especially a stranger &mdash; shifts something that social noise cannot.</p>
         </div>
         <div className="section">
-          <h2>Available Right Now. No Reason Required.</h2>
+          <h2>No Appointment. No Reason Required.</h2>
           <p>Browse listeners who are currently online. No appointment, no form, no assessment. Start a text session immediately. Your first 5-minute session is free &mdash; if it does not feel right, you stop and pay nothing. If it helps, continue for as long as you need.</p>
           <p>Anonymous: you sign up with a phone number and first name only. Nothing is connected to your real identity. What you share stays between you and your listener.</p>
         </div>
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>You do not have to be invisible.</h2><p>Real person. Genuinely present. Available right now. First 5 minutes free.</p><a href="/browse" className="btn-cta">Talk to someone now &rarr;</a></div>
+        <div className="cta-card"><h2>You do not have to be invisible.</h2><p>Real person. Genuinely present. No appointment. First 5 minutes free.</p><a href="/browse" className="btn-cta">Talk to someone now &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/someone-to-talk-to">Someone to talk to &rarr;</a>
           <a href="/online-emotional-support">Online emotional support &rarr;</a>

@@ -48,7 +48,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is it anonymous?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Your first name only. What you say stays in the session. No social risk, no consequences.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Your first name only. Your listener never sees your phone number, and nothing is shared with anyone in your life. No social risk, no consequences.' },
     },
   ],
 }

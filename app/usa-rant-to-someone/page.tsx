@@ -186,7 +186,7 @@ export default function UsaRantToSomeonePage() {
           <p>Your friends are tired of the same conversation. Your family back home will just worry.
             Your colleagues cannot know what you are really going through. And therapy has a six-week
             waitlist and costs $200 an hour.</p>
-          <p>LeanOn listeners are available right now, from $10 for 15 minutes. You tell them upfront:
+          <p>LeanOn listeners are in India (availability follows Indian time), from $10 for 15 minutes. You tell them upfront:
             &quot;I just want to rant, no advice.&quot; They will listen — fully, attentively, without judgment.
             And sometimes that is all you need.</p>
         </div>

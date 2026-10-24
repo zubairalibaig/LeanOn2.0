@@ -70,7 +70,7 @@ const terms = [
     definition: 'To "lean on" someone means to rely on them emotionally — to draw support, comfort, or strength from another person during a difficult time. The phrase comes from the physical act of leaning on someone for balance or rest.',
     example: '"I don\'t know what I would have done without her. She was always someone I could lean on."',
     related: 'emotional support, peer support, LeanOn',
-    detail: 'The concept of leaning on others is central to human resilience. Research consistently shows that social support — having people to lean on — is one of the strongest predictors of wellbeing and recovery from adversity. LeanOn (the platform) is named after this idea: making it possible for anyone to find someone to lean on, at any time.',
+    detail: 'The concept of leaning on others is central to human resilience. Research suggests that social support — having people to lean on — is one of the strongest predictors of wellbeing and recovery from adversity. LeanOn (the platform) is named after this idea: making it possible for anyone to find someone to lean on, at any time.',
   },
   {
     id: 'peer-support',
@@ -79,7 +79,7 @@ const terms = [
     definition: 'Emotional and social support given by a person who has lived experience of a similar challenge. Peer support is based on shared experience, empathy, and mutual understanding rather than clinical expertise.',
     example: '"Talking to someone who had been through their own burnout was more helpful than any book I read."',
     related: 'peer counselling, peer listener, lived experience',
-    detail: 'Peer support has a well-established evidence base. Studies show that people with lived experience of a challenge are often uniquely effective at supporting others going through the same thing — because they understand from the inside, not just theoretically. Peer support is not a replacement for clinical care, but it fills an important gap that therapy alone cannot.',
+    detail: 'Peer support has a well-established evidence base. Research suggests that people with lived experience of a challenge are often uniquely effective at supporting others going through the same thing — because they understand from the inside, not just theoretically. Peer support is not a replacement for clinical care, but it fills an important gap that therapy alone cannot.',
   },
   {
     id: 'peer-listener',

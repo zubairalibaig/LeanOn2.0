@@ -244,7 +244,7 @@ export default function FeelingLostPage() {
 
         <div className="cta-card">
           <h2>Talk to Someone Who Has Been Lost and Found Their Way</h2>
-          <p>You do not have to have it figured out to start. A peer listener is available right now — anonymous, no judgment, no appointments needed.</p>
+          <p>You do not have to have it figured out to start. A peer listener may be online right now — anonymous, no judgment, no appointments needed.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Someone is here — start free now →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>

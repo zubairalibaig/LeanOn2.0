@@ -266,7 +266,7 @@ export default function IndianAmericanRealSupportPage() {
             the other side with genuine understanding.
           </p>
           <p>
-            LeanOn listeners with South Asian backgrounds are available right now — no appointment,
+            LeanOn listeners with South Asian backgrounds are a request away — no appointment,
             no waitlist, no $250/hour. Just a real person who gets it.
           </p>
           <a href="/browse" className="cta-night">Find a listener who understands desi life →</a>

@@ -166,7 +166,7 @@ export default function EmotionalWellnessIndiaPage() {
 
         <div className="cta-card">
           <h2>Start the Practice</h2>
-          <p>Real peer conversations from ₹160. Available now, no appointment, anonymous.</p>
+          <p>Real peer conversations from ₹160. No appointment, private.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse listeners →</button></a>
             <a href="/daily-check-in"><button className="btn-secondary">Daily check-in →</button></a>

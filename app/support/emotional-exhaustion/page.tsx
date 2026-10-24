@@ -249,7 +249,7 @@ export default function EmotionalExhaustionPage() {
 
         <div className="cta-card">
           <h2>Let Someone Hold Space for You</h2>
-          <p>You have been giving for too long. Come be in the receiving role for a while. A peer listener is available right now — no judgment, no appointments.</p>
+          <p>You have been giving for too long. Come be in the receiving role for a while. A peer listener may be online right now — no judgment, no appointments.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Rest your mind — talk to someone — first 5 min free →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>

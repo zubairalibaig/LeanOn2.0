@@ -162,8 +162,8 @@ export default function VentToRealPersonPage() {
           <h2>🌙 Need to vent at 2 AM?</h2>
           <p>
             The urge to vent doesn&apos;t follow a schedule. It hits late at night when everyone you know
-            is asleep and the thoughts won&apos;t stop. LeanOn listeners are available right now — at any
-            hour, on any day.
+            is asleep and the thoughts won&apos;t stop. LeanOn listeners go online at different hours,
+            often including late at night.
           </p>
           <p>
             You don&apos;t have to wait until morning. You don&apos;t have to keep it bottled up. A real

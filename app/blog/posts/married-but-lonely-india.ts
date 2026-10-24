@@ -68,6 +68,6 @@ You can simply be a person who is lonely in a marriage that looks fine from the 
 
 ---
 
-*If you need someone to talk to — just to be heard, not to fix anything — [LeanOn peer listeners](/browse) are screened people who understand what this kind of weight feels like. Anonymous, available now, from ₹160.*
+*If you need someone to talk to — just to be heard, not to fix anything — [LeanOn peer listeners](/browse) are screened people who understand what this kind of weight feels like. Private, no appointment, from ₹160.*
   `.trim(),
 }

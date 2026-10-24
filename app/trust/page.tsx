@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { SERVICE_DESCRIPTION } from '@/lib/service-facts'
 
 export const dynamic = 'force-static'
 
@@ -70,11 +71,16 @@ export default function TrustPage() {
         <div className="hero">
           <p className="tag">Trust &amp; Safety</p>
           <h1>Your safety is our top priority</h1>
-          <p className="lead">LeanOn is built on trust. Every decision we make — from how you sign up to how we vet listeners — is designed to keep you safe, anonymous, and in control.</p>
+          <p className="lead">LeanOn is built on trust. Every decision we make — from how you sign up to how we vet listeners — is designed to keep you safe, private, and in control.</p>
         </div>
 
         <div className="section">
-          <h2>🔒 Your anonymity is protected</h2>
+          <h2>LeanOn in one paragraph</h2>
+          <p>{SERVICE_DESCRIPTION}</p>
+        </div>
+
+        <div className="section">
+          <h2>🔒 Your privacy</h2>
           <p>LeanOn was designed for privacy from the ground up. Here is exactly what we collect and what we don&apos;t:</p>
           <ul>
             <li>Sign up with just your mobile number — no full name, no email required</li>
@@ -126,10 +132,10 @@ export default function TrustPage() {
           <h2>🚨 Reporting &amp; blocking</h2>
           <p>If you feel unsafe in a session at any time:</p>
           <ul>
-            <li>Use the &ldquo;Report an issue&rdquo; button in any session or listener profile</li>
+            <li>Use &ldquo;Report an issue with this session&rdquo; when the session ends, or write to us through the <a href="/contact">contact form</a></li>
             <li>End the session at any time — you pay only for the minutes used, and nothing if it lasted under a minute</li>
             <li>You never have to talk to the same listener again — you choose who you book</li>
-            <li>Our team reviews all reports within 24 hours</li>
+            <li>A person at LeanOn reviews every report</li>
           </ul>
         </div>
 

@@ -40,7 +40,7 @@ export const post = {
 
 <p>All of the above helps. None of it replaces the relief of speaking it to a person. If you have someone you can call — a friend who will not make it complicated, who will just receive it — call them. Even ten minutes on the phone, even just saying &ldquo;I had a terrible morning and I just need to say it to someone,&rdquo; creates a shift that no amount of solo processing quite achieves.</p>
 
-<p>If you do not have that person readily available, or if the morning involves people in your circle whom you cannot exactly phone about it to, a LeanOn listener is available right now. This is exactly the use case — not a crisis, not a long emotional excavation, just the morning pressing on you and someone who will hear it so the afternoon can be different.</p>
+<p>If you do not have that person readily available, or if the morning involves people in your circle whom you cannot exactly phone about it to, a LeanOn listener may be online right now. This is exactly the use case — not a crisis, not a long emotional excavation, just the morning pressing on you and someone who will hear it so the afternoon can be different.</p>
 
 <h2>Step 5: Decide on the Unfinished Business</h2>
 

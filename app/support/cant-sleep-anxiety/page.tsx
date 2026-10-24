@@ -5,12 +5,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: "Can't Sleep Because of Anxiety? Peer Support India | LeanOn",
-  description: "Lying awake with racing thoughts, anxiety, or overthinking? Talk to a peer listener in India who knows that 2 AM feeling. Anonymous support, available right now.",
+  description: "Lying awake with racing thoughts, anxiety, or overthinking? Talk to a peer listener in India who knows that 2 AM feeling. Anonymous support.",
   keywords: ["can't sleep anxiety India", "insomnia anxiety India", "lying awake overthinking India", "racing thoughts at night India", "2am anxiety India", "sleep anxiety India", "I can't sleep what do I do India", "anxiety at night India", "midnight anxiety India", "overthinking at night India", "sleep problems anxiety India", "can't sleep worry India", "wake up anxious India", "night time anxiety India", "talk to someone at night India"],
   alternates: { canonical: 'https://www.leanon.app/support/cant-sleep-anxiety', languages: { 'en-IN': 'https://www.leanon.app/support/cant-sleep-anxiety' } },
   openGraph: {
     title: "Can't Sleep Because of Anxiety? Peer Support India | LeanOn",
-    description: "Lying awake with racing thoughts, anxiety, or overthinking? Talk to a peer listener in India who knows that 2 AM feeling. Anonymous support, available right now.",
+    description: "Lying awake with racing thoughts, anxiety, or overthinking? Talk to a peer listener in India who knows that 2 AM feeling. Anonymous support.",
     url: 'https://www.leanon.app/support/cant-sleep-anxiety',
     siteName: 'LeanOn',
     type: 'article',

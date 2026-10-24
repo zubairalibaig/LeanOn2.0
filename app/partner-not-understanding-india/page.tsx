@@ -43,7 +43,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'What if my partner finds out I talked to someone about our relationship?',
-      acceptedAnswer: { '@type': 'Answer', text: 'The session is entirely anonymous and confidential. There is no record linking you to the conversation, no name, no identifying information. Your partner has no way of knowing. And it is worth noting: talking to a neutral person about how you feel in a relationship is a healthy thing to do. You are not betraying anyone by processing your own experience.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'The session is private: your listener sees only the name you choose, never your phone number, and LeanOn never contacts your partner or family. Your partner has no way of knowing unless you tell them. And it is worth noting: talking to a neutral person about how you feel in a relationship is a healthy thing to do. You are not betraying anyone by processing your own experience.' },
     },
     {
       '@type': 'Question',

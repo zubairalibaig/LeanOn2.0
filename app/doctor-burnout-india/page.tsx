@@ -38,7 +38,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Can I talk about specific cases (anonymised)?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Many doctors use LeanOn specifically to process the weight of what they have witnessed &mdash; patient deaths, difficult diagnoses, impossible situations &mdash; anonymously, without any names. The listener will not encourage you to share identifying information, and what you share stays in the session.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Many doctors use LeanOn specifically to process the weight of what they have witnessed &mdash; patient deaths, difficult diagnoses, impossible situations &mdash; anonymously, without any names. The listener will not encourage you to share identifying information, and Your listener never sees your phone number, and nothing is shared with anyone in your life.' },
     },
     {
       '@type': 'Question',

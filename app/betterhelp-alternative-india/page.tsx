@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'BetterHelp Alternative India — Human Support, Indian Prices | LeanOn',
-  description: 'BetterHelp costs $280/month. LeanOn peer sessions start at ₹160. Real human listeners, Indian context, available now.',
+  description: 'BetterHelp costs $280/month. LeanOn peer sessions start at ₹160. Real human listeners, Indian context.',
   keywords: ['betterhelp alternative india', '7 cups alternative india', 'replika alternative india', 'woebot alternative india', 'talkspace alternative india', 'online therapy alternative india', 'best online counselling app india', 'therapy app india', 'online therapy india'],
   alternates: { canonical: 'https://www.leanon.app/betterhelp-alternative-india', languages: { 'en-IN': 'https://www.leanon.app/betterhelp-alternative-india' } },
   openGraph: {
     title: 'BetterHelp Alternative India — Human Support, Indian Prices | LeanOn',
-    description: 'BetterHelp costs $280/month. LeanOn peer sessions start at ₹160. Real human listeners, Indian context, available now.',
+    description: 'BetterHelp costs $280/month. LeanOn peer sessions start at ₹160. Real human listeners, Indian context.',
     url: 'https://www.leanon.app/betterhelp-alternative-india',
     siteName: 'LeanOn',
     type: 'website',
@@ -217,7 +217,7 @@ export default function BetterhelpAlternativeIndiaPage() {
             <li><strong>Indian listeners</strong> — who understand joint family dynamics, Indian work pressure, arranged marriage stress, and the specific loneliness of Indian cities</li>
             <li><strong>Anonymous</strong> — first name only, no photo, no billing identity</li>
             <li><strong>Voice call</strong> — a real conversation, not a chat window</li>
-            <li><strong>Available now</strong> — no appointment, no waitlist, browse and start in minutes</li>
+            <li><strong>No appointment</strong> — no waitlist; browse who is online and request a session</li>
           </ul>
         </div>
 

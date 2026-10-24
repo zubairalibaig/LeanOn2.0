@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Vent About Your Relationship — Say It to Someone Real | LeanOn',
-  description: 'Need to vent about your relationship — not get advice, just say it? Real peer listener in India, anonymous, available now. 15 minutes from ₹160.',
+  description: 'Need to vent about your relationship — not get advice, just say it? Real peer listener in India, private, no appointment. 15 minutes from ₹160.',
   keywords: [
     'need to vent about relationship india',
     'venting about relationship india',
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.leanon.app/vent-about-relationship-india', languages: { 'en-IN': 'https://www.leanon.app/vent-about-relationship-india' } },
   openGraph: {
     title: 'Vent About Your Relationship — Say It to Someone Real | LeanOn',
-    description: 'Need to vent about your relationship — not get advice, just say it? Real peer listener in India, anonymous, available now. 15 minutes from ₹160.',
+    description: 'Need to vent about your relationship — not get advice, just say it? Real peer listener in India, private, no appointment. 15 minutes from ₹160.',
     url: 'https://www.leanon.app/vent-about-relationship-india',
     siteName: 'LeanOn',
     type: 'article',
@@ -183,7 +183,7 @@ export default function VentAboutRelationshipIndiaPage() {
 
         <div className="cta-card">
           <h2>Say what&apos;s been building up.</h2>
-          <p>A real listener is available now &mdash; no appointment, no advice unless you want it, no judgment. 15 minutes from &#x20b9;160.</p>
+          <p>A real listener, with no appointment, no advice unless you want it, no judgment. 15 minutes from &#x20b9;160.</p>
           <a href="/browse" className="btn-cta">Say what&apos;s been building up &#x2192;</a>
         </div>
 

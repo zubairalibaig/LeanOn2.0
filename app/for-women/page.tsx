@@ -217,6 +217,14 @@ export default function ForWomenPage() {
           <div className="sit"><div className="sit-icon">🎧</div><div className="sit-body"><h3>Text or voice</h3><p>Type if you cannot speak freely at home. Voice calls are never recorded.</p></div></div>
         </div>
 
+        <h2>Practical Answers</h2>
+        <div className="situations">
+          <div className="sit"><div className="sit-icon">🏠</div><div className="sit-body"><h3>If you are at home all day</h3><p>Many homemakers talk in the quiet hours — after lunch, or once children are asleep. A 15-minute text session works without anyone hearing you, and you can stop at any time.</p></div></div>
+          <div className="sit"><div className="sit-icon">💼</div><div className="sit-body"><h3>If you are a working mother</h3><p>There is no appointment, so you can use a lunch break or the commute. Choose 15 minutes if that is all you have; unused minutes go back to your wallet if you end early.</p></div></div>
+          <div className="sit"><div className="sit-icon">📱</div><div className="sit-body"><h3>If you share a phone or home</h3><p>Use text if you cannot speak freely. LeanOn appears in your browser history or app list like any other app, so use your own phone if you can. Listeners never see your number, and LeanOn never contacts your family.</p></div></div>
+          <div className="sit"><div className="sit-icon">🙋‍♀️</div><div className="sit-body"><h3>How to choose a woman listener</h3><p>Open <a href="/browse" style={{color:'var(--teal)',fontWeight:800}}>Browse</a>, read the profiles (first name, photo, languages, topics) and request the listener you want. Talk now picks whoever is online first, so use Browse if you would prefer a woman. A session starts when she accepts.</p></div></div>
+        </div>
+
         <h2>What Women Talk About on LeanOn</h2>
         <div className="topics-grid">
           {topics.map((t) => (

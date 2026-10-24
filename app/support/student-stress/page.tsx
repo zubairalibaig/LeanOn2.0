@@ -150,6 +150,7 @@ export default function StudentStressSupportPage() {
         </div>
 
         <div className="section">
+          <p style={{background:'#FFF8F0',borderLeft:'4px solid #FF9933',borderRadius:'0 12px 12px 0',padding:'14px 18px',fontWeight:600}}>LeanOn is for adults aged 18 and over. If you are under 18 and need to talk, please reach out to a parent, teacher or another adult you trust, or call Tele-MANAS on <a href="tel:14416">14416</a> (free).</p>
           <h2>The Reality of Student Life in India</h2>
           <p>India&apos;s education system is one of the most demanding in the world. The stakes attached to competitive examinations, the family expectations that surround academic success, and the lack of adequate mental health support in most educational institutions create a perfect storm of student stress.</p>
 

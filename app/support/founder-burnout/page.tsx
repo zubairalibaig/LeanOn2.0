@@ -48,7 +48,7 @@ const faqSchema = {
       name: 'Is imposter syndrome normal for founders?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Extremely normal. Research consistently shows that imposter syndrome is particularly prevalent among high-achievers, entrepreneurs, and first-time founders. The combination of high stakes, uncertainty, and performing confidence for investors and team while privately doubting yourself creates fertile ground for imposter feelings. You are not alone in this.',
+        text: 'Extremely normal. Research suggests that imposter syndrome is particularly prevalent among high-achievers, entrepreneurs, and first-time founders. The combination of high stakes, uncertainty, and performing confidence for investors and team while privately doubting yourself creates fertile ground for imposter feelings. You are not alone in this.',
       },
     },
     {
@@ -252,7 +252,7 @@ export default function FounderBurnoutSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">Is imposter syndrome normal for founders?</div>
-            <div className="faq-a">Extremely normal. Research consistently shows that imposter syndrome is particularly prevalent among high-achievers and first-time founders. The combination of high stakes, uncertainty, and performing confidence while privately doubting yourself creates fertile ground for imposter feelings. You are not alone in this.</div>
+            <div className="faq-a">Extremely normal. Research suggests that imposter syndrome is particularly prevalent among high-achievers and first-time founders. The combination of high stakes, uncertainty, and performing confidence while privately doubting yourself creates fertile ground for imposter feelings. You are not alone in this.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Can peer support replace founder therapy or coaching?</div>

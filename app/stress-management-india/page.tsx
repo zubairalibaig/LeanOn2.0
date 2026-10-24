@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Stress Management India — Talk It Out with a Real Person | LeanOn',
-  description: 'Overwhelmed by stress? Sometimes talking helps more than tips. Real peer listeners available from ₹160. Anonymous, judgment-free, available now.',
+  description: 'Overwhelmed by stress? Sometimes talking helps more than tips. Real peer listeners available from ₹160. Anonymous, judgment-free.',
   keywords: ['stress management india', 'anxiety management india', 'how to deal with stress india', 'stress relief india', 'reduce stress india', 'coping with stress india'],
   alternates: { canonical: 'https://www.leanon.app/stress-management-india', languages: { 'en-IN': 'https://www.leanon.app/stress-management-india' } },
   openGraph: {
     title: 'Stress Management India — Talk It Out with a Real Person | LeanOn',
-    description: 'Overwhelmed by stress? Sometimes talking helps more than tips. Real peer listeners available from ₹160. Anonymous, judgment-free, available now.',
+    description: 'Overwhelmed by stress? Sometimes talking helps more than tips. Real peer listeners available from ₹160. Anonymous, judgment-free.',
     url: 'https://www.leanon.app/stress-management-india',
     siteName: 'LeanOn',
     type: 'website',
@@ -159,7 +159,7 @@ export default function StressManagementIndiaPage() {
 
         <div className="cta-card">
           <h2>Talk to Someone — Not a Tips Article</h2>
-          <p>Real peer listeners from ₹160. Anonymous, available now, no appointment needed.</p>
+          <p>Real peer listeners from ₹160. Private, no appointment needed.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse listeners →</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now →</button></a>

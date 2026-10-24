@@ -155,7 +155,7 @@ export default function SingleParentIndiaPage() {
         </div>
         <div className="cta-card">
           <h2>You carry so much. Put some of it down for 15 minutes.</h2>
-          <p>Anonymous. Private. Available now. From ₹160. First 5 minutes free.</p>
+          <p>Private. No appointment. From ₹160. First 5 minutes free.</p>
           <a href="/browse" className="btn-cta">Browse listeners &rarr;</a>
         </div>
         <div className="section">

@@ -186,10 +186,6 @@ export default function MomBurnoutIndiaPage() {
           ))}
         </div>
 
-        <div className="quote-box">
-          <p>"I have a 19 month old baby boy. I am burnt out on most days. I love my baby but I too need a break at times. I am very mindful around my baby but all this external stress is getting the better of me. If not for him, I would have given up a long time ago."</p>
-          <span>— a real LeanOn session, shared anonymously</span>
-        </div>
 
         <h2>Why Maternal Burnout Is Particularly Hard in India</h2>
         <p>
@@ -259,7 +255,7 @@ export default function MomBurnoutIndiaPage() {
 
         <div className="cta-card">
           <h2>You Deserve to Be Heard Too</h2>
-          <p>Talk to a real person who will actually listen — not advise, not fix, not make you feel guilty. Anonymous. Available now. First 5 minutes free.</p>
+          <p>Talk to a real person who will actually listen — not advise, not fix, not make you feel guilty. Private. No appointment. First 5 minutes free.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">You deserve to be heard too — first 5 min free →</button></a>
             <a href="/for-women"><button className="btn-secondary">Support for women</button></a>

@@ -34,7 +34,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is it anonymous?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Your first name only. What you say stays in the session. There is no connection to your social network, your family, or your partner&apos;s family. This is a completely private space.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Your first name only. Your listener never sees your phone number, and nothing is shared with anyone in your life. There is no connection to your social network, your family, or your partner&apos;s family. This is a completely private space.' },
     },
     {
       '@type': 'Question',

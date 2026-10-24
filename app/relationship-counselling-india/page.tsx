@@ -4,13 +4,13 @@ import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Relationship Counselling India — Talk It Through with a Real Person | LeanOn',
-  description: 'Relationship problems weighing on you? Talk to a real person — not an algorithm. Anonymous peer support from ₹160. No appointment needed.',
+  title: 'Relationship Counselling or Peer Support? Talk It Through in India | LeanOn',
+  description: 'LeanOn is not relationship or couples counselling. If you first want to talk it through, a screened peer listener in India can listen — private, from ₹160 for 15 minutes, no appointment.',
   keywords: ['relationship counselling india', 'marriage counselling india', 'couple counselling india', 'divorce support india', 'toxic relationship support india'],
   alternates: { canonical: 'https://www.leanon.app/relationship-counselling-india', languages: { 'en-IN': 'https://www.leanon.app/relationship-counselling-india' } },
   openGraph: {
-    title: 'Relationship Counselling India — Talk It Through with a Real Person | LeanOn',
-    description: 'Relationship problems weighing on you? Talk to a real person — not an algorithm. Anonymous peer support from ₹160. No appointment needed.',
+    title: 'Relationship Counselling or Peer Support? Talk It Through in India | LeanOn',
+    description: 'LeanOn is not relationship or couples counselling. If you first want to talk it through, a screened peer listener in India can listen — private, from ₹160 for 15 minutes, no appointment.',
     url: 'https://www.leanon.app/relationship-counselling-india',
     siteName: 'LeanOn',
     type: 'website',
@@ -34,7 +34,7 @@ const faqSchema = {
       name: 'What if I need a professional?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'If you are dealing with abuse, severe trauma, addiction, or a clinical mental health condition, please see a licensed therapist or counsellor. LeanOn will always tell you honestly when professional help is the right path. For the emotional weight of relationship difficulties — the confusion, the grief, the frustration — peer support is often exactly what is needed first.',
+        text: 'If you are dealing with abuse, severe trauma, addiction, or a clinical mental health condition, please see a licensed therapist or counsellor. LeanOn listeners are asked to suggest professional help when it is the right path. For the emotional weight of relationship difficulties — the confusion, the grief, the frustration — peer support is often exactly what is needed first.',
       },
     },
     {
@@ -162,6 +162,7 @@ export default function RelationshipCounsellingIndiaPage() {
 
         <GeoQuickAnswer path="/relationship-counselling-india" />
         <div className="section">
+          <p style={{background:'#FFF8F0',borderLeft:'4px solid #FF9933',borderRadius:'0 12px 12px 0',padding:'14px 18px',fontWeight:600}}>LeanOn does not provide relationship or couples counselling. Listeners are screened peers, not counsellors or therapists. For counselling, see a qualified relationship counsellor; LeanOn can sit alongside that.</p>
           <h2>What People Come to Talk About</h2>
           <ul>
             <li><strong>Marriage tension</strong> — communication breakdown, feeling unseen, growing apart</li>

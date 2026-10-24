@@ -209,7 +209,7 @@ export default function CantAffordTherapyIndiaPage() {
           <p>NIMHANS (080-46110007) and Tele-MANAS (14416) are run by the Government of India and are free, 24/7, and staffed by trained counsellors. They are genuinely useful in a crisis. But they are not designed for ongoing support or for the kind of regular processing that most people need — they are triaged for acute situations.</p>
 
           <h3>Journaling and Apps — Useful, But One-Sided</h3>
-          <p>Writing, breathwork apps, and self-help tools can be genuinely useful as supplements. But they do not do the one thing that matters most: make you feel heard by another person. Research consistently shows that the felt experience of being understood by another human is qualitatively different from self-reflection, however rigorous.</p>
+          <p>Writing, breathwork apps, and self-help tools can be genuinely useful as supplements. But they do not do the one thing that matters most: make you feel heard by another person. Research suggests that the felt experience of being understood by another human is qualitatively different from self-reflection, however rigorous.</p>
 
           <h3>Peer Support — The Real Middle Ground</h3>
           <p>Peer support sits between talking to friends (free, limited) and therapy (expensive, clinical). A screened peer listener is not a friend — they are an objective outside presence without a stake in your situation. And they are not a therapist — no diagnosis, no treatment framework, no clinical record. They are a person who has navigated hard things and been chosen for their ability to support others doing the same.</p>

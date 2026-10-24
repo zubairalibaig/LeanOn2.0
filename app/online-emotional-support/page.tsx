@@ -13,9 +13,9 @@ export const metadata: Metadata = {
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
   { '@type': 'Question', name: 'What is online emotional support?', acceptedAnswer: { '@type': 'Answer', text: 'Online emotional support is talking to a real person about what you are going through — not to receive diagnosis or treatment, but to be genuinely heard. LeanOn peer listeners provide emotional support through text-based sessions, no appointment needed needed.' } },
   { '@type': 'Question', name: 'How is LeanOn different from an AI chatbot?', acceptedAnswer: { '@type': 'Answer', text: 'LeanOn listeners are real humans with lived experience. An AI generates responses that simulate understanding. A real person who has been through something similar actually knows what it feels like. Most people who try both describe AI emotional support as hollow — it mimics empathy but does not provide it.' } },
-  { '@type': 'Question', name: 'How is this different from therapy?', acceptedAnswer: { '@type': 'Answer', text: 'Therapy is a clinical service with a licensed professional — appropriate for diagnosis and treatment. LeanOn is peer support: informal, accessible, and focused on being heard rather than treated. It is available right now, without an appointment, and is significantly more affordable.' } },
+  { '@type': 'Question', name: 'How is this different from therapy?', acceptedAnswer: { '@type': 'Answer', text: 'Therapy is a clinical service with a licensed professional — appropriate for diagnosis and treatment. LeanOn is peer support: informal, accessible, and focused on being heard rather than treated. It needs no appointment, and is significantly more affordable.' } },
   { '@type': 'Question', name: 'Do I need a reason to use LeanOn?', acceptedAnswer: { '@type': 'Answer', text: 'No. You do not need to be in crisis or have a diagnosed condition. Feeling overwhelmed, lonely, anxious, or just needing to talk is sufficient. LeanOn is for anyone who needs to be heard.' } },
-  { '@type': 'Question', name: 'Is it available right now?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn is. Browse listeners who are currently online and start a session immediately. The first 5 minutes are free with no charge.' } },
+  { '@type': 'Question', name: 'Can I talk to someone right now?', acceptedAnswer: { '@type': 'Answer', text: 'Often, yes. Browse listeners who are currently online and request a session; it starts when a listener accepts. The first 5 minutes are free, once per account.' } },
 ] }
 
 const breadcrumbSchema = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -79,7 +79,7 @@ export default function OnlineEmotionalSupportPage() {
         <div className="hero">
           <p className="badge">Emotional Support &middot; Real People No Appointment</p>
           <h1>More human than AI. <em>More accessible than therapy.</em></h1>
-          <p className="lead">Real peer listeners with lived experience, available right now. No appointment, no judgment, no waiting room. The first 5 minutes are free — start talking in under a minute.</p>
+          <p className="lead">Real peer listeners with lived experience. No appointment, no judgment, no waiting room. The first 5 minutes are free — start talking in under a minute.</p>
           <a href="/browse" className="cta-hero">Find a listener now &rarr;</a>
         </div>
         <div className="section">
@@ -111,7 +111,7 @@ export default function OnlineEmotionalSupportPage() {
           <p>These are the exact moments LeanOn is designed for. No reason required. No minimum severity. If you need to talk, that is enough.</p>
         </div>
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Real emotional support, right now.</h2><p>No AI. No appointment. No judgment. A real person with lived experience, available now. First 5 minutes free.</p><a href="/browse" className="btn-cta">Start talking &rarr;</a></div>
+        <div className="cta-card"><h2>Real emotional support, right now.</h2><p>No AI. No appointment. No judgment. A real person with lived experience. First 5 minutes free.</p><a href="/browse" className="btn-cta">Start talking &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/support/someone-to-talk-to">Talk to someone online &rarr;</a>
           <a href="/someone-to-talk-to">Need someone to talk to &rarr;</a>

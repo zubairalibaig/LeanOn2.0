@@ -188,10 +188,6 @@ export default function MenLonelinessIndiaPage() {
           ))}
         </div>
 
-        <div className="quote-box">
-          <p>"Just wanted to talk. Feelin lonely. Too many things — job marriage pressure going on. I don't trust in marriage because I have seen my parents themselves not having a good one."</p>
-          <span>— a real LeanOn session, shared anonymously</span>
-        </div>
 
         <h2>Why Men in India Cannot Say They Are Lonely</h2>
         <p>
@@ -266,7 +262,7 @@ export default function MenLonelinessIndiaPage() {
 
         <div className="cta-card">
           <h2>Just Wanted to Talk?</h2>
-          <p>A real person. No judgment. No advice you didn&apos;t ask for. Anonymous, available now. First 5 minutes free.</p>
+          <p>A real person. No judgment. No advice you didn&apos;t ask for. private, no appointment. First 5 minutes free.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Someone is listening — start free now →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works</button></a>

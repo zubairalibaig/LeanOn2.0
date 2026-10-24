@@ -185,7 +185,7 @@ export default function ChandigarhPage() {
 
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Gets Chandigarh?</h2>
-          <p>Browse peer listeners who understand Punjab and Haryana family dynamics. No appointments, no waitlists, available right now.</p>
+          <p>Browse peer listeners who understand Punjab and Haryana family dynamics. No appointments, no waitlists.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Chandigarh Listeners</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now</button></a>

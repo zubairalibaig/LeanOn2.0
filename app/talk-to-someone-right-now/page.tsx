@@ -27,7 +27,7 @@ const faqSchema = {
       name: 'How fast can I actually talk to someone?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'It depends on who is online. When you open the listener directory, you can see who is available right now — if someone is online, you can usually start talking within a minute or two. If nobody is online at that moment, you can leave a message and the listener will reply when they are back. We will not pretend someone is always instantly free, but listeners go online at different hours, often including late at night.',
+        text: 'It depends on who is online. When you open the listener directory, you can see who is online right now — if someone is online, you can usually start talking within a minute or two. If nobody is online at that moment, you can leave a message and the listener will reply when they are back. We will not pretend someone is always instantly free, but listeners go online at different hours, often including late at night.',
       },
     },
     {
@@ -147,7 +147,7 @@ export default function TalkToSomeoneRightNowPage() {
 
         {/* Hero */}
         <div className="hero">
-          <p className="tag">Available Now · Anonymous</p>
+          <p className="tag">No Appointment · Private</p>
           <h1>Someone Is Ready to <em>Listen</em> — Right Now</h1>
           <p className="lead">You do not need an appointment, a referral, or a reason good enough. Open the listener directory, see who is online, and start talking when a listener accepts.</p>
           <QuickAnswer question={"Can I talk to someone right now, without an appointment?"} answer={"Yes. Open leanon.app/talk, choose text or voice and tap what is on your mind. LeanOn asks a screened peer listener who is online now, and the next one if they can't answer within about 30 seconds. Your first 5 minutes are free. If you are in danger, call Tele-MANAS 14416 first."} />
@@ -250,7 +250,7 @@ export default function TalkToSomeoneRightNowPage() {
           <h2>Frequently Asked Questions</h2>
           <div className="faq-item">
             <div className="faq-q">How fast can I actually talk to someone?</div>
-            <div className="faq-a">It depends on who is online. When you open the listener directory, you can see who is available right now — if someone is online, you can usually start talking within a minute or two. If nobody is online at that moment, you can leave a message and the listener will reply when they are back. We will not pretend someone is always instantly free, but listeners go online at different hours, often including late at night.</div>
+            <div className="faq-a">It depends on who is online. When you open the listener directory, you can see who is online right now — if someone is online, you can usually start talking within a minute or two. If nobody is online at that moment, you can leave a message and the listener will reply when they are back. We will not pretend someone is always instantly free, but listeners go online at different hours, often including late at night.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is it really anonymous?</div>

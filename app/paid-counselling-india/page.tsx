@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Paid Counselling India — Affordable, Anonymous & Online | LeanOn',
-  description: 'Paid online counselling in India from ₹160 per session. Talk to a screened peer listener — anonymous, judgment-free, available now.',
+  description: 'Paid online counselling in India from ₹160 per session. Talk to a screened peer listener — anonymous, judgment-free.',
   keywords: ['paid counselling india', 'affordable counselling india', 'low cost counselling india', 'mental health counselling india', 'talk to counsellor online india', 'emotional counselling india'],
   alternates: { canonical: 'https://www.leanon.app/online-counselling-india-cost', languages: { 'en-IN': 'https://www.leanon.app/online-counselling-india-cost' } },
   openGraph: {
     title: 'Paid Counselling India — Affordable, Anonymous & Online | LeanOn',
-    description: 'Paid online counselling in India from ₹160 per session. Talk to a screened peer listener — anonymous, judgment-free, available now.',
+    description: 'Paid online counselling in India from ₹160 per session. Talk to a screened peer listener — anonymous, judgment-free.',
     url: 'https://www.leanon.app/online-counselling-india-cost',
     siteName: 'LeanOn',
     type: 'website',
@@ -233,7 +233,7 @@ export default function PaidCounsellingIndiaPage() {
 
         <div className="cta-card">
           <h2>Start a Session for ₹160</h2>
-          <p>Browse real peer listeners. First 5 minutes are free. No appointment, no waitlist, available right now.</p>
+          <p>Browse real peer listeners. First 5 minutes are free. No appointment, no waitlist.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse peer listeners →</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now →</button></a>

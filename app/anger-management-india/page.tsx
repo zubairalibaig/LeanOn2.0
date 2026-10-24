@@ -164,7 +164,7 @@ export default function AngerManagementIndiaPage() {
 
         <div className="cta-card">
           <h2>Talk Before It Explodes</h2>
-          <p>Anonymous peer support from ₹160. No judgment, available now.</p>
+          <p>Anonymous peer support from ₹160. No judgment.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse listeners →</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now →</button></a>

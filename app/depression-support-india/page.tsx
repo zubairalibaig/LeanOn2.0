@@ -227,7 +227,7 @@ export default function DepressionSupportPage() {
           </p>
           <h3>Private</h3>
           <p>
-            No real name required. No video. No record attached to your identity. You choose what to share and how much.
+            No real name required. No video. Your listener never sees your phone number. You choose what to share and how much.
           </p>
           <h3>First 5 minutes free, ₹160/session after</h3>
           <p>

@@ -188,7 +188,7 @@ export default function RelationshipAnxietyPage() {
           <h2>You Do Not Have to Process This Alone</h2>
           <p>Relationship anxiety is one of the loneliest experiences there is — because the one person you would normally talk to is the person the anxiety is about. You are carrying something heavy in a room that the other person is also in, and you cannot put it down in front of them.</p>
           <p>LeanOn gives you somewhere outside the room. A listener who has heard relationship anxiety before — who will not be surprised by the irrationality of the fear, will not judge the jealousy, will not tell you what to do — just receive what you have been carrying and help you feel less alone in it.</p>
-          <p>Sessions are anonymous. Your partner will not know. What you say stays in the session. You can start by saying "I have been feeling anxious about my relationship and I just need to say some of it out loud" — that is enough to begin.</p>
+          <p>Sessions are anonymous. Your partner will not know. Your listener never sees your phone number, and nothing is shared with anyone in your life. You can start by saying "I have been feeling anxious about my relationship and I just need to say some of it out loud" — that is enough to begin.</p>
         </div>
 
         <div className="section">

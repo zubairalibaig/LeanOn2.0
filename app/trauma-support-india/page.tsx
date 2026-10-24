@@ -182,7 +182,7 @@ export default function TraumaSupportIndiaPage() {
 
         <div className="cta-card">
           <h2>You Don&apos;t Have to Carry It Alone</h2>
-          <p>Peer support from ₹160. Anonymous, judgment-free, available now.</p>
+          <p>Peer support from ₹160. Anonymous, judgment-free.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse listeners →</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now →</button></a>

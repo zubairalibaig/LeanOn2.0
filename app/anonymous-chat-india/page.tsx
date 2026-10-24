@@ -156,7 +156,7 @@ export default function AnonymousChatIndiaPage() {
           <p className="tag">Anonymous · Private · Real People</p>
           <div className="badge">No Name. No Face. No History.</div>
           <h1>Say What You Can&apos;t Say to <em>Anyone You Know</em></h1>
-          <p className="lead">Some things can&apos;t go to your partner, your best friend, or your parents. On LeanOn, you talk to a real peer listener who has no connection to your life — and what you say stays in the session. Anonymous chat with a screened human, not a stranger from the internet.</p>
+          <p className="lead">Some things can&apos;t go to your partner, your best friend, or your parents. On LeanOn, you talk to a real peer listener who has no connection to your life — and Your listener never sees your phone number, and nothing is shared with anyone in your life. Anonymous chat with a screened human, not a stranger from the internet.</p>
           <div className="hero-cta">
             <a href="/talk?src=seo"><button className="btn-primary" style={{fontFamily:'Nunito,sans-serif'}}>Chat anonymously — first 5 min free →</button></a>
             <a href="/browse"><button className="btn-secondary" style={{fontFamily:'Nunito,sans-serif',background:'var(--teal)',border:'none',boxShadow:'0 4px 16px rgba(26,143,160,0.25)'}}>Browse listeners →</button></a>
@@ -191,8 +191,8 @@ export default function AnonymousChatIndiaPage() {
             },
             {
               icon: '📁',
-              title: 'Stays in the session',
-              body: 'Session content is not stored, shared, or used for any purpose outside the conversation. When the call ends, it ends. There is no record that gets forwarded, no notes that get filed.',
+              title: 'Private to you',
+              body: 'Voice calls are not recorded. Text messages are stored securely and opened only by authorised LeanOn staff if a session is reported or flagged for safety. Nothing is shared with anyone in your life.',
             },
           ].map((c, i) => (
             <div key={i} className="card">
@@ -285,7 +285,7 @@ export default function AnonymousChatIndiaPage() {
             </div>
             <div className="privacy-item">
               <span className="privacy-check">✅</span>
-              <span className="privacy-text"><strong>Session content not shared.</strong> Conversations are private to the session. There is no record sent anywhere, no notes shared with third parties.</span>
+              <span className="privacy-text"><strong>Session content not shared.</strong> Conversations are private to the session. Nothing is sent to anyone in your life, and nothing is shared with third parties.</span>
             </div>
             <div className="privacy-item">
               <span className="privacy-check">✅</span>
@@ -310,7 +310,7 @@ export default function AnonymousChatIndiaPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Say It to Someone Who Will Never Tell</h2>
-          <p>Your first 5 minutes are free. Use a name, use an alias — it does not matter. A real, screened listener is on the other side. What you say stays in the session.</p>
+          <p>Your first 5 minutes are free. Use a name, use an alias — it does not matter. A real, screened listener is on the other side. Your listener never sees your phone number, and nothing is shared with anyone in your life.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Chat anonymously — first 5 min free →</button></a>
             <a href="/browse"><button className="btn-secondary">Browse listeners →</button></a>

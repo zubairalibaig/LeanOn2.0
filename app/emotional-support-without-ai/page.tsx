@@ -75,7 +75,7 @@ const faqSchema = {
       name: 'Can AI help with loneliness?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'AI can provide distraction, but it cannot provide genuine connection. Research consistently shows that the feeling of being truly heard by another person — not a machine — is what relieves loneliness.',
+        text: 'AI can provide distraction, but it cannot provide genuine connection. Research suggests that the feeling of being truly heard by another person — not a machine — is what relieves loneliness.',
       },
     },
     {
@@ -303,8 +303,8 @@ export default function EmotionalSupportWithoutAIPage() {
           </div>
           <div className="faq-item">
             <h3>Can AI help with loneliness?</h3>
-            <p>AI can provide distraction, but it cannot provide genuine connection. Research consistently
-              shows that the feeling of being truly heard by another person — not a machine — is what
+            <p>AI can provide distraction, but it cannot provide genuine connection. Research suggests
+               that the feeling of being truly heard by another person — not a machine — is what
               relieves loneliness.</p>
           </div>
           <div className="faq-item">

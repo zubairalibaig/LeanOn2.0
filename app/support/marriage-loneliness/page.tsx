@@ -175,6 +175,7 @@ export default function MarriageLonelinessSupportPage() {
 
         {/* How LeanOn helps */}
         <div className="section">
+          <p>Not sure whether what you feel is loneliness? <a href="/support/married-but-lonely" style={{color:'#1A8FA0',fontWeight:800}}>Read the signs of being married but lonely →</a></p>
           <h2>How LeanOn Helps</h2>
           <p>LeanOn is peer support — real people who have lived through hard things, listening to other real people. Here is what that looks like when the thing you are carrying is loneliness inside your marriage:</p>
 
@@ -241,7 +242,7 @@ export default function MarriageLonelinessSupportPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Ready to Be Heard?</h2>
-          <p>Talk to a peer listener who understands loneliness inside a marriage. Completely anonymous, outside your circle. No appointments, no waitlists.</p>
+          <p>Talk to a peer listener who understands loneliness inside a marriage. Private and outside your circle. No appointments, no waitlists.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Talk to someone who understands — first 5 min free →</button></a>
             <a href="/how-leanon-works"><button className="btn-secondary">How it works →</button></a>

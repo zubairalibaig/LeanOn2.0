@@ -95,7 +95,7 @@ export default function TalkToSomeoneHindiPage() {
           <p>Sessions are text-based. No video, no voice &mdash; just text. This makes it easier to be honest, easier to say the thing you have been holding. The first 5 minutes are free. If it feels right, you continue. If not, you end and pay nothing. From ₹160 for 15 minutes after the free session.</p>
         </div>
         <div className="section"><h2>Frequently Asked Questions</h2>{faqs.map((f, i) => (<div className="faq-item" key={i}><p className="faq-q">{f.name}</p><p className="faq-a">{f.acceptedAnswer.text}</p></div>))}</div>
-        <div className="cta-card"><h2>Apni baat, apni bhasha mein.</h2><p>Hindi-speaking peer listeners. India-based. Available now. First 5 minutes free.</p><a href="/browse" className="btn-cta">Listener dhundhe &rarr;</a></div>
+        <div className="cta-card"><h2>Apni baat, apni bhasha mein.</h2><p>Hindi-speaking peer listeners. India-based. No appointment. First 5 minutes free.</p><a href="/browse" className="btn-cta">Listener dhundhe &rarr;</a></div>
         <div className="section"><h2>You Might Also Find This Helpful</h2><div className="related">
           <a href="/indian-emotional-support-abroad">NRI support &rarr;</a>
           <a href="/indian-diaspora-support">Indian diaspora support &rarr;</a>

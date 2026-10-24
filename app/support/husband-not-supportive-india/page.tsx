@@ -173,10 +173,6 @@ export default function HusbandNotSupportiveIndiaPage() {
           your expectations all the way down to nothing — and you are still disappointed.
         </p>
 
-        <div className="quote-box">
-          <p>"I have a 19 month old baby boy. Though I am married my husband hardly helps and of late has stopped supporting financially too... Everything feels like a never ending struggle."</p>
-          <span>— a real LeanOn session, shared anonymously</span>
-        </div>
 
         <h2>The Two Kinds of Withdrawal</h2>
         <div className="cards">

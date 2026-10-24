@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Walk-In Counselling India — No Appointment, Talk Now | LeanOn',
-  description: 'No waiting list. No appointment. No scheduling. LeanOn peer support is available right now — like walk-in counselling but from your phone. From ₹160.',
+  description: 'No waiting list. No appointment. No scheduling. LeanOn peer support needs no appointment — like walk-in counselling but from your phone. From ₹160.',
   keywords: [
     'walk-in counselling india', 'counselling without appointment india',
     'counselling without waiting list india', 'same day counselling india',
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.leanon.app/walk-in-counselling-india', languages: { 'en-IN': 'https://www.leanon.app/walk-in-counselling-india' } },
   openGraph: {
     title: 'Walk-In Counselling India — No Appointment, Talk Now | LeanOn',
-    description: 'No waiting list. No appointment. No scheduling. LeanOn peer support is available right now — like walk-in counselling but from your phone. From ₹160.',
+    description: 'No waiting list. No appointment. No scheduling. LeanOn peer support needs no appointment — like walk-in counselling but from your phone. From ₹160.',
     url: 'https://www.leanon.app/walk-in-counselling-india',
     siteName: 'LeanOn',
     type: 'article',
@@ -34,7 +34,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'How fast can I get a session?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Most people are in a session within 3 minutes of deciding to start. Browse available listeners at leanon.app/browse, choose one, and start. There is no scheduling, no intake form, no waiting room. The listener is available now.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Most people are in a session within 3 minutes of deciding to start. Browse available listeners at leanon.app/browse, choose one, and start. There is no scheduling, no intake form, no waiting room. You talk with whichever available listener accepts.' },
     },
     {
       '@type': 'Question',
@@ -133,7 +133,7 @@ export default function WalkInCounsellingIndiaPage() {
         </div>
 
         <div className="hero">
-          <p className="badge">Available Now &middot; No Appointment &middot; India</p>
+          <p className="badge">No Appointment &middot; India</p>
           <h1>Walk-in counselling. <em>Except you don&apos;t even have to walk anywhere.</em></h1>
           <p className="lead">Traditional counselling has waiting lists of weeks. Walk-in clinics have queues. LeanOn is instant &mdash; browse listeners, start a session, talk now. No appointment, no waiting, available across India.</p>
           <a href="/browse" className="cta-hero">Talk now &rarr;</a>
@@ -203,7 +203,7 @@ export default function WalkInCounsellingIndiaPage() {
         </div>
 
         <div className="cta-card">
-          <h2>The support you need, available now.</h2>
+          <h2>The support you need, without an appointment.</h2>
           <p>No appointment. No waiting list. From ₹160. First 5 minutes free.</p>
           <a href="/browse" className="btn-cta">Browse available listeners &rarr;</a>
         </div>

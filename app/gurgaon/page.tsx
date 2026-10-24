@@ -185,7 +185,7 @@ export default function GurgaonPage() {
 
         <div className="cta-card">
           <h2>Ready to Talk to Someone Who Gets Gurgaon?</h2>
-          <p>Browse peer listeners who understand the pressures of India&apos;s corporate capital. No appointments, no waitlists, available right now.</p>
+          <p>Browse peer listeners who understand the pressures of India&apos;s corporate capital. No appointments, no waitlists.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse Gurgaon Listeners</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now</button></a>

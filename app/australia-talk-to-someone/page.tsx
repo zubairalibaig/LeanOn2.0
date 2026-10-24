@@ -91,7 +91,7 @@ export default function AustraliaTalkToSomeonePage() {
         </h1>
 
         <p style={{ fontSize: '1.05rem', color: '#444', lineHeight: 1.7, marginBottom: 32 }}>
-          Australia has a large and growing Indian community — Melbourne, Sydney, Brisbane, Perth. The professional opportunities are real. So is the loneliness that can set in when the excitement of the move wears off and you realise the people who actually know you are ten thousand kilometres away. LeanOn gives you a real Indian peer listener who understands this from the inside. Anonymous, in your language, available now.
+          Australia has a large and growing Indian community — Melbourne, Sydney, Brisbane, Perth. The professional opportunities are real. So is the loneliness that can set in when the excitement of the move wears off and you realise the people who actually know you are ten thousand kilometres away. LeanOn gives you a real Indian peer listener who understands this from the inside. Private, in your language, with no appointment (availability follows Indian time).
         </p>
 
         <a href="/browse" style={{ display: 'inline-block', background: '#0F4867', color: '#fff', padding: '14px 28px', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: '1rem', marginBottom: 48 }}>

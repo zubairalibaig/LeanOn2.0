@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Need to Vent Right Now? Talk to a Real Person in 2 Minutes | LeanOn',
-  description: 'Something happened and you need to get it off your chest RIGHT NOW. LeanOn connects you with a real listener in India within minutes — no appointment, anonymous, available now.',
+  description: 'Something happened and you need to get it off your chest RIGHT NOW. LeanOn connects you with a real listener in India within minutes — no appointment, private, no appointment.',
   keywords: [
     'need to vent right now', 'need to vent online India',
     'someone to vent to right now', 'I need to rant right now India',
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.leanon.app/need-to-vent-right-now', languages: { 'en-IN': 'https://www.leanon.app/need-to-vent-right-now' } },
   openGraph: {
     title: 'Need to Vent Right Now? Talk to a Real Person in 2 Minutes | LeanOn',
-    description: 'Something happened and you need to get it off your chest RIGHT NOW. LeanOn connects you with a real listener in India within minutes — no appointment, anonymous, available now.',
+    description: 'Something happened and you need to get it off your chest RIGHT NOW. LeanOn connects you with a real listener in India within minutes — no appointment, private, no appointment.',
     url: 'https://www.leanon.app/need-to-vent-right-now',
     siteName: 'LeanOn',
     type: 'article',

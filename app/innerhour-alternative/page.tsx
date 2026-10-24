@@ -4,12 +4,12 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'InnerHour Alternative India — Peer Support from ₹160 | LeanOn',
-  description: 'Looking for an InnerHour or Amaha alternative? LeanOn offers real human peer support at ₹160 — no subscription, anonymous, available now.',
+  description: 'Looking for an InnerHour or Amaha alternative? LeanOn offers real human peer support at ₹160 — no subscription, private, no appointment.',
   keywords: ['innerhour alternative', 'amaha alternative', 'practo therapy alternative', 'lybrate counselling alternative', 'mpower alternative'],
   alternates: { canonical: 'https://www.leanon.app/innerhour-alternative', languages: { 'en-IN': 'https://www.leanon.app/innerhour-alternative' } },
   openGraph: {
     title: 'InnerHour Alternative India — Peer Support from ₹160 | LeanOn',
-    description: 'Looking for an InnerHour or Amaha alternative? LeanOn offers real human peer support at ₹160 — no subscription, anonymous, available now.',
+    description: 'Looking for an InnerHour or Amaha alternative? LeanOn offers real human peer support at ₹160 — no subscription, private, no appointment.',
     url: 'https://www.leanon.app/innerhour-alternative',
     siteName: 'LeanOn',
     type: 'website',
@@ -195,7 +195,7 @@ export default function InnerhourAlternativePage() {
         <div className="section">
           <h2>Who Each Platform Is For</h2>
           <p><strong>Clinical or psychiatric needs</strong> — If you need diagnosis, medication management, or structured psychotherapy for a clinical condition, Amaha, Practo, or mPower are the right choice. These platforms connect you with licensed professionals.</p>
-          <p><strong>Just need to talk</strong> — If you are carrying emotional weight — relationship stress, family pressure, work burnout, loneliness, anxiety — and you need a real human being to talk to right now, without a subscription or an appointment, that is exactly what LeanOn is built for. From ₹160, anonymous, available now.</p>
+          <p><strong>Just need to talk</strong> — If you are carrying emotional weight — relationship stress, family pressure, work burnout, loneliness, anxiety — and you need a real human being to talk to right now, without a subscription or an appointment, that is exactly what LeanOn is built for. From ₹160, private, no appointment.</p>
           <p>LeanOn does not compete with clinical platforms. It fills a different gap: the everyday emotional weight that does not need a psychiatrist but does need a real person.</p>
         </div>
 
