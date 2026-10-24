@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'Is it safe to talk about parenting struggles on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes — completely. Listeners agree to keep what you share confidential. You do not need to share your real name. What you share in a session stays there. Many people find that the anonymity of LeanOn is specifically what makes it possible to say the things they cannot say to family or friends — including the messy, ambivalent, exhausted parts of parenting that feel too vulnerable to share with people who know your child.',
+        text: 'Phone verification is required but listeners see your chosen display name. Text messages are stored securely and may be reviewed by authorised administrators when reported or flagged. Voice calls are not recorded by LeanOn.',
       },
     },
     {
@@ -187,8 +187,8 @@ export default function MomBurnoutIndiaPage() {
         </div>
 
         <div className="quote-box">
-          <p>"I have a 19 month old baby boy. I am burnt out on most days. I love my baby but I too need a break at times. I am very mindful around my baby but all this external stress is getting the better of me. If not for him, I would have given up a long time ago."</p>
-          <span>— a real LeanOn session, shared anonymously</span>
+          <p>Feeling exhausted while caring for others can coexist with love and commitment. Support may include trusted people, practical help, qualified professional care when needed, or a peer conversation.</p>
+          <span>General guidance — not a quotation from a LeanOn user</span>
         </div>
 
         <h2>Why Maternal Burnout Is Particularly Hard in India</h2>
@@ -259,7 +259,7 @@ export default function MomBurnoutIndiaPage() {
 
         <div className="cta-card">
           <h2>You Deserve to Be Heard Too</h2>
-          <p>Talk to a real person who will actually listen — not advise, not fix, not make you feel guilty. Anonymous. Available now. First 5 minutes free.</p>
+          <p>Request a conversation with a screened peer listener when one is available. One introductory session of up to five minutes is free per account. LeanOn is not therapy or a crisis service.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">You deserve to be heard too — first 5 min free →</button></a>
             <a href="/for-women"><button className="btn-secondary">Support for women</button></a>
