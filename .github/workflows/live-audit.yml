@@ -1,0 +1,24 @@
+# Read-only live visibility audit of www.leanon.app (robots, sitemaps, page
+# metadata, crawler access per user-agent, listener supply snapshot, mobile
+# PageSpeed). Runs on pushes to audit/* branches or manually. Never deploys.
+name: Live visibility audit
+on:
+  workflow_dispatch:
+  push:
+    branches: ['audit/**']
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Run live audit
+        run: node scripts/live-audit.mjs | tee live-audit.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: live-audit
+          path: live-audit.log
