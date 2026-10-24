@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'LeanOn — Real Human Peer Support | Talk to a Listener in India',
-  description: 'Need someone to talk to? LeanOn connects people in India and Indians abroad with real human peer listeners for private one-to-one conversations by text or voice. Start with a free 5-minute introduction; paid sessions start at ₹160 for 15 minutes in India.',
+  description: 'Need someone to just listen? Choose a screened peer listener in India by experience, language or gender, and talk privately by text or voice. Voice calls are never recorded and listeners never see your number. First 5 minutes free; you pay per minute at the listener\'s own price, only if they accept.',
   alternates: { canonical: 'https://www.leanon.app' },
   keywords: [
     'leanon', 'lean on', 'LeanOn', 'lean on app',

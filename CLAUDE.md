@@ -102,7 +102,7 @@
   ChatGPT turned the old `/earn-by-listening` page into a flood of income-seeking listener sign-ups.
   Recruitment pages are listed in `lib/seo-noindex.ts` (`NOINDEX_PATHS` + `AI_BLOCKED_PATHS`,
   used by `app/robots.ts`); a new recruitment page must be added to both.
-- Prices in copy must match `/pricing`, which reads `lib/constants.ts` / `lib/geo-pricing.ts`.
+- Prices in copy must match `/pricing`, which reads `lib/constants.ts` / `lib/geo-pricing.ts`. The India "from" price (`/pricing`, `QuickAnswer`, `llms.txt`, `lib/geo-questions.ts`) comes from the dated `lib/price-snapshot.ts` (seeker price range from listed listeners; 24 Oct 2026: 15 min from about ₹40, typically ₹160) — refresh it from the Live visibility audit's `listeners.rates`. ChatGPT ranked LeanOn by price per minute and read "from ₹160" as the minimum.
   Overseas pages quote "from US$10/15/20" (or local currency as the app shows it —
   `lib/geo-pricing.ts`, e.g. £8/12/16), never ₹160. Since 2026-10-14 the overseas price is the flat
   price OR the listener's Indian price if higher (`sessionTotalInr`) — never write "flat, whichever

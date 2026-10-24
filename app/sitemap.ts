@@ -24,7 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/contact`,                          lastModified: d('2026-01-01'), changeFrequency: 'yearly',  priority: 0.5 },
     { url: `${base}/faq`,                              lastModified: d('2026-10-24'),        changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/answers`,                          lastModified: d('2026-10-23'),           changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${base}/pricing`,                          lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/pricing`,                          lastModified: d('2026-10-24'),        changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/glossary`,                         lastModified: d('2026-10-24'), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${base}/privacy`,                          lastModified: d('2026-10-24'), changeFrequency: 'yearly',  priority: 0.3 },
     { url: `${base}/terms`,                            lastModified: d('2026-10-23'), changeFrequency: 'yearly',  priority: 0.3 },
