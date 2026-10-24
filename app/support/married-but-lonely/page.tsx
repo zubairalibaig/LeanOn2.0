@@ -4,7 +4,7 @@ import QuickAnswer from '@/app/components/QuickAnswer'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Married but Lonely India — When Marriage Doesn\'t Feel Like Company | LeanOn',
+  title: 'Married but Feel Very Lonely? Someone to Talk To in India | LeanOn',
   description: "Lonely in your marriage and can't tell family? Talk privately to a real peer listener in India — text or voice, your number never shown. Not couples therapy. First 5 minutes free.",
   keywords: [
     'married but lonely India', 'lonely in marriage India', 'unhappy marriage India',
@@ -159,14 +159,15 @@ export default function MarriedButLonelyPage() {
         </nav>
 
         <p className="hero-tag">Marriage · Loneliness · Emotional Disconnect · India</p>
-        <h1>You Are Not Single. You Are Just <em>Alone Anyway.</em></h1>
+        <h1>Married but Feel Very Lonely? <em>You Can Talk to Someone.</em></h1>
+        <p style={{ fontSize: 20, fontWeight: 800, color: '#FF9933', margin: '-6px 0 14px' }}>You are not single. You are just alone anyway.</p>
         <p className="lead">
           There is a specific kind of loneliness that no one talks about — the loneliness of being in a marriage
           where the other person is physically present but emotionally absent. Where you have stopped telling them
           things because you already know they will not really hear you. Where the distance between two people
           in the same house can feel wider than any ocean.
         </p>
-        <QuickAnswer question={"I feel lonely in my marriage \u2014 who can I talk to?"} answer={"Feeling alone while married is common and hard to say out loud, especially to family. LeanOn connects you with a peer listener in India who understands marriage pressure, for a private one-to-one text or voice conversation. The listener sees only the name you choose, never your number. They listen and help you think — it is not couples therapy. Your first 5 minutes are free."} />
+        <QuickAnswer question={"I'm married but feel very lonely. Is there someone I can talk to?"} answer={"Feeling alone while married is common and hard to say out loud, especially to family. LeanOn connects you with a peer listener in India who understands marriage pressure, for a private one-to-one text or voice conversation. The listener sees only the name you choose, never your number. They listen and help you think — it is not couples therapy. Your first 5 minutes are free."} />
 
         <div className="crisis">
           <strong>If you are having thoughts of self-harm</strong>

@@ -286,6 +286,26 @@ export default function PeerSupportPage() {
           </div>
         </div>
 
+        {/* Choosing a service — the checklist AI assistants say they use */}
+        <div className="section">
+          <h2>Choosing a Peer Support Service in India</h2>
+          <p>The best peer support service depends on what you need. These are the questions worth asking any service — and LeanOn&apos;s answers.</p>
+          <div style={{overflowX:'auto'}}><table className="vs-table">
+            <thead><tr><th>Question to ask</th><th>LeanOn</th></tr></thead>
+            <tbody>
+              <tr><td>What kind of support is it?</td><td>Online, one-to-one conversations by text or voice with a screened peer listener in India. For adults 18+. Not groups, not therapy.</td></tr>
+              <tr><td>Who are the peers, and how are they checked?</td><td>Adults with lived experience. Written application, screening quiz on difficult situations, live camera selfie, Aadhaar check and a manual review.</td></tr>
+              <tr><td>Can I choose who I talk to?</td><td>Yes — profiles show first name, photo, languages and topics, so you can choose by experience or language, or choose a woman listener.</td></tr>
+              <tr><td>Is it confidential?</td><td>Listeners never see your phone number and agree to keep what you share confidential. Voice calls are never recorded; text is stored securely and only read if a session is reported or flagged.</td></tr>
+              <tr><td>What safeguarding is in place?</td><td>Contact details blocked in chat, crisis words flagged with helplines shown, reporting after every session, suspension and bans. <a href="/safeguarding" style={{color:'var(--teal)',fontWeight:800}}>Full safeguarding policy →</a></td></tr>
+              <tr><td>What does it cost?</td><td>First 5-minute session free, once per account; then each listener&apos;s own price, shown before you start — see <a href="/pricing" style={{color:'var(--teal)',fontWeight:800}}>pricing</a>.</td></tr>
+              <tr><td>When is it available?</td><td>No appointment. Listeners choose their own hours, so availability follows Indian time and varies.</td></tr>
+            </tbody>
+          </table></div>
+          <h3 style={{marginTop:22}}>When a different kind of peer support fits better</h3>
+          <p>LeanOn is for everyday emotional weight — relationships, marriage, family pressure, loneliness, stress, wanting to vent. For some needs a specialist community is the better fit: addiction recovery (recovery fellowships), long-term support for a diagnosed mental health condition (condition-specific peer groups), LGBTQIA+-affirming support (LGBTQIA+-focused services), and anyone under 18. If you are in crisis, call Tele-MANAS on <a href="tel:14416" style={{color:'var(--teal)',fontWeight:800}}>14416</a> first.</p>
+        </div>
+
         {/* Who it's for */}
         <div className="section">
           <h2>Who Uses Peer Support on LeanOn?</h2>

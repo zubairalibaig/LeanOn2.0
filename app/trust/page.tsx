@@ -129,7 +129,7 @@ export default function TrustPage() {
         </div>
 
         <div className="section">
-          <h2>🚨 Reporting &amp; blocking</h2>
+          <h2>🚨 Reporting</h2>
           <p>If you feel unsafe in a session at any time:</p>
           <ul>
             <li>Use &ldquo;Report an issue with this session&rdquo; when the session ends, or write to us through the <a href="/contact">contact form</a></li>
