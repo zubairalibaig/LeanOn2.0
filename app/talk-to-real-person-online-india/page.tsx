@@ -40,7 +40,7 @@ const faqSchema = {
       name: 'Are LeanOn listeners real humans or AI?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'All LeanOn listeners are real people. They go through a screening and training process before they can listen on the platform. You will never talk to a bot or AI on LeanOn.',
+        text: 'LeanOn conversations are with screened human peer listeners, not AI-generated characters. They are screened for this role, but are not necessarily clinically trained.',
       },
     },
     {
@@ -56,7 +56,7 @@ const faqSchema = {
       name: 'How much does it cost to talk to a real person on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Your first 5 minutes are free (one per account). After that, 15-minute paid sessions start at ₹160 depending on the listener. Much more affordable than professional therapy.',
+        text: 'One introductory session of up to five minutes is free per account if a listener accepts. Later sessions are paid and the price is shown before a request.',
       },
     },
     {
@@ -64,7 +64,7 @@ const faqSchema = {
       name: 'Is talking to a LeanOn listener private?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn is private — no real name required. Your conversations are private and confidential. Listeners sign agreements to maintain your privacy.',
+        text: 'A chosen display name is shown to listeners, but phone verification is required. Text messages are stored securely for operation and possible safety review. Read the Privacy Policy.',
       },
     },
   ],
@@ -170,19 +170,19 @@ export default function TalkToRealPersonPage() {
               <ul>
                 <li>Generates text patterns</li>
                 <li>Cannot truly feel or understand</li>
-                <li>Responds the same to everyone</li>
-                <li>Cannot sit with silence</li>
-                <li>Has no stake in your wellbeing</li>
+                <li>Produces generated responses</li>
+                <li>Does not require a human booking</li>
+                <li>Not a person with lived experience</li>
               </ul>
             </div>
             <div className="vs-col human">
               <h3>💙 LeanOn listener</h3>
               <ul>
-                <li>Genuinely present with you</li>
-                <li>Hears the emotion behind words</li>
+                <li>A real person in the conversation</li>
+                <li>Can respond with human perspective</li>
                 <li>Responds to you specifically</li>
-                <li>Comfortable with silence</li>
-                <li>Trained to care, not just reply</li>
+                <li>Can listen at your pace</li>
+                <li>Screened for the peer-listening role</li>
               </ul>
             </div>
           </div>
@@ -202,7 +202,7 @@ export default function TalkToRealPersonPage() {
             <li>
               <div>
                 <strong>Browse who is online</strong>
-                <p>See real listeners available at this moment. Each has a short bio so you can pick someone who feels right.</p>
+                <p>Browse current listener profiles and status. A conversation starts only if a listener accepts.</p>
               </div>
             </li>
             <li>
@@ -223,15 +223,15 @@ export default function TalkToRealPersonPage() {
         <div className="card">
           <h2>Who are the LeanOn listeners?</h2>
           <p>LeanOn listeners are everyday people who have been through things too — and who care enough
-            to show up for others. They go through a training process before they can listen on the platform,
+            to show up for others. They go through a screening process before they can listen on the platform,
             and they are guided by clear principles: listen without judging, don&apos;t give unsolicited advice,
             keep everything private.</p>
           <p>They are not therapists. They are not astrologers. They are real humans who are there to hear you.</p>
         </div>
 
         <div className="cta">
-          <h2>A real human is waiting to hear you</h2>
-          <p>Anonymous, affordable, available right now across India.</p>
+          <h2>Request a Human Peer Conversation</h2>
+          <p>Use a chosen display name. Later sessions are paid, with prices shown before a request. Connection depends on listener acceptance.</p>
           <a href="/browse" className="btn-white">Browse listeners →</a><br />
           <a href="/talk?src=seo" className="btn-orange">Talk now</a>
         </div>
@@ -245,7 +245,7 @@ export default function TalkToRealPersonPage() {
           </div>
           <div className="faq-item">
             <h3>Are LeanOn listeners real humans or AI?</h3>
-            <p>All LeanOn listeners are real people. They go through a screening and training process before
+            <p>All LeanOn listeners are real people. They go through a screening process before
               they can listen on the platform. You will never talk to a bot or AI on LeanOn.</p>
           </div>
           <div className="faq-item">
@@ -261,8 +261,7 @@ export default function TalkToRealPersonPage() {
           </div>
           <div className="faq-item">
             <h3>Is talking to a LeanOn listener private?</h3>
-            <p>Yes. LeanOn is private — no real name required. Your conversations are private and
-              confidential.</p>
+            <p>You may use a chosen display name, but phone verification is required. Text messages may be reviewed by authorised administrators for safety. See <a href="/privacy">Privacy Policy</a>.</p>
           </div>
         </div>
 
