@@ -49,7 +49,7 @@ const faqSchema = {
       name: 'Is peer support free on LeanOn?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'New users get a free 5-minute trial session. After that, paid sessions start at around ₹160 for 15 minutes, including a flat ₹10 platform fee; the exact price depends on the listener and is shown before you start. That is a fraction of what a private therapy session costs in India, and sessions are available at any hour with no appointment needed.',
+        text: 'One introductory session of up to five minutes is free per account if a listener accepts. Later sessions are paid and prices vary by listener and mode; the amount is displayed before the request. A connection is never guaranteed.',
       },
     },
     {
@@ -181,13 +181,13 @@ export default function PeerSupportOnlineIndiaPage() {
 
           <h3>Sometimes You Don&apos;t Need a Professional. You Need Someone Who Has Been There.</h3>
           <p>There is a gap between &quot;I am struggling and need to talk to someone&quot; and &quot;I need clinical treatment&quot;. For a lot of people — working professionals after a brutal quarter, students under pressure from every direction, people navigating a relationship falling apart — what they need is not a diagnosis. It is a conversation with someone who has been in that same fog and come through it.</p>
-          <p>Peer support lives in that gap. It is the thing that helps most for day-to-day emotional weight: the accumulation of stress, the feeling of falling behind, the loneliness that does not show up on the outside, the things you cannot say to anyone in your actual life.</p>
+          <p>Peer support may be helpful for adults wanting to talk through everyday emotional pressures, such as work stress, loneliness or relationship difficulties. It is not a treatment for a health condition.</p>
 
-          <h3>Professional Distance Can Get in the Way</h3>
-          <p>A therapist is trained and expected to stay clinically neutral. That neutrality is valuable in treatment. But sometimes it creates distance at the exact moment you need closeness. A peer listener has been there. They bring warmth alongside skill, and they are not trying to be your professional — they are trying to be the person you needed when you were where they were.</p>
+          <h3>Peer Support and Professional Care Are Different</h3>
+          <p>Qualified professionals provide assessment and treatment when those are needed. Screened peer listeners offer non-clinical conversations about everyday experiences. Peer support cannot replace treatment or specialist services.</p>
 
-          <h3>Peer Support Is Available Right Now</h3>
-          <p>The people who need to talk rarely need to talk at 11am on a Tuesday. They need to talk at 11pm on a Sunday, or at 6am before a meeting that has kept them up all night. Peer support on LeanOn is available at those hours — no appointment, no waitlist, no requirement to explain yourself before the conversation starts.</p>
+          <h3>Request a Conversation Without an Appointment</h3>
+          <p>You can request a conversation without booking a future appointment, but actual listener availability changes. A session starts only if a listener accepts; immediate access, including late at night, is not guaranteed.</p>
         </div>
 
         {/* How LeanOn does it */}
@@ -198,13 +198,13 @@ export default function PeerSupportOnlineIndiaPage() {
           <p>Every listener on LeanOn is a real person who has lived through something relevant to the conversations they take. They are reviewed through LeanOn&apos;s screening process — application review, identity verification, and an assessment on active listening, boundaries and when to refer to professional help — before they are made available. They are not therapists, and we are transparent about that. But they are not random volunteers either.</p>
 
           <h3>Private Conversations</h3>
-          <p>You sign up with a phone number and a first name. No last name, no photo of you, no social account required. Nothing you say is shared with anyone in your life. The conversation stays between you and your listener.</p>
+          <p>Phone-number verification is required. You can choose a display name for listeners, who do not see your number. Text messages are stored securely and may be reviewed by authorised administrators for safety. Voice is not recorded by LeanOn. Read the <a href="/privacy">Privacy Policy</a>.</p>
 
           <h3>No Appointment, No Waitlist</h3>
-          <p>Listeners are available in the middle of the night, over weekends, on public holidays. Whether you are in Mumbai, Bengaluru, a small town in UP, or anywhere else in India — if you have a phone and data, peer support is available.</p>
+          <p>Adults across India can request a session when suitable listeners are available. Some may respond during evenings or weekends, but no particular time or 24/7 availability is promised.</p>
 
           <h3>Affordable</h3>
-          <p>A 15-minute session on LeanOn costs around ₹160. New users get a free 5-minute trial to find out whether the listener they chose actually understands them before committing to a longer session. There are no subscription traps, no membership fees, no automatic renewals.</p>
+          <p>One introductory session of up to five minutes is free per account if an available listener accepts. Subsequent sessions are paid; the price varies by listener and mode, and is shown before you send a paid request. See <a href="/pricing">pricing</a>.</p>
         </div>
 
         {/* Who it's for */}
@@ -259,36 +259,11 @@ export default function PeerSupportOnlineIndiaPage() {
           </div>
         </div>
 
-        {/* Listener cards */}
-        <h2 style={{fontSize:'20px',fontWeight:800,color:'var(--navy)',marginBottom:'16px'}}>Peer Listeners Who Have Been There</h2>
-        <div className="listeners-grid">
-          {[
-            {
-              emoji: '🌿',
-              name: 'Priya',
-              tag: 'Burnout & career stress',
-              bio: 'Three years in consulting that nearly broke me. I know what it is to appear fine at work and fall apart at home.'
-            },
-            {
-              emoji: '💙',
-              name: 'Arjun',
-              tag: 'Anxiety & pressure',
-              bio: 'Cleared JEE, then spent a year not knowing who I was without the exam. I listen to people who are carrying too much.'
-            },
-            {
-              emoji: '🌸',
-              name: 'Meera',
-              tag: 'Relationship & loneliness',
-              bio: 'Married for six years, lonely for most of it. I talk to people who cannot say the real version of their relationship to anyone they know.'
-            },
-          ].map((l, i) => (
-            <div key={i} className="listener-card">
-              <div className="listener-avatar">{l.emoji}</div>
-              <div className="listener-name">{l.name}</div>
-              <div className="listener-tag">{l.tag}</div>
-              <p className="listener-bio">{l.bio}</p>
-            </div>
-          ))}
+        {/* Show only actual listener profiles via Browse; example names here would imply verified biographies. */}
+        <div className="section">
+          <h2>Browse Screened Human Peer Listeners</h2>
+          <p>Browse actual profiles, topics, languages and current availability. A request starts only if a listener accepts.</p>
+          <a className="related-link" href="/browse">Explore real listener profiles</a>
         </div>
 
         {/* Topics */}
@@ -304,7 +279,7 @@ export default function PeerSupportOnlineIndiaPage() {
         {/* CTA */}
         <div className="cta-card">
           <h2>Find a Peer Listener Today</h2>
-          <p>Browse listeners by experience area. First 5 minutes free. Private, no appointment, no waitlist — check live listener availability.</p>
+          <p>Explore listener profiles and request a conversation. One introductory session of up to five minutes is free per account; actual connection depends on listener acceptance.</p>
           <div className="cta-btns">
             <a href="/talk?src=seo"><button className="btn-primary">Find a peer listener →</button></a>
             <a href="/browse"><button className="btn-secondary">Browse peer listeners →</button></a>
