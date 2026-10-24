@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Empathetic Peer Support for Every Challenge | LeanOn India',
-  description: 'Find empathetic peer support and peer counselling for loneliness, anxiety, grief, breakups, student stress, imposter syndrome, and founder burnout. Real humans who have been there — available now across India.',
+  description: 'Find empathetic peer support and peer counselling for loneliness, anxiety, grief, breakups, student stress, imposter syndrome, and founder burnout. Explore support topics and request a conversation with a screened human peer listener in India; acceptance depends on availability.',
   keywords: 'empathy, empathetic listener India, peer counselling India, peer support topics India, emotional support India',
   alternates: { canonical: 'https://www.leanon.app/support' },
   openGraph: {
@@ -191,8 +191,15 @@ export default function SupportHubPage() {
         <div className="hero">
           <p className="hero-tag">Peer Support · India</p>
           <h1>What Are You <em>Going Through?</em></h1>
-          <p className="hero-lead">Whatever you are facing, there is someone on LeanOn who has been through something similar — and come out the other side. Choose a topic to find listeners who truly understand.</p>
+          <p className="hero-lead">Whatever you are facing, you can explore non-clinical support from a screened peer listener. Choose a topic to find listeners who truly understand.</p>
         </div>
+
+        <section style={{background:'#EFF8FA',border:'1px solid #C9E4EB',padding:'20px 24px',borderRadius:20,marginBottom:28}}>
+          <h2 style={{fontSize:22,margin:'0 0 8px',color:'#0F4867'}}>Relationship, marriage or emotional stress?</h2>
+          <p style={{fontSize:15,color:'#3A6070',lineHeight:1.7,margin:'0 0 12px'}}>Start with our practical guide to relationship problems, loneliness in marriage, family pressure, women’s emotional load, and whether peer support or a qualified professional is the better fit.</p>
+          <a style={{color:'#0D7889',fontWeight:800,textDecoration:'underline'}} href="/relationship-emotional-support-guide-india">Explore the relationship & emotional support guide →</a>
+          <span style={{display:'block',fontSize:13,color:'#526D7A',marginTop:8}}>For adults 18+. Peer support is not therapy. An available listener must accept your request.</span>
+        </section>
 
         {/* Topics grid */}
         <div className="topics-grid">
@@ -209,13 +216,13 @@ export default function SupportHubPage() {
         {/* Intro section */}
         <div className="intro-section">
           <h2>Why Peer Support Works</h2>
-          <p>Unlike therapy, peer support connects you with real people who have lived through similar challenges. On LeanOn, listeners are verified, screened for active listening, and often online late at night, when professional help is not reachable. Sessions start at ₹160 with a short trial session available for new users.</p>
+          <p>Unlike therapy, peer support connects you with real people who have lived through similar challenges. On LeanOn, adults can request a one-to-one conversation with a screened peer listener by text or voice. One introductory session of up to 5 minutes is free per account; paid prices depend on listener and mode. Availability varies and requests are not always accepted. Peer listening is not a replacement for therapy.</p>
         </div>
 
         {/* CTA */}
         <div className="cta-card">
           <h2>Not Sure Where to Start?</h2>
-          <p>Browse all peer listeners by topic, language, or availability. No appointment needed.</p>
+          <p>Browse peer listeners by topic or language, or request a conversation. A session starts only when a listener accepts; an immediate match is not guaranteed.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse All Listeners</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now</button></a>

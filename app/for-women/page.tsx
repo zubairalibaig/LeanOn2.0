@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import QuickAnswer from '@/app/components/QuickAnswer'
 
 export const dynamic = 'force-static'
 
@@ -26,10 +27,14 @@ export const metadata: Metadata = {
   },
 }
 
+const directQuestion = "I'm a woman in India feeling lonely in my marriage — who can I talk to?"
+const directAnswer = "LeanOn lets adults in India request one-to-one text or voice conversations with screened peer listeners about marital loneliness, family pressure, parenting and work stress. You can choose a woman listener on Browse, use any name, and listeners never see your phone number. It offers non-clinical peer support, not therapy or couples counselling. One introductory session of up to five minutes is free per account; paid prices and listener availability vary."
+
 const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
+    { '@type': 'Question', name: directQuestion, acceptedAnswer: { '@type': 'Answer', text: directAnswer } },
     {
       '@type': 'Question',
       name: 'Is there a safe app in India where a woman can talk to someone privately?',
@@ -181,7 +186,7 @@ export default function ForWomenPage() {
           <span style={{color:'var(--navy)'}}>For Women</span>
         </nav>
 
-        <p className="hero-tag">Women · Emotional Support · India · Anonymous</p>
+        <p className="hero-tag">Women · Emotional Support · India</p>
         <h1>You Hold Everything Together.<br />Who Holds <em>You?</em></h1>
         <p className="lead">
           You manage the child, the house, the career, the family relationships, the finances, and the emotional labour
@@ -189,6 +194,8 @@ export default function ForWomenPage() {
           how you are doing. LeanOn is a real person who will actually listen — just to you, just about you, for once.
         </p>
 
+        <QuickAnswer question={directQuestion} answer={directAnswer} />
+        <p style={{ fontSize: 14, margin: '10px 0 20px', lineHeight: 1.7, color: '#4A6470' }}>Not sure what kind of help fits? <a href="/relationship-emotional-support-guide-india" style={{ fontWeight: 800, color: '#0F7788', textDecoration: 'underline' }}>Read our relationship and emotional support guide</a> for marriage, family pressure, women’s emotional load, and when to choose counselling instead of peer listening.</p>
         <h2>If Any of This Sounds Familiar</h2>
         <div className="situations">
           {situations.map((s, i) => (
@@ -200,10 +207,6 @@ export default function ForWomenPage() {
               </div>
             </div>
           ))}
-        </div>
-
-        <div className="quote-box">
-          <p style={{fontStyle:'normal'}}><strong>The short answer:</strong> LeanOn is a private place for women in India to talk to a real, screened person — by text or voice — about marriage, relationships, in-laws, motherhood or anything else. You can choose a woman listener, use any name, and the listener never sees your number. First 5 minutes free.</p>
         </div>
 
         <h2>Built So You Can Talk Safely</h2>
@@ -224,7 +227,7 @@ export default function ForWomenPage() {
           ))}
         </div>
 
-        <h2>Why Women Choose LeanOn Over Therapy</h2>
+        <h2>Peer Support and Therapy Serve Different Needs</h2>
         <p>
           Private therapy in India costs ₹1,500–₹5,000 per session. That is a real barrier — especially when
           you are already carrying financial pressure. Even when you can afford it, finding a therapist, making

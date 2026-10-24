@@ -561,22 +561,23 @@ test.describe('Become listener page', () => {
     await expect(heading).toBeVisible({ timeout: 8000 })
   })
 
-  test('has form inputs for application', async ({ page }) => {
+  test('shows the required consent step before the application form', async ({ page }) => {
     await skipIfBlocked(page)
     await page.goto('/become-listener')
-    // Wait for React hydration — client component
-    await page.waitForSelector('input, textarea', { timeout: 8000 })
-    const inputs = page.locator('input[type="text"], input[type="tel"], input[type="number"], textarea')
-    const count = await inputs.count()
-    expect(count).toBeGreaterThan(0)
+    await expect(page.getByRole('heading', { name: /before you apply/i })).toBeVisible({ timeout: 8000 })
+    await expect(page.getByRole('checkbox')).toBeVisible()
+    const continueButton = page.getByRole('button', { name: /i agree.*continue to apply/i })
+    await expect(continueButton).toBeVisible()
+    await expect(continueButton).toBeDisabled()
   })
 
-  test('phone input present on become-listener', async ({ page }) => {
+  test('does not ask for phone again before sign-in', async ({ page }) => {
     await skipIfBlocked(page)
     await page.goto('/become-listener')
-    await page.waitForLoadState('domcontentloaded')
-    const phoneInput = page.locator('input[type="tel"]').first()
-    await expect(phoneInput).toBeVisible({ timeout: 5000 })
+    await expect(page.getByRole('heading', { name: /before you apply/i })).toBeVisible({ timeout: 8000 })
+    // Phone verification is part of MSG91 sign-in, not the application form.
+    await expect(page.locator('input[type="tel"]')).toHaveCount(0)
+    await expect(page.getByRole('checkbox')).toBeVisible()
   })
 
   test('submit button is initially present', async ({ page }) => {
@@ -1652,14 +1653,21 @@ test.describe('Basic accessibility', () => {
     await expect(labeledInput).toBeVisible({ timeout: 5000 })
   })
 
-  test('become-listener page has accessible form structure', async ({ page }) => {
+  test('become-listener consent step has accessible keyboard controls', async ({ page }) => {
     await skipIfBlocked(page)
     await page.goto('/become-listener')
-    // Wait for React hydration so labels are rendered
-    await page.waitForSelector('label, input', { timeout: 8000 })
-    const inputs = page.locator('input[aria-label], input[id], label')
-    const count = await inputs.count()
-    expect(count).toBeGreaterThan(0)
+    await expect(page.getByRole('heading', { name: /before you apply/i })).toBeVisible({ timeout: 8000 })
+
+    const consent = page.getByRole('checkbox')
+    const continueButton = page.getByRole('button', { name: /i agree.*continue to apply/i })
+    await expect(consent).toBeVisible()
+    await expect(consent).toHaveAttribute('aria-checked', 'false')
+    await expect(continueButton).toBeDisabled()
+
+    await consent.focus()
+    await page.keyboard.press('Space')
+    await expect(consent).toHaveAttribute('aria-checked', 'true')
+    await expect(continueButton).toBeEnabled()
   })
 
   test('pages have lang attribute on <html>', async ({ page }) => {

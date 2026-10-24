@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
+import QuickAnswer from '@/app/components/QuickAnswer'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Housewife Mental Health India — Your Work Is Real. So Is Your Exhaustion. | LeanOn',
-  description: 'Homemaker life is invisible, relentless, and lonely in ways nobody talks about. Talk to someone who gets it — anonymous, from ₹160.',
+  description: 'Homemakers in India can request a conversation with a screened peer listener about loneliness, family pressure or emotional exhaustion. Non-clinical peer support; availability varies.',
   keywords: [
     'housewife mental health india', 'homemaker loneliness india', 'stay at home mom india support',
     'homemaker isolation india', 'housewife depression india', 'homemaker mental health india',
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.leanon.app/housewife-support-india', languages: { 'en-IN': 'https://www.leanon.app/housewife-support-india' } },
   openGraph: {
     title: 'Housewife Mental Health India — Your Work Is Real. So Is Your Exhaustion. | LeanOn',
-    description: 'Homemaker life is invisible, relentless, and lonely in ways nobody talks about. Talk to someone who gets it — anonymous, from ₹160.',
+    description: 'Homemakers in India can request a conversation with a screened peer listener about loneliness, family pressure or emotional exhaustion. Non-clinical peer support; availability varies.',
     url: 'https://www.leanon.app/housewife-support-india',
     siteName: 'LeanOn',
     type: 'article',
@@ -21,14 +22,18 @@ export const metadata: Metadata = {
   },
 }
 
+const directQuestion = "I'm a homemaker in India and feel lonely — where can I talk to someone?"
+const directAnswer = "LeanOn lets adults in India request a one-to-one text or voice conversation with a screened peer listener about isolation, marital stress or the emotional load of homemaking. This is non-clinical peer support, not therapy. One introductory session of up to five minutes is free per account; paid prices and availability vary."
+
 const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
+    { '@type': 'Question', name: directQuestion, acceptedAnswer: { '@type': 'Answer', text: directAnswer } },
     {
       '@type': 'Question',
       name: 'Is it normal to feel lonely as a homemaker?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes, and it is more common than the silence around it suggests. Research on homemaker mental health consistently finds elevated rates of loneliness, depression, and anxiety compared to working women &mdash; not because homemaking is inherently worse, but because the labour is invisible, the adult interaction is limited, and there is no off switch. What you feel is real and widely shared.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes, and it is more common than the silence around it suggests. Loneliness may be related to limited adult interaction, invisible household labour or the pressure of ongoing caregiving; experiences vary, and loneliness alone does not mean someone has depression or an anxiety disorder. What you feel is real and widely shared.' },
     },
     {
       '@type': 'Question',
@@ -38,12 +43,12 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Can I use LeanOn without my family knowing?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. LeanOn is completely private. You sign up with your phone number and any first name you like. Sessions are text chat or voice, from your own phone. The listener never sees your phone number, and what you say is confidential.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'LeanOn does not notify your family, but cannot guarantee nobody will discover your use through shared devices, browser history or payment records. Listeners see your chosen display name, not your phone number. Voice calls are not recorded; text messages are stored and authorised administrators may review reported or safety-flagged sessions.' },
     },
     {
       '@type': 'Question',
       name: 'Is it anonymous?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Your first name is all the listener knows. The session is private and confidential. Nothing is shared with your family, your social circle, or anyone outside the session.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'LeanOn is not fully anonymous because sign-in requires phone verification. Listeners see your chosen display name rather than your phone number. Text messages are stored, and authorised administrators may review reported or safety-flagged sessions.' },
     },
     {
       '@type': 'Question',
@@ -130,7 +135,9 @@ export default function HousewifeSupportIndiaPage() {
           <p className="badge">Homemaker Support &middot; India &middot; You Matter</p>
           <h1>You&apos;re always there for everyone. <em>Who&apos;s there for you?</em></h1>
           <p className="lead">You keep the house running, the kids fed, the family functioning. Nobody asked how you were doing this week &mdash; they assumed you were fine because nothing fell apart. You&apos;re not fine. And you&apos;re allowed to say that.</p>
-          <a href="/browse" className="cta-hero">Find someone to talk to &rarr;</a>
+          <QuickAnswer question={directQuestion} answer={directAnswer} />
+          <p style={{ fontSize: 14, margin: '10px 0 20px', lineHeight: 1.7, color: '#4A6470' }}>Not sure what kind of help fits? <a href="/relationship-emotional-support-guide-india" style={{ fontWeight: 800, color: '#0F7788', textDecoration: 'underline' }}>Read our relationship and emotional support guide</a> for marriage, family pressure, women’s emotional load, and when to choose counselling instead of peer listening.</p>
+          <a href="/talk?src=seo" className="cta-hero">Find someone to talk to &rarr;</a>
         </div>
 
         <div className="section">

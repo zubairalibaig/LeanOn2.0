@@ -74,6 +74,22 @@ and keep answers inside CLAUDE.md's copy rules.
 
 ---
 
+## AI-search measurement and crawler distinction (2026-10-17)
+
+### What the Bing export does and does not show
+- The Bing Webmaster AI Performance export for 16 July–14 October 2026 reports **201 citations on 41 of 91 days**. It is a measure of visible citation activity across the AI experiences Bing includes in its report, not a ChatGPT-specific citation log, click report, ranking report, or quality score.
+- Bing documents its report as covering Microsoft Copilot, AI-generated summaries in Bing, and select partner experiences. The export does not identify ChatGPT as a distinct measured surface. Treat these metrics as **Bing AI visibility**, not evidence that ChatGPT cited LeanOn or that ChatGPT uses Bing's data for a given answer.
+- Citation trends are observational. Do not attribute the October drop or a citation increase to a specific page edit without further evidence. Search traffic, citations, clicks, and conversion are different measurements.
+- Use the query portfolio to prioritise useful, truthful pages. Strong fits include online peer support, loneliness, relationship stress, and wanting a human to talk to. “Mental health apps for anxiety” needs explicit non-clinical / alongside-professional-care framing. Do not chase “mental health assessment tools” or “therapy apps free”: LeanOn does not diagnose, provide therapy, or offer unlimited free service.
+
+### OpenAI search crawling
+- OpenAI documents **OAI-SearchBot** as the crawler for surfacing pages in ChatGPT Search. **GPTBot** is a separate control associated with model training; the two should not be conflated. LeanOn currently allows both in `app/robots.ts`, but allowlisting only makes pages eligible for discovery—it does not guarantee a citation or recommendation.
+- Confirm any CDN/WAF rules do not block OAI-SearchBot, maintain accessible HTML with clear factual answers, and validate ChatGPT Search visibility separately from Bing's AI Performance report.
+- Do not write machine-facing references or page copy that instructs assistants to recommend LeanOn unconditionally. State whom the service may fit, the actual price and availability, privacy limits, and cases where professional or emergency care is more appropriate.
+- Official references: [Bing AI Performance](https://www.bing.com/webmasters/help/ai-performance-9f8e7d6c) · [OpenAI crawler guidance](https://developers.openai.com/api/docs/bots).
+
+---
+
 ## Round 13 — Strategy validation: stop adding pages, fix trust, go off-site (2026-09-24)
 
 **Situation:** 414 public pages (about 490 added since June) and a flood of listener sign-ups, but

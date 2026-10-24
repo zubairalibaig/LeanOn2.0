@@ -3,12 +3,12 @@ import { NRI_USD_PRICES } from '@/lib/geo-pricing'
 import { TALK_MAX_TEXT_RATE } from '@/lib/talk-match'
 
 // A short, direct answer at the top of a hub page, plus the same handful of
-// facts everywhere — what AI assistants (ChatGPT via Bing, Copilot, Perplexity)
+// facts everywhere — what AI-powered search experiences (including ChatGPT Search, Copilot and Perplexity)
 // quote. Keep every claim literally true: prices from lib/constants and
 // lib/geo-pricing, listeners SCREENED (never "trained"), only Tele-MANAS and
 // NIMHANS, no listener earnings of any kind.
 
-export const QUICK_ANSWER_UPDATED = '16 October 2026'
+export const QUICK_ANSWER_UPDATED = '17 October 2026'
 
 export default function QuickAnswer({ question, answer }: { question: string; answer: string }) {
   const india15 = TALK_MAX_TEXT_RATE * 15 + PLATFORM_FEE
@@ -16,7 +16,9 @@ export default function QuickAnswer({ question, answer }: { question: string; an
     'Real people, not AI',
     'Screened peer listeners in India',
     'Text or voice, one to one',
-    `First ${FREE_SESSION_MINS} minutes free, then 15 minutes from ₹${india15} in India or US$${NRI_USD_PRICES[15]} abroad`,
+    `One introductory session of up to ${FREE_SESSION_MINS} minutes free per account`,
+    `Paid 15-minute text sessions from ₹${india15} in India or US$${NRI_USD_PRICES[15]} abroad; price varies by listener and mode`,
+    'Availability varies; an immediate match is not guaranteed',
     'Peer support, not therapy',
   ]
   return (

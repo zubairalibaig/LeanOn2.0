@@ -31,6 +31,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/trust`,                            lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/press`,                            lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.6 },
     // Support hub + topic pages
+    { url: `${base}/relationship-emotional-support-guide-india`, lastModified: d('2026-10-24'), changeFrequency: 'monthly', priority: 0.92 },
     { url: `${base}/support`,                          lastModified: d('2026-04-01'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/support/loneliness`,               lastModified: d('2026-10-23'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/support/anxiety`,                  lastModified: d('2026-10-23'), changeFrequency: 'monthly', priority: 0.85 },
@@ -201,7 +202,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/talk-to-real-person-online-india`, lastModified: d(CONTENT_UPDATED),        changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/support/loneliness`,         lastModified: d('2026-10-23'),        changeFrequency: 'monthly', priority: 0.97 },
     { url: `${base}/alternatives-to-therapy-india`,    lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
-    { url: `${base}/feeling-lonely-in-india`,          lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/feeling-lonely-in-india`,          lastModified: d('2026-10-17'), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${base}/our-story`,                        lastModified: d('2026-05-01'), changeFrequency: 'monthly', priority: 0.8 },
     // Competitor-alternative pages — intercepts high-intent searchers who already
     // know a competing product and are looking for something better
@@ -525,8 +526,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     // Authoritative guide + disambiguation pages
     { url: `${base}/peer-support-india-guide`,          lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.90 },
+    { url: `${base}/is-leanon-worth-it`,                lastModified: d('2026-10-17'), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/peer-support-alongside-therapy`,    lastModified: d('2026-10-16'), changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${base}/is-leanon-worth-it`,                lastModified: d('2026-10-16'), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/become-a-peer-supporter`,           lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.6 },
     { url: `${base}/leanon-is-not-a-job`,              lastModified: d(CONTENT_UPDATED), changeFrequency: 'monthly', priority: 0.85 },
 
