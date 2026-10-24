@@ -21,7 +21,7 @@ for (const [name, link] of [
   ['NA', 'https://nabangalore.org/'],
   ['Al-Anon', 'https://al-anonalateenindia.org/alanon-meetings/'],
   ['Mind Over Matter', 'https://mindovermatter.org.in/our-services/'],
-]) must(page, new RegExp(link.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), name + ' official source')
+]) { if (!page.includes(link)) problems.push('Missing ' + name + ' official source: ' + link) }
 
 must(page, /Publisher disclosure:/, 'publisher conflict-of-interest disclosure')
 must(page, /adults 18\+|adults aged 18 and over|adults who want/, 'adult-only scope')
