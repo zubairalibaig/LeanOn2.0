@@ -4,8 +4,8 @@ import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Relationship Counselling India — Talk It Through with a Real Person | LeanOn',
-  description: 'Relationship problems weighing on you? Talk to a real person — not an algorithm. Anonymous peer support from ₹160. No appointment needed.',
+  title: 'Relationship Peer Support vs Counselling India | LeanOn',
+  description: 'Relationship problems in India? Compare non-clinical peer listening with qualified relationship counselling. LeanOn requests depend on listener acceptance.',
   keywords: ['relationship counselling india', 'marriage counselling india', 'couple counselling india', 'divorce support india', 'toxic relationship support india'],
   alternates: { canonical: 'https://www.leanon.app/relationship-counselling-india', languages: { 'en-IN': 'https://www.leanon.app/relationship-counselling-india' } },
   openGraph: {
@@ -26,7 +26,7 @@ const faqSchema = {
       name: 'Is peer support the same as relationship counselling?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'No. Relationship counselling is delivered by a licensed therapist who can work with underlying patterns, communication disorders, and trauma. Peer support is delivered by someone with lived experience who listens without judgment. Peer support is ideal when you need to process, vent, get perspective, or decide what you actually feel — before or instead of formal counselling.',
+        text: 'No. Relationship counselling is provided by an appropriately qualified professional. LeanOn provides screened non-clinical peer listening for everyday emotional stress. It is not therapy, diagnosis, couples counselling or specialist assistance.',
       },
     },
     {
@@ -34,7 +34,7 @@ const faqSchema = {
       name: 'What if I need a professional?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'If you are dealing with abuse, severe trauma, addiction, or a clinical mental health condition, please see a licensed therapist or counsellor. LeanOn will always tell you honestly when professional help is the right path. For the emotional weight of relationship difficulties — the confusion, the grief, the frustration — peer support is often exactly what is needed first.',
+        text: 'Seek appropriately qualified professional care for clinical needs, and specialist domestic-abuse support for threats, coercion or violence. LeanOn is not a crisis or abuse-support service.',
       },
     },
     {
@@ -42,7 +42,7 @@ const faqSchema = {
       name: 'Is it anonymous?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. You sign up with a phone number and a first name only. No last name, no photo, no social profile. What you share with a listener stays between you and them. Many people find it easier to talk about relationship problems with a stranger who has no connection to their social circle.',
+        text: 'Not fully. Phone verification is required, although listeners see your chosen display name. Text chats are stored securely and may be reviewed by authorised administrators for safety. See the Privacy Policy.',
       },
     },
     {
@@ -176,9 +176,9 @@ export default function RelationshipCounsellingIndiaPage() {
 
         <div className="section">
           <h2>Why Peer Support — Not Just Formal Counselling</h2>
-          <p>Professional relationship counselling is valuable — but it costs ₹2,000–₹8,000 per couple session, requires both partners to show up, and often has a weeks-long waitlist. For many people, that is not where they are right now.</p>
-          <p>Peer support is different: it is immediate, it is anonymous, and it does not require your partner to be involved. Sometimes you just need to talk to someone who has been through something similar — not a professional with a clipboard, but a real person who has lived the complexity of relationship pain and come out the other side.</p>
-          <p>Couple therapy costs ₹2,000+ per session. LeanOn peer support starts at ₹160.</p>
+          <p>Professional counselling and peer listening serve different needs. If you require clinical assessment, couples therapy or support around threats or abuse, contact a qualified professional or specialist service.</p>
+          <p>LeanOn offers non-clinical listening for everyday emotions around relationships. A request only becomes a conversation if an available listener accepts it.</p>
+          <p>LeanOn paid prices vary by listener and mode. See <a href="/pricing">current pricing</a> before requesting a session.</p>
         </div>
 
         <div className="section">
@@ -210,7 +210,7 @@ export default function RelationshipCounsellingIndiaPage() {
 
         <div className="cta-card">
           <h2>Talk to Someone Who Gets It</h2>
-          <p>Anonymous peer support for relationship pain. From ₹160. No appointment, no waitlist.</p>
+          <p>Non-clinical human peer listening for everyday relationship stress. Listener availability and acceptance are not guaranteed.</p>
           <div className="cta-btns">
             <a href="/browse"><button className="btn-primary">Browse peer listeners →</button></a>
             <a href="/talk?src=seo"><button className="btn-secondary">Talk now →</button></a>
@@ -221,15 +221,15 @@ export default function RelationshipCounsellingIndiaPage() {
           <h2>Frequently Asked Questions</h2>
           <div className="faq-item">
             <div className="faq-q">Is peer support the same as relationship counselling?</div>
-            <div className="faq-a">No. Relationship counselling is delivered by a licensed therapist. Peer support is delivered by someone with lived experience who listens without judgment. Peer support is ideal when you need to process, vent, or get perspective — before or instead of formal counselling.</div>
+            <div className="faq-a">No. LeanOn offers non-clinical peer listening, not counselling, diagnosis, professional treatment or couples therapy.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">What if I need a professional?</div>
-            <div className="faq-a">If you are dealing with abuse, severe trauma, or a clinical condition, please see a licensed therapist. LeanOn will always point you toward professional help when that is the right path. For the emotional weight of relationship difficulties, peer support is often exactly what is needed first.</div>
+            <div className="faq-a">For clinical needs, seek appropriate qualified care; for threats, coercion or abuse, contact a specialist service. LeanOn is not a crisis or abuse service.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is it anonymous?</div>
-            <div className="faq-a">Yes. First name only, no photo, no social profile. What you share with a listener stays between you and them. Many people find it easier to talk about relationship problems with someone who has no connection to their social circle.</div>
+            <div className="faq-a">Not completely. Phone verification is required and text may be reviewed for safety. Listeners see your chosen name rather than your phone number. See <a href="/privacy">Privacy Policy</a>.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">What if my partner does not know I am using this?</div>
