@@ -78,7 +78,13 @@ try {
   for (const l of arr) for (const g of (l.languages_spoken || [])) if (l.is_available) langs[g] = (langs[g] || 0) + 1
   report.listeners = { status: r.status, total: arr.length, onlineNow: arr.filter(l => l.is_available).length,
     inSessionNow: arr.filter(l => l.is_in_session).length, onlineByLanguage: langs,
-    phoneFieldExposed: arr.some(l => l.users && 'phone' in l.users), at: new Date().toISOString() }
+    phoneFieldExposed: arr.some(l => l.users && 'phone' in l.users), at: new Date().toISOString(),
+    // Text rate distribution (₹/min) of listed listeners — for honest "from" prices in copy.
+    rates: (() => { const r = arr.map(l => Number(l.rate_per_min)).filter(n => n > 0).sort((a, b) => a - b)
+      const q = f => r.length ? r[Math.min(r.length - 1, Math.floor(f * (r.length - 1)))] : null
+      return { n: r.length, min: r[0] ?? null, p25: q(0.25), median: q(0.5), p75: q(0.75), max: r[r.length - 1] ?? null,
+        atOrBelow5: r.filter(x => x <= 5).length, atOrBelow10: r.filter(x => x <= 10).length,
+        onlineMin: Math.min(...arr.filter(l => l.is_available).map(l => Number(l.rate_per_min)).filter(n => n > 0)) } })() }
 } catch (e) { report.listeners = { error: String(e) } }
 // Mobile performance (PageSpeed Insights public API; may be rate-limited without a key).
 report.pagespeed = {}
