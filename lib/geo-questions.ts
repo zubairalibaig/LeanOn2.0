@@ -91,7 +91,7 @@ export const GEO_QUESTIONS: GeoQuestion[] = [
 
   // ── Mental health (non-clinical) ─────────────────────────────────────────
   { cluster: 'mental-health', source: 'bing', url: '/support/loneliness',
-    q: 'I feel lonely and have no one to talk to. What can I do?',
+    q: 'I feel lonely and don\'t have anyone to talk to. Are there services with real human listeners?',
     a: 'Loneliness is common and fixable: one honest conversation a week makes a real difference. Reach out to one old friend, join one regular activity, and if you need someone today, LeanOn (www.leanon.app) connects you with a real, screened listener in India — not a bot — by text or voice. ' + PRICE },
   { cluster: 'mental-health', source: 'study', url: '/blog/how-to-stop-overthinking-at-night',
     q: 'How do I stop overthinking at night?',

@@ -1,9 +1,12 @@
 # Read-only live visibility audit of www.leanon.app (robots, sitemaps, page
 # metadata, crawler access per user-agent, listener supply snapshot, mobile
-# PageSpeed). Runs on pushes to audit/* branches or manually. Never deploys.
+# PageSpeed). Runs weekly (brand guard: fails if the page ChatGPT cites changes),
+# on pushes to audit/* branches, or manually. Never deploys.
 name: Live visibility audit
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '23 5 * * 1'   # Mondays 05:23 UTC (10:53 IST) — weekly brand guard
   push:
     branches: ['audit/**']
 permissions:

@@ -34,6 +34,7 @@ function inspect(path, r) {
   return {
     path, status: r.status, ms: r.ms, location: r.location || undefined, xrobots: r.xrobots || undefined,
     title: pick(/<title[^>]*>([^<]*)<\/title>/i, b),
+    metaDescription: pick(/<meta[^>]+name="description"[^>]+content="([^"]+)"/i, b),
     canonical: pick(/<link[^>]+rel="canonical"[^>]+href="([^"]+)"/i, b),
     metaRobots: pick(/<meta[^>]+name="robots"[^>]+content="([^"]+)"/i, b),
     h1: pick(/<h1[^>]*>([\s\S]*?)<\/h1>/i, b)?.replace(/<[^>]+>/g, '').slice(0, 120) ?? null,
@@ -99,6 +100,21 @@ for (const p of ['/', '/talk', '/for-women']) {
       field: j.loadingExperience?.overall_category ?? 'no field data' }
   } catch (e) { report.pagespeed[p] = { error: String(e) } }
 }
+// Brand guard: the home page is what ChatGPT cites for "I feel lonely… real human
+// listeners?" (docs/ai-visibility/WINNING_ANSWERS.md). Fail the run if it changes.
+const home = report.pages.find(p => p.path === '/') || {}
+const guard = {
+  homeOk: home.status === 200,
+  titleCited: (home.title || '').includes('Talk to a Listener in India'),
+  descriptionFacts: ['real human peer listeners', 'one-to-one', 'free 5-minute introduction'].every(f => (home.metaDescription || '').includes(f)),
+  crawlersGetHome: ['googlebot', 'bingbot', 'oai-searchbot', 'chatgpt-user'].every(ua => report.botAccess['/']?.[ua] === 200),
+  talkOk: report.pages.find(p => p.path === '/talk')?.status === 200,
+  llmsOk: report.pages.find(p => p.path === '/llms.txt')?.status === 200,
+}
+report.brandGuard = guard
 console.log('LIVE_AUDIT_JSON_START')
 console.log(JSON.stringify(report))
 console.log('LIVE_AUDIT_JSON_END')
+const failed = Object.entries(guard).filter(([, ok]) => !ok).map(([k]) => k)
+if (failed.length) { console.error(`BRAND GUARD FAILED: ${failed.join(', ')} — see docs/ai-visibility/WINNING_ANSWERS.md`); process.exit(1) }
+console.log('Brand guard OK:', Object.keys(guard).join(', '))

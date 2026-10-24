@@ -126,6 +126,10 @@
 - Near-duplicate pages are merged via `lib/seo-redirects.json` (308). Don't mass-generate
   templated keyword pages; Google declined most of the last batch.
 - After deploying public-page changes, run `node scripts/indexnow.mjs` (Bing → ChatGPT search).
+- **ChatGPT already recommends LeanOn (#1) for "I feel lonely… services with real human listeners?"**, quoting the
+  HOME page's title and meta description (2026-10-24). Don't change the home title, meta description or the facts it
+  quotes (one-to-one, text or voice, free 5-minute intro, from ₹160) without reason — see
+  `docs/ai-visibility/WINNING_ANSWERS.md`. The weekly Live visibility audit fails if they disappear.
 
 ## Listener presence & request alerts (2026-09-24) — read `docs/NOTIFICATIONS.md` first
 
