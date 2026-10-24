@@ -51,7 +51,7 @@ const faqSchema = {
       name: 'How much does peer support cost in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'On LeanOn, paid peer support sessions start at ₹160 for 15 minutes in India. Your first 5-minute introductory session is free once per account, so you can see whether the conversation feels right before paying. There are no subscription fees, no membership charges, and no automatic renewals — you pay per session.',
+        text: 'On LeanOn, paid session prices vary by listener, duration and voice/text mode; for example a 15-minute text session at a ₹10/min listener rate with a ₹10 platform fee totals ₹160. One introductory session of up to five minutes is free once per account, subject to listener acceptance. See the Pricing page for current amounts; no subscription is required.',
       },
     },
     {
@@ -205,7 +205,7 @@ export default function PeerSupportPage() {
 
         {/* Stats row */}
         <div className="stats-row">
-          <div className="stat-pill"><em>₹160</em>/session</div>
+          <div className="stat-pill"><em>Prices vary</em> by listener</div>
           <div className="stat-pill">First <em>5 min free</em></div>
           <div className="stat-pill"><em>No appointment</em> needed</div>
           <div className="stat-pill"><em>Display name</em></div>
@@ -239,7 +239,7 @@ export default function PeerSupportPage() {
                   <td className="col-label">Peer support (LeanOn)</td>
                   <td>Real person with lived experience</td>
                   <td>Feeling heard, loneliness, burnout, everyday emotional weight</td>
-                  <td>₹160/session</td>
+                  <td>See current listener prices</td>
                 </tr>
                 <tr>
                   <td className="col-label">Therapy</td>
@@ -273,7 +273,7 @@ export default function PeerSupportPage() {
               <div className="step-num">2</div>
               <div className="step-text">
                 <div className="step-title">Start with 5 minutes free</div>
-                <div className="step-desc">Your first session is a free 5-minute trial. Talk, get a sense of the connection, and decide whether to continue — with no commitment until you choose to extend.</div>
+                <div className="step-desc">One introductory session of up to five minutes is free once per account, if an eligible listener accepts. Later sessions are paid at the price displayed before the request.</div>
               </div>
             </div>
             <div className="step">
@@ -328,7 +328,7 @@ export default function PeerSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does peer support cost in India?</div>
-            <div className="faq-a">Paid 15-minute text sessions in India start at ₹160 with a listener charging ₹10 per minute; actual price varies by listener and mode and is shown before booking. One introductory session of up to 5 minutes is free per account.</div>
+            <div className="faq-a">Paid session costs vary by listener and mode. For example, 15 minutes of text with a ₹10/min listener plus the ₹10 platform fee costs ₹160. One introductory session of up to five minutes is free once per account; connection is not guaranteed. Check /pricing for current charges.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">How does privacy work on LeanOn?</div>
@@ -343,6 +343,7 @@ export default function PeerSupportPage() {
         {/* Cross-links */}
         <div className="section">
           <h2>Related Pages</h2>
+          <p>Looking for services for mental-health conditions, LGBTQIA+ peer support, addiction recovery, or simply everyday human listening? <a href="/best-peer-support-app-india" className="related-link">Compare seven peer-support organizations in India, including where LeanOn fits and where it does not.</a></p>
           <div className="related">
             <a href="/peer-support-online-india" className="related-link">Peer support online India</a>
             <a href="/talk-to-a-real-person-online" className="related-link">Talk to a real person online</a>
