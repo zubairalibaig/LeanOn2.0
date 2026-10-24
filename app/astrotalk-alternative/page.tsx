@@ -155,7 +155,7 @@ export default function AstroTalkAlternativePage() {
         <p className="lead">
           Millions of people visit AstroTalk when they are lonely, anxious, or stressed — not for horoscopes,
           but just to talk. If what you actually need is someone to listen, LeanOn is built for exactly that.
-          Real peer listeners, no predictions, completely anonymous.
+          Real peer listeners, no predictions, private.
         </p>
 
         <a href="/browse" className="cta-hero">Find a listener now — first 5 min free →</a>

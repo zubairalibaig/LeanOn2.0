@@ -68,7 +68,7 @@ const faqSchema = {
       name: 'Is it anonymous?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Completely anonymous. You can use LeanOn with a nickname. Your employer, your family, your social circle in Australia will not know.',
+        text: 'Private. You can use LeanOn with a nickname. Your employer, your family, your social circle in Australia will not know.',
       },
     },
   ],

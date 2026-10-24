@@ -200,7 +200,7 @@ export default function CanadaNriSupportPage() {
             <li>CA$14 for 15 min &nbsp;·&nbsp; CA$21 for 30 min &nbsp;·&nbsp; CA$28 for 45 min</li>
             <li>Real human listeners — not AI</li>
             <li>Anonymous and confidential</li>
-            <li>Available across all of Canada, any time of day or night</li>
+            <li>Available across all of Canada — availability follows Indian time</li>
           </ul>
         </div>
 

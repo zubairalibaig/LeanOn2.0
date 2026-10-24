@@ -181,7 +181,7 @@ export default function TalkAboutMyProblemsOnlinePage() {
               <div className="step-num">2</div>
               <div className="step-body">
                 <h3>Start talking</h3>
-                <p>Book instantly — no appointment, no waitlist. New users get a free 5-minute trial. Paid sessions start at ₹160 for 15 minutes. Your listener follows your lead.</p>
+                <p>No appointment, no waitlist. New users get a free 5-minute trial. Paid sessions start at ₹160 for 15 minutes. Your listener follows your lead.</p>
               </div>
             </div>
             <div className="step">

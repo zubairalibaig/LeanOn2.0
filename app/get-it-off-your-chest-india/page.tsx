@@ -37,8 +37,8 @@ const faqSchema = {
     },
     {
       '@type': 'Question',
-      name: 'Is it totally anonymous?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Your first name is all the listener knows. The session is private. What you say does not leave that conversation. The listener is bound by confidentiality and has no connection to your social or professional life.' },
+      name: 'Is it private?',
+      acceptedAnswer: { '@type': 'Answer', text: 'The listener sees only the name you choose, never your phone number. Voice calls are not recorded; text is stored securely and only opened by authorised LeanOn staff if a session is reported. The listener is bound by confidentiality and has no connection to your social or professional life.' },
     },
     {
       '@type': 'Question',

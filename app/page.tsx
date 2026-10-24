@@ -455,7 +455,7 @@ export default function Home() {
               {t:'Browse peer listeners',d:'Filter by topic. Read bios and ratings. Browse anonymously.'},
               {t:'Pick your session length',d:'5-min trial, or choose 15 or 30 minutes.'},
               {t:'Recharge your wallet',d:'Top up ₹200, ₹500 or ₹1000. Refundable anytime.'},
-              {t:'Start instantly',d:'Choose text or voice; the conversation can begin when a listener accepts your request.'},
+              {t:'No appointment',d:'Choose text or voice; the conversation can begin when a listener accepts your request.'},
               {t:'Get the support you need',d:'Rate your listener. Book again anytime. You are not alone.'},
             ].map((s,i)=>(
               <div key={i} className="si"><div className="sn">{i+1}</div><div><div className="stit">{s.t}</div><div className="sd">{s.d}</div></div></div>
@@ -523,7 +523,7 @@ export default function Home() {
       {/* TRUST */}
       <div className="inner">
         <div className="tg">
-          {[{i:'🔒',l:'Safe & private'},{i:'💬',l:'Text or voice'},{i:'🔄',l:'Refund anytime'},{i:'⚡',l:'Instant access'},{i:'🤝',l:'Lived experience'},{i:'⏱️',l:'Available now'}].map((t,i)=>(
+          {[{i:'🔒',l:'Safe & private'},{i:'💬',l:'Text or voice'},{i:'🔄',l:'Refund anytime'},{i:'⚡',l:'No appointment'},{i:'🤝',l:'Lived experience'},{i:'⏱️',l:'Available now'}].map((t,i)=>(
             <div key={i} className="ti"><div className="tic">{t.i}</div><span className="tl">{t.l}</span></div>
           ))}
         </div>

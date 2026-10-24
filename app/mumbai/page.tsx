@@ -198,7 +198,7 @@ export default function MumbaiPage() {
           <p>You have enough commuting to do. LeanOn sessions happen entirely on your phone or laptop. Talk from your office bathroom, your commute home, your bedroom after midnight. Support is available wherever you are, whenever you need it.</p>
 
           <h3>Affordable and Accessible</h3>
-          <p>Therapy in Mumbai can cost ₹2,000 to ₹5,000 per session — and there are waitlists. LeanOn starts at ₹160 for 15 minutes, available instantly. For the kind of emotional support that most Mumbaikars need most of the time — a caring human who listens without judgment — peer support is often the right tool.</p>
+          <p>Therapy in Mumbai can cost ₹2,000 to ₹5,000 per session — and there are waitlists. LeanOn starts at ₹160 for 15 minutes, with no appointment. For the kind of emotional support that most Mumbaikars need most of the time — a caring human who listens without judgment — peer support is often the right tool.</p>
 
           <h3>Private and Confidential</h3>
           <p>In Mumbai's social and professional circles, vulnerability can feel like a liability. LeanOn is completely private. Your conversations stay between you and your listener. No one in your network will know unless you choose to tell them.</p>

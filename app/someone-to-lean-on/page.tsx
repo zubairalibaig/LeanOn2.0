@@ -41,7 +41,7 @@ const faqSchema = {
       name: 'What if I genuinely have no one to lean on right now?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'That is a real and painful situation, and it is far more common than it looks from the outside — including among people who appear socially surrounded. Sometimes the people around you are close to the problem, or would worry, or would repeat it. LeanOn was built for exactly this gap: verified peer listeners who have lived through similar things, available anonymously and around the clock, so there is always someone to lean on even when your own circle is not an option tonight.',
+        text: 'That is a real and painful situation, and it is far more common than it looks from the outside — including among people who appear socially surrounded. Sometimes the people around you are close to the problem, or would worry, or would repeat it. LeanOn was built for exactly this gap: verified peer listeners who have lived through similar things, available privately with no appointment, so there is often someone to lean on even when your own circle is not an option tonight.',
       },
     },
     {
@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'How much does it cost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'The price depends on the listener you choose plus a flat ₹10 platform fee per paid session. A 15-minute session starts around ₹160 — far less than a therapy appointment in India, and available at any hour. A short trial session is available for new users.',
+        text: 'The price depends on the listener you choose plus a flat ₹10 platform fee per paid session. A 15-minute session starts around ₹160 — far less than a therapy appointment in India, and with no appointment. A short trial session is available for new users.',
       },
     },
   ],
@@ -147,7 +147,7 @@ export default function SomeoneToLeanOnPage() {
         <div className="hero">
           <p className="tag">Peer Support · India</p>
           <h1>Everyone Needs <em>Someone to Lean On</em></h1>
-          <p className="lead">Not advice. Not a diagnosis. Not a lecture about what you should have done. Just someone to lean on — a real, empathetic person on the other end who listens properly while you say the thing you have been carrying alone. LeanOn connects you with verified peer listeners across India, anonymously, at any hour.</p>
+          <p className="lead">Not advice. Not a diagnosis. Not a lecture about what you should have done. Just someone to lean on — a real, empathetic person on the other end who listens properly while you say the thing you have been carrying alone. LeanOn connects you with verified peer listeners across India, privately, with no appointment.</p>
         </div>
 
         {/* What it means */}
@@ -198,7 +198,7 @@ export default function SomeoneToLeanOnPage() {
           <p>Every listener on LeanOn is a verified human being who has personally lived through something like what you are carrying: a breakup, a job loss, years in a marriage they could not talk about, the long quiet of a city where nobody knows them. They are peers, not licensed therapists, and we are direct about that distinction. And there is no AI anywhere in the conversation — no generated replies, no simulated empathy. The person typing has actually been there.</p>
 
           <h3>Anonymous, First Names Only, Open at 3 AM</h3>
-          <p>You choose a listener and talk. First names only, no photographs of you, nothing shared with anyone in your life, and nothing that shows up anywhere later. Listeners are available around the clock, including the hours when this feeling is worst, so having someone to lean on does not depend on office timings. You can find out whether this particular person actually gets it with a short trial session before committing to a longer one.</p>
+          <p>You choose a listener and talk. First names only, no photographs of you, nothing shared with anyone in your life, and nothing that shows up anywhere later. Listeners go online at different hours, often including the hours when this feeling is worst, so having someone to lean on does not depend on office timings. You can find out whether this particular person actually gets it with a short trial session before committing to a longer one.</p>
         </div>
 
         {/* Listener cards */}
@@ -256,7 +256,7 @@ export default function SomeoneToLeanOnPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">What if I genuinely have no one to lean on right now?</div>
-            <div className="faq-a">That is a real and painful situation, and it is far more common than it looks from the outside — including among people who appear socially surrounded. Sometimes the people around you are close to the problem, or would worry, or would repeat it. LeanOn was built for exactly this gap: verified peer listeners who have lived through similar things, available anonymously and around the clock, so there is always someone to lean on even when your own circle is not an option tonight.</div>
+            <div className="faq-a">That is a real and painful situation, and it is far more common than it looks from the outside — including among people who appear socially surrounded. Sometimes the people around you are close to the problem, or would worry, or would repeat it. LeanOn was built for exactly this gap: verified peer listeners who have lived through similar things, available privately with no appointment, so there is often someone to lean on even when your own circle is not an option tonight.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">Is LeanOn related to the song &quot;Lean On&quot; by Major Lazer?</div>
@@ -264,7 +264,7 @@ export default function SomeoneToLeanOnPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">How much does it cost?</div>
-            <div className="faq-a">The price depends on the listener you choose plus a flat ₹10 platform fee per paid session. A 15-minute session starts around ₹160 — far less than a therapy appointment in India, and available at any hour. A short trial session is available for new users.</div>
+            <div className="faq-a">The price depends on the listener you choose plus a flat ₹10 platform fee per paid session. A 15-minute session starts around ₹160 — far less than a therapy appointment in India, and with no appointment. A short trial session is available for new users.</div>
           </div>
         </div>
 

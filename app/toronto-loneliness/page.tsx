@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Lonely in Toronto — Why New Immigrants Feel So Isolated | LeanOn',
-    description: 'Toronto can make you feel very alone, very fast. LeanOn peer listeners are available anytime — for the evenings, the weekends, the moments when the city feels too big.',
+    description: 'Toronto can make you feel very alone, very fast. LeanOn peer listeners are in India (availability follows Indian time) — for the evenings, the weekends, the moments when the city feels too big.',
     url: 'https://www.leanon.app/toronto-loneliness',
     siteName: 'LeanOn',
     type: 'article',

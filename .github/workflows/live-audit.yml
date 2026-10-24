@@ -1,0 +1,31 @@
+# Read-only live visibility audit of www.leanon.app (robots, sitemaps, page
+# metadata, crawler access per user-agent, listener supply snapshot, mobile
+# PageSpeed). Runs on pushes to audit/* branches or manually. Never deploys.
+name: Live visibility audit
+on:
+  workflow_dispatch:
+  push:
+    branches: ['audit/**']
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Run live audit
+        run: node scripts/live-audit.mjs | tee live-audit.log
+      - name: Lighthouse (mobile) on key pages
+        continue-on-error: true
+        run: |
+          for p in / /talk /for-women /marriage-problems-india; do
+            npx -y lighthouse@12 "https://www.leanon.app$p" --form-factor=mobile --screenEmulation.mobile --only-categories=performance,seo,accessibility,best-practices --output=json --output-path=lh.json --chrome-flags="--headless=new --no-sandbox" --quiet || continue
+            node -e "const j=require('./lh.json');const c=j.categories,a=j.audits;console.log('LH',process.argv[1],JSON.stringify({perf:c.performance.score,seo:c.seo.score,a11y:c.accessibility.score,bp:c['best-practices'].score,lcp:a['largest-contentful-paint'].displayValue,fcp:a['first-contentful-paint'].displayValue,tbt:a['total-blocking-time'].displayValue,cls:a['cumulative-layout-shift'].displayValue,bytes:a['total-byte-weight'].displayValue}))" "$p" | tee -a live-audit.log
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: live-audit
+          path: live-audit.log

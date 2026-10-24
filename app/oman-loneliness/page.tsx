@@ -65,7 +65,7 @@ const faqSchema = {
       name: 'Is LeanOn anonymous? My employer must not find out.',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Completely anonymous. You can use any name — nothing is connected to your real identity, your employer, or your visa. Speak freely and without worry.',
+        text: 'Private. You can use any name — nothing is connected to your real identity, your employer, or your visa. Speak freely and without worry.',
       },
     },
   ],
@@ -231,7 +231,7 @@ export default function OmanLonelinessPage() {
           </div>
           <div className="faq-item">
             <h3>Is LeanOn anonymous — will my employer find out?</h3>
-            <p>Completely anonymous. Nothing is connected to your real identity, employer, or visa. Speak
+            <p>Private. Nothing is connected to your real identity, employer, or visa. Speak
               freely and without worry.</p>
           </div>
         </div>

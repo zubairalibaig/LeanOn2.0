@@ -1,0 +1,1 @@
+date,engine,question_id,temporary_chat(yes/no),search_used(yes/no),leanon_named(yes/no),leanon_linked_or_cited(yes/no),leanon_url_cited,leanon_facts_correct(yes/no/na),wrong_fact_if_any,other_services_named,source_urls_cited,recommendation_appropriate(yes/no/na),notes

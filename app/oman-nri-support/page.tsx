@@ -58,7 +58,7 @@ const faqSchema = {
       name: 'Will anyone know I am using this?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'No. Sessions are completely anonymous. You can join without using your real name. Nothing is shared with your employer, your family, or anyone in Oman.',
+        text: 'No. Sessions are private. You can join without using your real name. Nothing is shared with your employer, your family, or anyone in Oman.',
       },
     },
   ],

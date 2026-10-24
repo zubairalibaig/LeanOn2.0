@@ -15,6 +15,10 @@ const faqs = [
     category: 'About LeanOn',
     items: [
       {
+        q: 'Who can use LeanOn?',
+        a: 'Adults aged 18 and over, in India or abroad. LeanOn is not for under-18s. If you are under 18 and need to talk, please reach out to a trusted adult, or call Tele-MANAS on 14416 (free).',
+      },
+      {
         q: 'What is LeanOn?',
         a: 'LeanOn is an online peer-support platform where people can browse screened human listeners for one-to-one text or voice conversations about everyday challenges such as loneliness, work stress, relationship difficulties, grief and overthinking. It is not therapy or a crisis service. A conversation can start when a listener is available; availability varies.',
       },

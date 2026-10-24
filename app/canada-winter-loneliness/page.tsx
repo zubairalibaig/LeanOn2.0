@@ -197,7 +197,7 @@ export default function CanadaWinterLonelinessPage() {
             <li>CA$14 for 15 min &nbsp;·&nbsp; CA$21 for 30 min &nbsp;·&nbsp; CA$28 for 45 min</li>
             <li>Real human listeners — not AI</li>
             <li>Anonymous and confidential</li>
-            <li>Available at any hour — including those long winter evenings</li>
+            <li>No appointment (availability follows Indian time) — including some long winter evenings</li>
           </ul>
         </div>
 

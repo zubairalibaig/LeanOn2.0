@@ -270,7 +270,7 @@ export default function BestPeerSupportAppIndiaPage() {
             <li>You need to talk to a real human — not an AI, not a bot — who has actually been through something like what you are facing</li>
             <li>You want to vent right now, not in two weeks when a therapist has an opening</li>
             <li>You are dealing with relationship problems, family pressure, burnout, or loneliness — emotional weight that does not require a clinical diagnosis</li>
-            <li>You need it to be completely anonymous — you cannot let the people in your life know you are seeking support</li>
+            <li>You need it to be private — you cannot let the people in your life know you are seeking support</li>
             <li>You cannot afford private therapy (₹1,500–₹5,000/session) but want something more human than an AI chatbot</li>
           </ul>
           <p>LeanOn is <strong>not</strong> the right choice for diagnosed mental health conditions that require clinical treatment, medication management, or structured psychotherapy. For those, a licensed professional is what is needed — and iCall or a private therapist are more appropriate.</p>

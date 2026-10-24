@@ -142,7 +142,7 @@ export default function SingleParentIndiaPage() {
         </div>
         <div className="section">
           <h2>How LeanOn Fits Single Parent Life</h2>
-          <p>15 minutes. Any time of day. A voice call from your phone. You do not need to find a babysitter. You do not need to schedule something two weeks out. You do not need to commute anywhere. During school hours, during nap time, after bedtime &mdash; the session fits around your life rather than demanding you reorganise around it.</p>
+          <p>15 minutes. No appointment. Text or voice from your phone. You do not need to find a babysitter. You do not need to schedule something two weeks out. You do not need to commute anywhere. During school hours, during nap time, after bedtime &mdash; the session fits around your life rather than demanding you reorganise around it.</p>
         </div>
         <div className="section">
           <h2>Frequently Asked Questions</h2>

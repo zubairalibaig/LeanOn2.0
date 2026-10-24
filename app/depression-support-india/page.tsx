@@ -225,7 +225,7 @@ export default function DepressionSupportPage() {
             You don&apos;t need to arrive with a neat summary of what&apos;s wrong. You can start with &ldquo;I don&apos;t
             even know where to begin&rdquo; — that is a completely valid place to start. Listeners follow your lead.
           </p>
-          <h3>Completely anonymous</h3>
+          <h3>Private</h3>
           <p>
             No real name required. No video. No record attached to your identity. You choose what to share and how much.
           </p>

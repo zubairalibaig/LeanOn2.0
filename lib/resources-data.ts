@@ -146,7 +146,7 @@ Paradoxically, India's density doesn't protect against loneliness. Joint family 
 
 Loneliness has real health consequences: it affects sleep quality, immune function, cardiovascular health, and cognitive decline. The impact is comparable to smoking 15 cigarettes a day.
 
-What helps? Community connection — which is increasingly hard to find in modern India. Professional support when needed. And peer support platforms like LeanOn, which provide the experience of genuine human connection to people who need it most, available anywhere in India, at any hour.
+What helps? Community connection — which is increasingly hard to find in modern India. Professional support when needed. And peer support platforms like LeanOn, which provide the experience of genuine human connection to people who need it most, available anywhere in India, with no appointment.
 
 LeanOn is not a solution to the structural causes of loneliness — but it is real human connection for the moments when it matters most.`,
   },
@@ -246,7 +246,7 @@ Younger members of joint families — particularly women who have married into h
 
 The privacy constraints of joint family life also affect help-seeking. You cannot have a difficult phone call without being heard. You cannot show that you are struggling without it becoming family news. The very density of the joint family — its apparent generosity — can make genuine emotional support harder to access.
 
-LeanOn was designed with this reality in mind. Text-first, completely private, accessible at any time of day, requiring only a phone — it provides a space where someone in a joint family can have an honest conversation about how they are actually feeling, without the consequences that such honesty might carry within the family system.
+LeanOn was designed with this reality in mind. Text-first, completely private, with no appointment, requiring only a phone — it provides a space where someone in a joint family can have an honest conversation about how they are actually feeling, without the consequences that such honesty might carry within the family system.
 
 You are not alone in feeling alone inside your family.`,
   },
@@ -480,7 +480,7 @@ Name what's happening. Try to articulate, even just to yourself, what you are ex
 
 Move your body. Get out of bed. Walk around your room. Splash cold water on your face. Physical movement disrupts the mental loop and activates the body in ways that can reduce panic.
 
-Reach out. Text someone even if you don't expect an immediate reply. Writing the message itself has value. And if you need someone right now — someone who is awake and ready to listen — LeanOn peer listeners are available 24/7, including at 2 AM.
+Reach out. Text someone even if you don't expect an immediate reply. Writing the message itself has value. And if you need someone right now — someone who may be awake and ready to listen — LeanOn peer listeners go online at different hours, often late at night.
 
 Breathe deliberately. Box breathing (4 counts in, 4 hold, 4 out, 4 hold) activates the parasympathetic nervous system and physiologically reduces the stress response within minutes.
 

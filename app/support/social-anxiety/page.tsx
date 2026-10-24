@@ -187,7 +187,7 @@ export default function SocialAnxietySupportPage() {
           <p>Talking to a listener who won&apos;t judge you is a low-stakes way to practice being heard. Many users find that after a few sessions, expressing themselves in real-world conversations — with a colleague, a friend, a family member — starts to feel a little less terrifying.</p>
 
           <h3>Support Before the Moment That Scares You</h3>
-          <p>Social anxiety often peaks in anticipation — the night before an interview, the morning of a wedding, an hour before a big presentation. LeanOn listeners are available around the clock, so you can talk through your nerves right before the moment that scares you, not days later in a scheduled appointment.</p>
+          <p>Social anxiety often peaks in anticipation — the night before an interview, the morning of a wedding, an hour before a big presentation. LeanOn listeners go online at different hours, so you can talk through your nerves right before the moment that scares you, not days later in a scheduled appointment.</p>
 
           <h3>Privacy That Removes the Fear of Judgment</h3>
           <p>The fear of being judged is at the core of social anxiety, so privacy matters enormously. LeanOn conversations are anonymous and confidential — no one from your family, college, or workplace will ever know you reached out, which makes it far easier to be completely honest.</p>

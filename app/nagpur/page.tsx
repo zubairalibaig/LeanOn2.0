@@ -38,7 +38,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'Is it anonymous and private?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Your first name only. Sessions are private voice calls. Nothing is shared with your family, your colleagues, or anyone outside the session. In a city where social networks are close and reputation matters, this privacy is essential &mdash; and it is fully guaranteed.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Your first name only. Sessions are private voice calls. Nothing is shared with your family, your colleagues, or anyone outside the session. In a city where social networks are close and reputation matters, this privacy is essential. Listeners never see your phone number.' },
     },
     {
       '@type': 'Question',

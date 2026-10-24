@@ -33,7 +33,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name: 'How quickly can I start venting to someone on LeanOn?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Instantly. Open LeanOn, browse listeners who are online, and book a session. There is no appointment, no intake form, no waiting room. If a listener is online, you can start within 2 minutes. Many people connect within the time it takes to make a coffee.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Usually within minutes when a listener is online. Open LeanOn, browse listeners who are online, and book a session. There is no appointment, no intake form, no waiting room. If a listener is online, you can start within 2 minutes. Many people connect within the time it takes to make a coffee.' },
     },
     {
       '@type': 'Question',

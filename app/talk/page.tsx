@@ -399,10 +399,12 @@ function TalkInner() {
       <div className="tk">
         {phase.k === 'topic' && (
           <>
+            {/* Same-size placeholder until the count loads, so the page doesn't jump (CLS). */}
+            {onlineCount === null && <div className="live" aria-hidden style={{ visibility: 'hidden' }}><i />0 listeners online now</div>}
             {onlineCount !== null && onlineCount > 0 && <div className="live"><i />{onlineCount} listener{onlineCount === 1 ? '' : 's'} online now</div>}
-            {onlineCount === 0 && <div className="live" style={{ background: '#FFF8EC', color: '#9A5B00' }}>Everyone&apos;s busy — tap anyway, we&apos;ll keep looking for 5 minutes</div>}
+            {onlineCount === 0 && <div className="live" style={{ background: '#FFF8EC', color: '#9A5B00' }}>Nobody is online this minute — tap anyway to try, or see all listeners</div>}
             <h1>Talk to someone now</h1>
-            <p className="sub">A real person, available right now. Private and one to one. New here? Your first {FREE_SESSION_MINS} minutes are free.</p>
+            <p className="sub">A real person, one to one and private, when a listener is online. New here? Your first {FREE_SESSION_MINS} minutes are free.</p>
             <div className="seg" role="radiogroup" aria-label="How would you like to talk?">
               {(['text', 'voice'] as const).map(m => (
                 <button key={m} type="button" role="radio" aria-checked={mode === m} className={mode === m ? 'on' : ''} onClick={() => setMode(m)}>
@@ -480,6 +482,7 @@ function TalkInner() {
             <h1 style={{ fontSize: 21 }}>Nobody could pick up just now</h1>
             <p className="sub">Listeners are in India, so availability follows Indian time. You haven&apos;t been charged.</p>
             <button className="btn" onClick={() => choice.current && start(choice.current)}>Try again</button>
+            <p className="sub" style={{ marginTop: 14 }}>Or open any listener&apos;s profile and leave them a message — they&apos;ll see it when they&apos;re back online.</p>
             <div><Link className="link" href="/browse">See all listeners →</Link></div>
           </div>
         )}

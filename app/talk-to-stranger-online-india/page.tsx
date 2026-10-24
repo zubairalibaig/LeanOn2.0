@@ -181,7 +181,7 @@ export default function TalkToStrangerOnlineIndiaPage() {
               <h3>LeanOn peer listener</h3>
               <ul>
                 <li>Reviewed and approved</li>
-                <li>Trained in active listening</li>
+                <li>Screened for active listening</li>
                 <li>Bound by confidentiality</li>
                 <li>Safe, supportive space</li>
                 <li>Here specifically for you</li>

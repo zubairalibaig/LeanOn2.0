@@ -153,7 +153,7 @@ export default function UsaTalkToSomeonePage() {
         <p className="lead">
           You do not need an appointment. You do not need a crisis. You do not need to wait six weeks for
           a therapy slot. You just need a real human being who will listen — properly, warmly, without
-          judgment. LeanOn peer listeners are available right now, any time of day or night.
+          judgment. LeanOn peer listeners are in India, so availability follows Indian time — check who is online now.
         </p>
 
         <a href="/browse" className="cta-hero">Talk to a real person now — first 5 min free →</a>
@@ -168,7 +168,7 @@ export default function UsaTalkToSomeonePage() {
         </div>
 
         <div className="night-box">
-          <h2>🕐 Available at any hour — for when the need hits</h2>
+          <h2>🕐 US evenings are Indian mornings — when listeners are often online</h2>
           <p>Emotional needs do not arrive at office hours. They arrive at 11 PM on a Tuesday when
             India is asleep, you cannot sleep, and everything is just too much.</p>
           <p>LeanOn listeners are based in India, so availability follows Indian time. You can open the app right now, browse who is online,

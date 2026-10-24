@@ -31,7 +31,7 @@ export const post = {
 
 <h2>Peer Support: What It Costs and What It Is</h2>
 
-<p>Peer support is a different category from professional therapy. A peer supporter is not a licensed therapist — they are someone with lived experience who has trained in active listening and supportive conversation. It is not clinical care. It is what you need when you need to be genuinely heard by someone who has actually been through something like what you are facing.</p>
+<p>Peer support is a different category from professional therapy. A peer supporter is not a licensed therapist — they are someone with lived experience who has been screened for active listening and supportive conversation. It is not clinical care. It is what you need when you need to be genuinely heard by someone who has actually been through something like what you are facing.</p>
 
 <p>On LeanOn, peer support costs approximately ₹160 per session. Your first 5-minute session is free. There are no subscription fees, no automatic renewals, and no appointment needed — listeners are.</p>
 

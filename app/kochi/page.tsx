@@ -57,7 +57,7 @@ const faqSchema = {
       name: 'Is LeanOn peer support different from therapy?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. LeanOn is peer support, not therapy. Listeners are screened peers — not licensed therapists. More accessible (from ₹160 for 15 minutes), and completely anonymous. For clinical mental health concerns, professional help is always recommended.',
+        text: 'Yes. LeanOn is peer support, not therapy. Listeners are screened peers — not licensed therapists. More accessible (from ₹160 for 15 minutes), and private. For clinical mental health concerns, professional help is always recommended.',
       },
     },
   ],

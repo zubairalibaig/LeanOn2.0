@@ -225,7 +225,7 @@ export default function CantAffordTherapyIndiaPage() {
             <li>No agenda, no judgment, no advice unless you specifically ask</li>
             <li>Complete confidentiality — nothing leaves the conversation</li>
             <li>Flexibility to talk about whatever is actually on your mind</li>
-            <li>Availability at any hour, including late at night</li>
+            <li>No appointment; listeners are often online late at night</li>
           </ul>
 
           <h3>What It Costs</h3>

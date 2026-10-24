@@ -32,7 +32,7 @@ const faqSchema = {
       name: 'What is hostel homesickness and how do I deal with it?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Hostel homesickness is the distress many Indian students experience when they leave home for the first time to attend college or coaching institutes — often at 16-18 years old. It involves missing family, familiar food, routines, and the safety of home while navigating an unfamiliar and often competitive environment. It is extremely normal and usually improves as you build new connections and routines.',
+        text: 'Hostel homesickness is the distress many Indian students experience when they leave home for the first time to attend college or coaching institutes — often around 18. It involves missing family, familiar food, routines, and the safety of home while navigating an unfamiliar and often competitive environment. It is extremely normal and usually improves as you build new connections and routines.',
       },
     },
     {
@@ -48,7 +48,7 @@ const faqSchema = {
       name: 'What do I do if I am being bullied at college?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Campus bullying — including ragging, which remains a serious problem in many Indian institutions despite regulations — can cause significant psychological harm. You should report it to the institution\'s anti-ragging committee and, if needed, the UGC Toll-Free Anti-Ragging Helpline at 1800-180-5522. You should also talk to someone you trust. LeanOn peer listeners who have navigated campus bullying can offer support while you navigate the situation.',
+        text: 'Campus bullying — including ragging, which remains a serious problem in many Indian institutions despite regulations — can cause significant psychological harm. You should report it to the institution\'s anti-ragging committee and, if needed, the UGC anti-ragging helpline. You should also talk to someone you trust. LeanOn peer listeners who have navigated campus bullying can offer support while you navigate the situation.',
       },
     },
     {
@@ -158,7 +158,7 @@ export default function StudentStressSupportPage() {
           <p>And when you do not clear the exam on the first attempt? Or do not get the rank you needed? The grief of that moment — combined with family reactions, financial cost, and the sense of a lost year or years — is real and profound.</p>
 
           <h3>Hostel Homesickness</h3>
-          <p>Leaving home for the first time at 17 or 18 to live in a hostel — often hundreds of kilometres from family — is a significant adjustment that Indian students are rarely prepared for. Hostel homesickness involves missing family, navigating unfamiliar food and routines, making new friends from scratch in a competitive environment, and doing all of this while maintaining high academic performance.</p>
+          <p>Leaving home for the first time to live in a hostel — often hundreds of kilometres from family — is a significant adjustment that Indian students are rarely prepared for. Hostel homesickness involves missing family, navigating unfamiliar food and routines, making new friends from scratch in a competitive environment, and doing all of this while maintaining high academic performance.</p>
 
           <h3>Campus Bullying and Ragging</h3>
           <p>Despite regulations, ragging and campus bullying remain serious problems in many Indian educational institutions. The power dynamics of senior-junior relationships, gender-based harassment, and social exclusion can cause lasting psychological harm. Students who experience this often feel they have no one to turn to — LeanOn offers a private, judgment-free space to talk.</p>
@@ -242,7 +242,7 @@ export default function StudentStressSupportPage() {
           </div>
           <div className="faq-item">
             <div className="faq-q">What do I do if I am being bullied at college?</div>
-            <div className="faq-a">You should report campus bullying to the institution&apos;s anti-ragging committee and, if needed, the UGC Toll-Free Anti-Ragging Helpline at 1800-180-5522. You should also talk to someone you trust. LeanOn peer listeners who have navigated campus bullying can offer support while you navigate the situation.</div>
+            <div className="faq-a">You should report campus bullying to the institution&apos;s anti-ragging committee and, if needed, the UGC anti-ragging helpline. You should also talk to someone you trust. LeanOn peer listeners who have navigated campus bullying can offer support while you navigate the situation.</div>
           </div>
           <div className="faq-item">
             <div className="faq-q">How do I handle career anxiety as a student in India?</div>

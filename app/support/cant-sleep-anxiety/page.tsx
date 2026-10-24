@@ -67,7 +67,7 @@ const faqSchema = {
       name: 'How much does it cost to talk to someone at night in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LeanOn starts at ₹160 for a 15-minute session and is available at any hour including 2 AM and 3 AM. New users get a free 5-minute trial. For the cost of a coffee, you can have a real conversation with someone who has personally navigated what you are going through — and who is awake right now.',
+        text: 'LeanOn starts at ₹160 for a 15-minute session and listeners are often online late at night. New users get a free 5-minute trial. For the cost of a coffee, you can have a real conversation with someone who has personally navigated what you are going through — and who is awake right now.',
       },
     },
   ],
