@@ -4,7 +4,7 @@ import QuickAnswer from '@/app/components/QuickAnswer'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Get Relationship Support from a Real Person — Not an AI | LeanOn',
+  title: 'Talk to a Real Person About Relationship Problems in India | LeanOn',
   description: "Talk through a fight, breakup, trust concerns or marriage pressure with a screened peer listener in India by text or voice. This is non-clinical peer support, not couples therapy or legal advice. One introductory session up to 5 minutes is free per account; availability varies.",
   keywords: [
     'relationship advice real person', 'someone to talk to about relationship problems',
@@ -152,11 +152,12 @@ export default function RelationshipSupportPage() {
           <a href="/">Home</a><span>›</span>Relationship Support — Real Person
         </div>
 
-        <h1>Relationship Stress? Talk It Through with a Human Peer Listener</h1>
+        <h1>Where Can I Talk to a Real Person About Relationship Problems in India?</h1>
+        <p style={{ fontSize: 20, fontWeight: 800, color: '#FF9933', margin: '-6px 0 14px' }}>Talk it through with a screened human peer listener — not an AI, not a therapist.</p>
         <p className="lead">
           When you&apos;re dealing with a relationship problem — a fight, a breakup, a slow drift apart or feeling unheard — you may want a human conversation outside your usual circle. LeanOn lets adults request a one-to-one text or voice conversation with a screened peer listener. It is non-clinical peer support, not professional relationship counselling.
         </p>
-        <QuickAnswer question={"Who can I talk to about relationship problems?"} answer={"If you want to talk through a fight, breakup, trust concern or marriage and family pressure, LeanOn lets you request a one-to-one conversation with a screened peer listener in India. Listeners are expected to listen without judgement, but the service is not professional relationship counselling, couples therapy or legal advice. One introductory session up to 5 minutes is free per account; a match is not guaranteed."} />
+        <QuickAnswer question={"Where can I talk to a real person about relationship problems in India?"} answer={"If you want to talk through a fight, breakup, trust concern or marriage and family pressure, LeanOn lets you request a one-to-one conversation with a screened peer listener in India. Listeners are expected to listen without judgement, but the service is not professional relationship counselling, couples therapy or legal advice. One introductory session up to 5 minutes is free per account; a match is not guaranteed."} />
         <p style={{ fontSize: 14, margin: '10px 0 20px', lineHeight: 1.7, color: '#4A6470' }}>Not sure what kind of help fits? <a href="/relationship-emotional-support-guide-india" style={{ fontWeight: 800, color: '#0F7788', textDecoration: 'underline' }}>Read our relationship and emotional support guide</a> for marriage, family pressure, women’s emotional load, and when to choose counselling instead of peer listening.</p>
 
         <a href="/talk?src=seo" className="cta-hero">Talk it through — first 5 minutes free →</a>

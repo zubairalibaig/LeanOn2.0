@@ -4,7 +4,7 @@ import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Pay to Talk to Someone Online in India | LeanOn Peer Support',
+  title: 'Pay for a Private Conversation with a Human Listener in India | LeanOn',
   description: 'Pay to talk to a real peer listener in India. One free 5-minute introduction per account; prices depend on listener rate, with a 15-minute example at ₹160.',
   keywords: [
     'pay to talk to someone online india', 'pay per minute chat india', 'paid chat online india',
@@ -154,7 +154,8 @@ export default function PayToTalkOnlineIndiaPage() {
           <a href="/">Home</a><span>›</span>Pay to Talk Online India
         </div>
 
-        <h1>Pay to Talk — A Real Person Who Listens, Not a Prediction</h1>
+        <h1>Affordable, Private Conversations with a Human Listener in India</h1>
+        <p style={{ fontSize: 20, fontWeight: 800, color: '#FF9933', margin: '-6px 0 14px' }}>Pay per minute to talk to a real person who listens — choose who, by text or voice.</p>
         <p className="lead">
           If you want a real person to listen rather than an AI response or a prediction, LeanOn offers one-to-one conversations with screened peer listeners. It is peer support, not therapy or clinical care. Your first introductory session of up to 5 minutes is free once per account; check the displayed price before starting a paid session.
         </p>

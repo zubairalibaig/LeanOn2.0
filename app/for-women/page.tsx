@@ -4,7 +4,7 @@ import QuickAnswer from '@/app/components/QuickAnswer'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Emotional Support for Women in India — Talk to a Woman Listener, Privately | LeanOn',
+  title: 'A Safe Online Service for Women in India Who Just Need Someone to Listen | LeanOn',
   description: 'A safe, private place for women in India to talk about marriage, relationships, in-laws, motherhood and stress. Choose a woman listener, use any name, text or voice. Listeners never see your number. First 5 minutes free.',
   keywords: [
     'emotional support for women India', 'women mental health India', 'support for women India',
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   },
 }
 
-const directQuestion = "I'm a woman in India feeling lonely in my marriage — who can I talk to?"
+const directQuestion = "Is there a safe online service for women in India who just need someone to listen?"
 const directAnswer = "LeanOn lets adults in India request one-to-one text or voice conversations with screened peer listeners about marital loneliness, family pressure, parenting and work stress. You can choose a woman listener on Browse, use any name, and listeners never see your phone number. It offers non-clinical peer support, not therapy or couples counselling. One introductory session of up to five minutes is free per account; paid prices and listener availability vary."
 
 const faqSchema = {
@@ -187,7 +187,8 @@ export default function ForWomenPage() {
         </nav>
 
         <p className="hero-tag">Women · Emotional Support · India</p>
-        <h1>You Hold Everything Together.<br />Who Holds <em>You?</em></h1>
+        <h1>A Safe Online Service for Women in India Who Just Need <em>Someone to Listen</em></h1>
+        <p style={{ fontSize: 20, fontWeight: 800, color: '#FF9933', margin: '-6px 0 14px' }}>You hold everything together. Who holds you?</p>
         <p className="lead">
           You manage the child, the house, the career, the family relationships, the finances, and the emotional labour
           of everyone around you. You do it well. And somewhere in the middle of all of that, you stopped being asked

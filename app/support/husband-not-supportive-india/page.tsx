@@ -4,7 +4,7 @@ import GeoQuickAnswer from '@/app/components/GeoQuickAnswer'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Husband Not Supportive India — Emotional and Financial Withdrawal in Marriage | LeanOn',
+  title: 'My Husband Doesn\'t Support Me Emotionally — What Are My Options? | LeanOn',
   description: 'When your husband has stopped showing up — emotionally, financially, or both. The particular exhaustion of managing everything while the person who was supposed to be your partner has checked out.',
   keywords: [
     'husband not supportive India', 'husband not helping India', 'unsupportive husband India',
@@ -146,7 +146,8 @@ export default function HusbandNotSupportiveIndiaPage() {
         </nav>
 
         <p className="hero-tag">Marriage · Unsupportive Partner · Emotional Withdrawal · India</p>
-        <h1>You Married a Partner. You Got a <em>House Guest.</em></h1>
+        <h1>My Husband Doesn&apos;t Support Me Emotionally. <em>What Are My Options?</em></h1>
+        <p style={{ fontSize: 20, fontWeight: 800, color: '#FF9933', margin: '-6px 0 14px' }}>You married a partner. You got a house guest.</p>
         <p className="lead">
           He is physically there. But the emotional support, the financial partnership, the sense of
           being a team — those have quietly withdrawn. You are managing the child, the bills, the home,
