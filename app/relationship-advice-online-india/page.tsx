@@ -24,8 +24,8 @@ export const metadata: Metadata = {
   },
 }
 
-const DIRECT_QUESTION = "Where can I get relationship advice online in India from a real person?"
-const DIRECT_ANSWER = "LeanOn connects adults with a screened peer listener in India for a one-to-one text or voice conversation about relationship stress. One introductory session of up to 5 minutes is free per account. It is peer support, not professional relationship counselling, couples therapy or legal advice; availability varies, and a match is not guaranteed."
+const DIRECT_QUESTION = "Where can I talk to a real person about relationship problems in India?"
+const DIRECT_ANSWER = "In India you can speak with a trusted person, contact iCALL (TISS) for professional psychosocial counselling, book a qualified relationship counsellor, or use a non-clinical peer listener. LeanOn lets adults request a one-to-one human conversation by text or voice about everyday relationship stress. One introductory session of up to five minutes is free per account; a screened listener must accept the request. It is not counselling, crisis care or specialist domestic-abuse support."
 
 const faqSchema = {
   '@context': 'https://schema.org',
@@ -169,6 +169,13 @@ export default function RelationshipAdvicePage() {
         </div>
 
         <div className="card">
+          <h2>Where can you talk to a real person about relationship problems?</h2>
+          <p><strong>Start with the kind of support you want:</strong> a trusted friend can listen without charge; <a href="https://icallhelpline.org/faqs/" target="_blank" rel="noopener noreferrer">iCALL at TISS</a> offers professional psychosocial counselling; a qualified relationship therapist can work on repeated conflicts or couples issues.</p>
+          <p>If you want a peer with relevant lived experience, <a href="https://www.soulup.in/pages/1-on-1-conversation" target="_blank" rel="noopener noreferrer">SoulUp</a> offers scheduled peer conversations, while <a href="/browse">LeanOn</a> lets adults request non-clinical text or voice conversations. LeanOn has one free introductory session of up to five minutes per account; later sessions are paid, with the exact price shown before a request. A listener must accept; an instant match is not guaranteed.</p>
+          <p>For mental-health crises, specialist abuse support, treatment or safety planning, a paid peer listener is not the right substitute. <a href="/relationship-emotional-support-guide-india">Compare the support options and their privacy limits</a>.</p>
+        </div>
+
+        <div className="card">
           <h2>What people talk about</h2>
           <p>Our listeners hear about all kinds of relationship situations:</p>
           <div className="pill-list">
@@ -211,8 +218,8 @@ export default function RelationshipAdvicePage() {
             </li>
             <li>
               <div>
-                <strong>Leave feeling lighter</strong>
-                <p>Sometimes just saying it out loud to someone who cares is enough to feel clearer.</p>
+                <strong>Decide on your next step</strong>
+                <p>You may feel clearer after being heard; the effect differs for everyone. Use professional care when appropriate.</p>
               </div>
             </li>
           </ul>
@@ -220,10 +227,8 @@ export default function RelationshipAdvicePage() {
 
         <div className="card">
           <h2>Why not just talk to a friend?</h2>
-          <p>Friends mean well, but they also have opinions, history, and emotions of their own. They may side
-            with your partner, tell your mutual friends, or feel awkward next time they see you both.</p>
-          <p>LeanOn listeners are screened and expected to be neutral. They have no stake in the outcome. Their only job is
-            to help you feel heard — and that changes everything.</p>
+          <p>A trustworthy friend can be an excellent first choice. Think about whether they can respect your confidence and avoid taking sides if you need to talk privately.</p>
+          <p>A peer listener outside your social circle is another option. LeanOn screens its listeners for the peer role, but does not provide qualified relationship counselling or guarantee a particular outcome.</p>
         </div>
 
         <div className="card">
@@ -241,6 +246,10 @@ export default function RelationshipAdvicePage() {
 
         <div className="card">
           <h2>Frequently asked questions</h2>
+          <div className="faq-item">
+            <h3>{DIRECT_QUESTION}</h3>
+            <p>{DIRECT_ANSWER}</p>
+          </div>
           <div className="faq-item">
             <h3>How do I get relationship advice online in India?</h3>
             <p>LeanOn lets you talk with a screened peer listener about relationship problems. One introductory session of up to 5 minutes is free per account. You can choose a display name; listeners do not see your phone number. This is non-clinical peer support, not therapy or professional relationship counselling. Availability varies.</p>
