@@ -229,7 +229,7 @@ export default function AnonymousSupportPage() {
           <p>Peer listeners offer a human conversation about everyday emotional difficulties. They do not offer diagnosis or clinical treatment.</p>
 
           <h3>People Who Would Not Seek Help Otherwise</h3>
-          <p>Perhaps the most important evidence for anonymous support&apos;s effectiveness is that it reaches people who would otherwise seek no support at all. For someone who would rather suffer in silence than risk judgment from people who know them, anonymous peer support is not a lesser option — it is the option that actually exists for them.</p>
+          <p>A listener outside your own social circle can be an option if you prefer to talk privately about everyday stress. This does not remove all privacy risks or replace specialist care.</p>
         </div>
 
         {/* Link to actual profiles rather than invented listener names or biographies. */}
